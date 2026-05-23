@@ -28,6 +28,8 @@ noncomputable section
 - `indexedBinaryMixturePMF_no_positive_event_raw_relevance_iff_selected_eq_unselected_on_positive_event`:
   no positive-event raw binary-mixture relevance is exactly selected/unselected
   equality on positive-event profiles.
+- `indexedBinaryMixturePMF_positive_event_of_raw_relevance`:
+  raw binary-mixture relevance forces a positive-mass selected event.
 - `pmf_map_apply_toReal_pos_of_pos`, `pmf_map_pos_exists_preimage`:
   positive-mass support lemmas for PMF pushforwards.
 -/
@@ -988,6 +990,71 @@ theorem pmf_pure_ne_of_ne
     simpa [h] using hx
   exact hne ((PMF.mem_support_pure_iff (a := y) (a' := x)).1 hy)
 
+/--
+Support-aware point-mass exclusion implies support-aware value exclusion.
+This removes Dirac PMF wrappers from finite point-estimate no-relevance
+statements.
+-/
+theorem not_exists_pos_mass_value_ne_of_not_exists_pos_mass_pmf_pure_ne
+    {ι α β γ : Type*}
+    (μ : ι → α → PMF β)
+    (baseValue : ι → α → γ)
+    (fullValue : ι → α → β → γ)
+    (hno_pure :
+      ¬ ∃ i a b,
+        0 < (μ i a b).toReal ∧
+          PMF.pure (baseValue i a) ≠ PMF.pure (fullValue i a b)) :
+    ¬ ∃ i a b,
+      0 < (μ i a b).toReal ∧
+        baseValue i a ≠ fullValue i a b := by
+  rintro ⟨i, a, b, hmass, hne⟩
+  exact
+    hno_pure
+      ⟨i, a, b, hmass, pmf_pure_ne_of_ne hne⟩
+
+/--
+Point-mass exclusion implies value exclusion.  This is the ordinary
+no-relevance version of
+`not_exists_pos_mass_value_ne_of_not_exists_pos_mass_pmf_pure_ne`.
+-/
+theorem not_exists_value_ne_of_not_exists_pmf_pure_ne
+    {ι α β γ : Type*}
+    (baseValue : ι → α → γ)
+    (fullValue : ι → α → β → γ)
+    (hno_pure :
+      ¬ ∃ i a b,
+        PMF.pure (baseValue i a) ≠ PMF.pure (fullValue i a b)) :
+    ¬ ∃ i a b,
+      baseValue i a ≠ fullValue i a b := by
+  rintro ⟨i, a, b, hne⟩
+  exact
+    hno_pure
+      ⟨i, a, b, pmf_pure_ne_of_ne hne⟩
+
+/--
+Full support upgrades support-aware Dirac-law exclusion to ordinary value
+exclusion.  This is a common final step for finite point-estimate
+no-relevance endpoints.
+-/
+theorem not_exists_value_ne_of_not_exists_pos_mass_pmf_pure_ne_of_full_support
+    {ι α β γ : Type*}
+    (μ : ι → α → PMF β)
+    (baseValue : ι → α → γ)
+    (fullValue : ι → α → β → γ)
+    (hfull_support : ∀ i a b, 0 < (μ i a b).toReal)
+    (hno_pure :
+      ¬ ∃ i a b,
+        0 < (μ i a b).toReal ∧
+          PMF.pure (baseValue i a) ≠ PMF.pure (fullValue i a b)) :
+    ¬ ∃ i a b,
+      baseValue i a ≠ fullValue i a b := by
+  exact
+    not_exists_of_not_exists_pos_mass_of_full_support μ
+      (fun i a b => baseValue i a ≠ fullValue i a b)
+      hfull_support
+      (not_exists_pos_mass_value_ne_of_not_exists_pos_mass_pmf_pure_ne
+        μ baseValue fullValue hno_pure)
+
 /-- Pointwise real-mass formula for `binaryMixturePMF`. -/
 theorem binaryMixturePMF_apply_toReal
     {α : Type*} (p : NNReal) (hp : p ≤ 1)
@@ -1130,6 +1197,37 @@ theorem unselected_ne_binaryMixturePMF_of_pos_of_ne
     unselected ≠ binaryMixturePMF p hp selected unselected := by
   exact (binaryMixturePMF_ne_unselected_of_pos_of_ne
     p hp selected unselected hpos hne).symm
+
+/--
+For an indexed binary-mixture surface whose share is the finite mass of an
+event, raw relevance of the displayed mixture implies that the event has a
+positive-mass atom.  If the event had no positive-mass atom, the mixture share
+would be zero and the mixture would reduce to the unselected law.
+-/
+theorem indexedBinaryMixturePMF_positive_event_of_raw_relevance
+    {ι κ α β : Type*} [Fintype α] [DecidableEq α]
+    (μ : ι → κ → PMF α)
+    (event : ι → κ → α → Prop)
+    (decEvent : ∀ i k, DecidablePred (event i k))
+    (selected unselected : ι → κ → PMF β)
+    (i : ι) (k : κ)
+    (hraw :
+      unselected i k ≠
+        binaryMixturePMF
+          (indexedPMFEventShare μ event decEvent i k)
+          (indexedPMFEventShare_le_one μ event decEvent i k)
+          (selected i k) (unselected i k)) :
+    ∃ a, event i k a ∧ 0 < (μ i k a).toReal := by
+  by_contra hno_positive
+  have hzero :
+      (indexedPMFEventShare μ event decEvent i k).toReal = 0 :=
+    (indexedPMFEventShare_eq_zero_iff_no_positive_mass
+      μ event decEvent i k).2 hno_positive
+  exact hraw
+    (binaryMixturePMF_eq_unselected_of_zero
+      (indexedPMFEventShare μ event decEvent i k)
+      (indexedPMFEventShare_le_one μ event decEvent i k)
+      (selected i k) (unselected i k) hzero).symm
 
 /--
 For an indexed binary-mixture surface whose mixture share is the finite mass of

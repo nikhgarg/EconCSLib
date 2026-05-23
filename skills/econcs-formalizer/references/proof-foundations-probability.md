@@ -36,6 +36,33 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   proof inside a single broad "asymptotic certificate" if the paper proves
   those pieces separately.
 
+## Measure-Zero And Almost-Everywhere Seams
+
+- For continuous type spaces and Gaussian threshold games, do not strengthen a
+  paper claim to pointwise behavior at cutoff ties or off-support states unless
+  the source explicitly needs it. Use an a.e. statement over the realized
+  information law, then add a separate pointwise-to-a.e. bridge for models that
+  really are pointwise.
+- Treat boundary-null facts as first-class lemmas. For intervals, rectangles,
+  and upper orthants, prove the boundary set has zero measure from no-atoms or
+  density assumptions, then use the a.e. indicator route for continuity or
+  limit statements. Existing reusable entry points include
+  `MeasureTheory.tendsto_measure_of_ae_tendsto_indicator_of_isFiniteMeasure`,
+  `measure_eq_zero_iff_ae_notMem`,
+  `lowerLeftRectangleMass_continuous_of_boundary_null`,
+  `lowerLeftRectangleMass_continuous_of_noAtoms_marginals`,
+  `upperOrthantMass_diagonal_continuous_of_boundary_null`, and
+  `upperOrthantMass_diagonal_continuous_of_noAtoms_marginals`.
+- For Gaussian laws, try no-atoms before adding a bespoke zero-boundary-mass
+  assumption. Useful compiled facts include `standardGaussianMeasure_noAtoms`,
+  `continuous_cdf_of_noAtoms`,
+  `correlatedStandardGaussianLaw_noAtoms_map_fst`, and
+  `correlatedStandardGaussianLaw_noAtoms_map_snd`.
+- Keep strict/weak threshold semantics explicit. A.e. equivalence lets strict
+  and weak cutoff policies differ on a null boundary, but the paper-facing
+  theorem should say which version is used for pointwise wrappers and which
+  version is only identified a.e.
+
 ## Continuous Reward And CTMC Seams
 
 - For two-state CTMC reward papers, separate primitive accounting from reward

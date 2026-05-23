@@ -79,6 +79,29 @@ theorem measure_pos_of_measureReal_pos
     0 < μ s := by
   exact (ENNReal.toReal_pos_iff.mp h).1
 
+/--
+Positive measure is monotone under set inclusion.
+-/
+theorem measure_pos_of_subset
+    {α : Type*} [MeasurableSpace α]
+    {μ : Measure α} {A B : Set α}
+    (hAB : A ⊆ B) (hpos : 0 < μ A) : 0 < μ B :=
+  lt_of_lt_of_le hpos (measure_mono hAB)
+
+/--
+An almost-everywhere property cannot fail on a positive-measure event.
+-/
+theorem ae_property_contradicts_positive_failure_mass
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) (P Q : α → Prop)
+    (hAE : ∀ᵐ a ∂μ, P a)
+    (hQ_bad : ∀ a, Q a → ¬ P a)
+    (hpos : 0 < μ {a | Q a}) : False := by
+  have hzero : μ {a | Q a} = 0 := by
+    exact measure_mono_null (fun a hQ => hQ_bad a hQ)
+      (MeasureTheory.ae_iff.1 hAE)
+  exact (ne_of_gt hpos) hzero
+
 theorem measureReal_inter_ge_one_sub_add
     {α : Type*} [MeasurableSpace α]
     (μ : Measure α) [IsProbabilityMeasure μ]

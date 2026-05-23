@@ -28,6 +28,23 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   lemmas in `StandardGaussianQuantileAPI`, strict payoff/probability algebra,
   then a paper-facing theorem saying apply strictly dominates above the cutoff
   and not applying strictly dominates below it.
+- For continuous Gaussian strategy games, consider an a.e. equilibrium surface
+  before forcing pointwise best response at null cutoff boundaries. The reusable
+  library surface is `EconCSLib.IsChoiceEquilibriumAE` with projections
+  `isChoiceEquilibriumAE_feasible_ae`,
+  `isChoiceEquilibriumAE_best_response_ae`,
+  `isChoiceEquilibriumAE_consistency`, and the bridge
+  `isChoiceEquilibriumAE_of_pointwise`.
+- LG21 is the nearest model for Gaussian reporting/taking games with null
+  boundary behavior. Its route defines `lg21SourceEquilibriumAE` in
+  `papers/LG21TestOptionalPolicies/Theorem32AEEquilibrium.lean`, exposes
+  `lg21SourceEquilibriumAE_of_sourceEquilibrium`, and then proves a.e.
+  best-response consequences such as
+  `lg21OptionalReportingBaseSourceEquilibriumData_actorMean_le_reported_score_ae`
+  plus contradiction bridges like
+  `lg21_ae_property_contradicts_positive_failure_mass`. When a GLM20 or
+  similar proof starts treating an indifference cutoff as a pointwise
+  obligation, inspect these LG21 wrappers before adding new assumptions.
 - For two-school strategic application regions, define the incremental payoff
   explicitly before proving best response: below the fallback school's cutoff
   the value is the preferred-school value, while above it the incremental value

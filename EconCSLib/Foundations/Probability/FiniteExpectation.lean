@@ -80,6 +80,21 @@ theorem pmf_apply_toReal_le_one {α : Type*} (μ : PMF α) (a : α) :
     exact ENNReal.le_tsum a
   exact ENNReal.toReal_mono ENNReal.one_ne_top hle
 
+/--
+Full support turns a support-aware exclusion into an ordinary exclusion.
+This is useful when a finite result first rules out positive-mass witnesses and
+a later endpoint assumes every atom has positive mass.
+-/
+theorem not_exists_of_not_exists_pos_mass_of_full_support
+    {ι α β : Type*}
+    (μ : ι → α → PMF β) (p : ι → α → β → Prop)
+    (hfull_support : ∀ i a b, 0 < (μ i a b).toReal)
+    (hno_positive :
+      ¬ ∃ i a b, 0 < (μ i a b).toReal ∧ p i a b) :
+    ¬ ∃ i a b, p i a b := by
+  rintro ⟨i, a, b, hp⟩
+  exact hno_positive ⟨i, a, b, hfull_support i a b, hp⟩
+
 /-- The uniform PMF over a finite nonempty type. -/
 noncomputable def uniformPMF (α : Type*) [Fintype α] [Nonempty α] : PMF α :=
   PMF.ofFintype (fun _ : α => ((Fintype.card α : ENNReal)⁻¹)) (by
@@ -167,6 +182,27 @@ theorem pmfExp_uniformPMF_eq_of_comp_equiv {α : Type*}
         (f := fun a => (μ a).toReal) (a := c)).symm
     _ = 1 * c := by rw [pmfToRealSum μ]
     _ = c := by ring
+
+/--
+If a finite random variable is equal to a constant on every positive-mass atom,
+then its expectation is that constant.  Zero-mass atoms may carry arbitrary
+values.
+-/
+theorem pmfExp_eq_const_of_support_eq
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (f : α → ℝ) (c : ℝ)
+    (h : ∀ a, 0 < (μ a).toReal → f a = c) :
+    pmfExp μ f = c := by
+  have hExp : pmfExp μ f = pmfExp μ (fun _ => c) := by
+    unfold pmfExp
+    refine Finset.sum_congr rfl ?_
+    intro a _ha
+    by_cases hmass : 0 < (μ a).toReal
+    · rw [h a hmass]
+    · have hzero : (μ a).toReal = 0 :=
+        le_antisymm (le_of_not_gt hmass) ENNReal.toReal_nonneg
+      simp [hzero]
+  rw [hExp, pmfExp_const]
 
 @[simp] theorem pmfPairExp_ignore_right {α β : Type*}
     [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]

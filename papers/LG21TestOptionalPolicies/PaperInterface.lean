@@ -5,9 +5,12 @@ import LG21TestOptionalPolicies.PostPaperAudit
 
 This is the canonical human-review surface for
 *Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps*.
-It intentionally contains only source-facing definitions and named results, in
-paper order.  Implementation endpoints and proof-seam checks live in
-`ProofInterface.lean` and `PostPaperAudit.lean`.
+It exposes one compact row per paper-facing definition or named result, with
+regime variants only where the paper states the result separately for optional
+reporting and report-required policies.
+
+Implementation endpoints, proof-route variants, diagnostics, and reusable
+bridge lemmas live in `ProofInterface.lean` and `PostPaperAudit.lean`.
 -/
 
 namespace LG21TestOptionalPolicies
@@ -80,15 +83,7 @@ abbrev proposition4_3_base_mixed_extra_signal_surface :=
 abbrev definition6_resampling_policy :=
   @PostPaperAudit.audit_definition6_resampling_policy_observable_kernel
 
-/-- Theorem 4.4: the re-sampling policy is observably fair. -/
-abbrev theorem4_4_resampling_policy_observably_fair :=
-  @PostPaperAudit.audit_theorem4_4_resampling_policy_observably_fair
-
-/-- Theorem 4.4: the re-sampling policy is demographically fair. -/
-abbrev theorem4_4_resampling_policy_demographically_fair :=
-  @PostPaperAudit.audit_theorem4_4_resampling_policy_demographically_fair
-
-/-- Theorem 4.4: source strategy-proof, observable, and demographic fairness bundle. -/
+/-- Theorem 4.4: the re-sampling policy is strategy-proof, observable, and demographic fair. -/
 abbrev theorem4_4_resampling_policy :=
   @PostPaperAudit.audit_theorem4_4_resampling_policy
 

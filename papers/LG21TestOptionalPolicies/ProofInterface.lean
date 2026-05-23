@@ -1,4 +1,8 @@
 import LG21TestOptionalPolicies.MainTheorems
+import LG21TestOptionalPolicies.Theorem31SourceEquilibrium
+import LG21TestOptionalPolicies.Theorem32AEEquilibrium
+import LG21TestOptionalPolicies.Theorem31ReportRequiredSourceEquilibrium
+import LG21TestOptionalPolicies.Theorem32SupportWrappers
 
 /-!
 # Proof Interface: LG21 Test-Optional Policies
@@ -92,9 +96,30 @@ abbrev paperSourceEquilibrium {Skill Base Test : Type*}
     (E : LG21SourceEquilibriumData Skill Base Test) : Prop :=
   lg21SourceEquilibrium E
 
+/--
+Source-equilibrium constructor for optional reporting in the all-taking
+regime, from a base-indexed two-sided binary report/withhold best response.
+-/
+abbrev paper_interface_source_equilibrium_of_base_optional_reporting_all_take_binary_choice :=
+  @lg21SourceEquilibrium_of_base_optional_reporting_all_take_binary_choice
+
 /-- Definition 1 student information: latent skill, non-test profile, and test score. -/
 abbrev paperAccessStudentInfo (Skill Base Test : Type*) :=
   LG21AccessStudentInfo Skill Base Test
+
+/--
+Definition 1 source equilibrium with best-response obligations required only
+almost everywhere under the realized information law.
+-/
+abbrev paperSourceEquilibriumAE {Skill Base Test : Type*}
+    [MeasurableSpace (paperAccessStudentInfo Skill Base Test)]
+    (μ : MeasureTheory.Measure (paperAccessStudentInfo Skill Base Test))
+    (E : LG21SourceEquilibriumData Skill Base Test) : Prop :=
+  lg21SourceEquilibriumAE μ E
+
+/-- Pointwise source equilibrium implies the corresponding a.e. source equilibrium. -/
+abbrev paper_interface_source_equilibrium_ae_of_source_equilibrium :=
+  @lg21SourceEquilibriumAE_of_sourceEquilibrium
 
 /-- Definition 1 chosen action `(Y(q, base), X(base, test))`. -/
 abbrev paperChosenAccessAction
@@ -120,6 +145,18 @@ theorem paper_interface_definition1_source_equilibrium_iff
                   E.takeDecision E.reportDecision info)) ∧
           E.estimationConsistent :=
   lg21SourceEquilibrium_iff E
+
+/-- Definition 1 a.e. source-equilibrium feasibility projection. -/
+abbrev paper_interface_definition1_source_equilibrium_ae_feasible :=
+  @lg21SourceEquilibriumAE_feasible_ae
+
+/-- Definition 1 a.e. source-equilibrium best-response projection. -/
+abbrev paper_interface_definition1_source_equilibrium_ae_best_response :=
+  @lg21SourceEquilibriumAE_best_response_ae
+
+/-- Definition 1 a.e. source-equilibrium consistency projection. -/
+abbrev paper_interface_definition1_source_equilibrium_ae_estimation_consistent :=
+  @lg21SourceEquilibriumAE_estimationConsistent
 
 /--
 Definition 1 bridge: in the binary reporting subgame, equilibrium implies the
@@ -638,6 +675,27 @@ theorem paper_interface_test_blank_iff_no_evidence
       ¬ ∃ e base test,
         S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test :=
   lg21_testBlank_iff_no_witness
+
+/--
+Reusable finite-support bridge: if every finite test value has positive mass,
+then ruling out positive-mass base/full-feature relevance witnesses rules out
+all base/full-feature relevance witnesses.
+-/
+theorem paper_interface_no_relevance_of_no_positive_mass_relevance_of_full_support
+    {Equilibrium Base Test Estimate : Type*}
+    (testLaw : Equilibrium → Base → PMF Test)
+    (baseOnlyEstimate : Equilibrium → Base → PMF Estimate)
+    (fullFeatureEstimate : Equilibrium → Base → Test → PMF Estimate)
+    (hfull_support :
+      ∀ e base test, 0 < (testLaw e base test).toReal)
+    (hno_positive :
+      ¬ ∃ e base test,
+        0 < (testLaw e base test).toReal ∧
+          baseOnlyEstimate e base ≠ fullFeatureEstimate e base test) :
+    ¬ ∃ e base test,
+      baseOnlyEstimate e base ≠ fullFeatureEstimate e base test :=
+  lg21NoRelevance_of_noPositiveMassRelevance_of_fullSupport
+    testLaw baseOnlyEstimate fullFeatureEstimate hfull_support hno_positive
 
 /--
 Definition 5 source note: if no reporter/taker event has positive mass in any
@@ -5845,6 +5903,13 @@ abbrev paper_interface_theorem3_2_no_reporter_ne_binary_mixture_of_pos_of_ne :=
   @lg21NoReporter_ne_binaryMixturePMF_of_pos_of_ne
 
 /--
+Raw-mixture relevance bridge: if the displayed binary mixture differs from
+the base-only law, then the reporter/taker event has a positive-mass atom.
+-/
+abbrev paper_interface_raw_binary_mixture_positive_event_of_raw_relevance :=
+  @lg21RawBinaryMixture_positive_event_of_raw_relevance
+
+/--
 Theorem 3.2 canonical surface check: if no-reporter/no-taker estimates are the
 base-only law and the raw full-feature law is the displayed event-share binary
 mixture, then the ordinary full-feature/base-only observable identities are
@@ -5968,6 +6033,370 @@ abbrev paper_interface_theorem3_2_positive_event_or_blank_of_blank_on_zero_event
   @lg21EventSharePositiveOrBlank_of_blankOnZeroEventShare
 
 /--
+Theorem 3.2 a.e. optional-reporting bridge: in a positive-slope affine
+point-estimate source game, almost every reporter has score at least the
+imputed no-report mean.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_ae_actorMean_le_reported_score :=
+  @lg21OptionalReportingBaseSourceEquilibriumData_actorMean_le_reported_score_ae
+
+/--
+Theorem 3.2 a.e. optional-reporting instability certificate: an a.e. source
+equilibrium cannot coexist with positive mass of reporters below the imputed
+no-report mean.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_ae_instability_of_positive_below_mean_reporter_mass :=
+  @lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_below_mean_reporter_mass
+
+/--
+Theorem 3.2 a.e. optional-reporting cutoff-interval instability certificate.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_ae_instability_of_positive_cutoff_interval_mass :=
+  @lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_cutoff_interval_mass
+
+/--
+Theorem 3.2 a.e. optional-reporting base-local cutoff-interval instability
+certificate.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_ae_instability_of_positive_base_cutoff_interval_mass :=
+  @lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_base_cutoff_interval_mass
+
+/--
+Theorem 3.2 a.e. optional-reporting Gaussian upper-tail interval instability
+certificate.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_ae_instability_of_positive_gaussian_upper_tail_interval_mass :=
+  @lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_gaussian_upper_tail_interval_mass
+
+/--
+Theorem 3.2 a.e. optional-reporting Gaussian marginal-law instability
+certificate.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_ae_instability_of_gaussian_upper_tail_marginal_interval_law :=
+  @lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_gaussian_upper_tail_marginal_interval_law
+
+/--
+Theorem 3.2 optional-reporting pointwise source-equilibrium contradiction from
+the Gaussian marginal-law interval.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_instability_of_gaussian_upper_tail_marginal_interval_law :=
+  @lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibrium_of_gaussian_upper_tail_marginal_interval_law
+
+/--
+Theorem 3.2 optional-reporting pointwise source-equilibrium contradiction for
+a fixed-base Gaussian score law.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_instability_of_single_base_gaussian_score_law :=
+  @lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibrium_of_single_base_gaussian_score_law
+
+/--
+Theorem 3.2 optional-reporting source-shaped Gaussian posterior payoff
+contradiction for a fixed-base Gaussian score law.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_gaussian_posterior_pbo_instability_of_single_base_gaussian_score_law :=
+  @lg21OptionalReportingGaussianPosteriorPBO_not_sourceEquilibrium_of_single_base_gaussian_score_law
+
+/--
+Theorem 3.2 optional-reporting source-shaped Gaussian posterior payoff
+family-level source-equilibrium contradiction.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_gaussian_posterior_pbo_family_not_source_equilibrium :=
+  @lg21OptionalReportingGaussianPosteriorPBO_family_not_sourceEquilibrium_of_nonempty
+
+/--
+Theorem 3.2 optional-reporting Gaussian posterior `P_BO` threshold
+family-level source-equilibrium contradiction.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_gaussian_posterior_pbo_threshold_family_not_source_equilibrium :=
+  @lg21OptionalReportingGaussianPosteriorPBO_threshold_family_not_sourceEquilibrium_of_nonempty
+
+/--
+Theorem 3.2 optional-reporting a.e. Gaussian posterior `P_BO` threshold
+family-level source-equilibrium contradiction from the Gaussian marginal law.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_gaussian_posterior_pbo_threshold_family_not_source_equilibrium_ae_of_gaussian_marginal_law :=
+  @lg21OptionalReportingGaussianPosteriorPBO_threshold_family_not_sourceEquilibriumAE_of_gaussian_upper_tail_marginal_interval_law
+
+/--
+Theorem 3.2 optional-reporting repaired a.e. fully specified upper-tail source
+model contradiction from the Gaussian marginal law.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_fully_specified_upper_tail_source_model_family_not_source_equilibrium_ae_of_gaussian_marginal_law :=
+  @lg21FullySpecifiedOptionalReportingUpperTailSourceEquilibriumData_family_not_sourceEquilibriumAE_of_gaussian_upper_tail_marginal_interval_law
+
+/-- Theorem 3.2 optional-reporting law-level Section 3 route through repaired a.e. source equilibrium and positive below-mean mass. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_fairness_impossibility_of_source_equilibrium_ae_positive_below_mean :=
+  @paper_theorem3_2_section3_law_optional_reporting_fairness_impossibility_of_source_equilibriumAE_positive_below_mean
+
+/-- Theorem 3.2 optional-reporting law-level no-relevance route through repaired a.e. source equilibrium and positive below-mean mass. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_no_test_relevance_of_source_equilibrium_ae_positive_below_mean :=
+  @paper_theorem3_2_section3_law_optional_reporting_no_test_relevance_of_source_equilibriumAE_positive_below_mean
+
+/-- Theorem 3.2 optional-reporting law-level Section 3 route through repaired a.e. source equilibrium and Gaussian upper-tail marginal law. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_fairness_impossibility_of_source_equilibrium_ae_gaussian_upper_tail_marginal_law :=
+  @paper_theorem3_2_section3_law_optional_reporting_fairness_impossibility_of_source_equilibriumAE_gaussian_upper_tail_marginal_law
+
+/-- Theorem 3.2 optional-reporting law-level no-relevance route through repaired a.e. source equilibrium and Gaussian upper-tail marginal law. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_no_test_relevance_of_source_equilibrium_ae_gaussian_upper_tail_marginal_law :=
+  @paper_theorem3_2_section3_law_optional_reporting_no_test_relevance_of_source_equilibriumAE_gaussian_upper_tail_marginal_law
+
+/-- Theorem 3.2 optional-reporting law-level Gaussian posterior `P_BO` repaired a.e. route. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_fairness_impossibility_gaussian_posterior_pbo_source_equilibrium_ae_gaussian_marginal_law :=
+  @paper_theorem3_2_section3_law_optional_reporting_fairness_impossibility_of_gaussian_posterior_pbo_source_equilibriumAE_gaussian_marginal_law
+
+/-- Theorem 3.2 optional-reporting law-level Gaussian posterior `P_BO` repaired a.e. no-relevance route. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_no_test_relevance_gaussian_posterior_pbo_source_equilibrium_ae_gaussian_marginal_law :=
+  @paper_theorem3_2_section3_law_optional_reporting_no_test_relevance_of_gaussian_posterior_pbo_source_equilibriumAE_gaussian_marginal_law
+
+/-- Theorem 3.2 optional-reporting Gaussian posterior `P_BO` repaired a.e. route with the finite-base Gaussian information law. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_fairness_impossibility_gaussian_posterior_pbo_source_equilibrium_ae_finite_base_gaussian_info_law :=
+  @paper_theorem3_2_section3_law_optional_reporting_fairness_impossibility_of_gaussian_posterior_pbo_source_equilibriumAE_finite_base_gaussian_info_law
+
+/-- Theorem 3.2 optional-reporting Gaussian posterior `P_BO` repaired a.e. no-relevance route with the finite-base Gaussian information law. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_no_test_relevance_gaussian_posterior_pbo_source_equilibrium_ae_finite_base_gaussian_info_law :=
+  @paper_theorem3_2_section3_law_optional_reporting_no_test_relevance_of_gaussian_posterior_pbo_source_equilibriumAE_finite_base_gaussian_info_law
+
+/-- Theorem 3.2 optional-reporting finite-base Gaussian information-law source-equilibrium contradiction for one threshold profile. -/
+abbrev paper_interface_theorem3_2_optional_reporting_gaussian_posterior_pbo_not_source_equilibrium_ae_finite_base_gaussian_info_law :=
+  @lg21OptionalReportingGaussianPosteriorPBO_not_sourceEquilibriumAE_finite_base_gaussian_info_law
+
+/--
+Theorem 3.2 optional-reporting repaired a.e. Gaussian posterior `P_BO`
+certificate inconsistency.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_gaussian_posterior_pbo_ae_certificate_false_of_nonempty :=
+  @LG21OptionalReportingGaussianPosteriorPBOAECertificate.false_of_nonempty
+
+/-- Theorem 3.2 optional-reporting Section 3 fairness-impossibility route from a generic a.e. Gaussian `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_fairness_impossibility_gaussian_posterior_pbo_ae_certificate :=
+  @paper_theorem3_2_section3_law_optional_reporting_fairness_impossibility_of_gaussian_posterior_pbo_ae_certificate
+
+/-- Theorem 3.2 optional-reporting Section 3 no-relevance route from a generic a.e. Gaussian `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_no_test_relevance_gaussian_posterior_pbo_ae_certificate :=
+  @paper_theorem3_2_section3_law_optional_reporting_no_test_relevance_of_gaussian_posterior_pbo_ae_certificate
+
+/-- Theorem 3.2 optional-reporting continuous-law certificate packaged from a generic a.e. Gaussian `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_gaussian_posterior_pbo_ae_certificate :=
+  @paper_theorem3_2_law_fairness_impossibility_certificate_of_gaussian_posterior_pbo_ae_certificate
+
+/-- Theorem 3.2 optional-reporting Section 3 fairness/no-relevance iff route from a generic a.e. Gaussian `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_fairness_iff_no_test_relevance_gaussian_posterior_pbo_ae_certificate_observable_identities :=
+  @paper_theorem3_2_section3_law_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_posterior_pbo_ae_certificate_observableIdentities
+
+/-- Theorem 3.2 optional-reporting repaired a.e. Gaussian `P_BO` source-law-model certificate. -/
+abbrev paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_optional_reporting_gaussian_posterior_pbo_ae_source_law_model :=
+  @paper_theorem3_2_law_fairness_impossibility_certificate_of_optional_reporting_gaussian_posterior_pbo_ae_source_law_model
+
+/-- Theorem 3.2 optional-reporting Section 3 fairness/no-relevance iff route from a nonblank-conditioned a.e. Gaussian `P_BO` source-law model. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_fairness_iff_no_test_relevance_gaussian_posterior_pbo_ae_source_law_model :=
+  @paper_theorem3_2_section3_law_optional_reporting_fairness_iff_no_test_relevance_of_gaussian_posterior_pbo_ae_source_law_model
+
+/--
+Theorem 3.2 optional-reporting repaired a.e. finite-base Gaussian information
+law certificate inconsistency.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_finite_base_gaussian_posterior_pbo_ae_certificate_false_of_nonempty :=
+  @LG21OptionalReportingFiniteBaseGaussianPosteriorPBOAECertificate.false_of_nonempty
+
+/-- Theorem 3.2 optional-reporting Section 3 fairness-impossibility route from a finite-base a.e. Gaussian `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_fairness_impossibility_finite_base_gaussian_posterior_pbo_ae_certificate :=
+  @paper_theorem3_2_section3_law_optional_reporting_fairness_impossibility_of_finite_base_gaussian_posterior_pbo_ae_certificate
+
+/-- Theorem 3.2 optional-reporting Section 3 no-relevance route from a finite-base a.e. Gaussian `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_no_test_relevance_finite_base_gaussian_posterior_pbo_ae_certificate :=
+  @paper_theorem3_2_section3_law_optional_reporting_no_test_relevance_of_finite_base_gaussian_posterior_pbo_ae_certificate
+
+/-- Theorem 3.2 optional-reporting continuous-law certificate packaged from a finite-base a.e. Gaussian `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_finite_base_gaussian_posterior_pbo_ae_certificate :=
+  @paper_theorem3_2_law_fairness_impossibility_certificate_of_finite_base_gaussian_posterior_pbo_ae_certificate
+
+/-- Theorem 3.2 optional-reporting Section 3 fairness/no-relevance iff route from a finite-base a.e. Gaussian `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_optional_reporting_fairness_iff_no_test_relevance_finite_base_gaussian_posterior_pbo_ae_certificate_observable_identities :=
+  @paper_theorem3_2_section3_law_optional_reporting_fairness_iff_no_test_relevance_of_finite_base_gaussian_posterior_pbo_ae_certificate_observableIdentities
+
+/--
+Theorem 3.2 a.e. report-required bridge: in a positive-slope affine
+point-estimate source game, almost every test taker has skill at least the
+imputed outside-option mean.
+-/
+abbrev paper_interface_theorem3_2_report_required_ae_actorMean_le_taker_skill :=
+  @lg21ReportRequiredBaseSourceEquilibriumData_actorMean_le_taker_skill_ae
+
+/--
+Theorem 3.2 a.e. report-required instability certificate: an a.e. source
+equilibrium cannot coexist with positive mass of test takers below the imputed
+outside-option mean.
+-/
+abbrev paper_interface_theorem3_2_report_required_ae_instability_of_positive_below_mean_taker_mass :=
+  @lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_below_mean_taker_mass
+
+/--
+Theorem 3.2 a.e. report-required cutoff-interval instability certificate.
+-/
+abbrev paper_interface_theorem3_2_report_required_ae_instability_of_positive_cutoff_interval_mass :=
+  @lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_cutoff_interval_mass
+
+/--
+Theorem 3.2 a.e. report-required base-local cutoff-interval instability
+certificate.
+-/
+abbrev paper_interface_theorem3_2_report_required_ae_instability_of_positive_base_cutoff_interval_mass :=
+  @lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_base_cutoff_interval_mass
+
+/--
+Theorem 3.2 a.e. report-required Gaussian upper-tail interval instability
+certificate.
+-/
+abbrev paper_interface_theorem3_2_report_required_ae_instability_of_positive_gaussian_upper_tail_interval_mass :=
+  @lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_gaussian_upper_tail_interval_mass
+
+/--
+Theorem 3.2 a.e. report-required Gaussian marginal-law instability
+certificate.
+-/
+abbrev paper_interface_theorem3_2_report_required_ae_instability_of_gaussian_upper_tail_marginal_interval_law :=
+  @lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_gaussian_upper_tail_marginal_interval_law
+
+/--
+Theorem 3.2 report-required pointwise source-equilibrium contradiction from
+the Gaussian marginal-law interval.
+-/
+abbrev paper_interface_theorem3_2_report_required_instability_of_gaussian_upper_tail_marginal_interval_law :=
+  @lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibrium_of_gaussian_upper_tail_marginal_interval_law
+
+/--
+Theorem 3.2 report-required pointwise source-equilibrium contradiction for a
+fixed-base Gaussian skill law.
+-/
+abbrev paper_interface_theorem3_2_report_required_instability_of_single_base_gaussian_skill_law :=
+  @lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibrium_of_single_base_gaussian_skill_law
+
+/--
+Theorem 3.2 report-required source-shaped unit-centered payoff contradiction
+for a fixed-base Gaussian skill law.
+-/
+abbrev paper_interface_theorem3_2_report_required_unit_centered_instability_of_single_base_gaussian_skill_law :=
+  @lg21ReportRequiredUnitCenteredPBO_not_sourceEquilibrium_of_single_base_gaussian_skill_law
+
+/--
+Theorem 3.2 report-required source-shaped unit-centered family-level
+source-equilibrium contradiction.
+-/
+abbrev paper_interface_theorem3_2_report_required_unit_centered_family_not_source_equilibrium :=
+  @lg21ReportRequiredUnitCenteredPBO_family_not_sourceEquilibrium_of_nonempty
+
+/--
+Theorem 3.2 report-required affine-skill `P_BO` threshold family-level
+source-equilibrium contradiction.
+-/
+abbrev paper_interface_theorem3_2_report_required_affine_skill_pbo_threshold_family_not_source_equilibrium :=
+  @lg21ReportRequiredAffineSkillPBO_threshold_family_not_sourceEquilibrium_of_nonempty
+
+/--
+Theorem 3.2 report-required a.e. affine-skill `P_BO` threshold family-level
+source-equilibrium contradiction from the Gaussian marginal law.
+-/
+abbrev paper_interface_theorem3_2_report_required_affine_skill_pbo_threshold_family_not_source_equilibrium_ae_of_gaussian_marginal_law :=
+  @lg21ReportRequiredAffineSkillPBO_threshold_family_not_sourceEquilibriumAE_of_gaussian_upper_tail_marginal_interval_law
+
+/--
+Theorem 3.2 report-required repaired a.e. fully specified upper-tail source
+model contradiction from the Gaussian marginal law.
+-/
+abbrev paper_interface_theorem3_2_report_required_fully_specified_upper_tail_source_model_family_not_source_equilibrium_ae_of_gaussian_marginal_law :=
+  @lg21FullySpecifiedReportRequiredUpperTailSourceEquilibriumData_family_not_sourceEquilibriumAE_of_gaussian_upper_tail_marginal_interval_law
+
+/-- Theorem 3.2 report-required law-level Section 3 route through repaired a.e. source equilibrium and positive below-mean mass. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_fairness_impossibility_of_source_equilibrium_ae_positive_below_mean :=
+  @paper_theorem3_2_section3_law_report_required_fairness_impossibility_of_source_equilibriumAE_positive_below_mean
+
+/-- Theorem 3.2 report-required law-level no-relevance route through repaired a.e. source equilibrium and positive below-mean mass. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_no_test_relevance_of_source_equilibrium_ae_positive_below_mean :=
+  @paper_theorem3_2_section3_law_report_required_no_test_relevance_of_source_equilibriumAE_positive_below_mean
+
+/-- Theorem 3.2 report-required law-level Section 3 route through repaired a.e. source equilibrium and Gaussian upper-tail marginal law. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_fairness_impossibility_of_source_equilibrium_ae_gaussian_upper_tail_marginal_law :=
+  @paper_theorem3_2_section3_law_report_required_fairness_impossibility_of_source_equilibriumAE_gaussian_upper_tail_marginal_law
+
+/-- Theorem 3.2 report-required law-level no-relevance route through repaired a.e. source equilibrium and Gaussian upper-tail marginal law. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_no_test_relevance_of_source_equilibrium_ae_gaussian_upper_tail_marginal_law :=
+  @paper_theorem3_2_section3_law_report_required_no_test_relevance_of_source_equilibriumAE_gaussian_upper_tail_marginal_law
+
+/-- Theorem 3.2 report-required law-level affine `P_BO` repaired a.e. route. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_fairness_impossibility_affine_pbo_source_equilibrium_ae_gaussian_marginal_law :=
+  @paper_theorem3_2_section3_law_report_required_fairness_impossibility_of_affine_pbo_source_equilibriumAE_gaussian_marginal_law
+
+/-- Theorem 3.2 report-required law-level affine `P_BO` repaired a.e. no-relevance route. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_no_test_relevance_affine_pbo_source_equilibrium_ae_gaussian_marginal_law :=
+  @paper_theorem3_2_section3_law_report_required_no_test_relevance_of_affine_pbo_source_equilibriumAE_gaussian_marginal_law
+
+/-- Theorem 3.2 report-required affine `P_BO` repaired a.e. route with the finite-base Gaussian information law. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_fairness_impossibility_affine_pbo_source_equilibrium_ae_finite_base_gaussian_info_law :=
+  @paper_theorem3_2_section3_law_report_required_fairness_impossibility_of_affine_pbo_source_equilibriumAE_finite_base_gaussian_info_law
+
+/-- Theorem 3.2 report-required affine `P_BO` repaired a.e. no-relevance route with the finite-base Gaussian information law. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_no_test_relevance_affine_pbo_source_equilibrium_ae_finite_base_gaussian_info_law :=
+  @paper_theorem3_2_section3_law_report_required_no_test_relevance_of_affine_pbo_source_equilibriumAE_finite_base_gaussian_info_law
+
+/-- Theorem 3.2 report-required finite-base Gaussian information-law source-equilibrium contradiction for one threshold profile. -/
+abbrev paper_interface_theorem3_2_report_required_affine_skill_pbo_not_source_equilibrium_ae_finite_base_gaussian_info_law :=
+  @lg21ReportRequiredAffineSkillPBO_not_sourceEquilibriumAE_finite_base_gaussian_info_law
+
+/--
+Theorem 3.2 report-required repaired a.e. affine-skill `P_BO` certificate
+inconsistency.
+-/
+abbrev paper_interface_theorem3_2_report_required_affine_skill_pbo_ae_certificate_false_of_nonempty :=
+  @LG21ReportRequiredAffineSkillPBOAECertificate.false_of_nonempty
+
+/-- Theorem 3.2 report-required Section 3 fairness-impossibility route from a generic a.e. affine-skill `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_fairness_impossibility_affine_skill_pbo_ae_certificate :=
+  @paper_theorem3_2_section3_law_report_required_fairness_impossibility_of_affine_skill_pbo_ae_certificate
+
+/-- Theorem 3.2 report-required Section 3 no-relevance route from a generic a.e. affine-skill `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_no_test_relevance_affine_skill_pbo_ae_certificate :=
+  @paper_theorem3_2_section3_law_report_required_no_test_relevance_of_affine_skill_pbo_ae_certificate
+
+/-- Theorem 3.2 report-required continuous-law certificate packaged from a generic a.e. affine-skill `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_affine_skill_pbo_ae_certificate :=
+  @paper_theorem3_2_law_fairness_impossibility_certificate_of_affine_skill_pbo_ae_certificate
+
+/-- Theorem 3.2 report-required Section 3 fairness/no-relevance iff route from a generic a.e. affine-skill `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_fairness_iff_no_test_relevance_affine_skill_pbo_ae_certificate_observable_identities :=
+  @paper_theorem3_2_section3_law_report_required_fairness_iff_no_test_relevance_of_affine_skill_pbo_ae_certificate_observableIdentities
+
+/-- Theorem 3.2 report-required repaired a.e. affine-skill `P_BO` source-law-model certificate. -/
+abbrev paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_report_required_affine_skill_pbo_ae_source_law_model :=
+  @paper_theorem3_2_law_fairness_impossibility_certificate_of_report_required_affine_skill_pbo_ae_source_law_model
+
+/-- Theorem 3.2 report-required Section 3 fairness/no-relevance iff route from a nonblank-conditioned a.e. affine-skill `P_BO` source-law model. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_fairness_iff_no_test_relevance_affine_skill_pbo_ae_source_law_model :=
+  @paper_theorem3_2_section3_law_report_required_fairness_iff_no_test_relevance_of_affine_skill_pbo_ae_source_law_model
+
+/--
+Theorem 3.2 report-required repaired a.e. finite-base Gaussian information law
+certificate inconsistency.
+-/
+abbrev paper_interface_theorem3_2_report_required_finite_base_affine_skill_pbo_ae_certificate_false_of_nonempty :=
+  @LG21ReportRequiredFiniteBaseAffineSkillPBOAECertificate.false_of_nonempty
+
+/-- Theorem 3.2 report-required Section 3 fairness-impossibility route from a finite-base a.e. affine-skill `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_fairness_impossibility_finite_base_affine_skill_pbo_ae_certificate :=
+  @paper_theorem3_2_section3_law_report_required_fairness_impossibility_of_finite_base_affine_skill_pbo_ae_certificate
+
+/-- Theorem 3.2 report-required Section 3 no-relevance route from a finite-base a.e. affine-skill `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_no_test_relevance_finite_base_affine_skill_pbo_ae_certificate :=
+  @paper_theorem3_2_section3_law_report_required_no_test_relevance_of_finite_base_affine_skill_pbo_ae_certificate
+
+/-- Theorem 3.2 report-required continuous-law certificate packaged from a finite-base a.e. affine-skill `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_finite_base_affine_skill_pbo_ae_certificate :=
+  @paper_theorem3_2_law_fairness_impossibility_certificate_of_finite_base_affine_skill_pbo_ae_certificate
+
+/-- Theorem 3.2 report-required Section 3 fairness/no-relevance iff route from a finite-base a.e. affine-skill `P_BO` certificate. -/
+abbrev paper_interface_theorem3_2_section3_law_report_required_fairness_iff_no_test_relevance_finite_base_affine_skill_pbo_ae_certificate_observable_identities :=
+  @paper_theorem3_2_section3_law_report_required_fairness_iff_no_test_relevance_of_finite_base_affine_skill_pbo_ae_certificate_observableIdentities
+
+/--
 Paper-facing Theorem 3.2, optional-reporting regime.  If access status is
 hidden and zero-positive-reporter profiles are already test-blank, then
 latent-skill or observable fairness implies test-blankness on the concrete
@@ -6046,6 +6475,23 @@ theorem paper_interface_theorem3_2_section3_optional_reporting_fairness_impossib
     reporterPMF noReporterPMF baseOnlyEstimate fullFeatureEstimate takeDecision
     reportDecision estimationConsistent referenceSkill actorLaw
     decisionThreshold hEq hthreshold hblank_of_no_positive
+
+/--
+Paper-facing nonempty-equilibrium optional-reporting diagnostic: the literal
+upper-tail source-equilibrium hypotheses are inconsistent, so the Section 3
+fairness-impossibility conclusion needs no zero-share blankness premise.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_of_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_impossibility_of_nonempty_upper_tail_source_model
+
+/--
+Paper-facing nonempty-equilibrium optional-reporting diagnostic in no-relevance
+form: the literal upper-tail source-equilibrium hypotheses are inconsistent, so
+fairness rules out concrete test relevance without a zero-share blankness
+premise.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_nonempty_upper_tail_source_model
 
 /--
 Paper-facing Theorem 3.2, optional-reporting regime, with positive reporter
@@ -6398,6 +6844,220 @@ reporting decision and finite reporter event literalized.
 -/
 abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_full_support_literal_cutoff_event :=
   @paper_theorem3_2_section3_optional_reporting_fairness_impossibility_full_support_literal_cutoff_event
+
+/--
+Paper-facing Theorem 3.2 optional-reporting endpoint with a Gaussian `P_BO`
+threshold comparison converted to its induced cutoff.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_gaussian_pbo_threshold :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_impossibility_of_gaussian_pbo_threshold
+
+/--
+Paper-facing Theorem 3.2 optional-reporting no-relevance endpoint with a
+Gaussian `P_BO` threshold comparison converted to its induced cutoff.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_gaussian_pbo_threshold :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_pbo_threshold
+
+/--
+Paper-facing Theorem 3.2 optional-reporting support-aware no-positive-mass
+test-relevance endpoint with a Gaussian `P_BO` threshold comparison converted
+to its induced cutoff.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_gaussian_pbo_threshold_supported_finite_test_cutoff :=
+  @paper_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_of_gaussian_pbo_threshold_supported_finite_test_cutoff
+
+/--
+Paper-facing Theorem 3.2 optional-reporting support-aware no-positive-mass
+test-relevance endpoint with the source equilibrium's reporting decision
+stated literally as a Gaussian `P_BO` threshold comparison.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_gaussian_pbo_literal_decision_supported_finite_test_cutoff :=
+  @paper_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_of_gaussian_pbo_literal_decision_supported_finite_test_cutoff
+
+/--
+Paper-facing Theorem 3.2 optional-reporting support-aware no-positive-mass
+test-relevance endpoint where the source-equilibrium premise is built
+internally from direct binary report/withhold best response.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_gaussian_pbo_binary_choice_literal_decision_supported_finite_test_cutoff :=
+  @paper_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_supported_finite_test_cutoff
+
+/--
+Paper-facing Theorem 3.2 optional-reporting support-aware no-positive-mass
+test-relevance endpoint from an exact payoff-threshold reporting rule.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_gaussian_pbo_payoff_threshold_literal_decision_supported_finite_test_cutoff :=
+  @paper_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_of_gaussian_pbo_payoff_threshold_literal_decision_supported_finite_test_cutoff
+
+/--
+Paper-facing Theorem 3.2 optional-reporting support-aware no-positive-mass
+test-relevance endpoint where the Gaussian reporting cutoff is the no-report
+acting-law mean.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_gaussian_pbo_indifference_cutoff_supported_finite_test :=
+  @paper_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_of_gaussian_pbo_indifference_cutoff_supported_finite_test
+
+/--
+Paper-facing Theorem 3.2 optional-reporting finite-test value no-relevance
+endpoint with the source equilibrium's reporting decision stated literally as
+a Gaussian `P_BO` threshold comparison, using direct finite test support and
+full test-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_value_no_test_relevance_gaussian_pbo_literal_decision_supported_finite_test_full_support :=
+  @paper_theorem3_2_section3_optional_reporting_value_no_test_relevance_of_gaussian_pbo_literal_decision_supported_finite_test_full_support
+
+/--
+Paper-facing Theorem 3.2 optional-reporting finite-test value no-relevance
+endpoint from direct binary report/withhold best response, using direct finite
+test support and full test-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_value_no_test_relevance_gaussian_pbo_binary_choice_literal_decision_supported_finite_test_full_support :=
+  @paper_theorem3_2_section3_optional_reporting_value_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_supported_finite_test_full_support
+
+/--
+Paper-facing Theorem 3.2 optional-reporting finite-test value no-relevance
+endpoint from an exact payoff-threshold reporting rule, using direct finite
+test support and full test-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_value_no_test_relevance_gaussian_pbo_payoff_threshold_literal_decision_supported_finite_test_full_support :=
+  @paper_theorem3_2_section3_optional_reporting_value_no_test_relevance_of_gaussian_pbo_payoff_threshold_literal_decision_supported_finite_test_full_support
+
+/--
+Paper-facing Theorem 3.2 optional-reporting finite-test value no-relevance
+endpoint when the Gaussian reporting cutoff is the no-report acting-law mean,
+using direct finite test support and full test-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_value_no_test_relevance_gaussian_pbo_indifference_cutoff_supported_finite_test_full_support :=
+  @paper_theorem3_2_section3_optional_reporting_value_no_test_relevance_of_gaussian_pbo_indifference_cutoff_supported_finite_test_full_support
+
+/--
+Paper-facing Theorem 3.2 optional-reporting support-aware no-positive-mass
+test-relevance endpoint where finite-test support is derived from
+positive-mass actor support under the literal Gaussian `P_BO` reporting
+decision.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_gaussian_pbo_literal_decision_actor_support :=
+  @paper_theorem3_2_section3_optional_reporting_no_positive_mass_test_relevance_of_gaussian_pbo_literal_decision_actor_support
+
+/--
+Paper-facing Theorem 3.2 optional-reporting support-aware positive-mass value
+no-relevance endpoint from literal Gaussian `P_BO` actor support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_positive_mass_value_test_relevance_gaussian_pbo_literal_decision_actor_support :=
+  @paper_theorem3_2_section3_optional_reporting_no_positive_mass_value_test_relevance_of_gaussian_pbo_literal_decision_actor_support
+
+/--
+Paper-facing Theorem 3.2 optional-reporting finite-test no-relevance endpoint
+where full test-law support upgrades the literal Gaussian `P_BO` actor-support
+route from no positive-mass relevance to ordinary finite-test no-relevance.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_gaussian_pbo_literal_decision_actor_support_full_test_support :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_pbo_literal_decision_actor_support_full_test_support
+
+/--
+Paper-facing Theorem 3.2 optional-reporting finite-test value no-relevance
+endpoint where full test-law support upgrades the literal Gaussian `P_BO`
+actor-support route from point-mass no-relevance to value no-relevance.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_value_no_test_relevance_gaussian_pbo_literal_decision_actor_support_full_test_support :=
+  @paper_theorem3_2_section3_optional_reporting_value_no_test_relevance_of_gaussian_pbo_literal_decision_actor_support_full_test_support
+
+/--
+Paper-facing Theorem 3.2 optional-reporting finite-test value no-relevance
+endpoint where the source-equilibrium premise is built internally from direct
+binary report/withhold best response.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_value_no_test_relevance_gaussian_pbo_binary_choice_literal_decision_actor_support_full_test_support :=
+  @paper_theorem3_2_section3_optional_reporting_value_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_actor_support_full_test_support
+
+/--
+Paper-facing Theorem 3.2 optional-reporting finite-test value no-relevance
+endpoint from an exact payoff-threshold reporting rule.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_value_no_test_relevance_gaussian_pbo_payoff_threshold_literal_decision_actor_support_full_test_support :=
+  @paper_theorem3_2_section3_optional_reporting_value_no_test_relevance_of_gaussian_pbo_payoff_threshold_literal_decision_actor_support_full_test_support
+
+/--
+Paper-facing Theorem 3.2 optional-reporting finite-test value no-relevance
+endpoint when the Gaussian reporting cutoff is the no-report acting-law mean.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_value_no_test_relevance_gaussian_pbo_indifference_cutoff_actor_support_full_test_support :=
+  @paper_theorem3_2_section3_optional_reporting_value_no_test_relevance_of_gaussian_pbo_indifference_cutoff_actor_support_full_test_support
+
+/--
+Paper-facing nonempty-equilibrium diagnostic for Theorem 3.2 optional
+reporting with a Gaussian `P_BO` threshold comparison.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_gaussian_pbo_threshold_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_impossibility_of_gaussian_pbo_threshold_nonempty_upper_tail_source_model
+
+/--
+Paper-facing nonempty-equilibrium no-relevance diagnostic for Theorem 3.2
+optional reporting with a Gaussian `P_BO` threshold comparison.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_gaussian_pbo_threshold_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_pbo_threshold_nonempty_upper_tail_source_model
+
+/--
+Paper-facing nonempty-equilibrium diagnostic for Theorem 3.2 optional
+reporting with literal Gaussian `P_BO` reporting decisions and reporter events.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_gaussian_pbo_literal_decision_event_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_impossibility_of_gaussian_pbo_literal_decision_event_nonempty_upper_tail_source_model
+
+/--
+Paper-facing decider-free nonempty-equilibrium diagnostic for Theorem 3.2
+optional reporting with literal Gaussian `P_BO` reporting decisions and
+reporter events.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_gaussian_pbo_literal_decision_event_nonempty_upper_tail_source_model_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_impossibility_of_gaussian_pbo_literal_decision_event_nonempty_upper_tail_source_model_classical_decidable
+
+/--
+Paper-facing nonempty-equilibrium no-relevance diagnostic for Theorem 3.2
+optional reporting with literal Gaussian `P_BO` reporting decisions and
+reporter events.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_gaussian_pbo_literal_decision_event_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_pbo_literal_decision_event_nonempty_upper_tail_source_model
+
+/--
+Paper-facing decider-free nonempty-equilibrium no-relevance diagnostic for
+Theorem 3.2 optional reporting with literal Gaussian `P_BO` reporting decisions
+and reporter events.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_gaussian_pbo_literal_decision_event_nonempty_upper_tail_source_model_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_pbo_literal_decision_event_nonempty_upper_tail_source_model_classical_decidable
+
+/--
+Paper-facing Theorem 3.2 optional-reporting endpoint with a Gaussian `P_BO`
+threshold, full finite support, and a literal finite reporter event.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_gaussian_pbo_threshold_full_support_literal_event :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_impossibility_of_gaussian_pbo_threshold_full_support_literal_event
+
+/--
+Paper-facing Theorem 3.2 optional-reporting no-relevance endpoint with a
+Gaussian `P_BO` threshold, full finite support, and a literal finite reporter
+event.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_gaussian_pbo_threshold_full_support_literal_event :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_pbo_threshold_full_support_literal_event
+
+/--
+Paper-facing Theorem 3.2 optional-reporting endpoint with literal Gaussian
+`P_BO` reporting decisions and literal finite reporter events.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_gaussian_pbo_literal_decision_event_full_support :=
+  @paper_theorem3_2_section3_optional_reporting_fairness_impossibility_of_gaussian_pbo_literal_decision_event_full_support
+
+/--
+Paper-facing Theorem 3.2 optional-reporting no-relevance endpoint with literal
+Gaussian `P_BO` reporting decisions and literal finite reporter events.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_gaussian_pbo_literal_decision_event_full_support :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_gaussian_pbo_literal_decision_event_full_support
 
 /--
 Paper-facing Theorem 3.2 optional-reporting endpoint with all students taking
@@ -6873,6 +7533,13 @@ abbrev paper_interface_theorem3_2_section3_optional_reporting_not_latent_or_obse
 
 /--
 Paper-interface endpoint for the optional-reporting canonical raw-mixture
+impossibility from raw mixture relevance.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_not_latent_or_observable_fair_of_raw_relevance_of_blank_on_zero_event_share_raw_mixture :=
+  @paper_theorem3_2_section3_optional_reporting_not_latent_or_observable_fair_of_raw_relevance_of_blank_on_zero_event_share_raw_mixture
+
+/--
+Paper-interface endpoint for the optional-reporting canonical raw-mixture
 necessary condition: fairness forces the reporter law to equal the base-only law
 on positive reporter-event profiles.
 -/
@@ -6952,11 +7619,34 @@ abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fair
 
 /--
 Paper-interface endpoint for the optional-reporting skill-mixture raw-mixture
+iff in Definition 5 test-blankness form, with literal latent kernels, a literal
+source reporting cutoff, and the no-report upper-tail fixed point supplied
+directly.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_test_blank_of_literal_latent_kernels_literal_cutoff_decision_upper_tail_fixed_point :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_test_blank_of_blank_on_zero_event_share_raw_mixture_literal_latent_kernels_literal_cutoff_decision_upper_tail_fixed_point
+
+/--
+Paper-interface decider-free endpoint for the optional-reporting
+literal-latent-kernel fixed-point Theorem 3.2 wrapper.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_test_blank_of_literal_latent_kernels_literal_cutoff_decision_upper_tail_fixed_point_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_test_blank_of_blank_on_zero_event_share_raw_mixture_literal_latent_kernels_literal_cutoff_decision_upper_tail_fixed_point_classical_decidable
+
+/--
+Paper-interface endpoint for the optional-reporting skill-mixture raw-mixture
 iff in no-test-relevance form, with the reporting cutoff extracted from source
 best response.
 -/
 abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_best_response_tiebreak :=
   @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_of_best_response_tiebreak
+
+/--
+Paper-interface endpoint for the optional-reporting skill-mixture raw-mixture
+best-response route in no-test-relevance form, with pointwise latent kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_best_response_tiebreak_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_of_best_response_tiebreak_pointwise_latent_kernels
 
 /--
 Paper-interface endpoint for the optional-reporting skill-mixture raw-mixture
@@ -6975,6 +7665,21 @@ abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fair
   @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_literal_cutoff_decision_upper_tail_fixed_point
 
 /--
+Paper-interface endpoint for the optional-reporting skill-mixture raw-mixture
+iff in no-test-relevance form, with literal latent kernels, a literal source
+reporting cutoff, and the no-report upper-tail fixed point supplied directly.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_literal_latent_kernels_literal_cutoff_decision_upper_tail_fixed_point :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_literal_latent_kernels_literal_cutoff_decision_upper_tail_fixed_point
+
+/--
+Paper-interface decider-free no-relevance endpoint for the optional-reporting
+literal-latent-kernel fixed-point Theorem 3.2 wrapper.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_literal_latent_kernels_literal_cutoff_decision_upper_tail_fixed_point_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_literal_latent_kernels_literal_cutoff_decision_upper_tail_fixed_point_classical_decidable
+
+/--
 Paper-interface certificate for the optional-reporting skill-mixture
 raw-mixture route with a literal reporting cutoff and upper-tail no-report
 fixed point.
@@ -6991,6 +7696,127 @@ abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_
   @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_literal_cutoff_decision_upper_tail_fixed_point
 
 /--
+Paper-interface certificate for the optional-reporting skill-mixture
+raw-mixture route from the fully specified upper-tail source model.
+-/
+abbrev paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model :=
+  @paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model
+
+/--
+Paper-interface endpoint for the optional-reporting skill-mixture raw-mixture
+iff in no-test-relevance form from the fully specified upper-tail source model.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_fully_specified_upper_tail_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model
+
+/--
+Paper-interface endpoint for the optional-reporting fully specified upper-tail
+source model with the source cutoff instantiated by Gaussian `P_BO`.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_gaussian_pbo_fully_specified_upper_tail_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_gaussian_pbo_fully_specified_upper_tail_source_model
+
+/--
+Paper-interface endpoint for the optional-reporting fully specified upper-tail
+source model with Gaussian `P_BO`, from pointwise latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_gaussian_pbo_fully_specified_upper_tail_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_gaussian_pbo_fully_specified_upper_tail_source_model_of_pointwise_latent_kernels
+
+/--
+Paper-interface endpoint for the optional-reporting fully specified upper-tail
+source model with Gaussian `P_BO` and literal latent kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_gaussian_pbo_fully_specified_upper_tail_source_model_literal_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_gaussian_pbo_fully_specified_upper_tail_source_model_literal_latent_kernels
+
+/--
+Paper-interface endpoint for the optional-reporting fully specified upper-tail
+source model with Gaussian `P_BO`, literal finite reporter events, and literal
+latent kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_gaussian_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_gaussian_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels
+
+/--
+Paper-interface endpoint for the optional-reporting fully specified upper-tail
+source model from pointwise latent-kernel identities, in no-test-relevance iff
+form.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_fully_specified_upper_tail_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_of_pointwise_latent_kernels
+
+/--
+Paper-interface no-test-relevance consequence for the optional-reporting
+skill-mixture raw-mixture route from the fully specified upper-tail source
+model.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model
+
+/--
+Paper-interface no-test-relevance consequence for the optional-reporting
+fully specified upper-tail source model with Gaussian `P_BO`.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_gaussian_pbo_fully_specified_upper_tail_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_gaussian_pbo_fully_specified_upper_tail_source_model
+
+/--
+Paper-interface no-test-relevance consequence for the optional-reporting
+fully specified upper-tail source model with Gaussian `P_BO`, from pointwise
+latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_gaussian_pbo_fully_specified_upper_tail_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_gaussian_pbo_fully_specified_upper_tail_source_model_of_pointwise_latent_kernels
+
+/--
+Paper-interface no-test-relevance consequence for the optional-reporting
+fully specified upper-tail source model with Gaussian `P_BO` and literal latent
+kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_gaussian_pbo_fully_specified_upper_tail_source_model_literal_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_gaussian_pbo_fully_specified_upper_tail_source_model_literal_latent_kernels
+
+/--
+Paper-interface no-test-relevance consequence for the optional-reporting fully
+specified upper-tail source model with Gaussian `P_BO`, literal finite
+reporter events, and literal latent kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_gaussian_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_gaussian_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels
+
+/--
+Paper-interface no-test-relevance consequence for the optional-reporting fully
+specified upper-tail source model from pointwise latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_of_pointwise_latent_kernels
+
+/--
+Paper-interface diagnostic: the literal fully specified optional-reporting
+upper-tail source model cannot itself satisfy Definition 1 source equilibrium
+at an inhabited skill/base profile.
+-/
+abbrev paper_interface_fully_specified_optional_reporting_upper_tail_source_model_not_source_equilibrium :=
+  @lg21FullySpecifiedOptionalReportingUpperTailSourceEquilibriumData_not_sourceEquilibrium
+
+/--
+Paper-interface diagnostic: on nonempty skill/base spaces, the literal fully
+specified optional-reporting upper-tail source model cannot satisfy Definition
+1 source equilibrium.
+-/
+abbrev paper_interface_fully_specified_optional_reporting_upper_tail_source_model_not_source_equilibrium_of_nonempty :=
+  @lg21FullySpecifiedOptionalReportingUpperTailSourceEquilibriumData_not_sourceEquilibrium_of_nonempty
+
+/--
+Paper-interface diagnostic: on nonempty equilibrium, skill, and base spaces,
+no family of literal optional-reporting upper-tail source models can satisfy
+Definition 1 source equilibrium at every equilibrium index.
+-/
+abbrev paper_interface_fully_specified_optional_reporting_upper_tail_source_model_not_source_equilibrium_family_of_nonempty :=
+  @lg21FullySpecifiedOptionalReportingUpperTailSourceEquilibriumData_not_sourceEquilibrium_family_of_nonempty
+
+/--
 Paper-interface certificate constructor for the optional-reporting
 skill-mixture raw-mixture route from a Gaussian upper-tail source-equilibrium
 certificate.
@@ -7004,6 +7830,37 @@ skill-mixture raw-mixture route from pointwise latent-kernel identities.
 -/
 abbrev paper_interface_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_source_equilibrium_certificate_of_pointwise_latent_kernels :=
   @paper_theorem3_2_optional_reporting_fairness_impossibility_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_source_equilibrium_certificate_of_pointwise_latent_kernels
+
+/--
+Paper-interface diagnostic: a literal optional-reporting Gaussian upper-tail
+source-equilibrium certificate is inconsistent at any concrete
+equilibrium/base profile.
+-/
+abbrev paper_interface_optional_reporting_gaussian_upper_tail_source_equilibrium_certificate_false_at :=
+  @LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate.false_at
+
+/--
+Paper-interface diagnostic: on nonempty equilibrium/base spaces, no literal
+optional-reporting Gaussian upper-tail source-equilibrium certificate exists.
+-/
+abbrev paper_interface_optional_reporting_gaussian_upper_tail_source_equilibrium_certificate_false_of_nonempty :=
+  @LG21OptionalReportingGaussianUpperTailSourceEquilibriumCertificate.false_of_nonempty
+
+/--
+Paper-interface diagnostic: the optional-reporting extracted-cutoff
+upper-tail fixed-point source-certificate route is inconsistent at any concrete
+equilibrium/base profile.
+-/
+abbrev paper_interface_optional_reporting_best_response_tiebreak_upper_tail_fixed_point_false_at :=
+  @paper_theorem3_2_optional_reporting_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_source_equilibrium_certificate_of_best_response_tiebreak_false_at
+
+/--
+Paper-interface diagnostic: on nonempty equilibrium/base spaces, the
+optional-reporting extracted-cutoff upper-tail fixed-point source-certificate
+route cannot exist.
+-/
+abbrev paper_interface_optional_reporting_best_response_tiebreak_upper_tail_fixed_point_false_of_nonempty :=
+  @paper_theorem3_2_optional_reporting_gaussian_upper_tail_event_share_constant_latent_surface_posterior_payoff_source_equilibrium_certificate_of_best_response_tiebreak_false_of_nonempty
 
 /--
 Paper-interface Theorem 3.1 optional-reporting strategic-withholding
@@ -7113,6 +7970,53 @@ abbrev paper_interface_theorem3_1_optional_reporting_strategic_withholding_certi
   @paper_theorem3_1_optional_reporting_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_literal_cutoff_decision_upper_tail_fixed_point_positive_event_raw_relevance_demographic_observable_identities
 
 /--
+Paper-interface optional-reporting strategic-withholding certificate from the
+fully specified upper-tail source model, with demographic unfairness derived
+from observable/demographic identities.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities :=
+  @paper_theorem3_1_optional_reporting_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities
+
+/--
+Paper-interface optional-reporting strategic-withholding certificate from the
+fully specified upper-tail source model, deriving the positive raw event from
+finite full support and the literal reporting cutoff.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_full_support_literal_cutoff_event :=
+  @paper_theorem3_1_optional_reporting_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_full_support_literal_cutoff_event
+
+/--
+Paper-interface optional-reporting strategic-withholding certificate from the
+fully specified upper-tail source model, deriving both the positive raw event
+and the reporter/base-only inequality from paper-facing cutoff/relevance
+witnesses.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_optional_reporting_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface optional-reporting strategic-withholding certificate from the
+fully specified upper-tail source model and pointwise latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_pointwise_latent_kernels :=
+  @paper_theorem3_1_optional_reporting_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_pointwise_latent_kernels
+
+/--
+Paper-interface optional-reporting strategic-withholding certificate from
+pointwise latent-kernel identities, full support, literal cutoff events, and
+raw relevance.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_optional_reporting_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface optional-reporting every-equilibrium certificate family for
+the fully specified upper-tail source model.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_strategic_withholding_certificate_family_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_optional_reporting_strategic_withholding_certificate_family_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance
+
+/--
 Paper-interface full Section 3 optional-reporting strategic-withholding
 endpoint for the skill-mixture raw-mixture fixed-point source model, with
 latent/observable unfairness derived from positive-event raw relevance.
@@ -7126,6 +8030,172 @@ demographic unfairness derived from observable/demographic identities.
 -/
 abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_literal_cutoff_decision_upper_tail_fixed_point_positive_event_raw_relevance_demographic_observable_identities :=
   @paper_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_literal_cutoff_decision_upper_tail_fixed_point_positive_event_raw_relevance_demographic_observable_identities
+
+/--
+Paper-interface full Section 3 optional-reporting strategic-withholding
+endpoint from the fully specified upper-tail source model, with all fairness
+failures derived from positive-event raw relevance and observable/demographic
+identities.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities
+
+/--
+Paper-interface full Section 3 optional-reporting strategic-withholding
+endpoint from the fully specified upper-tail source model, deriving the
+positive raw event from finite full support and the literal reporting cutoff.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_full_support_literal_cutoff_event :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_full_support_literal_cutoff_event
+
+/--
+Paper-interface full Section 3 optional-reporting strategic-withholding
+endpoint from the fully specified upper-tail source model, with cutoff and raw
+relevance witnesses replacing the lower-level positive-event/reporter-law
+premises.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface full Section 3 optional-reporting strategic-withholding
+endpoint from the fully specified upper-tail source model and pointwise
+latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_pointwise_latent_kernels :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_pointwise_latent_kernels
+
+/--
+Paper-interface full Section 3 optional-reporting strategic-withholding
+endpoint from pointwise latent-kernel identities, with full support, the
+literal reporting cutoff, and raw relevance deriving the event-level witnesses.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface full Section 3 optional-reporting every-equilibrium endpoint
+for the fully specified upper-tail source model.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface full Section 3 optional-reporting every-equilibrium endpoint
+for the fully specified upper-tail source model with literal latent kernels.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface full Section 3 optional-reporting every-equilibrium endpoint
+for the fully specified upper-tail source model with literal latent kernels
+and direct demographic observable identities.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_direct_demographic_observable_identities :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_direct_demographic_observable_identities
+
+/--
+Paper-interface full Section 3 optional-reporting every-equilibrium endpoint
+for the fully specified upper-tail source model with literal latent kernels and
+direct demographic observable identities, deriving the positive reporter-event
+witness from raw mixture relevance.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_direct_demographic_observable_identities_of_raw_relevance :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_direct_demographic_observable_identities_of_raw_relevance
+
+/--
+Paper-interface full Section 3 optional-reporting every-equilibrium endpoint
+for the fully specified upper-tail source model with literal latent kernels and
+literal demographic observable laws, deriving the positive reporter-event
+witness from raw mixture relevance.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_literal_demographic_laws_of_raw_relevance :=
+  @paper_theorem3_1_section3_optional_reporting_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_literal_demographic_laws_of_raw_relevance
+
+/--
+Paper-interface optional-reporting fully specified source-model route with
+literal Gaussian `P_BO` reporter events, literal latent kernels, and direct
+demographic observable identities.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_direct_demographic_observable_identities :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_direct_demographic_observable_identities
+
+/--
+Paper-interface optional-reporting `P_BO` route with literal reporter events,
+literal latent kernels, and direct demographic observable identities, deriving
+the positive reporter-event witness from raw mixture relevance.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_direct_demographic_observable_identities_of_raw_relevance :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_direct_demographic_observable_identities_of_raw_relevance
+
+/--
+Paper-interface optional-reporting `P_BO` route with literal reporter events,
+literal latent kernels, and literal demographic observable laws, deriving the
+positive reporter-event witness from raw mixture relevance.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance
+
+/--
+Paper-interface optional-reporting `P_BO` raw-relevance route with literal
+demographic laws and no literal source-equilibrium premise.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance_no_source_equilibrium :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance_no_source_equilibrium
+
+/--
+Paper-interface optional-reporting raw-relevance no-source `P_BO` route with
+internal finite-event decidability.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance_no_source_equilibrium_classical_decidable :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance_no_source_equilibrium_classical_decidable
+
+/--
+Paper-interface optional-reporting `P_BO` route with literal reporter events
+and literal demographic laws, deriving raw relevance from full support,
+above-threshold support, and reporter/base-only law inequality.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne
+
+/--
+Paper-interface optional-reporting `P_BO` route with literal demographic laws,
+full support, reporter/base-only inequality, and no literal source-equilibrium
+premise.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_no_source_equilibrium :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_no_source_equilibrium
+
+/--
+Paper-interface optional-reporting `P_BO` route with literal demographic laws,
+full support, reporter/base-only inequality, and internal finite-event
+decidability.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_classical_decidable :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_classical_decidable
+
+/--
+Paper-interface optional-reporting `P_BO` no-source-equilibrium route with
+internal finite-event decidability.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_no_source_equilibrium_classical_decidable :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_no_source_equilibrium_classical_decidable
+
+/--
+Paper-interface optional-reporting `P_BO` no-source-equilibrium route with
+point-estimate laws and internal finite-event decidability.
+-/
+noncomputable abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_point_mass_value_ne_no_source_equilibrium_classical_decidable :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_point_mass_value_ne_no_source_equilibrium_classical_decidable
+
+/--
+Paper-interface optional-reporting `P_BO` no-source-equilibrium route with
+point-estimate laws and only a positive-mass reporter event at the selected
+base.
+-/
+noncomputable abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_positive_event_point_mass_value_ne_no_source_equilibrium_classical_decidable :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_positive_event_point_mass_value_ne_no_source_equilibrium_classical_decidable
 
 /--
 Paper-interface full Section 3 strategic-withholding endpoint for the
@@ -9526,6 +10596,23 @@ theorem paper_interface_theorem3_2_section3_report_required_fairness_impossibili
     hthreshold hblank_of_no_positive
 
 /--
+Paper-facing nonempty-equilibrium report-required diagnostic: the unit-centered
+upper-tail source-equilibrium hypotheses are inconsistent, so the Section 3
+fairness-impossibility conclusion needs no zero-share blankness premise.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_impossibility_of_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_report_required_fairness_impossibility_of_nonempty_upper_tail_source_model
+
+/--
+Paper-facing nonempty-equilibrium report-required diagnostic in no-relevance
+form: the unit-centered upper-tail source-equilibrium hypotheses are
+inconsistent, so fairness rules out concrete test relevance without a
+zero-share blankness premise.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_nonempty_upper_tail_source_model
+
+/--
 Paper-facing Theorem 3.2, report-required regime, with positive taker events
 derived from full student support and ordinary taker existence.
 -/
@@ -9854,6 +10941,196 @@ cutoff taking decision and finite taker event literalized.
 -/
 abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_full_support_literal_cutoff_event :=
   @paper_theorem3_2_section3_report_required_no_test_relevance_full_support_literal_cutoff_event
+
+/--
+Paper-facing Theorem 3.2 report-required endpoint with an affine-skill `P_BO`
+threshold comparison converted to its induced cutoff.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_impossibility_affine_pbo_threshold :=
+  @paper_theorem3_2_section3_report_required_fairness_impossibility_of_affine_pbo_threshold
+
+/--
+Paper-facing Theorem 3.2 report-required no-relevance endpoint with an
+affine-skill `P_BO` threshold comparison converted to its induced cutoff.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_affine_pbo_threshold :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_affine_pbo_threshold
+
+/--
+Paper-facing Theorem 3.2 report-required support-aware no-positive-mass
+test-relevance endpoint with an affine-skill `P_BO` threshold comparison
+converted to its induced cutoff.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_positive_mass_test_relevance_affine_pbo_threshold_supported_finite_test_cutoff :=
+  @paper_theorem3_2_section3_report_required_no_positive_mass_test_relevance_of_affine_pbo_threshold_supported_finite_test_cutoff
+
+/--
+Paper-facing Theorem 3.2 report-required support-aware no-positive-mass
+test-relevance endpoint with the source equilibrium's taking decision stated
+literally as an affine-skill `P_BO` threshold comparison.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_positive_mass_test_relevance_affine_pbo_literal_decision_supported_finite_test_cutoff :=
+  @paper_theorem3_2_section3_report_required_no_positive_mass_test_relevance_of_affine_pbo_literal_decision_supported_finite_test_cutoff
+
+/--
+Paper-facing Theorem 3.2 report-required finite-test value no-relevance
+endpoint with direct finite-test support and full test-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_value_no_test_relevance_affine_pbo_literal_decision_supported_finite_test_full_support :=
+  @paper_theorem3_2_section3_report_required_value_no_test_relevance_of_affine_pbo_literal_decision_supported_finite_test_full_support
+
+/--
+Paper-facing Theorem 3.2 report-required finite-test value no-relevance
+endpoint from binary take/leave best response, direct finite-test support, and
+full test-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_value_no_test_relevance_affine_pbo_binary_choice_literal_decision_supported_finite_test_full_support :=
+  @paper_theorem3_2_section3_report_required_value_no_test_relevance_of_affine_pbo_binary_choice_literal_decision_supported_finite_test_full_support
+
+/--
+Paper-facing Theorem 3.2 report-required finite-test value no-relevance
+endpoint from an exact payoff-threshold taking rule, direct finite-test
+support, and full test-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_value_no_test_relevance_affine_pbo_payoff_threshold_literal_decision_supported_finite_test_full_support :=
+  @paper_theorem3_2_section3_report_required_value_no_test_relevance_of_affine_pbo_payoff_threshold_literal_decision_supported_finite_test_full_support
+
+/--
+Paper-facing Theorem 3.2 report-required finite-test value no-relevance
+endpoint from an indifference cutoff, direct finite-test support, and full
+test-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_value_no_test_relevance_affine_pbo_indifference_cutoff_supported_finite_test_full_support :=
+  @paper_theorem3_2_section3_report_required_value_no_test_relevance_of_affine_pbo_indifference_cutoff_supported_finite_test_full_support
+
+/--
+Paper-facing Theorem 3.2 report-required support-aware no-positive-mass
+test-relevance endpoint where finite-test support is derived from
+positive-mass actor support under the literal affine-skill `P_BO` taking
+decision.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_positive_mass_test_relevance_affine_pbo_literal_decision_actor_support :=
+  @paper_theorem3_2_section3_report_required_no_positive_mass_test_relevance_of_affine_pbo_literal_decision_actor_support
+
+/--
+Paper-facing Theorem 3.2 report-required support-aware positive-mass value
+no-relevance endpoint from literal affine-skill `P_BO` actor support.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_positive_mass_value_test_relevance_affine_pbo_literal_decision_actor_support :=
+  @paper_theorem3_2_section3_report_required_no_positive_mass_value_test_relevance_of_affine_pbo_literal_decision_actor_support
+
+/--
+Paper-facing Theorem 3.2 report-required finite-test no-relevance endpoint
+where full test-law support upgrades the literal affine-skill `P_BO`
+actor-support route from no positive-mass relevance to ordinary finite-test
+no-relevance.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_affine_pbo_literal_decision_actor_support_full_test_support :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_affine_pbo_literal_decision_actor_support_full_test_support
+
+/--
+Paper-facing Theorem 3.2 report-required finite-test value no-relevance
+endpoint where full test-law support upgrades the literal affine-skill `P_BO`
+actor-support route from point-mass no-relevance to value no-relevance.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_value_no_test_relevance_affine_pbo_literal_decision_actor_support_full_test_support :=
+  @paper_theorem3_2_section3_report_required_value_no_test_relevance_of_affine_pbo_literal_decision_actor_support_full_test_support
+
+/--
+Paper-facing Theorem 3.2 report-required finite-test value no-relevance
+endpoint where the source-equilibrium premise is built internally from direct
+binary take/leave best response.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_value_no_test_relevance_affine_pbo_binary_choice_literal_decision_actor_support_full_test_support :=
+  @paper_theorem3_2_section3_report_required_value_no_test_relevance_of_affine_pbo_binary_choice_literal_decision_actor_support_full_test_support
+
+/--
+Paper-facing Theorem 3.2 report-required finite-test value no-relevance
+endpoint from an exact payoff-threshold taking rule.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_value_no_test_relevance_affine_pbo_payoff_threshold_literal_decision_actor_support_full_test_support :=
+  @paper_theorem3_2_section3_report_required_value_no_test_relevance_of_affine_pbo_payoff_threshold_literal_decision_actor_support_full_test_support
+
+/--
+Paper-facing Theorem 3.2 report-required finite-test value no-relevance
+endpoint when the affine taking cutoff is the acting-law mean.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_value_no_test_relevance_affine_pbo_indifference_cutoff_actor_support_full_test_support :=
+  @paper_theorem3_2_section3_report_required_value_no_test_relevance_of_affine_pbo_indifference_cutoff_actor_support_full_test_support
+
+/--
+Paper-facing nonempty-equilibrium diagnostic for Theorem 3.2 report-required
+policies with an affine-skill `P_BO` threshold comparison.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_impossibility_affine_pbo_threshold_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_report_required_fairness_impossibility_of_affine_pbo_threshold_nonempty_upper_tail_source_model
+
+/--
+Paper-facing nonempty-equilibrium no-relevance diagnostic for Theorem 3.2
+report-required policies with an affine-skill `P_BO` threshold comparison.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_affine_pbo_threshold_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_affine_pbo_threshold_nonempty_upper_tail_source_model
+
+/--
+Paper-facing nonempty-equilibrium diagnostic for Theorem 3.2 report-required
+policies with literal affine `P_BO` taking decisions and taker events.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_impossibility_affine_pbo_literal_decision_event_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_report_required_fairness_impossibility_of_affine_pbo_literal_decision_event_nonempty_upper_tail_source_model
+
+/--
+Paper-facing decider-free nonempty-equilibrium diagnostic for Theorem 3.2
+report-required policies with literal affine `P_BO` taking decisions and taker
+events.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_impossibility_affine_pbo_literal_decision_event_nonempty_upper_tail_source_model_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_fairness_impossibility_of_affine_pbo_literal_decision_event_nonempty_upper_tail_source_model_classical_decidable
+
+/--
+Paper-facing nonempty-equilibrium no-relevance diagnostic for Theorem 3.2
+report-required policies with literal affine `P_BO` taking decisions and taker
+events.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_affine_pbo_literal_decision_event_nonempty_upper_tail_source_model :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_affine_pbo_literal_decision_event_nonempty_upper_tail_source_model
+
+/--
+Paper-facing decider-free nonempty-equilibrium no-relevance diagnostic for
+Theorem 3.2 report-required policies with literal affine `P_BO` taking
+decisions and taker events.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_affine_pbo_literal_decision_event_nonempty_upper_tail_source_model_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_affine_pbo_literal_decision_event_nonempty_upper_tail_source_model_classical_decidable
+
+/--
+Paper-facing Theorem 3.2 report-required endpoint with an affine-skill `P_BO`
+threshold, full finite support, and a literal finite taker event.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_impossibility_affine_pbo_threshold_full_support_literal_event :=
+  @paper_theorem3_2_section3_report_required_fairness_impossibility_of_affine_pbo_threshold_full_support_literal_event
+
+/--
+Paper-facing Theorem 3.2 report-required no-relevance endpoint with an
+affine-skill `P_BO` threshold, full finite support, and a literal finite taker
+event.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_affine_pbo_threshold_full_support_literal_event :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_affine_pbo_threshold_full_support_literal_event
+
+/--
+Paper-facing Theorem 3.2 report-required endpoint with literal affine `P_BO`
+taking decisions and literal finite taker events.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_fairness_impossibility_affine_pbo_literal_decision_event_full_support :=
+  @paper_theorem3_2_section3_report_required_fairness_impossibility_of_affine_pbo_literal_decision_event_full_support
+
+/--
+Paper-facing Theorem 3.2 report-required no-relevance endpoint with literal
+affine `P_BO` taking decisions and literal finite taker events.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_affine_pbo_literal_decision_event_full_support :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_affine_pbo_literal_decision_event_full_support
 
 /--
 Paper-facing Theorem 3.2 report-required no-relevance form, with the blank
@@ -10271,6 +11548,13 @@ abbrev paper_interface_theorem3_2_section3_report_required_not_latent_or_observa
   @paper_theorem3_2_section3_report_required_not_latent_or_observable_fair_of_reporter_ne_on_positive_event_of_blank_on_zero_event_share_raw_mixture
 
 /--
+Paper-interface endpoint for the report-required canonical raw-mixture
+impossibility from raw mixture relevance.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_not_latent_or_observable_fair_of_raw_relevance_of_blank_on_zero_event_share_raw_mixture :=
+  @paper_theorem3_2_section3_report_required_not_latent_or_observable_fair_of_raw_relevance_of_blank_on_zero_event_share_raw_mixture
+
+/--
 Paper-interface endpoint for the report-required canonical raw-mixture necessary
 condition: fairness forces the reporter law to equal the base-only law on
 positive taker-event profiles.
@@ -10369,6 +11653,21 @@ abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairnes
 
 /--
 Paper-interface endpoint for the report-required skill-mixture raw-mixture iff
+in Definition 5 test-blankness form, with literal latent kernels, a literal
+source taking cutoff, and an affine upper-tail fixed point.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_test_blank_of_literal_latent_kernels_literal_cutoff_decision_affine_upper_tail_fixed_point :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_test_blank_of_blank_on_zero_event_share_raw_mixture_literal_latent_kernels_literal_cutoff_decision_affine_upper_tail_fixed_point
+
+/--
+Paper-interface decider-free endpoint for the report-required
+literal-latent-kernel fixed-point Theorem 3.2 wrapper.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_test_blank_of_literal_latent_kernels_literal_cutoff_decision_affine_upper_tail_fixed_point_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_test_blank_of_blank_on_zero_event_share_raw_mixture_literal_latent_kernels_literal_cutoff_decision_affine_upper_tail_fixed_point_classical_decidable
+
+/--
+Paper-interface endpoint for the report-required skill-mixture raw-mixture iff
 in no-test-relevance form.
 -/
 abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture :=
@@ -10391,6 +11690,13 @@ abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairnes
   @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_of_best_response_tiebreak_upper_tail_fixed_point
 
 /--
+Paper-interface endpoint for the report-required skill-mixture raw-mixture
+best-response route in no-test-relevance form, with pointwise latent kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_best_response_tiebreak_upper_tail_fixed_point_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_of_best_response_tiebreak_upper_tail_fixed_point_pointwise_latent_kernels
+
+/--
 Paper-interface endpoint for the report-required skill-mixture raw-mixture iff
 in no-test-relevance form, with the source taking decision literalized as the
 paper's cutoff rule.
@@ -10407,6 +11713,65 @@ abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairnes
   @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_literal_cutoff_decision_affine_upper_tail_fixed_point
 
 /--
+Paper-interface endpoint for the report-required skill-mixture raw-mixture iff
+in no-test-relevance form, with literal latent kernels, a literal source taking
+cutoff, and an affine upper-tail fixed point.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_literal_latent_kernels_literal_cutoff_decision_affine_upper_tail_fixed_point :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_literal_latent_kernels_literal_cutoff_decision_affine_upper_tail_fixed_point
+
+/--
+Paper-interface decider-free no-relevance endpoint for the report-required
+literal-latent-kernel fixed-point Theorem 3.2 wrapper.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_literal_latent_kernels_literal_cutoff_decision_affine_upper_tail_fixed_point_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_literal_latent_kernels_literal_cutoff_decision_affine_upper_tail_fixed_point_classical_decidable
+
+/--
+Paper-interface endpoint for the report-required skill-mixture raw-mixture iff
+in no-test-relevance form from the fully specified upper-tail source model.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_fully_specified_upper_tail_source_model :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model
+
+/--
+Paper-interface endpoint for the report-required fully specified upper-tail
+source model with the source cutoff instantiated by affine `P_BO`.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_affine_pbo_fully_specified_upper_tail_source_model :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_affine_pbo_fully_specified_upper_tail_source_model
+
+/--
+Paper-interface endpoint for the report-required fully specified upper-tail
+source model with affine `P_BO`, from pointwise latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_affine_pbo_fully_specified_upper_tail_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_affine_pbo_fully_specified_upper_tail_source_model_of_pointwise_latent_kernels
+
+/--
+Paper-interface endpoint for the report-required fully specified upper-tail
+source model with affine `P_BO` and literal latent kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_affine_pbo_fully_specified_upper_tail_source_model_literal_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_affine_pbo_fully_specified_upper_tail_source_model_literal_latent_kernels
+
+/--
+Paper-interface endpoint for the report-required fully specified upper-tail
+source model with affine `P_BO`, literal finite taker events, and literal
+latent kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_affine_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_affine_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels
+
+/--
+Paper-interface endpoint for the report-required fully specified upper-tail
+source model from pointwise latent-kernel identities, in no-test-relevance iff
+form.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_fully_specified_upper_tail_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_fairness_iff_no_test_relevance_of_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_of_pointwise_latent_kernels
+
+/--
 Paper-interface certificate for the report-required skill-mixture raw-mixture
 route with a literal taking cutoff and affine upper-tail fixed point.
 -/
@@ -10420,6 +11785,108 @@ a `testOf` observable-identity witness.
 -/
 abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_literal_cutoff_decision_affine_upper_tail_fixed_point :=
   @paper_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_literal_cutoff_decision_affine_upper_tail_fixed_point
+
+/--
+Paper-interface no-test-relevance consequence for the report-required
+skill-mixture raw-mixture route from the fully specified upper-tail source
+model.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model
+
+/--
+Paper-interface no-test-relevance consequence for the report-required fully
+specified upper-tail source model with affine `P_BO`.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_affine_pbo_fully_specified_upper_tail_source_model :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_affine_pbo_fully_specified_upper_tail_source_model
+
+/--
+Paper-interface no-test-relevance consequence for the report-required fully
+specified upper-tail source model with affine `P_BO`, from pointwise
+latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_affine_pbo_fully_specified_upper_tail_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_affine_pbo_fully_specified_upper_tail_source_model_of_pointwise_latent_kernels
+
+/--
+Paper-interface no-test-relevance consequence for the report-required fully
+specified upper-tail source model with affine `P_BO` and literal latent
+kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_affine_pbo_fully_specified_upper_tail_source_model_literal_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_affine_pbo_fully_specified_upper_tail_source_model_literal_latent_kernels
+
+/--
+Paper-interface no-test-relevance consequence for the report-required fully
+specified upper-tail source model with affine `P_BO`, literal finite taker
+events, and literal latent kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_affine_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_affine_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels
+
+/--
+Paper-interface no-test-relevance consequence for the report-required fully
+specified upper-tail source model from pointwise latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_no_test_relevance_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_of_pointwise_latent_kernels
+
+/--
+Paper-interface diagnostic: the literal fully specified report-required
+upper-tail source model cannot itself satisfy Definition 1 source equilibrium
+at a base/test profile.
+-/
+abbrev paper_interface_fully_specified_report_required_upper_tail_source_model_not_source_equilibrium :=
+  @lg21FullySpecifiedReportRequiredUpperTailSourceEquilibriumData_not_sourceEquilibrium
+
+/--
+Paper-interface diagnostic: on nonempty base/test spaces, the literal fully
+specified report-required upper-tail source model cannot satisfy Definition 1
+source equilibrium.
+-/
+abbrev paper_interface_fully_specified_report_required_upper_tail_source_model_not_source_equilibrium_of_nonempty :=
+  @lg21FullySpecifiedReportRequiredUpperTailSourceEquilibriumData_not_sourceEquilibrium_of_nonempty
+
+/--
+Paper-interface diagnostic: on nonempty equilibrium, base, and test spaces, no
+family of literal report-required upper-tail source models can satisfy
+Definition 1 source equilibrium at every equilibrium index.
+-/
+abbrev paper_interface_fully_specified_report_required_upper_tail_source_model_not_source_equilibrium_family_of_nonempty :=
+  @lg21FullySpecifiedReportRequiredUpperTailSourceEquilibriumData_not_sourceEquilibrium_family_of_nonempty
+
+/--
+Paper-interface diagnostic: report-required literal-cutoff affine upper-tail
+fixed-point source-equilibrium premises are inconsistent at any concrete
+base/test profile.
+-/
+abbrev paper_interface_report_required_literal_cutoff_affine_upper_tail_fixed_point_false :=
+  @lg21ReportRequiredBaseSourceEquilibriumData_literal_cutoff_affine_upper_tail_fixed_point_false
+
+/--
+Paper-interface diagnostic: on nonempty base/test spaces, report-required
+literal-cutoff affine upper-tail fixed-point source-equilibrium premises are
+inconsistent.
+-/
+abbrev paper_interface_report_required_literal_cutoff_affine_upper_tail_fixed_point_false_of_nonempty :=
+  @lg21ReportRequiredBaseSourceEquilibriumData_literal_cutoff_affine_upper_tail_fixed_point_false_of_nonempty
+
+/--
+Paper-interface diagnostic: a report-required upper-tail source-equilibrium
+certificate plus the theorem-specific upper-tail fixed point is inconsistent
+at any concrete equilibrium/base profile.
+-/
+abbrev paper_interface_report_required_upper_tail_source_equilibrium_certificate_false_at_of_upper_tail_fixed_point :=
+  @LG21ReportRequiredUpperTailSourceEquilibriumCertificate.false_at_of_upper_tail_fixed_point
+
+/--
+Paper-interface diagnostic: on nonempty equilibrium/base spaces, a
+report-required upper-tail source-equilibrium certificate plus the
+theorem-specific upper-tail fixed point cannot exist.
+-/
+abbrev paper_interface_report_required_upper_tail_source_equilibrium_certificate_false_of_upper_tail_fixed_point_of_nonempty :=
+  @LG21ReportRequiredUpperTailSourceEquilibriumCertificate.false_of_upper_tail_fixed_point_of_nonempty
 
 /--
 Paper-interface certificate constructor for the report-required skill-mixture
@@ -10453,6 +11920,53 @@ abbrev paper_interface_theorem3_1_report_required_strategic_withholding_certific
   @paper_theorem3_1_report_required_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_source_equilibrium_certificate_positive_event_raw_relevance_demographic_observable_identities
 
 /--
+Paper-interface report-required strategic-withholding certificate from the
+fully specified upper-tail source model, with demographic unfairness derived
+from observable/demographic identities.
+-/
+abbrev paper_interface_theorem3_1_report_required_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities :=
+  @paper_theorem3_1_report_required_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities
+
+/--
+Paper-interface report-required strategic-withholding certificate from the
+fully specified upper-tail source model and pointwise latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_1_report_required_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_pointwise_latent_kernels :=
+  @paper_theorem3_1_report_required_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_pointwise_latent_kernels
+
+/--
+Paper-interface report-required strategic-withholding certificate from
+pointwise latent-kernel identities, full support, literal cutoff events, and
+raw relevance.
+-/
+abbrev paper_interface_theorem3_1_report_required_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_report_required_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface report-required strategic-withholding certificate from the
+fully specified upper-tail source model, deriving the positive raw event from
+finite full support and the literal taking cutoff.
+-/
+abbrev paper_interface_theorem3_1_report_required_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_full_support_literal_cutoff_event :=
+  @paper_theorem3_1_report_required_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_full_support_literal_cutoff_event
+
+/--
+Paper-interface report-required strategic-withholding certificate from the
+fully specified upper-tail source model, deriving both the positive raw event
+and the reporter/base-only inequality from paper-facing cutoff/relevance
+witnesses.
+-/
+abbrev paper_interface_theorem3_1_report_required_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_report_required_strategic_withholding_certificate_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface report-required every-equilibrium certificate family for the
+fully specified upper-tail source model.
+-/
+abbrev paper_interface_theorem3_1_report_required_strategic_withholding_certificate_family_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_report_required_strategic_withholding_certificate_family_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance
+
+/--
 Paper-interface Section 3 Theorem 3.1 report-required strategic-withholding
 endpoint from a skill-mixture raw-mixture source-equilibrium certificate and
 positive-event raw relevance.
@@ -10466,6 +11980,170 @@ demographic unfairness is derived from observable/demographic identities.
 -/
 abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_source_equilibrium_certificate_positive_event_raw_relevance_demographic_observable_identities :=
   @paper_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_source_equilibrium_certificate_positive_event_raw_relevance_demographic_observable_identities
+
+/--
+Paper-interface full Section 3 report-required strategic-withholding endpoint
+from the fully specified upper-tail source model, with all fairness failures
+derived from positive-event raw relevance and observable/demographic
+identities.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities
+
+/--
+Paper-interface full Section 3 report-required strategic-withholding endpoint
+from the fully specified upper-tail source model, deriving the positive raw
+event from finite full support and the literal taking cutoff.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_full_support_literal_cutoff_event :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_full_support_literal_cutoff_event
+
+/--
+Paper-interface full Section 3 report-required strategic-withholding endpoint
+from the fully specified upper-tail source model, with cutoff and raw relevance
+witnesses replacing the lower-level positive-event/reporter-law premises.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface full Section 3 report-required strategic-withholding endpoint
+from the fully specified upper-tail source model and pointwise latent-kernel
+identities.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_pointwise_latent_kernels :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_pointwise_latent_kernels
+
+/--
+Paper-interface full Section 3 report-required strategic-withholding endpoint
+from pointwise latent-kernel identities, with full support, the literal taking
+cutoff, and raw relevance deriving the event-level witnesses.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_positive_event_raw_relevance_demographic_observable_identities_of_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface full Section 3 report-required every-equilibrium endpoint for
+the fully specified upper-tail source model.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_pointwise_latent_kernels_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface full Section 3 report-required every-equilibrium endpoint for
+the fully specified upper-tail source model with literal latent kernels.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_full_support_literal_cutoff_event_raw_relevance :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_full_support_literal_cutoff_event_raw_relevance
+
+/--
+Paper-interface full Section 3 report-required every-equilibrium endpoint for
+the fully specified upper-tail source model with literal latent kernels and
+direct demographic observable identities.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_direct_demographic_observable_identities :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_direct_demographic_observable_identities
+
+/--
+Paper-interface full Section 3 report-required every-equilibrium endpoint for
+the fully specified upper-tail source model with literal latent kernels and
+direct demographic observable identities, deriving the positive taker-event
+witness from raw mixture relevance.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_direct_demographic_observable_identities_of_raw_relevance :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_direct_demographic_observable_identities_of_raw_relevance
+
+/--
+Paper-interface full Section 3 report-required every-equilibrium endpoint for
+the fully specified upper-tail source model with literal latent kernels and
+literal demographic observable laws, deriving the positive taker-event witness
+from raw mixture relevance.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_literal_demographic_laws_of_raw_relevance :=
+  @paper_theorem3_1_section3_report_required_strategic_withholding_for_every_equilibrium_of_skill_mixture_blank_on_zero_event_share_raw_mixture_fully_specified_upper_tail_source_model_literal_latent_kernels_literal_demographic_laws_of_raw_relevance
+
+/--
+Paper-interface report-required fully specified source-model route with
+literal affine `P_BO` taker events, literal latent kernels, and direct
+demographic observable identities.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_direct_demographic_observable_identities :=
+  @paper_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_direct_demographic_observable_identities
+
+/--
+Paper-interface report-required `P_BO` route with literal taker events,
+literal latent kernels, and direct demographic observable identities, deriving
+the positive taker-event witness from raw mixture relevance.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_direct_demographic_observable_identities_of_raw_relevance :=
+  @paper_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_direct_demographic_observable_identities_of_raw_relevance
+
+/--
+Paper-interface report-required `P_BO` route with literal taker events,
+literal latent kernels, and literal demographic observable laws, deriving the
+positive taker-event witness from raw mixture relevance.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance :=
+  @paper_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance
+
+/--
+Paper-interface report-required `P_BO` raw-relevance route with literal
+demographic laws and no literal source-equilibrium premise.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance_no_source_equilibrium :=
+  @paper_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance_no_source_equilibrium
+
+/--
+Paper-interface report-required raw-relevance no-source `P_BO` route with
+internal finite-event decidability.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance_no_source_equilibrium_classical_decidable :=
+  @paper_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_raw_relevance_no_source_equilibrium_classical_decidable
+
+/--
+Paper-interface report-required `P_BO` route with literal taker events and
+literal demographic laws, deriving raw relevance from full support,
+above-threshold support, and reporter/base-only law inequality.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne :=
+  @paper_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne
+
+/--
+Paper-interface report-required `P_BO` route with literal demographic laws,
+full support, reporter/base-only inequality, and no literal source-equilibrium
+premise.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_no_source_equilibrium :=
+  @paper_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_no_source_equilibrium
+
+/--
+Paper-interface report-required `P_BO` route with literal demographic laws,
+full support, reporter/base-only inequality, and internal finite-event
+decidability.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_classical_decidable :=
+  @paper_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_classical_decidable
+
+/--
+Paper-interface report-required `P_BO` no-source-equilibrium route with
+internal finite-event decidability.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_no_source_equilibrium_classical_decidable :=
+  @paper_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_reporter_ne_no_source_equilibrium_classical_decidable
+
+/--
+Paper-interface report-required `P_BO` no-source-equilibrium route with
+point-estimate laws and internal finite-event decidability.
+-/
+noncomputable abbrev paper_interface_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_point_mass_value_ne_no_source_equilibrium_classical_decidable :=
+  @paper_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_full_support_point_mass_value_ne_no_source_equilibrium_classical_decidable
+
+/--
+Paper-interface report-required `P_BO` no-source-equilibrium route with
+point-estimate laws and only a positive-mass taker event at the selected base.
+-/
+noncomputable abbrev paper_interface_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_positive_event_point_mass_value_ne_no_source_equilibrium_classical_decidable :=
+  @paper_theorem3_1_section3_report_required_pbo_fully_specified_upper_tail_source_model_literal_event_latent_kernels_literal_demographic_laws_of_positive_event_point_mass_value_ne_no_source_equilibrium_classical_decidable
 
 /--
 Paper-interface endpoint for the report-required skill-mixture raw-mixture
@@ -13917,6 +15595,14 @@ theorem paper_interface_theorem3_2_observable_fair_best_response_implies_test_bl
     hdenom hnonblank_off_mean
 
 /--
+Theorem 3.2 observable-fairness-to-test-blank bridge from a one-actor off-mean
+source witness, requiring positive reporter/taker share only at nonblank
+profiles.
+-/
+abbrev paper_interface_theorem3_2_observable_fair_best_response_implies_test_blank_of_local_off_mean_positive_mass_actor_evidence :=
+  @paper_theorem3_2_observable_fair_best_response_implies_test_blank_of_local_off_mean_positive_mass_actor_witness
+
+/--
 Theorem 3.2 continuous-law observable-fairness-to-test-blank bridge from a
 one-actor off-mean source witness.
 -/
@@ -13978,6 +15664,14 @@ theorem paper_interface_theorem3_2_law_observable_fair_best_response_implies_tes
     hotherPayoff_of_law_eq hweight hdenom hnonblank_off_mean
 
 /--
+Theorem 3.2 continuous-law observable-fairness-to-test-blank bridge from a
+one-actor off-mean source witness, requiring positive reporter/taker share only
+at nonblank profiles.
+-/
+abbrev paper_interface_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_local_off_mean_positive_mass_actor_evidence :=
+  @paper_theorem3_2_law_observable_fair_best_response_implies_test_blank_of_local_off_mean_positive_mass_actor_witness
+
+/--
 Theorem 3.2 final-witness constructor for scalar point-estimate PMF surfaces.
 -/
 theorem paper_interface_theorem3_2_nonblank_off_mean_evidence_of_point_estimate_surface
@@ -14035,6 +15729,67 @@ theorem paper_interface_theorem3_2_not_latent_or_observable_fair_of_point_estima
   paper_theorem3_2_not_latent_or_observable_fair_of_point_estimate_witness
     actorLaw actorValue actorOfTest hbasePoint hfullPoint hfair_to_blank
     e base test hne
+
+/--
+Value-level Theorem 3.2 no-relevance bridge for scalar point-estimate PMF
+surfaces.
+-/
+theorem paper_interface_theorem3_2_value_no_test_relevance_of_point_estimate_identities
+    {Skill Base Test Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test ℝ}
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hfair_iff_no_test_relevance :
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) ↔
+        ¬ ∃ e base test,
+          S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test) :
+    lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+      ¬ ∃ e base test,
+        pmfExp (actorLaw e base) (actorValue e base) ≠
+          actorValue e base (actorOfTest e base test) :=
+  paper_theorem3_2_value_no_test_relevance_of_point_estimate_identities
+    actorLaw actorValue actorOfTest hbasePoint hfullPoint
+    hfair_iff_no_test_relevance
+
+/--
+Value-level iff Theorem 3.2 bridge for scalar point-estimate PMF surfaces.
+-/
+theorem paper_interface_theorem3_2_fairness_iff_value_no_test_relevance_of_point_estimate_identities
+    {Skill Base Test Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    {S : LG21SourcePolicySurface Skill Base Test ℝ}
+    (actorLaw : S.Equilibrium → Base → PMF Actor)
+    (actorValue : S.Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : S.Equilibrium → Base → Test → Actor)
+    (hbasePoint :
+      ∀ e base,
+        S.baseOnlyEstimate e base =
+          PMF.pure (pmfExp (actorLaw e base) (actorValue e base)))
+    (hfullPoint :
+      ∀ e base test,
+        S.fullFeatureEstimate e base test =
+          PMF.pure (actorValue e base (actorOfTest e base test)))
+    (hfair_iff_no_test_relevance :
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) ↔
+        ¬ ∃ e base test,
+          S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test) :
+    (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) ↔
+      ¬ ∃ e base test,
+        pmfExp (actorLaw e base) (actorValue e base) ≠
+          actorValue e base (actorOfTest e base test) :=
+  paper_theorem3_2_fairness_iff_value_no_test_relevance_of_point_estimate_identities
+    actorLaw actorValue actorOfTest hbasePoint hfullPoint
+    hfair_iff_no_test_relevance
 
 /--
 Two distinct full-feature point estimates imply an off-mean point-estimate test
@@ -15162,6 +16917,118 @@ theorem paper_interface_theorem3_2_fairness_impossibility_of_concrete_optional_b
     baseTerm signalWeight denom hEq hweight hdenom hmass
 
 /--
+Certificate form of the concrete optional-reporting PMF endpoint.
+-/
+abbrev paper_interface_theorem3_2_fairness_impossibility_certificate_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law :=
+  @paper_theorem3_2_fairness_impossibility_certificate_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law
+
+/--
+Section 3 form of the concrete optional-reporting PMF self-law endpoint:
+hidden access plus the finite source-surface fairness-impossibility conclusion.
+-/
+theorem paper_interface_theorem3_2_section3_optional_reporting_fairness_impossibility_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law
+    {Equilibrium Skill Base Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    (skillGivenBase : Base → PMF Skill)
+    (latentAccessEstimate latentNoAccessEstimate :
+      Equilibrium → Skill → Base → PMF ℝ)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF ℝ)
+    (takeDecision : Equilibrium → Skill → Base → Bool)
+    (reportDecision : Equilibrium → Base → ℝ → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceSkill : Equilibrium → Base → Skill)
+    (positiveShare : Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (hpositiveShare_pos : ∀ e base, 0 < (positiveShare e base).toReal)
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF ℝ)
+    (hObsAccess :
+      ∀ e base,
+        lg21BinaryMixturePMF
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base) =
+          lg21LatentSkillEstimateDistribution skillGivenBase
+            (latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base,
+        noReporterPMF e base =
+          lg21LatentSkillEstimateDistribution skillGivenBase
+            (latentNoAccessEstimate e) base)
+    (actorLaw : Equilibrium → Base → PMF Actor)
+    (actorValue : Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : Equilibrium → Base → ℝ → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        reportDecision e base (actorValue e base actor) = true)
+    (baseTerm signalWeight denom : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        paperSourceEquilibrium
+          (lg21OptionalReportingBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (fun base =>
+              (baseTerm e base +
+                signalWeight e base *
+                  pmfExp (actorLaw e base) (actorValue e base)) /
+                denom e base)
+            (estimationConsistent e)))
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    let S :=
+      lg21BinaryMixturePointEstimateSurface
+        (Skill := Skill) (Base := Base) (Actor := Actor)
+        Equilibrium latentAccessEstimate latentNoAccessEstimate
+        demographicAccessEstimate demographicNoAccessEstimate positiveShare
+        hpositiveShare_le_one reporterPMF noReporterPMF actorLaw actorValue
+        actorOfTest
+    (∀ (base : Base) (test : ℝ) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S) :=
+  paper_interface_theorem3_2_section3_fairness_impossibility
+    (paper_interface_theorem3_2_fairness_impossibility_certificate_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law
+      skillGivenBase latentAccessEstimate latentNoAccessEstimate
+      demographicAccessEstimate demographicNoAccessEstimate takeDecision
+      reportDecision estimationConsistent referenceSkill positiveShare
+      hpositiveShare_le_one hpositiveShare_pos reporterPMF noReporterPMF
+      hObsAccess hObsNoAccess actorLaw actorValue actorOfTest
+      hchooses_support baseTerm signalWeight denom hEq hweight hdenom hmass)
+
+/--
+Paper-interface optional-reporting concrete PMF endpoint from pointwise
+latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_2_fairness_impossibility_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law_pointwise_latent_kernels :=
+  @paper_theorem3_2_fairness_impossibility_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law_of_pointwise_latent_kernels
+
+/--
+Paper-interface optional-reporting concrete PMF endpoint with literal latent
+kernels.
+-/
+abbrev paper_interface_theorem3_2_fairness_impossibility_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law_literal_latent_kernels :=
+  @paper_theorem3_2_fairness_impossibility_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law_literal_latent_kernels
+
+/--
+Paper-interface Section 3 no-relevance form of the optional-reporting concrete
+PMF endpoint from pointwise latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_no_test_relevance_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law_of_pointwise_latent_kernels
+
+/--
+Paper-interface Section 3 no-relevance form of the optional-reporting concrete
+PMF endpoint with literal latent kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_no_test_relevance_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law_literal_latent_kernels :=
+  @paper_theorem3_2_section3_no_test_relevance_of_concrete_optional_base_affine_binary_mixture_point_estimate_surface_self_law_literal_latent_kernels
+
+/--
 Direct Theorem 3.2 unfairness statement for the concrete optional-reporting
 binary-mixture point-estimate surface.
 -/
@@ -15905,6 +17772,42 @@ abbrev paper_interface_theorem3_2_section3_no_test_relevance_of_concrete_optiona
   @paper_theorem3_2_section3_no_test_relevance_of_concrete_optional_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_constant_latent_mapped_actor_law_of_finite_test_literal_cutoff_decision_event_full_support_threshold_support
 
 /--
+Section 3 optional-reporting finite-test mapped-actor contradiction with
+literal lower-cutoff reporting and only local support for the two distinct
+tests.
+-/
+abbrev paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_constant_latent_mapped_actor_law_of_finite_test_literal_cutoff_decision_event_supported_distinct :=
+  @paper_theorem3_2_not_latent_or_observable_fair_of_concrete_optional_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_constant_latent_mapped_actor_law_of_finite_test_literal_cutoff_decision_event_supported_distinct
+
+/--
+Optional-reporting finite-test literal-cutoff route: fairness rules out
+distinct displayed point estimates on positive-mass tests.
+-/
+abbrev paper_interface_theorem3_2_no_supported_distinct_tests_of_fair_concrete_optional_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event :=
+  @paper_theorem3_2_no_supported_distinct_tests_of_fair_concrete_optional_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event
+
+/--
+Optional-reporting finite-test literal-cutoff route: fairness makes each
+positive-mass test estimate equal the base-only acting mean.
+-/
+abbrev paper_interface_theorem3_2_supported_test_estimate_eq_base_mean_of_fair_concrete_optional_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event :=
+  @paper_theorem3_2_supported_test_estimate_eq_base_mean_of_fair_concrete_optional_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event
+
+/--
+Optional-reporting finite-test literal-cutoff route: support-aware no relevance
+as point-mass base-only/full-feature equality.
+-/
+abbrev paper_interface_theorem3_2_supported_test_full_feature_eq_base_only_of_fair_concrete_optional_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event :=
+  @paper_theorem3_2_supported_test_full_feature_eq_base_only_of_fair_concrete_optional_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event
+
+/--
+Optional-reporting finite-test literal-cutoff route: fairness rules out any
+positive-mass test-relevance witness.
+-/
+abbrev paper_interface_theorem3_2_no_positive_mass_test_relevance_of_fair_concrete_optional_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event :=
+  @paper_theorem3_2_no_positive_mass_test_relevance_of_fair_concrete_optional_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event
+
+/--
 Theorem 3.2 concrete report-required PMF endpoint using the reporter and
 no-reporter PMFs themselves as the finite law objects.
 -/
@@ -15983,6 +17886,94 @@ theorem paper_interface_theorem3_2_fairness_impossibility_of_concrete_report_req
     hmass
 
 /--
+Certificate form of the concrete report-required PMF endpoint.
+-/
+abbrev paper_interface_theorem3_2_fairness_impossibility_certificate_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law :=
+  @paper_theorem3_2_fairness_impossibility_certificate_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law
+
+/--
+Section 3 form of the concrete report-required PMF self-law endpoint: hidden
+access plus the finite source-surface fairness-impossibility conclusion.
+-/
+theorem paper_interface_theorem3_2_section3_report_required_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law
+    {Equilibrium Base Test Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    (skillGivenBase : Base → PMF ℝ)
+    (latentAccessEstimate latentNoAccessEstimate :
+      Equilibrium → ℝ → Base → PMF ℝ)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF ℝ)
+    (takeDecision : Equilibrium → ℝ → Base → Bool)
+    (reportDecision : Equilibrium → Base → Test → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceTest : Equilibrium → Base → Test)
+    (positiveShare : Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (hpositiveShare_pos : ∀ e base, 0 < (positiveShare e base).toReal)
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF ℝ)
+    (hObsAccess :
+      ∀ e base,
+        lg21BinaryMixturePMF
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base) =
+          lg21LatentSkillEstimateDistribution skillGivenBase
+            (latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base,
+        noReporterPMF e base =
+          lg21LatentSkillEstimateDistribution skillGivenBase
+            (latentNoAccessEstimate e) base)
+    (actorLaw : Equilibrium → Base → PMF Actor)
+    (actorValue : Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : Equilibrium → Base → Test → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        takeDecision e (actorValue e base actor) base = true)
+    (baseTerm signalWeight denom : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        paperSourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (estimationConsistent e)))
+    (houtsidePayoff_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          (1 / 2 : ℝ) =
+            (baseTerm e base +
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base)) /
+              denom e base)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    let S :=
+      lg21BinaryMixturePointEstimateSurface
+        (Skill := ℝ) (Base := Base) (Test := Test) (Actor := Actor)
+        Equilibrium latentAccessEstimate latentNoAccessEstimate
+        demographicAccessEstimate demographicNoAccessEstimate positiveShare
+        hpositiveShare_le_one reporterPMF noReporterPMF actorLaw actorValue
+        actorOfTest
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S) :=
+  paper_interface_theorem3_2_section3_fairness_impossibility
+    (paper_interface_theorem3_2_fairness_impossibility_certificate_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law
+      skillGivenBase latentAccessEstimate latentNoAccessEstimate
+      demographicAccessEstimate demographicNoAccessEstimate takeDecision
+      reportDecision estimationConsistent referenceTest positiveShare
+      hpositiveShare_le_one hpositiveShare_pos reporterPMF noReporterPMF
+      hObsAccess hObsNoAccess actorLaw actorValue actorOfTest hchooses_support
+      baseTerm signalWeight denom hEq houtsidePayoff_of_pmfEq hweight hdenom
+      hmass)
+
+/--
 Theorem 3.2 concrete report-required PMF endpoint using the centered-numerator
 form of the affine outside-payoff identity.
 -/
@@ -16059,6 +18050,123 @@ theorem paper_interface_theorem3_2_fairness_impossibility_of_concrete_report_req
     hObsAccess hObsNoAccess actorLaw actorValue actorOfTest hchooses_support
     baseTerm signalWeight denom hEq houtside_center_of_pmfEq hweight hdenom
     hmass
+
+/--
+Certificate form of the concrete report-required PMF endpoint using the
+centered-numerator outside-payoff identity.
+-/
+abbrev paper_interface_theorem3_2_fairness_impossibility_certificate_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside :=
+  @paper_theorem3_2_fairness_impossibility_certificate_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside
+
+/--
+Section 3 form of the concrete report-required PMF self-law endpoint using
+the centered-numerator outside-payoff identity.
+-/
+theorem paper_interface_theorem3_2_section3_report_required_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside
+    {Equilibrium Base Test Actor : Type*}
+    [Fintype Actor] [DecidableEq Actor]
+    (skillGivenBase : Base → PMF ℝ)
+    (latentAccessEstimate latentNoAccessEstimate :
+      Equilibrium → ℝ → Base → PMF ℝ)
+    (demographicAccessEstimate demographicNoAccessEstimate :
+      Equilibrium → PMF ℝ)
+    (takeDecision : Equilibrium → ℝ → Base → Bool)
+    (reportDecision : Equilibrium → Base → Test → Bool)
+    (estimationConsistent : Equilibrium → Prop)
+    (referenceTest : Equilibrium → Base → Test)
+    (positiveShare : Equilibrium → Base → NNReal)
+    (hpositiveShare_le_one : ∀ e base, positiveShare e base ≤ 1)
+    (hpositiveShare_pos : ∀ e base, 0 < (positiveShare e base).toReal)
+    (reporterPMF noReporterPMF : Equilibrium → Base → PMF ℝ)
+    (hObsAccess :
+      ∀ e base,
+        lg21BinaryMixturePMF
+            (positiveShare e base) (hpositiveShare_le_one e base)
+            (reporterPMF e base) (noReporterPMF e base) =
+          lg21LatentSkillEstimateDistribution skillGivenBase
+            (latentAccessEstimate e) base)
+    (hObsNoAccess :
+      ∀ e base,
+        noReporterPMF e base =
+          lg21LatentSkillEstimateDistribution skillGivenBase
+            (latentNoAccessEstimate e) base)
+    (actorLaw : Equilibrium → Base → PMF Actor)
+    (actorValue : Equilibrium → Base → Actor → ℝ)
+    (actorOfTest : Equilibrium → Base → Test → Actor)
+    (hchooses_support :
+      ∀ e base actor, 0 < (actorLaw e base actor).toReal →
+        takeDecision e (actorValue e base actor) base = true)
+    (baseTerm signalWeight denom : Equilibrium → Base → ℝ)
+    (hEq :
+      ∀ e,
+        paperSourceEquilibrium
+          (lg21ReportRequiredBaseSourceEquilibriumData
+            (takeDecision e) (reportDecision e)
+            (fun base actor =>
+              (baseTerm e base + signalWeight e base * actor) / denom e base)
+            (estimationConsistent e)))
+    (houtside_center_of_pmfEq :
+      ∀ e base,
+        reporterPMF e base = noReporterPMF e base →
+          2 *
+            (baseTerm e base +
+              signalWeight e base *
+                pmfExp (actorLaw e base) (actorValue e base)) =
+            denom e base)
+    (hweight : ∀ e base, 0 < signalWeight e base)
+    (hdenom : ∀ e base, 0 < denom e base)
+    (hmass :
+      ∀ e base test,
+        0 < (actorLaw e base (actorOfTest e base test)).toReal) :
+    let S :=
+      lg21BinaryMixturePointEstimateSurface
+        (Skill := ℝ) (Base := Base) (Test := Test) (Actor := Actor)
+        Equilibrium latentAccessEstimate latentNoAccessEstimate
+        demographicAccessEstimate demographicNoAccessEstimate positiveShare
+        hpositiveShare_le_one reporterPMF noReporterPMF actorLaw actorValue
+        actorOfTest
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S) :=
+  paper_interface_theorem3_2_section3_fairness_impossibility
+    (paper_interface_theorem3_2_fairness_impossibility_certificate_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside
+      skillGivenBase latentAccessEstimate latentNoAccessEstimate
+      demographicAccessEstimate demographicNoAccessEstimate takeDecision
+      reportDecision estimationConsistent referenceTest positiveShare
+      hpositiveShare_le_one hpositiveShare_pos reporterPMF noReporterPMF
+      hObsAccess hObsNoAccess actorLaw actorValue actorOfTest hchooses_support
+      baseTerm signalWeight denom hEq houtside_center_of_pmfEq hweight hdenom
+      hmass)
+
+/--
+Paper-interface report-required concrete PMF endpoint from pointwise
+latent-kernel identities, using the centered outside-payoff route.
+-/
+abbrev paper_interface_theorem3_2_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside_pointwise_latent_kernels :=
+  @paper_theorem3_2_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside_pointwise_latent_kernels
+
+/--
+Paper-interface report-required concrete PMF endpoint with literal latent
+kernels, using the centered outside-payoff route.
+-/
+abbrev paper_interface_theorem3_2_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside_literal_latent_kernels :=
+  @paper_theorem3_2_fairness_impossibility_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside_literal_latent_kernels
+
+/--
+Paper-interface Section 3 no-relevance form of the report-required concrete
+PMF endpoint from pointwise latent-kernel identities.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_no_test_relevance_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside_pointwise_latent_kernels
+
+/--
+Paper-interface Section 3 no-relevance form of the report-required concrete PMF
+endpoint with literal latent kernels, using the centered outside-payoff route.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_no_test_relevance_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside_literal_latent_kernels :=
+  @paper_theorem3_2_section3_no_test_relevance_of_concrete_report_required_base_affine_binary_mixture_point_estimate_surface_self_law_of_centered_outside_literal_latent_kernels
 
 /--
 Direct Theorem 3.2 unfairness statement for the concrete report-required
@@ -16963,6 +19071,41 @@ abbrev paper_interface_theorem3_2_section3_no_test_relevance_of_concrete_report_
   @paper_theorem3_2_section3_no_test_relevance_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm_constant_latent_mapped_actor_law_by_definition_of_finite_test_literal_cutoff_decision_event_full_support_threshold_support
 
 /--
+Section 3 report-required finite-test mapped-actor contradiction with literal
+lower-cutoff taking and only local support for the two distinct tests.
+-/
+abbrev paper_interface_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm_constant_latent_mapped_actor_law_by_definition_of_finite_test_literal_cutoff_decision_event_supported_distinct :=
+  @paper_theorem3_2_not_latent_or_observable_fair_of_concrete_report_required_base_affine_binary_mixture_point_estimate_distinct_supported_tests_of_event_share_centered_baseTerm_constant_latent_mapped_actor_law_by_definition_of_finite_test_literal_cutoff_decision_event_supported_distinct
+
+/--
+Report-required finite-test literal-cutoff route: fairness rules out distinct
+displayed point estimates on positive-mass tests.
+-/
+abbrev paper_interface_theorem3_2_no_supported_distinct_tests_of_fair_concrete_report_required_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event :=
+  @paper_theorem3_2_no_supported_distinct_tests_of_fair_concrete_report_required_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event
+
+/--
+Report-required finite-test literal-cutoff route: fairness makes each
+positive-mass test estimate equal the base-only acting mean.
+-/
+abbrev paper_interface_theorem3_2_supported_test_estimate_eq_base_mean_of_fair_concrete_report_required_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event :=
+  @paper_theorem3_2_supported_test_estimate_eq_base_mean_of_fair_concrete_report_required_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event
+
+/--
+Report-required finite-test literal-cutoff route: support-aware no relevance
+as point-mass base-only/full-feature equality.
+-/
+abbrev paper_interface_theorem3_2_supported_test_full_feature_eq_base_only_of_fair_concrete_report_required_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event :=
+  @paper_theorem3_2_supported_test_full_feature_eq_base_only_of_fair_concrete_report_required_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event
+
+/--
+Report-required finite-test literal-cutoff route: fairness rules out any
+positive-mass test-relevance witness.
+-/
+abbrev paper_interface_theorem3_2_no_positive_mass_test_relevance_of_fair_concrete_report_required_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event :=
+  @paper_theorem3_2_no_positive_mass_test_relevance_of_fair_concrete_report_required_base_affine_binary_mixture_point_estimate_of_finite_test_literal_cutoff_decision_event
+
+/--
 Theorem 3.2 endpoint from latent-to-observable mixture identities and the
 source-shaped PMF witness.
 -/
@@ -17100,6 +19243,41 @@ theorem paper_interface_theorem3_2_section3_no_test_relevance_of_constant_estima
     hAccess hNoAccess W hfair
 
 /--
+Theorem 3.2 Section 3 PMF endpoint from a source-shaped witness when a
+separate source argument has already ruled out latent-skill fairness.
+-/
+theorem paper_interface_theorem3_2_section3_fairness_impossibility_of_not_latent_and_source_evidence
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hnot_latent : ¬ lg21SourceLatentSkillFair S)
+    (W : LG21ObservableFairTestBlankSourceWitness S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S →
+        lg21SourceTestBlank S) :=
+  paper_theorem3_2_section3_fairness_impossibility_of_not_latent_and_source_witness
+    hnot_latent W
+
+/--
+Theorem 3.2 Section 3 PMF no-relevance form from a source-shaped witness when
+a separate source argument has already ruled out latent-skill fairness.
+-/
+theorem paper_interface_theorem3_2_section3_no_test_relevance_of_not_latent_and_source_evidence
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hnot_latent : ¬ lg21SourceLatentSkillFair S)
+    (W : LG21ObservableFairTestBlankSourceWitness S)
+    (hfair : lg21SourceLatentSkillFair S ∨ lg21SourceObservablyFair S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ¬ ∃ e base test,
+          S.baseOnlyEstimate e base ≠ S.fullFeatureEstimate e base test :=
+  paper_theorem3_2_section3_no_test_relevance_of_not_latent_and_source_witness
+    hnot_latent W hfair
+
+/--
 Theorem 3.2 source-witness route packaged as the compact PMF certificate.
 -/
 def paper_interface_theorem3_2_fairness_impossibility_certificate_of_mixture_and_source_evidence
@@ -17136,6 +19314,19 @@ def paper_interface_theorem3_2_fairness_impossibility_certificate_of_constant_es
     LG21FairnessImpossibilityCertificate S :=
   paper_theorem3_2_fairness_impossibility_certificate_of_constant_estimates_and_source_witness
     hAccess hNoAccess W
+
+/--
+Theorem 3.2 source-witness route packaged as a compact PMF certificate when a
+separate source argument has already ruled out latent-skill fairness.
+-/
+def paper_interface_theorem3_2_fairness_impossibility_certificate_of_not_latent_and_source_evidence
+    {Skill Base Test Estimate : Type*}
+    {S : LG21SourcePolicySurface Skill Base Test Estimate}
+    (hnot_latent : ¬ lg21SourceLatentSkillFair S)
+    (W : LG21ObservableFairTestBlankSourceWitness S) :
+    LG21FairnessImpossibilityCertificate S :=
+  paper_theorem3_2_fairness_impossibility_certificate_of_not_latent_and_source_witness
+    hnot_latent W
 
 /--
 Theorem 3.2 source-witness iff form: the paper's unraveling witness plus the
@@ -17330,6 +19521,80 @@ abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_fairness_im
   @paper_theorem3_2_section3_skill_mixture_raw_mixture_fairness_implies_no_test_relevance_of_raw_observable_identities
 
 /--
+Theorem 3.2 Section 3 closed skill-mixture raw-mixture endpoint with constant
+latent kernels: latent-skill or observable fairness is equivalent to
+test-blankness.
+-/
+abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_fairness_iff_test_blank_of_constant_latent_kernels :=
+  @paper_theorem3_2_section3_skill_mixture_raw_mixture_fairness_iff_test_blank_of_constant_latent_kernels
+
+/--
+Theorem 3.2 Section 3 closed skill-mixture raw-mixture endpoint with constant
+latent kernels: latent-skill or observable fairness is equivalent to no test
+relevance.
+-/
+abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_fairness_iff_no_test_relevance_of_constant_latent_kernels :=
+  @paper_theorem3_2_section3_skill_mixture_raw_mixture_fairness_iff_no_test_relevance_of_constant_latent_kernels
+
+/--
+Theorem 3.2 Section 3 closed skill-mixture raw-mixture endpoint with constant
+latent kernels: fairness is equivalent to reporter/base-only equality on
+positive event profiles.
+-/
+abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_fairness_iff_reporter_eq_baseOnly_on_positive_event_of_constant_latent_kernels :=
+  @paper_theorem3_2_section3_skill_mixture_raw_mixture_fairness_iff_reporter_eq_baseOnly_on_positive_event_of_constant_latent_kernels
+
+/--
+Theorem 3.2 Section 3 closed skill-mixture raw-mixture endpoint with constant
+latent kernels: a positive-event reporter/base-only law difference rules out
+latent-skill and observable fairness.
+-/
+abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_not_latent_or_observable_fair_of_reporter_ne_on_positive_event_of_constant_latent_kernels :=
+  @paper_theorem3_2_section3_skill_mixture_raw_mixture_not_latent_or_observable_fair_of_reporter_ne_on_positive_event_of_constant_latent_kernels
+
+/--
+Theorem 3.2 Section 3 closed skill-mixture raw-mixture endpoint with constant
+latent kernels: latent-skill or observable fairness implies test-blankness.
+-/
+abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_fairness_implies_test_blank_of_constant_latent_kernels :=
+  @paper_theorem3_2_section3_skill_mixture_raw_mixture_fairness_implies_test_blank_of_constant_latent_kernels
+
+/--
+Theorem 3.2 Section 3 closed skill-mixture raw-mixture endpoint with constant
+latent kernels: latent-skill or observable fairness implies no test relevance.
+-/
+abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_fairness_implies_no_test_relevance_of_constant_latent_kernels :=
+  @paper_theorem3_2_section3_skill_mixture_raw_mixture_fairness_implies_no_test_relevance_of_constant_latent_kernels
+
+/--
+Theorem 3.2 Section 3 optional-reporting constant-latent raw-mixture route, in
+test-blankness form.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_fairness_iff_test_blank_of_constant_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_fairness_iff_test_blank_of_constant_latent_kernels
+
+/--
+Theorem 3.2 Section 3 optional-reporting constant-latent raw-mixture route, in
+no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_fairness_iff_no_test_relevance_of_constant_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_fairness_iff_no_test_relevance_of_constant_latent_kernels
+
+/--
+Theorem 3.2 Section 3 report-required constant-latent raw-mixture route, in
+test-blankness form.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_fairness_iff_test_blank_of_constant_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_fairness_iff_test_blank_of_constant_latent_kernels
+
+/--
+Theorem 3.2 Section 3 report-required constant-latent raw-mixture route, in
+no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_fairness_iff_no_test_relevance_of_constant_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_fairness_iff_no_test_relevance_of_constant_latent_kernels
+
+/--
 Theorem 3.2 Section 3 closed skill-mixture raw-mixture observable-fairness
 branch: observable fairness implies test-blankness.
 -/
@@ -17351,11 +19616,514 @@ abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_source_witn
   @paper_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_no_test_relevance
 
 /--
+Theorem 3.2 Section 3 skill-mixture raw-mixture route from local positive-share
+source evidence, in fairness iff no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_local_source_fairness_iff_no_test_relevance :=
+  @paper_theorem3_2_section3_skill_mixture_raw_mixture_local_source_fairness_iff_no_test_relevance
+
+/--
+Theorem 3.2 Section 3 skill-mixture raw-mixture route from local positive-share
+source evidence, in fairness iff reporter/base-only equality form.
+-/
+abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_local_source_fairness_iff_reporter_eq_baseOnly_on_positive_event :=
+  @paper_theorem3_2_section3_skill_mixture_raw_mixture_local_source_fairness_iff_reporter_eq_baseOnly_on_positive_event
+
+/--
 Theorem 3.2 Section 3 source-witness route specialized to the skill-mixture
 raw-mixture surface, in fairness iff reporter/base-only equality form.
 -/
 abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_reporter_eq_baseOnly_on_positive_event :=
   @paper_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_reporter_eq_baseOnly_on_positive_event
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected base-source-model route
+for the skill-mixture raw-mixture surface, in no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_fairness_iff_no_test_relevance_of_base_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_fairness_iff_no_test_relevance_of_base_source_model
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected base-source-model route
+for scalar point-estimate skill-mixture raw-mixture surfaces, in
+no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected base-source-model route
+for scalar point-estimate skill-mixture raw-mixture surfaces, in value
+no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected base-source-model route
+for scalar point-estimate skill-mixture raw-mixture surfaces from pointwise
+latent-kernel identities, in value no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model_of_pointwise_latent_kernels
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected base-source-model route
+for scalar point-estimate skill-mixture raw-mixture surfaces with literal
+latent kernels, in value no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model_literal_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model_literal_latent_kernels
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected base-source-model route
+for scalar point-estimate skill-mixture raw-mixture surfaces from pointwise
+latent-kernel identities, in no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model_of_pointwise_latent_kernels
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected base-source-model route
+for scalar point-estimate skill-mixture raw-mixture surfaces with literal
+latent kernels, in no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model_literal_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model_literal_latent_kernels
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected point-estimate
+base-source-model route with Gaussian `P_BO`, literal reporting decision/event,
+and literal latent kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected point-estimate
+base-source-model route with Gaussian `P_BO`, literal reporting decision/event,
+literal latent kernels, and literal lower-cutoff support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected point-estimate
+base-source-model route with Gaussian `P_BO`, literal reporting decision/event,
+literal latent kernels, literal lower-cutoff support, and affine no-report
+payoff.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected point-estimate
+base-source-model route with Gaussian `P_BO`, literal reporting decision/event,
+literal latent kernels, literal lower-cutoff support, affine no-report payoff,
+and internal finite-event decidability.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected point-estimate
+base-source-model route with Gaussian `P_BO`, literal reporting decision/event,
+literal latent kernels, literal lower-cutoff support, affine no-report payoff,
+and PMF self-laws.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected point-estimate
+base-source-model route with Gaussian `P_BO`, literal reporting decision/event,
+literal latent kernels, actor-law support, affine no-report payoff, and PMF
+self-laws.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected point-estimate
+base-source-model route with Gaussian `P_BO`, literal reporting decision/event,
+literal latent kernels, actor-law support, affine no-report payoff, PMF
+self-laws, canonical base point estimate, and internal finite-event
+decidability.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected point-estimate
+base-source-model route with Gaussian `P_BO`, canonical base point estimate,
+Boolean actor support, and full actor-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_actor_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_actor_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected point-estimate
+base-source-model route with Gaussian `P_BO`, canonical base point estimate,
+and lower-cutoff support instead of Boolean actor support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected point-estimate
+base-source-model route with Gaussian `P_BO`, canonical base point estimate,
+lower-cutoff support, and full actor-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical point-estimate route with
+Gaussian `P_BO`, direct binary report/withhold best response, literal
+decision/event, literal latent kernels, actor-law support, affine no-report
+payoff, PMF self-laws, and internal finite-event decidability.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical point-estimate route with
+Gaussian `P_BO`, direct binary report/withhold best response, literal
+decision/event, literal latent kernels, actor-law support, affine no-report
+payoff, PMF self-laws, internal finite-event decidability, and scalar value
+no-relevance.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical point-estimate scalar
+value no-relevance route with Gaussian `P_BO`, direct binary report/withhold
+best response, Boolean actor support, and full actor-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_event_latent_kernels_actor_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_event_latent_kernels_actor_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical point-estimate scalar
+value no-relevance route with Gaussian `P_BO`, direct binary report/withhold
+best response, and lower-cutoff support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical point-estimate scalar
+value no-relevance route with Gaussian `P_BO`, direct binary report/withhold
+best response, lower-cutoff support, and full actor-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_event_latent_kernels_threshold_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_binary_choice_literal_decision_event_latent_kernels_threshold_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical point-estimate scalar
+value no-relevance route with Gaussian `P_BO`, exact payoff-threshold
+reporting, literal decision/event, literal latent kernels, actor-law support,
+affine no-report payoff, PMF self-laws, and internal finite-event
+decidability.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_payoff_threshold_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_payoff_threshold_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical scalar value
+no-relevance route with exact payoff-threshold reporting, Boolean actor
+support, and full actor-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_payoff_threshold_literal_decision_event_latent_kernels_actor_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_payoff_threshold_literal_decision_event_latent_kernels_actor_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical scalar value
+no-relevance route with exact payoff-threshold reporting and lower-cutoff
+support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_payoff_threshold_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_payoff_threshold_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical scalar value
+no-relevance route with exact payoff-threshold reporting, lower-cutoff
+support, and full actor-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_payoff_threshold_literal_decision_event_latent_kernels_threshold_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_payoff_threshold_literal_decision_event_latent_kernels_threshold_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical point-estimate scalar
+value no-relevance route with Gaussian `P_BO`, indifference cutoff, literal
+decision/event, literal latent kernels, actor-law support, affine no-report
+payoff, PMF self-laws, and internal finite-event decidability.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_indifference_cutoff_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_indifference_cutoff_literal_decision_event_latent_kernels_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical scalar value
+no-relevance route with indifference cutoff, Boolean actor support, and full
+actor-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_indifference_cutoff_literal_decision_event_latent_kernels_actor_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_indifference_cutoff_literal_decision_event_latent_kernels_actor_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical scalar value
+no-relevance route with indifference cutoff and lower-cutoff support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_indifference_cutoff_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_indifference_cutoff_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting canonical scalar value
+no-relevance route with indifference cutoff, lower-cutoff support, and full
+actor-law support.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_indifference_cutoff_literal_decision_event_latent_kernels_threshold_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_gaussian_pbo_indifference_cutoff_literal_decision_event_latent_kernels_threshold_support_full_actor_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected point-estimate
+base-source-model route with Gaussian `P_BO`, literal reporting decision/event,
+literal latent kernels, literal lower-cutoff support, affine no-report payoff,
+PMF self-laws, and internal finite-event decidability.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_gaussian_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_affine_noReportPayoff_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 optional-reporting corrected base-source-model route
+for the skill-mixture raw-mixture surface, in reporter/base-only equality form.
+-/
+abbrev paper_interface_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_fairness_iff_reporter_eq_baseOnly_on_positive_event_of_base_source_model :=
+  @paper_theorem3_2_section3_optional_reporting_skill_mixture_raw_mixture_fairness_iff_reporter_eq_baseOnly_on_positive_event_of_base_source_model
+
+/--
+Theorem 3.2 Section 3 report-required corrected base-source-model route for
+the skill-mixture raw-mixture surface, in no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_fairness_iff_no_test_relevance_of_base_source_model :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_fairness_iff_no_test_relevance_of_base_source_model
+
+/--
+Theorem 3.2 Section 3 report-required corrected base-source-model route for
+scalar point-estimate skill-mixture raw-mixture surfaces, in no-test-relevance
+form.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model
+
+/--
+Theorem 3.2 Section 3 report-required corrected base-source-model route for
+scalar point-estimate skill-mixture raw-mixture surfaces, in value
+no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model
+
+/--
+Theorem 3.2 Section 3 report-required corrected base-source-model route for
+scalar point-estimate skill-mixture raw-mixture surfaces from pointwise
+latent-kernel identities, in value no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model_of_pointwise_latent_kernels
+
+/--
+Theorem 3.2 Section 3 report-required corrected base-source-model route for
+scalar point-estimate skill-mixture raw-mixture surfaces with literal latent
+kernels, in value no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model_literal_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_value_no_test_relevance_of_base_source_model_literal_latent_kernels
+
+/--
+Theorem 3.2 Section 3 report-required corrected base-source-model route for
+scalar point-estimate skill-mixture raw-mixture surfaces from pointwise
+latent-kernel identities, in no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model_of_pointwise_latent_kernels
+
+/--
+Theorem 3.2 Section 3 report-required corrected base-source-model route for
+scalar point-estimate skill-mixture raw-mixture surfaces with literal latent
+kernels, in no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model_literal_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_base_source_model_literal_latent_kernels
+
+/--
+Theorem 3.2 Section 3 report-required corrected point-estimate base-source-model
+route with affine `P_BO`, literal taking decision/event, and literal latent
+kernels.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels
+
+/--
+Theorem 3.2 Section 3 report-required corrected point-estimate
+base-source-model route with affine `P_BO`, literal taking decision/event,
+literal latent kernels, and literal lower-cutoff support.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support
+
+/--
+Theorem 3.2 Section 3 report-required corrected point-estimate
+base-source-model route with affine `P_BO`, literal taking decision/event,
+literal latent kernels, literal lower-cutoff support, and centered base term.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_centered_baseTerm :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_centered_baseTerm
+
+/--
+Theorem 3.2 Section 3 report-required corrected point-estimate
+base-source-model route with affine `P_BO`, literal taking decision/event,
+literal latent kernels, literal lower-cutoff support, centered base term, and
+internal finite-event decidability.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_centered_baseTerm_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_centered_baseTerm_classical_decidable
+
+/--
+Theorem 3.2 Section 3 report-required corrected point-estimate
+base-source-model route with affine `P_BO`, literal taking decision/event,
+literal latent kernels, literal lower-cutoff support, centered base term, and
+PMF self-laws.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_centered_baseTerm_self_law :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_centered_baseTerm_self_law
+
+/--
+Theorem 3.2 Section 3 report-required corrected point-estimate
+base-source-model route with affine `P_BO`, literal taking decision/event,
+literal latent kernels, actor-law support, centered base term, and PMF
+self-laws.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_actor_support_centered_baseTerm_self_law :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_actor_support_centered_baseTerm_self_law
+
+/--
+Theorem 3.2 Section 3 report-required corrected point-estimate
+base-source-model route with affine `P_BO`, literal taking decision/event,
+literal latent kernels, actor-law support, centered base term, PMF self-laws,
+canonical base point estimate, and internal finite-event decidability.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_actor_support_centered_baseTerm_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_actor_support_centered_baseTerm_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 report-required corrected point-estimate
+base-source-model route with affine `P_BO`, literal taking decision/event,
+literal latent kernels, finite-test actor support, full test-law support,
+centered base term, PMF self-laws, canonical base point estimate, and internal
+finite-event decidability.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_finite_test_actor_support_full_test_support_centered_baseTerm_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_finite_test_actor_support_full_test_support_centered_baseTerm_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 report-required corrected point-estimate
+base-source-model route with direct finite-test threshold support in place of
+pushforward actor support.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_finite_test_threshold_support_full_test_support_centered_baseTerm_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_finite_test_threshold_support_full_test_support_centered_baseTerm_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 report-required corrected point-estimate route with
+direct binary best response, affine `P_BO`, literal taking decision/event,
+literal latent kernels, finite-test actor support, full test-law support,
+centered base term, PMF self-laws, canonical base point estimate, and scalar
+value no-test-relevance.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_binary_choice_literal_decision_event_latent_kernels_finite_test_actor_support_full_test_support_centered_baseTerm_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_binary_choice_literal_decision_event_latent_kernels_finite_test_actor_support_full_test_support_centered_baseTerm_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 report-required finite-test value no-relevance endpoint
+with affine `P_BO`, full finite-test support, and an exact payoff-threshold
+taking rule.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_payoff_threshold_literal_decision_event_latent_kernels_finite_test_actor_support_full_test_support_centered_baseTerm_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_payoff_threshold_literal_decision_event_latent_kernels_finite_test_actor_support_full_test_support_centered_baseTerm_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 report-required finite-test value no-relevance endpoint
+with affine `P_BO`, full finite-test support, and the affine indifference
+cutoff at the centered acting-law mean.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_indifference_cutoff_literal_decision_event_latent_kernels_finite_test_actor_support_full_test_support_centered_baseTerm_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_indifference_cutoff_literal_decision_event_latent_kernels_finite_test_actor_support_full_test_support_centered_baseTerm_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 report-required finite-test value no-relevance endpoint
+with affine `P_BO`, direct binary best response, direct finite-test threshold
+support, full test-law support, and centered base term.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_binary_choice_literal_decision_event_latent_kernels_finite_test_threshold_support_full_test_support_centered_baseTerm_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_binary_choice_literal_decision_event_latent_kernels_finite_test_threshold_support_full_test_support_centered_baseTerm_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 report-required finite-test value no-relevance endpoint
+with affine `P_BO`, exact payoff-threshold taking, direct finite-test
+threshold support, full test-law support, and centered base term.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_payoff_threshold_literal_decision_event_latent_kernels_finite_test_threshold_support_full_test_support_centered_baseTerm_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_payoff_threshold_literal_decision_event_latent_kernels_finite_test_threshold_support_full_test_support_centered_baseTerm_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 report-required finite-test value no-relevance endpoint
+with affine `P_BO`, indifference cutoff, direct finite-test threshold support,
+full test-law support, and centered base term.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_indifference_cutoff_literal_decision_event_latent_kernels_finite_test_threshold_support_full_test_support_centered_baseTerm_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_canonical_base_point_estimate_fairness_iff_value_no_test_relevance_of_affine_pbo_indifference_cutoff_literal_decision_event_latent_kernels_finite_test_threshold_support_full_test_support_centered_baseTerm_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 report-required corrected point-estimate
+base-source-model route with affine `P_BO`, literal taking decision/event,
+literal latent kernels, literal lower-cutoff support, centered base term, PMF
+self-laws, and internal finite-event decidability.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_centered_baseTerm_self_law_classical_decidable :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_point_estimate_fairness_iff_no_test_relevance_of_affine_pbo_base_source_model_literal_decision_event_latent_kernels_threshold_support_centered_baseTerm_self_law_classical_decidable
+
+/--
+Theorem 3.2 Section 3 report-required corrected base-source-model route for
+the skill-mixture raw-mixture surface, in reporter/base-only equality form.
+-/
+abbrev paper_interface_theorem3_2_section3_report_required_skill_mixture_raw_mixture_fairness_iff_reporter_eq_baseOnly_on_positive_event_of_base_source_model :=
+  @paper_theorem3_2_section3_report_required_skill_mixture_raw_mixture_fairness_iff_reporter_eq_baseOnly_on_positive_event_of_base_source_model
+
+/--
+Theorem 3.2 Section 3 source-witness route specialized to the skill-mixture
+raw-mixture surface from pointwise latent-kernel identities, in fairness iff
+test-blankness form.
+-/
+abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_test_blank_of_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_test_blank_of_pointwise_latent_kernels
+
+/--
+Theorem 3.2 Section 3 source-witness route specialized to the skill-mixture
+raw-mixture surface from pointwise latent-kernel identities, in fairness iff
+no-test-relevance form.
+-/
+abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_no_test_relevance_of_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_no_test_relevance_of_pointwise_latent_kernels
+
+/--
+Theorem 3.2 Section 3 source-witness route specialized to the skill-mixture
+raw-mixture surface from pointwise latent-kernel identities, in reporter/base-
+only equality form.
+-/
+abbrev paper_interface_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_reporter_eq_baseOnly_on_positive_event_of_pointwise_latent_kernels :=
+  @paper_theorem3_2_section3_skill_mixture_raw_mixture_source_witness_fairness_iff_reporter_eq_baseOnly_on_positive_event_of_pointwise_latent_kernels
 
 /--
 Theorem 3.2 constant-latent source-witness iff form: the paper's source witness
@@ -17536,6 +20304,13 @@ theorem paper_interface_theorem3_2_law_fairness_impossibility_of_observable_impl
     hlatent_to_observable W
 
 /--
+Theorem 3.2 abstract-law endpoint from a latent-to-observable implication and
+local positive-share source evidence.
+-/
+abbrev paper_interface_theorem3_2_law_fairness_impossibility_of_observable_implication_and_local_off_mean_evidence :=
+  @paper_theorem3_2_law_fairness_impossibility_of_observable_implication_and_local_off_mean_witness
+
+/--
 Theorem 3.2 abstract-law endpoint from a source-shaped witness and constant
 latent-law identities.
 -/
@@ -17553,6 +20328,13 @@ theorem paper_interface_theorem3_2_law_fairness_impossibility_of_constant_laws_a
       lg21SourceLawTestBlank S :=
   paper_theorem3_2_law_fairness_impossibility_of_constant_laws_and_source_witness
     hAccess hNoAccess W
+
+/--
+Theorem 3.2 abstract-law endpoint from constant latent-law identities and
+local positive-share source evidence.
+-/
+abbrev paper_interface_theorem3_2_law_fairness_impossibility_of_constant_laws_and_local_off_mean_evidence :=
+  @paper_theorem3_2_law_fairness_impossibility_of_constant_laws_and_local_off_mean_witness
 
 /--
 Theorem 3.2 Section 3 abstract-law endpoint from the source-shaped witness.
@@ -17636,6 +20418,42 @@ theorem paper_interface_theorem3_2_section3_law_no_test_relevance_of_constant_la
     hAccess hNoAccess W hfair
 
 /--
+Theorem 3.2 Section 3 continuous-law endpoint from a source-shaped witness
+when a separate source argument has already ruled out latent-skill fairness.
+-/
+theorem paper_interface_theorem3_2_section3_law_fairness_impossibility_of_not_latent_and_source_evidence
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hnot_latent : ¬ lg21SourceLawLatentSkillFair S)
+    (W : LG21LawObservableFairTestBlankSourceWitness S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      (lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S →
+        lg21SourceLawTestBlank S) :=
+  paper_theorem3_2_section3_law_fairness_impossibility_of_not_latent_and_source_witness
+    hnot_latent W
+
+/--
+Theorem 3.2 Section 3 continuous-law no-relevance form from a source-shaped
+witness when a separate source argument has already ruled out latent-skill
+fairness.
+-/
+theorem paper_interface_theorem3_2_section3_law_no_test_relevance_of_not_latent_and_source_evidence
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hnot_latent : ¬ lg21SourceLawLatentSkillFair S)
+    (W : LG21LawObservableFairTestBlankSourceWitness S)
+    (hfair :
+      lg21SourceLawLatentSkillFair S ∨ lg21SourceLawObservablyFair S) :
+    (∀ (base : Base) (test : Test) (action : LG21AccessAction),
+        (paperSchoolInformationSetFromAccessAction false base test action).accessStatus =
+          none) ∧
+      ¬ ∃ e base test, S.baseOnlyLaw e base ≠ S.fullFeatureLaw e base test :=
+  paper_theorem3_2_section3_law_no_test_relevance_of_not_latent_and_source_witness
+    hnot_latent W hfair
+
+/--
 Theorem 3.2 continuous-law source-witness route packaged as the compact
 fairness-impossibility certificate.
 -/
@@ -17666,6 +20484,20 @@ def paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_constan
     LG21LawFairnessImpossibilityCertificate S :=
   paper_theorem3_2_law_fairness_impossibility_certificate_of_constant_laws_and_source_witness
     hAccess hNoAccess W
+
+/--
+Theorem 3.2 continuous-law source-witness route packaged as a compact
+certificate when a separate source argument has already ruled out latent-skill
+fairness.
+-/
+def paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_not_latent_and_source_evidence
+    {Skill Base Test Law : Type*}
+    {S : LG21SourceLawPolicySurface Skill Base Test Law}
+    (hnot_latent : ¬ lg21SourceLawLatentSkillFair S)
+    (W : LG21LawObservableFairTestBlankSourceWitness S) :
+    LG21LawFairnessImpossibilityCertificate S :=
+  paper_theorem3_2_law_fairness_impossibility_certificate_of_not_latent_and_source_witness
+    hnot_latent W
 
 /--
 Theorem 3.2 continuous-law source-witness iff form using the named
@@ -20477,6 +23309,359 @@ cutoff taking decision and finite taker event literalized.
 -/
 abbrev paper_interface_theorem3_1_section3_report_required_strategic_withholding_event_share_of_full_support_literal_cutoff_event_with_per_base_nontriviality :=
   @paper_theorem3_1_section3_report_required_law_strategic_withholding_for_every_equilibrium_of_full_support_literal_cutoff_event_and_base_mixed_affine_skill_posterior_surface_with_per_base_nontriviality
+
+/-- Paper-facing predicate identifying a policy with the Gaussian `P_BO` formula. -/
+abbrev paper_interface_gaussian_posterior_mean_pbo_formula :=
+  @lg21GaussianPosteriorMeanPBOFormula
+
+/-- Paper-facing bridge from posterior means to the Gaussian `P_BO` formula. -/
+abbrev paper_interface_gaussian_posterior_mean_pbo_formula_of_posteriorMean :=
+  @lg21GaussianPosteriorMeanPBOFormula_of_posteriorMean
+
+/-- Paper-facing predicate identifying a policy with the affine-skill `P_BO` formula. -/
+abbrev paper_interface_affine_skill_pbo_formula :=
+  @lg21AffineSkillPBOFormula
+
+/-- Paper-facing Gaussian cutoff induced by a `P_BO` threshold comparison. -/
+abbrev paper_interface_gaussian_posterior_mean_pbo_cutoff :=
+  @lg21GaussianPosteriorMeanPBOCutoff
+
+/-- Paper-facing threshold equivalence for Gaussian `P_BO` comparisons. -/
+abbrev paper_interface_gaussian_posterior_mean_pbo_threshold_iff_cutoff :=
+  @lg21GaussianPosteriorMeanPBO_threshold_iff_cutoff
+
+/-- Paper-facing lower-cutoff strategy fact for Gaussian `P_BO` comparisons. -/
+abbrev paper_interface_gaussian_posterior_mean_pbo_lowerCutoffStrategy :=
+  @lg21GaussianPosteriorMeanPBO_lowerCutoffStrategy
+
+/-- Paper-facing support bridge from literal Gaussian `P_BO` decisions to the induced cutoff. -/
+abbrev paper_interface_gaussian_posterior_mean_pbo_cutoff_le_of_literal_decision_true :=
+  @lg21GaussianPosteriorMeanPBO_cutoff_le_of_literal_decision_true
+
+/-- Paper-facing actor-support bridge from literal Gaussian `P_BO` decisions to induced-cutoff support. -/
+abbrev paper_interface_gaussian_posterior_mean_pbo_actor_support_cutoff_of_literal_decision_true :=
+  @lg21GaussianPosteriorMeanPBO_actor_support_cutoff_of_literal_decision_true
+
+/-- Paper-facing affine-skill cutoff induced by a `P_BO` threshold comparison. -/
+abbrev paper_interface_affine_skill_pbo_cutoff :=
+  @lg21AffineSkillPBOCutoff
+
+/-- Paper-facing threshold equivalence for affine-skill `P_BO` comparisons. -/
+abbrev paper_interface_affine_skill_pbo_threshold_iff_cutoff :=
+  @lg21AffineSkillPBO_threshold_iff_cutoff
+
+/-- Paper-facing lower-cutoff strategy fact for affine-skill `P_BO` comparisons. -/
+abbrev paper_interface_affine_skill_pbo_lowerCutoffStrategy :=
+  @lg21AffineSkillPBO_lowerCutoffStrategy
+
+/-- Paper-facing support bridge from literal affine-skill `P_BO` decisions to the induced cutoff. -/
+abbrev paper_interface_affine_skill_pbo_cutoff_le_of_literal_decision_true :=
+  @lg21AffineSkillPBO_cutoff_le_of_literal_decision_true
+
+/-- Paper-facing actor-support bridge from literal affine-skill `P_BO` decisions to induced-cutoff support. -/
+abbrev paper_interface_affine_skill_pbo_actor_support_cutoff_of_literal_decision_true :=
+  @lg21AffineSkillPBO_actor_support_cutoff_of_literal_decision_true
+
+/-- Paper-facing Theorem 3.1 optional-reporting source witness from a Gaussian `P_BO` threshold rule. -/
+abbrev paper_interface_theorem3_1_optional_reporting_pbo_threshold_source_witness :=
+  @paper_theorem3_1_optional_reporting_pbo_threshold_source_witness
+
+/--
+Paper-facing Theorem 3.1 optional-reporting source-equilibrium bridge from
+the closed no-report-mixture fixed point.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_source_equilibrium_of_no_report_mixture :=
+  @paper_theorem3_1_optional_reporting_source_equilibrium_of_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting source-equilibrium bridge in
+Gaussian `P_BO` threshold notation.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_pbo_threshold_source_equilibrium_of_no_report_mixture :=
+  @paper_theorem3_1_optional_reporting_pbo_threshold_source_equilibrium_of_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting source-equilibrium bridge with
+the access fraction instantiated as a finite event share.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_source_equilibrium_of_event_share_no_report_mixture :=
+  @paper_theorem3_1_optional_reporting_source_equilibrium_of_event_share_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting finite-event-share
+source-equilibrium bridge in Gaussian `P_BO` threshold notation.
+-/
+abbrev paper_interface_theorem3_1_optional_reporting_pbo_threshold_source_equilibrium_of_event_share_no_report_mixture :=
+  @paper_theorem3_1_optional_reporting_pbo_threshold_source_equilibrium_of_event_share_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting Section 3 source-equilibrium
+endpoint from the no-report-mixture fixed point, bundled with the concrete
+source-shaped posterior continuous-law unfairness surface.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_of_no_report_mixture :=
+  @paper_theorem3_1_section3_optional_reporting_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_of_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting Section 3 source-equilibrium
+endpoint with concrete finite-event-share access fractions.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_of_event_share_no_report_mixture :=
+  @paper_theorem3_1_section3_optional_reporting_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_of_event_share_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting Section 3 source-equilibrium and
+continuous-law unfairness endpoint in Gaussian `P_BO` threshold notation.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_threshold_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_of_no_report_mixture :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_threshold_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_of_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting Section 3 finite-event-share
+source-equilibrium and continuous-law unfairness endpoint in Gaussian `P_BO`
+threshold notation.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_threshold_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_of_event_share_no_report_mixture :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_threshold_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_of_event_share_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting Section 3 source-equilibrium and
+continuous-law unfairness endpoint for every equilibrium index in Gaussian
+`P_BO` threshold notation.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_threshold_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_for_every_equilibrium_of_no_report_mixture :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_threshold_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_for_every_equilibrium_of_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting Section 3 finite-event-share
+source-equilibrium and continuous-law unfairness endpoint for every equilibrium
+index in Gaussian `P_BO` threshold notation.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_threshold_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_for_every_equilibrium_of_event_share_no_report_mixture :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_threshold_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_for_every_equilibrium_of_event_share_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting Section 3 source-equilibrium
+endpoint for every equilibrium index.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_for_every_equilibrium_of_no_report_mixture :=
+  @paper_theorem3_1_section3_optional_reporting_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_for_every_equilibrium_of_no_report_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting Section 3 finite-event-share
+source-equilibrium endpoint for every equilibrium index.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_for_every_equilibrium_of_event_share_no_report_mixture :=
+  @paper_theorem3_1_section3_optional_reporting_source_equilibrium_and_base_mixed_gaussian_posterior_law_unfair_for_every_equilibrium_of_event_share_no_report_mixture
+
+/-- Paper-facing Theorem 3.1 report-required source witness from an affine-skill `P_BO` threshold rule. -/
+abbrev paper_interface_theorem3_1_report_required_pbo_threshold_source_witness :=
+  @paper_theorem3_1_report_required_pbo_threshold_source_witness
+
+/--
+Paper-facing blocker for the old pointwise report-required source model: the
+nontrivial no-take-mixture threshold witness cannot be realized by
+`lg21ReportRequiredBaseSourceEquilibriumData` when reporting is required at
+every off-support information state.
+-/
+abbrev paper_interface_theorem3_1_report_required_pointwise_source_equilibrium_blocker_of_no_take_mixture :=
+  @paper_theorem3_1_report_required_source_equilibrium_blocker_of_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required source-equilibrium bridge from the
+no-take-mixture fixed point, repaired as an a.e. source equilibrium on the
+realized diagonal information law.
+-/
+abbrev paper_interface_theorem3_1_report_required_source_equilibriumAE_of_no_take_mixture :=
+  @paper_theorem3_1_report_required_source_equilibriumAE_of_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required a.e. source-equilibrium bridge in
+affine-skill `PBO` threshold notation.
+-/
+abbrev paper_interface_theorem3_1_report_required_pbo_threshold_source_equilibriumAE_of_no_take_mixture :=
+  @paper_theorem3_1_report_required_pbo_threshold_source_equilibriumAE_of_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required a.e. source-equilibrium bridge with
+the access fraction instantiated as a finite event share.
+-/
+abbrev paper_interface_theorem3_1_report_required_source_equilibriumAE_of_event_share_no_take_mixture :=
+  @paper_theorem3_1_report_required_source_equilibriumAE_of_event_share_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required finite-event-share a.e.
+source-equilibrium bridge in affine-skill `PBO` threshold notation.
+-/
+abbrev paper_interface_theorem3_1_report_required_pbo_threshold_source_equilibriumAE_of_event_share_no_take_mixture :=
+  @paper_theorem3_1_report_required_pbo_threshold_source_equilibriumAE_of_event_share_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 a.e. source-equilibrium
+endpoint from the no-take-mixture fixed point, bundled with the concrete
+source-shaped affine-skill posterior continuous-law unfairness surface.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_of_no_take_mixture :=
+  @paper_theorem3_1_section3_report_required_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_of_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 repaired a.e.
+source-equilibrium endpoint with concrete finite-event-share access fractions.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_of_event_share_no_take_mixture :=
+  @paper_theorem3_1_section3_report_required_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_of_event_share_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 repaired a.e.
+source-equilibrium and continuous-law unfairness endpoint in affine-skill
+`P_BO` threshold notation.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_threshold_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_of_no_take_mixture :=
+  @paper_theorem3_1_section3_report_required_pbo_threshold_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_of_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 finite-event-share repaired
+a.e. source-equilibrium and continuous-law unfairness endpoint in affine-skill
+`P_BO` threshold notation.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_threshold_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_of_event_share_no_take_mixture :=
+  @paper_theorem3_1_section3_report_required_pbo_threshold_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_of_event_share_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 repaired a.e.
+source-equilibrium and continuous-law unfairness endpoint for every equilibrium
+index in affine-skill `P_BO` threshold notation.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_threshold_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_for_every_equilibrium_of_no_take_mixture :=
+  @paper_theorem3_1_section3_report_required_pbo_threshold_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_for_every_equilibrium_of_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 finite-event-share repaired
+a.e. source-equilibrium and continuous-law unfairness endpoint for every
+equilibrium index in affine-skill `P_BO` threshold notation.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_threshold_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_for_every_equilibrium_of_event_share_no_take_mixture :=
+  @paper_theorem3_1_section3_report_required_pbo_threshold_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_for_every_equilibrium_of_event_share_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 repaired a.e.
+source-equilibrium endpoint for every equilibrium index.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_for_every_equilibrium_of_no_take_mixture :=
+  @paper_theorem3_1_section3_report_required_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_for_every_equilibrium_of_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 finite-event-share repaired
+a.e. source-equilibrium endpoint for every equilibrium index.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_for_every_equilibrium_of_event_share_no_take_mixture :=
+  @paper_theorem3_1_section3_report_required_source_equilibriumAE_and_base_mixed_affine_skill_posterior_law_unfair_for_every_equilibrium_of_event_share_no_take_mixture
+
+/--
+Paper-facing Theorem 3.1 optional-reporting Section 3 source-witness endpoint
+from Gaussian `P_BO` threshold rules, for every equilibrium index.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_threshold_source_witness_for_every_equilibrium :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_threshold_source_witness_for_every_equilibrium
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 source-witness endpoint
+from affine-skill `P_BO` threshold rules, for every equilibrium index.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_threshold_source_witness_for_every_equilibrium :=
+  @paper_theorem3_1_section3_report_required_pbo_threshold_source_witness_for_every_equilibrium
+
+/--
+Paper-facing Theorem 3.1 optional-reporting Section 3 source-witness endpoint
+from Gaussian `P_BO` threshold rules, bundled with the concrete source-shaped
+posterior PMF unfairness surface.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_threshold_source_witness_and_base_mixed_gaussian_posterior_pmf_unfair_for_every_equilibrium :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_threshold_source_witness_and_base_mixed_gaussian_posterior_pmf_unfair_for_every_equilibrium
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 source-witness endpoint
+from affine-skill `P_BO` threshold rules, bundled with the concrete
+source-shaped posterior PMF unfairness surface.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_threshold_source_witness_and_base_mixed_affine_skill_posterior_pmf_unfair_for_every_equilibrium :=
+  @paper_theorem3_1_section3_report_required_pbo_threshold_source_witness_and_base_mixed_affine_skill_posterior_pmf_unfair_for_every_equilibrium
+
+/--
+Paper-facing Theorem 3.1 optional-reporting Section 3 source-witness endpoint
+from Gaussian `P_BO` threshold rules, bundled with the concrete source-shaped
+posterior continuous-law unfairness surface.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_threshold_source_witness_and_base_mixed_gaussian_posterior_law_unfair_for_every_equilibrium :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_threshold_source_witness_and_base_mixed_gaussian_posterior_law_unfair_for_every_equilibrium
+
+/--
+Paper-facing Theorem 3.1 report-required Section 3 source-witness endpoint
+from affine-skill `P_BO` threshold rules, bundled with the concrete
+source-shaped posterior continuous-law unfairness surface.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_threshold_source_witness_and_base_mixed_affine_skill_posterior_law_unfair_for_every_equilibrium :=
+  @paper_theorem3_1_section3_report_required_pbo_threshold_source_witness_and_base_mixed_affine_skill_posterior_law_unfair_for_every_equilibrium
+
+/-- Paper-facing facts for the optional-reporting Gaussian `P_BO` PMF certificate family. -/
+abbrev paper_interface_theorem3_1_optional_reporting_pbo_threshold_pmf_certificate_facts_of_full_support :=
+  @paper_theorem3_1_optional_reporting_pbo_threshold_pmf_certificate_facts_for_every_equilibrium_of_full_support_and_base_mixed_gaussian_posterior_surface
+
+/-- Paper-facing optional-reporting Gaussian `P_BO` PMF certificate family. -/
+noncomputable abbrev paper_interface_theorem3_1_optional_reporting_pbo_threshold_pmf_certificate_family_of_full_support :=
+  @paper_theorem3_1_optional_reporting_pbo_threshold_pmf_certificate_for_every_equilibrium_of_full_support_and_base_mixed_gaussian_posterior_surface
+
+/-- Paper-facing facts for the report-required affine-skill `P_BO` PMF certificate family. -/
+abbrev paper_interface_theorem3_1_report_required_pbo_threshold_pmf_certificate_facts_of_full_support :=
+  @paper_theorem3_1_report_required_pbo_threshold_pmf_certificate_facts_for_every_equilibrium_of_full_support_and_base_mixed_affine_skill_posterior_surface
+
+/-- Paper-facing report-required affine-skill `P_BO` PMF certificate family. -/
+noncomputable abbrev paper_interface_theorem3_1_report_required_pbo_threshold_pmf_certificate_family_of_full_support :=
+  @paper_theorem3_1_report_required_pbo_threshold_pmf_certificate_for_every_equilibrium_of_full_support_and_base_mixed_affine_skill_posterior_surface
+
+/--
+Paper-facing Theorem 3.1 optional-reporting PMF endpoint with the Gaussian
+`P_BO` threshold comparison, full support, and source-shaped posterior surface.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_threshold_pmf_strategic_withholding_of_full_support :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_threshold_pmf_strategic_withholding_for_every_equilibrium_of_full_support_and_base_mixed_gaussian_posterior_surface
+
+/--
+Paper-facing Theorem 3.1 report-required PMF endpoint with the affine-skill
+`P_BO` threshold comparison, full support, and source-shaped posterior surface.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_threshold_pmf_strategic_withholding_of_full_support :=
+  @paper_theorem3_1_section3_report_required_pbo_threshold_pmf_strategic_withholding_for_every_equilibrium_of_full_support_and_base_mixed_affine_skill_posterior_surface
+
+/--
+Paper-facing Theorem 3.1 optional-reporting full-support route with the
+Gaussian `P_BO` assumption explicit, a literal cutoff event, and per-base
+reporting/nonreporting.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_strategic_withholding_event_share_of_full_support_literal_cutoff_event_with_per_base_nontriviality :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_strategic_withholding_for_every_equilibrium_of_full_support_literal_cutoff_event_and_base_mixed_gaussian_posterior_surface_with_per_base_nontriviality
+
+/--
+Paper-facing Theorem 3.1 report-required full-support route with the
+affine-skill `P_BO` assumption explicit, a literal cutoff event, and per-base
+taking/nontaking.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_strategic_withholding_event_share_of_full_support_literal_cutoff_event_with_per_base_nontriviality :=
+  @paper_theorem3_1_section3_report_required_pbo_strategic_withholding_for_every_equilibrium_of_full_support_literal_cutoff_event_and_base_mixed_affine_skill_posterior_surface_with_per_base_nontriviality
+
+/--
+Paper-facing Theorem 3.1 optional-reporting full-support route with a Gaussian
+`P_BO` threshold comparison converted to its induced cutoff.
+-/
+abbrev paper_interface_theorem3_1_section3_optional_reporting_pbo_threshold_strategic_withholding_event_share_of_full_support_with_per_base_nontriviality :=
+  @paper_theorem3_1_section3_optional_reporting_pbo_threshold_strategic_withholding_for_every_equilibrium_of_full_support_and_base_mixed_gaussian_posterior_surface_with_per_base_nontriviality
+
+/--
+Paper-facing Theorem 3.1 report-required full-support route with an affine-skill
+`P_BO` threshold comparison converted to its induced cutoff.
+-/
+abbrev paper_interface_theorem3_1_section3_report_required_pbo_threshold_strategic_withholding_event_share_of_full_support_with_per_base_nontriviality :=
+  @paper_theorem3_1_section3_report_required_pbo_threshold_strategic_withholding_for_every_equilibrium_of_full_support_and_base_mixed_affine_skill_posterior_surface_with_per_base_nontriviality
 
 /--
 Paper-facing Theorem 3.1, optional-reporting regime, with the access fraction

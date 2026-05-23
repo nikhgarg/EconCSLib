@@ -112,6 +112,25 @@ theorem affine_div_lt_affine_div_of_lt
   exact div_lt_div_of_pos_right hnum hdenom
 
 /--
+A positive-slope affine score divided by a positive denominator preserves and
+reflects weak order.
+-/
+theorem affine_div_le_affine_div_iff
+    {intercept slope denom x y : ℝ}
+    (hslope : 0 < slope) (hdenom : 0 < denom) :
+    (intercept + slope * x) / denom ≤
+        (intercept + slope * y) / denom ↔
+      x ≤ y := by
+  constructor
+  · intro hle
+    by_contra hnot
+    have hlt : y < x := lt_of_not_ge hnot
+    exact not_lt_of_ge hle
+      (affine_div_lt_affine_div_of_lt hslope hdenom hlt)
+  · intro hxy
+    exact affine_div_le_affine_div_of_le hslope.le hdenom hxy
+
+/--
 If twice an affine numerator equals the denominator, then the corresponding
 normalized affine value is one half.
 -/

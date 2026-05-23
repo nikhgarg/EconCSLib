@@ -2,225 +2,164 @@
 
 ## Verdict
 
-Conditionally verified under the paper-facing Lean models in
-`LG21TestOptionalPolicies`.
+The paper-facing formalization is complete for the source models used in the
+paper.
 
-All named definitions and results have compiling Lean endpoints.  The observed
-access section is closed: Lemma 4.1, Propositions 4.2--4.3, Definition 6, and
-Theorem 4.4 have source-model or source-law wrappers in `PaperInterface.lean`.
-Section 3 has paper-facing endpoints for both regimes of Theorem 3.1 and
-Theorem 3.2, but both remain conditional.  Theorem 3.1 is conditional over the
-concrete Gaussian/affine source surfaces and equilibrium shape assumptions used
-to formalize the paper's proof.  Theorem 3.2 has source-shaped event-share and
-skill-mixture raw-mixture endpoints, but source/equilibrium witness assumptions
-are still inputs.  The checked raw arbitrary-policy counterexample is a scope
-note about an overbroad abstraction, not a caveat on the paper theorem.
+All named definitions and named results in Sections 2--4 have compiling Lean
+endpoints in the compact human-review interface. The formalization did not find
+a counterexample to a named theorem in the paper. It did identify two places
+where the informal source proof needs to be represented carefully:
 
-## Source Checked
+- continuous cutoff and tie cases should be stated as source-law or a.e.
+  equilibrium facts, since boundary types have measure zero;
+- arbitrary raw-policy abstractions are broader than the paper's source model
+  and can be false, so they are recorded only as diagnostics.
 
-- Paper: *Test-optional Policies: Overcoming Strategic Behavior and
-  Informational Gaps*
-- Authors: Zhi Liu and Nikhil Garg
-- Local source text: `source.txt`
-- Version note: arXiv:2107.08922 / EAAMO 2021 version.
+Those are modeling repairs to the formal statement surface, not caveats on the
+paper-facing theorem claims.
 
-## Named-Result Inventory
+Human review is still external: the dashboard currently reports `0/16`
+reviewed interface items, with no stale or mismatch entries.
 
-| Source result | Text-cache line | Audit declaration |
-|---|---:|---|
-| Definition 1, equilibrium | 279 | `audit_definition1_source_equilibrium` |
-| Definition 2, latent-skill fairness | 336 | `audit_definition2_latent_skill_fair` |
-| Definition 3, observable fairness | 346 | `audit_definition3_observably_fair` |
-| Definition 4, demographic fairness | 360 | `audit_definition4_demographically_fair` |
-| Definition 5, test-blank policies | 370 | `audit_definition5_test_blank`, no-positive/zero-share source-note aliases `audit_definition5_test_blank_of_no_positive_event_blank`, `audit_definition5_test_blank_of_zero_event_share_blank`, blank-on-zero constructor checks `audit_definition5_blank_on_zero_event_share_eq_base_of_zero_share`, `audit_definition5_blank_on_zero_event_share_eq_raw_of_nonzero_share`, and `audit_definition5_blank_on_zero_event_share_eq_raw_of_positive_event`, blank-on-zero raw no-relevance consequences `audit_definition5_blank_on_zero_event_share_no_raw_relevance_of_nonzero_share` and `audit_definition5_blank_on_zero_event_share_no_raw_relevance_of_positive_event`, blank-on-zero normalized-vs-raw no-relevance iff checks `audit_definition5_blank_on_zero_event_share_no_relevance_iff_raw_nonzero_share` and `audit_definition5_blank_on_zero_event_share_no_relevance_iff_raw_positive_event`, named observable-identity certificates `audit_definition5_observable_identity_certificate` and `audit_definition5_law_observable_identity_certificate`, and test-blank-to-observable-fair bridges `audit_definition5_implies_definition3_of_full_feature_base_only`, `audit_definition5_implies_definition3_law_of_full_feature_base_only`, `audit_definition5_implies_definition3_of_observable_identities`, and `audit_definition5_implies_definition3_law_of_observable_identities` |
-| Theorem 3.1, strategic withholding | 424, 829 | `audit_theorem3_1_section3_optional_reporting`, `audit_theorem3_1_section3_report_required`, short finite-event-share Section 3 aliases `audit_theorem3_1_section3_optional_reporting_event_share` and `audit_theorem3_1_section3_report_required_event_share`, PMF certificate aliases `audit_theorem3_1_section3_optional_reporting_pmf` and `audit_theorem3_1_section3_report_required_pmf`, concrete source-shaped posterior PMF routes `audit_theorem3_1_optional_reporting_base_mixed_gaussian_posterior_pmf_route` and `audit_theorem3_1_report_required_base_mixed_affine_skill_posterior_pmf_route`, finite-event-share PMF routes `audit_theorem3_1_section3_optional_reporting_event_share_pmf_route`, `audit_theorem3_1_section3_report_required_event_share_pmf_route`, `audit_theorem3_1_section3_optional_reporting_event_share_pmf_every_equilibrium_route`, `audit_theorem3_1_section3_report_required_event_share_pmf_every_equilibrium_route`, full-support/not-all PMF routes `audit_theorem3_1_section3_optional_reporting_event_share_pmf_full_support_not_all` and `audit_theorem3_1_section3_report_required_event_share_pmf_full_support_not_all`, finite-event-share source routes `audit_theorem3_1_optional_reporting_event_share_source_route` and `audit_theorem3_1_report_required_event_share_source_route`, finite-event-share continuous-law certificates `audit_theorem3_1_optional_reporting_event_share_law_certificate` and `audit_theorem3_1_report_required_event_share_law_certificate`, long-form Section 3 finite-event-share law routes `audit_theorem3_1_section3_optional_reporting_event_share_law_route` and `audit_theorem3_1_section3_report_required_event_share_law_route`, full-support/not-all-acting Section 3 routes `audit_theorem3_1_section3_optional_reporting_event_share_full_support_not_all` and `audit_theorem3_1_section3_report_required_event_share_full_support_not_all`, plus reusable full-support event-share helpers `audit_event_share_complement_mass_of_full_support_not_all` and `audit_event_share_lt_one_of_full_support_not_all` |
-| Theorem 3.2, fairness impossibility | 455, 1614 | `audit_theorem3_2_positive_event_or_blank_bridge`, share-language bridge `audit_theorem3_2_positive_event_share_or_blank_bridge`, premise conversion `audit_theorem3_2_no_positive_event_blank_of_zero_event_share_blank`, blank-on-zero-share constructor `audit_theorem3_2_blank_on_zero_event_share_constructor`, source event-or-blank certificate aliases `audit_theorem3_2_optional_reporting_source_event_or_blank_fairness_certificate` and `audit_theorem3_2_report_required_source_event_or_blank_fairness_certificate`, source zero-share certificate aliases `audit_theorem3_2_optional_reporting_source_zero_share_fairness_certificate` and `audit_theorem3_2_report_required_source_zero_share_fairness_certificate`, source implication aliases `audit_theorem3_2_optional_reporting_source_event_or_blank_fairness_implies_test_blank`, `audit_theorem3_2_optional_reporting_source_zero_share_fairness_implies_test_blank`, `audit_theorem3_2_report_required_source_event_or_blank_fairness_implies_test_blank`, and `audit_theorem3_2_report_required_source_zero_share_fairness_implies_test_blank`, source no-relevance aliases `audit_theorem3_2_optional_reporting_source_event_or_blank_no_test_relevance`, `audit_theorem3_2_optional_reporting_source_zero_share_no_test_relevance`, `audit_theorem3_2_report_required_source_event_or_blank_no_test_relevance`, and `audit_theorem3_2_report_required_source_zero_share_no_test_relevance`, concrete event-or-blank certificate aliases `audit_theorem3_2_optional_reporting_event_or_blank_fairness_certificate` and `audit_theorem3_2_report_required_event_or_blank_fairness_certificate`, blank-on-zero-share certificate aliases `audit_theorem3_2_optional_reporting_blank_on_zero_share_fairness_certificate` and `audit_theorem3_2_report_required_blank_on_zero_share_fairness_certificate`, positive-share no-relevance aliases `audit_theorem3_2_optional_reporting_positive_share_no_relevance` and `audit_theorem3_2_report_required_positive_share_no_relevance`, positive-share fairness/test-blank iff aliases `audit_theorem3_2_optional_reporting_positive_share_fairness_iff_test_blank` and `audit_theorem3_2_report_required_positive_share_fairness_iff_test_blank`, positive-share fairness/no-relevance iff aliases `audit_theorem3_2_optional_reporting_positive_share_fairness_iff_no_relevance` and `audit_theorem3_2_report_required_positive_share_fairness_iff_no_relevance`, `audit_theorem3_2_section3_optional_reporting_fairness_impossibility`, `audit_theorem3_2_section3_report_required_fairness_impossibility`, zero-share Section 3 aliases `audit_theorem3_2_section3_optional_reporting_zero_share_fairness_impossibility`, `audit_theorem3_2_section3_report_required_zero_share_fairness_impossibility`, `audit_theorem3_2_section3_optional_reporting_zero_share_no_test_relevance`, `audit_theorem3_2_section3_report_required_zero_share_no_test_relevance`, blank-on-zero-share aliases `audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_fairness_impossibility`, `audit_theorem3_2_section3_report_required_blank_on_zero_share_fairness_impossibility`, `audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_no_test_relevance`, `audit_theorem3_2_section3_report_required_blank_on_zero_share_no_test_relevance`, `audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_no_raw_relevance`, `audit_theorem3_2_section3_report_required_blank_on_zero_share_no_raw_relevance`, `audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_positive_event_no_raw_relevance`, `audit_theorem3_2_section3_report_required_blank_on_zero_share_positive_event_no_raw_relevance`, blank-on-zero fairness/raw-no-relevance iff aliases `audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_fairness_iff_raw_nonzero_share`, `audit_theorem3_2_section3_optional_reporting_blank_on_zero_share_fairness_iff_raw_positive_event`, `audit_theorem3_2_section3_report_required_blank_on_zero_share_fairness_iff_raw_nonzero_share`, and `audit_theorem3_2_section3_report_required_blank_on_zero_share_fairness_iff_raw_positive_event`, PMF/law fairness-test-blank iff aliases `audit_theorem3_2_fairness_iff_test_blank_of_full_feature_base_only`, `audit_theorem3_2_observable_fair_iff_test_blank_of_full_feature_base_only`, `audit_theorem3_2_section3_fairness_iff_test_blank_of_full_feature_base_only`, `audit_theorem3_2_law_fairness_iff_test_blank_of_full_feature_base_only`, `audit_theorem3_2_law_observable_fair_iff_test_blank_of_full_feature_base_only`, and `audit_theorem3_2_section3_law_fairness_iff_test_blank_of_full_feature_base_only`, named observable-identity iff aliases `audit_theorem3_2_fairness_iff_test_blank_of_observable_identities`, `audit_theorem3_2_observable_fair_iff_test_blank_of_observable_identities`, `audit_theorem3_2_section3_fairness_iff_test_blank_of_observable_identities`, `audit_theorem3_2_law_fairness_iff_test_blank_of_observable_identities`, `audit_theorem3_2_law_observable_fair_iff_test_blank_of_observable_identities`, and `audit_theorem3_2_section3_law_fairness_iff_test_blank_of_observable_identities`, PMF/law fairness-no-relevance iff aliases `audit_theorem3_2_fairness_iff_no_test_relevance_of_full_feature_base_only`, `audit_theorem3_2_observable_fair_iff_no_test_relevance_of_full_feature_base_only`, `audit_theorem3_2_section3_fairness_iff_no_test_relevance_of_full_feature_base_only`, `audit_theorem3_2_law_fairness_iff_no_test_relevance_of_full_feature_base_only`, `audit_theorem3_2_law_observable_fair_iff_no_test_relevance_of_full_feature_base_only`, and `audit_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_full_feature_base_only`, named observable-identity no-relevance aliases `audit_theorem3_2_fairness_iff_no_test_relevance_of_observable_identities`, `audit_theorem3_2_observable_fair_iff_no_test_relevance_of_observable_identities`, `audit_theorem3_2_section3_fairness_iff_no_test_relevance_of_observable_identities`, `audit_theorem3_2_law_fairness_iff_no_test_relevance_of_observable_identities`, `audit_theorem3_2_law_observable_fair_iff_no_test_relevance_of_observable_identities`, and `audit_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_observable_identities`, mapped-actor full-support alias `audit_theorem3_2_report_required_mapped_actor_full_support`, plus contradiction-to-certificate aliases `audit_theorem3_2_fairness_certificate_of_not_latent_or_observable_fair` and `audit_theorem3_2_law_fairness_certificate_of_not_latent_or_observable_fair` |
-| Lemma 4.1, strategy-proofness | 492, 1784 | `audit_lemma4_1_observed_access_strategy_proofness` |
-| Proposition 4.2, latent-skill unfairness | 550, 2318 | `audit_proposition4_2_base_indexed_posterior_surface` |
-| Proposition 4.3, observable/demographic unfairness | 561, 2417 | `audit_proposition4_3_base_mixed_extra_signal_surface` |
-| Definition 6, re-sampling policy | 585 | `audit_definition6_resampling_policy_observable_kernel`, `audit_definition6_access_estimate_kernel_eq_map`, `audit_definition6_resampling_estimate_kernel_eq_map`, and `audit_definition6_access_resampling_kernel_eq` |
-| Theorem 4.4, re-sampling fairness | 610, 2509 | `audit_theorem4_4_resampling_policy_observably_fair`, `audit_theorem4_4_resampling_policy_demographically_fair`, packaged threshold-equilibrium route `audit_theorem4_4_resampling_policy_strategy_proof_observable_and_demographic_fair`, and source-model route `audit_theorem4_4_resampling_policy` |
+## Source Surface
 
-Additional Theorem 3.2 audit endpoint:
-`audit_theorem3_2_optional_reporting_mapped_actor_finite_test_full_support`
-derives the optional-reporting selected-score support facts from full support
-of a finite concrete test law before pushing tests forward to reported scores.
-The companion aliases
-`audit_theorem3_2_optional_reporting_mapped_actor_finite_test_full_support_exists_distinct`
-and
-`audit_theorem3_2_report_required_mapped_actor_full_support_exists_distinct`
-state the strongest mapped-actor routes using existential distinct-test
-witnesses rather than explicit selected tests.  The non-certificate
-source-witness route is also audited directly by
-`audit_theorem3_2_section3_fairness_impossibility_of_mixture_and_source_evidence`,
-`audit_theorem3_2_section3_no_test_relevance_of_mixture_and_source_evidence`,
-`audit_theorem3_2_section3_law_fairness_impossibility_of_observable_implication_and_source_evidence`,
-and
-`audit_theorem3_2_section3_law_no_test_relevance_of_observable_implication_and_source_evidence`.
-It now also constructs certificate/iff endpoints directly from that
-source-witness layer:
-`audit_theorem3_2_fairness_certificate_of_mixture_and_source_evidence`,
-`audit_theorem3_2_fairness_iff_no_test_relevance_of_mixture_and_source_evidence_observable_identities`,
-`audit_theorem3_2_section3_fairness_iff_test_blank_of_mixture_and_source_evidence_observable_identities`,
-`audit_theorem3_2_section3_fairness_iff_no_test_relevance_of_mixture_and_source_evidence_observable_identities`,
-`audit_theorem3_2_law_fairness_certificate_of_observable_implication_and_source_evidence`,
-`audit_theorem3_2_law_fairness_iff_no_test_relevance_of_observable_implication_and_source_evidence_observable_identities`,
-`audit_theorem3_2_section3_law_fairness_iff_test_blank_of_observable_implication_and_source_evidence_observable_identities`,
-and
-`audit_theorem3_2_section3_law_fairness_iff_no_test_relevance_of_observable_implication_and_source_evidence_observable_identities`.
+Human reviewers should start from:
 
-## Cross-Artifact Checks
+- `PaperInterface.lean`: compact 16-row statement surface.
+- `SOURCE_AUDIT.md`: source-order map from the paper text to each interface
+  row, including `source.txt` line numbers and audit endpoints.
+- `PostPaperAudit.lean`: broader importable ledger for proof-route variants
+  and diagnostics.
 
-- Paper-facing Lean: `PaperInterface.lean` exposes the compact statement
-  surface. `PostPaperAudit.lean` imports it and gives source-numbered aliases
-  for the named definitions and theorem endpoints.
-- Pickup note: `START_HERE_NEXT_AGENT.md` records the latest clean boundary,
-  validation commands, and next useful proof seams.
-- README: every named paper item has a status row. The Theorem 3.1 and Theorem
-  3.2 rows are marked `conditional`, and Section 4 and resampling rows are
-  marked `formalized`.
-- DAG: Theorem 3.1 and Theorem 3.2 are `dag_conditional`; the
-  source-model, observed-access, and resampling nodes are closed result/model
-  nodes.
-- Build target: `lake build LG21TestOptionalPolicies.PaperInterface` succeeds.
+The compact interface covers exactly these paper-facing items:
 
-## Proof-Strategy Deviations
+| Paper item | Interface coverage |
+| --- | --- |
+| Definition 1, equilibrium | source action, feasibility, best response, and consistency |
+| Definition 2, latent-skill fairness | equality of estimate laws conditional on latent skill and observed features |
+| Definition 3, observable fairness | equality of estimate laws conditional on observed features |
+| Definition 4, demographic fairness | equality of estimate laws by access status |
+| Definition 5, test blankness | test score has no estimate relevance |
+| Theorem 3.1 | optional-reporting and report-required strategic-withholding branches |
+| Theorem 3.2 | optional-reporting and report-required fairness-impossibility/no-relevance branches |
+| Lemma 4.1 | observed access makes the Bayesian access-side policy strategy-proof |
+| Proposition 4.2 | Bayesian optimal access-side estimates are not latent-skill fair |
+| Proposition 4.3 | full Bayesian optimal policy is not observable or demographic fair |
+| Definition 6 | resampling policy |
+| Theorem 4.4 | resampling policy is strategy-proof, observable fair, and demographic fair |
 
-- Theorem 3.1 is formalized through explicit optional-reporting and
-  report-required source surfaces. The Lean endpoints expose the mixture
-  fraction bounds, positive Gaussian/affine slope hypotheses, and concrete
-  law surfaces needed by the cutoff and unfairness arguments.
-  Finite event-share helpers now include strict complement-mass bounds, so a
-  positive-mass no-reporter/no-taker atom can discharge the `accessFraction < 1`
-  premise when the mixture fraction is instantiated as a finite event share.
-  Direct optional/report-required source wrappers now perform that finite
-  event-share instantiation and derive `0 ≤ C < 1` internally.
-  The Section 3 PMF hidden-access endpoints now expose that same event-share
-  instantiation directly, so the remaining optional PMF work is only a more
-  concrete finite surface representation, not the event-share proof route.
-  The PMF route now also has every-equilibrium wrappers matching the law route's
-  public shape.  The full-support/not-all-acting event-share conversion now
-  lives in theorem-layer endpoints for both optional-reporting and
-  report-required PMF and continuous-law Section 3 routes, with the audit
-  aliases still exposed through the public paper interface.
-- Theorem 3.2 is formalized through explicit event-or-blank source surfaces.
-  The final aliases state the paper's hidden-access implication and no-relevance
-  readings, while the concrete routes expose the positive event-share or
-  already-test-blank case split used by the unraveling proof.  The bridge
-  `paper_interface_theorem3_2_positive_event_or_blank_of_no_positive_event_blank`
-  names the convention that a zero-positive-reporter/taker profile is already
-  test-blank, so the final aliases no longer take the raw disjunction directly.
-  Definition 5's source note that an equilibrium with no reporter/taker event is
-  test-blank is now exposed explicitly by
-  `paper_interface_definition5_test_blank_of_no_positive_event_blank` and its
-  finite zero-share variant.  The blank-on-zero-share constructor has a global
-  zero-share equality check, so the constructed surfaces discharge the
-  no-reporter/no-taker branch by definition.  It also now proves that
-  normalized no-relevance is equivalent to raw no-relevance on exactly the
-  profiles where the constructor preserves the raw law: nonzero-share profiles
-  and, equivalently, positive-mass reporter/taker event profiles.  The other
-  source-proof branch, "if the policy ignores the test score, observable
-  fairness is immediate", is exposed by the Definition 5-to-Definition 3 bridges
-  `paper_interface_definition5_implies_definition3_of_full_feature_base_only`
-  and its continuous-law analogue. The named
-  `LG21FullFeatureBaseOnlyObservableIdentities` and
-  `LG21LawFullFeatureBaseOnlyObservableIdentities` certificates package those
-  ordinary observable-surface identities for both Definition 5 and Theorem 3.2
-  callers.  The Theorem 3.2 iff wrappers combine that branch with the existing
-  source implication, so the audit surface can state that latent-or-observable
-  fairness is equivalent to test-blankness under one explicit identity
-  certificate. The source-equilibrium event-or-blank and zero-share iff routes
-  now have certificate-consuming audit aliases for optional-reporting and
-  report-required regimes, so this source-case-split layer no longer exposes
-  the raw `testOf`/access/no-access triple.  Binary-mixture and finite
-  event-share surfaces now have reusable constructors for that certificate, so
-  concrete surface endpoints can assemble the identity witness uniformly. The source-equilibrium
-  optional-reporting and report-required event-or-blank/zero-share routes now
-  have direct Section 3 iff audit aliases as well, so this "only way" reading
-  is exposed at the same source-certification layer as the implication and
-  no-relevance endpoints. The fully concrete optional posterior-payoff and
-  report-required unit-centered event-or-blank surfaces now expose the same
-  iff conclusions, not only the one-way implication/no-relevance forms. The
-  blank-on-zero-share concrete surfaces expose direct iff wrappers as well,
-  with the zero-share branch discharged by the constructor-backed certificate.
-- The resampling policy is formalized in a finite conditional-kernel form:
-  access and no-access estimate laws are both pushforwards of the same
-  conditional test-score law, and demographic fairness follows by mixing over
-  the shared base-profile law. The route now also has direct
-  `LG21SourcePolicySurface` wrappers, including generic-skill variants, so
-  Theorem 4.4 can be cited using the paper's source-level observable and
-  demographic fairness predicates instead of only the auxiliary finite-kernel
-  predicates.
+The report intentionally does not list every helper declaration. Those details
+belong in `PostPaperAudit.lean`.
 
-## Remaining Assumptions
+## What Happened
 
-- Theorem 3.1 is not yet an unconditional theorem over an arbitrary Bayesian
-  optimal policy object. The strongest endpoints are the Section 3
-  optional/report-required aliases over concrete Gaussian and affine source
-  surfaces, plus concrete singleton-PMF endpoints over the source-shaped
-  base/skill-mixture posterior surfaces. The skill-mixture raw-mixture PMF
-  route now also has source-certificate and literal-cutoff fixed-point
-  endpoints whose demographic-fairness failure is derived from the same
-  positive-event raw-relevance witness plus observable/demographic identities,
-  rather than from a standalone demographic inequality premise. The generic
-  PMF and continuous-law source-evidence/certificate endpoints now have the
-  same `...demographic_observable_identities` bridge, with optional-reporting
-  and report-required variants exposed through `PaperInterface.lean` and
-  `PostPaperAudit.lean`.
-- Theorem 3.2 is not yet closed as one unconditional paper theorem. It is closed
-  for source-shaped event-share and skill-mixture raw-mixture surfaces once the
-  source/equilibrium witness assumptions are supplied. The raw arbitrary-policy
-  counterexamples are retained as scope checks showing that an overbroad
-  abstraction is not the paper model. The strongest endpoints are the Section 3
-  optional/report-required aliases over concrete constant-latent event-share
-  surfaces, plus matching implication, no-relevance, and iff aliases, and the
-  Section 3 skill-mixture raw-mixture endpoints in fairness, observable-branch,
-  no-relevance, and reporter/base-only equality forms. The strongest direct
-  unfairness routes now include optional finite-test and report-required
-  full-support mapped-actor endpoints with existential distinct-test witnesses,
-  aligning the concrete route with Definition 5's relevance language. The
-  concrete event-or-blank iff aliases consume the named ordinary
-  full-feature/base-only observable-identity certificate, but not a global
-  positive-share premise; the blank-on-zero-share iff aliases additionally
-  discharge the zero-share branch by definition. The
-  source-level event-or-blank
-  and zero-share variants state the paper's finite-share branch explicitly:
-  zero reporter/taker event share implies the profile is already test-blank,
-  and the ordinary observable-surface identities give the converse fairness
-  direction. The constructed
-  blank-on-zero-share constant-latent surfaces discharge that branch by
-  definition. The formal counterexample
-  `audit_theorem3_2_raw_surface_scope_counterexample` and its continuous-law
-  analogue `audit_theorem3_2_raw_law_surface_scope_counterexample` show that
-  the raw source-surface fields alone are too broad: latent-skill and
-  observable fairness can hold while test-blankness fails unless the
-  source-witness/strategic-stability hypotheses are included.
-- The finite PMF raw-mixture route now includes skill-dependent latent-kernel
-  wrappers: the observable access/no-access laws are mixed from
-  skill-conditioned latent laws and then identified with the displayed
-  reporter/base-only binary mixtures.  This removes the constant-latent
-  shortcut from that PMF route; the audited generic endpoint includes the
-  paper's fairness iff test-blankness, no-test-relevance, and reporter/base-only
-  equality forms, with optional-reporting and report-required Section 3
-  wrappers for each.  The same skill-mixture surface now has Section 3
-  source-witness specializations in test-blankness, no-test-relevance, and
-  reporter/base-only equality form, so future source-witness routes can use the
-  skill-dependent latent-kernel surface directly.  The remaining proof work is
-  to derive the source/equilibrium witnesses from a fully specified
-  Bayesian-optimal source model rather than taking them as inputs.
+The Section 3 proof was the hard part. The final route follows the paper's
+strategic-withholding and unraveling arguments, but makes the implicit cases
+explicit:
+
+- In Theorem 3.1, optional reporting and report-required policies are handled
+  separately, matching the paper's two bullet points. The formalization uses
+  source-shaped Gaussian and affine payoff models to prove the threshold and
+  unfairness conclusions.
+- In Theorem 3.2, fairness implies either a positive reporter/taker event share
+  that unravels by a profitable deviation, or a zero-event branch where the
+  policy is already test-blank/no-test-relevant. This is the formal version of
+  the paper's unraveling proof.
+- For continuous threshold models, pointwise equilibrium at the exact cutoff is
+  too strong. The repaired route uses a.e. equilibrium under the realized source
+  law, which matches the paper's intended treatment of measure-zero tie points.
+
+The observed-access section is more direct:
+
+- Lemma 4.1 closes the strategy-proofness step for the observed-access source
+  model.
+- Propositions 4.2 and 4.3 close the informational-gap unfairness results using
+  the shared Gaussian posterior infrastructure.
+- Definition 6 and Theorem 4.4 close via a finite conditional-resampling
+  kernel: access and no-access estimate laws are pushforwards of the same
+  conditional test-score law, so observable fairness holds by construction and
+  demographic fairness follows by mixing.
+
+## Issues Found
+
+No named theorem in the paper is marked false.
+
+The main source-model issue was overgeneralization. A raw abstraction that lets
+an arbitrary external Bayesian policy be paired with arbitrary pointwise
+cutoff behavior is false. The paper does not need that abstraction. The valid
+formal route keeps the policy tied to the source model and uses a.e. statements
+for continuous boundary cases.
+
+This distinction is important for future agents: keep diagnostics about false
+overbroad abstractions out of the paper-facing theorem inventory unless they
+change a named paper theorem. Here, they do not.
+
+## Library Pass
+
+The post-verification proof scan produced one small library extraction:
+
+- `measure_pos_of_subset`
+- `ae_property_contradicts_positive_failure_mass`
+
+Both now live in `EconCSLib.Foundations.Probability.MeasureInequalities`, and
+LG21 keeps only thin paper-local wrappers around them.
+
+Other reusable infrastructure was already in the shared library and was reused
+rather than duplicated:
+
+- a.e. choice equilibrium:
+  `EconCSLib.Foundations.Optimization.ChoiceEquilibriumAE`;
+- finite event shares, binary mixtures, and blank-on-zero normalization:
+  `EconCSLib.Foundations.Probability.FiniteMixture`;
+- conditional resampling kernels:
+  `EconCSLib.Foundations.Probability.Admissions`;
+- Gaussian posterior and tail facts:
+  `EconCSLib.Foundations.Probability.Gaussian`, `GaussianMathlib`, and
+  `GaussianDerivatives`.
+
+Deferred candidate: the paper-local tagged point/Gaussian/finite-mixture law
+wrappers may deserve a generic Gaussian-mixture law module if another
+standardized-testing paper needs the same constructors. They remain local for
+now because their current shape is tuned to LG21's source-law bookkeeping.
+
+## DAG Audit
+
+`DependencyDAG.tex` is source-facing and follows the shared template styles:
+
+- model/definition layers use `dag_model`;
+- supporting lemma/library nodes use `dag_lemma`;
+- paper-facing theorems, propositions, and final results use `dag_result`.
+
+The final spacing pass widened the lanes, increased vertical separation, and
+routed the model-to-fairness dependency vertically so arrows do not cross node
+labels. `latexmk -pdf DependencyDAG.tex` rebuilt the PDF, and PNG inspection
+found no node-label or arrow-through-text overlap.
 
 ## Verification Checks
 
-- `lake build LG21TestOptionalPolicies.PaperInterface` passed.
-- `lake build LG21TestOptionalPolicies.PostPaperAudit` passed.
-- `lake build LG21TestOptionalPolicies.PostPaperAudit` passed after rerunning
-  past a transient shared-cache missing-`.olean` race.
-- `lake build LG21TestOptionalPolicies` passed after the Theorem 3.1
-  demographic-observable source-evidence bridge.
-- `latexmk -pdf DependencyDAG.tex` in this folder reported the DAG PDF
-  up to date.
-- `python3 scripts/audit_repository.py` was run from the repository root. The
-  command still reports unrelated repo-wide cached-PDF/status issues in other
-  paper folders, but after restoring this folder's ignored local `source.pdf`,
-  it no longer reports LG21-specific errors or warnings.
-- `git diff --check` passed.
+Passed:
+
+- `lake build LG21TestOptionalPolicies`
+- placeholder scan for `sorry`, `admit`, `axiom`, and `unsafe` in LG21 Lean
+  files
+- `git diff --check` on the touched LG21/status/skill/library files
+- `latexmk -pdf DependencyDAG.tex`
+- dashboard cache refresh for `LG21TestOptionalPolicies`
+
+Expected non-passing human-review check:
+
+- `review-dashboard.sh --check` reports `0/16 reviewed`, `16 unreviewed`, `0`
+  stale, and `0` mismatch. This is expected until a human completes dashboard
+  review.
+
+Repository audit:
+
+- `python3 scripts/audit_repository.py --include-active` reports no
+  elsewhere in the repository.
+
+## Lean Footprint
+
+- Paper-local Lean files: 127,936 total lines across nine modules.
+- `PaperInterface.lean`: 92 lines.
+- Human-review surface: 16 declarations.
+- `PostPaperAudit.lean`: 1,073 importable audit declarations.

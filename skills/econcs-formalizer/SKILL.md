@@ -110,6 +110,27 @@ the source theorem requires it. Finite analogues are useful scaffolds only when
 they shorten the faithful proof. If the fastest honest route is a direct
 measure/integral/renewal/CTMC statement, build that statement directly and keep
 the paper-facing wrapper source-level.
+For continuous strategy/type-space games, audit whether the source really needs
+pointwise best response on boundary or off-support types. If indifference
+cutoffs or support boundaries are null events, prefer an almost-everywhere
+equilibrium or policy statement with an explicit pointwise-to-a.e. bridge and
+separate boundary-null/no-atoms lemmas. Load
+`references/proof-foundations-probability.md` for measure-zero/boundary-null
+routes and `references/proof-mechanism-design.md` for Gaussian strategy-game
+a.e. equilibrium patterns.
+
+When Lean exposes a contradiction or apparently false source statement, do not
+immediately mark the paper theorem false. Pause the Lean loop briefly: reread
+the source PDF/TeX around the exact theorem and proof paragraph, think through
+the intended mathematical statement outside Lean, write a short paper-local
+proof plan, and then implement the repaired route. If the source really appears
+to assert the false statement, surface that issue to the human before rewriting
+the theorem status; otherwise treat the correction as a faithful formalization
+repair and continue. Common repairs include replacing an over-strong pointwise
+claim by a law-level or almost-everywhere statement, adding a missing
+nondegeneracy/support assumption, separating a displayed formula from a
+derivation-corrected formula, or weakening an auxiliary abstraction while
+preserving the paper-facing theorem.
 
 Keep theorem-specific proof tactics out of this always-loaded file. Use the
 reference routing table at the end: CTMC/reward-rate details live in
@@ -334,8 +355,11 @@ the Lean statements against the paper.
 - If `MainTheorems.lean` is becoming a large implementation file, add narrow
   proof-route files instead of appending more proof bodies there. A route file
   should own one stable declaration cluster or named proof path and be imported
-  by the central theorem file. Avoid risky mass moves just to split a file; move
-  a cluster only after its imports and targeted build are already stable.
+  by the central theorem file. Splitting is allowed and often desirable when it
+  will reduce repeated proof-loop rebuilds, localize expensive imports, or give
+  concurrent agents disjoint ownership. Avoid risky mass moves just to split a
+  file; move a cluster only after its imports and targeted build are already
+  stable, and keep `MainTheorems.lean` as the re-exported paper ledger.
 - Any proof-facing interface or route file is an implementation bridge. Keep it
   thin and source-shaped, and keep `PaperInterface.lean` as the human review
   surface.
@@ -353,6 +377,12 @@ the Lean statements against the paper.
   contain helper families, proof-seam checks, algebraic plumbing, or endpoint
   changelogs; put those in `MainTheorems.lean`, `ProofInterface.lean`, or
   `PostPaperAudit.lean`.
+- Keep the interface row count close to the paper's named definitions and
+  results. Do not expose every theorem-route variant, support wrapper,
+  diagnostic, certificate, or PMF/law specialization as its own dashboard row.
+  If a proof pass makes `PaperInterface.lean` grow far beyond the source's
+  named result list, trim it before refreshing the dashboard or calling the
+  paper ready for review.
 - Paper-facing definitions in `PaperInterface.lean` must show their actual
   Lean definition bodies, not only their function types or an opaque imported
   library name. If a dashboard row for a definition renders as only
@@ -1058,11 +1088,19 @@ validation pass:
   This should be a durable engineering summary, not theorem-specific proof
   chatter: name the modeling choices, proof decomposition, and Lean tactics or
   library seams that saved time or would have saved time if used earlier.
-- Include a short library-lift pass in the final report. Identify paper-local
-  definitions, theorem patterns, and proof utilities that should eventually
-  move into `EconCSLib`, name the likely destination module, and say whether
-  extraction was done now or deferred. Do not perform a risky broad move during
-  final closeout unless the extraction is small, targeted, and build-verified.
+- Run a proof-level library-lift pass before final handoff. Inspect the
+  paper-local proof modules for thin wrappers around `EconCSLib`, generic
+  lemmas that are not paper-specific, and repeated theorem patterns that would
+  serve another paper. Extract small, targeted generic lemmas immediately when
+  the destination is clear and the build can be verified; otherwise record the
+  candidate and destination in the final report. Do not perform a risky broad
+  move during final closeout.
+- Run a skill-update pass as a required post-verification step. If the paper
+  taught a reusable workflow lesson, update this skill or its reference files
+  before final handoff; if it did not, state that explicitly in the final
+  report or handoff. Put durable process rules in this always-loaded file only
+  if they apply across papers, and put theorem-family, domain, or proof-pattern
+  details in the appropriate reference file.
 - Include a final DAG audit in the final report. Confirm the DAG was rendered
   and visually inspected, note any topology changes, and state whether the DAG
   has missing/extra paper-facing boxes, node-overlap, label-overlap, or
@@ -1118,6 +1156,11 @@ validation pass:
   - Re-read every node as human prose. Green/formalized nodes should summarize
     the paper claim, not how the Lean proof was implemented. Caveat or
     conditional nodes should name the exact remaining semantic issue.
+  - Use the shared DAG template's node-type styles, not just status color:
+    `dag_model` for definitions/model layers, `dag_lemma` for lemmas/supporting
+    lemma clusters, and `dag_result` for theorems, propositions, corollaries,
+    and final paper-facing results. Keep the legend consistent with the styles
+    actually used in the diagram.
   - Check edge semantics. Solid arrows are verified Lean dependencies; dashed
     arrows are caveats, bypassed paper routes, or non-required context. Remove
     redundant arrows if they make the diagram harder to inspect.

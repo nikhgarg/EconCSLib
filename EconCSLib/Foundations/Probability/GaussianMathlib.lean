@@ -25,6 +25,16 @@ standard-normal interfaces used by admissions and testing formalizations.
 
 - `continuous_cdf_of_noAtoms`
 - `standardGaussianMeasure`
+- `gaussianReal_singleton_eq_zero`
+- `gaussianReal_Ioc_pos`
+- `gaussianReal_Ico_pos`
+- `gaussianReal_Ioo_pos`
+- `gaussianReal_Icc_pos`
+- `GaussianScaleLaw.toMeasure_singleton_eq_zero`
+- `GaussianScaleLaw.toMeasure_Ioc_pos`
+- `GaussianScaleLaw.toMeasure_Ico_pos`
+- `GaussianScaleLaw.toMeasure_Ioo_pos`
+- `GaussianScaleLaw.toMeasure_Icc_pos`
 - `standardGaussianCDF_neg_eq_one_sub`
 - `standardGaussianDensity_mul_affine_eq`
 - `standardGaussianDensity_hasDerivAt`
@@ -122,6 +132,121 @@ theorem standardGaussianMeasure_Ioc_pos {x y : ℝ} (hxy : x < y) :
     (μ := (0 : ℝ)) (v := (1 : ℝ≥0)) standardGaussianVariance_ne_zero]
   rw [univ_inter, Real.volume_Ioc]
   exact ENNReal.ofReal_pos.mpr (sub_pos.mpr hxy)
+
+/-- Every nonempty half-open interval has positive mass under a nondegenerate Gaussian. -/
+theorem gaussianReal_Ioc_pos (mean : ℝ) {variance : ℝ≥0}
+    (hvariance : variance ≠ 0) {x y : ℝ} (hxy : x < y) :
+    0 < ProbabilityTheory.gaussianReal mean variance (Ioc x y) := by
+  rw [ProbabilityTheory.gaussianReal_apply mean hvariance (Ioc x y)]
+  rw [MeasureTheory.setLIntegral_pos_iff
+    (ProbabilityTheory.measurable_gaussianPDF mean variance)]
+  rw [ProbabilityTheory.support_gaussianPDF
+    (μ := mean) (v := variance) hvariance]
+  rw [univ_inter, Real.volume_Ioc]
+  exact ENNReal.ofReal_pos.mpr (sub_pos.mpr hxy)
+
+/-- Every nonempty left-closed, right-open interval has positive mass under a nondegenerate Gaussian. -/
+theorem gaussianReal_Ico_pos (mean : ℝ) {variance : ℝ≥0}
+    (hvariance : variance ≠ 0) {x y : ℝ} (hxy : x < y) :
+    0 < ProbabilityTheory.gaussianReal mean variance (Ico x y) := by
+  let mid : ℝ := (x + y) / 2
+  have hxmid : x < mid := by
+    dsimp [mid]
+    linarith
+  have hmidy : mid < y := by
+    dsimp [mid]
+    linarith
+  have hpos : 0 < ProbabilityTheory.gaussianReal mean variance (Ioc x mid) :=
+    gaussianReal_Ioc_pos mean hvariance hxmid
+  exact lt_of_lt_of_le hpos
+    (measure_mono (fun z hz => ⟨le_of_lt hz.1, lt_of_le_of_lt hz.2 hmidy⟩))
+
+/-- Nondegenerate real Gaussian laws have no mass at a point. -/
+theorem gaussianReal_singleton_eq_zero (mean : ℝ) {variance : ℝ≥0}
+    (hvariance : variance ≠ 0) (x : ℝ) :
+    ProbabilityTheory.gaussianReal mean variance ({x} : Set ℝ) = 0 := by
+  haveI : NoAtoms (ProbabilityTheory.gaussianReal mean variance) :=
+    ProbabilityTheory.noAtoms_gaussianReal hvariance
+  exact measure_singleton x
+
+/-- Every nonempty open interval has positive mass under a nondegenerate Gaussian. -/
+theorem gaussianReal_Ioo_pos (mean : ℝ) {variance : ℝ≥0}
+    (hvariance : variance ≠ 0) {x y : ℝ} (hxy : x < y) :
+    0 < ProbabilityTheory.gaussianReal mean variance (Ioo x y) := by
+  let mid : ℝ := (x + y) / 2
+  have hxmid : x < mid := by
+    dsimp [mid]
+    linarith
+  have hmidy : mid < y := by
+    dsimp [mid]
+    linarith
+  have hpos : 0 < ProbabilityTheory.gaussianReal mean variance (Ioc x mid) :=
+    gaussianReal_Ioc_pos mean hvariance hxmid
+  exact lt_of_lt_of_le hpos
+    (measure_mono (fun z hz => ⟨hz.1, lt_of_le_of_lt hz.2 hmidy⟩))
+
+/-- Every nonempty closed interval has positive mass under a nondegenerate Gaussian. -/
+theorem gaussianReal_Icc_pos (mean : ℝ) {variance : ℝ≥0}
+    (hvariance : variance ≠ 0) {x y : ℝ} (hxy : x < y) :
+    0 < ProbabilityTheory.gaussianReal mean variance (Icc x y) := by
+  exact lt_of_lt_of_le (gaussianReal_Ioc_pos mean hvariance hxy)
+    (measure_mono (fun z hz => ⟨le_of_lt hz.1, hz.2⟩))
+
+namespace GaussianScaleLaw
+
+/-- The mathlib variance parameter associated with a positive scale law. -/
+def varianceNNReal (L : GaussianScaleLaw) : ℝ≥0 :=
+  ⟨L.scale ^ 2, sq_nonneg L.scale⟩
+
+theorem varianceNNReal_ne_zero (L : GaussianScaleLaw) :
+    L.varianceNNReal ≠ 0 := by
+  have hscale_sq_pos : 0 < L.scale ^ 2 :=
+    sq_pos_of_ne_zero (ne_of_gt L.scale_pos)
+  have hvariance_pos : (0 : ℝ≥0) < L.varianceNNReal := by
+    rw [← NNReal.coe_lt_coe]
+    simpa [varianceNNReal] using hscale_sq_pos
+  exact ne_of_gt hvariance_pos
+
+/-- The concrete mathlib Gaussian measure represented by a location-scale law. -/
+def toMeasure (L : GaussianScaleLaw) : Measure ℝ :=
+  ProbabilityTheory.gaussianReal L.mean L.varianceNNReal
+
+instance toMeasure_isProbabilityMeasure (L : GaussianScaleLaw) :
+    IsProbabilityMeasure L.toMeasure := by
+  dsimp [toMeasure]
+  infer_instance
+
+instance toMeasure_noAtoms (L : GaussianScaleLaw) :
+    NoAtoms L.toMeasure := by
+  dsimp [toMeasure]
+  exact ProbabilityTheory.noAtoms_gaussianReal L.varianceNNReal_ne_zero
+
+/-- A location-scale Gaussian law has no mass at a point. -/
+theorem toMeasure_singleton_eq_zero (L : GaussianScaleLaw) (x : ℝ) :
+    L.toMeasure ({x} : Set ℝ) = 0 := by
+  exact measure_singleton x
+
+/-- Every nonempty half-open interval has positive mass under a location-scale Gaussian law. -/
+theorem toMeasure_Ioc_pos (L : GaussianScaleLaw) {x y : ℝ} (hxy : x < y) :
+    0 < L.toMeasure (Ioc x y) := by
+  exact gaussianReal_Ioc_pos L.mean L.varianceNNReal_ne_zero hxy
+
+/-- Every nonempty left-closed, right-open interval has positive mass under a location-scale Gaussian law. -/
+theorem toMeasure_Ico_pos (L : GaussianScaleLaw) {x y : ℝ} (hxy : x < y) :
+    0 < L.toMeasure (Ico x y) := by
+  exact gaussianReal_Ico_pos L.mean L.varianceNNReal_ne_zero hxy
+
+/-- Every nonempty open interval has positive mass under a location-scale Gaussian law. -/
+theorem toMeasure_Ioo_pos (L : GaussianScaleLaw) {x y : ℝ} (hxy : x < y) :
+    0 < L.toMeasure (Ioo x y) := by
+  exact gaussianReal_Ioo_pos L.mean L.varianceNNReal_ne_zero hxy
+
+/-- Every nonempty closed interval has positive mass under a location-scale Gaussian law. -/
+theorem toMeasure_Icc_pos (L : GaussianScaleLaw) {x y : ℝ} (hxy : x < y) :
+    0 < L.toMeasure (Icc x y) := by
+  exact gaussianReal_Icc_pos L.mean L.varianceNNReal_ne_zero hxy
+
+end GaussianScaleLaw
 
 /-- The standard Gaussian measure gives positive mass to every nonempty open set. -/
 instance standardGaussianMeasure_isOpenPosMeasure :

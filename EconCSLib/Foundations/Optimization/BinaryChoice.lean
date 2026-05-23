@@ -49,6 +49,26 @@ def NoProfitableUnchosenDeviation
   ∀ a, ¬ chooses a → choosePayoff a ≤ otherPayoff a
 
 /--
+Exact payoff-threshold choice rules are two-sided binary best responses:
+choose exactly when the chosen-action payoff weakly dominates the outside
+option.
+-/
+theorem noProfitableBinaryChoiceDeviation_of_choice_iff_payoff_le
+    {α : Type*} {chooses : α → Prop}
+    {choosePayoff otherPayoff : α → ℝ}
+    (hchoice :
+      ∀ a, chooses a ↔ otherPayoff a ≤ choosePayoff a) :
+    NoProfitableBinaryChoiceDeviation chooses choosePayoff otherPayoff := by
+  constructor
+  · intro a hchoose
+    exact (hchoice a).1 hchoose
+  · intro a hnot
+    have hnot_le : ¬ otherPayoff a ≤ choosePayoff a := by
+      intro hle
+      exact hnot ((hchoice a).2 hle)
+    exact le_of_lt (lt_of_not_ge hnot_le)
+
+/--
 Binary choice subgame as a static choice-equilibrium problem.  The `true`
 action receives `choosePayoff`; the `false` action receives `otherPayoff`.
 -/

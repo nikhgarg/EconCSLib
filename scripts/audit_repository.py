@@ -88,6 +88,12 @@ DAG_STATUS_STYLES = {
 }
 PAPER_FOLDER_NAME_RE = re.compile(r"^[A-Z][A-Za-z0-9]*\d{2}[A-Z][A-Za-z0-9]*$")
 LEAN_DECL_RE = re.compile(r"^\s*(?:theorem|lemma|def|abbrev|structure|class|inductive|export)\s+", re.M)
+REVIEW_DECL_RE = re.compile(
+    r"^\s*(?:(?:@[A-Za-z_][A-Za-z0-9_]*(?:\([^)]*\))?\s+)*)?"
+    r"(?:(?:noncomputable|private|protected)\s+)*"
+    r"(?:theorem|lemma|def|abbrev)\s+([A-Za-z_][A-Za-z0-9_']*)\b",
+    re.M,
+)
 LEDGER_PLACEHOLDER_RE = re.compile(
     r"\[Paper Title\]|\bnamespace TEMPLATE\b|\bpaperDefinition1\b|\bpaper_theorem_1\b|Replace before claiming progress",
 )
@@ -290,11 +296,11 @@ def _safe_slice_id(value: str) -> str:
 
 
 def review_slice_counts(interface_text: str, slice_file: Path) -> tuple[list[str], dict[str, int]]:
-    """Count theorem/lemma rows by optional review-slice metadata."""
+    """Count human-review declaration rows by optional review-slice metadata."""
 
     decls: list[tuple[int, str]] = []
     for line_number, line in enumerate(interface_text.splitlines(), start=1):
-        match = re.match(r"^\s*(?:theorem|lemma)\s+([A-Za-z_][A-Za-z0-9_']*)\b", line)
+        match = REVIEW_DECL_RE.match(line)
         if match:
             decls.append((line_number, match.group(1)))
     if not slice_file.exists():
@@ -417,9 +423,9 @@ def check_review_launcher_readiness(include_active: bool) -> list[Finding]:
             )
 
         interface_text = interface.read_text(encoding="utf-8")
-        item_count = len(re.findall(r"^\s*(?:theorem|lemma)\s+", interface_text, re.M))
+        item_count = len(REVIEW_DECL_RE.findall(interface_text))
         if item_count == 0:
-            findings.append(Finding("ERROR", interface, "review dashboard finds no theorem/lemma rows"))
+            findings.append(Finding("ERROR", interface, "review dashboard finds no review rows"))
         elif item_count > REVIEW_ROW_WARN_THRESHOLD:
             slice_file = folder / REVIEW_SLICES_NAME
             problems, counts = review_slice_counts(interface_text, slice_file)
@@ -558,7 +564,13 @@ def check_post_paper_audit_interfaces(include_active: bool) -> list[Finding]:
                         "human-facing interface has no visible definition/abbrev declarations",
                     )
                 )
-            if not re.search(r"^\s*theorem\s+", text, re.M):
+            has_theorem_or_theorem_alias = re.search(r"^\s*theorem\s+", text, re.M) or re.search(
+                r"^\s*(?:(?:noncomputable|private|protected)\s+)*(?:def|abbrev)\s+"
+                r"(?:theorem|lemma|proposition|corollary)[A-Za-z0-9_']*\b",
+                text,
+                re.M,
+            )
+            if not has_theorem_or_theorem_alias:
                 findings.append(
                     Finding("WARN", interface, "human-facing interface has no visible theorem statements")
                 )
