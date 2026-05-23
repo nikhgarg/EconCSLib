@@ -52,6 +52,11 @@ closeout route:
   lets the closest pointwise upper-transfer route use fixed-state reward-rate
   identities directly; Lean derives the local Lemma 6 names `Ri = R1` and
   `Rj = R2` by cancellation from the bracket records.
+- `GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffFixedRewardRateRejectLongUpperSourceExistenceData`
+  is the source-facing reduced LightAE route: it asks for fixed-state
+  reward-rate identities plus the reject-long upper cross comparison, while
+  Lean derives `Ri = R1`, `Rj = R2`, the lower cross field, and the
+  accepted-middle adapter fields.
 
 For pickup on the older endpoint-selection path, start from the public
 interface theorem

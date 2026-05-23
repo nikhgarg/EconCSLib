@@ -2602,7 +2602,11 @@ adapter fields from the a.e. reject-long representative.  The aggregate source
 boundary is also exposed as
 `PaperInterface.theorem3_light_ae_bracket_surge_cutoff_reject_long_upper_normalized`
 when the proof supplies the integrated reject-long upper cross comparison
-directly.  The older
+directly.  The source-facing fixed-reward-rate variant
+`PaperInterface.theorem3_light_ae_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized`
+asks for fixed-state reward-rate identities instead of local Lemma 6
+`Ri = R1` and `Rj = R2` name equalities; Lean derives those names by
+canceling the positive current times in the bracket records.  The older
 `PaperInterface.theorem3_light_ae_bracket_surge_cross_middle_cutoff_normalized`
 route remains available, but it should no longer be treated as the active
 frontier because it asks for separate accepted-middle cross fields that the

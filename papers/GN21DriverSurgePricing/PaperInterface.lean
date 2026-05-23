@@ -313,6 +313,14 @@ abbrev theorem3_feasible_policy_canonical_pointwise_reward_rate :=
 abbrev theorem3_feasible_policy_canonical_pointwise_reward_rate_normalized :=
   @theorem3_structured_measurable_ic_ae_unique_of_feasible_policy_canonical_pointwise_reward_rate_normalized_mass_ratio_source
 
+/-- Theorem 3: feasible-policy-canonical representative route with paper ratio inputs. -/
+abbrev theorem3_feasible_policy_canonical_representative_normalized :=
+  @theorem3_measurable_ic_ae_unique_of_feasible_policy_canonical_representative_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the feasible-policy-canonical representative route. -/
+abbrev theorem3_feasible_policy_canonical_representative_normalized_ic :=
+  @theorem3_measurable_ic_of_feasible_policy_canonical_representative_normalized_mass_ratio_source
+
 /-- Theorem 3: endpoint-bridge route. -/
 abbrev theorem3_endpoint_bridge :=
   @theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source
@@ -376,6 +384,17 @@ abbrev theorem3_light_ae_bracket_surge_cutoff_reject_long_upper_normalized :=
 /-- Theorem 3: IC projection of the reduced bracket surge-cutoff route. -/
 abbrev theorem3_light_ae_bracket_surge_cutoff_reject_long_upper_normalized_ic :=
   @theorem3_measurable_ic_of_bracket_surge_cutoff_reject_long_upper_normalized_mass_ratio_source
+
+/--
+Theorem 3: reduced bracket route with fixed reward-rate identities replacing
+local `Ri`/`Rj` name equalities.
+-/
+abbrev theorem3_light_ae_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized :=
+  @theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the fixed-reward-rate reduced bracket route. -/
+abbrev theorem3_light_ae_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized_ic :=
+  @theorem3_measurable_ic_of_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized_mass_ratio_source
 
 /--
 Theorem 3: reduced bracket surge-cutoff route from one-sided pointwise upper

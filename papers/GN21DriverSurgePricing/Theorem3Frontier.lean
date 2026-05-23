@@ -107,6 +107,283 @@ structure GN21Theorem3LightAEFeasibleCanonicalEndpointData
       μ arrival R1 R2 switch12 switch21 m z
 
 /--
+Feasible policy-level Lemma 5 canonical-dominance data instantiate the
+feasible a.e. representative source package used by the representative
+Theorem 3 route.  The only remaining endpoint obligations are the four
+source-local strict-improvement callbacks on the exact representatives.
+-/
+noncomputable def GN21Theorem3FeasibleAERepresentativeSourceData.of_feasible_policy_canonical_dominance
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (forms :
+      Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData μ
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21)))
+    (accept_all_optimal :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy)
+    (nonsurge_reject_long_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 0) →
+        ∀ t : ℝ,
+          rejectsLongTrips t (ρ 0) →
+            gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (nonsurge_accept_middle_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 0) →
+        ∀ lo hi : ℝ,
+          acceptsMiddleTrips lo hi (ρ 0) →
+            gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (surge_reject_short_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 1) →
+        ∀ t : ℝ,
+          rejectsShortTrips t (ρ 1) →
+            gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ)
+    (surge_reject_middle_improvement :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hρ :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ¬ acceptsAllTrips (ρ 1) →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+              μ arrival m z switch12 switch21 ρ) :
+    GN21Theorem3FeasibleAERepresentativeSourceData
+      μ arrival switch12 switch21 m z where
+  forms := forms.to_allowed_policy_forms.to_feasible_ae_policy_forms
+  accept_all_optimal := accept_all_optimal
+  nonsurge_reject_long_improvement := nonsurge_reject_long_improvement
+  nonsurge_accept_middle_improvement := nonsurge_accept_middle_improvement
+  surge_reject_short_improvement := surge_reject_short_improvement
+  surge_reject_middle_improvement := surge_reject_middle_improvement
+
+/--
+Per-price payload for the feasible-canonical representative route: Lemma 5
+canonical dominance gives the a.e. policy-form representatives, while the four
+endpoint callbacks rule out each non-accept-all representative branch.
+-/
+structure GN21Theorem3FeasibleCanonicalRepresentativeEndpointData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  canonical :
+    Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData μ
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  accept_all_optimal :
+    dynamicMeasurableOptimal
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+      acceptAllDynamicPolicy
+  nonsurge_reject_long_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 0) →
+      ∀ t : ℝ,
+        rejectsLongTrips t (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  nonsurge_accept_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 0) →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21NonsurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_short_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 1) →
+      ∀ t : ℝ,
+        rejectsShortTrips t (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+  surge_reject_middle_improvement :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hρ :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ¬ acceptsAllTrips (ρ 1) →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          gn21SurgeFeasibleStatewiseStrictAggregateImprovement
+            μ arrival m z switch12 switch21 ρ
+
+/-- Convert the feasible-canonical representative payload to the source data
+consumed by the existing feasible a.e. representative Theorem 3 route. -/
+noncomputable def GN21Theorem3FeasibleCanonicalRepresentativeEndpointData.to_feasible_ae_representative_source
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (D :
+      GN21Theorem3FeasibleCanonicalRepresentativeEndpointData
+        μ arrival switch12 switch21 m z) :
+    GN21Theorem3FeasibleAERepresentativeSourceData
+      μ arrival switch12 switch21 m z :=
+  GN21Theorem3FeasibleAERepresentativeSourceData.of_feasible_policy_canonical_dominance
+    D.canonical D.accept_all_optimal D.nonsurge_reject_long_improvement
+    D.nonsurge_accept_middle_improvement D.surge_reject_short_improvement
+    D.surge_reject_middle_improvement
+
+/--
+Normalized-mass feasible-canonical representative route for Theorem 3.  This
+is the a.e.-representative version of the paper path when Lemma 5 has been
+closed by feasible policy-canonical dominance rather than by fixed-response
+one-threshold records.
+-/
+theorem theorem3_measurable_ic_ae_unique_of_feasible_policy_canonical_representative_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (endpoint_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FeasibleCanonicalRepresentativeEndpointData
+            μ arrival switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_ae_representative_ratio_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      (measure_pos_of_singleStateTripMass_eq_one (μ 0) acceptAllPolicy
+        hmass1_eq_one)
+      (measure_pos_of_singleStateTripMass_eq_one (μ 1) acceptAllPolicy
+        hmass2_eq_one)
+      (fun m z hnonneg hparams =>
+        (endpoint_selection m z hnonneg hparams).to_feasible_ae_representative_source)
+
+/-- IC projection of the feasible-canonical representative normalized route. -/
+theorem theorem3_measurable_ic_of_feasible_policy_canonical_representative_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (endpoint_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FeasibleCanonicalRepresentativeEndpointData
+            μ arrival switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  exact
+    theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
+      (theorem3_measurable_ic_ae_unique_of_feasible_policy_canonical_representative_normalized_mass_ratio_source
+        μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+        hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+        htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+        hmass1_eq_one hmass2_eq_one endpoint_selection)
+
+/--
 Theorem 3 on the normalized-mass LightAE route, with the per-price proof
 payload stated as feasible Lemma 5 canonical dominance plus the fixed-state
 middle-reroute endpoint certificate.  Use this shortcut only when the source
@@ -1072,6 +1349,196 @@ noncomputable def GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectL
     D.nonsurge_reject_long_upper_cross
 
 /--
+Build the reduced bracket reject-long-upper package from target fixed
+reward-rate identities.  This removes the local `Ri = R1` and `Rj = R2`
+bookkeeping fields from the main reduced route while keeping the source
+obligations in the paper's reward-rate form.
+-/
+noncomputable def GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData.of_fixed_reward_rate_fields
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (forms :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+        μ arrival switch12 switch21 m z)
+    (shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (nonsurge_fixed_reward_rate :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        gn21ScaledStateEarning (μ 0) (arrival 0)
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+          R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (surge_fixed_reward_rate :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        gn21ScaledStateEarning (μ 1) (arrival 1)
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+          R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (surge_reject_short_cutoff_bound :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ∀ u : ℝ,
+          rejectsShortTrips u (ρ 1) →
+            0 < u →
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) * u ≤
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                  gn21SwitchProb switch21 switch12 u)
+    (surge_reject_middle_ordered_upper_cutoff_bound :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            lo ≤ hi →
+              0 < hi →
+                gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                    (ρ 1) * hi ≤
+                  gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                    gn21SwitchProb switch21 switch12 hi)
+    (nonsurge_reject_long_upper_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) ≤
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21) :
+    GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData
+      μ arrival R1 R2 switch12 switch21 m z where
+  forms := forms
+  shared := shared
+  nonsurge_Ri_eq := by
+    intro ρ hopt
+    exact
+      (forms.nonsurge ρ hopt).Ri_eq_of_fixed_reward_rate
+        (nonsurge_fixed_reward_rate ρ hopt)
+  surge_Rj_eq := by
+    intro ρ hopt
+    exact
+      (forms.surge ρ hopt).Rj_eq_of_fixed_reward_rate
+        (surge_fixed_reward_rate ρ hopt)
+  surge_reject_short_cutoff_bound := surge_reject_short_cutoff_bound
+  surge_reject_middle_ordered_upper_cutoff_bound :=
+    surge_reject_middle_ordered_upper_cutoff_bound
+  nonsurge_reject_long_upper_cross := nonsurge_reject_long_upper_cross
+
+/--
+Reduced bracket source payload with fixed reward-rate identities instead of
+local `Ri`/`Rj` name equalities.  This is the source-facing version of the
+reject-long-upper route.
+-/
+structure GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffFixedRewardRateRejectLongUpperSourceExistenceData
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ) where
+  forms :
+    Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+      μ arrival switch12 switch21 m z
+  shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21
+  nonsurge_fixed_reward_rate :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      gn21ScaledStateEarning (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0) (ρ 0) =
+        R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0)
+  surge_fixed_reward_rate :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      gn21ScaledStateEarning (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1) (ρ 1) =
+        R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1)
+  surge_reject_short_cutoff_bound :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hopt :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          0 < u →
+            gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                (ρ 1) * u ≤
+              gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                gn21SwitchProb switch21 switch12 u
+  surge_reject_middle_ordered_upper_cutoff_bound :
+    ∀ ρ : Fin 2 → TripPolicy,
+      (hopt :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ) →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          lo ≤ hi →
+            0 < hi →
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) * hi ≤
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                  gn21SwitchProb switch21 switch12 hi
+  nonsurge_reject_long_upper_cross :
+    ∀ ρ : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) ≤
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21
+
+/--
+Convert the source-facing fixed-reward-rate payload to the reduced
+reject-long-upper source package by canceling the positive current times in
+the bracket records.
+-/
+noncomputable def GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffFixedRewardRateRejectLongUpperSourceExistenceData.to_reject_long_upper_source
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (D :
+      GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffFixedRewardRateRejectLongUpperSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData
+      μ arrival R1 R2 switch12 switch21 m z :=
+  GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffRejectLongUpperSourceExistenceData.of_fixed_reward_rate_fields
+    D.forms D.shared D.nonsurge_fixed_reward_rate D.surge_fixed_reward_rate
+    D.surge_reject_short_cutoff_bound
+    D.surge_reject_middle_ordered_upper_cutoff_bound
+    D.nonsurge_reject_long_upper_cross
+
+/--
 Build the reduced bracket source package from the paper-style one-sided
 pointwise upper transfer on rejected non-surge trips.  The pointwise comparison
 is integrated once, here, into the aggregate reject-long upper cross field.
@@ -1368,6 +1835,63 @@ theorem theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_reject_long_upp
       exact
         (fixed_response_selection m z hnonneg hparams).to_middle_cutoff_source)
 
+/--
+Theorem 3 on the reduced bracket route with fixed reward-rate identities.
+This is the source-facing version of the reject-long-upper frontier: Lean
+derives the local `Ri = R1` and `Rj = R2` names from the fixed reward rates.
+-/
+theorem theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffFixedRewardRateRejectLongUpperSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_reject_long_upper_normalized_mass_ratio_source
+    μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+    hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+    htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+    hmass1_eq_one hmass2_eq_one
+    (by
+      intro m z hnonneg hparams
+      exact
+        (fixed_response_selection m z hnonneg hparams).to_reject_long_upper_source)
+
 /-- IC projection of the reduced bracket surge-cutoff/reject-long-upper route. -/
 theorem theorem3_measurable_ic_of_bracket_surge_cutoff_reject_long_upper_normalized_mass_ratio_source
     (μ : Fin 2 → Measure TripLength)
@@ -1413,6 +1937,56 @@ theorem theorem3_measurable_ic_of_bracket_surge_cutoff_reject_long_upper_normali
       μ arrival R1 R2 switch12 switch21 :=
   theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
     (theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_reject_long_upper_normalized_mass_ratio_source
+      μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmass1_eq_one hmass2_eq_one fixed_response_selection)
+
+/-- IC projection of the fixed-reward-rate reduced bracket route. -/
+theorem theorem3_measurable_ic_of_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized_mass_ratio_source
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (μ 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (μ 1))
+    (hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1)
+    (fixed_response_selection :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredPositiveParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+          GN21Theorem3FixedResponseOneThresholdBracketSurgeCutoffFixedRewardRateRejectLongUpperSourceExistenceData
+            μ arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
+    (theorem3_measurable_ic_ae_unique_of_bracket_surge_cutoff_fixed_reward_rate_reject_long_upper_normalized_mass_ratio_source
       μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
       htime1_integrable htime2_integrable hq1_integrable hq2_integrable
