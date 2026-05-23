@@ -127,7 +127,8 @@ lake build GN21DriverSurgePricing.PostPaperAudit
 lake build GN21DriverSurgePricing.PaperInterface
 lake build GN21DriverSurgePricing
 lake build GN21DriverSurgePricing.DomainBridge
+lake env lean HumanStartHere.lean
 latexmk -pdf -halt-on-error DependencyDAG.tex
-git diff --check -- papers/GN21DriverSurgePricing skills/econcs-formalizer/references/proof-foundations-probability.md
-rg -n "\bsorry\b|\badmit\b|axiom|by\s*omega" papers/GN21DriverSurgePricing
+git diff --check -- HumanStartHere.lean papers/GN21DriverSurgePricing
+rg -n --glob "*.lean" "\bsorry\b|\badmit\b|axiom|by\s*omega" papers/GN21DriverSurgePricing
 ```

@@ -1441,6 +1441,14 @@ Status cells use the controlled vocabulary from `../../docs/STATUS.md`.
 | Theorem 3, structured IC pricing | `paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions`, `paper_theorem3_measured_structured_defined_reward_ic_ae_unique_prices_of_source_assumptions`, `theorem3MeasuredStructuredPositiveMassMeasurableICAEUniqueConclusion`, `theorem3MeasuredStructuredDefinedMeasurableICAEUniqueConclusion`, `PaperInterface.theorem3_positive_mass_source`, `PaperInterface.theorem3_defined_reward_source`, `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`, `theorem3MeasuredStructuredMeasurableICAEUniqueConclusion_of_positiveMass_ae_unique_and_zeroMassStrictDominance`, `PaperInterface.theorem3_zero_mass_dominance_of_acceptAll_dominates_zero_mass`, `PaperInterface.theorem3_zero_mass_totalization_obstruction_state_rates`, `PaperInterface.theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass` | formalized | `DomainBridge.lean`, `MainTheorems.lean`, `Theorem3SplitCurrentBounds.lean`, `ProofInterface.lean`, `PaperInterface.lean` | Lean closes the denominator-valid positive-mass source theorem, the partial defined-reward source theorem, and the full feasible-measurable source-data route. The full route is `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`: it uses feasible-policy Lemma 9 then Lemma 10 current-bounds source data directly, avoiding an invented zero-mass dominance proof. The defined-reward route leaves zero-mass denominator failures undefined while preserving IC and a.e. uniqueness for defined-reward optima. The optional zero-mass-dominance bridge remains exposed, but Lean also proves the state-rate zero-mass totalization obstruction and the generic impossibility theorem showing that a profitable zero-mass deviation rules out that certificate once accept-all is positive-mass optimal. |
 | Auxiliary finite dynamic policy support | `paper_aux_finite_dynamic_pricing_ic_of_greedy`, `paper_aux_finite_dynamic_pricing_not_ic_of_profitable_deviation` | formalized | `FiniteSupport.lean` | None; these are library-level finite MDP support lemmas, not source theorem substitutes. |
 
+## Historical Proof-Development Log
+
+The theorem ledger above and `FINAL_VALIDATION_REPORT.md` are the current
+paper-facing source of truth.  The notes below are retained as an implementation
+history and optional-strengthening map.  Mentions of "remaining", "next", or
+"final" below refer to superseded proof-search routes unless they are explicitly
+listed in the theorem ledger as an open paper-facing item.
+
 The Lemma 5 generalized interval/ray route now also exposes
 `GN21GeneralizedIntervalPolicy.lemma5ShapeComplexity` and
 `lemma5OptimizerReplacementCertificate_of_generalizedIntervalPolicy_canonical_dominance_and_maximizer`,
@@ -2434,8 +2442,10 @@ that consumes all-optimal Lemma 5 replacement data directly or the packaged
 allowed-replacement source-boundary certificate, and the current regular
 allowed-policy-form route that consumes measurable Lemma 5 policy-form
 classification plus regular endpoint packages directly.
-Proposition 3.1 is closed for the source renewal reward on measurable
-continuous policies. Next: instantiate the regular current-bounds source endpoint for arbitrary feasible measurable
+Historical note: Proposition 3.1 was already closed for the source renewal
+reward on measurable continuous policies at this point in the proof log.  The
+then-active next target was to instantiate the regular current-bounds source
+endpoint for arbitrary feasible measurable
 optimal policies by proving the regularity theorem that supplies ordinary Lemma
 5 allowed policy-form classification, chooses the relevant upper, lower, tail,
 or middle-rejection endpoint move, and discharges the remaining Lemma 9/10
@@ -2814,6 +2824,8 @@ route remains compiled for the variant that proves ordinary allowed Lemma 5
   `Theorem3AcceptAllStructuredParameterData.of_evidence` gives a named view of
   the constructed Theorem 3 ratios, accept-all Lemma 9/10 bounds, and
   accounting identities.
-Then continue with the two-state renewal law-of-large-numbers bridge and the
-remaining Theorem 3/Theorem 4 endpoint-selection boundary; Theorem 1's compact
-upper-semicontinuity proof is closed.
+Historical next target, now superseded by the closed paper-facing source-data
+route: continue with the two-state renewal law-of-large-numbers bridge and the
+Theorem 3/Theorem 4 endpoint-selection boundary.  Theorem 1's compact
+upper-semicontinuity proof is closed, and the current named-result status is
+recorded in the theorem ledger above.

@@ -494,10 +494,13 @@ This is a lightweight handoff document for source-to-Lean mapping.
   plus next-agent handoff notes in `HANDOFF_NEXT_AGENT.md`,
   and
   auxiliary finite dynamic policy support.
-- Outstanding assumptions / caveats: source theorems remain conditional on the
-  global Theorem 1 Step 1 selection and Step 3 threshold-maximizer
-  compactness/continuity argument, plus the remaining analytic
-  selection/regularity hypotheses listed in `README.md`.  Lemmas 1--3 now have
-  explicit IID-cycle strong-law bridges, Proposition 3.1 is closed for the
-  actual renewal reward on measurable feasible policies, and Theorem 1 Step 2
-  is closed directly rather than supplied as a certificate field.
+- Historical 2026-05-05 outstanding assumptions / caveats, now superseded:
+  source theorems were then conditional on the global Theorem 1 Step 1
+  selection and Step 3 threshold-maximizer compactness/continuity argument,
+  plus analytic selection/regularity hypotheses listed in the historical
+  `README.md` proof log.  The current paper-facing status is the 2026-05-23
+  complete ledger in `FINAL_VALIDATION_REPORT.md` and the README theorem table.
+  Lemmas 1--3 now have explicit IID-cycle strong-law bridges, Proposition 3.1
+  is closed for the actual renewal reward on measurable feasible policies, and
+  Theorem 1 Step 2 is closed directly rather than supplied as a certificate
+  field.
