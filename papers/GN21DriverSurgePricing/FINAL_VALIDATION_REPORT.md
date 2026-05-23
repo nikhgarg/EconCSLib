@@ -45,27 +45,15 @@ for compatibility with older notes and `PostPaperAudit.lean`.
 - `PaperInterface.review_lemma8_affine_negative_additive_response_quasi_concave`
 - `PaperInterface.review_lemma9_surge_derivative_positive_of_acceptAll_bounds`
 - `PaperInterface.review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds`
+- `PaperInterface.review_remark1_switch_probability_per_time_strictAntiOn`
+- `PaperInterface.review_remark3_switch_probability_per_time_tendsto_at_zero`
+- `PaperInterface.review_remark4_switch_time_minus_switch_probability_nonneg`
 - `PaperInterface.review_proposition3_1_affine_single_state_ic`
 - `PaperInterface.review_theorem1_single_state_threshold_best_response`
 - `PaperInterface.review_theorem2_multiplicative_policy_shape_ae`
-- `PaperInterface.review_theorem2_multiplicative_measured_not_ic_explicit_atomic`
-- `PaperInterface.review_theorem2_multiplicative_profitable_deviations_both_states`
-- `PaperInterface.review_theorem2_multiplicative_positive_finite_cutoff_deviations_both_states`
-- `PaperInterface.review_theorem2_multiplicative_measured_not_ic_both_states`
-- `PaperInterface.review_theorem3_feasibility_threshold`
-- `PaperInterface.review_theorem3_positive_mass_source`
-- `PaperInterface.review_theorem3_positive_response`
-- `PaperInterface.review_theorem3_positive_fixed_response_normalized`
-- `PaperInterface.review_theorem3_defined_reward_ic_of_positive_mass`
-- `PaperInterface.review_theorem3_defined_reward_source`
-- `PaperInterface.review_theorem3_feasible_sequential_current_bounds_source_data`
-- `PaperInterface.review_theorem3_feasible_sequential_current_bounds_source_data_statement`
-- `PaperInterface.review_theorem3_source_with_zero_mass_dominance`
-- `PaperInterface.review_theorem3_zero_mass_totalization_obstruction`
-- `PaperInterface.review_theorem3_zero_mass_totalization_obstruction_state_rates`
-- `PaperInterface.review_theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass`
+- `PaperInterface.review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states`
 - `PaperInterface.review_theorem4_structural_policy_representatives`
-- `PaperInterface.review_theorem4_acceptAll_ae_unique_of_current_bounds_source`
+- `PaperInterface.review_theorem3_feasible_sequential_current_bounds_source_data_statement`
 
 ## Dashboard source-text overrides
 
@@ -83,6 +71,10 @@ definitions, or appendix remark formatting.
 - `PaperInterface.review_remark1_switch_probability_per_time_strictAntiOn`: Remark 1 includes the claim that q_{i->j}(u) / u is strictly decreasing in u, together with continuity and derivative-sign consequences.
 - `PaperInterface.review_remark3_switch_probability_per_time_tendsto_at_zero`: Remark 3. The limit of q_{i->j}(u) / u as u tends to zero is lambda_{i->j}.
 - `PaperInterface.review_remark4_switch_time_minus_switch_probability_nonneg`: Remark 4. lambda_{i->j} T_i - Q_i is nonnegative and is maximized by the accept-all policy; Q_i is also nonnegative and maximized by accepting all trips.
+- `PaperInterface.review_theorem2_multiplicative_policy_shape_ae`: Theorem 2. Under multiplicative pricing, there exists an optimal policy whose non-surge component rejects long trips above a cutoff and whose surge component rejects short trips below a cutoff, and only policies of the appropriate form can be optimal.
+- `PaperInterface.review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states`: Theorem 2. There exist settings with positive finite cutoffs in which multiplicative pricing is not incentive compatible in either state.
+- `PaperInterface.review_theorem4_structural_policy_representatives`: Theorem 4. For the appendix structural pricing function, there exists an optimal policy of the displayed threshold form, and any optimal policy has the corresponding structural representative up to null feasible-trip sets.
+- `PaperInterface.review_theorem3_feasible_sequential_current_bounds_source_data_statement`: Theorem 3. For target earning rates R1 < R2, there exist structured additive prices of the form m_i tau + z_i q_{i->j}(tau) that make accepting all trips uniquely optimal while delivering the target rates.
 
 ## Named-result inventory
 
@@ -164,5 +156,5 @@ git diff --check -- HumanStartHere.lean papers/GN21DriverSurgePricing
 rg -n --glob "*.lean" "\bsorry\b|\badmit\b|axiom|by\s*omega" papers/GN21DriverSurgePricing
 ```
 
-The dashboard precheck reports `0/39 reviewed` with no stale or mismatch rows;
+The dashboard precheck reports `0/24 reviewed` with no stale or mismatch rows;
 the remaining action is human review, not Lean formalization work.

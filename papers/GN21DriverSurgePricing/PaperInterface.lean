@@ -104,61 +104,65 @@ abbrev review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds :=
 
 /-! ## Main dynamic theorems -/
 
-/-- Theorem 2: multiplicative-pricing optimal-policy shape handoff. -/
-abbrev review_theorem2_multiplicative_policy_shape_ae :=
-  @theorem2_multiplicative_policy_shape_ae_of_feasible_ae_policy_forms
+/--
+Theorem 2: multiplicative-pricing optimal-policy shape handoff.
 
-/-- Theorem 2: explicit measured multiplicative non-IC instance. -/
-abbrev review_theorem2_multiplicative_measured_not_ic_explicit_atomic :=
-  @theorem2_multiplicative_measured_not_ic_explicit_atomic
+Lean states the policy-shape clause separately from the explicit non-IC
+counterexample because the paper's theorem combines a structural statement with
+an existential example.
+-/
+theorem review_theorem2_multiplicative_policy_shape_ae
+    (mu : Fin 2 → MeasureTheory.Measure TripLength) (R : DynamicReward)
+    (forms : Theorem4AllMeasurableFeasibleAEPolicyFormData mu R)
+    (hnonsurge :
+      ∀ rho : Fin 2 → TripPolicy, (hrho : dynamicMeasurableOptimal R rho) →
+        let D := forms.nonsurge rho hrho
+        D.1.1 = .positive ∨ D.1.1 = .strictlyDecreasing)
+    (hsurge :
+      ∀ rho : Fin 2 → TripPolicy, (hrho : dynamicMeasurableOptimal R rho) →
+        let D := forms.surge rho hrho
+        D.1.1 = .positive ∨ D.1.1 = .strictlyIncreasing) :
+    (∃ rho : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R rho ∧
+        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) ∧
+        rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)) ∧
+      ∀ rho : Fin 2 → TripPolicy, dynamicMeasurableOptimal R rho →
+        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) ∧
+          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1) := by
+  exact
+    theorem2_multiplicative_policy_shape_ae_of_feasible_ae_policy_forms
+      mu R forms hnonsurge hsurge
 
-/-- Theorem 2: explicit profitable multiplicative deviations in both states. -/
-abbrev review_theorem2_multiplicative_profitable_deviations_both_states :=
-  @theorem2_multiplicative_measured_profitable_deviations_both_states_explicit_atomic
-
-/-- Theorem 2: positive finite cutoff deviations in both states. -/
-abbrev review_theorem2_multiplicative_positive_finite_cutoff_deviations_both_states :=
-  @theorem2_multiplicative_measured_profitable_positive_finite_cutoff_deviations_both_states_explicit_atomic
-
-/-- Theorem 2: explicit both-state measured multiplicative non-IC instance. -/
-abbrev review_theorem2_multiplicative_measured_not_ic_both_states :=
-  @theorem2_multiplicative_measured_not_ic_both_states_explicit_atomic
+/--
+Theorem 2: explicit multiplicative-pricing instance with positive finite
+cutoff deviations in both states, and hence measured dynamic non-IC.
+-/
+theorem review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states :
+    (((0 < (2 : ℝ) ∧
+        rejectsLongTrips 2 (theorem2BothStatesAtomicNonsurgeDeviation 0)) ∧
+      dynamicProfitableDeviation
+        (gn21MeasuredDynamicRewardFunctional theorem2BothStatesAtomicMu
+          theorem2BothStatesAtomicArrival ((1 : ℝ) / 4) ((1 : ℝ) / 4)
+          (fun i => multiplicativePricing (theorem2BothStatesAtomicM i)))
+        theorem2BothStatesAtomicNonsurgeDeviation) ∧
+      ((0 < (2 : ℝ) ∧
+          rejectsShortTrips 2 (theorem2BothStatesAtomicSurgeDeviation 1)) ∧
+        dynamicProfitableDeviation
+          (gn21MeasuredDynamicRewardFunctional theorem2BothStatesAtomicMu
+            theorem2BothStatesAtomicArrival ((1 : ℝ) / 4) ((1 : ℝ) / 4)
+            (fun i => multiplicativePricing (theorem2BothStatesAtomicM i)))
+          theorem2BothStatesAtomicSurgeDeviation)) ∧
+      ¬ dynamicIncentiveCompatible
+        (gn21MeasuredDynamicRewardFunctional theorem2BothStatesAtomicMu
+          theorem2BothStatesAtomicArrival ((1 : ℝ) / 4) ((1 : ℝ) / 4)
+          (fun i => multiplicativePricing (theorem2BothStatesAtomicM i))) := by
+  exact
+    ⟨theorem2_multiplicative_measured_profitable_positive_finite_cutoff_deviations_both_states_explicit_atomic,
+      theorem2_multiplicative_measured_not_ic_both_states_explicit_atomic⟩
 
 /-- Theorem 4: structural representatives for optimal policies. -/
 abbrev review_theorem4_structural_policy_representatives :=
   @theorem4_structural_policy_representatives_of_gn21_bracket_source_data
-
-/-- Theorem 4: accept-all a.e. uniqueness route used by Theorem 3. -/
-abbrev review_theorem4_acceptAll_ae_unique_of_current_bounds_source :=
-  @theorem4_acceptAll_ae_unique_of_current_bounds_source
-
-/-- Theorem 3: feasibility threshold lies in the admissible interval. -/
-abbrev review_theorem3_feasibility_threshold :=
-  @theorem3_feasibility_threshold
-
-/-- Theorem 3: denominator-valid positive-mass source endpoint. -/
-abbrev review_theorem3_positive_mass_source :=
-  @theorem3_positive_mass_source
-
-/-- Theorem 3: direct positive-response source proof line. -/
-abbrev review_theorem3_positive_response :=
-  @theorem3_positive_response
-
-/-- Theorem 3: fixed-response source records imply the positive-response endpoint. -/
-abbrev review_theorem3_positive_fixed_response_normalized :=
-  @theorem3_positive_fixed_response_normalized
-
-/-- Theorem 3: positive-mass IC in the defined-reward interface. -/
-abbrev review_theorem3_defined_reward_ic_of_positive_mass :=
-  @theorem3_defined_reward_ic_of_positive_mass
-
-/-- Theorem 3: defined-reward source endpoint. -/
-abbrev review_theorem3_defined_reward_source :=
-  @theorem3_defined_reward_source
-
-/-- Theorem 3: full feasible sequential current-bounds source-data route. -/
-abbrev review_theorem3_feasible_sequential_current_bounds_source_data :=
-  @theorem3_feasible_sequential_current_bounds_source_data
 
 /--
 Theorem 3: visible statement for the full feasible sequential current-bounds
@@ -175,22 +179,6 @@ theorem review_theorem3_feasible_sequential_current_bounds_source_data_statement
   exact
     theorem3_feasible_sequential_current_bounds_source_data
       mu arrival rho R1 R2 switch12 switch21 A
-
-/-- Theorem 3: full measurable lift with an explicit zero-mass dominance certificate. -/
-abbrev review_theorem3_source_with_zero_mass_dominance :=
-  @theorem3_source_with_zero_mass_dominance
-
-/-- Theorem 3 audit: zero-mass totalization obstruction. -/
-abbrev review_theorem3_zero_mass_totalization_obstruction :=
-  @theorem3_zero_mass_totalization_obstruction
-
-/-- Theorem 3 audit: state-rate zero-mass totalization obstruction. -/
-abbrev review_theorem3_zero_mass_totalization_obstruction_state_rates :=
-  @theorem3_zero_mass_totalization_obstruction_state_rates
-
-/-- Theorem 3 audit: profitable zero-mass deviations preclude the dominance certificate. -/
-abbrev review_theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass :=
-  @theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass
 
 end PaperInterface
 end GN21DriverSurgePricing
