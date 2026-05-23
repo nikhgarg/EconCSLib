@@ -25,35 +25,47 @@ current real-valued reward totalization.
 
 ## Paper interface
 
-- `PaperInterface.definition_single_state_ic`
-- `PaperInterface.definition_dynamic_ic`
-- `PaperInterface.definition_threshold_policy`
-- `PaperInterface.section2_single_state_renewal_reward_iid_bridge`
-- `PaperInterface.definition_dynamic_defined_reward`
-- `PaperInterface.lemma1_measured_dynamic_reward_decomposition`
-- `PaperInterface.lemma2_switch_probability_formula`
-- `PaperInterface.lemma3_measured_time_fraction_formula`
-- `PaperInterface.lemma4_single_state_threshold_uniqueness`
-- `PaperInterface.lemma5_fixed_response_policy_form`
-- `PaperInterface.lemma6_upper_endpoint_derivative_formula`
-- `PaperInterface.lemma7_affine_positive_additive_response_quasi_convex`
-- `PaperInterface.lemma8_affine_negative_additive_response_quasi_concave`
-- `PaperInterface.lemma9_surge_derivative_positive_of_acceptAll_bounds`
-- `PaperInterface.lemma10_nonsurge_derivative_positive_of_acceptAll_bounds`
-- `PaperInterface.theorem2_multiplicative_measured_not_ic_explicit_atomic`
-- `PaperInterface.theorem2_multiplicative_measured_profitable_deviations_both_states_explicit_atomic`
-- `PaperInterface.theorem2_multiplicative_measured_profitable_positive_finite_cutoff_deviations_both_states_explicit_atomic`
-- `PaperInterface.theorem2_multiplicative_measured_not_ic_both_states_explicit_atomic`
-- `PaperInterface.theorem3_positive_mass_source`
-- `PaperInterface.theorem3_positive_response`
-- `PaperInterface.theorem3_positive_fixed_response_normalized`
-- `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`
-- `PaperInterface.theorem3_defined_reward_source`
-- `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`
-- `PaperInterface.theorem3_source_with_zero_mass_dominance`
-- `PaperInterface.theorem3_zero_mass_totalization_obstruction_state_rates`
-- `PaperInterface.theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass`
-- `PaperInterface.theorem4_structural_policy_representatives_of_gn21_bracket_source_data`
+The compact dashboard-facing `PaperInterface.lean` exposes `review_*` wrappers
+for the source definitions and named results.  The larger historical
+`PaperInterface.*` alias layer remains importable through `InterfaceAliases.lean`
+for compatibility with older notes and `PostPaperAudit.lean`.
+
+- `PaperInterface.review_definition_single_state_ic`
+- `PaperInterface.review_definition_dynamic_ic`
+- `PaperInterface.review_definition_threshold_policy`
+- `PaperInterface.review_section2_single_state_renewal_reward_iid_bridge`
+- `PaperInterface.review_definition_dynamic_defined_reward`
+- `PaperInterface.review_lemma1_measured_dynamic_reward_decomposition`
+- `PaperInterface.review_lemma2_switch_probability_formula`
+- `PaperInterface.review_lemma3_measured_time_fraction_formula`
+- `PaperInterface.review_lemma4_single_state_threshold_uniqueness`
+- `PaperInterface.review_lemma5_fixed_response_policy_form`
+- `PaperInterface.review_lemma6_upper_endpoint_derivative_formula`
+- `PaperInterface.review_lemma7_affine_positive_additive_response_quasi_convex`
+- `PaperInterface.review_lemma8_affine_negative_additive_response_quasi_concave`
+- `PaperInterface.review_lemma9_surge_derivative_positive_of_acceptAll_bounds`
+- `PaperInterface.review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds`
+- `PaperInterface.review_proposition3_1_affine_single_state_ic`
+- `PaperInterface.review_theorem1_single_state_threshold_best_response`
+- `PaperInterface.review_theorem2_multiplicative_policy_shape_ae`
+- `PaperInterface.review_theorem2_multiplicative_measured_not_ic_explicit_atomic`
+- `PaperInterface.review_theorem2_multiplicative_profitable_deviations_both_states`
+- `PaperInterface.review_theorem2_multiplicative_positive_finite_cutoff_deviations_both_states`
+- `PaperInterface.review_theorem2_multiplicative_measured_not_ic_both_states`
+- `PaperInterface.review_theorem3_feasibility_threshold`
+- `PaperInterface.review_theorem3_positive_mass_source`
+- `PaperInterface.review_theorem3_positive_response`
+- `PaperInterface.review_theorem3_positive_fixed_response_normalized`
+- `PaperInterface.review_theorem3_defined_reward_ic_of_positive_mass`
+- `PaperInterface.review_theorem3_defined_reward_source`
+- `PaperInterface.review_theorem3_feasible_sequential_current_bounds_source_data`
+- `PaperInterface.review_theorem3_feasible_sequential_current_bounds_source_data_statement`
+- `PaperInterface.review_theorem3_source_with_zero_mass_dominance`
+- `PaperInterface.review_theorem3_zero_mass_totalization_obstruction`
+- `PaperInterface.review_theorem3_zero_mass_totalization_obstruction_state_rates`
+- `PaperInterface.review_theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass`
+- `PaperInterface.review_theorem4_structural_policy_representatives`
+- `PaperInterface.review_theorem4_acceptAll_ae_unique_of_current_bounds_source`
 
 ## Named-result inventory
 
@@ -127,8 +139,13 @@ lake build GN21DriverSurgePricing.PostPaperAudit
 lake build GN21DriverSurgePricing.PaperInterface
 lake build GN21DriverSurgePricing
 lake build GN21DriverSurgePricing.DomainBridge
-lake env lean HumanStartHere.lean
 latexmk -pdf -halt-on-error DependencyDAG.tex
+wc -l papers/GN21DriverSurgePricing/PaperInterface.lean
+rg -c '^(noncomputable\s+|private\s+|protected\s+)*(theorem|lemma|def|abbrev) ' papers/GN21DriverSurgePricing/PaperInterface.lean
+python3 scripts/review_dashboard.py --paper GN21DriverSurgePricing --precheck
 git diff --check -- HumanStartHere.lean papers/GN21DriverSurgePricing
 rg -n --glob "*.lean" "\bsorry\b|\badmit\b|axiom|by\s*omega" papers/GN21DriverSurgePricing
 ```
+
+The dashboard precheck reports `0/39 reviewed` with no stale or mismatch rows;
+the remaining action is human review, not Lean formalization work.

@@ -11,9 +11,10 @@
 The PDF is cached locally as `source.pdf` and ignored by Git. The extracted text
 cache is `source.txt`.
 
-Human review starts from `FINAL_VALIDATION_REPORT.md`, then
+Human review starts from `FINAL_VALIDATION_REPORT.md`, then the compact
 `PaperInterface.lean`, `DependencyDAG.pdf`, and this README.  The importable
-source-numbered endpoint ledger is `PostPaperAudit.lean`.
+source-numbered endpoint ledger is `PostPaperAudit.lean`; the larger historical
+alias layer is retained separately in `InterfaceAliases.lean`.
 
 ## Guideline Audit
 
@@ -1409,6 +1410,7 @@ source-numbered endpoint ledger is `PostPaperAudit.lean`.
 ## Paper-Facing Ledger
 
 - Human-facing theorem file: `GN21DriverSurgePricing/PaperInterface.lean`
+- Compatibility alias layer: `GN21DriverSurgePricing/InterfaceAliases.lean`
 - Main proof ledger: `GN21DriverSurgePricing/MainTheorems.lean`
 - Active route modules: `GN21DriverSurgePricing/Lemma5Frontier.lean`,
   `GN21DriverSurgePricing/Theorem4Frontier.lean`,
