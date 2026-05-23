@@ -67,6 +67,23 @@ for compatibility with older notes and `PostPaperAudit.lean`.
 - `PaperInterface.review_theorem4_structural_policy_representatives`
 - `PaperInterface.review_theorem4_acceptAll_ae_unique_of_current_bounds_source`
 
+## Dashboard source-text overrides
+
+These entries supply paper text for source items whose PDF text extraction is
+not caught by the numbered-statement parser because of line breaks, unnumbered
+definitions, or appendix remark formatting.
+
+- `PaperInterface.review_definition_single_state_ic`: In the single-state model, a strategy is a measurable set of accepted positive trip lengths. A payment function is incentive compatible when accepting all job requests is optimal for the driver's lifetime average earnings.
+- `PaperInterface.review_definition_dynamic_ic`: In the dynamic model, a policy is a pair of measurable open trip-length acceptance sets, one for each state. A pricing function is incentive compatible when accepting all job requests in both states is optimal.
+- `PaperInterface.review_definition_threshold_policy`: Theorem 1 writes an optimal single-state policy as the set of trips whose busy-time hourly rate is at least a threshold constant.
+- `PaperInterface.review_definition_dynamic_defined_reward`: Appendix D reward-rate formulas use accepted-trip denominators; the Lean defined-reward interface records the positive-mass domain where those denominators are defined.
+- `PaperInterface.review_section2_single_state_renewal_reward_iid_bridge`: Section 2.2 states that the single-state model is a renewal-reward process and that lifetime mean hourly earnings equal expected cycle earnings divided by expected cycle length with probability one.
+- `PaperInterface.review_theorem1_single_state_threshold_best_response`: Theorem 1. With a single state, for each payment function there exists a nonnegative constant such that accepting exactly trips whose payment-per-time exceeds that constant is optimal for the driver.
+- `PaperInterface.review_proposition3_1_affine_single_state_ic`: Proposition 3.1. With a single state, affine pricing w(tau) = m tau + a is incentive compatible if 0 <= a <= m / lambda.
+- `PaperInterface.review_remark1_switch_probability_per_time_strictAntiOn`: Remark 1 states that q_{i->j}(u) / u is strictly decreasing in u, alongside continuity properties and monotonicity consequences for the derivative sign proxy.
+- `PaperInterface.review_remark3_switch_probability_per_time_tendsto_at_zero`: Remark 3. The limit of q_{i->j}(u) / u as u tends to zero is lambda_{i->j}.
+- `PaperInterface.review_remark4_switch_time_minus_switch_probability_nonneg`: Remark 4. lambda_{i->j} T_i - Q_i is nonnegative and is maximized when the policy accepts all trips; similarly Q_i is nonnegative and maximized by accepting all trips.
+
 ## Named-result inventory
 
 | Source item | Text-cache line | Audit declaration | Status |
