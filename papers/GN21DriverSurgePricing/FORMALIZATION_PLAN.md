@@ -13,7 +13,11 @@ Last updated: 2026-05-22
 - `DomainBridge.lean` now contains the source-faithful positive-mass Theorem 3
   a.e.-uniqueness endpoint
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions`,
-  exposed as `PaperInterface.theorem3_positive_mass_source`.
+  exposed as `PaperInterface.theorem3_positive_mass_source`.  It also exposes
+  the full feasible-measurable bridge
+  `PaperInterface.theorem3_source_with_zero_mass_dominance`, which adds exactly
+  the explicit zero-mass strict-dominance certificate needed outside the
+  denominator-valid source domain.
 - `Lemma5Frontier.lean` now contains the compact Theorem 4 structural
   endpoints that turn allowed Lemma 5 forms or feasible a.e. representative
   forms into the paper's measurable-domain structural statement.  It also
@@ -34,7 +38,8 @@ Last updated: 2026-05-22
 - Treat the current interface as a curated starter surface; the Theorem 3
   positive-mass source theorem is the current denominator-valid paper endpoint,
   while full feasible-measurable lifting needs an explicit zero-mass dominance
-  condition or a revised reward interface.
+  condition through `PaperInterface.theorem3_source_with_zero_mass_dominance`
+  or a revised reward interface.
 - Add more paper-facing interface rows only when the corresponding source claim
   has a stable Lean statement.
 

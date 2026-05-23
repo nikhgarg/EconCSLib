@@ -185,6 +185,10 @@ abbrev theorem3_feasible_weak_reward_optimal_positive_response_normalized :=
 abbrev theorem3_positive_mass_source :=
   @theorem3_positive_mass_measurable_ic_ae_unique_of_source_assumptions
 
+/-- Theorem 3: full measurable route from source assumptions plus zero-mass dominance. -/
+abbrev theorem3_source_with_zero_mass_dominance :=
+  @theorem3_measurable_ic_ae_unique_of_source_assumptions_and_zero_mass_dominance
+
 /-- Theorem 3: legacy positive-mass route with an explicit marginal-response certificate. -/
 abbrev theorem3_positive_mass_source_positive_response :=
   @theorem3_positive_mass_measurable_ic_ae_unique_of_source_and_positive_response_marginal

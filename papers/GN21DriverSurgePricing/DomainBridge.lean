@@ -1729,4 +1729,33 @@ theorem theorem3MeasuredStructuredMeasurableICAEUniqueConclusion_of_positiveMass
     ⟨hIC, hAE⟩
   exact ⟨m, z, hsigns, hIC, hAE, hprice_form, hparams⟩
 
+/--
+Full feasible-measurable Theorem 3 from the denominator-valid sequential
+source assumptions plus the exact zero-mass dominance bridge.  The positive
+mass part is the paper-ordered Lemma 9 then Lemma 10 proof; the extra premise
+is precisely what is needed to include feasible policies for which the
+Appendix-D reward-rate denominators vanish.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_source_assumptions_and_zero_mass_dominance
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21)
+    (hzero :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            μ arrival R1 R2 switch12 switch21 m z →
+            DynamicZeroMassStrictDominanceCertificate μ
+              (gn21MeasuredCTMCStructuredDynamicReward
+                μ arrival switch12 switch21 m z)) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  theorem3MeasuredStructuredMeasurableICAEUniqueConclusion_of_positiveMass_ae_unique_and_zeroMassStrictDominance
+    (paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions
+      μ arrival rho R1 R2 switch12 switch21 A)
+    hzero
+
 end GN21DriverSurgePricing

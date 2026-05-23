@@ -654,6 +654,32 @@ theorem theorem3_positive_mass_measurable_ic_ae_unique_of_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Full feasible-measurable Theorem 3 from the closed positive-mass source proof
+plus the explicit zero-mass dominance bridge needed when Appendix-D reward
+rates would otherwise have zero denominators.
+-/
+theorem theorem3_measurable_ic_ae_unique_of_source_assumptions_and_zero_mass_dominance
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21)
+    (zero_mass_dominance :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+            DynamicZeroMassStrictDominanceCertificate mu
+              (gn21MeasuredCTMCStructuredDynamicReward
+                mu arrival switch12 switch21 m z)) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_source_assumptions_and_zero_mass_dominance
+      mu arrival rho R1 R2 switch12 switch21 A zero_mass_dominance
+
+/--
 Canonical source-facing Theorem 3 endpoint at the positive-replacement
 boundary: constructed-price algebra and Lemma 9/10 primitive scalar conditions
 are discharged in Lean; the source supplies the positive Lemma 5 replacement

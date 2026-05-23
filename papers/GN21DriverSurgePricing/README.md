@@ -68,7 +68,11 @@ cache is `source.txt`.
   a.e.; the GN21 measured reward is invariant under that null change; then
   Lemma 10 closes the non-surge state with the surge state fixed at exact
   accept-all.  The older explicit-marginal variant remains available as
-  `PaperInterface.theorem3_positive_mass_source_positive_response`.
+  `PaperInterface.theorem3_positive_mass_source_positive_response`.  The full
+  feasible-measurable statement is now exposed as
+  `PaperInterface.theorem3_source_with_zero_mass_dominance`: it combines the
+  closed positive-mass source route with exactly the zero-mass strict-dominance
+  certificate needed when Appendix-D reward-rate denominators vanish.
 - Theorem 4 now has compact paper-facing structural endpoints for the
   measurable domain.  `Lemma5Frontier.lean` proves the source existential
   shape statement directly from allowed Lemma 5 policy forms via
