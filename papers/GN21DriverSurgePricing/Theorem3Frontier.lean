@@ -334,6 +334,368 @@ theorem theorem3_measurable_ic_of_bracket_light_ae_normalized_mass_ratio_source
         hmass1_eq_one hmass2_eq_one fixed_response_selection)
 
 /--
+Build the bracket LightAE aggregate-cross source package directly from
+Lemma 6 bracket records, fixed reward-rate identities, and the paper's
+aggregate fixed-state cross-ratio fields.
+-/
+def GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_fixed_reward_rate_cross_fields
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (forms :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+        μ arrival switch12 switch21 m z)
+    (shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (nonsurge_fixed_reward_rate :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        gn21ScaledStateEarning (μ 0) (arrival 0)
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+            (ρ 0) =
+          R1 * gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0))
+    (surge_fixed_reward_rate :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+        gn21ScaledStateEarning (μ 1) (arrival 1)
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+            (ρ 1) =
+          R2 * gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1))
+    (surge_reject_short_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          gn21AcceptAllScaledStateTime (μ 1) (arrival 1) *
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                (ρ 1) ≤
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+              gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                switch21 switch12)
+    (surge_reject_middle_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          gn21AcceptAllScaledStateTime (μ 1) (arrival 1) *
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                (ρ 1) ≤
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+              gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                switch21 switch12)
+    (nonsurge_reject_long_upper_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) ≤
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21)
+    (nonsurge_accept_middle_lower_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21 ≤
+            gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0))
+    (nonsurge_accept_middle_upper_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) ≤
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21) :
+    GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData
+      μ arrival R1 R2 switch12 switch21 m z where
+  forms := forms
+  local_endpoint :=
+    Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateCrossByPolicyFormDerivedTailMiddleCutoffRerouteAELocalEndpointCertificate.of_one_threshold_fixed_response_cross_fields
+      forms.exists_optimal
+      (by
+        intro ρ hopt
+        exact
+          (forms.nonsurge ρ hopt).to_source_data forms.hswitch12_pos
+            (add_pos forms.hswitch12_pos forms.hswitch21_pos))
+      (by
+        intro ρ hopt
+        exact
+          (forms.surge ρ hopt).to_source_data forms.hswitch21_pos
+            (add_pos forms.hswitch21_pos forms.hswitch12_pos))
+      shared nonsurge_fixed_reward_rate surge_fixed_reward_rate
+      surge_reject_short_cross surge_reject_middle_cross
+      nonsurge_reject_long_upper_cross
+      nonsurge_accept_middle_lower_cross nonsurge_accept_middle_upper_cross
+
+/--
+Named-rate version of the bracket LightAE aggregate-cross constructor.  This
+matches the paper's Lemma 6 reward-rate notation (`Ri = R1`, `Rj = R2`) and
+derives the fixed reward-rate equalities consumed by the endpoint certificate.
+-/
+def GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_named_rate_cross_fields
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (forms :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+        μ arrival switch12 switch21 m z)
+    (shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (nonsurge_Ri_eq :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+          (forms.nonsurge ρ hopt).Ri = R1)
+    (surge_Rj_eq :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+          (forms.surge ρ hopt).Rj = R2)
+    (surge_reject_short_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ u : ℝ,
+        rejectsShortTrips u (ρ 1) →
+          gn21AcceptAllScaledStateTime (μ 1) (arrival 1) *
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                (ρ 1) ≤
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+              gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                switch21 switch12)
+    (surge_reject_middle_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ lo hi : ℝ,
+        rejectsMiddleTrips lo hi (ρ 1) →
+          gn21AcceptAllScaledStateTime (μ 1) (arrival 1) *
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                (ρ 1) ≤
+            gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+              gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                switch21 switch12)
+    (nonsurge_reject_long_upper_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) ≤
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21)
+    (nonsurge_accept_middle_lower_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21 ≤
+            gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0))
+    (nonsurge_accept_middle_upper_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) ≤
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21) :
+    GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData
+      μ arrival R1 R2 switch12 switch21 m z :=
+  GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_fixed_reward_rate_cross_fields
+    forms shared
+    (by
+      intro ρ hopt
+      exact
+        (forms.nonsurge ρ hopt).fixed_reward_rate_of_Ri_eq
+          (nonsurge_Ri_eq ρ hopt))
+    (by
+      intro ρ hopt
+      exact
+        (forms.surge ρ hopt).fixed_reward_rate_of_Rj_eq
+          (surge_Rj_eq ρ hopt))
+    surge_reject_short_cross surge_reject_middle_cross
+    nonsurge_reject_long_upper_cross
+    nonsurge_accept_middle_lower_cross nonsurge_accept_middle_upper_cross
+
+/--
+Named-rate bracket LightAE aggregate-cross package from the paper's surge
+cutoff bounds.  The shared CTMC monotonicity lemmas integrate the short- and
+middle-rejection scalar cutoff inequalities into the aggregate surge
+cross-ratio fields.
+-/
+def GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_named_rate_surge_cutoff_bounds
+    {μ : Fin 2 → Measure TripLength}
+    {arrival m z : Fin 2 → ℝ}
+    {R1 R2 switch12 switch21 : ℝ}
+    (forms :
+      Theorem4AllMeasurableGN21FixedResponsePolicyFormBracketSourceData
+        μ arrival switch12 switch21 m z)
+    (shared : GN21RegularEndpointSharedSourceData μ arrival switch12 switch21)
+    (nonsurge_Ri_eq :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+          (forms.nonsurge ρ hopt).Ri = R1)
+    (surge_Rj_eq :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+          (forms.surge ρ hopt).Rj = R2)
+    (surge_reject_short_cutoff_bound :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ∀ u : ℝ,
+          rejectsShortTrips u (ρ 1) →
+            0 < u →
+              gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                  (ρ 1) * u ≤
+                gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                  gn21SwitchProb switch21 switch12 u)
+    (surge_reject_middle_ordered_upper_cutoff_bound :
+      ∀ ρ : Fin 2 → TripPolicy,
+        (hopt :
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ) →
+        ∀ lo hi : ℝ,
+          rejectsMiddleTrips lo hi (ρ 1) →
+            lo ≤ hi →
+              0 < hi →
+                gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
+                    (ρ 1) * hi ≤
+                  gn21ScaledStateTime (μ 1) (arrival 1) (ρ 1) *
+                    gn21SwitchProb switch21 switch12 hi)
+    (nonsurge_reject_long_upper_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ u : ℝ,
+        rejectsLongTrips u (ρ 0) →
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) ≤
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21)
+    (nonsurge_accept_middle_lower_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21 ≤
+            gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0))
+    (nonsurge_accept_middle_upper_cross :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+      ∀ lo hi : ℝ,
+        acceptsMiddleTrips lo hi (ρ 0) →
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+              gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+                (ρ 0) ≤
+            gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) *
+              gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+                switch12 switch21) :
+    GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData
+      μ arrival R1 R2 switch12 switch21 m z :=
+  GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_named_rate_cross_fields
+    forms shared nonsurge_Ri_eq surge_Rj_eq
+    (by
+      intro ρ hopt u hshape
+      exact
+        shared.surge_fixed_cross_le_acceptAll_of_rejectsShortTrips_of_positive_cutoff_bound
+          hopt.1 hshape
+          (surge_reject_short_cutoff_bound ρ hopt u hshape))
+    (by
+      intro ρ hopt lo hi hshape
+      exact
+        shared.surge_fixed_cross_le_acceptAll_of_rejectsMiddleTrips_of_ordered_positive_upper_cutoff_bound
+          hopt.1 hshape
+          (surge_reject_middle_ordered_upper_cutoff_bound ρ hopt lo hi
+            hshape))
+    nonsurge_reject_long_upper_cross
+    nonsurge_accept_middle_lower_cross nonsurge_accept_middle_upper_cross
+
+/--
 Theorem 3 on the bracket fixed-response LightAE route with aggregate
 cross-ratio endpoint data and normalized trip-length laws.  This is the
 closest current frontier to the paper proof when Lemma 9/10 provide aggregate

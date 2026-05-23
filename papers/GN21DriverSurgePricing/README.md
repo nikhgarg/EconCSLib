@@ -2447,7 +2447,15 @@ forms only up to a.e. representatives and Lemmas 9--10 provide aggregate
 cross-ratio endpoint comparisons rather than pointwise fixed-transfer
 equalities.  Lean handles the non-surge `lo <= 0` accepted-middle branch by
 rerouting through reject-long and derives positive accept-all mass from
-normalized trip-length laws.  The named-rate pointwise-equality route remains
+normalized trip-length laws.  The current source-facing constructor for this
+route is
+`GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_named_rate_surge_cutoff_bounds`:
+it keeps Lemma 6 at the raw bracket-record level, derives fixed reward-rate
+identities from the local `Ri = R1` and `Rj = R2` names, and integrates the
+surge short/middle scalar cutoff bounds into aggregate cross-ratio fields.
+After this constructor, the remaining substantive per-policy endpoint work is
+the non-surge aggregate cross comparisons for reject-long and accepted-middle
+branches.  The named-rate pointwise-equality route remains
 available as
 `PaperInterface.theorem3_light_ae_bracket_middle_cutoff_named_rate_normalized`,
 with IC-only projection

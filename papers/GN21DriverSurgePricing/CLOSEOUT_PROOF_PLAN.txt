@@ -447,6 +447,27 @@ use the compiled projections
   nonsurge_accept_middle_lower_cross
   nonsurge_accept_middle_upper_cross
 
+Update: the bracket LightAE aggregate-cross route now has a source-facing
+constructor:
+
+  GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData.of_named_rate_surge_cutoff_bounds
+
+Use this before rebuilding any endpoint certificate by hand.  It takes the raw
+Lemma 6 bracket forms, the local named reward-rate equalities Ri = R1 and
+Rj = R2, the shared regular endpoint data, the surge short/middle scalar
+cutoff inequalities, and the three non-surge aggregate cross fields.  Lean
+then constructs the fixed reward-rate identities and the surge aggregate
+cross-ratio fields internally.  The next source-proof target on this route is
+therefore the non-surge aggregate cross trio:
+
+  nonsurge_reject_long_upper_cross
+  nonsurge_accept_middle_lower_cross
+  nonsurge_accept_middle_upper_cross
+
+Do not replace this by a pointwise equality route unless the source proof
+actually supplies pointwise fixed-transfer equality.  The aggregate-cross route
+is the current faithful route for Lemma 9/10 integral comparisons.
+
 The middle projection uses
 `lo_nonpos_of_rejectsShortTrips_of_rejectsMiddleTrips_of_ordered`: under the
 exact surge short-tail selector, any ordered middle-rejection representation
