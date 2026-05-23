@@ -48,6 +48,7 @@ explicit zero-mass bridge:
 
 ```lean
 theorem3MeasuredStructuredMeasurableICAEUniqueConclusion_of_positiveMass_ae_unique_and_zeroMassStrictDominance
+PaperInterface.theorem3_positive_mass_to_full_with_zero_mass_dominance
 ```
 
 That is not bookkeeping. The Appendix-D formulas divide by accepted trip mass,
@@ -55,7 +56,10 @@ and Lean's current real-valued totalization makes zero-mass reward rates
 collapse to `0`; the paper source route is denominator-valid on the
 positive-mass/nondegenerate domain. Use the full-domain bridge only when a
 separate source condition or revised reward interface supplies zero-mass
-strict dominance.
+strict dominance. Do not try to prove zero-mass dominance from the current
+source reward-rate algebra: `PaperInterface.theorem3_zero_mass_totalization_obstruction`
+records the compiled left-empty/right-accept-all obstruction for the existing
+real-valued totalization.
 
 Older source-boundary cleanup that remains useful but is no longer the main
 closeout route:

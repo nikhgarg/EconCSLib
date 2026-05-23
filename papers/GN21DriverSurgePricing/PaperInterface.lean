@@ -218,6 +218,15 @@ measurable domain when zero-mass strict dominance is supplied.
 abbrev theorem3_positive_mass_to_full_with_zero_mass_dominance :=
   @theorem3MeasuredStructuredMeasurableICAEUniqueConclusion_of_positiveMass_ae_unique_and_zeroMassStrictDominance
 
+/--
+Theorem 3 zero-mass boundary: with the current real-valued reward
+totalization, a left-empty/right-accept-all policy can beat accept-all when
+the right accept-all state reward rate exceeds the full accept-all dynamic
+reward.
+-/
+abbrev theorem3_zero_mass_totalization_obstruction :=
+  @gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_right_rewardRate_gt
+
 /-- Theorem 3: full measurable route from source assumptions plus zero-mass dominance. -/
 abbrev theorem3_source_with_zero_mass_dominance :=
   @theorem3_measurable_ic_ae_unique_of_source_assumptions_and_zero_mass_dominance

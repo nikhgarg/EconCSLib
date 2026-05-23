@@ -142,6 +142,20 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   zero-mass dominance certificate, or an extended-real/partial reward
   interface.  Add tiny simplification lemmas for the zero-mass cases before
   spending tokens on a doomed dominance proof.
+- If a CTMC source theorem is already closed on the paper's
+  denominator-valid positive-mass domain, do not keep marking that paper
+  result as caveated just because a broader all-feasible totalized abstraction
+  fails.  Put the positive-mass paper theorem on the review surface, record the
+  all-feasible lift as an optional strengthening with its exact extra
+  certificate, and name any zero-mass obstruction theorem so future agents do
+  not retry the same false bridge.
+- Avoid all-candidate nondegeneracy records for Lemma 5/Theorem 4 adapters
+  when the candidate universe contains the empty policy.  Empty policies are
+  measurable feasible subsets but cannot satisfy positive accepted-mass or
+  positive-denominator fields.  If the paper proof only compares an optimum to
+  the accept-all candidate, use the candidate-only accept-all certificate route
+  and let the a.e. uniqueness lemma turn that single comparison into the paper
+  conclusion.
 - For GN21-style two-state CTMC surge proofs, the useful "support any ratio"
   paragraph is a small-ratio construction, not a claim that the current fixed
   reward equals the target accept-all reward. Prove a scalar lemma of the form:

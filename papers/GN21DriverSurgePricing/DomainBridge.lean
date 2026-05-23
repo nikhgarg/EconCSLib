@@ -500,6 +500,62 @@ theorem gn21MeasuredDynamicReward_eq_left_rewardRate_of_right_zero_mass_time_pay
   simpa [gn21MeasuredDynamicReward, gn21DynamicRewardFormula, add_comm,
     mul_comm] using hswap
 
+/--
+Concrete zero-mass obstruction: if the left state accepts no trips and the
+right state accepts all trips, the current real-valued measured reward
+totalizes to the right state's reward rate whenever the right-state
+time-fraction denominator is nonzero.
+-/
+theorem gn21MeasuredDynamicReward_eq_right_rewardRate_of_left_empty_acceptAll
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction)
+    (hdenJ :
+      arrivalJ * singleStateTripMass μJ acceptAllPolicy *
+            gn21StateCycleTime μJ arrivalJ acceptAllPolicy *
+            gn21ExitWeightIntegral μI arrivalI switchIJ switchJI
+              (∅ : TripPolicy) ≠ 0) :
+    gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
+      wI wJ (∅ : TripPolicy) acceptAllPolicy =
+      gn21MeasuredStateRewardRate μJ arrivalJ wJ acceptAllPolicy := by
+  exact
+    gn21MeasuredDynamicReward_eq_right_rewardRate_of_left_zero_mass_time_payment
+      μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ
+      (∅ : TripPolicy) acceptAllPolicy
+      (by simp [singleStateTripMass])
+      (by simp [singleStateTripTime])
+      (by simp [singleStateTripPayment])
+      hdenJ
+
+/--
+If the right accept-all state reward rate is strictly larger than the full
+accept-all dynamic reward, the left-empty/right-accept-all policy is a
+profitable deviation under the current real-valued totalization.  This records
+why a full-domain Theorem 3 cannot be obtained from the positive-mass source
+proof without an explicit zero-mass dominance condition or a revised reward
+interface.
+-/
+theorem gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_right_rewardRate_gt
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction)
+    (hdenJ :
+      arrivalJ * singleStateTripMass μJ acceptAllPolicy *
+            gn21StateCycleTime μJ arrivalJ acceptAllPolicy *
+            gn21ExitWeightIntegral μI arrivalI switchIJ switchJI
+              (∅ : TripPolicy) ≠ 0)
+    (hgt :
+      gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
+          wI wJ acceptAllPolicy acceptAllPolicy <
+        gn21MeasuredStateRewardRate μJ arrivalJ wJ acceptAllPolicy) :
+    gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
+        wI wJ acceptAllPolicy acceptAllPolicy <
+      gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
+        wI wJ (∅ : TripPolicy) acceptAllPolicy := by
+  rw [gn21MeasuredDynamicReward_eq_right_rewardRate_of_left_empty_acceptAll
+    μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ hdenJ]
+  exact hgt
+
 /-- A feasible measurable dynamic policy has zero accepted mass in some state. -/
 def dynamicHasZeroAcceptedMass
     (μ : Fin 2 → Measure TripLength) (σ : Fin 2 → TripPolicy) : Prop :=

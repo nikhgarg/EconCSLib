@@ -62,7 +62,12 @@ lemmas such as
 `gn21MeasuredDynamicReward_eq_right_rewardRate_of_left_zero_mass_time_payment`
 and
 `gn21MeasuredDynamicReward_eq_left_rewardRate_of_right_zero_mass_time_payment`
-showing why that dominance certificate is not automatic.
+showing why that dominance certificate is not automatic.  The concrete
+left-empty/right-accept-all boundary is now named
+`gn21MeasuredDynamicReward_eq_right_rewardRate_of_left_empty_acceptAll`,
+`gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_right_rewardRate_gt`,
+and on the paper review surface
+`PaperInterface.theorem3_zero_mass_totalization_obstruction`.
 
 2026-05-22 positive-mass closeout endpoint: the denominator-valid Theorem 3
 source route now compiles all the way to positive-mass measurable IC plus
