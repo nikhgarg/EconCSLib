@@ -1,4 +1,4 @@
-import GN21DriverSurgePricing.MainTheorems
+import GN21DriverSurgePricing.DomainBridge
 
 /-!
 # Theorem 3 Split Current-Bounds Routes
@@ -1511,6 +1511,220 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_str
         have Dsrc :=
           GN21SurgeLemma9AcceptAllAggregateSourceData.of_reward_rate
             hmassI harrivalMassI (ne_of_gt htimeI_pos) D
+        exact ⟨R1_current, ratio, by
+          simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb]
+            using Dsrc⟩ }
+
+/--
+Optimal-only sequential surge data with the zero-mass boundary made explicit.
+This is the honest source-domain replacement for assuming positive non-surge
+current mass at every full measurable optimum: Lean derives that mass fact
+from a strict-dominance certificate ruling out feasible zero-mass optima.
+-/
+structure Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeSourceDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1
+  hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1
+  weak_reward :
+    theorem3AcceptAllFeasibleWeakRewardCertificate
+      μ arrival R1 R2 switch12 switch21
+  zero_mass_strict_dominance :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        DynamicZeroMassStrictDominanceCertificate μ
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+  surge_source_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∃ R1_current ratio : ℝ,
+            GN21SurgeLemma9AcceptAllAggregateSourceData
+              (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+              (m 1) R1_current (z 1) ratio
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+              (ρ 0) (ρ 1)
+
+/--
+The zero-mass bridge supplies the positive non-surge current mass needed by
+the existing optimal-only sequential surge Theorem 3 wrapper.
+-/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_source_data_zero_mass_bridge_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeSourceDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_source_data_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    { hR1_eq := A.hR1_eq
+      hR2_pos := A.hR2_pos
+      hC_lt_rho := A.hC_lt_rho
+      hrho_lt_one := A.hrho_lt_one
+      harrival1_pos := A.harrival1_pos
+      harrival2_pos := A.harrival2_pos
+      hswitch12_pos := A.hswitch12_pos
+      hswitch21_pos := A.hswitch21_pos
+      htime1_integrable := A.htime1_integrable
+      htime2_integrable := A.htime2_integrable
+      hq1_integrable := A.hq1_integrable
+      hq2_integrable := A.hq2_integrable
+      hmass1_eq_one := A.hmass1_eq_one
+      hmass2_eq_one := A.hmass2_eq_one
+      weak_reward := A.weak_reward
+      optimal_nonsurge_current_mass_pos := by
+        intro m z hnonneg hparams ρ hρ
+        exact
+          (dynamicPositiveMassMeasurableOptimal_of_dynamicMeasurableOptimal_of_zeroMassStrictDominance
+            (A.zero_mass_strict_dominance m z hnonneg hparams) hρ).1.2 0
+      surge_source_data := A.surge_source_data }
+
+/--
+Accounting-form optimal-only sequential surge data with the zero-mass bridge
+instead of an assumed positive non-surge current-mass field.
+-/
+structure Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeAccountingDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) extends
+      Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeSourceDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21 where
+  surge_accounting_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∃ R1_current ratio : ℝ,
+            GN21SurgeLemma9AcceptAllAggregateAccountingData
+              (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+              (m 1) R1_current (z 1) ratio (m 0) (z 0) (ρ 0) (ρ 1)
+
+/-- Accounting-form zero-mass-bridge wrapper for the optimal sequential surge route. -/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_accounting_data_zero_mass_bridge_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeAccountingDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_source_data_zero_mass_bridge_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    { A.toTheorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeSourceDataAssumptions with
+      surge_source_data := by
+        intro m z hnonneg hparams ρ hρ
+        rcases A.surge_accounting_data m z hnonneg hparams ρ hρ with
+          ⟨R1_current, ratio, D⟩
+        have Dsrc :=
+          GN21SurgeLemma9AcceptAllAggregateSourceData.of_structured_accounting
+            (A.htime1_integrable.mono_set (hρ.1 0).1)
+            (A.hq1_integrable.mono_set (hρ.1 0).1) D
+        exact ⟨R1_current, ratio, by
+          simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb]
+            using Dsrc⟩ }
+
+/--
+Reward-rate-form optimal-only sequential surge data with the zero-mass bridge
+instead of an assumed positive non-surge current-mass field.
+-/
+structure Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeRewardRateDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) extends
+      Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeSourceDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21 where
+  surge_reward_rate_data :
+    ∀ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+        theorem3AcceptAllStructuredParameterEvidence
+          μ arrival R1 R2 switch12 switch21 m z →
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          ∃ R1_current ratio : ℝ,
+            GN21SurgeLemma9AcceptAllAggregateRewardRateData
+              (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+              (m 1) R1_current (z 1) ratio (m 0) (z 0) (ρ 0) (ρ 1)
+
+/-- Reward-rate-form zero-mass-bridge wrapper for the optimal sequential surge route. -/
+theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_reward_rate_data_zero_mass_bridge_assumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeRewardRateDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      μ arrival R1 R2 switch12 switch21 :=
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_source_data_zero_mass_bridge_assumptions
+    μ arrival rho R1 R2 switch12 switch21
+    { A.toTheorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeSourceDataAssumptions with
+      surge_source_data := by
+        intro m z hnonneg hparams ρ hρ
+        rcases A.surge_reward_rate_data m z hnonneg hparams ρ hρ with
+          ⟨R1_current, ratio, D⟩
+        have hmassI :
+            0 < singleStateTripMass (μ 0) (ρ 0) :=
+          (dynamicPositiveMassMeasurableOptimal_of_dynamicMeasurableOptimal_of_zeroMassStrictDominance
+            (A.zero_mass_strict_dominance m z hnonneg hparams) hρ).1.2 0
+        have harrivalMassI :
+            arrival 0 * singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
+          mul_ne_zero (ne_of_gt A.harrival1_pos) (ne_of_gt hmassI)
+        have htimeI_pos :
+            0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) :=
+          gn21ScaledStateTime_pos_of_nonneg
+            (μ 0) (arrival 0) (ρ 0) (le_of_lt A.harrival1_pos)
+            (hρ.1 0).2 (hρ.1 0).1
+        have Dsrc :=
+          GN21SurgeLemma9AcceptAllAggregateSourceData.of_reward_rate
+            (ne_of_gt hmassI) harrivalMassI (ne_of_gt htimeI_pos) D
         exact ⟨R1_current, ratio, by
           simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb]
             using Dsrc⟩ }

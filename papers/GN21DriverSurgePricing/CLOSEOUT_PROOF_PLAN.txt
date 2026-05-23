@@ -12,6 +12,31 @@ Do not edit source.txt for this purpose.  source.txt is the extracted paper.
 
 Current best Lean frontier
 --------------------------
+2026-05-22 zero-mass correction: do not try to prove that arbitrary
+zero-mass feasible policies are strictly dominated under the current
+real-valued `gn21MeasuredDynamicReward` totalization.  Lean's real division
+collapses a zero-mass state's cycle time and reward rate to `0`; if the other
+state is nondegenerate, the dynamic reward can collapse to the other state's
+reward rate rather than to a bad or infeasible outcome.  This is not a claim
+that the paper proof is wrong: the source Appendix-D formulas divide by
+accepted trip mass and are source-valid on the nondegenerate/positive-mass
+domain.  The full all-feasible measurable statement therefore needs either:
+
+  * a theorem surface restricted to `dynamicFeasibleMeasurablePositiveMassPolicy`;
+  * an explicit zero-mass dominance hypothesis supplied as an extra source
+    condition; or
+  * a different extended-real/nondegenerate CTMC reward interface where
+    zero-mass policies are not silently totalized by real division.
+
+The compiled bridge layer is `GN21DriverSurgePricing.DomainBridge`.  It proves
+the order-theoretic lift from positive-mass IC/AE uniqueness plus an explicit
+`DynamicZeroMassStrictDominanceCertificate`, and it records simplification
+lemmas such as
+`gn21MeasuredDynamicReward_eq_right_rewardRate_of_left_zero_mass_time_payment`
+and
+`gn21MeasuredDynamicReward_eq_left_rewardRate_of_right_zero_mass_time_payment`
+showing why that dominance certificate is not automatic.
+
 2026-05-22 route correction: the active source-faithful Theorem 3 path is the
 split feasible-sequential current-bounds route, not the all-candidate
 fixed-response route and not the reduced LightAE pointwise-transfer route by

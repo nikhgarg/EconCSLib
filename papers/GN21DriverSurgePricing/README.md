@@ -48,6 +48,17 @@ cache is `source.txt`.
   strict positivity on positive times, the strict linearization bound
   `q(u) < lambda*u`, `q(u)/u` strict decrease on positive times, and the
   zero-time limit `q(u)/u -> lambda`.
+- The zero-mass boundary is now explicit.  `DomainBridge.lean` proves the
+  reusable lift from positive-mass measurable IC/AE uniqueness to the full
+  feasible-measurable statement when an explicit
+  `DynamicZeroMassStrictDominanceCertificate` is supplied.  It also proves the
+  simplification lemmas showing why that certificate is not automatic under
+  the current real-valued CTMC reward totalization: a zero-mass state's
+  denominator divisions collapse to `0`, and a one-zero-state policy can reduce
+  to the other state's reward rate.  Thus source-faithful reward-rate routes
+  should stay on the positive-mass/nondegenerate domain, or the full theorem
+  must use an explicit zero-mass dominance condition or a different
+  extended-real/nondegenerate reward interface.
 - The CTMC monotonicity layer now also exposes
   `gn21SwitchProb_mul_le_mul_of_pos_lt` and
   `gn21FixedState_lower_pointwise_of_rejectsLongTrips`: for reject-long fixed

@@ -2545,6 +2545,52 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_
       mu arrival rho R1 R2 switch12 switch21 A
 
 /--
+Theorem 3 from optimal-only sequential surge-source data plus an explicit
+zero-mass strict-dominance certificate.  Lean derives the non-surge current
+positive-mass fact for full measurable optima from that certificate.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_source_data_zero_mass_bridge
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeSourceDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_source_data_zero_mass_bridge_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/-- Accounting-form zero-mass-bridge version of the optimal sequential surge route. -/
+theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_accounting_data_zero_mass_bridge
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeAccountingDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_accounting_data_zero_mass_bridge_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/-- Reward-rate-form zero-mass-bridge version of the optimal sequential surge route. -/
+theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_reward_rate_data_zero_mass_bridge
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeRewardRateDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_reward_rate_data_zero_mass_bridge_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
 Theorem 3 with feasible source current-bounds data for weak IC and
 optimal-policy positive-response data for a.e. uniqueness.
 -/

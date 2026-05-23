@@ -196,6 +196,18 @@ abbrev theorem3_optimal_sequential_surge_accounting_data :=
 abbrev theorem3_optimal_sequential_surge_reward_rate_data :=
   @theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_reward_rate_data
 
+/-- Theorem 3: optimal-only sequential surge route with zero-mass dominance. -/
+abbrev theorem3_optimal_sequential_surge_source_data_zero_mass_bridge :=
+  @theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_source_data_zero_mass_bridge
+
+/-- Theorem 3: optimal-only accounting sequential surge route with zero-mass dominance. -/
+abbrev theorem3_optimal_sequential_surge_accounting_data_zero_mass_bridge :=
+  @theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_accounting_data_zero_mass_bridge
+
+/-- Theorem 3: optimal-only reward-rate sequential surge route with zero-mass dominance. -/
+abbrev theorem3_optimal_sequential_surge_reward_rate_data_zero_mass_bridge :=
+  @theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_reward_rate_data_zero_mass_bridge
+
 /-- Theorem 3: current-bounds accounting endpoint. -/
 abbrev theorem3_current_bounds_accounting :=
   @theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting

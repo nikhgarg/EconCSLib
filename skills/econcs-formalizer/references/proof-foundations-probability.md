@@ -111,6 +111,18 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   routes should quantify over feasible measurable policies with positive mass,
   while broader measurable wrappers should either keep explicit positive-mass
   obligations or use scaled-earning/accounting forms that avoid division.
+- When a continuous CTMC reward formula divides by accepted mass, audit the
+  zero-mass semantics before trying to lift a positive-mass theorem to all
+  feasible policies.  In Lean, real division totalizes `1 / 0` and `0 / 0` to
+  `0`; this can make a zero-mass state's cycle time/reward rate vanish instead
+  of representing an infinite wait or an undefined source expression.  If one
+  state has zero accepted mass and the other state is nondegenerate, the
+  two-state reward may collapse to the other state's reward rate, so a blanket
+  "zero-mass policies are strictly dominated by accept-all" bridge can be
+  false.  Prefer a positive-mass/nondegenerate theorem surface, an explicit
+  zero-mass dominance certificate, or an extended-real/partial reward
+  interface.  Add tiny simplification lemmas for the zero-mass cases before
+  spending tokens on a doomed dominance proof.
 - For GN21-style two-state CTMC surge proofs, the useful "support any ratio"
   paragraph is a small-ratio construction, not a claim that the current fixed
   reward equals the target accept-all reward. Prove a scalar lemma of the form:
