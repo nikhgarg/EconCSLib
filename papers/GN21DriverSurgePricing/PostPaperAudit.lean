@@ -135,6 +135,18 @@ abbrev audit_theorem2_multiplicative_policy_shape_ae :=
 abbrev audit_theorem2_multiplicative_measured_not_ic_explicit_atomic :=
   @PaperInterface.theorem2_multiplicative_measured_not_ic_explicit_atomic
 
+/-- Audit endpoint for Theorem 2: explicit both-state multiplicative deviations. -/
+abbrev audit_theorem2_multiplicative_measured_profitable_deviations_both_states :=
+  @PaperInterface.theorem2_multiplicative_measured_profitable_deviations_both_states_explicit_atomic
+
+/-- Audit endpoint for Theorem 2: explicit both-state positive finite cutoff deviations. -/
+abbrev audit_theorem2_multiplicative_measured_profitable_positive_finite_cutoff_deviations_both_states :=
+  @PaperInterface.theorem2_multiplicative_measured_profitable_positive_finite_cutoff_deviations_both_states_explicit_atomic
+
+/-- Audit endpoint for Theorem 2: both-state explicit measured non-IC instance. -/
+abbrev audit_theorem2_multiplicative_measured_not_ic_both_states :=
+  @PaperInterface.theorem2_multiplicative_measured_not_ic_both_states_explicit_atomic
+
 /-- Audit endpoint for Theorem 4: measurable structural representatives. -/
 abbrev audit_theorem4_structural_policy_representatives :=
   @PaperInterface.theorem4_structural_policy_representatives_of_gn21_bracket_source_data

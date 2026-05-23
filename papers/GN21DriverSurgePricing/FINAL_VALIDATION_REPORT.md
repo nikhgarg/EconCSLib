@@ -41,6 +41,9 @@ current real-valued reward totalization.
 - `PaperInterface.lemma9_surge_derivative_positive_of_acceptAll_bounds`
 - `PaperInterface.lemma10_nonsurge_derivative_positive_of_acceptAll_bounds`
 - `PaperInterface.theorem2_multiplicative_measured_not_ic_explicit_atomic`
+- `PaperInterface.theorem2_multiplicative_measured_profitable_deviations_both_states_explicit_atomic`
+- `PaperInterface.theorem2_multiplicative_measured_profitable_positive_finite_cutoff_deviations_both_states_explicit_atomic`
+- `PaperInterface.theorem2_multiplicative_measured_not_ic_both_states_explicit_atomic`
 - `PaperInterface.theorem3_positive_mass_source`
 - `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`
 - `PaperInterface.theorem3_defined_reward_source`
@@ -67,7 +70,7 @@ current real-valued reward totalization.
 | Remarks 1, 3, 4 | 3747, 3793, 3799 | `audit_remark1_switch_probability_per_time_strictAntiOn`, `audit_remark3_switch_probability_per_time_tendsto_at_zero`, `audit_remark4_switch_time_minus_switch_probability_nonneg` | complete |
 | Lemmas 7-8 | 3773, 3775 | `audit_lemma7_affine_positive_additive_response_quasi_convex`, `audit_lemma8_affine_negative_additive_response_quasi_concave` | complete |
 | Lemmas 9-10 | 3809, 3834 | `audit_lemma9_surge_derivative_positive_of_acceptAll_bounds`, `audit_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds` | complete |
-| Theorem 2 | 560 | `audit_theorem2_multiplicative_policy_shape_ae`, `audit_theorem2_multiplicative_measured_not_ic_explicit_atomic` | complete for the structural handoff and explicit measured non-IC instance |
+| Theorem 2 | 560 | `audit_theorem2_multiplicative_policy_shape_ae`, `audit_theorem2_multiplicative_measured_not_ic_explicit_atomic`, `audit_theorem2_multiplicative_measured_profitable_deviations_both_states`, `audit_theorem2_multiplicative_measured_profitable_positive_finite_cutoff_deviations_both_states`, `audit_theorem2_multiplicative_measured_not_ic_both_states` | complete for the structural handoff, explicit measured non-IC instance, and a single atomic instance with profitable positive-finite-cutoff deviations in both states |
 | Theorem 4 | 3859 | `audit_theorem4_structural_policy_representatives` | complete at the measure-theoretic structural surface |
 | Theorem 3 | 704, 3944 | `audit_theorem3_positive_mass_source`, `audit_theorem3_feasible_sequential_current_bounds_source_data`, `audit_theorem3_source_with_zero_mass_dominance` | complete through the positive-mass source endpoint and the full feasible sequential current-bounds source-data endpoint; zero-mass dominance remains an optional bridge route |
 
