@@ -1,4 +1,4 @@
-import GN21DriverSurgePricing.MainTheorems
+import GN21DriverSurgePricing.Theorem4Frontier
 
 /-!
 # Theorem 3 Frontier Routes for Driver Surge Pricing
@@ -105,6 +105,46 @@ structure GN21Theorem3LightAEFeasibleCanonicalEndpointData
   local_endpoint :
     Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateEqDerivedTailMiddleRerouteAELocalEndpointCertificate
       μ arrival R1 R2 switch12 switch21 m z
+
+/--
+Theorem 4 AE endpoint directly from the LightAE feasible-canonical payload.
+This is the fixed-price form of the source proof boundary: feasible Lemma 5
+canonical dominance supplies the all-optima replacement data, and the local
+middle-reroute certificate supplies the positive-rejected-mass endpoint moves.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_light_ae_feasible_canonical_endpoint
+    (μ : Fin 2 → Measure TripLength)
+    [IsFiniteMeasure (μ 0)] [(μ 0).InnerRegularCompactLTTop]
+    [IsFiniteMeasure (μ 1)] [(μ 1).InnerRegularCompactLTTop]
+    (arrival m z : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_nonsurge_acceptAll_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (D :
+      GN21Theorem3LightAEFeasibleCanonicalEndpointData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+  exact
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_middle_reroute_light_ae_eq_source_existence
+      μ arrival m z R1 R2 switch12 switch21 P hR1_pos hR1_lt_R2 hR2_pos
+      hmeasure_nonsurge_acceptAll_pos hmeasure_surge_acceptAll_pos
+      (GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData.of_feasible_policy_canonical_dominance
+        D.canonical D.local_endpoint)
 
 /--
 Feasible policy-level Lemma 5 canonical-dominance data instantiate the

@@ -205,6 +205,64 @@ abbrev theorem4_acceptAll_ae_unique_middle_reroute_policy_form_source_existence 
   @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_middle_reroute_ae_policy_form_source_existence
 
 /--
+Theorem 4: a.e.-unique accept-all optimality from the lighter common
+fixed-state-equality middle-reroute source package for a fixed structured
+price.
+-/
+abbrev theorem4_acceptAll_ae_unique_middle_reroute_light_eq_source_existence :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_middle_reroute_light_ae_eq_source_existence
+
+/--
+Theorem 4: a.e.-unique accept-all optimality from feasible-canonical Lemma 5
+data plus the local LightAE middle-reroute endpoint certificate.
+-/
+abbrev theorem4_acceptAll_ae_unique_light_ae_feasible_canonical_endpoint :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_light_ae_feasible_canonical_endpoint
+
+/--
+Theorem 4: a.e.-unique accept-all optimality from fixed-response policy forms
+and common fixed-state-equality middle-reroute endpoint data.
+-/
+abbrev theorem4_acceptAll_ae_unique_fixed_response_eq_middle_reroute :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_form_eq_middle_reroute_source_existence
+
+/--
+Theorem 4: a.e.-unique accept-all optimality from one-threshold fixed-response
+source data and common fixed-state-equality middle-reroute endpoint data.
+-/
+abbrev theorem4_acceptAll_ae_unique_fixed_response_one_threshold_eq_middle_reroute :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_one_threshold_eq_middle_reroute_source_existence
+
+/--
+Theorem 4: a.e.-unique accept-all optimality from bracket-level one-threshold
+fixed-response source data and common fixed-state-equality middle-reroute
+endpoint data.
+-/
+abbrev theorem4_acceptAll_ae_unique_fixed_response_bracket_eq_middle_reroute :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_one_threshold_bracket_eq_middle_reroute_source_existence
+
+/--
+Theorem 4: a.e.-unique accept-all optimality from fixed-response policy forms
+and the by-policy-form middle-cutoff-reroute endpoint boundary.
+-/
+abbrev theorem4_acceptAll_ae_unique_fixed_response_by_policy_form_middle_cutoff :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_form_by_policy_form_middle_cutoff_reroute_source_existence
+
+/--
+Theorem 4: a.e.-unique accept-all optimality from fixed-response policy forms
+and the aggregate fixed-surge cross-ratio middle-cutoff-reroute boundary.
+-/
+abbrev theorem4_acceptAll_ae_unique_fixed_response_surge_cross_middle_cutoff :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_form_surge_cross_by_policy_form_middle_cutoff_reroute_source_existence
+
+/--
+Theorem 4: a.e.-unique accept-all optimality from fixed-response policy forms
+and the scalar surge-cutoff middle-cutoff-reroute boundary.
+-/
+abbrev theorem4_acceptAll_ae_unique_fixed_response_surge_cutoff_middle_cutoff :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_form_surge_cutoff_by_policy_form_middle_cutoff_reroute_source_existence
+
+/--
 Theorem 4: accept-all structural representatives from the source-ordered
 sequential Lemma 9 then Lemma 10 reward-rate route.
 -/

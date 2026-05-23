@@ -408,6 +408,291 @@ theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_middle_reroute
           D.replacement.to_shape_replacements)
         |>.to_accept_all_certificate)
 
+/--
+Theorem 4 AE endpoint from the lighter common fixed-state-equality
+middle-reroute source package.  This is the smallest fixed-price source package
+shared with the active Theorem 3 route: equality fields are expanded to the
+by-policy-form endpoint data internally, and accept-all optimality is still
+derived by the rejected-mass route.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_middle_reroute_light_ae_eq_source_existence
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_nonsurge_acceptAll_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (D :
+      GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+  exact
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_middle_reroute_ae_policy_form_source_existence
+      μ arrival m z R1 R2 switch12 switch21 P hR1_pos hR1_lt_R2 hR2_pos
+      hmeasure_nonsurge_acceptAll_pos hmeasure_surge_acceptAll_pos
+      { replacement := D.replacement
+        local_endpoint := D.local_endpoint.to_by_policy_form_ae_local_endpoint }
+
+/--
+Theorem 4 AE endpoint from fixed-response policy-form data plus common
+fixed-state-equality middle-reroute endpoint data.  This exposes the same
+source package used by the existence-based fixed-response Theorem 3 route, but
+with the fixed-price Theorem 4 conclusion.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_form_eq_middle_reroute_source_existence
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival m z : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_nonsurge_acceptAll_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (D :
+      GN21Theorem3FixedResponsePolicyFormEqMiddleRerouteSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+  let S :=
+    GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData.of_fixed_state_eq_middle_reroute
+      μ arrival m z R1 R2 switch12 switch21 P hR1_pos hR1_lt_R2
+      hR2_pos hmeasure_nonsurge_acceptAll_pos hmeasure_surge_acceptAll_pos
+      D.forms D.local_endpoint
+  exact
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_forms_and_representative_rejected_mass_improvements_from_exists
+      μ arrival m z switch12 switch21 S.forms
+      S.nonsurge_reject_long_improvement
+      S.nonsurge_accept_middle_improvement
+      S.surge_reject_short_improvement
+      S.surge_reject_middle_improvement
+
+/--
+Theorem 4 AE endpoint from one-threshold fixed-response source data plus the
+common fixed-state-equality middle-reroute endpoint.  Lemma 6 supplies the
+one-threshold fixed-response forms; Lean derives the rejected-mass endpoint
+moves and accept-all optimality internally.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_one_threshold_eq_middle_reroute_source_existence
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival m z : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_nonsurge_acceptAll_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (D :
+      GN21Theorem3FixedResponseOneThresholdEqMiddleRerouteSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
+  paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_form_eq_middle_reroute_source_existence
+    μ arrival m z R1 R2 switch12 switch21 P hR1_pos hR1_lt_R2 hR2_pos
+    hmeasure_nonsurge_acceptAll_pos hmeasure_surge_acceptAll_pos
+    D.to_policy_form_source
+
+/--
+Theorem 4 AE endpoint from raw bracket-level one-threshold fixed-response
+source data plus the common fixed-state-equality middle-reroute endpoint.  This
+lets a source proof keep Lemma 6 at the sign-bracket layer while using the
+fixed-price Theorem 4 conclusion directly.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_one_threshold_bracket_eq_middle_reroute_source_existence
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival m z : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_nonsurge_acceptAll_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (D :
+      GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
+  paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_one_threshold_eq_middle_reroute_source_existence
+    μ arrival m z R1 R2 switch12 switch21 P hR1_pos hR1_lt_R2 hR2_pos
+    hmeasure_nonsurge_acceptAll_pos hmeasure_surge_acceptAll_pos
+    D.to_one_threshold_source
+
+/--
+Theorem 4 AE endpoint from the sharper by-policy-form middle-cutoff-reroute
+endpoint boundary.  This is the fixed-price version of the current Theorem 3
+frontier: source proofs supply fixed-response Lemma 5 forms and the
+branch-indexed by-policy-form endpoint certificate; Lean derives the
+positive-rejected-mass strict local moves.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_form_by_policy_form_middle_cutoff_reroute_source_existence
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival m z : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_nonsurge_acceptAll_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (D :
+      GN21Theorem3FixedResponsePolicyFormByPolicyFormMiddleCutoffRerouteSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+  let S :=
+    GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData.of_fixed_state_by_policy_form_middle_cutoff_reroute
+      μ arrival m z R1 R2 switch12 switch21 P hR1_pos hR1_lt_R2
+      hR2_pos hmeasure_nonsurge_acceptAll_pos hmeasure_surge_acceptAll_pos
+      D.forms D.local_endpoint
+  exact
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_forms_and_representative_rejected_mass_improvements_from_exists
+      μ arrival m z switch12 switch21 S.forms
+      S.nonsurge_reject_long_improvement
+      S.nonsurge_accept_middle_improvement
+      S.surge_reject_short_improvement
+      S.surge_reject_middle_improvement
+
+/--
+Theorem 4 AE endpoint from the aggregate fixed-surge cross-ratio
+middle-cutoff-reroute boundary.  This keeps the source obligation at the
+single cross-ratio comparison actually consumed by the non-surge endpoint
+constructor.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_form_surge_cross_by_policy_form_middle_cutoff_reroute_source_existence
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival m z : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_nonsurge_acceptAll_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (D :
+      GN21Theorem3FixedResponsePolicyFormSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+  let S :=
+    GN21Theorem3FixedResponsePolicyFormRejectedMassSourceExistenceData.of_fixed_state_cross_by_policy_form_middle_cutoff_reroute
+      μ arrival m z R1 R2 switch12 switch21 P hR1_pos hR1_lt_R2
+      hR2_pos hmeasure_nonsurge_acceptAll_pos hmeasure_surge_acceptAll_pos
+      D.forms D.local_endpoint
+  exact
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_forms_and_representative_rejected_mass_improvements_from_exists
+      μ arrival m z switch12 switch21 S.forms
+      S.nonsurge_reject_long_improvement
+      S.nonsurge_accept_middle_improvement
+      S.surge_reject_short_improvement
+      S.surge_reject_middle_improvement
+
+/--
+Theorem 4 AE endpoint from the scalar surge-cutoff middle-cutoff-reroute
+boundary.  The scalar cutoff package lowers to the by-policy-form endpoint
+certificate before the same rejected-mass Theorem 4 proof is applied.
+-/
+theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_form_surge_cutoff_by_policy_form_middle_cutoff_reroute_source_existence
+    (μ : Fin 2 → Measure TripLength)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (arrival m z : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (P :
+      Theorem3AcceptAllStructuredPositiveParameterData
+        μ arrival R1 R2 switch12 switch21 m z)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hmeasure_nonsurge_acceptAll_pos : 0 < μ 0 acceptAllPolicy)
+    (hmeasure_surge_acceptAll_pos : 0 < μ 1 acceptAllPolicy)
+    (D :
+      GN21Theorem3FixedResponsePolicyFormSurgeCutoffByPolicyFormMiddleCutoffRerouteSourceExistenceData
+        μ arrival R1 R2 switch12 switch21 m z) :
+    dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy ∧
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+          ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
+  paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_form_by_policy_form_middle_cutoff_reroute_source_existence
+    μ arrival m z R1 R2 switch12 switch21 P hR1_pos hR1_lt_R2 hR2_pos
+    hmeasure_nonsurge_acceptAll_pos hmeasure_surge_acceptAll_pos
+    D.to_by_policy_form_source
+
 end
 
 end GN21DriverSurgePricing

@@ -12,6 +12,28 @@ Do not edit source.txt for this purpose.  source.txt is the extracted paper.
 
 Current best Lean frontier
 --------------------------
+2026-05-23 fixed-price Theorem 4 source-boundary tightening:
+`Theorem4Frontier.lean` now exposes the Theorem 4 a.e. accept-all uniqueness
+conclusion directly from the source packages already used by the active
+Theorem 3 route:
+
+  PaperInterface.theorem4_acceptAll_ae_unique_middle_reroute_light_eq_source_existence
+  PaperInterface.theorem4_acceptAll_ae_unique_light_ae_feasible_canonical_endpoint
+  PaperInterface.theorem4_acceptAll_ae_unique_fixed_response_eq_middle_reroute
+  PaperInterface.theorem4_acceptAll_ae_unique_fixed_response_bracket_eq_middle_reroute
+  PaperInterface.theorem4_acceptAll_ae_unique_fixed_response_by_policy_form_middle_cutoff
+  PaperInterface.theorem4_acceptAll_ae_unique_fixed_response_surge_cross_middle_cutoff
+  PaperInterface.theorem4_acceptAll_ae_unique_fixed_response_surge_cutoff_middle_cutoff
+
+This means the remaining Theorem 4 work should not rebuild accept-all
+optimality or the paper-level uniqueness conclusion.  Use the sharpest
+available source package: feasible-canonical data if proving Lemma 5 at that
+level; by-policy-form middle-cutoff data when the proof has branch-specific
+Lemma 9/10 endpoint inequalities; aggregate surge-cross data when the source
+has only the fixed-surge cross-ratio comparison.  The remaining hard proof is
+deriving one of those source packages from the paper primitives for arbitrary
+measurable optima.
+
 2026-05-23 Theorem 4 a.e. representative split: `Theorem4Frontier.lean` now
 also exposes the fixed-price a.e. Theorem 4 route through
 

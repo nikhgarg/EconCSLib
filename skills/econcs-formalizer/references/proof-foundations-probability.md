@@ -222,6 +222,14 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `to_shape_replacement_rejected_mass_improvements_existence_of_shape_replacements`;
   `to_accept_all_certificate` derives accept-all optimality, so do not add a
   separate accept-all-optimality assumption just to call an older wrapper.
+- GN21 Theorem 4 source-boundary lesson: before proving a new fixed-price
+  accept-all uniqueness theorem, check `Theorem4Frontier.lean` for direct
+  wrappers from the active Theorem 3 source packages.  The light equality,
+  feasible-canonical, fixed-response equality, by-policy-form middle-cutoff,
+  aggregate surge-cross, and scalar surge-cutoff packages already lower to the
+  a.e. Theorem 4 conclusion; the remaining source work should derive one of
+  those packages from paper primitives, not rebuild rejected-mass or
+  accept-all-optimality plumbing.
 - GN21 Lemma 5 adapter lesson: when state source data are response-dependent,
   obtain the marginal-response fields through the fixed-response converter
   such as `D.to_fixed_response hρ`; using the base policy-form data directly
