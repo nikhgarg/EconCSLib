@@ -127,7 +127,9 @@ cache is `source.txt`.
   The optimal-current-bounds source package now feeds that structural statement
   directly through
   `PaperInterface.theorem4_acceptAll_structural_representatives_of_optimal_current_bounds`,
-  avoiding the older all-candidate nondegeneracy boundary.
+  avoiding the older all-candidate nondegeneracy boundary.  The exact
+  source-ordered Lemma 9 then Lemma 10 route also has the structural surface
+  `PaperInterface.theorem4_acceptAll_structural_representatives_of_sequential_optimal_reward_rate`.
   The remaining analytic Theorem 4 work is to construct the Lemma 5
   replacement/canonical-dominance/a.e.-form data for arbitrary measurable
   optima, not to reassemble the paper-level structural conclusion.

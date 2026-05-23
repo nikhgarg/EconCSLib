@@ -480,6 +480,51 @@ theorem paper_theorem2_one_threshold_measurable_policy_shape_ae_of_gn21_bracket_
             (hρ.1 1).2 (hρ.1 1).1 }
 
 /--
+Accept-all optimality plus a.e. accept-all uniqueness gives the Theorem 4
+accept-all structural representative statement.
+-/
+theorem paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_acceptAll_ae_unique
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    (H :
+      dynamicMeasurableOptimal R acceptAllDynamicPolicy ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal R ρ →
+            dynamicAcceptAllAlmostEverywhere μ ρ) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) := by
+  refine
+    ⟨acceptAllDynamicPolicy, H.1,
+      ⟨acceptAllPolicy, theorem4NonsurgeShape_acceptAllPolicy, ?_⟩,
+      ⟨acceptAllPolicy, theorem4SurgeShape_acceptAllPolicy, ?_⟩,
+      ?_⟩
+  · simp [acceptAllDynamicPolicy, policyAlmostEverywhereEq]
+  · simp [acceptAllDynamicPolicy, policyAlmostEverywhereEq]
+  · intro ρ hρ
+    have hae := H.2 ρ hρ
+    constructor
+    · refine ⟨acceptAllPolicy, theorem4NonsurgeShape_acceptAllPolicy, ?_⟩
+      exact
+        policyAlmostEverywhereEq_acceptAll_of_acceptAllAlmostEverywhere
+          (μ 0) (hρ.1 0).1 (hae 0)
+    · refine ⟨acceptAllPolicy, theorem4SurgeShape_acceptAllPolicy, ?_⟩
+      exact
+        policyAlmostEverywhereEq_acceptAll_of_acceptAllAlmostEverywhere
+          (μ 1) (hρ.1 1).1 (hae 1)
+
+/--
 Positive-response marginal optimality gives the Theorem 4 structural
 representative statement in the accept-all branch.
 -/
@@ -607,6 +652,46 @@ theorem paper_theorem4_measurable_dynamic_accept_all_structural_representatives_
     (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
       (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
     (Theorem4MeasurablePositiveResponseAEAcceptAllCandidateCertificate.of_structured_current_bounds_optimal_source
+      μ arrival R1 R2 switch12 switch21 m z C)
+
+/--
+Reward-rate current-bounds data give the same paper-facing Theorem 4
+accept-all structural representative statement after Lean converts the local
+Lemma 9/10 reward-rate fields to source data.
+-/
+theorem paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_structured_current_bounds_optimal_reward_rate_positive_response
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalRewardRatePositiveResponseCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_structured_current_bounds_optimal_source_positive_response
+    μ arrival R1 R2 switch12 switch21 m z
+    (Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate.of_optimal_reward_rate
       μ arrival R1 R2 switch12 switch21 m z C)
 
 /--

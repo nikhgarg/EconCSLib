@@ -121,6 +121,52 @@ abbrev theorem4_positive_response_acceptAll_candidate_optimal_current_bounds :=
 abbrev theorem4_acceptAll_structural_representatives_of_optimal_current_bounds :=
   @paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_structured_current_bounds_optimal_source_positive_response
 
+/-- Theorem 4: accept-all structural representatives from reward-rate current bounds. -/
+abbrev theorem4_acceptAll_structural_representatives_of_optimal_reward_rate :=
+  @paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_structured_current_bounds_optimal_reward_rate_positive_response
+
+/--
+Theorem 4: accept-all structural representatives from the source-ordered
+sequential Lemma 9 then Lemma 10 reward-rate route.
+-/
+theorem theorem4_acceptAll_structural_representatives_of_sequential_optimal_reward_rate
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (R1 R2 switch12 switch21 : ℝ)
+    (m z : Fin 2 → ℝ)
+    (C :
+      Theorem4MeasuredAggregateStructuredSequentialOptimalRewardRatePositiveResponseCertificate
+        μ arrival R1 R2 switch12 switch21 m z) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+            ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) := by
+  exact
+    GN21DriverSurgePricing.paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_acceptAll_ae_unique
+      μ
+      (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+        (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+      (GN21DriverSurgePricing.paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_sequential_optimal_reward_rate_positive_response
+        μ arrival R1 R2 switch12 switch21 m z C)
+
 /-- Theorem 2: multiplicative extended policy shape. -/
 abbrev theorem2_multiplicative_policy_shape :=
   @theorem2_multiplicative_extended_policy_shape_of_shape_derivation
