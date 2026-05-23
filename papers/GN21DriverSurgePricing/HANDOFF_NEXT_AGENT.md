@@ -84,7 +84,8 @@ closeout route:
   `PaperInterface.theorem3_light_ae_bracket_ordered_cross_field_normalized` and
   `PaperInterface.theorem3_light_ae_exact_bracket_branch_normalized`.
 
-For pickup on the older endpoint-selection path, start from the public
+For pickup on the older optional endpoint-selection path, which is no longer
+needed for the closed paper-facing Theorem 3 endpoint, start from the public
 interface theorem
 
 ```lean
