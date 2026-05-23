@@ -502,6 +502,23 @@ reward.
 abbrev theorem3_zero_mass_totalization_obstruction :=
   @gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_right_rewardRate_gt
 
+/--
+Theorem 3 zero-mass boundary, state-rate form: if accept-all has state reward
+rates `R1 < R2` and positive left-state time share, the left-empty/right-
+accept-all zero-mass policy strictly improves on accept-all under the current
+real-valued reward totalization.
+-/
+abbrev theorem3_zero_mass_totalization_obstruction_state_rates :=
+  @gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_state_rates
+
+/--
+Theorem 3 zero-mass certificate obstruction: a feasible zero-mass policy that
+beats accept-all rules out any zero-mass strict-dominance lift once accept-all
+is optimal on the positive-mass source domain.
+-/
+abbrev theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass :=
+  @not_DynamicZeroMassStrictDominanceCertificate_of_zero_mass_policy_beats_acceptAll
+
 /-- Theorem 3: full measurable route from source assumptions plus zero-mass dominance. -/
 abbrev theorem3_source_with_zero_mass_dominance :=
   @theorem3_measurable_ic_ae_unique_of_source_assumptions_and_zero_mass_dominance

@@ -8,12 +8,12 @@ Conditionally complete under the paper-facing Lean models in
 The main denominator-valid continuous/CTMC source results are represented by
 direct statement endpoints in `PaperInterface.lean`, with source-numbered audit
 aliases in `PostPaperAudit.lean` and the theorem ledger in `README.md`.
-Theorem 3 is fully proved on the positive-mass source domain where the paper's
-Appendix-D reward-rate formulas have nonzero denominators.  The stronger
-all-feasible measurable lift is compiled only with an explicit zero-mass
-strict-dominance certificate; Lean also records a concrete obstruction showing
-why that certificate is not automatic for the current real-valued reward
-totalization.
+Theorem 3 has both the positive-mass source endpoint and a compiled full
+feasible-measurable endpoint through the source-ordered feasible sequential
+Lemma 9/10 current-bounds route.  The separate zero-mass-dominance lift remains
+available as an optional bridge, and Lean records a concrete obstruction
+showing why that certificate is not automatic for the current real-valued
+reward totalization.
 
 ## Source checked
 
@@ -42,7 +42,10 @@ totalization.
 - `PaperInterface.lemma10_nonsurge_derivative_positive_of_acceptAll_bounds`
 - `PaperInterface.theorem2_multiplicative_measured_not_ic_explicit_atomic`
 - `PaperInterface.theorem3_positive_mass_source`
+- `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`
 - `PaperInterface.theorem3_source_with_zero_mass_dominance`
+- `PaperInterface.theorem3_zero_mass_totalization_obstruction_state_rates`
+- `PaperInterface.theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass`
 - `PaperInterface.theorem4_structural_policy_representatives_of_gn21_bracket_source_data`
 
 ## Named-result inventory
@@ -64,7 +67,7 @@ totalization.
 | Lemmas 9-10 | 3809, 3834 | `audit_lemma9_surge_derivative_positive_of_acceptAll_bounds`, `audit_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds` | complete |
 | Theorem 2 | 560 | `audit_theorem2_multiplicative_policy_shape_ae`, `audit_theorem2_multiplicative_measured_not_ic_explicit_atomic` | complete for the structural handoff and explicit measured non-IC instance |
 | Theorem 4 | 3859 | `audit_theorem4_structural_policy_representatives` | complete at the measure-theoretic structural surface |
-| Theorem 3 | 704, 3944 | `audit_theorem3_positive_mass_source`, `audit_theorem3_source_with_zero_mass_dominance` | complete on the positive-mass source domain; full measurable lift conditional on zero-mass dominance |
+| Theorem 3 | 704, 3944 | `audit_theorem3_positive_mass_source`, `audit_theorem3_feasible_sequential_current_bounds_source_data`, `audit_theorem3_source_with_zero_mass_dominance` | complete through the positive-mass source endpoint and the full feasible sequential current-bounds source-data endpoint; zero-mass dominance remains an optional bridge route |
 
 ## Deliberate model conventions and proof deviations
 
@@ -76,13 +79,17 @@ totalization.
 - The single-state Theorem 1 proof allows atoms at threshold boundaries by
   proving one-sided dominated-convergence limits, rather than assuming boundary
   mass is zero.
-- Theorem 3 is stated at the denominator-valid positive-mass source boundary.
-  The all-feasible measurable version requires
-  `DynamicZeroMassStrictDominanceCertificate`, exposed through
+- Theorem 3 has a denominator-valid positive-mass source endpoint and a full
+  feasible-measurable source-data endpoint exposed as
+  `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`.
+  A separate all-feasible bridge through
+  `DynamicZeroMassStrictDominanceCertificate` is also exposed as
   `PaperInterface.theorem3_source_with_zero_mass_dominance`.
 - The current real-valued CTMC reward totalization is intentionally audited by
-  `PaperInterface.theorem3_zero_mass_totalization_obstruction`, which shows the
-  overbroad all-feasible zero-mass lift cannot be discharged automatically.
+  `PaperInterface.theorem3_zero_mass_totalization_obstruction_state_rates` and
+  `PaperInterface.theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass`,
+  which show the overbroad all-feasible zero-mass lift cannot be discharged
+  automatically.
 
 ## Cross-artifact checks
 
@@ -90,8 +97,9 @@ totalization.
   statements needed for human review.
 - `PostPaperAudit.lean` imports the paper interface and gives source-numbered
   audit aliases for the final endpoints above.
-- `README.md` and `DependencyDAG.tex` distinguish the closed positive-mass
-  Theorem 3 route from the optional full measurable zero-mass-dominance lift.
+- `README.md` and `DependencyDAG.tex` distinguish the closed positive-mass and
+  feasible sequential current-bounds Theorem 3 routes from the optional
+  zero-mass-dominance lift.
 - The paper root module imports `PostPaperAudit.lean`.
 
 ## Verification commands

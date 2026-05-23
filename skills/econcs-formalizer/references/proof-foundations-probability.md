@@ -156,6 +156,14 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   all-feasible lift as an optional strengthening with its exact extra
   certificate, and name any zero-mass obstruction theorem so future agents do
   not retry the same false bridge.
+- Before adding a new zero-mass bridge, search for compiled all-feasible
+  endpoints whose assumption bundle already quantifies over feasible policies.
+  In GN21, the source-faithful route is the feasible sequential Lemma 9 then
+  Lemma 10 current-bounds endpoint; the zero-mass dominance certificate is only
+  one optional lift route and can be incompatible with the current totalized
+  real reward.  If the source mathematics treats zero-mass rewards as
+  undefined, use a partial/defined reward interface instead of forcing Lean's
+  totalized `ℝ` quotient to carry the source semantics.
 - Avoid all-candidate nondegeneracy records for Lemma 5/Theorem 4 adapters
   when the candidate universe contains the empty policy.  Empty policies are
   measurable feasible subsets but cannot satisfy positive accepted-mass or

@@ -556,6 +556,99 @@ theorem gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_right_rew
     μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ hdenJ]
   exact hgt
 
+/--
+If the two accept-all state reward rates are `R1 < R2` and the left state has
+positive accept-all time share, then accept-all's dynamic reward is strictly
+below the right accept-all state reward rate.  This is the weighted-average
+algebra behind the zero-mass boundary obstruction.
+-/
+theorem gn21MeasuredDynamicReward_acceptAll_lt_right_rewardRate_of_state_rates
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction)
+    (R1 R2 : ℝ)
+    (hleft_rate :
+      gn21MeasuredStateRewardRate μI arrivalI wI acceptAllPolicy = R1)
+    (hright_rate :
+      gn21MeasuredStateRewardRate μJ arrivalJ wJ acceptAllPolicy = R2)
+    (hleft_fraction_pos :
+      0 <
+        gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ switchJI
+          acceptAllPolicy acceptAllPolicy)
+    (hfractions_sum :
+      gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ switchJI
+            acceptAllPolicy acceptAllPolicy +
+          gn21MeasuredTimeFraction μJ μI arrivalJ arrivalI switchJI switchIJ
+            acceptAllPolicy acceptAllPolicy =
+        1)
+    (hR1_lt_R2 : R1 < R2) :
+    gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
+        wI wJ acceptAllPolicy acceptAllPolicy <
+      gn21MeasuredStateRewardRate μJ arrivalJ wJ acceptAllPolicy := by
+  rw [paper_lemma1_measured_dynamic_reward_decomposition, hleft_rate,
+    hright_rate]
+  set a :=
+    gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ switchJI
+      acceptAllPolicy acceptAllPolicy
+  set b :=
+    gn21MeasuredTimeFraction μJ μI arrivalJ arrivalI switchJI switchIJ
+      acceptAllPolicy acceptAllPolicy
+  have ha_pos : 0 < a := by
+    simpa [a] using hleft_fraction_pos
+  have hsum_ab : a + b = 1 := by
+    simpa [a, b] using hfractions_sum
+  have hb_eq : b = 1 - a := by
+    linarith
+  rw [hb_eq]
+  have havg :
+      a * R1 + (1 - a) * R2 = R2 - a * (R2 - R1) := by
+    ring
+  rw [havg]
+  have hdiff_pos : 0 < R2 - R1 := sub_pos.mpr hR1_lt_R2
+  have hprod_pos : 0 < a * (R2 - R1) := mul_pos ha_pos hdiff_pos
+  linarith
+
+/--
+Sharper zero-mass obstruction for the Theorem 3 accept-all accounting shape:
+when accept-all has state rates `R1 < R2` and a positive left-state time share,
+the left-empty/right-accept-all zero-mass policy strictly improves on
+accept-all under the current real-valued reward totalization.
+-/
+theorem gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_state_rates
+    (μI μJ : Measure TripLength)
+    (arrivalI arrivalJ switchIJ switchJI : ℝ)
+    (wI wJ : PricingFunction)
+    (R1 R2 : ℝ)
+    (hdenJ :
+      arrivalJ * singleStateTripMass μJ acceptAllPolicy *
+            gn21StateCycleTime μJ arrivalJ acceptAllPolicy *
+            gn21ExitWeightIntegral μI arrivalI switchIJ switchJI
+              (∅ : TripPolicy) ≠ 0)
+    (hleft_rate :
+      gn21MeasuredStateRewardRate μI arrivalI wI acceptAllPolicy = R1)
+    (hright_rate :
+      gn21MeasuredStateRewardRate μJ arrivalJ wJ acceptAllPolicy = R2)
+    (hleft_fraction_pos :
+      0 <
+        gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ switchJI
+          acceptAllPolicy acceptAllPolicy)
+    (hfractions_sum :
+      gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ switchJI
+            acceptAllPolicy acceptAllPolicy +
+          gn21MeasuredTimeFraction μJ μI arrivalJ arrivalI switchJI switchIJ
+            acceptAllPolicy acceptAllPolicy =
+        1)
+    (hR1_lt_R2 : R1 < R2) :
+    gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
+        wI wJ acceptAllPolicy acceptAllPolicy <
+      gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
+        wI wJ (∅ : TripPolicy) acceptAllPolicy :=
+  gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_right_rewardRate_gt
+    μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ hdenJ
+    (gn21MeasuredDynamicReward_acceptAll_lt_right_rewardRate_of_state_rates
+      μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ R1 R2 hleft_rate
+      hright_rate hleft_fraction_pos hfractions_sum hR1_lt_R2)
+
 /-- A feasible measurable dynamic policy has zero accepted mass in some state. -/
 def dynamicHasZeroAcceptedMass
     (μ : Fin 2 → Measure TripLength) (σ : Fin 2 → TripPolicy) : Prop :=
@@ -678,6 +771,27 @@ def DynamicZeroMassStrictDominanceCertificate.of_acceptAll_dominates_zero_mass
     acceptAllDynamicPolicy
     (dynamicFeasibleMeasurablePositiveMassPolicy_acceptAll hmass_acceptAll)
     hdom
+
+/--
+If a feasible zero-mass policy strictly beats accept-all while accept-all is
+already optimal on the positive-mass source domain, then no zero-mass strict
+dominance certificate can exist.  This records the logical obstruction behind
+the GN21 totalized-reward boundary.
+-/
+theorem not_DynamicZeroMassStrictDominanceCertificate_of_zero_mass_policy_beats_acceptAll
+    {μ : Fin 2 → Measure TripLength}
+    {R : DynamicReward}
+    {σ : Fin 2 → TripPolicy}
+    (hposIC : dynamicPositiveMassMeasurableIncentiveCompatible μ R)
+    (hσ : dynamicFeasibleMeasurablePolicy σ)
+    (hσ_zero : dynamicHasZeroAcceptedMass μ σ)
+    (hgt : R acceptAllDynamicPolicy < R σ) :
+    ¬ DynamicZeroMassStrictDominanceCertificate μ R := by
+  intro hzero
+  rcases hzero.improve_zero_mass σ hσ hσ_zero with
+    ⟨τ, hτ_pos, hσ_lt_τ⟩
+  have hτ_le_accept : R τ ≤ R acceptAllDynamicPolicy := hposIC.2 τ hτ_pos
+  linarith
 
 /--
 Positive-mass measurable IC lifts to full feasible-measurable IC once every

@@ -26,10 +26,12 @@ Cached source text inventory checked by this audit:
 - Theorem 4, line 3859.
 - Theorem 3, lines 704 and 3944.
 
-Theorem 3 is closed on the denominator-valid positive-mass source domain.  The
-full feasible-measurable lift is also compiled, but it needs an explicit
-zero-mass strict-dominance certificate because the paper's Appendix-D
-reward-rate formulas divide by accepted trip mass.
+Theorem 3 is closed on the denominator-valid positive-mass source domain and
+also has a full feasible-measurable endpoint through the source-ordered
+feasible sequential Lemma 9/10 current-bounds data.  The separate
+zero-mass-dominance lift remains available as an optional route, but Lean also
+records why that certificate is not automatic under the current real-valued
+reward totalization.
 -/
 
 namespace GN21DriverSurgePricing
@@ -145,6 +147,10 @@ abbrev audit_theorem3_feasibility_threshold :=
 abbrev audit_theorem3_positive_mass_source :=
   @PaperInterface.theorem3_positive_mass_source
 
+/-- Audit endpoint for Theorem 3: full feasible sequential current-bounds source-data route. -/
+abbrev audit_theorem3_feasible_sequential_current_bounds_source_data :=
+  @PaperInterface.theorem3_feasible_sequential_current_bounds_source_data
+
 /-- Audit endpoint for Theorem 3: full measurable lift with zero-mass dominance. -/
 abbrev audit_theorem3_source_with_zero_mass_dominance :=
   @PaperInterface.theorem3_source_with_zero_mass_dominance
@@ -152,6 +158,14 @@ abbrev audit_theorem3_source_with_zero_mass_dominance :=
 /-- Audit endpoint for the zero-mass totalization obstruction in the current reward model. -/
 abbrev audit_theorem3_zero_mass_totalization_obstruction :=
   @PaperInterface.theorem3_zero_mass_totalization_obstruction
+
+/-- Audit endpoint for the state-rate form of the zero-mass totalization obstruction. -/
+abbrev audit_theorem3_zero_mass_totalization_obstruction_state_rates :=
+  @PaperInterface.theorem3_zero_mass_totalization_obstruction_state_rates
+
+/-- Audit endpoint for the impossibility of zero-mass dominance after a profitable zero-mass deviation. -/
+abbrev audit_theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass :=
+  @PaperInterface.theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass
 
 end PostPaperAudit
 end GN21DriverSurgePricing

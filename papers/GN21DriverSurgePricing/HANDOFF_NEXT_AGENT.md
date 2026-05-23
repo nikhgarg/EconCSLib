@@ -2,32 +2,29 @@
 
 ## Scope
 
-Stay on `papers/GN21DriverSurgePricing`.  The current target is to close the
-Driver Surge Pricing Theorem 3 IC route, not to audit other papers.
+Stay on `papers/GN21DriverSurgePricing` unless the user redirects.  The main
+Driver Surge Pricing Theorem 3 route is now closed at the paper-facing
+source-data surface; future work should be limited to validation, dashboard
+review, or optional strengthening rather than rebuilding the proof.
 
 ## Latest Stopping Point
 
-2026-05-22 update: `Lemma5Frontier.lean` now bundles the per-state GN21
-fixed-response positive-affine adapters into the all-optima source object
-`Theorem4AllMeasurableGN21FixedResponsePolicyCanonicalDominancePositiveAffineData`.
-Its method `.to_feasible_policy_canonical_dominance` produces exactly the
-`Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData` consumed by the
-strongest Theorem 4 frontier.  The public review surface exposes this through
-`PaperInterface.theorem4_structural_policy_forms_of_gn21_fixed_response_positive_affine`
-and
-`PaperInterface.theorem4_structural_policy_representatives_of_gn21_fixed_response_positive_affine`.
-This does not remove the remaining continuous proof obligation, and it should
-not replace the source-faithful quotient/marginal-optimality route unless the
-positive-affine continuation-objective identity is genuinely available.  For an
-exact-form positive-affine route, the next target is narrower: prove, for every
-measurable optimum, the statewise fixed-response source record,
-open/current continuity, strict-mass witness, and positive-affine identity.
-`PaperInterface` also now exposes the reusable bridge
-`theorem3_positive_mass_to_full_with_zero_mass_dominance`.
+2026-05-23 update: `PaperInterface` exposes the source-faithful full feasible
+sequential current-bounds endpoint:
 
-The current compiled stopping point is the source-faithful positive-mass
-Theorem 3 route. `lake build GN21DriverSurgePricing.PaperInterface` passes
-after the new sequential a.e.-uniqueness bridge:
+```lean
+PaperInterface.theorem3_feasible_sequential_current_bounds_source_data
+GN21DriverSurgePricing.theorem3_structured_measurable_ic_ae_unique_of_feasible_sequential_current_bounds_source_data
+```
+
+This route uses the feasible-policy sequential Lemma 9 then Lemma 10
+current-bounds source package directly.  It is a compiled full
+`theorem3MeasuredStructuredMeasurableICAEUniqueConclusion`; it is not the older
+positive-mass-only endpoint and it does not require a zero-mass strict-
+dominance certificate.  `lake build GN21DriverSurgePricing.PaperInterface` and
+`lake build GN21DriverSurgePricing.PostPaperAudit` pass after this audit update.
+
+The positive-mass source endpoint also remains compiled:
 
 ```lean
 PaperInterface.theorem3_positive_mass_source
@@ -43,23 +40,22 @@ asks for Lemma 10 source data at the original arbitrary `rho 1`, whereas the
 paper proof only needs Lemma 10 after the surge state has already been made
 accept-all.
 
-The full feasible-measurable theorem is still available only through the
-explicit zero-mass bridge:
+The zero-mass-dominance bridge remains an optional strengthening route:
 
 ```lean
 theorem3MeasuredStructuredMeasurableICAEUniqueConclusion_of_positiveMass_ae_unique_and_zeroMassStrictDominance
 PaperInterface.theorem3_positive_mass_to_full_with_zero_mass_dominance
 ```
 
-That is not bookkeeping. The Appendix-D formulas divide by accepted trip mass,
-and Lean's current real-valued totalization makes zero-mass reward rates
-collapse to `0`; the paper source route is denominator-valid on the
-positive-mass/nondegenerate domain. Use the full-domain bridge only when a
-separate source condition or revised reward interface supplies zero-mass
-strict dominance. Do not try to prove zero-mass dominance from the current
-source reward-rate algebra: `PaperInterface.theorem3_zero_mass_totalization_obstruction`
-records the compiled left-empty/right-accept-all obstruction for the existing
-real-valued totalization.
+Do not try to derive that certificate from the current source reward-rate
+algebra.  The Appendix-D formulas divide by accepted trip mass, and Lean's
+current real-valued totalization makes zero-mass reward rates collapse to `0`.
+`PaperInterface.theorem3_zero_mass_totalization_obstruction_state_rates` proves
+the left-empty/right-accept-all obstruction when accept-all state rates satisfy
+`R1 < R2`, and
+`PaperInterface.theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass`
+proves that such a profitable zero-mass deviation rules out the zero-mass
+dominance certificate once accept-all is positive-mass optimal.
 
 Older source-boundary cleanup that remains useful but is no longer the main
 closeout route:
