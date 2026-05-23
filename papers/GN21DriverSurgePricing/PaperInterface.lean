@@ -124,10 +124,18 @@ abbrev theorem3_feasible_policy_canonical_pointwise_reward_rate_normalized :=
 abbrev theorem3_endpoint_bridge :=
   @theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source
 
+/-- Theorem 3: normalized LightAE route from feasible Lemma 5 canonical data. -/
+abbrev theorem3_light_ae_feasible_canonical_normalized :=
+  @theorem3_measurable_ic_ae_unique_of_light_ae_feasible_canonical_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the normalized LightAE feasible-canonical route. -/
+abbrev theorem3_light_ae_feasible_canonical_normalized_ic :=
+  @theorem3_measurable_ic_of_light_ae_feasible_canonical_normalized_mass_ratio_source
+
 /--
 Theorem 3: finite-or-infinite branch route with aggregate cross-ratio endpoint
-fields.  This is the preferred paper-proof boundary after Lemma 5 reduces
-optimal policies to the source finite-cutoff or accept-all alternatives.
+fields.  Use this when the proof has exact branch selectors for the current
+policy representatives; otherwise prefer the LightAE feasible-canonical route.
 -/
 abbrev theorem3_finite_or_infinite_branch_surge_cross :=
   @theorem3_measurable_ic_ae_unique_of_finite_or_infinite_surge_cross_named_rate

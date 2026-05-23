@@ -2437,17 +2437,28 @@ and
 `PaperInterface.theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source`.
 These are the preferred entry points when the remaining proof is the continuous
 endpoint bridge itself rather than the scalar ratio/probability bookkeeping.
-The current sharpest Theorem 3 branch-selection frontier is
+The current source-faithful Theorem 3 frontier is the LightAE representative
+route exposed as `PaperInterface.theorem3_light_ae_feasible_canonical_normalized`,
+with IC-only projection
+`PaperInterface.theorem3_light_ae_feasible_canonical_normalized_ic`.  Its
+per-price payload is
+`GN21Theorem3LightAEFeasibleCanonicalEndpointData`: feasible Lemma 5
+canonical-dominance data, plus the fixed-state middle-reroute local endpoint
+certificate.  This is the route to use when Lemma 5 reduces measurable optima
+to canonical forms only up to a.e. representatives; Lean proves strict
+improvement on the representative and transfers it back by a.e. congruence.
+The finite-or-infinite aggregate-cross frontier
 `PaperInterface.theorem3_finite_or_infinite_branch_surge_cross`, with IC-only
-projection `PaperInterface.theorem3_finite_or_infinite_branch_surge_cross_ic`.
-This is the route to use after Lemma 5 has reduced all measurable optima to
-the paper's finite-cutoff or accept-all alternatives: it asks for Lemma 6
-bracket source forms plus named-rate aggregate cross-ratio endpoint fields,
-not the non-surge pointwise upper-transfer comparison that is opposite to the
+projection `PaperInterface.theorem3_finite_or_infinite_branch_surge_cross_ic`,
+remains available when the source proof has exact finite-cutoff or accept-all
+selectors for the current policy representatives.  That route asks for Lemma 6
+bracket source forms plus named-rate aggregate cross-ratio endpoint fields, not
+the non-surge pointwise upper-transfer comparison that is opposite to the
 direct CTMC reject-long monotonicity direction.  The helper
 `GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossNamedRateSourceExistenceData.of_fixed_reward_rate_fields`
-now also lets this route consume ordinary fixed-state reward-rate equations
-and derive the local Lemma 6 names `Ri = R1` and `Rj = R2` internally.
+lets the exact-selector route consume ordinary fixed-state reward-rate
+equations and derive the local Lemma 6 names `Ri = R1` and `Rj = R2`
+internally.
 The policy-canonical fixed-transfer route now avoids prepackaging allowed
 policy forms by hand:
 `Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularLocalEndpointCertificate.to_policy_canonical_dominance`,
