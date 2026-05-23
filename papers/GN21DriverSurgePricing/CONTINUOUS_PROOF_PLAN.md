@@ -1,7 +1,14 @@
 # GN21 Continuous Proof Plan
 
-This note records the fastest route to closing the remaining GN21 proof, beyond
-the already-compiled wrappers.  The canonical broad measurable entry point is:
+Status: historical proof-search log.  The paper-facing GN21 closeout is now
+recorded in `FINAL_VALIDATION_REPORT.md`, with review endpoints in
+`PaperInterface.lean` and `PostPaperAudit.lean`.  This file is useful only for
+optional strengthening work or for understanding earlier proof-routing
+decisions; do not treat the "remaining" items below as required paper work.
+
+At the time it was written, this note recorded the fastest route to closing the
+remaining GN21 proof, beyond the already-compiled wrappers.  The historical
+canonical broad measurable entry point was:
 
 ## Section 3.1 Update
 

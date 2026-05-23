@@ -196,11 +196,12 @@ source-numbered endpoint ledger is `PostPaperAudit.lean`.
   they consume the same middle-reroute and middle-cutoff fixed-transfer source
   packages already used by Theorem 3, including the current sharper
   by-policy-form and aggregate-cross boundaries, then prove the paper's a.e.
-  accept-all uniqueness conclusion directly for that structured price.  The remaining
-  analytic Theorem 4 work is to derive either the exact/non-accept-all
-  one-threshold source-selection facts, or the a.e. representative
-  positive-rejected-mass endpoint moves, from the paper primitives for
-  arbitrary measurable optima; do not reassemble the paper-level conclusion.
+  accept-all uniqueness conclusion directly for that structured price.
+  Optional Theorem 4 strengthening would derive either the
+  exact/non-accept-all one-threshold source-selection facts, or the a.e.
+  representative positive-rejected-mass endpoint moves, from the paper
+  primitives for arbitrary measurable optima; do not reassemble the
+  paper-level conclusion.
 - The CTMC monotonicity layer now also exposes
   `gn21SwitchProb_mul_le_mul_of_pos_lt` and
   `gn21FixedState_lower_pointwise_of_rejectsLongTrips`: for reject-long fixed

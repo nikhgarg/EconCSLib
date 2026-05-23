@@ -4,6 +4,11 @@ Last updated: 2026-05-23
 
 ## Current State
 
+- Paper-facing closeout is complete.  The current source of truth is
+  `FINAL_VALIDATION_REPORT.md`, then `PaperInterface.lean` and
+  `PostPaperAudit.lean`.  Older plan files in this folder record proof-search
+  history and optional strengthening paths; they are not required work for the
+  named-paper closeout.
 - `PaperInterface.lean` exposes a compact review surface for central
   single-state source claims, the named CTMC lemmas, Theorems 2--4, and the
   current Theorem 3 source route.
@@ -46,11 +51,13 @@ Last updated: 2026-05-23
   positive affine continuation-objective identity directly into a.e. canonical
   representatives, avoiding the older exact strict-mass side condition.
   The raw bracket source data also now prove the Theorem 4-to-Theorem 2 a.e.
-  shape handoff for one-threshold CTMC prices.  The remaining Theorem 4 work is
-  the analytic construction of those positive-affine fixed-state objective
-  identities and policy-form records for arbitrary measurable optima.
-- The folder has active proof work; avoid broad rewrites while other agents are
-  editing `MainTheorems.lean`.
+  shape handoff for one-threshold CTMC prices.  Further analytic construction
+  of positive-affine fixed-state objective identities and policy-form records
+  would strengthen optional routes, but is not needed for the closed
+  paper-facing endpoints.
+- There is no active required proof seam in this folder.  In the shared
+  worktree, still stage only GN21-owned files and avoid broad rewrites while
+  other agents may be editing unrelated papers.
 
 ## Review Plan
 
@@ -65,16 +72,13 @@ Last updated: 2026-05-23
 - Add more paper-facing interface rows only when the corresponding source claim
   has a stable Lean statement.
 
-## Next Work
+## Optional Follow-Up Work
 
 - Refresh the dashboard/cache around `PaperInterface.lean` and the audit
-  endpoints in `PostPaperAudit.lean`, now that the full feasible sequential
-  Theorem 3 route is the preferred source-facing endpoint.
+  endpoints in `PostPaperAudit.lean` if the review UI needs regenerated data.
 - Extend the partial reward interface only if a future paper needs more than
-  the current theorem `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`;
-  it is no longer required to close the paper-facing Theorem 3 source-data
-  endpoint.
-- For Theorem 4, target
+  the current theorem `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`.
+- For optional Theorem 4 strengthening, target
   `PaperInterface.theorem4_structural_policy_representatives_of_allowed_replacement_data`
   when following the paper's Lemma 5 replacement proof,
   `PaperInterface.theorem4_structural_policy_representatives_of_dynamic_state_positive_affine_policy_forms`

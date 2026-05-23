@@ -102,18 +102,18 @@ closeout route:
   `PaperInterface.theorem3_light_ae_exact_bracket_branch_normalized`.
 
 For pickup on the older optional endpoint-selection path, which is no longer
-needed for the closed paper-facing Theorem 3 endpoint, start from the public
-interface theorem
+needed for the closed paper-facing Theorem 3 endpoint, start from the
+implementation-facing theorem defined in `ProofInterface.lean`
 
 ```lean
 PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch_pointwise_upper_transfer_named_rate_normalized_mass_ratio_source
 ```
 
-or its IC-only projection.  The remaining source proof should construct the
+or its IC-only projection.  That optional strengthening proof would construct the
 `GN21Theorem3FixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferNamedRateSourceExistenceData`
 selection using `of_fixed_reward_rate_fields`.
 
-What is still substantive:
+What is still substantive only for that optional endpoint-selection path:
 
 - fixed-response bracket forms for every optimal policy under the constructed
   prices;
@@ -122,9 +122,9 @@ What is still substantive:
 - the non-surge rejected-tail upper comparison
   `current_Q1 * tau <= current_T1 * q12 tau` on `acceptAllPolicy \ rho 0`.
 
-Do not reopen broad all-feasible Lemma 9 or global audit routes.  The useful
-route is paper-local endpoint/source selection plus the one-sided non-surge
-tail comparison.
+Do not reopen broad all-feasible Lemma 9 or global audit routes.  If someone
+chooses to strengthen this optional route, the useful path is paper-local
+endpoint/source selection plus the one-sided non-surge tail comparison.
 
 ## Build State
 
@@ -1316,8 +1316,8 @@ bound.
 ## Documentation Map
 
 - `README.md`: theorem inventory and status.
-- `CLOSEOUT_PROOF_PLAN.txt`: shortest remaining source proof plan for Theorem 3.
-- `CONTINUOUS_PROOF_PLAN.md`: strategic route and reusable infrastructure.
+- `CLOSEOUT_PROOF_PLAN.txt`: historical optional-strengthening proof log.
+- `CONTINUOUS_PROOF_PLAN.md`: historical strategic route and reusable infrastructure notes.
 - `LEMMA9_10_REWARD_RATE_AUDIT.md`: why target reward rates cannot be confused
   with current fixed-state rates, and why the sequential route is only a
   fallback scalar audit after the endpoint/allowed-policy pivot.

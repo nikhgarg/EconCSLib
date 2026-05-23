@@ -1,11 +1,19 @@
 GN21 Driver Surge Pricing closeout proof plan
 =============================================
 
+Status
+------
+Historical proof-search log.  The paper-facing GN21 closeout is now recorded
+in FINAL_VALIDATION_REPORT.md, with the human review surface in
+PaperInterface.lean and the source-numbered ledger in PostPaperAudit.lean.
+The remaining/next-proof text below is retained for optional strengthening
+routes only and should not be read as required work for the named paper.
+
 Purpose
 -------
-This file is the external-to-Lean plan for finishing Theorem 3.  It is meant
-to be read before doing more Lean work, so the next agent does not rediscover
-the same Lemma 9/10 boundary issues.
+This file was the external-to-Lean plan for finishing Theorem 3.  It is now a
+historical note to consult only before optional strengthening work, so the next
+agent does not rediscover the same Lemma 9/10 boundary issues.
 
 Do not edit source.txt for this purpose.  source.txt is the extracted paper.
 
