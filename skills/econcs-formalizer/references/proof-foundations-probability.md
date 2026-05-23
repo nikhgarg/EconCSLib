@@ -179,7 +179,10 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   the fixed-lower-cross route when the paper supplies
   `T_current * Q_acceptAll <= T_acceptAll * Q_current`; this avoids a
   stronger per-policy current final-sign assumption and keeps the public source
-  boundary closer to the paper proof.
+  boundary closer to the paper proof.  If the paper has the accept-all lower
+  endpoint only as a cross-multiplied final-sign inequality, add one more
+  wrapper that derives the divided lower endpoint from the primitive
+  denominator signs before calling the fixed-cross theorem.
 - GN21 file-organization lesson: when a CTMC proof route has made
   `MainTheorems.lean` unwieldy, add a new proof-route module for the stable
   declaration cluster while keeping `MainTheorems.lean` as the stable source

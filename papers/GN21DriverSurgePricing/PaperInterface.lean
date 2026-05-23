@@ -585,5 +585,12 @@ lower-cross comparison instead of a current final-sign input.
 abbrev theorem3_small_surge_mass_affine_fixed_lower_cross_no_rmax_normalized :=
   @theorem3_positive_mass_measurable_ic_of_small_surge_mass_affine_fixed_lower_cross_no_rmax_normalized_mass
 
+/--
+Theorem 3: normalized no-`Rmax` mass-affine fixed-lower-cross route with the
+accept-all lower endpoint derived from the paper's final-sign inequality.
+-/
+abbrev theorem3_small_surge_mass_affine_fixed_lower_cross_final_sign_no_rmax_normalized :=
+  @theorem3_positive_mass_measurable_ic_of_small_surge_mass_affine_fixed_lower_cross_final_sign_no_rmax_normalized_mass
+
 end PaperInterface
 end GN21DriverSurgePricing

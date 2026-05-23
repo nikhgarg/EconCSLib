@@ -2758,6 +2758,139 @@ theorem theorem3_positive_mass_measurable_ic_of_small_surge_mass_affine_fixed_lo
         current_fixed_lower_cross := A.current_fixed_lower_cross }
 
 /--
+Normalized no-`Rmax` fixed-lower-cross assumptions with the accept-all Lemma 9
+lower endpoint stated in the paper's cross-multiplied final-sign form.
+-/
+structure Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineFixedLowerCrossFinalSignNoRmaxNormalizedMassDataAssumptions
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ) where
+  hR1_eq : R1 = rho * R2
+  hR2_pos : 0 < R2
+  hC_lt_rho :
+    theorem3FeasibilityThresholdC
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch12 < rho
+  hrho_lt_one : rho < 1
+  harrival1_pos : 0 < arrival 0
+  harrival2_pos : 0 < arrival 1
+  hswitch12_pos : 0 < switch12
+  hswitch21_pos : 0 < switch21
+  htime1_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 0)
+  htime2_integrable :
+    IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (μ 1)
+  hq1_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+      acceptAllPolicy (μ 0)
+  hq2_integrable :
+    IntegrableOn
+      (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+      acceptAllPolicy (μ 1)
+  hmass1_eq_one : singleStateTripMass (μ 0) acceptAllPolicy = 1
+  hmass2_eq_one : singleStateTripMass (μ 1) acceptAllPolicy = 1
+  acceptAll_lower_left_nonpos :
+    lemma9StructuredLowerNumerator
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+          switch12 switch21)
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+          switch21 switch12)
+        switch21 *
+      lemma9StructuredUpperDenominator
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+          switch12 switch21)
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+          switch21 switch12)
+        switch21 ≤ 0
+  arrival_nonsurge_ratio_numerator_bound :
+    (arrival 0) *
+        (rho * gn21AcceptAllScaledStateTime (μ 0) (arrival 0) -
+          (gn21AcceptAllScaledStateTime (μ 0) (arrival 0) - 1)) ≤
+      gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21 -
+        switch12
+  current_fixed_lower_cross :
+    ∀ policy : Fin 2 → TripPolicy,
+      dynamicFeasibleMeasurablePositiveMassPolicy μ policy →
+        gn21ScaledStateTime (μ 0) (arrival 0) (policy 0) *
+            gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0)
+              switch12 switch21 ≤
+          gn21AcceptAllScaledStateTime (μ 0) (arrival 0) *
+            gn21ExitWeightIntegral (μ 0) (arrival 0)
+              switch12 switch21 (policy 0)
+
+/--
+Theorem 3 positive-mass measurable IC on the normalized no-`Rmax`
+fixed-lower-cross route with the accept-all lower endpoint derived from the
+paper's cross-multiplied Lemma 9 final-sign inequality.
+-/
+theorem theorem3_positive_mass_measurable_ic_of_small_surge_mass_affine_fixed_lower_cross_final_sign_no_rmax_normalized_mass
+    (μ : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineFixedLowerCrossFinalSignNoRmaxNormalizedMassDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
+      μ arrival R1 R2 switch12 switch21 := by
+  have hmass1_pos : 0 < singleStateTripMass (μ 0) acceptAllPolicy := by
+    rw [A.hmass1_eq_one]
+    norm_num
+  have hmass2_pos : 0 < singleStateTripMass (μ 1) acceptAllPolicy := by
+    rw [A.hmass2_eq_one]
+    norm_num
+  rcases theorem3_acceptAll_measured_primitives_scalar_conditions_positive_primitives
+      μ arrival switch12 switch21 A.harrival1_pos A.harrival2_pos
+      A.hswitch12_pos A.hswitch21_pos A.htime1_integrable
+      A.htime2_integrable A.hq1_integrable A.hq2_integrable
+      (measure_pos_of_singleStateTripMass_pos
+        (μ 0) acceptAllPolicy hmass1_pos)
+      (measure_pos_of_singleStateTripMass_pos
+        (μ 1) acceptAllPolicy hmass2_pos) with
+    ⟨hT1_pos, hQ1_pos, _hQ1_sub_switch12_pos, _hden_theorem3_pos,
+      hgap2_nonneg, _hT2_ge_one, hswitch21_lt_Q2⟩
+  have haccept_lower_nonpos :
+      lemma9StructuredLower
+        (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+        (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+        switch21 ≤ 0 :=
+    lemma9StructuredLower_nonpos_of_positive_primitives_and_final_signs
+      (gn21AcceptAllScaledStateTime (μ 0) (arrival 0))
+      (gn21AcceptAllExitWeightIntegral (μ 0) (arrival 0) switch12 switch21)
+      (gn21AcceptAllScaledStateTime (μ 1) (arrival 1))
+      (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1) switch21 switch12)
+      switch21 (le_of_lt hT1_pos) hQ1_pos A.hswitch21_pos hgap2_nonneg
+      hswitch21_lt_Q2 A.acceptAll_lower_left_nonpos
+  exact
+    theorem3_positive_mass_measurable_ic_of_small_surge_mass_affine_fixed_lower_cross_no_rmax_normalized_mass
+      μ arrival rho R1 R2 switch12 switch21
+      { hR1_eq := A.hR1_eq
+        hR2_pos := A.hR2_pos
+        hC_lt_rho := A.hC_lt_rho
+        hrho_lt_one := A.hrho_lt_one
+        harrival1_pos := A.harrival1_pos
+        harrival2_pos := A.harrival2_pos
+        hswitch12_pos := A.hswitch12_pos
+        hswitch21_pos := A.hswitch21_pos
+        htime1_integrable := A.htime1_integrable
+        htime2_integrable := A.htime2_integrable
+        hq1_integrable := A.hq1_integrable
+        hq2_integrable := A.hq2_integrable
+        hmass1_eq_one := A.hmass1_eq_one
+        hmass2_eq_one := A.hmass2_eq_one
+        acceptAll_lower_nonpos := haccept_lower_nonpos
+        arrival_nonsurge_ratio_numerator_bound :=
+          A.arrival_nonsurge_ratio_numerator_bound
+        current_fixed_lower_cross := A.current_fixed_lower_cross }
+
+/--
 Theorem 3 positive-mass measurable IC on the source-shaped small-surge route.
 The remaining policy-dependent input is the current Lemma 9 lower final-sign
 condition; Lean derives the accept-all lower endpoint and the uniform upper

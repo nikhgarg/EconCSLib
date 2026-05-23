@@ -21,12 +21,19 @@ implemented by
 `theorem3_positive_mass_measurable_ic_of_small_surge_mass_affine_fixed_lower_cross_no_rmax_normalized_mass`.
 It mirrors the existing no-Rmax current-final-sign wrapper but uses the
 paper-friendlier fixed-state lower-cross comparison
-`T_current * Q_acceptAll <= T_acceptAll * Q_current`.  Lean sign-splits the
-constructed non-surge intercept, chooses the mass-affine `Rmax` internally,
-derives `R1 > 0` and `R1 < R2` from the ratio hypotheses, derives both
-accept-all positive masses from normalized mass equations, and then invokes the
-older fixed-lower-cross mass-affine wrapper.  Use this endpoint before any
-route that asks the source proof to supply an explicit envelope witness.
+`T_current * Q_acceptAll <= T_acceptAll * Q_current`.  The still closer
+endpoint
+
+  PaperInterface.theorem3_small_surge_mass_affine_fixed_lower_cross_final_sign_no_rmax_normalized
+
+also derives the accept-all lower endpoint from the paper's cross-multiplied
+Lemma 9 final-sign inequality.  Lean sign-splits the constructed non-surge
+intercept, chooses the mass-affine `Rmax` internally, derives `R1 > 0` and
+`R1 < R2` from the ratio hypotheses, derives both accept-all positive masses
+from normalized mass equations, and then invokes the older fixed-lower-cross
+mass-affine wrapper.  Use the final-sign endpoint before any route that asks
+the source proof to supply an explicit envelope witness or a divided
+accept-all lower endpoint.
 
 2026-05-22 Lemma 5/Theorem 4 source-boundary tightening: the statewise
 positive-affine GN21 fixed-response adapters in Lemma5Frontier are now bundled
