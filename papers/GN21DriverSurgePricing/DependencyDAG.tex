@@ -80,14 +80,14 @@
   each non-accept-all structural shape admits a feasible local endpoint move with higher reward
 };
 
-\node[dag_conditional, text width=4.6cm] (Thm4) at (23.6,-8.2) {
+\node[dag_caveat, text width=4.6cm] (Thm4) at (23.6,-8.2) {
   \textbf{Theorem 4 (App. D.4)}\\
-  optimal policies have the stated surge/non-surge forms once policy-form source data and endpoint improvements are supplied
+  a.e. structural representatives follow from allowed/fixed-response GN21 source-form data
 };
 
-\node[dag_conditional, text width=4.6cm] (Thm2) at (29.5,-8.2) {
+\node[dag_caveat, text width=4.6cm] (Thm2) at (29.5,-8.2) {
   \textbf{Theorem 2 (Sec. 3.2)}\\
-  measurable optima have multiplicative shapes up to null sets; non-IC uses a measured aggregate witness
+  shape handoff proves a.e. reject-long/reject-short forms; non-IC uses a measured aggregate witness
 };
 
 \node[dag_result, text width=5.0cm] (Thm3) at (23.6,-16.0) {
@@ -96,8 +96,8 @@
 };
 
 \node[dag_conditional, text width=5.1cm] (MeasShapeSource) at (29.5,-16.0) {
-  \textbf{Sequential source-data route}\\
-  weak feasible rewards prove IC; full feasible-measurable lifting additionally needs explicit zero-mass dominance
+  \textbf{Full measurable lift}\\
+  positive-mass source proof plus explicit zero-mass dominance gives the full feasible-measurable theorem
 };
 
 \node[dag_result, text width=4.9cm] (FiniteAux) at (0,-12.1) {
@@ -129,7 +129,7 @@
 \draw[dag_dashed_arrow] (Lemmas78.north east) -- (Thm4.north west);
 \draw[dag_arrow] (Lemmas910.east) -- (EndpointFeasible.west);
 \draw[dag_arrow] (EndpointFeasible.north) -- (Thm4.south);
-\draw[dag_dashed_arrow] (Thm4.east) -- (Thm2.west);
+\draw[dag_arrow] (Thm4.east) -- (Thm2.west);
 \draw[dag_arrow, rounded corners=6pt]
   (Lemma5.south east) -- ++(1.25,-1.35) -| ([xshift=-1.25cm]MeasShapeSource.north);
 \draw[dag_arrow, rounded corners=6pt]
