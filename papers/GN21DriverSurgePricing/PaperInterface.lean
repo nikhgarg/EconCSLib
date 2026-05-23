@@ -125,6 +125,18 @@ abbrev theorem3_endpoint_bridge :=
   @theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source
 
 /--
+Theorem 3: finite-or-infinite branch route with aggregate cross-ratio endpoint
+fields.  This is the preferred paper-proof boundary after Lemma 5 reduces
+optimal policies to the source finite-cutoff or accept-all alternatives.
+-/
+abbrev theorem3_finite_or_infinite_branch_surge_cross :=
+  @theorem3_measurable_ic_ae_unique_of_finite_or_infinite_surge_cross_named_rate
+
+/-- Theorem 3: IC projection of the finite-or-infinite aggregate-cross route. -/
+abbrev theorem3_finite_or_infinite_branch_surge_cross_ic :=
+  @theorem3_measurable_ic_of_finite_or_infinite_surge_cross_named_rate
+
+/--
 Theorem 3: small-surge source route with current Lemma 9 final-sign input.
 -/
 abbrev theorem3_small_surge_final_sign :=
