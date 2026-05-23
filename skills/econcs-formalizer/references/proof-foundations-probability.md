@@ -170,6 +170,16 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   immediate from `R2 > 0`; the positive-`z0` branch should be derived from the
   non-surge ratio formula/feasibility assumptions, or recorded as the exact
   missing source regime condition.
+- When a GN21 small-surge route has a sign-selected `Rmax` envelope and the
+  source has normalized accept-all masses, do not carry `Rmax` as a public
+  paper assumption if it is just `if z0 <= 0 then R2 else max R2
+  (arrival0*z0)`.  Add a no-`Rmax` wrapper that sign-splits this value
+  internally, derives `R1 > 0` and `R1 < R2` from `R1 = rho*R2`, `R2 > 0`, and
+  `C < rho < 1`, and then calls the older envelope theorem.  Mirror this for
+  the fixed-lower-cross route when the paper supplies
+  `T_current * Q_acceptAll <= T_acceptAll * Q_current`; this avoids a
+  stronger per-policy current final-sign assumption and keeps the public source
+  boundary closer to the paper proof.
 - GN21 file-organization lesson: when a CTMC proof route has made
   `MainTheorems.lean` unwieldy, add a new proof-route module for the stable
   declaration cluster while keeping `MainTheorems.lean` as the stable source

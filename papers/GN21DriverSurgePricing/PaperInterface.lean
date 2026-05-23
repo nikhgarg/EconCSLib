@@ -571,5 +571,19 @@ slack.
 abbrev theorem3_small_surge_mass_affine_interval_final_sign :=
   @theorem3_positive_mass_measurable_ic_of_small_surge_mass_affine_interval_final_sign
 
+/--
+Theorem 3: normalized no-`Rmax` mass-affine route with a current Lemma 9
+final-sign input.
+-/
+abbrev theorem3_small_surge_mass_affine_current_final_sign_no_rmax_normalized :=
+  @paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_no_rmax_normalized_mass_data_assumptions
+
+/--
+Theorem 3: normalized no-`Rmax` mass-affine route using the fixed-state
+lower-cross comparison instead of a current final-sign input.
+-/
+abbrev theorem3_small_surge_mass_affine_fixed_lower_cross_no_rmax_normalized :=
+  @theorem3_positive_mass_measurable_ic_of_small_surge_mass_affine_fixed_lower_cross_no_rmax_normalized_mass
+
 end PaperInterface
 end GN21DriverSurgePricing
