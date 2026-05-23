@@ -2495,6 +2495,11 @@ optimal-policy source records to the local reward-rate Lemma 9/10 form
 internally, avoiding any nondegeneracy requirement for arbitrary zero-mass
 comparison policies.  The reward-rate version remains available as
 `PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_reward_rate_positive_response_normalized`.
+For sequential surge reward-rate wrappers, Lean now builds the a.e.-uniqueness
+certificate directly from measured Lemma 9/10 reward-rate equalities through
+`Theorem4MeasuredAggregateStructuredSequentialOptimalRewardRatePositiveResponseCertificate.of_feasible_sequential_surge_reward_rate`;
+the source-data conversion remains only where the weak feasible-IC construction
+still consumes aggregate scaled-source certificates.
 The sequential surge-source wrappers also expose the common source presentations
 after the Lemma 10 branch has been constructed from Theorem 3 parameter data:
 `PaperInterface.theorem3_feasible_sequential_surge_source_data`,
@@ -2658,8 +2663,8 @@ The primitive feasible current-bounds package has its own rejected-mass
 adapter,
 `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_primitive`,
 and the feasible-primitive, accounting, and reward-rate Theorem 3 wrappers
-reuse it or the source-data adapter to return the same AE uniqueness
-conclusion.
+reuse it, the source-data adapter, or the direct sequential reward-rate
+certificate constructor to return the same AE uniqueness conclusion.
 Concrete
 with-density replacement policies, primitive equalities, finite positive-density
 current/replacement nondegeneracy, accept-all density support constructors,

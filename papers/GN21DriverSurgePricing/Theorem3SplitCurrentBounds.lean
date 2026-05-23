@@ -67,6 +67,81 @@ theorem GN21NonsurgeLemma10AcceptAllAggregateRewardRateData.of_source_structured
       μJ arrivalJ R2 (ctmcStructuredSurgePrice mJ zJ switch21 switch12)
       σJ hfixed_mass hfixed_arrival_mass hfixed_time D.fixed_reward_rate
 
+/--
+Build non-surge Lemma 10 reward-rate data by tightening the accept-all
+moving-state bounds to the current non-surge policy.  This is the reward-rate
+analogue of `GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening`.
+-/
+theorem GN21NonsurgeLemma10AcceptAllAggregateRewardRateData.of_acceptAll_tightening
+    {μI μJ : Measure TripLength}
+    {arrivalI arrivalJ switch12 switch21 R2 z ratio mJ zJ : ℝ}
+    {σI σJ : TripPolicy}
+    (hσI_subset : σI ⊆ acceptAllPolicy)
+    (hσI_measurable : MeasurableSet σI)
+    (harrivalI_pos : 0 < arrivalI)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htimeI_current_integrable :
+      IntegrableOn (fun τ : TripLength => τ) σI μI)
+    (hqI_current_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ) σI μI)
+    (htimeI_acceptAll_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy μI)
+    (hqI_acceptAll_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy μI)
+    (hbounds_acceptAll :
+      lemma10StructuredBounds ratio
+        (gn21ScaledStateTime μJ arrivalJ σJ)
+        (gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+        (gn21ScaledStateTime μI arrivalI acceptAllPolicy)
+        (gn21ExitWeightIntegral μI arrivalI switch12 switch21 acceptAllPolicy)
+        switch12)
+    (hfixed_A_pos :
+      0 <
+        gn21ScaledStateTime μJ arrivalJ σJ * switch12 +
+          gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hfixed_exit_nonneg :
+      0 ≤ gn21ExitWeightIntegral μJ arrivalJ switch21 switch12 σJ)
+    (hcurrent_mass_pos : 0 < singleStateTripMass μI σI)
+    (hz : z = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hfixed_mass :
+      singleStateTripMass μJ σJ ≠ 0)
+    (hfixed_arrival_mass :
+      arrivalJ * singleStateTripMass μJ σJ ≠ 0)
+    (hfixed_time :
+      gn21ScaledStateTime μJ arrivalJ σJ ≠ 0)
+    (hfixed_reward_rate :
+      gn21MeasuredStateRewardRate μJ arrivalJ
+        (ctmcStructuredSurgePrice mJ zJ switch21 switch12) σJ = R2) :
+    GN21NonsurgeLemma10AcceptAllAggregateRewardRateData
+      μI μJ arrivalI arrivalJ switch12 switch21 R2 z ratio mJ zJ
+      σI σJ := by
+  have hfixed_scaled :
+      gn21ScaledStateEarning μJ arrivalJ
+          (ctmcStructuredSurgePrice mJ zJ switch21 switch12) σJ =
+        R2 * gn21ScaledStateTime μJ arrivalJ σJ :=
+    gn21ScaledStateEarning_eq_reward_mul_scaled_time_of_measuredStateRewardRate
+      μJ arrivalJ R2
+      (ctmcStructuredSurgePrice mJ zJ switch21 switch12) σJ
+      hfixed_mass hfixed_arrival_mass hfixed_time hfixed_reward_rate
+  have Dsrc :
+      GN21NonsurgeLemma10AcceptAllAggregateSourceData
+        μI μJ arrivalI arrivalJ switch12 switch21 R2 z ratio
+        (ctmcStructuredSurgePrice mJ zJ switch21 switch12) σI σJ :=
+    GN21NonsurgeLemma10AcceptAllAggregateSourceData.of_acceptAll_tightening
+      hσI_subset hσI_measurable harrivalI_pos hswitch12_pos
+      hswitch21_pos htimeI_current_integrable hqI_current_integrable
+      htimeI_acceptAll_integrable hqI_acceptAll_integrable hbounds_acceptAll
+      hfixed_A_pos hfixed_exit_nonneg hcurrent_mass_pos hz hR2_pos
+      hfixed_scaled
+  exact
+    GN21NonsurgeLemma10AcceptAllAggregateRewardRateData.of_source_structured
+      hfixed_mass hfixed_arrival_mass hfixed_time Dsrc
+
 /-- Convert surge Lemma 9 source data for a structured fixed non-surge price
 to the reward-rate form used by the sequential positive-response route. -/
 theorem GN21SurgeLemma9AcceptAllAggregateRewardRateData.of_source_structured
@@ -1490,30 +1565,124 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_str
         μ arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
       μ arrival R1 R2 switch12 switch21 :=
-  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_source_data_assumptions
-    μ arrival rho R1 R2 switch12 switch21
-    { A.toTheorem3AcceptAllStructuredOptimalSequentialSurgeSourceDataAssumptions with
-      surge_source_data := by
-        intro m z hnonneg hparams ρ hρ
-        rcases A.surge_reward_rate_data m z hnonneg hparams ρ hρ with
-          ⟨R1_current, ratio, D⟩
-        have hmassI : singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
-          ne_of_gt
-            (A.optimal_nonsurge_current_mass_pos m z hnonneg hparams ρ hρ)
-        have harrivalMassI :
-            arrival 0 * singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
-          mul_ne_zero (ne_of_gt A.harrival1_pos) hmassI
-        have htimeI_pos :
-            0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) :=
-          gn21ScaledStateTime_pos_of_nonneg
-            (μ 0) (arrival 0) (ρ 0) (le_of_lt A.harrival1_pos)
-            (hρ.1 0).2 (hρ.1 0).1
-        have Dsrc :=
-          GN21SurgeLemma9AcceptAllAggregateSourceData.of_reward_rate
-            hmassI harrivalMassI (ne_of_gt htimeI_pos) D
-        exact ⟨R1_current, ratio, by
-          simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb]
-            using Dsrc⟩ }
+  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_sequential_optimal_reward_rate_positive_response_normalized_mass_ratio_source_assumptions
+    μ arrival rho R1 R2 switch12 switch21 A.hR1_eq A.hR2_pos
+    A.hC_lt_rho A.hrho_lt_one A.harrival1_pos A.harrival2_pos
+    A.hswitch12_pos A.hswitch21_pos A.htime1_integrable
+    A.htime2_integrable A.hq1_integrable A.hq2_integrable
+    A.hmass1_eq_one A.hmass2_eq_one A.weak_reward
+    (by
+      intro m z hnonneg hparams
+      let P := Theorem3AcceptAllStructuredParameterData.of_evidence hparams
+      exact
+        { accept_all_optimal := by
+            have hweak := A.weak_reward m z hnonneg hparams
+            have hopt :=
+              paper_theorem4_measurable_accept_all_optimal_of_statewise_accept_all_weak_reward
+                (gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12
+                  switch21 m z) hweak
+            simpa [gn21MeasuredCTMCStructuredDynamicReward] using hopt
+          m0_eq := P.hm0
+          arrival1_pos := A.harrival1_pos
+          arrival2_pos := A.harrival2_pos
+          switch12_pos := A.hswitch12_pos
+          switch21_pos := A.hswitch21_pos
+          acceptAll_mass_pos := by
+            intro i
+            fin_cases i
+            · simpa [A.hmass1_eq_one]
+            · simpa [A.hmass2_eq_one]
+          time1_acceptAll_integrable := A.htime1_integrable
+          time2_acceptAll_integrable := A.htime2_integrable
+          q1_acceptAll_integrable := A.hq1_integrable
+          q2_acceptAll_integrable := A.hq2_integrable
+          nonsurge_after_surge_data := by
+            intro ρ hρ
+            have hsum21 : 0 < switch21 + switch12 := by
+              linarith [A.hswitch21_pos, A.hswitch12_pos]
+            have hfixed_exit_pos :
+                0 <
+                  gn21ExitWeightIntegral (μ 1) (arrival 1)
+                    switch21 switch12 acceptAllPolicy :=
+              gn21ExitWeightIntegral_pos_of_switch_pos
+                (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+                (le_of_lt A.harrival2_pos) A.hswitch21_pos hsum21
+                measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+            have hfixed_time_pos :
+                0 <
+                  gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy :=
+              gn21ScaledStateTime_pos_of_nonneg
+                (μ 1) (arrival 1) acceptAllPolicy
+                (le_of_lt A.harrival2_pos) measurableSet_acceptAllPolicy
+                (fun _ hτ => hτ)
+            have hfixed_A_pos :
+                0 <
+                  gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy *
+                      switch12 +
+                    gn21ExitWeightIntegral (μ 1) (arrival 1)
+                      switch21 switch12 acceptAllPolicy := by
+              exact add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
+                hfixed_exit_pos
+            have hfixed_mass :
+                singleStateTripMass (μ 1) acceptAllPolicy ≠ 0 := by
+              rw [A.hmass2_eq_one]
+              norm_num
+            have hfixed_arrival_mass :
+                arrival 1 * singleStateTripMass (μ 1) acceptAllPolicy ≠ 0 :=
+              mul_ne_zero (ne_of_gt A.harrival2_pos) hfixed_mass
+            have hfixed_reward_rate :
+                gn21MeasuredStateRewardRate (μ 1) (arrival 1)
+                    (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                    acceptAllPolicy =
+                  R2 := by
+              have hscaled :
+                  gn21ScaledStateEarning (μ 1) (arrival 1)
+                      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                      acceptAllPolicy =
+                    R2 * gn21ScaledStateTime (μ 1) (arrival 1)
+                      acceptAllPolicy := by
+                calc
+                  gn21ScaledStateEarning (μ 1) (arrival 1)
+                      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                      acceptAllPolicy
+                      =
+                    m 1 *
+                        (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+                      z 1 *
+                        (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                            switch21 switch12 -
+                          switch21) := by
+                        simpa [ctmcStructuredDynamicSurgePrice,
+                          ctmcDynamicSwitchProb, ctmcStructuredSurgePrice,
+                          gn21AcceptAllScaledStateTime,
+                          gn21AcceptAllExitWeightIntegral] using
+                          paper_remark2_structured_scaled_earning_algebra
+                            (μ 1) (arrival 1) (m 1) (z 1) switch21 switch12
+                            acceptAllPolicy A.htime2_integrable
+                            A.hq2_integrable
+                  _ = R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1) :=
+                    P.surge_accounting
+              exact
+                gn21MeasuredStateRewardRate_eq_of_scaled_earning
+                  (μ 1) (arrival 1) R2
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                  acceptAllPolicy hfixed_mass hfixed_arrival_mass
+                  (ne_of_gt hfixed_time_pos) hscaled
+            exact
+              ⟨P.nonsurgeRatio,
+                GN21NonsurgeLemma10AcceptAllAggregateRewardRateData.of_acceptAll_tightening
+                  (hρ.1 0).1 (hρ.1 0).2 A.harrival1_pos
+                  A.hswitch12_pos A.hswitch21_pos
+                  (A.htime1_integrable.mono_set (hρ.1 0).1)
+                  (A.hq1_integrable.mono_set (hρ.1 0).1)
+                  A.htime1_integrable A.hq1_integrable
+                  P.nonsurge_acceptAll_bounds hfixed_A_pos
+                  (le_of_lt hfixed_exit_pos)
+                  (A.optimal_nonsurge_current_mass_pos
+                    m z hnonneg hparams ρ hρ)
+                  P.hz0 A.hR2_pos hfixed_mass hfixed_arrival_mass
+                  (ne_of_gt hfixed_time_pos) hfixed_reward_rate⟩
+          surge_data := A.surge_reward_rate_data m z hnonneg hparams } )
 
 /--
 Optimal-only sequential surge data with the zero-mass boundary made explicit.
@@ -1957,6 +2126,135 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_str
             using Dsrc⟩ }
 
 /--
+Constructor for the source-ordered Lemma 9 then Lemma 10 a.e.-uniqueness
+certificate when the feasible sequential surge package is already stated in
+measured reward-rate form.
+-/
+def Theorem4MeasuredAggregateStructuredSequentialOptimalRewardRatePositiveResponseCertificate.of_feasible_sequential_surge_reward_rate
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {rho R1 R2 switch12 switch21 : ℝ}
+    {m z : Fin 2 → ℝ}
+    (A :
+      Theorem3AcceptAllStructuredFeasibleSequentialSurgeRewardRateDataAssumptions
+        μ arrival rho R1 R2 switch12 switch21)
+    (hnonneg : 0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1)
+    (hparams :
+      theorem3AcceptAllStructuredParameterEvidence
+        μ arrival R1 R2 switch12 switch21 m z)
+    (haccept :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy) :
+    Theorem4MeasuredAggregateStructuredSequentialOptimalRewardRatePositiveResponseCertificate
+      μ arrival R1 R2 switch12 switch21 m z := by
+  let P := Theorem3AcceptAllStructuredParameterData.of_evidence hparams
+  exact
+    { accept_all_optimal := haccept
+      m0_eq := P.hm0
+      arrival1_pos := A.harrival1_pos
+      arrival2_pos := A.harrival2_pos
+      switch12_pos := A.hswitch12_pos
+      switch21_pos := A.hswitch21_pos
+      acceptAll_mass_pos := by
+        intro i
+        fin_cases i
+        · exact A.hmass1_pos
+        · exact A.hmass2_pos
+      time1_acceptAll_integrable := A.htime1_integrable
+      time2_acceptAll_integrable := A.htime2_integrable
+      q1_acceptAll_integrable := A.hq1_integrable
+      q2_acceptAll_integrable := A.hq2_integrable
+      nonsurge_after_surge_data := by
+        intro ρ hρ
+        have hsum21 : 0 < switch21 + switch12 := by
+          linarith [A.hswitch21_pos, A.hswitch12_pos]
+        have hfixed_exit_pos :
+            0 <
+              gn21ExitWeightIntegral (μ 1) (arrival 1)
+                switch21 switch12 acceptAllPolicy :=
+          gn21ExitWeightIntegral_pos_of_switch_pos
+            (μ 1) (arrival 1) switch21 switch12 acceptAllPolicy
+            (le_of_lt A.harrival2_pos) A.hswitch21_pos hsum21
+            measurableSet_acceptAllPolicy (fun _ hτ => hτ)
+        have hfixed_time_pos :
+            0 <
+              gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy :=
+          gn21ScaledStateTime_pos_of_nonneg
+            (μ 1) (arrival 1) acceptAllPolicy
+            (le_of_lt A.harrival2_pos) measurableSet_acceptAllPolicy
+            (fun _ hτ => hτ)
+        have hfixed_A_pos :
+            0 <
+              gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy *
+                  switch12 +
+                gn21ExitWeightIntegral (μ 1) (arrival 1)
+                  switch21 switch12 acceptAllPolicy := by
+          exact add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
+            hfixed_exit_pos
+        have hfixed_mass :
+            singleStateTripMass (μ 1) acceptAllPolicy ≠ 0 :=
+          ne_of_gt A.hmass2_pos
+        have hfixed_arrival_mass :
+            arrival 1 * singleStateTripMass (μ 1) acceptAllPolicy ≠ 0 :=
+          mul_ne_zero (ne_of_gt A.harrival2_pos) hfixed_mass
+        have hfixed_reward_rate :
+            gn21MeasuredStateRewardRate (μ 1) (arrival 1)
+                (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                acceptAllPolicy =
+              R2 := by
+          have hscaled :
+              gn21ScaledStateEarning (μ 1) (arrival 1)
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                  acceptAllPolicy =
+                R2 * gn21ScaledStateTime (μ 1) (arrival 1)
+                  acceptAllPolicy := by
+            calc
+              gn21ScaledStateEarning (μ 1) (arrival 1)
+                  (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+                  acceptAllPolicy
+                  =
+                m 1 *
+                    (gn21AcceptAllScaledStateTime (μ 1) (arrival 1) - 1) +
+                  z 1 *
+                    (gn21AcceptAllExitWeightIntegral (μ 1) (arrival 1)
+                        switch21 switch12 -
+                      switch21) := by
+                    simpa [ctmcStructuredDynamicSurgePrice,
+                      ctmcDynamicSwitchProb, ctmcStructuredSurgePrice,
+                      gn21AcceptAllScaledStateTime,
+                      gn21AcceptAllExitWeightIntegral] using
+                      paper_remark2_structured_scaled_earning_algebra
+                        (μ 1) (arrival 1) (m 1) (z 1) switch21 switch12
+                        acceptAllPolicy A.htime2_integrable
+                        A.hq2_integrable
+              _ = R2 * gn21AcceptAllScaledStateTime (μ 1) (arrival 1) :=
+                P.surge_accounting
+          exact
+            gn21MeasuredStateRewardRate_eq_of_scaled_earning
+              (μ 1) (arrival 1) R2
+              (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+              acceptAllPolicy hfixed_mass hfixed_arrival_mass
+              (ne_of_gt hfixed_time_pos) hscaled
+        exact
+          ⟨P.nonsurgeRatio,
+            GN21NonsurgeLemma10AcceptAllAggregateRewardRateData.of_acceptAll_tightening
+              (hρ.1 0).1 (hρ.1 0).2 A.harrival1_pos A.hswitch12_pos
+              A.hswitch21_pos
+              (A.htime1_integrable.mono_set (hρ.1 0).1)
+              (A.hq1_integrable.mono_set (hρ.1 0).1)
+              A.htime1_integrable A.hq1_integrable
+              P.nonsurge_acceptAll_bounds hfixed_A_pos
+              (le_of_lt hfixed_exit_pos)
+              (A.nonsurge_current_mass_pos m z hnonneg hparams ρ hρ.1)
+              P.hz0 A.hR2_pos hfixed_mass hfixed_arrival_mass
+              (ne_of_gt hfixed_time_pos) hfixed_reward_rate⟩
+      surge_data := by
+        intro ρ hρ
+        exact A.surge_reward_rate_data m z hnonneg hparams ρ hρ.1 }
+
+/--
 Reward-rate-form Theorem 3 a.e.-uniqueness wrapper for the sequential surge
 source route.
 -/
@@ -1968,46 +2266,36 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_str
       Theorem3AcceptAllStructuredFeasibleSequentialSurgeRewardRateDataAssumptions
         μ arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      μ arrival R1 R2 switch12 switch21 :=
-  paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_feasible_sequential_surge_source_data_assumptions
-    μ arrival rho R1 R2 switch12 switch21
-    { hR1_eq := A.hR1_eq
-      hR1_pos := A.hR1_pos
-      hR1_lt_R2 := A.hR1_lt_R2
-      hR2_pos := A.hR2_pos
-      hC_lt_rho := A.hC_lt_rho
-      hrho_lt_one := A.hrho_lt_one
-      harrival1_pos := A.harrival1_pos
-      harrival2_pos := A.harrival2_pos
-      hswitch12_pos := A.hswitch12_pos
-      hswitch21_pos := A.hswitch21_pos
-      htime1_integrable := A.htime1_integrable
-      htime2_integrable := A.htime2_integrable
-      hq1_integrable := A.hq1_integrable
-      hq2_integrable := A.hq2_integrable
-      hmass1_pos := A.hmass1_pos
-      hmass2_pos := A.hmass2_pos
-      nonsurge_current_mass_pos := A.nonsurge_current_mass_pos
-      surge_source_data := by
-        intro m z hnonneg hparams ρ hρ
-        rcases A.surge_reward_rate_data m z hnonneg hparams ρ hρ with
-          ⟨R1_current, ratio, D⟩
-        have hmassI : singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
-          ne_of_gt (A.nonsurge_current_mass_pos m z hnonneg hparams ρ hρ)
-        have harrivalMassI :
-            arrival 0 * singleStateTripMass (μ 0) (ρ 0) ≠ 0 :=
-          mul_ne_zero (ne_of_gt A.harrival1_pos) hmassI
-        have htimeI_pos :
-            0 < gn21ScaledStateTime (μ 0) (arrival 0) (ρ 0) :=
-          gn21ScaledStateTime_pos_of_nonneg
-            (μ 0) (arrival 0) (ρ 0) (le_of_lt A.harrival1_pos)
-            (hρ 0).2 (hρ 0).1
-        have Dsrc :=
-          GN21SurgeLemma9AcceptAllAggregateSourceData.of_reward_rate
-            hmassI harrivalMassI (ne_of_gt htimeI_pos) D
-        exact ⟨R1_current, ratio, by
-          simpa [ctmcStructuredDynamicSurgePrice, ctmcDynamicSwitchProb]
-            using Dsrc⟩ }
+      μ arrival R1 R2 switch12 switch21 := by
+  rcases
+      paper_theorem3_measured_structured_measurable_ic_prices_of_structured_feasible_sequential_surge_reward_rate_data_assumptions
+        μ arrival rho R1 R2 switch12 switch21 A with
+    ⟨m, z, hsigns, hIC, hprice_form, hparams⟩
+  have haccept :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
+        acceptAllDynamicPolicy := by
+    simpa [gn21MeasuredCTMCStructuredDynamicReward] using hIC
+  have H :=
+    paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_sequential_optimal_reward_rate_positive_response
+      μ arrival R1 R2 switch12 switch21 m z
+      (Theorem4MeasuredAggregateStructuredSequentialOptimalRewardRatePositiveResponseCertificate.of_feasible_sequential_surge_reward_rate
+        A hsigns hparams haccept)
+  have hAE :
+      ∀ ρ : Fin 2 → TripPolicy,
+        dynamicMeasurableOptimal
+          (gn21MeasuredCTMCStructuredDynamicReward
+            μ arrival switch12 switch21 m z) ρ →
+          dynamicAcceptAllAlmostEverywhere μ ρ := by
+    intro ρ hρ
+    have hρ' :
+        dynamicMeasurableOptimal
+          (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
+            (ctmcStructuredDynamicSurgePrice m z switch12 switch21)) ρ := by
+      simpa [gn21MeasuredCTMCStructuredDynamicReward] using hρ
+    exact H.2 ρ hρ'
+  exact ⟨m, z, hsigns, hIC, hAE, hprice_form, hparams⟩
 
 /--
 Normalized Theorem 3 route with the paper-proof split made explicit:

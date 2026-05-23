@@ -54,6 +54,12 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   local theorem names, reward-rate equalities, positivity side facts, or
   aggregate aliases internally. This keeps the next proof pass focused on the
   mathematical source obligations rather than on plumbing.
+- If a paper proof is source-ordered, keep that order in the reusable
+  constructor. For GN21-style Lemma 9 then Lemma 10 routes, build one
+  sequential reward-rate certificate from the feasible/optimal source fields
+  and reuse it for a.e. uniqueness; do not convert measured reward-rate data
+  back to scaled source data and then immediately recover reward rates unless
+  the weak-IC layer specifically needs the aggregate source package.
 - For source proofs that state scalar cutoff inequalities but downstream
   endpoint certificates need aggregate cross-ratio fields, add tiny bridge
   lemmas in the paper folder from the scalar cutoff fact to the aggregate

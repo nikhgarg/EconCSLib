@@ -18,6 +18,12 @@ Last updated: 2026-05-22
   `PaperInterface.theorem3_source_with_zero_mass_dominance`, which adds exactly
   the explicit zero-mass strict-dominance certificate needed outside the
   denominator-valid source domain.
+- `Theorem3SplitCurrentBounds.lean` now routes the sequential Lemma 9 then
+  Lemma 10 a.e.-uniqueness proof through local measured reward-rate records.
+  The feasible sequential surge reward-rate wrapper still reuses the existing
+  source-data path for weak feasible IC, but its uniqueness half now constructs
+  the sequential optimal reward-rate certificate directly rather than
+  round-tripping through scaled source data.
 - `Lemma5Frontier.lean` now contains the compact Theorem 4 structural
   endpoints that turn allowed Lemma 5 replacement data, allowed Lemma 5 forms,
   or feasible a.e. representative forms into the paper's measurable-domain
