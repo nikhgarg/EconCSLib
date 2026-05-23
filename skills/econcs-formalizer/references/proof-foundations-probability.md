@@ -168,6 +168,12 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   obtain the marginal-response fields through the fixed-response converter
   such as `D.to_fixed_response hρ`; using the base policy-form data directly
   can silently give the wrong response type and waste a build cycle.
+- GN21 Lemma 5 current-branch lesson: when an optimum is already in a
+  canonical middle branch, add or use a current-policy replacement constructor
+  instead of rebuilding optimizer-replacement certificates.  Prove equality to
+  the canonical accept-middle/reject-middle policy from the exact shape plus
+  `σ ⊆ acceptAllPolicy`, then discharge strictness with the corresponding
+  Lemma 5 policy-form constructor.
 - To avoid token-heavy Lean retries in CTMC algebra, name the denominator and
   numerator identities before using inequalities. Prove `m-r = numerator/den`
   and `z = ratio*B/den`, then transfer slack by

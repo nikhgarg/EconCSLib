@@ -18,6 +18,68 @@ namespace GN21DriverSurgePricing
 noncomputable section
 
 /-!
+## Source-style Lemma 5 replacement shortcuts
+
+These helpers cover exact current-policy branches that the paper proof reaches
+after Lemma 5.  They avoid rebuilding a replacement certificate when the
+current feasible policy already has the canonical middle-interval form.
+-/
+
+/--
+If the current feasible non-surge policy already has exact middle-acceptance
+syntax, the Lemma 5 replacement can be the current policy itself.
+-/
+def Theorem4NonsurgeAllowedReplacementData.of_acceptsMiddle_current
+    {Rhat : SingleStateReward} {σ0 : TripPolicy} {lo hi : ℝ}
+    (hσ0_subset : σ0 ⊆ acceptAllPolicy)
+    (hshape : acceptsMiddleTrips lo hi σ0) :
+    Theorem4NonsurgeAllowedReplacementData Rhat σ0 :=
+  .acceptMiddle lo hi
+    (by
+      have hpolicy_eq :
+          σ0 = acceptMiddleTripsPolicy lo hi :=
+        eq_acceptMiddleTripsPolicy_of_acceptsMiddleTrips_of_subset_acceptAll
+          hshape hσ0_subset
+      simp [hpolicy_eq])
+    (by
+      intro hnot
+      have hpolicy_eq :
+          σ0 = acceptMiddleTripsPolicy lo hi :=
+        eq_acceptMiddleTripsPolicy_of_acceptsMiddleTrips_of_subset_acceptAll
+          hshape hσ0_subset
+      have hform : lemma5PolicyForm .strictlyQuasiConcave σ0 := by
+        rw [hpolicy_eq]
+        exact lemma5PolicyForm_strictlyQuasiConcave_acceptMiddleTripsPolicy lo hi
+      exact False.elim (hnot hform))
+
+/--
+If the current feasible surge policy already has exact middle-rejection syntax,
+the Lemma 5 replacement can be the current policy itself.
+-/
+def Theorem4SurgeAllowedReplacementData.of_rejectsMiddle_current
+    {Rhat : SingleStateReward} {σ0 : TripPolicy} {lo hi : ℝ}
+    (hσ0_subset : σ0 ⊆ acceptAllPolicy)
+    (hshape : rejectsMiddleTrips lo hi σ0) :
+    Theorem4SurgeAllowedReplacementData Rhat σ0 :=
+  .rejectMiddle lo hi
+    (by
+      have hpolicy_eq :
+          σ0 = rejectMiddleTripsPolicy lo hi :=
+        eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+          hshape hσ0_subset
+      simp [hpolicy_eq])
+    (by
+      intro hnot
+      have hpolicy_eq :
+          σ0 = rejectMiddleTripsPolicy lo hi :=
+        eq_rejectMiddleTripsPolicy_of_rejectsMiddleTrips_of_subset_acceptAll
+          hshape hσ0_subset
+      have hform : lemma5PolicyForm .strictlyQuasiConvex σ0 := by
+        rw [hpolicy_eq]
+        exact lemma5PolicyForm_strictlyQuasiConvex_rejectMiddleTripsPolicy lo hi
+      exact False.elim (hnot hform))
+
+/-!
 ## Theorem 4 structural endpoints from Lemma 5 frontier data
 
 The source Theorem 4 statement is existential: there is an optimal dynamic
@@ -54,6 +116,26 @@ theorem paper_theorem4_measurable_dynamic_structural_policy_of_allowed_policy_fo
     exact
       ⟨theorem4NonsurgeShape_of_allowed_lemma5_form hnallowed hnform,
         theorem4SurgeShape_of_allowed_lemma5_form hsallowed hsform⟩
+
+/--
+Source-style Lemma 5 replacement data for every measurable optimum imply the
+paper's measurable Theorem 4 structural statement.  This is closer to the
+paper proof than prepackaged policy-form data: Lean first turns the feasible
+replacement certificates into allowed policy forms using optimality.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_of_allowed_replacement_data
+    (R : DynamicReward)
+    (D : Theorem4AllMeasurableOptimalAllowedReplacementData R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        theorem4NonsurgeShape (ρstar 0) ∧
+        theorem4SurgeShape (ρstar 1) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          theorem4NonsurgeShape (ρ 0) ∧ theorem4SurgeShape (ρ 1) :=
+  paper_theorem4_measurable_dynamic_structural_policy_of_allowed_policy_forms
+    R
+    (Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements
+      D.to_shape_replacements)
 
 /--
 Feasible policy-level canonical-dominance Lemma 5 data imply the paper's
@@ -151,6 +233,35 @@ theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_a
               policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
   paper_theorem4_measurable_dynamic_structural_policy_representatives_of_feasible_ae_policy_forms
     μ R (C.to_feasible_ae_policy_forms)
+
+/--
+Source-style Lemma 5 replacement data also imply the a.e.-representative
+version of Theorem 4.  This is the paper-facing null-set statement to use when
+the source proof constructs canonical replacements rather than exact policy
+forms.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_allowed_replacement_data
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    (D : Theorem4AllMeasurableOptimalAllowedReplacementData R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_structural_policy_representatives_of_allowed_policy_forms
+    μ R
+    (Theorem4AllMeasurableAllowedPolicyFormsCertificate.of_shape_replacements
+      D.to_shape_replacements)
 
 /--
 Feasible policy-level canonical-dominance Lemma 5 data imply the source

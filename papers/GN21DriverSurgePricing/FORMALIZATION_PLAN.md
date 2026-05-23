@@ -19,15 +19,16 @@ Last updated: 2026-05-22
   the explicit zero-mass strict-dominance certificate needed outside the
   denominator-valid source domain.
 - `Lemma5Frontier.lean` now contains the compact Theorem 4 structural
-  endpoints that turn allowed Lemma 5 forms or feasible a.e. representative
-  forms into the paper's measurable-domain structural statement.  It also
-  exposes the same a.e. representative statement from fixed-response shape
-  data, fixed-response policy-form data, GN21 fixed-response source data, and
-  raw GN21 bracket source data, so the source-shaped Theorem 4 route no longer
-  needs a manual reconstruction layer.  The raw bracket source data also now
-  prove the Theorem 4-to-Theorem 2 a.e. shape handoff for one-threshold CTMC
-  prices.  The remaining Theorem 4 work is the analytic construction of those
-  Lemma 5 form/canonical-dominance records for arbitrary measurable optima.
+  endpoints that turn allowed Lemma 5 replacement data, allowed Lemma 5 forms,
+  or feasible a.e. representative forms into the paper's measurable-domain
+  structural statement.  It also exposes the same a.e. representative
+  statement from replacement data, fixed-response shape data, fixed-response
+  policy-form data, GN21 fixed-response source data, and raw GN21 bracket
+  source data, so the source-shaped Theorem 4 route no longer needs a manual
+  reconstruction layer.  The raw bracket source data also now prove the
+  Theorem 4-to-Theorem 2 a.e. shape handoff for one-threshold CTMC prices.
+  The remaining Theorem 4 work is the analytic construction of those Lemma 5
+  replacement/canonical-dominance records for arbitrary measurable optima.
 - The folder has active proof work; avoid broad rewrites while other agents are
   editing `MainTheorems.lean`.
 
@@ -52,6 +53,8 @@ Last updated: 2026-05-22
   dashboard/cache and write the final validation report around
   `PaperInterface.theorem3_positive_mass_source`.
 - For Theorem 4, target
+  `PaperInterface.theorem4_structural_policy_representatives_of_allowed_replacement_data`
+  when following the paper's Lemma 5 replacement proof,
   `PaperInterface.theorem4_structural_policy_representatives_of_gn21_bracket_source_data`
   when following the paper proof at the raw Lemma 6 bracket level, or
   `PaperInterface.theorem4_structural_policy_representatives_of_feasible_ae_policy_forms`

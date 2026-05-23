@@ -43,6 +43,10 @@ abbrev theorem4_positive_response_acceptAll_candidate :=
 abbrev theorem4_structural_policy_forms_of_allowed_policy_forms :=
   @paper_theorem4_measurable_dynamic_structural_policy_of_allowed_policy_forms
 
+/-- Theorem 4: measurable structural forms from source-style Lemma 5 replacements. -/
+abbrev theorem4_structural_policy_forms_of_allowed_replacement_data :=
+  @paper_theorem4_measurable_dynamic_structural_policy_of_allowed_replacement_data
+
 /-- Theorem 4: measurable structural forms from feasible canonical dominance. -/
 abbrev theorem4_structural_policy_forms_of_feasible_policy_canonical_dominance :=
   @paper_theorem4_measurable_dynamic_structural_policy_of_feasible_policy_canonical_dominance
@@ -50,6 +54,10 @@ abbrev theorem4_structural_policy_forms_of_feasible_policy_canonical_dominance :
 /-- Theorem 4: a.e. structural representatives from feasible Lemma 5 forms. -/
 abbrev theorem4_structural_policy_representatives_of_feasible_ae_policy_forms :=
   @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_feasible_ae_policy_forms
+
+/-- Theorem 4: a.e. structural representatives from source-style Lemma 5 replacements. -/
+abbrev theorem4_structural_policy_representatives_of_allowed_replacement_data :=
+  @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_allowed_replacement_data
 
 /-- Theorem 4: a.e. structural representatives from feasible canonical dominance. -/
 abbrev theorem4_structural_policy_representatives_of_feasible_policy_canonical_dominance :=

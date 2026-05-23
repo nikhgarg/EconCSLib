@@ -77,7 +77,10 @@ cache is `source.txt`.
   measurable domain.  `Lemma5Frontier.lean` proves the source existential
   shape statement directly from allowed Lemma 5 policy forms via
   `PaperInterface.theorem4_structural_policy_forms_of_allowed_policy_forms`,
-  and also exposes the source-faithful a.e.-representative statement through
+  and now also from source-style Lemma 5 replacement data via
+  `PaperInterface.theorem4_structural_policy_forms_of_allowed_replacement_data`.
+  It also exposes the source-faithful a.e.-representative statement through
+  `PaperInterface.theorem4_structural_policy_representatives_of_allowed_replacement_data`,
   `PaperInterface.theorem4_structural_policy_representatives_of_feasible_ae_policy_forms`
   and
   `PaperInterface.theorem4_structural_policy_representatives_of_feasible_policy_canonical_dominance`.
@@ -98,9 +101,9 @@ cache is `source.txt`.
   `PaperInterface.theorem4_acceptAll_structural_representatives_of_positive_response_marginal`
   and
   `PaperInterface.theorem4_acceptAll_structural_representatives_of_positive_response_candidates`.
-  The remaining analytic Theorem 4 work is to construct the feasible Lemma 5
-  canonical-dominance/a.e.-form data for arbitrary measurable optima, not to
-  reassemble the paper-level structural conclusion.
+  The remaining analytic Theorem 4 work is to construct the Lemma 5
+  replacement/canonical-dominance/a.e.-form data for arbitrary measurable
+  optima, not to reassemble the paper-level structural conclusion.
 - The CTMC monotonicity layer now also exposes
   `gn21SwitchProb_mul_le_mul_of_pos_lt` and
   `gn21FixedState_lower_pointwise_of_rejectsLongTrips`: for reject-long fixed
