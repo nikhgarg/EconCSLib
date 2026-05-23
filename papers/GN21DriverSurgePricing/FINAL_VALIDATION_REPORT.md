@@ -138,6 +138,8 @@ definitions, or appendix remark formatting.
   audit aliases for the final endpoints above.
 - `lean_to_tex_llm.json` gives the dashboard independent Lean-to-TeX drafts for
   all 24 paper-facing review rows.
+- `SOURCE_AUDIT.md` is the tracked durable source-vs-Lean audit for the 24
+  `PaperInterface.lean` review rows.
 - The local dashboard trace records a `codex-source-audit` review for all 24
   rows, with no stale rows and no mismatches.  This is an agent source audit,
   not a human signoff.
