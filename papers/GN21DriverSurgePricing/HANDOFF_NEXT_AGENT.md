@@ -7,6 +7,24 @@ Driver Surge Pricing Theorem 3 IC route, not to audit other papers.
 
 ## Latest Stopping Point
 
+2026-05-22 update: `Lemma5Frontier.lean` now bundles the per-state GN21
+fixed-response positive-affine adapters into the all-optima source object
+`Theorem4AllMeasurableGN21FixedResponsePolicyCanonicalDominancePositiveAffineData`.
+Its method `.to_feasible_policy_canonical_dominance` produces exactly the
+`Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData` consumed by the
+strongest Theorem 4 frontier.  The public review surface exposes this through
+`PaperInterface.theorem4_structural_policy_forms_of_gn21_fixed_response_positive_affine`
+and
+`PaperInterface.theorem4_structural_policy_representatives_of_gn21_fixed_response_positive_affine`.
+This does not remove the remaining continuous proof obligation, and it should
+not replace the source-faithful quotient/marginal-optimality route unless the
+positive-affine continuation-objective identity is genuinely available.  For an
+exact-form positive-affine route, the next target is narrower: prove, for every
+measurable optimum, the statewise fixed-response source record,
+open/current continuity, strict-mass witness, and positive-affine identity.
+`PaperInterface` also now exposes the reusable bridge
+`theorem3_positive_mass_to_full_with_zero_mass_dominance`.
+
 The current compiled stopping point is the source-faithful positive-mass
 Theorem 3 route. `lake build GN21DriverSurgePricing.PaperInterface` passes
 after the new sequential a.e.-uniqueness bridge:

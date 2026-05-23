@@ -83,6 +83,20 @@ abbrev theorem4_structural_policy_representatives_of_gn21_fixed_response_source_
 abbrev theorem4_structural_policy_representatives_of_gn21_bracket_source_data :=
   @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_bracket_source_data
 
+/--
+Theorem 4: structural forms from GN21 fixed-response source data plus
+positive-affine continuation-objective transfer.
+-/
+abbrev theorem4_structural_policy_forms_of_gn21_fixed_response_positive_affine :=
+  @paper_theorem4_measurable_dynamic_structural_policy_of_gn21_fixed_response_policy_canonical_dominance_positive_affine
+
+/--
+Theorem 4: a.e. structural representatives from GN21 fixed-response source
+data plus positive-affine continuation-objective transfer.
+-/
+abbrev theorem4_structural_policy_representatives_of_gn21_fixed_response_positive_affine :=
+  @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_fixed_response_policy_canonical_dominance_positive_affine
+
 /-- Theorem 4: accept-all structural representatives from positive-response optima. -/
 abbrev theorem4_acceptAll_structural_representatives_of_positive_response_marginal :=
   @paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_positive_response_marginal_optima
@@ -196,6 +210,13 @@ abbrev theorem3_feasible_weak_reward_optimal_positive_response_normalized :=
 /-- Theorem 3: positive-mass source-domain IC/a.e. uniqueness route. -/
 abbrev theorem3_positive_mass_source :=
   @theorem3_positive_mass_measurable_ic_ae_unique_of_source_assumptions
+
+/--
+Theorem 3: reusable lift from positive-mass a.e. uniqueness to the full
+measurable domain when zero-mass strict dominance is supplied.
+-/
+abbrev theorem3_positive_mass_to_full_with_zero_mass_dominance :=
+  @theorem3MeasuredStructuredMeasurableICAEUniqueConclusion_of_positiveMass_ae_unique_and_zeroMassStrictDominance
 
 /-- Theorem 3: full measurable route from source assumptions plus zero-mass dominance. -/
 abbrev theorem3_source_with_zero_mass_dominance :=

@@ -183,6 +183,16 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   canonical-dominance data unless the endpoint route truly needs exact forms.
   This avoids introducing `hstrict_mass` obligations stronger than the
   source's null-boundary convention.
+- GN21 Theorem 4 exact-form lesson: if the endpoint route truly needs feasible
+  policy-canonical dominance, do not rebuild all-optima packaging by hand.
+  Feed the per-state fixed-response source records, current openness,
+  continuity, strict-mass witness, and positive-affine objective identity into
+  `Theorem4AllMeasurableGN21FixedResponsePolicyCanonicalDominancePositiveAffineData`;
+  its `.to_feasible_policy_canonical_dominance` method produces the exact
+  Theorem 4 certificate.  Use this only when the positive-affine identity is
+  true; otherwise stay on the quotient-cross-multiplication
+  marginal-optimality/a.e. route.  The remaining hard work is proving the
+  relevant statewise fields, not reassembling allowed-policy-form wrappers.
 - GN21 Lemma 5 current-branch lesson: when an optimum is already in a
   canonical middle branch, add or use a current-policy replacement constructor
   instead of rebuilding optimizer-replacement certificates.  Prove equality to

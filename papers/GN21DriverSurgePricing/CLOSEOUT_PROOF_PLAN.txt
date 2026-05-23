@@ -12,6 +12,33 @@ Do not edit source.txt for this purpose.  source.txt is the extracted paper.
 
 Current best Lean frontier
 --------------------------
+2026-05-22 Lemma 5/Theorem 4 source-boundary tightening: the statewise
+positive-affine GN21 fixed-response adapters in Lemma5Frontier are now bundled
+into an all-optima source object:
+
+  Theorem4AllMeasurableGN21FixedResponsePolicyCanonicalDominancePositiveAffineData
+
+and the compiled method
+
+  Theorem4AllMeasurableGN21FixedResponsePolicyCanonicalDominancePositiveAffineData.to_feasible_policy_canonical_dominance
+
+returns the exact `Theorem4AllMeasurableFeasiblePolicyCanonicalDominanceData`
+needed by the strongest Theorem 4 structural frontier.  The human-review
+surface names are:
+
+  PaperInterface.theorem4_structural_policy_forms_of_gn21_fixed_response_positive_affine
+  PaperInterface.theorem4_structural_policy_representatives_of_gn21_fixed_response_positive_affine
+
+For exact-form routes with a true positive-affine continuation objective, this
+turns the remaining Lemma 5 packaging work into four statewise fields for each
+measurable optimum: the GN21 fixed-response source record, current-policy
+openness/continuity, strict-mass witness, and positive-affine identity between
+the fixed-state continuation reward and the Lemma 5 marginal integral.  Do not
+redo the all-optima packaging or allowed-policy-form conversion.  For the
+actual measured quotient reward, keep using the existing
+quotient-cross-multiplication marginal-optimality/a.e. fixed-response route
+unless that positive-affine identity has been proved.
+
 2026-05-22 zero-mass correction: do not try to prove that arbitrary
 zero-mass feasible policies are strictly dominated under the current
 real-valued `gn21MeasuredDynamicReward` totalization.  Lean's real division

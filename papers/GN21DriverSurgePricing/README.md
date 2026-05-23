@@ -72,7 +72,9 @@ cache is `source.txt`.
   feasible-measurable statement is now exposed as
   `PaperInterface.theorem3_source_with_zero_mass_dominance`: it combines the
   closed positive-mass source route with exactly the zero-mass strict-dominance
-  certificate needed when Appendix-D reward-rate denominators vanish.
+  certificate needed when Appendix-D reward-rate denominators vanish.  The
+  reusable lift itself is also exposed as
+  `PaperInterface.theorem3_positive_mass_to_full_with_zero_mass_dominance`.
 - Theorem 4 now has compact paper-facing structural endpoints for the
   measurable domain.  `Lemma5Frontier.lean` proves the source existential
   shape statement directly from allowed Lemma 5 policy forms via
@@ -92,11 +94,21 @@ cache is `source.txt`.
   `PaperInterface.theorem4_structural_policy_representatives_of_gn21_fixed_response_source_data`,
   and
   `PaperInterface.theorem4_structural_policy_representatives_of_gn21_bracket_source_data`.
-  The dynamic-state positive-affine route formalizes the paper's frozen-state
-  Lemma 5 step directly: if the fixed-state continuation objective is a
+  The dynamic-state positive-affine route is a conditional exact-form shortcut:
+  if the fixed-state continuation objective is genuinely a
   positive affine transform of the Lemma 5 marginal reward, dynamic optimality
   yields the a.e. structural representative without an exact strict-mass
-  side condition.
+  side condition.  The exact canonical-dominance variant is now bundled at the
+  all-optima GN21 fixed-response boundary too:
+  `PaperInterface.theorem4_structural_policy_forms_of_gn21_fixed_response_positive_affine`
+  and
+  `PaperInterface.theorem4_structural_policy_representatives_of_gn21_fixed_response_positive_affine`
+  package per-state fixed-response source records, positive-affine objective
+  transfer, continuity, and strict-mass witnesses into the feasible
+  policy-canonical Lemma 5 data consumed by Theorem 4.  For the paper's
+  measured quotient reward, keep using the quotient cross-multiplication
+  marginal-optimality route unless that positive-affine identity has actually
+  been proved.
   The same raw bracket package now also closes the paper's Theorem
   4-to-Theorem 2 shape handoff for one-threshold CTMC prices through
   `PaperInterface.theorem2_one_threshold_policy_shape_ae_of_gn21_bracket_source_data`,
@@ -2676,6 +2688,20 @@ ratio and probability-normalization assumptions.  The Lemma 5 dominance side
 ranges only over feasible generalized interval/ray seeds, and the remaining
 source work is the actual continuous feasible canonical-dominance and
 pointwise/reward-rate endpoint facts, not the allowed-policy-form packaging.
+When an exact-form route has a true positive-affine continuation objective,
+the same feasible canonical-dominance target can now be fed from a compact
+all-optima GN21 fixed-response positive-affine package:
+`Theorem4AllMeasurableGN21FixedResponsePolicyCanonicalDominancePositiveAffineData`
+and its method `.to_feasible_policy_canonical_dominance`.  This packages the
+statewise fixed-response source record, open/current continuity, strict-mass
+witness, and positive-affine continuation-objective identity, then exposes the
+paper-facing Theorem 4 endpoints through
+`PaperInterface.theorem4_structural_policy_forms_of_gn21_fixed_response_positive_affine`
+and
+`PaperInterface.theorem4_structural_policy_representatives_of_gn21_fixed_response_positive_affine`.
+For the actual measured quotient reward, this package is not a substitute for
+the source-faithful marginal-optimality/a.e. fixed-response route unless the
+positive-affine identity is separately established.
 The primitive feasible current-bounds package has its own rejected-mass
 adapter,
 `paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_primitive`,
