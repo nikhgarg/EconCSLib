@@ -60,7 +60,7 @@ paper folder contains the detailed theorem ledger and caveats.
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | Bayesian rating-system results are formalized with a documented boundary correction. |
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Main endpoints formalized | Core AdWords endpoints are closed with documented proof-structure deviations. |
 | [LG21 Test-Optional Policies](papers/LG21TestOptionalPolicies) | Partially formalized | Conditional Section 3 endpoints are audited; observed-access and resampling results are closed. |
-| [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Partially formalized | Continuous IC/reward and CTMC algebra are in place; process-level bridges remain open. |
+| [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized with caveat | Named CTMC lemmas and Theorems 1-4 are exposed; full all-feasible Theorem 3 needs explicit zero-mass dominance. |
 
 For more detail, use:
 

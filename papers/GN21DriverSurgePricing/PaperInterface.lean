@@ -22,6 +22,13 @@ namespace PaperInterface
 /-- Section 2.2: single-state incentive-compatibility predicate. -/
 abbrev definition_single_state_ic := @singleStateIC
 
+/-- Section 2.2: dynamic incentive-compatibility predicate. -/
+abbrev definition_dynamic_ic := @dynamicIncentiveCompatible
+
+/-- Section 2.2: measured single-state renewal-reward stochastic bridge. -/
+abbrev section2_single_state_renewal_reward_iid_bridge :=
+  @paper_section2_single_state_renewal_reward_iid_stochastic_bridge
+
 /-- Section 2.2: threshold-policy predicate. -/
 abbrev definition_threshold_policy := @thresholdPolicy
 
@@ -33,9 +40,57 @@ abbrev proposition3_1_affine_single_state_ic :=
 abbrev theorem1_single_state_threshold_best_response :=
   @theorem1_single_state_threshold_best_response_measurable
 
+/-- Lemma 1: measured dynamic reward decomposition. -/
+abbrev lemma1_measured_dynamic_reward_decomposition :=
+  @paper_lemma1_measured_dynamic_reward_decomposition
+
+/-- Lemma 2: two-state CTMC switch-probability formula. -/
+abbrev lemma2_switch_probability_formula :=
+  @paper_lemma2_switch_probability_formula
+
+/-- Remark 1: strict antitonicity of switch probability per unit time. -/
+abbrev remark1_switch_probability_per_time_strictAntiOn :=
+  @paper_remark1_switch_probability_per_time_strictAntiOn
+
+/-- Remark 3: small-time switch-probability-per-time limit. -/
+abbrev remark3_switch_probability_per_time_tendsto_at_zero :=
+  @paper_remark3_switch_probability_per_time_tendsto_at_zero
+
+/-- Remark 4: nonnegativity of `lambda * t - q(t)`. -/
+abbrev remark4_switch_time_minus_switch_probability_nonneg :=
+  @paper_remark4_switch_time_minus_switch_probability_nonneg
+
+/-- Lemma 3: measured state time-fraction formula. -/
+abbrev lemma3_measured_time_fraction_formula :=
+  @paper_lemma3_measured_time_fraction_formula_algebra
+
+/-- Lemma 4: measurable threshold optimizer uniqueness up to zero-mass sets. -/
+abbrev lemma4_single_state_threshold_uniqueness :=
+  @paper_lemma4_single_state_threshold_mass_zero_uniqueness_measurable
+
 /-- Lemma 5: fixed-response feasible policy form almost everywhere. -/
 abbrev lemma5_fixed_response_policy_form :=
   @lemma5_fixed_response_feasible_policy_form_ae_of_response_shape
+
+/-- Lemma 6: upper-endpoint derivative formula for dynamic reward. -/
+abbrev lemma6_upper_endpoint_derivative_formula :=
+  @paper_lemma6_upper_endpoint_interval_density_response_formula
+
+/-- Lemma 7: positive-additive affine CTMC response is strictly quasi-convex. -/
+abbrev lemma7_affine_positive_additive_response_quasi_convex :=
+  @paper_lemma7_affine_positive_additive_response_strict_quasi_convex
+
+/-- Lemma 8: negative-additive affine CTMC response is strictly quasi-concave. -/
+abbrev lemma8_affine_negative_additive_response_quasi_concave :=
+  @paper_lemma8_affine_negative_additive_response_strict_quasi_concave
+
+/-- Lemma 9: surge derivative is positive under the accept-all bounds. -/
+abbrev lemma9_surge_derivative_positive_of_acceptAll_bounds :=
+  @paper_lemma9_surge_derivative_positive_of_acceptAll_bounds
+
+/-- Lemma 10: non-surge derivative is positive under the accept-all bounds. -/
+abbrev lemma10_nonsurge_derivative_positive_of_acceptAll_bounds :=
+  @paper_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds
 
 /-- Theorem 4: positive-response accept-all candidate from current bounds. -/
 abbrev theorem4_positive_response_acceptAll_candidate :=
