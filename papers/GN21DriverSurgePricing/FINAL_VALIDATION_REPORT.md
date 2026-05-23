@@ -2,18 +2,17 @@
 
 ## Verdict
 
-Conditionally complete under the paper-facing Lean models in
-`GN21DriverSurgePricing`.
+Complete at the paper-facing source surfaces in `GN21DriverSurgePricing`.
 
 The main denominator-valid continuous/CTMC source results are represented by
 direct statement endpoints in `PaperInterface.lean`, with source-numbered audit
 aliases in `PostPaperAudit.lean` and the theorem ledger in `README.md`.
-Theorem 3 has both the positive-mass source endpoint and a compiled full
-feasible-measurable endpoint through the source-ordered feasible sequential
-Lemma 9/10 current-bounds route.  The separate zero-mass-dominance lift remains
-available as an optional bridge, and Lean records a concrete obstruction
-showing why that certificate is not automatic for the current real-valued
-reward totalization.
+Theorem 3 has both the denominator-valid positive-mass source endpoint and a
+compiled full feasible-measurable endpoint through the source-ordered feasible
+sequential Lemma 9/10 current-bounds route.  The separate zero-mass-dominance
+lift remains available as an optional stronger bridge, and Lean records a
+concrete obstruction showing why that certificate is not automatic for the
+current real-valued reward totalization.
 
 ## Source checked
 
