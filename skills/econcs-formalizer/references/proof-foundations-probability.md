@@ -215,6 +215,13 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   fixed-state aggregate-cross endpoint facts from the paper primitives for
   arbitrary measurable optima; reassembling the accept-all unique-optimality
   conclusion is not the bottleneck.
+- GN21 Theorem 4 AE-route lesson: if the source theorem is only up to measure
+  zero, prefer the positive-rejected-mass representative route over forcing
+  exact selector equality.  Use existence-based certificates such as
+  `GN21Theorem3MiddleRerouteAEPolicyFormSourceExistenceData` and route through
+  `to_shape_replacement_rejected_mass_improvements_existence_of_shape_replacements`;
+  `to_accept_all_certificate` derives accept-all optimality, so do not add a
+  separate accept-all-optimality assumption just to call an older wrapper.
 - GN21 Lemma 5 adapter lesson: when state source data are response-dependent,
   obtain the marginal-response fields through the fixed-response converter
   such as `D.to_fixed_response hρ`; using the base policy-form data directly

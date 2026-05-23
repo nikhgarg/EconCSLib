@@ -12,6 +12,22 @@ Do not edit source.txt for this purpose.  source.txt is the extracted paper.
 
 Current best Lean frontier
 --------------------------
+2026-05-23 Theorem 4 a.e. representative split: `Theorem4Frontier.lean` now
+also exposes the fixed-price a.e. Theorem 4 route through
+
+  PaperInterface.theorem4_acceptAll_ae_unique_feasible_ae_representative_rejected_mass
+  PaperInterface.theorem4_acceptAll_ae_unique_fixed_response_representative_rejected_mass
+  PaperInterface.theorem4_acceptAll_ae_unique_gn21_bracket_representative_rejected_mass
+  PaperInterface.theorem4_acceptAll_ae_unique_middle_reroute_policy_form_source_existence
+
+These wrappers derive accept-all optimality internally from existence plus
+positive-rejected-mass strict endpoint moves.  For source-faithful closeout,
+prefer this a.e. representative route when the paper proof only identifies
+policies up to null sets.  The next hard proof obligation can now be stated
+as deriving the by-policy-form middle-reroute fixed-transfer endpoint package
+and Lemma 5 replacement data from the paper primitives for an arbitrary
+measurable optimum; do not add a separate accept-all-optimality assumption.
+
 2026-05-23 Theorem 4 exact-endpoint split: `Theorem4Frontier.lean` now exposes
 the compact paper-facing Theorem 4 accept-all uniqueness endpoints
 

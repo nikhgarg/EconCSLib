@@ -177,6 +177,34 @@ abbrev theorem4_acceptAll_unique_extended_one_threshold_surge_cross_source :=
   @paper_theorem4_measurable_accept_all_unique_optimal_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_source
 
 /--
+Theorem 4: a.e.-unique accept-all optimality from feasible a.e. Lemma 5
+representatives and positive-rejected-mass endpoint moves.
+-/
+abbrev theorem4_acceptAll_ae_unique_feasible_ae_representative_rejected_mass :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_feasible_ae_forms_and_representative_rejected_mass_improvements_from_exists
+
+/--
+Theorem 4: a.e.-unique accept-all optimality from fixed-response Lemma 5
+policy forms and positive-rejected-mass endpoint moves.
+-/
+abbrev theorem4_acceptAll_ae_unique_fixed_response_representative_rejected_mass :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_fixed_response_policy_forms_and_representative_rejected_mass_improvements_from_exists
+
+/--
+Theorem 4: a.e.-unique accept-all optimality from raw GN21 bracket
+fixed-response source data and positive-rejected-mass endpoint moves.
+-/
+abbrev theorem4_acceptAll_ae_unique_gn21_bracket_representative_rejected_mass :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_gn21_bracket_source_data_and_representative_rejected_mass_improvements_from_exists
+
+/--
+Theorem 4: a.e.-unique accept-all optimality from the by-policy-form
+middle-reroute fixed-transfer source package for a fixed structured price.
+-/
+abbrev theorem4_acceptAll_ae_unique_middle_reroute_policy_form_source_existence :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_middle_reroute_ae_policy_form_source_existence
+
+/--
 Theorem 4: accept-all structural representatives from the source-ordered
 sequential Lemma 9 then Lemma 10 reward-rate route.
 -/
