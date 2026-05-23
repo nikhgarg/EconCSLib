@@ -10,12 +10,8 @@
   \node[dag_model, dag_template_legend] (legModel) {formalized\\model};
   \node[dag_lemma, right=0.35cm of legModel, dag_template_legend] (legLemma) {formalized\\lemma};
   \node[dag_result, right=0.35cm of legLemma, dag_template_legend] (legAux) {formalized\\result};
-  \node[dag_caveat_legend, right=0.35cm of legAux] (legCaveat) {formalized\\with caveat};
-  \node[dag_partial, right=0.35cm of legCaveat, dag_template_legend] (legPartial) {partially\\formalized};
-  \node[dag_conditional, right=0.45cm of legPartial, dag_template_legend] (legCond) {conditional};
-  \node[dag_unformalized, right=0.45cm of legCond, dag_template_legend] (legOpen) {not started};
 }
-\daglegend{(legModel)(legLemma)(legAux)(legCaveat)(legPartial)(legCond)(legOpen)}{Legend}
+\daglegend{(legModel)(legLemma)(legAux)}{Legend}
 
 \begin{dagPaperBody}
 \begin{scope}[yshift=-1.2cm]
@@ -100,9 +96,9 @@
   structured CTMC prices give positive-mass and full feasible sequential current-bounds source-data IC/a.e. uniqueness
 };
 
-\node[dag_conditional, text width=5.1cm] (MeasShapeSource) at (29.5,-16.0) {
-  \textbf{Optional zero-mass lift}\\
-  positive-mass source proof plus explicit accept-all zero-mass dominance gives an alternate full-domain bridge
+\node[dag_result, text width=5.1cm] (MeasShapeSource) at (29.5,-16.0) {
+  \textbf{Zero-mass reward audit}\\
+  defined-reward interface and totalized-reward obstruction formalized separately; not needed for Theorem 3
 };
 
 \node[dag_result, text width=4.9cm] (FiniteAux) at (0,-12.1) {
@@ -110,8 +106,9 @@
   Bellman-greedy policy is finite-horizon IC; profitable deviation refutes IC
 };
 
-% Solid arrows are verified support. Dashed arrows are source-roadmap dependencies
-% whose continuous certificates are not yet formalized.
+% Arrows show verified support.  The zero-mass reward audit is downstream
+% documentation of the reward-interface boundary, not a prerequisite for
+% Theorem 3's source endpoint.
 \draw[dag_arrow] (Model.east) -- (Lemma1.west);
 \draw[dag_arrow] (Model.north east)
   .. controls +(2.0,1.05) and +(-2.0,1.05) .. (Lemma2.north west);
@@ -131,7 +128,7 @@
 \draw[dag_arrow] (Lemma6.east) -- (Lemmas78.west);
 \draw[dag_arrow] (Lemma6.west) -- (Lemma5.east);
 \draw[dag_arrow] (Lemma6.south) |- (Lemmas910.west);
-\draw[dag_dashed_arrow] (Lemmas78.north east) -- (Thm4.north west);
+\draw[dag_arrow] (Lemmas78.north east) -- (Thm4.north west);
 \draw[dag_arrow] (Lemmas910.east) -- (EndpointFeasible.west);
 \draw[dag_arrow] (EndpointFeasible.north) -- (Thm4.south);
 \draw[dag_arrow] (Thm4.east) -- (Thm2Shape.west);
@@ -139,16 +136,8 @@
   (Lemma1.east) -- ++(1.7,1.0) -| ([xshift=-0.9cm]Thm2NonIC.north);
 \draw[dag_arrow, rounded corners=6pt]
   (Lemma2.east) -- ++(1.7,0.7) -| ([xshift=0.9cm]Thm2NonIC.north);
-\draw[dag_arrow, rounded corners=6pt]
-  (Lemma5.south east) -- ++(1.25,-1.35) -| ([xshift=-1.25cm]MeasShapeSource.north);
-\draw[dag_arrow, rounded corners=6pt]
-  (EndpointFeasible.south east) -- ++(0.55,-0.9)
-  -| ([xshift=-0.85cm]MeasShapeSource.north);
-\draw[dag_dashed_arrow, rounded corners=6pt]
-  (Thm4.south east) -- ++(0.85,-1.25)
-  -| ([xshift=0.85cm]MeasShapeSource.north);
 \draw[dag_arrow] (Lemmas910.south) |- (Thm3.north);
-\draw[dag_dashed_arrow] (MeasShapeSource.west) -- (Thm3.east);
+\draw[dag_arrow] (Thm3.east) -- (MeasShapeSource.west);
 
 \end{scope}
 \end{dagPaperBody}
