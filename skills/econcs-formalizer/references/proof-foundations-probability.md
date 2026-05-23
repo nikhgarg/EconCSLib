@@ -177,6 +177,17 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   paper root. Do not do a risky broad declaration move unless the cluster
   already builds in place, and never use `git reset` to recover in a shared
   worktree.
+- GN21 explicit counterexample lesson: for a measured CTMC non-IC result,
+  prefer an isolated atomic-instance file over exact exponential arithmetic in
+  the main ledger.  Prove the weighted-Dirac `singleStateTripMass`,
+  `singleStateTripTime`, and `singleStateTripPayment` reductions once using
+  `Measure.restrict_add`, `Measure.restrict_smul`, `restrict_dirac`,
+  `integral_add_measure`, `integral_smul_measure`, and `integrable_dirac`.
+  Then reduce the aggregate reward to named `Q,T,W` primitives and prove the
+  strict comparison from rational envelopes on switch probabilities.  This is
+  much faster than asking `ring_nf`/`nlinarith` to simplify formulas containing
+  `Real.exp`; use `Real.add_one_lt_exp` only to get the one lower switch bound
+  needed for the rational envelope.
 - GN21 route-selection lesson: the finite/infinite pointwise upper-transfer
   branch is not the default paper path for Theorem 3.  For reject-long CTMC
   policies, the proved monotonicity gives the lower-transfer direction; the

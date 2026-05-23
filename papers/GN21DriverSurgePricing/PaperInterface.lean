@@ -1,6 +1,7 @@
 import GN21DriverSurgePricing.ProofInterface
 import GN21DriverSurgePricing.Lemma5Frontier
 import GN21DriverSurgePricing.Theorem3Frontier
+import GN21DriverSurgePricing.Theorem2ExplicitInstance
 
 /-!
 # Paper Interface: Driver Surge Pricing
@@ -240,6 +241,13 @@ theorem theorem2_multiplicative_measured_not_ic_aggregate_witness
   exact
     GN21DriverSurgePricing.paper_theorem2_multiplicative_measured_not_ic_of_aggregate_witness
       mu arrival switch12 switch21 m C
+
+/--
+Theorem 2: explicit atomic measured counterexample showing multiplicative
+pricing is not dynamically incentive compatible.
+-/
+abbrev theorem2_multiplicative_measured_not_ic_explicit_atomic :=
+  @paper_theorem2_multiplicative_measured_not_ic_explicit_atomic
 
 /-- Lemma 9: non-surge current constraint feasibility. -/
 abbrev lemma9_current_nonsurge_feasible :=
