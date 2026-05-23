@@ -672,6 +672,239 @@ def Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.of_positiveResponse_marg
     nlinarith [hscale_pos, hmarg]
 
 /--
+Positive-affine objective changes preserve the source-faithful a.e. Lemma 5
+policy-form conclusion.  This is weaker than the exact canonical-dominance
+constructor above: it only needs the current policy to beat the canonical
+positive-response policy in the transformed objective, and then delegates the
+null-boundary work to the existing a.e. Lemma 5 theorem.
+-/
+def Lemma5PositiveResponsePolicyFormData.feasiblePolicyFormAlmostEverywhere_of_positive_affine_candidate_le
+    {Rhat : SingleStateReward}
+    (μ : Measure TripLength) [NoAtoms μ]
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponsePolicyFormData response shape)
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (scale offset : ℝ) (hscale_pos : 0 < scale)
+    (haffine :
+      ∀ σ' : TripPolicy,
+        σ' ⊆ acceptAllPolicy →
+        MeasurableSet σ' →
+          Rhat σ' = scale * lemma5MarginalSetReward μ response σ' + offset)
+    (hcandidate :
+      Rhat (lemma5PositiveResponsePolicy response) ≤ Rhat σ) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape σ := by
+  let P : TripPolicy := lemma5PositiveResponsePolicy response
+  have hP_subset : P ⊆ acceptAllPolicy :=
+    lemma5PositiveResponsePolicy_subset_acceptAll response
+  have hP_measurable : MeasurableSet P :=
+    measurableSet_lemma5PositiveResponsePolicy response hresponse_measurable
+  have hP_aff := haffine P hP_subset hP_measurable
+  have hσ_aff := haffine σ hσ_subset hσ_measurable
+  have hmarg_candidate :
+      lemma5MarginalSetReward μ response P ≤
+        lemma5MarginalSetReward μ response σ := by
+    rw [hP_aff, hσ_aff] at hcandidate
+    nlinarith [hscale_pos, hcandidate]
+  exact
+    D.feasiblePolicyFormAlmostEverywhere_of_candidate_le
+      μ σ hresponse_measurable hresponse_integrable_acceptAll
+      hσ_measurable hσ_subset (by simpa [P] using hmarg_candidate)
+
+/--
+Feasible optimality for a positive-affine transform of the Lemma 5 marginal
+reward gives the a.e. canonical policy-form representative directly.  Use this
+when the paper proof has local optimality for a transformed continuation
+objective rather than for the raw marginal set reward.
+-/
+def Lemma5PositiveResponsePolicyFormData.feasiblePolicyFormAlmostEverywhere_of_positive_affine_feasible_optimal
+    {Rhat : SingleStateReward}
+    (μ : Measure TripLength) [NoAtoms μ]
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponsePolicyFormData response shape)
+    (σ : TripPolicy)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (hσ_measurable : MeasurableSet σ)
+    (hσ_subset : σ ⊆ acceptAllPolicy)
+    (scale offset : ℝ) (hscale_pos : 0 < scale)
+    (haffine :
+      ∀ σ' : TripPolicy,
+        σ' ⊆ acceptAllPolicy →
+        MeasurableSet σ' →
+          Rhat σ' = scale * lemma5MarginalSetReward μ response σ' + offset)
+    (hoptimal :
+      ∀ σ' : TripPolicy,
+        σ' ⊆ acceptAllPolicy →
+        MeasurableSet σ' →
+          Rhat σ' ≤ Rhat σ) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape σ :=
+  D.feasiblePolicyFormAlmostEverywhere_of_positive_affine_candidate_le
+    μ σ hresponse_measurable hresponse_integrable_acceptAll
+    hσ_measurable hσ_subset scale offset hscale_pos haffine
+    (hoptimal (lemma5PositiveResponsePolicy response)
+      (lemma5PositiveResponsePolicy_subset_acceptAll response)
+      (measurableSet_lemma5PositiveResponsePolicy response
+        hresponse_measurable))
+
+/--
+Dynamic local optimality plus a positive-affine fixed-state continuation
+identity gives the source-faithful a.e. Lemma 5 policy-form representative.
+This is the direct version of the paper's Theorem 4 "freeze the other state
+and apply Lemma 5" step.
+-/
+def Lemma5PositiveResponsePolicyFormData.feasiblePolicyFormAlmostEverywhere_of_dynamicStateReward_positive_affine
+    (R : DynamicReward)
+    {ρ : Fin 2 → TripPolicy}
+    (hρ : dynamicMeasurableOptimal R ρ)
+    (i : Fin 2)
+    (μ : Measure TripLength) [NoAtoms μ]
+    {response : TripLength → ℝ} {shape : Lemma5DerivativeShape}
+    (D : Lemma5PositiveResponsePolicyFormData response shape)
+    (hresponse_measurable : Measurable response)
+    (hresponse_integrable_acceptAll :
+      IntegrableOn response acceptAllPolicy μ)
+    (scale offset : ℝ) (hscale_pos : 0 < scale)
+    (haffine :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          dynamicStateReward R ρ i σ =
+            scale * lemma5MarginalSetReward μ response σ + offset) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape (ρ i) :=
+  D.feasiblePolicyFormAlmostEverywhere_of_positive_affine_feasible_optimal
+    μ (ρ i) hresponse_measurable hresponse_integrable_acceptAll
+    (hρ.1 i).2 (hρ.1 i).1 scale offset hscale_pos haffine
+    (by
+      intro σ hσ_subset hσ_measurable
+      exact
+        dynamicStateReward_optimal_of_dynamicMeasurableOptimal R hρ i
+          (dynamicFeasibleMeasurablePolicy_update hρ.1 i σ
+            hσ_subset hσ_measurable))
+
+/--
+One fixed state of the dynamic problem has Lemma 5 policy-form data and a
+positive-affine identification of its continuation reward with the marginal
+set reward.  This keeps the Theorem 4 source boundary at the paper's frozen
+state objective rather than requiring exact canonical-dominance data.
+-/
+structure Lemma5DynamicStatePositiveAffinePolicyFormData
+    (R : DynamicReward)
+    (ρ : Fin 2 → TripPolicy)
+    (i : Fin 2)
+    (μ : Measure TripLength)
+    (response : TripLength → ℝ)
+    (shape : Lemma5DerivativeShape) where
+  marker : Unit := ()
+  policy_form_data : Lemma5PositiveResponsePolicyFormData response shape
+  response_measurable : Measurable response
+  response_integrable_acceptAll :
+    IntegrableOn response acceptAllPolicy μ
+  scale : ℝ
+  offset : ℝ
+  scale_pos : 0 < scale
+  affine :
+    ∀ σ : TripPolicy,
+      σ ⊆ acceptAllPolicy →
+      MeasurableSet σ →
+        dynamicStateReward R ρ i σ =
+          scale * lemma5MarginalSetReward μ response σ + offset
+
+/--
+Positive-affine dynamic-state policy-form data produce the a.e. Lemma 5
+representative for the current state of a dynamic optimum.
+-/
+def Lemma5DynamicStatePositiveAffinePolicyFormData.to_feasiblePolicyFormAlmostEverywhere
+    {R : DynamicReward}
+    {ρ : Fin 2 → TripPolicy}
+    {i : Fin 2}
+    {μ : Measure TripLength} [NoAtoms μ]
+    {response : TripLength → ℝ}
+    {shape : Lemma5DerivativeShape}
+    (D :
+      Lemma5DynamicStatePositiveAffinePolicyFormData R ρ i μ response shape)
+    (hρ : dynamicMeasurableOptimal R ρ) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData μ shape (ρ i) :=
+  D.policy_form_data.feasiblePolicyFormAlmostEverywhere_of_dynamicStateReward_positive_affine
+    R hρ i μ D.response_measurable D.response_integrable_acceptAll
+    D.scale D.offset D.scale_pos D.affine
+
+/--
+All measurable optima have fixed-state positive-affine policy-form data in the
+Theorem 4 allowed shape families.
+-/
+structure Theorem4AllMeasurableDynamicStatePositiveAffinePolicyFormData
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward) where
+  exists_optimal :
+    ∃ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ
+  nonsurge :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4NonsurgeAllowedLemma5Shape shape},
+        Σ response : TripLength → ℝ,
+          Lemma5DynamicStatePositiveAffinePolicyFormData
+            R ρ 0 (μ 0) response shape.1
+  surge :
+    ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+      Σ shape :
+        {shape : Lemma5DerivativeShape //
+          theorem4SurgeAllowedLemma5Shape shape},
+        Σ response : TripLength → ℝ,
+          Lemma5DynamicStatePositiveAffinePolicyFormData
+            R ρ 1 (μ 1) response shape.1
+
+/--
+Dynamic-state positive-affine policy-form data feed the feasible a.e. policy
+form boundary consumed by the Theorem 4 endpoint bridge.
+-/
+def Theorem4AllMeasurableDynamicStatePositiveAffinePolicyFormData.to_feasible_ae_policy_forms
+    {μ : Fin 2 → Measure TripLength} {R : DynamicReward}
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (C : Theorem4AllMeasurableDynamicStatePositiveAffinePolicyFormData μ R) :
+    Theorem4AllMeasurableFeasibleAEPolicyFormData μ R where
+  exists_optimal := C.exists_optimal
+  nonsurge := by
+    intro ρ hρ
+    rcases C.nonsurge ρ hρ with ⟨shape, response, D⟩
+    exact ⟨shape, D.to_feasiblePolicyFormAlmostEverywhere hρ⟩
+  surge := by
+    intro ρ hρ
+    rcases C.surge ρ hρ with ⟨shape, response, D⟩
+    exact ⟨shape, D.to_feasiblePolicyFormAlmostEverywhere hρ⟩
+
+/--
+The paper's frozen-state positive-affine Lemma 5 boundary implies the
+measurable Theorem 4 structural statement with explicit a.e. representatives.
+-/
+theorem paper_theorem4_measurable_dynamic_structural_policy_representatives_of_dynamic_state_positive_affine_policy_forms
+    (μ : Fin 2 → Measure TripLength) (R : DynamicReward)
+    [NoAtoms (μ 0)] [NoAtoms (μ 1)]
+    (D : Theorem4AllMeasurableDynamicStatePositiveAffinePolicyFormData μ R) :
+    ∃ ρstar : Fin 2 → TripPolicy,
+      dynamicMeasurableOptimal R ρstar ∧
+        (∃ σstar : TripPolicy,
+          theorem4NonsurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 0) (ρstar 0) σstar) ∧
+        (∃ σstar : TripPolicy,
+          theorem4SurgeShape σstar ∧
+            policyAlmostEverywhereEq (μ 1) (ρstar 1) σstar) ∧
+        ∀ ρ : Fin 2 → TripPolicy, dynamicMeasurableOptimal R ρ →
+          (∃ σstar : TripPolicy,
+            theorem4NonsurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 0) (ρ 0) σstar) ∧
+          (∃ σstar : TripPolicy,
+            theorem4SurgeShape σstar ∧
+              policyAlmostEverywhereEq (μ 1) (ρ 1) σstar) :=
+  paper_theorem4_measurable_dynamic_structural_policy_representatives_of_feasible_ae_policy_forms
+    μ R (D.to_feasible_ae_policy_forms)
+
+/--
 Left-state GN21 fixed-response data feed the feasible policy-canonical Lemma 5
 route once the source proof supplies the continuous strict-mass and positive
 affine objective-transfer facts.
@@ -739,6 +972,51 @@ def GN21MeasuredLeftFixedResponsePolicyFormSourceData.to_feasible_policy_canonic
     hscale_pos haffine
 
 /--
+Left-state GN21 fixed-response data feed the a.e. Lemma 5 representative route
+through any positive-affine local continuation objective.  Unlike
+`to_feasible_policy_canonical_dominance_positive_affine`, this follows the
+source's null-boundary convention and does not require an exact strict-mass
+witness.
+-/
+def GN21MeasuredLeftFixedResponsePolicyFormSourceData.to_feasible_policy_form_ae_positive_affine
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    {Rhat : SingleStateReward}
+    [NoAtoms (μ 0)]
+    (D :
+      GN21MeasuredLeftFixedResponsePolicyFormSourceData μ arrival switch12
+        switch21 w ρ shape)
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ)
+    (scale offset : ℝ) (hscale_pos : 0 < scale)
+    (haffine :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          Rhat σ =
+            scale *
+              lemma5MarginalSetReward (μ 0)
+                (gn21MeasuredLeftMarginalResponseAtCurrent (μ 0) (μ 1)
+                  (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                  (ρ 0) (ρ 1)) σ + offset)
+    (hoptimal :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          Rhat σ ≤ Rhat (ρ 0)) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData (μ 0) shape (ρ 0) :=
+  let F := D.to_fixed_response hρ
+  F.policy_form_data.feasiblePolicyFormAlmostEverywhere_of_positive_affine_feasible_optimal
+    (μ 0) (ρ 0) F.response_measurable F.response_integrable_acceptAll
+    (hρ.1 0).2 (hρ.1 0).1 scale offset hscale_pos haffine hoptimal
+
+/--
 Right-state GN21 fixed-response data feed the feasible policy-canonical Lemma
 5 route once the source proof supplies continuous strict-mass and positive
 affine objective-transfer facts.
@@ -804,6 +1082,49 @@ def GN21MeasuredRightFixedResponsePolicyFormSourceData.to_feasible_policy_canoni
     (D.to_fixed_response hρ).response_integrable_acceptAll
     (D.to_fixed_response hρ).policy_form_data.policy_form hstrict_mass scale offset
     hscale_pos haffine
+
+/--
+Right-state GN21 fixed-response data feed the a.e. Lemma 5 representative
+route through any positive-affine local continuation objective, without the
+extra exact strict-mass side condition required by canonical-dominance data.
+-/
+def GN21MeasuredRightFixedResponsePolicyFormSourceData.to_feasible_policy_form_ae_positive_affine
+    {μ : Fin 2 → Measure TripLength}
+    {arrival : Fin 2 → ℝ}
+    {switch12 switch21 : ℝ}
+    {w : Fin 2 → PricingFunction}
+    {ρ : Fin 2 → TripPolicy}
+    {shape : Lemma5DerivativeShape}
+    {Rhat : SingleStateReward}
+    [NoAtoms (μ 1)]
+    (D :
+      GN21MeasuredRightFixedResponsePolicyFormSourceData μ arrival switch12
+        switch21 w ρ shape)
+    (hρ :
+      dynamicMeasurableOptimal
+        (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21 w)
+        ρ)
+    (scale offset : ℝ) (hscale_pos : 0 < scale)
+    (haffine :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          Rhat σ =
+            scale *
+              lemma5MarginalSetReward (μ 1)
+                (gn21MeasuredRightMarginalResponseAtCurrent (μ 0) (μ 1)
+                  (arrival 0) (arrival 1) switch12 switch21 (w 0) (w 1)
+                  (ρ 0) (ρ 1)) σ + offset)
+    (hoptimal :
+      ∀ σ : TripPolicy,
+        σ ⊆ acceptAllPolicy →
+        MeasurableSet σ →
+          Rhat σ ≤ Rhat (ρ 1)) :
+    Lemma5FeasiblePolicyFormAlmostEverywhereData (μ 1) shape (ρ 1) :=
+  let F := D.to_fixed_response hρ
+  F.policy_form_data.feasiblePolicyFormAlmostEverywhere_of_positive_affine_feasible_optimal
+    (μ 1) (ρ 1) F.response_measurable F.response_integrable_acceptAll
+    (hρ.1 1).2 (hρ.1 1).1 scale offset hscale_pos haffine hoptimal
 
 end
 

@@ -71,6 +71,10 @@ abbrev theorem4_structural_policy_representatives_of_fixed_response_shape_data :
 abbrev theorem4_structural_policy_representatives_of_fixed_response_policy_forms :=
   @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_fixed_response_policy_forms
 
+/-- Theorem 4: a.e. representatives from frozen-state positive-affine Lemma 5 data. -/
+abbrev theorem4_structural_policy_representatives_of_dynamic_state_positive_affine_policy_forms :=
+  @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_dynamic_state_positive_affine_policy_forms
+
 /-- Theorem 4: a.e. structural representatives from GN21 fixed-response source data. -/
 abbrev theorem4_structural_policy_representatives_of_gn21_fixed_response_source_data :=
   @paper_theorem4_measurable_dynamic_structural_policy_representatives_of_gn21_fixed_response_source_data

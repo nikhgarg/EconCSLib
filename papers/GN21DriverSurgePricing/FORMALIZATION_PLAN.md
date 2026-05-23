@@ -29,12 +29,17 @@ Last updated: 2026-05-22
   or feasible a.e. representative forms into the paper's measurable-domain
   structural statement.  It also exposes the same a.e. representative
   statement from replacement data, fixed-response shape data, fixed-response
-  policy-form data, GN21 fixed-response source data, and raw GN21 bracket
-  source data, so the source-shaped Theorem 4 route no longer needs a manual
-  reconstruction layer.  The raw bracket source data also now prove the
-  Theorem 4-to-Theorem 2 a.e. shape handoff for one-threshold CTMC prices.
-  The remaining Theorem 4 work is the analytic construction of those Lemma 5
-  replacement/canonical-dominance records for arbitrary measurable optima.
+  policy-form data, frozen-state positive-affine policy-form data, GN21
+  fixed-response source data, and raw GN21 bracket source data, so the
+  source-shaped Theorem 4 route no longer needs a manual reconstruction layer.
+  The dynamic-state positive-affine boundary is the preferred paper-proof path
+  for the frozen-state Lemma 5 step: it converts dynamic optimality plus a
+  positive affine continuation-objective identity directly into a.e. canonical
+  representatives, avoiding the older exact strict-mass side condition.
+  The raw bracket source data also now prove the Theorem 4-to-Theorem 2 a.e.
+  shape handoff for one-threshold CTMC prices.  The remaining Theorem 4 work is
+  the analytic construction of those positive-affine fixed-state objective
+  identities and policy-form records for arbitrary measurable optima.
 - The folder has active proof work; avoid broad rewrites while other agents are
   editing `MainTheorems.lean`.
 
@@ -61,6 +66,9 @@ Last updated: 2026-05-22
 - For Theorem 4, target
   `PaperInterface.theorem4_structural_policy_representatives_of_allowed_replacement_data`
   when following the paper's Lemma 5 replacement proof,
+  `PaperInterface.theorem4_structural_policy_representatives_of_dynamic_state_positive_affine_policy_forms`
+  when proving the paper's frozen-state continuation objective is a positive
+  affine transform of a Lemma 5 marginal reward,
   `PaperInterface.theorem4_structural_policy_representatives_of_gn21_bracket_source_data`
   when following the paper proof at the raw Lemma 6 bracket level, or
   `PaperInterface.theorem4_structural_policy_representatives_of_feasible_ae_policy_forms`

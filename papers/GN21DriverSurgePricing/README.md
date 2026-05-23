@@ -88,9 +88,15 @@ cache is `source.txt`.
   fixed-response boundaries that match the paper proof:
   `PaperInterface.theorem4_structural_policy_representatives_of_fixed_response_shape_data`,
   `PaperInterface.theorem4_structural_policy_representatives_of_fixed_response_policy_forms`,
+  `PaperInterface.theorem4_structural_policy_representatives_of_dynamic_state_positive_affine_policy_forms`,
   `PaperInterface.theorem4_structural_policy_representatives_of_gn21_fixed_response_source_data`,
   and
   `PaperInterface.theorem4_structural_policy_representatives_of_gn21_bracket_source_data`.
+  The dynamic-state positive-affine route formalizes the paper's frozen-state
+  Lemma 5 step directly: if the fixed-state continuation objective is a
+  positive affine transform of the Lemma 5 marginal reward, dynamic optimality
+  yields the a.e. structural representative without an exact strict-mass
+  side condition.
   The same raw bracket package now also closes the paper's Theorem
   4-to-Theorem 2 shape handoff for one-threshold CTMC prices through
   `PaperInterface.theorem2_one_threshold_policy_shape_ae_of_gn21_bracket_source_data`,

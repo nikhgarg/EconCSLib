@@ -174,6 +174,15 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   obtain the marginal-response fields through the fixed-response converter
   such as `D.to_fixed_response hρ`; using the base policy-form data directly
   can silently give the wrong response type and waste a build cycle.
+- GN21 Theorem 4 a.e. lesson: when a frozen fixed-state continuation
+  objective is a positive affine transform of a Lemma 5 marginal-response
+  reward, prefer the a.e. positive-affine bridge
+  (`Lemma5PositiveResponsePolicyFormData.feasiblePolicyFormAlmostEverywhere_of_positive_affine_*`,
+  `...of_dynamicStateReward_positive_affine`, and the GN21
+  `...to_feasible_policy_form_ae_positive_affine` adapters) over exact
+  canonical-dominance data unless the endpoint route truly needs exact forms.
+  This avoids introducing `hstrict_mass` obligations stronger than the
+  source's null-boundary convention.
 - GN21 Lemma 5 current-branch lesson: when an optimum is already in a
   canonical middle branch, add or use a current-policy replacement constructor
   instead of rebuilding optimizer-replacement certificates.  Prove equality to
