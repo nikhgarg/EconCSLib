@@ -59,6 +59,11 @@ also proves that a broader arbitrary abstraction is false but the paper-facing
 source theorem is closed, mark the paper theorem `formalized` and record the
 broader abstraction as a scope note or out-of-scope failed generalization, not
 as a caveat on the paper result.
+If a named paper theorem is closed but a downstream corollary or application
+that uses it is still conditional, split the README/DAG entries. The named
+paper theorem should stay green with its actual statement; the conditional
+application should get its own row or node. Do not let a harder follow-on
+endpoint make the source theorem look unformalized.
 
 When a proof is blocked, think outside Lean as needed, patch the mathematical
 argument yourself, and then implement the patched proof in Lean. Do not stop at

@@ -135,6 +135,10 @@ abbrev theorem4_acceptAll_structural_representatives_of_positive_response_margin
 abbrev theorem4_acceptAll_structural_representatives_of_positive_response_candidates :=
   @paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_positive_response_acceptAll_candidates
 
+/-- Theorem 4: a.e.-unique accept-all optimality from accept-all candidate comparisons. -/
+abbrev theorem4_acceptAll_ae_unique_of_positive_response_candidates :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_positive_response_acceptAll_candidates
+
 /-- Theorem 4: optimal-current-bounds accounting route. -/
 abbrev theorem4_optimal_current_bounds_accounting :=
   @theorem4_optimal_current_bounds_source_of_optimal_accounting
@@ -150,6 +154,14 @@ abbrev theorem4_positive_response_acceptAll_candidate_optimal_current_bounds :=
 /-- Theorem 4: accept-all structural representatives from optimal current bounds. -/
 abbrev theorem4_acceptAll_structural_representatives_of_optimal_current_bounds :=
   @paper_theorem4_measurable_dynamic_accept_all_structural_representatives_of_structured_current_bounds_optimal_source_positive_response
+
+/-- Theorem 4: a.e.-unique accept-all optimality from feasible current bounds. -/
+abbrev theorem4_acceptAll_ae_unique_of_current_bounds_source :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_source_positive_response
+
+/-- Theorem 4: a.e.-unique accept-all optimality from optimal-policy current bounds. -/
+abbrev theorem4_acceptAll_ae_unique_of_optimal_current_bounds :=
+  @paper_theorem4_measurable_accept_all_ae_unique_optimal_of_structured_current_bounds_optimal_source_positive_response
 
 /-- Theorem 4: accept-all structural representatives from reward-rate current bounds. -/
 abbrev theorem4_acceptAll_structural_representatives_of_optimal_reward_rate :=
