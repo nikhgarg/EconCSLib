@@ -46,6 +46,10 @@ abbrev theorem4_optimal_current_bounds_accounting :=
 abbrev theorem4_optimal_current_bounds_reward_rate :=
   @theorem4_optimal_current_bounds_source_of_optimal_reward_rate
 
+/-- Theorem 4: positive-response accept-all candidate from optimal current bounds. -/
+abbrev theorem4_positive_response_acceptAll_candidate_optimal_current_bounds :=
+  @theorem4_positive_response_acceptAll_candidate_of_optimal_current_bounds_source
+
 /-- Theorem 2: multiplicative extended policy shape. -/
 abbrev theorem2_multiplicative_policy_shape :=
   @theorem2_multiplicative_extended_policy_shape_of_shape_derivation
@@ -104,9 +108,89 @@ abbrev theorem3_feasibility_threshold :=
 abbrev theorem3_positive_response :=
   @theorem3_structured_measurable_ic_ae_unique_of_positive_response_marginal_normalized_mass_ratio_source
 
+/-- Theorem 3: positive fixed-response source endpoint. -/
+abbrev theorem3_positive_fixed_response_normalized :=
+  @theorem3_structured_measurable_ic_ae_unique_of_positive_fixed_response_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the positive fixed-response endpoint. -/
+abbrev theorem3_positive_fixed_response_normalized_ic :=
+  @theorem3_structured_measurable_ic_of_positive_fixed_response_normalized_mass_ratio_source
+
 /-- Theorem 3: current-bounds source-feasible endpoint. -/
 abbrev theorem3_current_bounds_source_feasible :=
   @theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_feasible_normalized_mass_ratio_source
+
+/-- Theorem 3: current-bounds route through the positive-response Lemma 5 branch. -/
+abbrev theorem3_current_bounds_source_positive_response :=
+  @theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_positive_response
+
+/-- Theorem 3: split route, weak feasible IC plus optimal-policy positive response. -/
+abbrev theorem3_feasible_weak_reward_optimal_positive_response :=
+  @theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_source
+
+/-- Theorem 3: ratio-source split positive-response route. -/
+abbrev theorem3_feasible_weak_reward_optimal_positive_response_ratio :=
+  @theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_ratio_source
+
+/-- Theorem 3: normalized-mass split positive-response route. -/
+abbrev theorem3_feasible_weak_reward_optimal_positive_response_normalized :=
+  @theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_normalized_mass_ratio_source
+
+/-- Theorem 3: normalized split route with optimal-policy accounting data. -/
+abbrev theorem3_feasible_weak_reward_optimal_accounting_positive_response_normalized :=
+  @theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_accounting_positive_response_normalized_mass_ratio_source
+
+/-- Theorem 3: normalized split route with optimal-policy reward-rate data. -/
+abbrev theorem3_feasible_weak_reward_optimal_reward_rate_positive_response_normalized :=
+  @theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_reward_rate_positive_response_normalized_mass_ratio_source
+
+/-- Theorem 3: source current-bounds split into feasible and optimal-response data. -/
+abbrev theorem3_current_bounds_source_feasible_optimal_positive_response_normalized :=
+  @theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_feasible_and_optimal_positive_response_normalized_mass_ratio_source
+
+/-- Theorem 3: accounting current-bounds split into feasible and optimal-response data. -/
+abbrev theorem3_current_bounds_accounting_feasible_optimal_positive_response_normalized :=
+  @theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting_feasible_and_optimal_positive_response_normalized_mass_ratio_source
+
+/-- Theorem 3: reward-rate current-bounds split into feasible and optimal-response data. -/
+abbrev theorem3_current_bounds_reward_rate_feasible_optimal_positive_response_normalized :=
+  @theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate_feasible_and_optimal_positive_response_normalized_mass_ratio_source
+
+/-- Theorem 3: source-ordered sequential optimal reward-rate positive-response route. -/
+abbrev theorem3_feasible_weak_reward_sequential_optimal_reward_rate_positive_response_normalized :=
+  @GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_sequential_optimal_reward_rate_positive_response_normalized_mass_ratio_source_assumptions
+
+/-- Theorem 3: source-ordered feasible sequential current-bounds route. -/
+abbrev theorem3_feasible_weak_reward_feasible_sequential_source_normalized :=
+  @theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_feasible_sequential_source_normalized_mass_ratio_source
+
+/-- Theorem 3: full source-data feasible sequential current-bounds route. -/
+abbrev theorem3_feasible_sequential_current_bounds_source_data :=
+  @theorem3_structured_measurable_ic_ae_unique_of_feasible_sequential_current_bounds_source_data
+
+/-- Theorem 3: current-bounds accounting endpoint. -/
+abbrev theorem3_current_bounds_accounting :=
+  @theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting
+
+/-- Theorem 3: current-bounds reward-rate endpoint. -/
+abbrev theorem3_current_bounds_reward_rate :=
+  @theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate
+
+/-- Theorem 3: normalized accounting current-bounds endpoint. -/
+abbrev theorem3_current_bounds_accounting_normalized :=
+  @theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the normalized accounting endpoint. -/
+abbrev theorem3_current_bounds_accounting_normalized_ic :=
+  @theorem3_structured_measurable_ic_of_current_bounds_accounting_normalized_mass_ratio_source
+
+/-- Theorem 3: normalized reward-rate current-bounds endpoint. -/
+abbrev theorem3_current_bounds_reward_rate_normalized :=
+  @theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate_normalized_mass_ratio_source
+
+/-- Theorem 3: IC projection of the normalized reward-rate endpoint. -/
+abbrev theorem3_current_bounds_reward_rate_normalized_ic :=
+  @theorem3_structured_measurable_ic_of_current_bounds_reward_rate_normalized_mass_ratio_source
 
 /-- Theorem 3: policy-canonical pointwise/reward-rate fixed-transfer endpoint. -/
 abbrev theorem3_policy_canonical_pointwise_reward_rate :=

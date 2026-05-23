@@ -1,4 +1,4 @@
-import GN21DriverSurgePricing.MainTheorems
+import GN21DriverSurgePricing.Theorem3SplitCurrentBounds
 
 /-!
 # Proof Interface: Driver Surge Pricing
@@ -2322,6 +2322,256 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
       htime1_integrable htime2_integrable hq1_integrable hq2_integrable
       hmass1_eq_one hmass2_eq_one weak_reward optimal_reward_rate
+
+/--
+Normalized Theorem 3 route from weak feasible IC plus the feasible sequential
+current-bounds source certificate.  The split bridge converts the source
+Appendix-D scaled reward identities to the local Lemma 9/10 reward-rate form
+needed for a.e. uniqueness.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_feasible_sequential_source_normalized_mass_ratio_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (hmass1_eq_one : singleStateTripMass (mu 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (mu 1) acceptAllPolicy = 1)
+    (weak_reward :
+      theorem3AcceptAllFeasibleWeakRewardCertificate
+        mu arrival R1 R2 switch12 switch21)
+    (feasible_sequential_source :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate
+          mu arrival R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_feasible_sequential_source_normalized_mass_ratio_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmass1_eq_one hmass2_eq_one weak_reward feasible_sequential_source
+
+/--
+Theorem 3 from the existing source-facing feasible sequential current-bounds
+assumption bundle.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_sequential_current_bounds_source_data
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (A :
+      Theorem3AcceptAllStructuredFeasibleSequentialCurrentBoundsSourceDataAssumptions
+        mu arrival rho R1 R2 switch12 switch21) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions
+      mu arrival rho R1 R2 switch12 switch21 A
+
+/--
+Theorem 3 with feasible source current-bounds data for weak IC and
+optimal-policy positive-response data for a.e. uniqueness.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_feasible_and_optimal_positive_response_normalized_mass_ratio_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (hmass1_eq_one : singleStateTripMass (mu 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (mu 1) acceptAllPolicy = 1)
+    (feasible_current_bounds :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
+          mu arrival R1 R2 switch12 switch21 m z)
+    (optimal_positive_response :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate
+          mu arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_current_bounds_source_feasible_and_optimal_positive_response_normalized_mass_ratio_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmass1_eq_one hmass2_eq_one feasible_current_bounds
+      optimal_positive_response
+
+/--
+Accounting-form split current-bounds Theorem 3 route.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting_feasible_and_optimal_positive_response_normalized_mass_ratio_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (hmass1_eq_one : singleStateTripMass (mu 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (mu 1) acceptAllPolicy = 1)
+    (feasible_accounting :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredCurrentBoundsAccountingFeasibleCertificate
+          mu arrival R1 R2 switch12 switch21 m z)
+    (optimal_accounting :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalAccountingPositiveResponseCertificate
+          mu arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_current_bounds_accounting_feasible_and_optimal_positive_response_normalized_mass_ratio_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmass1_eq_one hmass2_eq_one feasible_accounting optimal_accounting
+
+/--
+Reward-rate split current-bounds Theorem 3 route.
+-/
+theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate_feasible_and_optimal_positive_response_normalized_mass_ratio_source
+    (mu : Fin 2 → Measure TripLength)
+    (arrival : Fin 2 → ℝ)
+    (rho R1 R2 switch12 switch21 : ℝ)
+    (hR1_eq : R1 = rho * R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun tau : TripLength => tau) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch12 switch21 tau)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun tau : TripLength => gn21SwitchProb switch21 switch12 tau)
+        acceptAllPolicy (mu 1))
+    (hmass1_eq_one : singleStateTripMass (mu 0) acceptAllPolicy = 1)
+    (hmass2_eq_one : singleStateTripMass (mu 1) acceptAllPolicy = 1)
+    (feasible_reward_rate :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredCurrentBoundsRewardRateFeasibleCertificate
+          mu arrival R1 R2 switch12 switch21 m z)
+    (optimal_reward_rate :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+        Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalRewardRatePositiveResponseCertificate
+          mu arrival R1 R2 switch12 switch21 m z) :
+    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
+      mu arrival R1 R2 switch12 switch21 := by
+  exact
+    GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_current_bounds_reward_rate_feasible_and_optimal_positive_response_normalized_mass_ratio_source_assumptions
+      mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
+      hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
+      htime1_integrable htime2_integrable hq1_integrable hq2_integrable
+      hmass1_eq_one hmass2_eq_one feasible_reward_rate optimal_reward_rate
 
 /--
 The same source-data feasible current-bounds route under the paper's ratio

@@ -42,6 +42,12 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   rates. Prove measured `T`, `Q`, and scaled-earning identities first, then
   derive measured reward-rate statements only when positive mass/time
   denominators are available.
+- When an older CTMC source certificate stores a fixed-state identity as
+  scaled earning `W = R*T` but the next lemma needs the measured reward-rate
+  equality, add the tiny converse bridge from
+  `gn21MeasuredStateRewardRate_eq_scaled_primitives`.  Use the positive
+  accepted-mass and scaled-time facts from the neighboring Lemma 9/10 source
+  data instead of adding a new paper assumption.
 - When a CTMC proof has accumulated several theorem wrappers, stop adding
   new wrappers once there is a source-faithful public endpoint. Instead build
   one constructor that consumes the paper's actual source fields and derives

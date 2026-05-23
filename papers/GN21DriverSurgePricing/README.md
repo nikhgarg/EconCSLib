@@ -1226,7 +1226,9 @@ cache is `source.txt`.
   prove the positive-response Lemma 5 a.e. route directly from the structured
   current-bounds source data, without requiring nondegeneracy for every
   zero-mass comparison policy.  The compact interface exposes this as
-  `PaperInterface.theorem4_positive_response_acceptAll_candidate_of_current_bounds_source`.
+  `PaperInterface.theorem4_positive_response_acceptAll_candidate`; the
+  optimal-only current-bounds variant is
+  `PaperInterface.theorem4_positive_response_acceptAll_candidate_optimal_current_bounds`.
   The
   broader allowed-replacement route is also
   exposed as `Theorem3AcceptAllAllowedReplacementSourceAssumptions` plus
@@ -2382,6 +2384,11 @@ surface:
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_ratio_source`,
 and
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_positive_response_normalized_mass_ratio_source`.
+The compact human-review aliases are
+`PaperInterface.theorem3_feasible_weak_reward_optimal_positive_response`,
+`PaperInterface.theorem3_feasible_weak_reward_optimal_positive_response_ratio`,
+and
+`PaperInterface.theorem3_feasible_weak_reward_optimal_positive_response_normalized`.
 The optimal-policy positive-response certificate can now be built from
 optimal-only accounting or reward-rate source records through
 `Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate.of_optimal_accounting`,
@@ -2397,6 +2404,35 @@ The direct normalized-mass Theorem 3 surfaces are now
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_accounting_positive_response_normalized_mass_ratio_source`,
 and
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_optimal_reward_rate_positive_response_normalized_mass_ratio_source`.
+Their compact aliases are
+`PaperInterface.theorem3_feasible_weak_reward_optimal_accounting_positive_response_normalized`
+and
+`PaperInterface.theorem3_feasible_weak_reward_optimal_reward_rate_positive_response_normalized`.
+The mixed current-bounds bridge lives in
+`Theorem3SplitCurrentBounds.lean`, imported by `ProofInterface.lean`, so future
+work on this route should not edit `MainTheorems.lean` unless the underlying
+certificate definitions need to change.  It exposes feasible-current-bounds
+data for weak IC separately from optimal-policy positive-response data for
+a.e. uniqueness:
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_current_bounds_source_feasible_and_optimal_positive_response_normalized_mass_ratio_source_assumptions`,
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_current_bounds_accounting_feasible_and_optimal_positive_response_normalized_mass_ratio_source_assumptions`,
+and
+`paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_current_bounds_reward_rate_feasible_and_optimal_positive_response_normalized_mass_ratio_source_assumptions`.
+The matching compact aliases are
+`PaperInterface.theorem3_current_bounds_source_feasible_optimal_positive_response_normalized`,
+`PaperInterface.theorem3_current_bounds_accounting_feasible_optimal_positive_response_normalized`,
+and
+`PaperInterface.theorem3_current_bounds_reward_rate_feasible_optimal_positive_response_normalized`.
+The stronger source-ordered route now reuses the existing feasible sequential
+current-bounds source certificate directly:
+`PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`.  This
+route converts the source Appendix-D scaled earning identities back to the
+paper's local Lemma 9/10 reward-rate notation, applies Lemma 9 first to prove
+surge accepts all a.e., transports Lemma 10 across that a.e. equivalence, and
+then proves non-surge accepts all a.e.  The lower-level compact bridges are
+`PaperInterface.theorem3_feasible_weak_reward_feasible_sequential_source_normalized`
+and
+`PaperInterface.theorem3_feasible_weak_reward_sequential_optimal_reward_rate_positive_response_normalized`.
 The direct positive-response and concrete fixed-response boundaries now have
 matching normalized-mass ratio wrappers as well:
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_positive_response_marginal_normalized_mass_ratio_source`,
@@ -2414,10 +2450,10 @@ so existing source proofs can reuse the narrower positive-response endpoint
 without restating their weak-IC component.
 The same source-current-bounds route is now exposed in the compact
 `PaperInterface` as
-`theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_feasible`,
+`PaperInterface.theorem3_current_bounds_source_feasible`,
 with accounting and reward-rate variants
-`theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting` and
-`theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate`.
+`PaperInterface.theorem3_current_bounds_accounting` and
+`PaperInterface.theorem3_current_bounds_reward_rate`.
 The accounting and reward-rate variants now also have paper-ratio and
 normalized-mass public surfaces:
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting_ratio_source`,
@@ -2427,6 +2463,11 @@ normalized-mass public surfaces:
 `PaperInterface.theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rate_normalized_mass_ratio_source`,
 and
 `PaperInterface.theorem3_structured_measurable_ic_of_current_bounds_reward_rate_normalized_mass_ratio_source`.
+The compact aliases for the normalized public endpoints are
+`PaperInterface.theorem3_current_bounds_accounting_normalized`,
+`PaperInterface.theorem3_current_bounds_accounting_normalized_ic`,
+`PaperInterface.theorem3_current_bounds_reward_rate_normalized`, and
+`PaperInterface.theorem3_current_bounds_reward_rate_normalized_ic`.
 These derive the internal `R1 > 0`, `R1 < R2`, and positive accept-all measure
 fields from `R1 = rho * R2`, `R2 > 0`, `C < rho < 1`, and probability-normalized
 trip laws, so source proofs using Remark 2 accounting equations or measured
@@ -2437,18 +2478,35 @@ and
 `PaperInterface.theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_ratio_source`.
 These are the preferred entry points when the remaining proof is the continuous
 endpoint bridge itself rather than the scalar ratio/probability bookkeeping.
-The current source-faithful Theorem 3 frontier is the reduced bracket
-surge-cutoff LightAE route exposed compactly as
+The current source-faithful Theorem 3 frontier is the feasible sequential
+current-bounds source-data route exposed compactly as
+`PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`.
+It is the preferred entry point when the source proof supplies the
+policy-dependent sequential Lemma 9/10 source packages already used by the
+IC-only theorem.  The split current-bounds positive-response route remains
+available as
+`PaperInterface.theorem3_current_bounds_source_feasible_optimal_positive_response_normalized`,
+with accounting and reward-rate variants
+`PaperInterface.theorem3_current_bounds_accounting_feasible_optimal_positive_response_normalized`
+and
+`PaperInterface.theorem3_current_bounds_reward_rate_feasible_optimal_positive_response_normalized`.
+Use those wrappers when weak feasible IC can be proved separately and
+Lemma 9--10 current-bounds/positive-response data are needed only for
+measurable optima to derive a.e. accept-all uniqueness.  Do not force these
+optimal-policy current bounds through the older all-candidate fixed-response
+source records: those records impose nondegeneracy on arbitrary zero-mass
+comparison policies, which is stronger than the paper proof needs.
+
+The reduced bracket surge-cutoff LightAE route remains available as
 `PaperInterface.theorem3_light_ae_bracket_surge_cutoff_pointwise_upper_normalized`,
 with IC-only projection
 `PaperInterface.theorem3_light_ae_bracket_surge_cutoff_pointwise_upper_normalized_ic`.
-This is the route to use when Lemma 5 reduces measurable optima to canonical
-forms only up to a.e. representatives and the source proof supplies the
-one-sided pointwise upper transfer on rejected non-surge trips.  Lean integrates
-that pointwise comparison into the aggregate reject-long upper cross field,
-gets the lower cross field from CTMC monotonicity of reject-long policies, and
-derives the accepted-middle adapter fields from the a.e. reject-long
-representative.  The aggregate source boundary is also exposed as
+Use it only if the source proof supplies the one-sided pointwise upper transfer
+on rejected non-surge trips.  Lean integrates that pointwise comparison into
+the aggregate reject-long upper cross field, gets the lower cross field from
+CTMC monotonicity of reject-long policies, and derives the accepted-middle
+adapter fields from the a.e. reject-long representative.  The aggregate source
+boundary is also exposed as
 `PaperInterface.theorem3_light_ae_bracket_surge_cutoff_reject_long_upper_normalized`
 when the proof supplies the integrated reject-long upper cross comparison
 directly.  The older

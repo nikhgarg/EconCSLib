@@ -82,6 +82,13 @@ the validation command. Do not copy long proof states, full diffs, or entire
 README tables into handoffs when declaration names and file links identify the
 same information.
 
+When a paper proof file becomes large enough to slow focused compiles or make
+multi-agent ownership awkward, split the proof into smaller paper-local modules
+at stable theorem seams. Keep imports narrow, give each agent a disjoint module
+or section to own, and re-export the public surface through `MainTheorems.lean`,
+`ProofInterface.lean`, and `PostPaperAudit.lean` so the paper ledger remains
+easy to audit.
+
 Use subagents only when they shorten the current proof loop. Medium-effort
 subagents are appropriate for bounded read-only scouting: find declaration
 names, trace imports, locate source statements, or identify likely reusable
