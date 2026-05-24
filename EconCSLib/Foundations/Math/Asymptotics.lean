@@ -33,6 +33,26 @@ def ExactInvSqrtRate (ε : ℕ → ℝ) : Prop :=
 
 namespace AsymptoticEquivalent
 
+theorem congr_left_eventually
+    {x x' y : ℕ → ℝ}
+    (hxx' : ∀ᶠ n in atTop, x n = x' n)
+    (h : AsymptoticEquivalent x' y) :
+    AsymptoticEquivalent x y := by
+  rw [AsymptoticEquivalent] at h ⊢
+  refine Tendsto.congr' ?_ h
+  filter_upwards [hxx'] with n hn
+  rw [hn]
+
+theorem congr_right_eventually
+    {x y y' : ℕ → ℝ}
+    (hyy' : ∀ᶠ n in atTop, y n = y' n)
+    (h : AsymptoticEquivalent x y) :
+    AsymptoticEquivalent x y' := by
+  rw [AsymptoticEquivalent] at h ⊢
+  refine Tendsto.congr' ?_ h
+  filter_upwards [hyy'] with n hn
+  rw [hn]
+
 theorem eventually_ratio_mem_Icc
     {x y : ℕ → ℝ} (h : AsymptoticEquivalent x y)
     {ε : ℝ} (hε : 0 < ε) :

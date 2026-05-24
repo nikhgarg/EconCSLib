@@ -20,11 +20,13 @@ import EconCSLib.Foundations.Probability.Kernel
 import EconCSLib.Foundations.Probability.LargeDeviations
 import EconCSLib.Foundations.Probability.MarkovChain
 import EconCSLib.Foundations.Probability.MDP
+import EconCSLib.Foundations.Probability.MeasureAtoms
 import EconCSLib.Foundations.Probability.MeasureInequalities
 import EconCSLib.Foundations.Probability.Occupancy
 import EconCSLib.Foundations.Probability.OrderStatistics
 import EconCSLib.Foundations.Probability.RandomUtility
 import EconCSLib.Foundations.Probability.RealDistribution
+import EconCSLib.Foundations.Probability.RealIntervalPartition
 import EconCSLib.Foundations.Probability.RenewalReward
 import EconCSLib.Foundations.Probability.StochasticDominance
 import EconCSLib.Foundations.Probability.Weighted

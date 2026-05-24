@@ -36,6 +36,28 @@ structure Valuation (Agent Item : Type*) where
 
 variable {Agent Item : Type*}
 
+/-- Additive finite-good value from item weights. -/
+noncomputable def additiveValue (w : Agent → Item → ℝ)
+    (agent : Agent) (S : Bundle Item) : ℝ :=
+  S.sum fun g => w agent g
+
+/-- Additive valuations with nonnegative item weights are monotone. -/
+noncomputable def additiveValuation [DecidableEq Item]
+    (w : Agent → Item → ℝ) (hnonneg : ∀ agent g, 0 ≤ w agent g) :
+    Valuation Agent Item where
+  value := additiveValue w
+  monotone := by
+    intro agent S T hsub
+    unfold additiveValue
+    exact Finset.sum_le_sum_of_subset_of_nonneg hsub
+      (by intro g _ _; exact hnonneg agent g)
+
+theorem additiveValuation_value [DecidableEq Item]
+    (w : Agent → Item → ℝ) (hnonneg : ∀ agent g, 0 ≤ w agent g)
+    (agent : Agent) (S : Bundle Item) :
+    (additiveValuation w hnonneg).value agent S = additiveValue w agent S := by
+  rfl
+
 /-- Envy of `i` for `j` under allocation `A`. -/
 def envy (v : Valuation Agent Item) (A : Allocation Agent Item) (i j : Agent) : ℝ :=
   max 0 (v.value i (A j) - v.value i (A i))
@@ -52,6 +74,37 @@ def EnvyBoundedBy (v : Valuation Agent Item) (A : Allocation Agent Item) (α : �
 def IsAllocationOf [DecidableEq Item] (A : Allocation Agent Item) (goods : Finset Item) : Prop :=
   (∀ i g, g ∈ A i → g ∈ goods) ∧
     ∀ g, g ∈ goods → ∃! i, g ∈ A i
+
+theorem isAllocationOf_mem_goods [DecidableEq Item]
+    {A : Allocation Agent Item} {goods : Finset Item}
+    (halloc : IsAllocationOf A goods) {i : Agent} {g : Item}
+    (hmem : g ∈ A i) :
+    g ∈ goods :=
+  halloc.1 i g hmem
+
+theorem isAllocationOf_exists_owner [DecidableEq Item]
+    {A : Allocation Agent Item} {goods : Finset Item}
+    (halloc : IsAllocationOf A goods) {g : Item}
+    (hgoods : g ∈ goods) :
+    ∃ i : Agent, g ∈ A i :=
+  (halloc.2 g hgoods).exists
+
+theorem isAllocationOf_owner_unique [DecidableEq Item]
+    {A : Allocation Agent Item} {goods : Finset Item}
+    (halloc : IsAllocationOf A goods) {g : Item}
+    (hgoods : g ∈ goods) {i j : Agent}
+    (hi : g ∈ A i) (hj : g ∈ A j) :
+    i = j :=
+  (halloc.2 g hgoods).unique hi hj
+
+theorem isAllocationOf_not_mem_of_mem_ne [DecidableEq Item]
+    {A : Allocation Agent Item} {goods : Finset Item}
+    (halloc : IsAllocationOf A goods) {g : Item}
+    (hgoods : g ∈ goods) {i j : Agent}
+    (hi : g ∈ A i) (hne : j ≠ i) :
+    g ∉ A j := by
+  intro hj
+  exact hne (isAllocationOf_owner_unique halloc hgoods hj hi)
 
 theorem isAllocationOf_empty [DecidableEq Item] :
     IsAllocationOf (emptyAllocation Agent Item) (∅ : Finset Item) := by
@@ -99,6 +152,17 @@ theorem envyBoundedBy_zero_iff_envyFree
 def MarginalBound [DecidableEq Item] (v : Valuation Agent Item) (α : ℝ) : Prop :=
   ∀ agent (S : Bundle Item) (g : Item),
     v.value agent (insert g S) - v.value agent S ≤ α
+
+/-- If every item weight is at most `α`, the additive valuation has marginal bound `α`. -/
+theorem additiveValuation_marginalBound [DecidableEq Item]
+    (w : Agent → Item → ℝ) (hnonneg : ∀ agent g, 0 ≤ w agent g)
+    {α : ℝ} (hweight : ∀ agent g, w agent g ≤ α) :
+    MarginalBound (additiveValuation w hnonneg) α := by
+  intro agent S g
+  by_cases hg : g ∈ S
+  · have halpha : 0 ≤ α := le_trans (hnonneg agent g) (hweight agent g)
+    simp [additiveValuation, additiveValue, Finset.insert_eq_of_mem hg, halpha]
+  · simp [additiveValuation, additiveValue, hg, hweight agent g]
 
 /--
 Maximum one-good marginal value over all finite agents, bundles, and goods.

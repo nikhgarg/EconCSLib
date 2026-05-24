@@ -66,6 +66,17 @@ theorem lmmsAlgorithm_goods_eq_list_toFinset (goodsList : List Item) (hnodup : g
     unfold lmmsStep
     simp [hnot_in_state]
     rw [ih_eq]
+
+theorem lmmsAlgorithm_isAllocationOf_list_toFinset_and_envyBoundedBy
+    (goodsList : List Item) (hnodup : goodsList.Nodup) :
+    let res := lmmsAlgorithm v hαnonneg hmargin goodsList
+    IsAllocationOf res.2.val goodsList.toFinset ∧
+      EnvyBoundedBy v res.2.val α := by
+  classical
+  let res := lmmsAlgorithm v hαnonneg hmargin goodsList
+  have hres := lmmsAlgorithm_isAllocationOf_and_envyBoundedBy v hαnonneg hmargin goodsList
+  have hgoods := lmmsAlgorithm_goods_eq_list_toFinset v hαnonneg hmargin goodsList hnodup
+  simpa [res, hgoods] using hres
     
 end FairDivision
 end EconCSLib

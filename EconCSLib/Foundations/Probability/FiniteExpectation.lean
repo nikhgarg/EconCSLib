@@ -117,6 +117,19 @@ theorem uniformPMF_apply_toReal_pos {α : Type*} [Fintype α] [Nonempty α] (a :
   rw [uniformPMF_apply_toReal]
   exact inv_pos.mpr (by exact_mod_cast (Fintype.card_pos_iff.mpr ‹Nonempty α›))
 
+/--
+The product of identical uniform coordinate laws is the uniform law on finite
+functions.
+-/
+theorem pmfProduct_uniformPMF_eq_uniformPMF_fun
+    (ι α : Type*) [Fintype ι] [DecidableEq ι] [Fintype α] [Nonempty α] :
+    pmfProduct ι α (uniformPMF α) = uniformPMF (ι → α) := by
+  classical
+  ext f
+  simp [pmfProduct_apply, uniformPMF, Finset.prod_const]
+  exact (ENNReal.inv_pow (a := (Fintype.card α : ENNReal))
+    (n := Fintype.card ι)).symm
+
 theorem pmfExp_congr {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) {f g : α → ℝ}
     (h : ∀ a, f a = g a) :
@@ -579,6 +592,29 @@ theorem pmfExp_mul_const {α : Type*} [Fintype α] [DecidableEq α]
           ring
     _ = (∑ a : α, (μ a).toReal * f a) * c := by
           rw [Finset.sum_mul]
+
+/-- Finite PMF expectation commutes with a finite sum. -/
+theorem pmfExp_sum {Ω ι : Type*} [Fintype Ω] [DecidableEq Ω]
+    (μ : PMF Ω) (s : Finset ι) (f : ι → Ω → ℝ) :
+    pmfExp μ (fun ω => ∑ i ∈ s, f i ω) =
+      ∑ i ∈ s, pmfExp μ (fun ω => f i ω) := by
+  classical
+  unfold pmfExp
+  calc
+    ∑ ω : Ω, (μ ω).toReal * (∑ i ∈ s, f i ω) =
+        ∑ ω : Ω, ∑ i ∈ s, (μ ω).toReal * f i ω := by
+          refine Finset.sum_congr rfl ?_
+          intro ω _
+          rw [Finset.mul_sum]
+    _ = ∑ i ∈ s, ∑ ω : Ω, (μ ω).toReal * f i ω := by
+          exact Finset.sum_comm
+
+/-- Finite PMF expectation commutes with a finite type sum. -/
+theorem pmfExp_univ_sum {Ω ι : Type*} [Fintype Ω] [DecidableEq Ω]
+    [Fintype ι] (μ : PMF Ω) (f : ι → Ω → ℝ) :
+    pmfExp μ (fun ω => ∑ i : ι, f i ω) =
+      ∑ i : ι, pmfExp μ (fun ω => f i ω) := by
+  simpa using pmfExp_sum μ (Finset.univ : Finset ι) f
 
 /--
 If a finite random variable takes value `x` on event `p` and value `y` off that
@@ -1061,6 +1097,66 @@ theorem pmfProb_uniformPMF_prod_fst_event {α β : Type*}
           simp
     _ = pmfProb (uniformPMF α) p := by
           rfl
+
+/--
+For a uniformly drawn finite function, one coordinate hits a prescribed value
+with probability `1 / #values`.
+-/
+theorem pmfProb_uniformPMF_fun_eval_eq {ι α : Type*}
+    [Fintype ι] [DecidableEq ι]
+    [Fintype α] [DecidableEq α] [Nonempty α]
+    {i : ι} (a₀ : α) :
+    pmfProb (uniformPMF (ι → α))
+        (fun f : ι → α => f i = a₀) =
+      (Fintype.card α : ℝ)⁻¹ := by
+  classical
+  let Rest := {x : ι // x ≠ i}
+  let e : (ι → α) ≃ (α × (Rest → α)) :=
+    { toFun := fun f => (f i, fun x => f x.1)
+      invFun := fun p x =>
+        if hx : x = i then p.1 else p.2 ⟨x, hx⟩
+      left_inv := by
+        intro f
+        funext x
+        by_cases hx : x = i
+        · subst x
+          simp
+        · simp [hx]
+      right_inv := by
+        intro p
+        rcases p with ⟨a, rest⟩
+        apply Prod.ext
+        · simp
+        · funext x
+          simp [x.property] }
+  let targetPred : α × (Rest → α) → Prop :=
+    fun p => p.1 = a₀
+  have hsource :
+      pmfProb (uniformPMF (ι → α))
+          (fun f : ι → α => f i = a₀) =
+        pmfProb (uniformPMF (α × (Rest → α))) targetPred := by
+    unfold pmfProb
+    symm
+    calc
+      pmfExp (uniformPMF (α × (Rest → α)))
+          (fun p => if targetPred p then (1 : ℝ) else 0) =
+          pmfExp (uniformPMF (ι → α))
+            (fun f => if targetPred (e f) then (1 : ℝ) else 0) :=
+            pmfExp_uniformPMF_equiv e
+              (fun p : α × (Rest → α) =>
+                if targetPred p then (1 : ℝ) else 0)
+      _ = pmfExp (uniformPMF (ι → α))
+            (fun f => if f i = a₀ then (1 : ℝ) else 0) := by
+            refine pmfExp_congr (uniformPMF (ι → α)) ?_
+            intro f
+            simp [targetPred, e]
+  have htarget :
+      pmfProb (uniformPMF (α × (Rest → α))) targetPred =
+        (Fintype.card α : ℝ)⁻¹ := by
+    simpa [targetPred] using
+      (pmfProb_uniformPMF_prod_fst_eq
+        (α := α) (β := Rest → α) (a₀ := a₀))
+  exact hsource.trans htarget
 
 /--
 For two independent uniform coordinates, the probability of a prescribed pair

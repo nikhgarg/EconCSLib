@@ -1,1 +1,4 @@
 import EconCSLib.SocialChoice.FairDivision.IndivisibleGoods
+import EconCSLib.SocialChoice.FairDivision.LMMSAlgorithm
+import EconCSLib.SocialChoice.FairDivision.MeasurePartition
+import EconCSLib.SocialChoice.FairDivision.Mechanisms
