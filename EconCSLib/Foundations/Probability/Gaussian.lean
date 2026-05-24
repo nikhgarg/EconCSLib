@@ -51,6 +51,17 @@ structure GaussianScaleLaw where
 
 namespace GaussianScaleLaw
 
+/-- Extensionality for Gaussian location-scale laws. -/
+theorem ext {L1 L2 : GaussianScaleLaw}
+    (hmean : L1.mean = L2.mean) (hscale : L1.scale = L2.scale) :
+    L1 = L2 := by
+  cases L1
+  cases L2
+  simp at hmean hscale
+  subst hmean
+  subst hscale
+  rfl
+
 /-- Standardize a value relative to a Gaussian location-scale law. -/
 def standardize (L : GaussianScaleLaw) (x : ℝ) : ℝ :=
   (x - L.mean) / L.scale
@@ -1183,6 +1194,26 @@ def posteriorMeanScaleLaw [Nonempty ι]
   scale := Real.sqrt M.posteriorMeanVariance
   scale_pos := Real.sqrt_pos.mpr M.posteriorMeanVariance_pos
 
+/--
+Two finite Gaussian signal families induce the same posterior-mean
+location-scale law when their prior means, prior variances, and total signal
+precisions agree.
+-/
+theorem posteriorMeanScaleLaw_eq_of_priorMean_eq_priorVar_eq_signalPrecisionSum_eq
+    {κ : Type*} [Fintype κ] [Nonempty ι] [Nonempty κ]
+    (M1 : GaussianSignalFamily ι) (M2 : GaussianSignalFamily κ)
+    (hmean : M1.priorMean = M2.priorMean)
+    (hpriorVar : M1.priorVar = M2.priorVar)
+    (hsignalPrecisionSum :
+      M1.signalPrecisionSum = M2.signalPrecisionSum) :
+    M1.posteriorMeanScaleLaw = M2.posteriorMeanScaleLaw := by
+  apply GaussianScaleLaw.ext
+  · simp [posteriorMeanScaleLaw, hmean]
+  · dsimp [posteriorMeanScaleLaw, posteriorMeanVariance, posteriorVariance,
+      posteriorPrecision, priorPrecision, signalPrecisionSum]
+      at hsignalPrecisionSum ⊢
+    rw [hpriorVar, hsignalPrecisionSum]
+
 theorem priorWeight_pos (M : GaussianSignalFamily ι) :
     0 < M.priorWeight := by
   exact mul_pos M.posteriorVariance_pos M.priorPrecision_pos
@@ -1488,6 +1519,18 @@ def withExtraSignal (M : GaussianOffsetSignalFamily ι)
     | none => hextraNoiseVar
     | some i => M.noiseVar_pos i
 
+@[simp] theorem withExtraSignal_priorMean
+    (M : GaussianOffsetSignalFamily ι)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    (M.withExtraSignal extraNoiseMean extraNoiseVar
+      hextraNoiseVar).priorMean = M.priorMean := rfl
+
+@[simp] theorem withExtraSignal_priorVar
+    (M : GaussianOffsetSignalFamily ι)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    (M.withExtraSignal extraNoiseMean extraNoiseVar
+      hextraNoiseVar).priorVar = M.priorVar := rfl
+
 def centeredFamily (M : GaussianOffsetSignalFamily ι) :
     GaussianSignalFamily ι where
   priorMean := M.priorMean
@@ -1542,6 +1585,28 @@ def posteriorMeanScaleLaw [Nonempty ι]
   mean := M.priorMean
   scale := Real.sqrt M.posteriorMeanVariance
   scale_pos := Real.sqrt_pos.mpr M.posteriorMeanVariance_pos
+
+/--
+Two offset Gaussian signal families induce the same posterior-mean
+location-scale law when their prior means, prior variances, and total centered
+signal precisions agree.
+-/
+theorem posteriorMeanScaleLaw_eq_of_priorMean_eq_priorVar_eq_signalPrecisionSum_eq
+    {κ : Type*} [Fintype κ] [Nonempty ι] [Nonempty κ]
+    (M1 : GaussianOffsetSignalFamily ι) (M2 : GaussianOffsetSignalFamily κ)
+    (hmean : M1.priorMean = M2.priorMean)
+    (hpriorVar : M1.priorVar = M2.priorVar)
+    (hsignalPrecisionSum :
+      M1.centeredFamily.signalPrecisionSum =
+        M2.centeredFamily.signalPrecisionSum) :
+    M1.posteriorMeanScaleLaw = M2.posteriorMeanScaleLaw := by
+  change
+    M1.centeredFamily.posteriorMeanScaleLaw =
+      M2.centeredFamily.posteriorMeanScaleLaw
+  exact
+    GaussianSignalFamily.posteriorMeanScaleLaw_eq_of_priorMean_eq_priorVar_eq_signalPrecisionSum_eq
+      M1.centeredFamily M2.centeredFamily hmean hpriorVar
+      hsignalPrecisionSum
 
 /--
 Conditional law of the posterior mean given true skill `q` for offset signals
