@@ -31,6 +31,11 @@ When another agent will pick up later, spend tokens on durable artifacts rather
 than chat: a paper-local handoff note, README/audit links, exact declaration
 names, validation status, and next command. Future agents should start from
 those files instead of reconstructing context from conversation history.
+When the latest green endpoint is a source-sequence, source-certificate, or
+analytic boundary rather than the actual paper distribution/object, say that
+plainly in the handoff and README. Name the exact identification bridge still
+missing; do not let a compiled certificate wrapper read like the paper theorem
+is fully closed.
 For a pause of several days or longer, create or refresh a paper-local
 `START_HERE_NEXT_AGENT.md` that is shorter than the full handoff: current
 validation commands, shared-worktree caveats, the exact active proof seam,
@@ -110,11 +115,16 @@ the source theorem requires it. Finite analogues are useful scaffolds only when
 they shorten the faithful proof. If the fastest honest route is a direct
 measure/integral/renewal/CTMC statement, build that statement directly and keep
 the paper-facing wrapper source-level.
-For continuous strategy/type-space games, audit whether the source really needs
-pointwise best response on boundary or off-support types. If indifference
-cutoffs or support boundaries are null events, prefer an almost-everywhere
-equilibrium or policy statement with an explicit pointwise-to-a.e. bridge and
-separate boundary-null/no-atoms lemmas. Load
+For continuous strategy/type-space games, treat strategy, equilibrium,
+best-response, uniqueness, policy-optimality, and indifference-boundary claims
+as almost-everywhere statements under the relevant type or information law by
+default, not as pointwise statements. Use a pointwise statement only when the
+paper explicitly needs pointwise behavior, the state space is genuinely
+finite/discrete, or the pointwise result is a stronger helper that is
+immediately bridged to the paper-facing a.e. theorem. If indifference cutoffs,
+support boundaries, or off-support types are null events, state the theorem
+a.e. and prove separate boundary-null/no-atoms lemmas rather than adding
+artificial pointwise tie behavior. Load
 `references/proof-foundations-probability.md` for measure-zero/boundary-null
 routes and `references/proof-mechanism-design.md` for Gaussian strategy-game
 a.e. equilibrium patterns.

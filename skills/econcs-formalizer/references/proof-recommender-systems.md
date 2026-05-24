@@ -39,6 +39,121 @@ allocation.
   the source backward marginal strictly smaller than the destination forward
   marginal. The finite FOC rules out the gap, and the sublinear scaled-count
   bridge gives the sequence limit.
+- For PRPKG continuous order-statistic branches, let the probability layer
+  produce `TopKScaledMarginalLimitCertificate` or a source-loss asymptotic
+  certificate, then feed that into the existing floor-aware eventual FOC bridge.
+  The compiled source bridge now starts from
+  `EconCSLib.Probability.sampleTopKSum` /
+  `sampleTopKEndpointLoss_eq_reflectedBottomKSum`, passes through
+  `orderStatisticTopKSumFromSample_eq_sampleTopKSum`, and reaches
+  `paper_lemma1_bounded_support_order_statistic_top_k_loss_asymptotic_of_cdf_power_sandwich_monotone_bounded_support`.
+  The measure-level bridge is `expectedOrderStatisticMeanSeq`; use its top-`k`
+  and endpoint-loss theorems before introducing paper-local FOC wrappers.
+  When a bounded finite sample law has coordinatewise a.e. bounds, use
+  `paper_definition3_expected_order_statistic_mean_seq_topk_sum_eq_expected_sample_topk_sum_of_ae_bounds`
+  and
+  `paper_definition3_expected_order_statistic_mean_seq_topk_endpoint_loss_eq_expected_reflected_bottom_sum_of_ae_bounds`
+  to avoid reproving sorted-tuple measurability/integrability at the paper
+  level. For the finite deterministic layer-cake step, use
+  `paper_definition3_reflected_bottom_sum_eq_integral_rank_count_indicator`;
+  the measure-level count-layer bridge is
+  `expectedReflectedBottomKSum_eq_integral_rank_count_layer_of_integrable`,
+  and bounded coordinate support discharges the required product/Fubini
+  integrability through
+  `reflectedBottomKRankCountLayer_integrable_prod_of_ae_bounds`.
+  The fixed-threshold iid product/binomial-count evaluation is already exposed
+  as `paper_definition3_iid_reflected_count_layer_inner_integral_binomial`,
+  with the bounded Lemma D.2 kernel form
+  `paper_definition3_iid_reflected_count_layer_inner_integral_kernel`; the
+  outer positive-threshold assembly is
+  `paper_definition3_iid_reflected_count_layer_integral_kernel_of_integrable_of_le`.
+  Bounded support for `G` gives the finite kernel-integrability bundle through
+  `paper_lemmaD2_bounded_integral_kernel_eventually_fin_integrableOn_of_bounded_support`,
+  so the first iid bounded Lemma 1 endpoint is
+  `paper_lemma1_bounded_support_iid_reflected_cdf_count_layer_top_k_loss_asymptotic_of_base_ae_bounds_and_cdf_power_sandwich_monotone_bounded_support`;
+  it defines `G` as `x ↦ P[M - X <= x]`, so no separate reflected-CDF identity
+  is needed.
+  The stronger endpoint
+  `paper_lemma1_bounded_support_iid_reflected_cdf_count_layer_top_k_loss_asymptotic_of_base_ae_bounds_and_reflected_cdf_tail`
+  uses `reflectedCDFMass` and derives reflected-CDF measurability,
+  monotonicity, range, and upper-support saturation from one-dimensional
+  a.e. bounds. Prefer it when the only law-specific analytic input left is
+  `BoundedTailCDFPowerSandwich (reflectedCDFMass baseMeasure M) beta c`.
+  If the concrete law proves an exact local identity
+  `reflectedCDFMass baseMeasure M x = (c / beta) * x ^ beta` eventually as
+  `x -> 0+`, use
+  `paper_lemma1_bounded_support_iid_reflected_cdf_count_layer_top_k_loss_asymptotic_of_base_ae_bounds_and_reflected_cdf_eventually_eq_power`;
+  the helper `BoundedTailCDFPowerSandwich.of_eventually_eq_const_mul_power`
+  builds the tail sandwich. For uniform-style reflected CDF `G(x)=x`, the
+  ready certificate is `BoundedTailCDFPowerSandwich.identity_beta_one`.
+  The continuous uniform `[0,1]` law is already packaged as `uniform01Measure`,
+  with `uniform01_reflectedCDFMass_eventually_eq_power` and the Lemma 1
+  endpoint
+  `paper_lemma1_uniform01_iid_reflected_cdf_count_layer_top_k_loss_asymptotic`.
+  To convert bounded-source loss asymptotics into first-difference/marginal
+  asymptotics, do not subtract asymptotic equivalents. Use
+  `bounded_source_forward_marginal_asymptotic_of_loss_ae_and_scaled_drop` or
+  the source-level wrappers
+  `paper_lemma1_bounded_support_iid_reflected_cdf_count_layer_top_k_forward_marginal_asymptotic_of_base_ae_bounds_and_reflected_cdf_tail_and_scaled_drop`
+  and
+  `paper_lemma1_bounded_support_iid_reflected_cdf_count_layer_top_k_forward_marginal_asymptotic_of_base_ae_bounds_and_reflected_cdf_eventually_eq_power_and_scaled_drop`.
+  These require the explicit scaled-drop limit
+  `(q+1)*((A-h(q))-(A-h(q+1)))/(A-h(q)) -> 1/beta`. The finite scale ratio is
+  eventually `((q+1)/q)^(1/beta)`, proved by
+  `boundedTailScale_div_succ_ratio_eventually_eq_rpow`, and only then tends to
+  one. The bounded source marginal certificate is
+  `BoundedOrderStatisticScaledMarginalCertificate`; use
+  `BoundedOrderStatisticScaledMarginalCertificate.ofLossAsymptoticAndScaledDrop`
+  and `.toTopKScaledMarginalLimitCertificate`, or the paper-facing
+  `paper_theorem1_ii_bounded_order_statistic_scaled_marginal_certificate_of_loss_ae_and_scaled_drop`,
+  to feed the reusable optimization layer.
+  For the exact uniform `[0,1]` order-statistic closed form, use the direct
+  bounded `β = 1` certificate
+  `paper_theorem1_ii_uniform_order_statistic_scaled_marginal_certificate`
+  instead of rebuilding the generic loss-to-drop route. The matching
+  source-oracle sequence wrappers are
+  `paper_theorem1_ii_uniform_order_statistic_sequence_homogeneity_of_paper_bound`
+  and `paper_theorem1_ii_uniform_order_statistic_sequence_formula_of_paper_bound`.
+  Use `iidProductMeasure_forall_bounds_ae` when a paper-local wrapper still
+  has product-sample support in its hypotheses. The remaining law-specific
+  bounded work is one-dimensional support, positive support width, and the
+  Lemma D.2 near-zero tail sandwich for that reflected CDF.
+  For bounded-support Lemma 1, prefer the aggregate endpoint
+  `paper_lemma1_bounded_support_expected_reflected_bottom_top_k_loss_asymptotic_of_cdf_power_sandwich_monotone_bounded_support`
+  when the distribution proof naturally identifies `expectedReflectedBottomKSum`
+  as a single reflected-CDF integral double sum.
+  Use
+  `paper_definition3_expected_reflected_bottom_sum_eq_sum_reflected_order_statistic_integrals_of_le`
+  after the eventual `k ≤ a` prefix to turn that aggregate into a fixed
+  `Fin k` sum of reflected lower order-statistic integrals.
+  For Pareto Lemma D.4, an `AsymptoticEquivalent` marginal proof can feed
+  `paper_theorem1_iv_pareto_order_statistic_scaled_marginal_certificate_of_asymptotic_equivalent`
+  directly; do not manually rebuild the source certificate unless the proof is
+  already in `marginal_ratio_tendsto` form. If the calculation is naturally
+  per fixed rank, use
+  `paper_theorem1_iv_pareto_order_statistic_scaled_marginal_certificate_of_finite_rank_scaled_limits`;
+  it reduces the source obligation to scaled limits for each `i : Fin k` plus
+  the finite coefficient sum. If using the paper's gamma-ratio constants, use
+  `paper_theorem1_iv_pareto_order_statistic_scaled_marginal_certificate_of_pareto_rank_scaled_limits`
+  with `paretoRankMarginalCoeff`; the positivity and coefficient sum are
+  supplied by the Pareto module. If the rank proof is naturally staged as a
+  value asymptotic plus scaled drop, first apply
+  `paper_lemmaD4_pareto_rank_scaled_limit_of_value_asymptotic_and_scaled_drop`.
+  If it uses the cited exact gamma-ratio sequence, apply
+  `paper_lemmaD4_pareto_rank_gamma_ratio_mean_scaled_limit` directly and spend
+  effort only on proving that the concrete Pareto order-statistic mean equals
+  that sequence. The gamma-ratio sequence layer is now closed through
+  `EconCSLib.Foundations.Math.GammaAsymptotics` plus PRPKG wrappers:
+  `paretoRankGammaRatioMean_value_asymptoticEquivalent`,
+  `paretoRankGammaRatioMean_succ_div_self`,
+  `paretoRankGammaRatioMean_scaled_drop`, and
+  `paretoRankGammaRatioMean_scaled_limit`; do not reopen that algebra unless
+  the actual Pareto law uses a different sequence. The PDF's equation (135)
+  appears to print a denominator inconsistent with equations (77), (131), and
+  Lemma D.4; keep the literal source discrepancy in the paper handoff and use
+  the derivation-consistent `a^(1/α)` scaling for compiled wrappers.
+  Do not add another paper-local optimizer interface unless the new probability
+  certificate cannot express the source marginal comparison.
 - For decaying Bernoulli top-one objectives, check `α = 0` before doing product
   asymptotics: rank success probabilities become constant, so the model should
   reduce to the existing i.i.d. Bernoulli satisfaction model and reuse its

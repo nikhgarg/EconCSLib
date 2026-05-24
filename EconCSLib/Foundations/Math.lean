@@ -11,6 +11,7 @@ import EconCSLib.Foundations.Math.FractionalSqrt
 import EconCSLib.Foundations.Math.QuasiConvex
 import EconCSLib.Foundations.Math.Sequence
 import EconCSLib.Foundations.Math.Asymptotics
+import EconCSLib.Foundations.Math.GammaAsymptotics
 import EconCSLib.Foundations.Math.ExponentialBounds
 import EconCSLib.Foundations.Math.IntervalCrossing
 import EconCSLib.Foundations.Math.EpsilonContinuity

@@ -35,6 +35,13 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   fields, and final assembly theorems. Do not hide a missing near-zero or tail
   proof inside a single broad "asymptotic certificate" if the paper proves
   those pieces separately.
+- For bounded-support finite-sample top-`k` order-statistic proofs, use the
+  shared reflected-sample bridges before writing paper-specific algebra:
+  `expectedSampleTopKEndpointLoss_eq_expectedReflectedBottomKSum`,
+  `expectedReflectedBottomKSum_eq_sum_reflectedAscendingOrderStatistic`, and
+  `expectedReflectedBottomKSum_eq_sum_reflectedAscendingOrderStatistic_of_le`.
+  The fixed-`k` version is the right entry point after the eventual
+  sample-size prefix in asymptotic arguments.
 
 ## Measure-Zero And Almost-Everywhere Seams
 
@@ -653,16 +660,137 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `TopKExpectationOracle.ScaledMarginalLimitCertificate.marginal_lt_of_scaled_gap`,
   and
   `TopKExpectationOracle.ScaledMarginalLimitCertificate.eventually_same_count_marginal_lt_of_weight_gap`.
+  For pointwise real samples, the same file now provides
+  `ascendingOrderStatistic`, `upperOrderStatistic`, `sampleTopKSum`,
+  `sampleTopKEndpointLoss_eq_reflectedBottomKSum`, and
+  `upperOrderStatistic_eq_endpoint_sub_reflectedAscending`. For expectations
+  over a finite sample law, use
+  `expectedSampleTopKSum_eq_sum_expectedUpperOrderStatistic` and
+  `expectedSampleTopKEndpointLoss_eq_expectedReflectedBottomKSum`. The generic
+  sorted-tuple measurability and bounded-support integrability layer is also
+  available: `ascendingOrderStatistic_measurable`,
+  `reflectedAscendingOrderStatistic_measurable`,
+  `sampleTopKSum_integrable_of_ae_bounds`, and
+  `reflectedAscendingOrderStatistic_integrable_of_ae_bounds`. For finite
+  layer-cake arguments, use
+  `ascendingOrderStatistic_eq_integral_rank_count_indicator` and
+  `reflectedBottomKSum_eq_integral_rank_count_indicator`; for measure-level
+  arguments, use `reflectedBottomKRankCountLayer` and
+  `expectedReflectedBottomKSum_eq_integral_rank_count_layer_of_integrable`.
+  If the finite sample law has coordinatewise a.e. bounds, discharge the
+  product/Fubini integrability side with
+  `reflectedBottomKRankCountLayer_integrable_prod_of_ae_bounds` before
+  specializing to a distribution's iid CDF/binomial-count law. For iid real
+  product laws, lift one-dimensional support to coordinatewise sample support
+  with `iidProductMeasure_forall_bounds_ae`.
+  For iid product laws, the generic finite-count facts are
+  `iidProductMeasure_successCount_eq_real`,
+  `iidProductMeasure_successCount_le_real`, and
+  `iidProductMeasure_successCount_eq_indicator_integral`; PRPKG's reflected
+  bounded branch wraps these as
+  `paper_definition3_iid_reflected_count_layer_inner_integral_binomial` and
+  `paper_definition3_iid_reflected_count_layer_inner_integral_kernel`, with
+  outer fixed-`k` assembly in
+  `paper_definition3_iid_reflected_count_layer_integral_kernel_of_integrable_of_le`.
   Concrete bounded, exponential, and Pareto order-statistic integrals should be
   proved once as certificate providers and then fed into the paper's
   homogeneity/FOC certificates.
+- For bounded reflected-CDF arguments, use
+  `EconCSLib.Probability.reflectedCDFMass μ M` instead of expanding
+  `Measure.real {y | M - y <= x}` in a paper folder. The library supplies
+  `reflectedCDFMass_measurable`, `reflectedCDFMass_mono`,
+  `reflectedCDFMass_nonneg`, `reflectedCDFMass_le_one`, and
+  `reflectedCDFMass_eq_one_of_ae_bounds`, so bounded iid PRPKG wrappers only
+  need base support, positive support width, and the concrete near-zero
+  `BoundedTailCDFPowerSandwich` proof for that reflected CDF. If the CDF is
+  eventually exactly `(c / beta) * x ^ beta`, use
+  `BoundedTailCDFPowerSandwich.of_eventually_eq_const_mul_power`; the identity
+  reflected CDF has `BoundedTailCDFPowerSandwich.identity_beta_one`. For the
+  concrete continuous uniform law on `[0,1]`, PRPKG has `uniform01Measure` and
+  `uniform01_reflectedCDFMass_eventually_eq_power`.
+- For PRPKG bounded loss-to-marginal steps, do not subtract asymptotic
+  equivalents. The compiled bridge is
+  `bounded_source_forward_marginal_asymptotic_of_loss_ae_and_scaled_drop`; it
+  takes `A - h(q) ~ C*boundedTailScale beta q` plus the explicit scaled-drop
+  limit `(q+1)*((A-h(q))-(A-h(q+1)))/(A-h(q)) -> 1/beta` and returns the
+  forward marginal asymptotic with `boundedPowerMarginalScale`. The helper
+  `boundedTailScale_div_succ_ratio_eventually_eq_rpow` records the necessary
+  off-by-one scale ratio `((q+1)/q)^(1/beta)`, and
+  `boundedTailScale_div_succ_ratio_tendsto_one` proves its limit. Source-level
+  PRPKG wrappers ending in `_and_scaled_drop` combine this with bounded
+  reflected-CDF Lemma 1 endpoints. Convert the resulting source marginal into
+  the shared probability-to-optimization interface with
+  `BoundedOrderStatisticScaledMarginalCertificate.toTopKScaledMarginalLimitCertificate`
+  or the paper-facing
+  `paper_theorem1_ii_bounded_order_statistic_scaled_marginal_certificate_of_loss_ae_and_scaled_drop`.
+  For exact uniform `[0,1]` order-statistic means, PRPKG also has the direct
+  bounded `β = 1` certificate
+  `paper_theorem1_ii_uniform_order_statistic_scaled_marginal_certificate`;
+  the source-oracle sequence wrappers then reuse the exact uniform top-`k`
+  theorem via
+  `paper_theorem1_ii_uniform_order_statistic_toConsumptionModel_eq`.
+- For PRPKG-style continuous order-statistic branches, do not reopen the
+  already-closed optimization wrappers when the missing layer is a sampled-law
+  bridge. Use the existing real tuple and expectation source interfaces, then
+  add only the missing law-specific iid-product/CDF layer: closed reflected-CDF
+  identities for bounded upper support, Pareto CDF/gamma-ratio facts, and
+  finite-prefix wrappers for fixed `k` asymptotics. In PRPKG,
+  `sampleOrderStatisticValue`,
+  `orderStatisticTopKSumFromSample_eq_sampleTopKSum`, and
+  `expectedOrderStatisticMeanSeq_topKSum_eq_expectedSampleTopKSum`, plus
+  `paper_lemma1_bounded_support_order_statistic_top_k_loss_asymptotic_of_cdf_power_sandwich_monotone_bounded_support`
+  are the compiled bridge names. Treat exact power-marginal oracles as optimizer
+  checkpoints only; the paper proof is not closed until the actual distribution
+  yields the corresponding scaled-marginal or source-loss certificate.
+- For bounded-support top-`k` proofs, keep the reflection step separate from
+  the tail asymptotic. A reusable bridge should prove that upper
+  order-statistic means for `X` with endpoint `M` equal `M` minus lower
+  order-statistic means for the reflected variable `M - X`; the paper-local
+  Lemma D.2 layer should only consume the resulting reflected-CDF integral
+  terms. Handle the `min k a` versus fixed-`k` asymptotic boundary with an
+  eventual `k ≤ a` or finite-prefix lemma rather than strengthening every
+  identity to all small sample sizes.
+- For Pareto top-`k` proofs, a certificate boundary matching the source's cited
+  order-statistic facts is acceptable before a full gamma-integral proof. Keep
+  the fields auditable: maximum-order-statistic asymptotic, fixed-rank gamma
+  multiplier, strict concavity or diminishing marginals, positive leading
+  constant, and the resulting `TopKExpectationOracle.ScaledMarginalLimitCertificate`.
+  In PRPKG, the compiled boundary is
+  `ParetoOrderStatisticScaledMarginalCertificate`, whose key source field is
+  `marginal_ratio_tendsto`; it converts to the reusable scaled-marginal
+  certificate via `toTopKScaledMarginalLimitCertificate`. For rank-by-rank
+  gamma-ratio proofs, prefer `ofFiniteRankScaledLimits`: prove the scaled
+  marginal limit for each fixed `i : Fin k`, then discharge the aggregate
+  constant with a finite sum identity. In PRPKG, `paretoRankMarginalCoeff` is
+  the canonical gamma coefficient and `ofParetoRankScaledLimits` builds the
+  aggregate certificate from those per-rank limits. If the source proof first
+  establishes the fixed-rank value asymptotic and an explicit scaled-drop
+  limit, `pareto_rank_scaled_limit_of_value_asymptotic_and_scaled_drop`
+  converts those two facts into the per-rank scaled marginal limit. If the
+  source formula is the cited gamma-ratio expression itself, use
+  `paretoRankGammaRatioMean_scaled_limit`; the remaining work is then only to
+  identify actual Pareto order-statistic means with that exact sequence.
+  The reusable gamma-ratio route lives in
+  `EconCSLib.Foundations.Math.GammaAsymptotics`: it proves the shifted product
+  identity against `Real.GammaSeq`, uses `Real.GammaSeq_tendsto_Gamma` to get
+  `Γ(q+1)/Γ(q+1-δ) ~ q^δ` for `0 < δ < 1`, and exposes
+  `scaled_difference_limit_of_value_asymptotic_and_scaled_drop` for the generic
+  finite-difference step. Reuse
+  `EconCSLib.Math.gamma_ratio_nat_add_one_sub_asymptoticEquivalent`,
+  `EconCSLib.Math.scaled_difference_limit_of_value_asymptotic_and_scaled_drop`,
+  `paretoRankGammaRatioMean_value_asymptoticEquivalent`,
+  `paretoRankGammaRatioMean_succ_div_self`,
+  `paretoRankGammaRatioMean_scaled_drop`, and
+  `pareto_rank_scaled_limit_of_value_asymptotic_and_scaled_drop` rather than
+  subtracting asymptotic equivalents.
 - For real-valued threshold/tail arguments, use
   `EconCSLib.Foundations.Probability.RealDistribution`: `lowerCDFMass`,
   `upperTailMass`, `lowerCDFMass_mono`, `upperTailMass_antitone`,
-  `lowerCDFMass_eq_cdf`, `upperTailMass_eq_one_sub_cdf`, and
-  `UpperTailThresholdCertificate`. Put concrete distribution-family tail
-  asymptotics on top of these wrappers instead of repeating
-  `Measure.real (Iic x)` / `Measure.real (Ioi x)` algebra in paper folders.
+  `lowerCDFMass_eq_cdf`, `upperTailMass_eq_one_sub_cdf`,
+  `reflectedCDFMass`, and `UpperTailThresholdCertificate`. Put concrete
+  distribution-family tail asymptotics on top of these wrappers instead of
+  repeating `Measure.real (Iic x)`, `Measure.real (Ioi x)`, or reflected
+  endpoint-event algebra in paper folders.
 - For finite union bounds over paper-indexed bad events, first prove the event
   inclusion or exact event equivalence, then use
   `pmfProb_exists_mem_le_sum` for a finite index set or
