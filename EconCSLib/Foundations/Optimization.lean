@@ -3,6 +3,7 @@ import EconCSLib.Foundations.Optimization.Argmax
 import EconCSLib.Foundations.Optimization.ChoiceEquilibrium
 import EconCSLib.Foundations.Optimization.ChoiceEquilibriumAE
 import EconCSLib.Foundations.Optimization.BinaryChoice
+import EconCSLib.Foundations.Optimization.BinaryChoiceAE
 import EconCSLib.Foundations.Optimization.Certificate
 import EconCSLib.Foundations.Optimization.Endpoint
 import EconCSLib.Foundations.Optimization.FiniteSearch
@@ -25,6 +26,8 @@ Aggregate import for reusable optimization primitives.
   best-response variant for continuous or mixed information laws.
 - `EconCSLib.Foundations.Optimization.BinaryChoice`: two-sided binary
   best-response predicates and basic contradiction lemmas.
+- `EconCSLib.Foundations.Optimization.BinaryChoiceAE`: a.e. binary
+  best-response predicates and affine cutoff consequences.
 - `EconCSLib.Foundations.Optimization.Approximation`: primal-dual/benchmark
   sandwich certificates for approximation and competitive-ratio proofs.
 - `EconCSLib.Foundations.Optimization.Certificate`: reusable optimality

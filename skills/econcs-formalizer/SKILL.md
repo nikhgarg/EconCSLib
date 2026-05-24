@@ -17,8 +17,13 @@ Formalize theorem seams, not PDFs. Start from the paper's precise definitions,
 the main result to be checked, and the smallest reusable lemmas needed to close
 that result.
 
-Unless told otherwise, you do not have a time limit; keep going until you fully
-finish a paper and run the post-paper checklist.
+Unless told otherwise, you do not have a time limit; keep going until you reach
+the requested stopping condition or a clean theorem/compile boundary. Run the
+full post-paper checklist, review-dashboard/audit workflow, and polished
+`FINAL_VALIDATION_REPORT.md` update only when the paper is genuinely finished
+or the user explicitly asks for post-validation. For intermediate progress on
+an unfinished paper, use targeted Lean builds and a short status/handoff update
+instead of spending tokens on the full audit/report cycle.
 
 Do not confuse "keep going" with broad exploration. Move in tight compile/proof
 loops: identify the exact current theorem seam, make the smallest coherent
@@ -40,8 +45,9 @@ For a pause of several days or longer, create or refresh a paper-local
 `START_HERE_NEXT_AGENT.md` that is shorter than the full handoff: current
 validation commands, shared-worktree caveats, the exact active proof seam,
 strongest reusable endpoints, and what not to work on next. Link it from the
-paper README, audit/final-validation report, and front repository status so a
-future agent has one obvious startup path.
+paper README and front repository status so a future agent has one obvious
+startup path. Link it from the audit/final-validation report only during a
+paper-done or user-requested post-validation pass.
 For a week-scale pause after a long proof push, also create a dated
 paper-local handoff such as `HANDOFF_YYYY-MM-DD_WEEK_PAUSE.md` and make
 `START_HERE_NEXT_AGENT.md` point to it first. That week-pause note should name
@@ -56,6 +62,12 @@ the paper README/handoff and in the front repository status entries. Name the
 three or fewer exact proof seams that remain and the strongest public wrapper or
 certificate for each. Do not leave vague optimistic status such as "one bridge
 remains" when multiple paper-level proof campaigns are still open.
+When a remaining seam is a large family of repetitive row/table
+identifications, package those facts into a source-shaped structure and expose
+a single packaged bridge before stopping. Handoffs should point future agents
+at the package as the proof target instead of asking them to rediscover a dozen
+flat premises. Do not overclaim the packaged bridge as closing the source
+model; say exactly which row-identification package is still unproved.
 
 Reserve `formalized with caveat` for cases where the Lean theorem adds
 something on top of the paper statement, such as an extra assumption,
@@ -76,8 +88,9 @@ identifying the gap unless the target theorem is false or the needed assumption
 is mathematically indispensable.
 
 If a paper proof is imprecise, think hard outside Lean to create a precise proof
-strategy, implement that strategy in Lean, and log in the paper's final report
-that the source proof was imprecise and needed additional formalization work.
+strategy, implement that strategy in Lean, and record the issue in the live
+README or handoff. Carry it into the paper's final report only during the
+paper-done or user-requested post-validation pass.
 
 When the right proof strategy is unclear, think deeply outside Lean before
 editing. If a written scratch argument would help, create a short `.txt`,
@@ -156,8 +169,9 @@ When a displayed formula conflicts with its surrounding derivation, do not
 silently overwrite the paper statement. Keep the literal source formula and the
 derivation-corrected formula as separate named definitions or wrappers, prove
 the corrected bridge from the surrounding source equations when possible, and
-record the discrepancy in the paper handoff/final report. Only mark a
-paper-facing theorem as closed for the exact statement Lean actually proves.
+record the discrepancy in the paper handoff during active work and in the final
+report during post-validation. Only mark a paper-facing theorem as closed for
+the exact statement Lean actually proves.
 
 When starting a new paper, briefly inspect the repository's already-formalized
 papers in the same EC area and ask which proof moves should become general
@@ -185,8 +199,10 @@ the relevant proof reference file, not here.
 When a long session ends before validation, write a paper-local handoff note
 before stopping. Include the files touched, the latest unvalidated theorem
 families, the intended proof route, exact next validation command, and likely
-fragile Lean points. Link that handoff from the paper README and post-paper
-audit report so a future agent does not need chat context.
+fragile Lean points. Link that handoff from the paper README so a future agent
+does not need chat context. Do not update the post-paper audit report or final
+validation report for this intermediate stop unless the paper is done or the
+user explicitly requested post-validation.
 After validation succeeds, immediately update the handoff/status language from
 "unvalidated" to the exact command that passed. Do not leave stale caveats that
 force the next agent to rerun work just to learn whether the current additions
@@ -208,13 +224,14 @@ reasonably available. Do not spend unbounded time following the exact proof line
 by line if a different or more precise argument proves the same paper-facing
 statement cleanly. In that case, keep the named theorem/lemma structure in the
 README, DAG, audit wrappers, and declaration names where practical; state the
-same theorem; and log the route change in `FINAL_VALIDATION_REPORT.md` under
-`Proof-Strategy Deviations` as a proof deviation. Do not replace a named-lemma
-path with a looser certificate, alternate theorem, or broad abstraction unless
-the resulting paper-facing endpoint still states the source result or the source
-route is false, imprecise, or genuinely inapplicable. If an auxiliary
-certificate is temporarily useful, keep it as a clearly marked staging device
-and continue toward the paper's named theorem itself.
+same theorem; and record the route change in the live README/handoff. During
+the paper-done or user-requested post-validation pass, carry it into
+`FINAL_VALIDATION_REPORT.md` under `Proof-Strategy Deviations`. Do not replace
+a named-lemma path with a looser certificate, alternate theorem, or broad
+abstraction unless the resulting paper-facing endpoint still states the source
+result or the source route is false, imprecise, or genuinely inapplicable. If
+an auxiliary certificate is temporarily useful, keep it as a clearly marked
+staging device and continue toward the paper's named theorem itself.
 
 For stable-matching/deferred-acceptance papers, load
 `references/proof-markets-social-choice.md` after the first status pass. It
@@ -513,10 +530,11 @@ the Lean statements against the paper.
   - **Paper-route vs formal-route discipline:** If formalization discovers that
     a paper lemma is misstated, too strong, or unnecessary for a later theorem,
     do not silently collapse the distinction. Record the source issue in the
-    README/validation report, keep the affected paper lemma partial/caveated,
-    and mark any later theorem green only if Lean proves that theorem through a
-    fully verified alternate route or through weaker assumptions already
-    discharged. If the later theorem merely assumes the problematic lemma, it is
+    README during active work and in the validation report only during
+    post-validation. Keep the affected paper lemma partial/caveated, and mark
+    any later theorem green only if Lean proves that theorem through a fully
+    verified alternate route or through weaker assumptions already discharged.
+    If the later theorem merely assumes the problematic lemma, it is
     conditional/caveated, not green.
 - **DAG Formatting and Clarity Mandates:**
   - **Visual Iteration Requirement:** After every substantive DAG edit, render the DAG, inspect the visual output, and keep adjusting layout until you can explicitly confirm that it looks clean with no box, legend, note, edge, or label overlap. Do not claim the DAG is done if you have not visually checked it or if any overlap remains.
@@ -533,8 +551,8 @@ the Lean statements against the paper.
     node should describe the source theorem's statement, not the Lean proof
     machinery that closed it. Do not fill a closed theorem box with internal
     helper names, certificate layers, construction details, or a list of every
-    bridge lemma. Put those details in the README status row, final report, or
-    proof comments.
+    bridge lemma. Put those details in the README status row, proof comments,
+    or the final report during post-validation.
     Include the actual source-facing conclusion or a faithful short formula
     summary in the DAG node itself so a human can recognize the paper result
     without opening the Lean file. For example, a closed Gaussian lemma node
@@ -645,11 +663,12 @@ the Lean statements against the paper.
 - The paper `README.md` is the live status ledger and handoff document for
   partial progress. A `FINAL_VALIDATION_REPORT.md` is not a handoff note; it is
   the final one-page human assessment created only when making a final claim
-  about a paper or completed proof phase. It must answer whether the paper is
-  verified, what additional assumptions were needed, whether mistakes were
-  found, and whether the Lean proof followed the paper strategy or used a
-  different route. When creating or updating a final validation report, also
-  update the front repository `README.md` paper-status table and
+  about a paper, or when the user explicitly asks for post-validation of a
+  completed proof phase. It must answer whether the paper is verified, what
+  additional assumptions were needed, whether mistakes were found, and whether
+  the Lean proof followed the paper strategy or used a different route. When
+  creating or updating a final validation report, also update the front
+  repository `README.md` paper-status table and
   `docs/ECONCSLEAN_CURRENT_STATUS.md` so the public entry points match the
   paper-local verdict.
 - For paper-specific status questions, the paper folder `README.md`,
@@ -787,7 +806,7 @@ search.
   verify that the final source wrapper does not expose them before calling the
   source theorem closed.
 - After closing a paper seam, run a stale-status grep over the paper README,
-  DAG, and final report before committing, for example:
+  DAG, and, during post-validation, final report before committing, for example:
   `rg "Previous status|not formalized|partially formalized|conditional|none for|source wrappers partial" papers/<Paper>`.
   Stale ledger wording is often the only remaining "gap" after Lean is green.
   Keep legend entries if the template includes them, but no actual paper node
@@ -1049,8 +1068,9 @@ Instead:
 
 Never enter a cycle of modifying a single line in a shell command just to test slightly different lemma names. Stop, use `exact?`, and proceed efficiently.
 
-Before declaring a paper or proof phase "done," run a final human-facing
-validation pass:
+Before declaring a paper "done," or when the user explicitly asks for
+post-validation of a completed proof phase, run a final human-facing validation
+pass:
 
 - Re-read `PaperInterface.lean` and check each named
   definition/theorem/corollary against the paper statement.

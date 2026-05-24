@@ -28,13 +28,25 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   lemmas in `StandardGaussianQuantileAPI`, strict payoff/probability algebra,
   then a paper-facing theorem saying apply strictly dominates above the cutoff
   and not applying strictly dominates below it.
-- For continuous Gaussian strategy games, consider an a.e. equilibrium surface
-  before forcing pointwise best response at null cutoff boundaries. The reusable
-  library surface is `EconCSLib.IsChoiceEquilibriumAE` with projections
+- For continuous Gaussian strategy games, default to an a.e. equilibrium
+  surface for strategy, best-response, uniqueness, and cutoff-boundary claims;
+  do not force pointwise best response at null cutoff boundaries unless the
+  paper explicitly needs it. The reusable library surface is
+  `EconCSLib.IsChoiceEquilibriumAE` with projections
   `isChoiceEquilibriumAE_feasible_ae`,
   `isChoiceEquilibriumAE_best_response_ae`,
   `isChoiceEquilibriumAE_consistency`, and the bridge
   `isChoiceEquilibriumAE_of_pointwise`.
+- For binary cutoff strategies with null boundaries, use
+  `EconCSLib.NoProfitableBinaryChoiceDeviationAE` and
+  `bool_choice_eq_decide_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_no_tie`
+  before writing paper-local a.e. case splits. If the payoff is affine with a
+  positive slope, `chosen_reference_le_value_ae_of_affine_noProfitableBinaryChoiceDeviationAE`
+  and `unchosen_value_le_reference_ae_of_affine_noProfitableBinaryChoiceDeviationAE`
+  extract the cutoff-side inequalities directly. Use
+  `noProfitableBinaryChoiceDeviationAE_of_bool_best_response_ae` and
+  `bool_best_response_ae_of_noProfitableBinaryChoiceDeviationAE` to move
+  between raw `∀ action : Bool` best-response clauses and the named predicate.
 - LG21 is the nearest model for Gaussian reporting/taking games with null
   boundary behavior. Its route defines `lg21SourceEquilibriumAE` in
   `papers/LG21TestOptionalPolicies/Theorem32AEEquilibrium.lean`, exposes
@@ -45,6 +57,13 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `lg21_ae_property_contradicts_positive_failure_mass`. When a GLM20 or
   similar proof starts treating an indifference cutoff as a pointwise
   obligation, inspect these LG21 wrappers before adding new assumptions.
+- Reuse the LG21 pattern at the library layer, not by copying LG21-specific
+  wrappers: project an a.e. equilibrium to `IsChoiceEquilibriumAE`, project
+  binary actions to `NoProfitableBinaryChoiceDeviationAE`, derive affine
+  chosen/unchosen inequalities with the positive-slope helpers, and use
+  `ae_property_contradicts_positive_failure_mass` for any positive-mass
+  violation. Keep pointwise equilibrium wrappers only as compatibility bridges
+  into the a.e. public theorem.
 - For two-school strategic application regions, define the incremental payoff
   explicitly before proving best response: below the fallback school's cutoff
   the value is the preferred-school value, while above it the incremental value
@@ -196,6 +215,14 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   the mass feasibility hypothesis separately, and add a no-tie premise if the
   source uses a strict inequality but the game objective is weak preference.
   Then compose that smaller bridge into the paper-facing equilibrium wrapper.
+- When generated policy-state tables leave many branch-conditioned
+  posterior/admitted-merit row equalities, create a compact row-package
+  structure and a packaged objective bridge before attacking the source game.
+  The concrete Bayesian-game proof should target that package with a.e.
+  strategy and posterior-law facts, while the already-compiled bridge handles
+  table bookkeeping and weighted-objective algebra. This avoids repeatedly
+  threading flat `honlyA`/`honlyB` premises through Theorem 3 and Proposition 5
+  wrappers.
 - For strategic admissions equilibrium theorems that are still certificate
   based, make the certificate target source-shaped before doing fixed-point
   work. Define the paper's displayed inequalities, exactly-one-group clauses,
