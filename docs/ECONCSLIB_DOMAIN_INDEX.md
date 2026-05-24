@@ -33,8 +33,8 @@ when you need material from a domain quickly.
   - `EconCSLib.Foundations.Graph`
   - `EconCSLib.Foundations.Optimization`
     (`Approximation`, `Argmax`, `Certificate`, `FiniteSearch`,
-    `LinearProgram`, `MoveGraph`, `ChoiceEquilibrium`, `BinaryChoice`,
-    `Endpoint`)
+    `LinearProgram`, `MoveGraph`, `ChoiceEquilibrium`, `ChoiceEquilibriumAE`,
+    `BinaryChoice`, `BinaryChoiceAE`, `Endpoint`)
     - `Approximation`: benchmark/dual upper-bound sandwich certificates for
       approximation and competitive-ratio proofs, including additive-error
       variants.
@@ -56,9 +56,15 @@ when you need material from a domain quickly.
       along feasible moves.
     - `ChoiceEquilibrium`: static choice-equilibrium data, feasibility,
       best-response, and consistency projections.
+    - `ChoiceEquilibriumAE`: almost-everywhere choice-equilibrium data for
+      continuous or mixed information laws with null boundary behavior.
     - `BinaryChoice`: two-action no-profitable-deviation predicates,
       projections from static choice equilibria, and threshold/tiebreak
       consequences for binary choice rules.
+    - `BinaryChoiceAE`: almost-everywhere binary no-profitable-deviation
+      predicates, conversions to and from raw Boolean best-response clauses,
+      a.e. projection from choice equilibria, no-tie threshold identification,
+      and affine cutoff consequences.
     - `Endpoint`: one-dimensional endpoint-move calculus from derivative
       signs, first/last-zero stopping lemmas, and one-sided local
       improvement/decrease steps for cutoff and interval-endpoint proofs.
@@ -205,9 +211,16 @@ when you need material from a domain quickly.
 
 ## Algorithms
 
-- Entrypoints: `EconCSLib.Algorithms.Online`, `EconCSLib.Algorithms.Complexity.Yao`
+- Entrypoints: `EconCSLib.Algorithms.Online`,
+  `EconCSLib.Algorithms.Complexity.Classes`,
+  `EconCSLib.Algorithms.Complexity.Yao`
 - Modules:
   - `Online/AdWords`, `Online/Regret`
+  - `Complexity/Classes`: abstract decision-problem, reduction,
+    reduction-closed hardness, randomized-class collapse, and
+    complexity-consequence interfaces for paper-local reductions
+  - `Complexity/Yao`: finite expectation algebra for Yao-style lower-bound
+    certificates
 
 ## Social Choice
 

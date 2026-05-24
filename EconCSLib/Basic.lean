@@ -1,4 +1,5 @@
 import EconCSLib.Foundations
+import EconCSLib.Algorithms.Complexity.Classes
 import EconCSLib.Algorithms.Online
 import EconCSLib.Algorithms.Complexity.Yao
 import EconCSLib.Algorithms.Online.AdWords

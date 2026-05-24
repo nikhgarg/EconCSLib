@@ -173,6 +173,15 @@ record the discrepancy in the paper handoff during active work and in the final
 report during post-validation. Only mark a paper-facing theorem as closed for
 the exact statement Lean actually proves.
 
+For rounding, discretization, PTAS, or finite-search proofs, track scale changes
+explicitly. If the source rounds values using one baseline scale but defines a
+new average, budget, or normalization after rounding, do not force an exact
+normalization back to the original scale. Build a two-scale interface: one
+parameter for the value grid and a separate parameter for the rounded
+instance's average/window, plus the finite count-cap or boundedness lemma that
+makes the search space finite. Keep any one-scale theorem as a clearly marked
+staging lemma until a source-faithful two-scale bridge exists.
+
 When starting a new paper, briefly inspect the repository's already-formalized
 papers in the same EC area and ask which proof moves should become general
 library tools. Do not force a detached library project before proving the paper,
@@ -237,6 +246,11 @@ For stable-matching/deferred-acceptance papers, load
 `references/proof-markets-social-choice.md` after the first status pass. It
 contains the matching-specific assumptions, strict-preference notation checks,
 DA infrastructure guidance, manipulation-rank warning, and IM05 repair notes.
+
+For papers with computational-complexity, hardness, approximation-hardness, or
+randomized-class claims, load `references/proof-algorithms-complexity.md` after
+the first status pass. It contains the workflow for separating Lean-verified
+reductions and solver transfers from external machine-level class semantics.
 
 ### 1.2 Library Layering Rule: Textbook vs. Audit Trail
 
