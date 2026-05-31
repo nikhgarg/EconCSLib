@@ -34,3 +34,6 @@ Pages is not enabled by this scaffold. To publish later:
 4. In the GitHub repository settings, set Pages to deploy from GitHub Actions.
 
 Until those steps happen, the site is just local source code.
+
+For the full publishing checklist, see
+[`docs/PAGES_PUBLISHING.md`](../docs/PAGES_PUBLISHING.md).

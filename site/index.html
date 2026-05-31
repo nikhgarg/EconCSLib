@@ -15,6 +15,7 @@
       <nav class="nav" aria-label="Primary">
         <a class="brand" href="#">EconCSLib</a>
         <div class="nav-links">
+          <a href="#paper">Paper</a>
           <a href="#status">Status</a>
           <a href="#architecture">Architecture</a>
           <a href="#contribute">Contribute</a>
@@ -57,6 +58,27 @@
         </div>
       </section>
 
+      <section class="band paper-draft" id="paper" aria-labelledby="paper-title">
+        <div class="section-heading">
+          <p class="eyebrow">Workshop paper</p>
+          <h2 id="paper-title">Draft paper and repository snapshot</h2>
+          <p>
+            The paper draft describes the repository architecture, current
+            verification status, and the AI-assisted workflow used to build the
+            paper formalizations.
+          </p>
+        </div>
+        <div class="paper-actions">
+          <a class="button primary" href="assets/econcslib-workshop-draft.pdf">Open draft PDF</a>
+          <a class="button" href="https://github.com/nikhgarg/EconCSLib">Browse source</a>
+        </div>
+        <p class="note">
+          This PDF is a draft artifact. Refresh
+          <code>site/assets/econcslib-workshop-draft.pdf</code> before enabling
+          GitHub Pages.
+        </p>
+      </section>
+
       <section class="band" id="status" aria-labelledby="status-title">
         <div class="section-heading">
           <p class="eyebrow">Current verification status</p>
@@ -93,6 +115,70 @@
               validation report, and caveats are ready for public review.
             </p>
           </article>
+        </div>
+
+        <div class="table-wrap" role="region" aria-label="Paper status table" tabindex="0">
+          <table class="status-table">
+            <thead>
+              <tr>
+                <th>Paper</th>
+                <th>Status</th>
+                <th>Main note</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>DSWG24 Discretization Bias</td>
+                <td>Verified</td>
+                <td>Proof-route deviations documented.</td>
+              </tr>
+              <tr>
+                <td>GHW01 Digital Goods</td>
+                <td>Verified</td>
+                <td>Finite certificate caveats documented.</td>
+              </tr>
+              <tr>
+                <td>GCG24 User-Item Fairness</td>
+                <td>Verified</td>
+                <td>Recommendation fairness statements closed.</td>
+              </tr>
+              <tr>
+                <td>Roth82 Stable Matching</td>
+                <td>Verified</td>
+                <td>Strict-profile matching theorems exposed.</td>
+              </tr>
+              <tr>
+                <td>GS62 College Admissions</td>
+                <td>Verified with caveat</td>
+                <td>Source scan quality documented.</td>
+              </tr>
+              <tr>
+                <td>MBJG25 Producer Fairness</td>
+                <td>Formalized with caveat</td>
+                <td>Boundary correction recorded.</td>
+              </tr>
+              <tr>
+                <td>MSVV07 AdWords</td>
+                <td>Formalized</td>
+                <td>Core AdWords and extensions closed.</td>
+              </tr>
+              <tr>
+                <td>LG21 Test-Optional Policies</td>
+                <td>Formalized</td>
+                <td>Section 3--4 source models closed.</td>
+              </tr>
+              <tr>
+                <td>GN21 Driver Surge Pricing</td>
+                <td>Formalized</td>
+                <td>CTMC lemmas and Theorems 1--4 exposed.</td>
+              </tr>
+              <tr>
+                <td>LMMS04 Fair Division</td>
+                <td>Public partial</td>
+                <td>Open seam is fixed-dimension IP runtime infrastructure.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <p class="more-link">

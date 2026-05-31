@@ -134,7 +134,8 @@ h1 {
   font-size: 1.18rem;
 }
 
-.actions {
+.actions,
+.paper-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -171,6 +172,14 @@ a:focus-visible {
 
 .band + .band {
   border-top: 1px solid var(--line);
+}
+
+.paper-draft {
+  background: var(--soft);
+  width: 100%;
+  max-width: none;
+  padding-left: max(20px, calc((100% - 1120px) / 2));
+  padding-right: max(20px, calc((100% - 1120px) / 2));
 }
 
 .intro {
@@ -228,6 +237,47 @@ a:focus-visible {
 
 .more-link {
   margin-top: 22px;
+}
+
+.note {
+  max-width: 760px;
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+}
+
+.status-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.status-table th,
+.status-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.status-table th {
+  color: var(--accent-strong);
+  background: #eef4f6;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.status-table tr:last-child td {
+  border-bottom: 0;
 }
 
 .contact {
