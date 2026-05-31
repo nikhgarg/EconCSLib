@@ -14,6 +14,8 @@ or what a completed formalization proves without reading proof internals.
   status, caveat, and review entrypoint.
 - [PUBLIC_REPOSITORY_WORKFLOW.md](PUBLIC_REPOSITORY_WORKFLOW.md): public/private
   repository split, completed-paper imports, and private partial-paper policy.
+- [PUBLIC_RELEASE_CHECKLIST.md](PUBLIC_RELEASE_CHECKLIST.md): checks before a
+  public announcement or broad external contribution request.
 - Paper-level `FINAL_VALIDATION_REPORT.md`, `PaperInterface.lean`, and
   `DependencyDAG.pdf` files under `papers/<PaperName>/`.
 

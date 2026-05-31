@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use EconCSLib, please cite the repository and the relevant formalized paper(s)."
+title: "EconCSLib: A Lean library and audit trail for Economics and Computation"
+type: software
+authors:
+  - family-names: Garg
+    given-names: Nikhil
+    email: ngarg@cornell.edu
+repository-code: "https://github.com/nikhgarg/EconCSLib"
+url: "https://github.com/nikhgarg/EconCSLib"
+date-released: "2026-05-31"
+keywords:
+  - Lean
+  - formal verification
+  - economics and computation
+  - mechanism design
+  - algorithmic game theory
+license: "NOASSERTION"

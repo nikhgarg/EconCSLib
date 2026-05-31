@@ -107,6 +107,7 @@ see [docs/REVIEW_DASHBOARD.md](docs/REVIEW_DASHBOARD.md).
 
 ## More Documentation
 
+- [CITATION.cff](CITATION.cff): citation metadata for the public repository.
 - [docs/README.md](docs/README.md): documentation index split into
   human-facing and agent-facing references.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): repository architecture,
@@ -121,4 +122,6 @@ see [docs/REVIEW_DASHBOARD.md](docs/REVIEW_DASHBOARD.md).
   optimization-library roadmap.
 - [docs/LEAN_STYLE.md](docs/LEAN_STYLE.md): Lean style conventions.
 - [docs/STATUS.md](docs/STATUS.md): controlled vocabulary for paper status.
+- [docs/PUBLIC_RELEASE_CHECKLIST.md](docs/PUBLIC_RELEASE_CHECKLIST.md): checks
+  before public announcements or broad external contribution requests.
 - [ROADMAP.md](ROADMAP.md): high-level project roadmap.
