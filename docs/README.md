@@ -13,6 +13,8 @@ or what a completed formalization proves without reading proof internals.
   author-paper formalization summary.
 - [REVIEW_DASHBOARD.md](REVIEW_DASHBOARD.md): theorem-statement review
   dashboard workflow.
+- [PUBLIC_REPOSITORY_WORKFLOW.md](PUBLIC_REPOSITORY_WORKFLOW.md): public/private
+  repository split, completed-paper imports, and private partial-paper policy.
 - Paper-level `FINAL_VALIDATION_REPORT.md`, `PaperInterface.lean`, and
   `DependencyDAG.pdf` files under `papers/<PaperName>/`.
 
