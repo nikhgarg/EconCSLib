@@ -10,7 +10,7 @@ EconCSLib has two connected goals:
 - maintain source-faithful, auditable formalizations of individual papers.
 
 The public repository should contain reusable library code, tooling, docs, and
-completed paper formalizations. Partially verified papers may be developed in
+completed paper formalizations. Partially formalized papers may be developed in
 private workspaces until their authors are ready to make them public.
 
 ## What To Contribute
