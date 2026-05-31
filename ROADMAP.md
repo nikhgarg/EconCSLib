@@ -46,7 +46,7 @@ paper formalizations privately and submit them when complete. A public paper
 contribution should include a compact `PaperInterface.lean`, a theorem-status
 ledger, a dependency DAG, a validation report, and a reproducible build target.
 
-Partially verified papers may remain in private repositories until their
+Partially formalized papers may remain in private repositories until their
 authors are ready to publish them. When a paper becomes public-ready, its
 paper-local history can be imported with filtered history rather than exposing
 unrelated unfinished work.
