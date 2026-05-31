@@ -1,17 +1,14 @@
-import MSVV07AdWords.MainTheorems
+import MSVV07AdWords.ProofInterface
 
 /-!
 # Paper Interface: MSVV07 AdWords
 
-This file is the single Lean file intended for human audit of the formalized
-surface of Mehta, Saberi, Vazirani, and Vazirani, *AdWords and Generalized
-Online Matching* (JACM 2007).
+This file is the compact human-facing statement surface for Mehta, Saberi,
+Vazirani, and Vazirani, *AdWords and Generalized Online Matching* (JACM 2007).
 
-The declarations below deliberately expose the paper-facing formulas for the
-finite AdWords model, Balance/MSVV rule, small-bids limit, and Section 7
-b-matching lower bound. The proofs are thin wrappers around the detailed
-formalization in `MainTheorems.lean`, `AdWords.lean`, `AdWordsExtensions.lean`,
-and `AdWordsLowerBound.lean`.
+It exposes the paper model formulas and the closed paper-facing theorem
+endpoints. The broader source-route LP and accounting audit ledger is retained
+in `ProofInterface.lean` and `PostPaperAudit.lean`.
 -/
 
 open scoped BigOperators
@@ -22,94 +19,82 @@ namespace MSVV07PaperFacing
 
 /-! ## Sections 2--3: finite AdWords model and Balance/MSVV rule -/
 
-/--
-Paper model. An AdWords instance consists of advertiser budgets `budget a` and
-query bids `bid a q`, where assigning query `q` to advertiser `a` earns
-`bid a q` and charges the same amount to `a`.
--/
+/-- Paper model: advertiser budgets and query bids. -/
 abbrev PaperInstance (Advertiser Query : Type*) :=
-  AdWordsInstance Advertiser Query
+  Proof.PaperInstance Advertiser Query
 
 /-- Paper assignment: every query is assigned to one advertiser or left unmatched. -/
 abbrev PaperAssignment (Advertiser Query : Type*) :=
-  Query → Option Advertiser
+  Proof.PaperAssignment Advertiser Query
+
+/-- Paper multiple-slot distinctness: no advertiser appears twice on one page. -/
+abbrev paperSlotsPerPageDistinct
+    {Advertiser Query : Type*} (Slot : Query → Type*)
+    (A : PaperAssignment Advertiser (Σ q : Query, Slot q)) : Prop :=
+  Proof.paperSlotsPerPageDistinct Slot A
 
 /-- Paper spend formula for advertiser `a` under assignment `A`. -/
 noncomputable abbrev paperSpend
     {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
     (I : PaperInstance Advertiser Query)
     (A : PaperAssignment Advertiser Query) (a : Advertiser) : ℝ :=
-  ∑ q : Query,
-    match A q with
-    | none => 0
-    | some a' => if a' = a then I.bid a q else 0
+  Proof.paperSpend I A a
 
 /-- Paper revenue formula for an assignment. -/
 noncomputable abbrev paperRevenue
     {Advertiser Query : Type*} [Fintype Query]
     (I : PaperInstance Advertiser Query)
     (A : PaperAssignment Advertiser Query) : ℝ :=
-  ∑ q : Query,
-    match A q with
-    | none => 0
-    | some a => I.bid a q
+  Proof.paperRevenue I A
 
 /-- Paper budget feasibility: no advertiser spends more than her budget. -/
 abbrev paperFeasible
     {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
     (I : PaperInstance Advertiser Query)
     (A : PaperAssignment Advertiser Query) : Prop :=
-  ∀ a, paperSpend I A a ≤ I.budget a
+  Proof.paperFeasible I A
 
 /-- Paper small-bids condition: every bid is at most an `epsilon` budget fraction. -/
 abbrev paperSmallBids
     {Advertiser Query : Type*}
     (I : PaperInstance Advertiser Query) (epsilon : ℝ) : Prop :=
-  ∀ a q, I.bid a q ≤ epsilon * I.budget a
+  Proof.paperSmallBids I epsilon
 
-/--
-Paper fractional LP value: the relaxed assignment variable `x a q` contributes
-`bid a q * x a q`.
--/
+/-- Paper fractional LP value. -/
 noncomputable abbrev paperFractionalRevenue
     {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]
     (I : PaperInstance Advertiser Query)
     (x : Advertiser → Query → ℝ) : ℝ :=
-  ∑ q : Query, ∑ a : Advertiser, I.bid a q * x a q
+  Proof.paperFractionalRevenue I x
 
-/--
-Paper fractional LP feasibility: nonnegative assignment, at most one unit per
-query, and budget feasibility for every advertiser.
--/
-structure PaperFractionalFeasible
+/-- Paper fractional LP feasibility. -/
+abbrev PaperFractionalFeasible
     {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]
     (I : PaperInstance Advertiser Query)
-    (x : Advertiser → Query → ℝ) : Prop where
-  nonneg : ∀ a q, 0 ≤ x a q
-  query : ∀ q, (∑ a : Advertiser, x a q) ≤ 1
-  budget : ∀ a, (∑ q : Query, I.bid a q * x a q) ≤ I.budget a
+    (x : Advertiser → Query → ℝ) : Prop :=
+  Proof.PaperFractionalFeasible I x
 
 /-- The paper's MSVV/Balance tradeoff function at spent fraction `s`. -/
 noncomputable abbrev paperTradeoff (s : ℝ) : ℝ :=
-  1 - Real.exp (s - 1)
+  Proof.paperTradeoff s
 
 /-- The paper's competitive ratio `1 - 1/e`. -/
 noncomputable abbrev paperMsvvRatio : ℝ :=
-  1 - 1 / Real.exp 1
+  Proof.paperMsvvRatio
 
 /-- Paper Balance/MSVV scaled bid. -/
 noncomputable abbrev paperBalanceScore
     {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
     (I : PaperInstance Advertiser Query)
     (A : PaperAssignment Advertiser Query) (a : Advertiser) (q : Query) : ℝ :=
-  I.bid a q * paperTradeoff (paperSpend I A a / I.budget a)
+  Proof.paperBalanceScore I A a q
 
 /-- Paper feasibility for assigning query `q` next to advertiser `a`. -/
 abbrev paperCanAssign
     {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
     (I : PaperInstance Advertiser Query)
     (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) : Prop :=
-  paperSpend I A a + I.bid a q ≤ I.budget a
+  Proof.paperCanAssign I A q a
 
 /--
 Paper Balance/MSVV choice rule: assign the query to a feasible advertiser with
@@ -120,196 +105,18 @@ abbrev paperIsBalanceChoice
     [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
     (I : PaperInstance Advertiser Query)
     (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) : Prop :=
-  paperCanAssign I A q a ∧
-    ∀ b, paperCanAssign I A q b →
-      paperBalanceScore I A b q ≤ paperBalanceScore I A a q
-
-theorem paperSpend_eq_library
-    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
-    (I : PaperInstance Advertiser Query)
-    (A : PaperAssignment Advertiser Query) (a : Advertiser) :
-    paperSpend I A a = I.spend A a := by
-  rfl
-
-theorem paperRevenue_eq_library
-    {Advertiser Query : Type*} [Fintype Query]
-    (I : PaperInstance Advertiser Query)
-    (A : PaperAssignment Advertiser Query) :
-    paperRevenue I A = I.revenue A := by
-  rfl
-
-theorem paperFeasible_eq_library
-    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
-    (I : PaperInstance Advertiser Query)
-    (A : PaperAssignment Advertiser Query) :
-    paperFeasible I A = I.Feasible A := by
-  rfl
-
-theorem paperSmallBids_eq_library
-    {Advertiser Query : Type*}
-    (I : PaperInstance Advertiser Query) (epsilon : ℝ) :
-    paperSmallBids I epsilon = I.SmallBids epsilon := by
-  rfl
-
-theorem paperFractionalRevenue_eq_library
-    {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]
-    (I : PaperInstance Advertiser Query)
-    (x : Advertiser → Query → ℝ) :
-    paperFractionalRevenue I x = I.fractionalRevenue x := by
-  rfl
-
-theorem paperTradeoff_eq_library (s : ℝ) :
-    paperTradeoff s = AdWordsInstance.balanceDiscount s := by
-  rfl
-
-theorem paperMsvvRatio_eq_library :
-    paperMsvvRatio = AdWordsInstance.msvvRatio := by
-  rfl
-
-theorem paperBalanceScore_eq_library
-    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
-    (I : PaperInstance Advertiser Query)
-    (A : PaperAssignment Advertiser Query) (a : Advertiser) (q : Query) :
-    paperBalanceScore I A a q = I.balanceScore A a q := by
-  rfl
-
-theorem paperCanAssign_eq_library
-    {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
-    (I : PaperInstance Advertiser Query)
-    (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) :
-    paperCanAssign I A q a = I.CanAssign A q a := by
-  rfl
-
-theorem paperIsBalanceChoice_eq_library
-    {Advertiser Query : Type*}
-    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
-    (I : PaperInstance Advertiser Query)
-    (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) :
-    paperIsBalanceChoice I A q a = I.IsBalanceChoice A q a := by
-  rfl
-
-/-! ## Core LP and online-run support used by the paper proof -/
-
-/-- Empty assignments are feasible under nonnegative budgets. -/
-theorem section2_empty_assignment_feasible
-    {Advertiser Query : Type*}
-    [Fintype Query] [DecidableEq Advertiser]
-    (I : PaperInstance Advertiser Query)
-    (hbudget : ∀ a, 0 ≤ I.budget a) :
-    paperFeasible I
-      (AdWordsInstance.emptyAssignment :
-        PaperAssignment Advertiser Query) := by
-  simpa [paperFeasible_eq_library] using
-    paper_adwords_empty_assignment_feasible I hbudget
-
-/-- Finite instances have an offline optimum assignment. -/
-theorem section2_offline_optimum_exists
-    {Advertiser Query : Type*}
-    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
-    (I : PaperInstance Advertiser Query)
-    (hbudget : ∀ a, 0 ≤ I.budget a) :
-    ∃ A : PaperAssignment Advertiser Query,
-      I.IsOptimalAssignment A := by
-  exact paper_adwords_offline_optimum_exists I hbudget
-
-/-- Paper LP weak duality for the fractional AdWords relaxation. -/
-theorem section2_fractional_lp_weak_duality
-    {Advertiser Query : Type*}
-    [Fintype Advertiser] [Fintype Query]
-    (I : PaperInstance Advertiser Query)
-    (x : Advertiser → Query → ℝ)
-    (alpha : Advertiser → ℝ) (beta : Query → ℝ)
-    (hfeasible : I.FractionalFeasible x)
-    (hdual : I.DualFeasible alpha beta) :
-    paperFractionalRevenue I x ≤ I.dualObjective alpha beta := by
-  simpa [paperFractionalRevenue_eq_library] using
-    paper_adwords_fractional_lp_weak_duality I x alpha beta hfeasible hdual
-
-/-- A Balance/MSVV maximizer exists whenever some advertiser can accept the query. -/
-theorem section3_balance_choice_exists
-    {Advertiser Query : Type*}
-    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
-    (I : PaperInstance Advertiser Query)
-    (A : PaperAssignment Advertiser Query) (q : Query)
-    (h : ∃ a, paperCanAssign I A q a) :
-    ∃ a, paperIsBalanceChoice I A q a := by
-  simpa [paperCanAssign_eq_library, paperIsBalanceChoice_eq_library] using
-    paper_adwords_balance_choice_exists I A q h
-
-/-- The canonical Balance/MSVV online run is budget-feasible. -/
-theorem section3_balance_run_assignment_feasible
-    {Advertiser Query : Type*}
-    [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
-    [DecidableEq Query]
-    (I : PaperInstance Advertiser Query)
-    (hbudget : ∀ a, 0 ≤ I.budget a)
-    (history : List Query) :
-    paperFeasible I (I.runAssignment I.balanceChoiceRule history) := by
-  simpa [paperFeasible_eq_library] using
-    paper_adwords_balance_run_assignment_feasible I hbudget history
+  Proof.paperIsBalanceChoice I A q a
 
 /-! ## Section 5 / Theorem 8: Balance/MSVV is `1 - 1/e` competitive -/
 
 /--
 Paper-facing small-bids limiting family. The paper's limiting theorem is about
-a sequence of finite instances whose bids become small relative to budgets;
-these fields spell out that limiting model.
+a sequence of finite instances whose bids become small relative to budgets.
 -/
-structure PaperSmallBidsLimitFamily
+abbrev PaperSmallBidsLimitFamily
     (Advertiser : Type*) [Fintype Advertiser] [Nonempty Advertiser]
-    [DecidableEq Advertiser] where
-  queryCount : ℕ → ℕ
-  instanceAt : (k : ℕ) → PaperInstance Advertiser (Fin (queryCount k))
-  optLimit : ℝ
-  revenueLimit : ℝ
-  nonnegative_bids : ∀ k, (instanceAt k).NonnegativeBids
-  positive_budgets : ∀ k, (instanceAt k).PositiveBudgets
-  maxBidSum_pos :
-    ∀ k, 0 < ∑ q : Fin (queryCount k), (instanceAt k).maxBidForQuery q
-  small_bids_eventually :
-    ∀ delta : ℝ, 0 < delta →
-      ∃ N : ℕ, ∀ k : ℕ, N ≤ k →
-        paperSmallBids (instanceAt k)
-          (min 1
-            (delta / ((Real.exp 1 + 1) *
-              (∑ q : Fin (queryCount k), (instanceAt k).maxBidForQuery q))))
-  offlineOptimum_tendsTo :
-    Sequence.SeqTendsTo
-      (fun k =>
-        (instanceAt k).offlineOptimumValue
-          (fun a => (positive_budgets k a).le))
-      optLimit
-  revenue_tendsTo :
-    Sequence.SeqTendsTo
-      (fun k =>
-        (instanceAt k).revenue
-          ((instanceAt k).runAssignment (instanceAt k).balanceChoiceRule
-            (List.finRange (queryCount k))))
-      revenueLimit
-
-namespace PaperSmallBidsLimitFamily
-
-noncomputable def toLibrary
-    {Advertiser : Type*} [Fintype Advertiser] [Nonempty Advertiser]
-    [DecidableEq Advertiser]
-    (F : PaperSmallBidsLimitFamily Advertiser) :
-    AdWordsInstance.MsvvSmallBidsLimitFamily Advertiser where
-  queryCount := F.queryCount
-  instanceAt := F.instanceAt
-  optLimit := F.optLimit
-  revenueLimit := F.revenueLimit
-  nonnegative_bids := F.nonnegative_bids
-  positive_budgets := F.positive_budgets
-  maxBidSum_pos := F.maxBidSum_pos
-  small_bids_eventually := by
-    intro delta hdelta
-    obtain ⟨N, hN⟩ := F.small_bids_eventually delta hdelta
-    exact ⟨N, fun k hk => by
-      simpa [paperSmallBids_eq_library] using hN k hk⟩
-  offlineOptimum_tendsTo := F.offlineOptimum_tendsTo
-  revenue_tendsTo := F.revenue_tendsTo
-
-end PaperSmallBidsLimitFamily
+    [DecidableEq Advertiser] :=
+  Proof.PaperSmallBidsLimitFamily Advertiser
 
 /--
 Theorem 8, finite explicit-error form. For a complete finite query history,
@@ -335,11 +142,9 @@ theorem theorem8_finite_explicit_error
       paperRevenue I (I.runAssignment I.balanceChoiceRule history) +
         epsilon * (Real.exp 1 + 1) *
           (∑ q : Query, I.maxBidForQuery q) := by
-  rw [paperMsvvRatio_eq_library, paperRevenue_eq_library]
   exact
-    paper_adwords_balance_msvv_approx_competitive_with_query_sum_error_bound
-      I hbid hbudget history hnodup hcover hepsilon hepsilon_le_one
-      (by simpa [paperSmallBids_eq_library] using hsmall)
+    Proof.theorem8_finite_explicit_error
+      I hbid hbudget history hnodup hcover hepsilon hepsilon_le_one hsmall
 
 /--
 Theorem 8, paper-level limiting endpoint. Any finite-query small-bids family
@@ -351,115 +156,433 @@ theorem theorem8_balance_msvv_competitive_of_small_bids_limit_family
     [Fintype Advertiser] [Nonempty Advertiser] [DecidableEq Advertiser]
     (F : PaperSmallBidsLimitFamily Advertiser) :
     paperMsvvRatio * F.optLimit ≤ F.revenueLimit := by
-  rw [paperMsvvRatio_eq_library]
-  exact
-    paper_adwords_balance_msvv_competitive_of_small_bids_limit_family
-      F.toLibrary
+  exact Proof.theorem8_balance_msvv_competitive_of_small_bids_limit_family F
 
 /-! ## Section 6 and Section 8: model extensions by effective bids -/
 
-/-- Section 6: arbitrary effective charges preserve the paper small-bids condition. -/
-theorem section6_effective_bids_small_bids
+/--
+Section 6 items 1--2. Different advertiser budgets and nonexhaustive optima are
+already part of the base AdWords model, so the finite explicit Theorem 8
+guarantee applies without changing the instance.
+-/
+theorem section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error
     {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
     (I : PaperInstance Advertiser Query)
-    (effectiveBid : Advertiser → Query → ℝ) {epsilon : ℝ}
-    (hsmall : ∀ a q, effectiveBid a q ≤ epsilon * I.budget a) :
-    paperSmallBids (I.withEffectiveBids effectiveBid) epsilon := by
-  simpa [paperSmallBids_eq_library] using
-    paper_adwords_effective_bids_small_bids I effectiveBid hsmall
-
-/-- Section 6: click-through-rate effective bids preserve small bids when CTRs are at most one. -/
-theorem section6_click_through_rates_small_bids
-    {Advertiser Query : Type*}
-    (I : PaperInstance Advertiser Query)
-    (ctr : Advertiser → Query → ℝ) {epsilon : ℝ}
     (hbid : I.NonnegativeBids)
-    (hctr_le_one : ∀ a q, ctr a q ≤ 1)
-    (hsmall : paperSmallBids I epsilon) :
-    paperSmallBids (I.withClickThroughRates ctr) epsilon := by
-  simpa [paperSmallBids_eq_library] using
-    paper_adwords_click_through_rates_small_bids I ctr hctr_le_one hbid
-      (by simpa [paperSmallBids_eq_library] using hsmall)
-
-/-- Section 6: delayed-entry availability masks preserve small bids. -/
-theorem section6_availability_small_bids
-    {Advertiser Query : Type*}
-    (I : PaperInstance Advertiser Query)
-    (available : Advertiser → Query → Prop) {epsilon : ℝ}
-    [∀ a q, Decidable (available a q)]
-    (hepsilon : 0 ≤ epsilon)
     (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {epsilon : ℝ}
+    (hepsilon : 0 ≤ epsilon)
+    (hepsilon_le_one : epsilon ≤ 1)
     (hsmall : paperSmallBids I epsilon) :
-    paperSmallBids (I.withAvailability available) epsilon := by
-  simpa [paperSmallBids_eq_library] using
-    paper_adwords_availability_small_bids I available hepsilon hbudget
-      (by simpa [paperSmallBids_eq_library] using hsmall)
+    paperMsvvRatio *
+        I.offlineOptimumValue (fun a => (hbudget a).le) ≤
+      paperRevenue I (I.runAssignment I.balanceChoiceRule history) +
+        epsilon * (Real.exp 1 + 1) *
+          (∑ q : Query, I.maxBidForQuery q) := by
+  exact
+    Proof.section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error
+      I hbid hbudget history hnodup hcover hepsilon hepsilon_le_one hsmall
 
-/-- Section 6: multiple slots per query reduce to distinct slot-query IDs. -/
-theorem section6_multiple_slots_small_bids
-    {Advertiser Query : Type*}
-    (I : PaperInstance Advertiser Query) {epsilon : ℝ}
-    (Slot : Query → Type*)
-    (hsmall : paperSmallBids I epsilon) :
-    paperSmallBids (I.withSlots Slot) epsilon := by
-  simpa [paperSmallBids_eq_library] using
-    paper_adwords_multiple_slots_small_bids I Slot
-      (by simpa [paperSmallBids_eq_library] using hsmall)
+/-- Section 6 next-price charge from all bidders, floored at zero. -/
+noncomputable abbrev section6_next_highest_bid_all
+    {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]
+    (I : PaperInstance Advertiser Query) (a : Advertiser) (q : Query) : ℝ :=
+  Proof.section6_next_highest_bid_all I a q
 
-/-- Section 8: advertiser-weighted effective bids preserve small bids for weights in `[0,1]`. -/
-theorem section8_weighted_bids_small_bids
-    {Advertiser Query : Type*}
+/-- Section 6 next-price charge among alive bidders, floored at zero. -/
+noncomputable abbrev section6_next_highest_bid_alive
+    {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]
     (I : PaperInstance Advertiser Query)
-    (weight : Advertiser → ℝ) {epsilon : ℝ}
-    (hbid : I.NonnegativeBids)
-    (hweight_le_one : ∀ a, weight a ≤ 1)
-    (hsmall : paperSmallBids I epsilon) :
-    paperSmallBids (I.withAdvertiserWeights weight) epsilon := by
-  simpa [paperSmallBids_eq_library] using
-    paper_adwords_weighted_bids_small_bids I weight hweight_le_one hbid
-      (by simpa [paperSmallBids_eq_library] using hsmall)
+    (alive : Advertiser → Query → Prop) [∀ a q, Decidable (alive a q)]
+    (a : Advertiser) (q : Query) : ℝ :=
+  Proof.section6_next_highest_bid_alive I alive a q
 
-/-! ## Section 7 / Theorem 9: b-matching randomized lower bound -/
+/-- Section 6 effective-bid reduction: finite explicit Theorem 8 guarantee. -/
+theorem section6_effective_bids_theorem8_finite_explicit_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : PaperInstance Advertiser Query)
+    (effectiveBid : Advertiser → Query → ℝ)
+    (hbid : ∀ a q, 0 ≤ effectiveBid a q)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {epsilon : ℝ}
+    (hepsilon : 0 ≤ epsilon)
+    (hepsilon_le_one : epsilon ≤ 1)
+    (hsmall : ∀ a q, effectiveBid a q ≤ epsilon * I.budget a) :
+    paperMsvvRatio *
+        (I.withEffectiveBids effectiveBid).offlineOptimumValue
+          (fun a => (hbudget a).le) ≤
+      (I.withEffectiveBids effectiveBid).revenue
+        ((I.withEffectiveBids effectiveBid).runAssignment
+          (I.withEffectiveBids effectiveBid).balanceChoiceRule history) +
+        epsilon * (Real.exp 1 + 1) *
+          (∑ q : Query, (I.withEffectiveBids effectiveBid).maxBidForQuery q) := by
+  exact
+    Proof.section6_effective_bids_theorem8_finite_explicit_error
+      I effectiveBid hbid hbudget history hnodup hcover
+      hepsilon hepsilon_le_one hsmall
+
+/-- Section 6 next-highest-bid charges, all-bidders variant. -/
+theorem section6_next_highest_bid_all_theorem8_finite_explicit_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : PaperInstance Advertiser Query)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover :
+      AdWordsInstance.historyFinset history = Finset.univ)
+    {epsilon : ℝ}
+    (hepsilon : 0 ≤ epsilon)
+    (hepsilon_le_one : epsilon ≤ 1)
+    (hnext_small :
+      ∀ a q, section6_next_highest_bid_all I a q ≤ epsilon * I.budget a) :
+    paperMsvvRatio *
+        (I.withEffectiveBids (section6_next_highest_bid_all I)).offlineOptimumValue
+          (fun a => (hbudget a).le) ≤
+      paperRevenue (I.withEffectiveBids (section6_next_highest_bid_all I))
+        ((I.withEffectiveBids (section6_next_highest_bid_all I)).runAssignment
+          (I.withEffectiveBids
+            (section6_next_highest_bid_all I)).balanceChoiceRule history) +
+        epsilon * (Real.exp 1 + 1) *
+          (∑ q : Query,
+            (I.withEffectiveBids
+              (section6_next_highest_bid_all I)).maxBidForQuery q) := by
+  exact
+    Proof.section6_next_highest_bid_all_theorem8_finite_explicit_error
+      I hbudget history hnodup hcover hepsilon hepsilon_le_one hnext_small
+
+/-- Section 6 next-highest-bid charges, alive-bidders variant. -/
+theorem section6_next_highest_bid_alive_theorem8_finite_explicit_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : PaperInstance Advertiser Query)
+    (alive : Advertiser → Query → Prop) [∀ a q, Decidable (alive a q)]
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover :
+      AdWordsInstance.historyFinset history = Finset.univ)
+    {epsilon : ℝ}
+    (hepsilon : 0 ≤ epsilon)
+    (hepsilon_le_one : epsilon ≤ 1)
+    (hnext_small :
+      ∀ a q, section6_next_highest_bid_alive I alive a q ≤
+        epsilon * I.budget a) :
+    paperMsvvRatio *
+        (I.withEffectiveBids
+          (section6_next_highest_bid_alive I alive)).offlineOptimumValue
+          (fun a => (hbudget a).le) ≤
+      paperRevenue
+        (I.withEffectiveBids (section6_next_highest_bid_alive I alive))
+        ((I.withEffectiveBids
+          (section6_next_highest_bid_alive I alive)).runAssignment
+          (I.withEffectiveBids
+            (section6_next_highest_bid_alive I alive)).balanceChoiceRule history) +
+        epsilon * (Real.exp 1 + 1) *
+          (∑ q : Query,
+            (I.withEffectiveBids
+              (section6_next_highest_bid_alive I alive)).maxBidForQuery q) := by
+  exact
+    Proof.section6_next_highest_bid_alive_theorem8_finite_explicit_error
+      I alive hbudget history hnodup hcover hepsilon hepsilon_le_one hnext_small
+
+/-- Section 6 click-through rates: finite explicit Theorem 8 guarantee. -/
+theorem section6_click_through_rates_theorem8_finite_explicit_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : PaperInstance Advertiser Query)
+    (ctr : Advertiser → Query → ℝ)
+    (hctr_nonneg : ∀ a q, 0 ≤ ctr a q)
+    (hctr_le_one : ∀ a q, ctr a q ≤ 1)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {epsilon : ℝ}
+    (hepsilon : 0 ≤ epsilon)
+    (hepsilon_le_one : epsilon ≤ 1)
+    (hsmall : paperSmallBids I epsilon) :
+    paperMsvvRatio *
+        (I.withClickThroughRates ctr).offlineOptimumValue
+          (fun a => (hbudget a).le) ≤
+      (I.withClickThroughRates ctr).revenue
+        ((I.withClickThroughRates ctr).runAssignment
+          (I.withClickThroughRates ctr).balanceChoiceRule history) +
+        epsilon * (Real.exp 1 + 1) *
+          (∑ q : Query, (I.withClickThroughRates ctr).maxBidForQuery q) := by
+  exact
+    Proof.section6_click_through_rates_theorem8_finite_explicit_error
+      I ctr hctr_nonneg hctr_le_one hbid hbudget history hnodup hcover
+      hepsilon hepsilon_le_one hsmall
+
+/-- Section 6 delayed-entry availability: finite explicit Theorem 8 guarantee. -/
+theorem section6_availability_theorem8_finite_explicit_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : PaperInstance Advertiser Query)
+    (available : Advertiser → Query → Prop)
+    [∀ a q, Decidable (available a q)]
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {epsilon : ℝ}
+    (hepsilon : 0 ≤ epsilon)
+    (hepsilon_le_one : epsilon ≤ 1)
+    (hsmall : paperSmallBids I epsilon) :
+    paperMsvvRatio *
+        (I.withAvailability available).offlineOptimumValue
+          (fun a => (hbudget a).le) ≤
+      (I.withAvailability available).revenue
+        ((I.withAvailability available).runAssignment
+          (I.withAvailability available).balanceChoiceRule history) +
+        epsilon * (Real.exp 1 + 1) *
+          (∑ q : Query, (I.withAvailability available).maxBidForQuery q) := by
+  exact
+    Proof.section6_availability_theorem8_finite_explicit_error
+      I available hbid hbudget history hnodup hcover hepsilon hepsilon_le_one hsmall
+
+/-- Section 6 multiple slots: finite explicit Theorem 8 guarantee. -/
+theorem section6_multiple_slots_theorem8_finite_explicit_error
+    {Advertiser Query : Type*} {Slot : Query → Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype (Σ q : Query, Slot q)]
+    [DecidableEq Advertiser] [DecidableEq (Σ q : Query, Slot q)]
+    (I : PaperInstance Advertiser Query)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List (Σ q : Query, Slot q))
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {epsilon : ℝ}
+    (hepsilon : 0 ≤ epsilon)
+    (hepsilon_le_one : epsilon ≤ 1)
+    (hsmall : paperSmallBids I epsilon) :
+    paperMsvvRatio *
+        (I.withSlots Slot).offlineOptimumValue
+          (fun a => (hbudget a).le) ≤
+      paperRevenue (I.withSlots Slot)
+        ((I.withSlots Slot).runAssignment
+          (I.withSlots Slot).balanceChoiceRule history) +
+        epsilon * (Real.exp 1 + 1) *
+          (∑ q : Σ q : Query, Slot q, (I.withSlots Slot).maxBidForQuery q) := by
+  exact
+    Proof.section6_multiple_slots_theorem8_finite_explicit_error
+      I hbid hbudget history hnodup hcover hepsilon hepsilon_le_one hsmall
+
+/--
+Section 6 multiple slots: source-shaped page-level finite explicit Theorem 8
+guarantee. On each page `q`, Balance chooses the top `slots q` distinct feasible
+advertisers by current scaled bid, and competes with the page-level offline
+optimum subject to the same per-page cardinality and advertiser-budget
+constraints.
+-/
+theorem section6_page_top_balance_theorem8_finite_explicit_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : PaperInstance Advertiser Query)
+    (slots : Query → ℕ)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {epsilon : ℝ}
+    (hepsilon : 0 ≤ epsilon)
+    (hepsilon_le_one : epsilon ≤ 1)
+    (hsmall : paperSmallBids I epsilon) :
+    paperMsvvRatio *
+        I.pageOfflineOptimumValue slots (fun a => (hbudget a).le) ≤
+      I.pageRevenue
+        (I.runPageAssignment slots (I.pageTopBalanceRule slots) history) +
+        epsilon * (Real.exp 1 + 1) *
+          I.pageHistoryMaxBidSum slots history := by
+  exact
+    Proof.section6_page_top_balance_theorem8_finite_explicit_error
+      I slots hbid hbudget history hnodup hcover
+      hepsilon hepsilon_le_one hsmall
+
+/--
+Section 6 multiple slots: the distinct-choice wrapper assigns any advertiser to
+at most one slot of each original query during the slot-expanded online run.
+-/
+theorem section6_multiple_slots_distinct_choice_run_assignment_per_page_distinct
+    {Advertiser Query : Type*} {Slot : Query → Type*}
+    [Fintype Advertiser] [Fintype (Σ q : Query, Slot q)]
+    [DecidableEq Advertiser] [DecidableEq (Σ q : Query, Slot q)]
+    (I : PaperInstance Advertiser Query)
+    (history : List (Σ q : Query, Slot q)) :
+    paperSlotsPerPageDistinct Slot
+      ((I.withSlots Slot).runAssignment
+        (AdWordsInstance.withSlotsDistinctChoice Slot
+          (I.withSlots Slot).balanceChoiceRule)
+        history) := by
+  exact
+    Proof.section6_multiple_slots_distinct_choice_run_per_page_distinct
+      I (I.withSlots Slot).balanceChoiceRule history
+
+/-- Section 8 advertiser weights: finite explicit Theorem 8 guarantee. -/
+theorem section8_weighted_bids_theorem8_finite_explicit_error
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : PaperInstance Advertiser Query)
+    (weight : Advertiser → ℝ)
+    (hweight_nonneg : ∀ a, 0 ≤ weight a)
+    (hweight_le_one : ∀ a, weight a ≤ 1)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {epsilon : ℝ}
+    (hepsilon : 0 ≤ epsilon)
+    (hepsilon_le_one : epsilon ≤ 1)
+    (hsmall : paperSmallBids I epsilon) :
+    paperMsvvRatio *
+        (I.withAdvertiserWeights weight).offlineOptimumValue
+          (fun a => (hbudget a).le) ≤
+      (I.withAdvertiserWeights weight).revenue
+        ((I.withAdvertiserWeights weight).runAssignment
+          (I.withAdvertiserWeights weight).balanceChoiceRule history) +
+        epsilon * (Real.exp 1 + 1) *
+          (∑ q : Query, (I.withAdvertiserWeights weight).maxBidForQuery q) := by
+  exact
+    Proof.section8_weighted_bids_theorem8_finite_explicit_error
+      I weight hweight_nonneg hweight_le_one hbid hbudget history hnodup hcover
+      hepsilon hepsilon_le_one hsmall
+
+/--
+Section 8 advertiser weights, stated directly for the weighted effective-bid
+small-bids regime.
+-/
+theorem section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids
+    {Advertiser Query : Type*}
+    [Fintype Advertiser] [Nonempty Advertiser]
+    [Fintype Query] [DecidableEq Advertiser] [DecidableEq Query]
+    (I : PaperInstance Advertiser Query)
+    (weight : Advertiser → ℝ)
+    (hweight_nonneg : ∀ a, 0 ≤ weight a)
+    (hbid : I.NonnegativeBids)
+    (hbudget : I.PositiveBudgets)
+    (history : List Query)
+    (hnodup : history.Nodup)
+    (hcover : AdWordsInstance.historyFinset history = Finset.univ)
+    {epsilon : ℝ}
+    (hepsilon : 0 ≤ epsilon)
+    (hepsilon_le_one : epsilon ≤ 1)
+    (hweighted_small :
+      ∀ a q, weight a * I.bid a q ≤ epsilon * I.budget a) :
+    paperMsvvRatio *
+        (I.withAdvertiserWeights weight).offlineOptimumValue
+          (fun a => (hbudget a).le) ≤
+      (I.withAdvertiserWeights weight).revenue
+        ((I.withAdvertiserWeights weight).runAssignment
+          (I.withAdvertiserWeights weight).balanceChoiceRule history) +
+        epsilon * (Real.exp 1 + 1) *
+          (∑ q : Query, (I.withAdvertiserWeights weight).maxBidForQuery q) := by
+  exact
+    Proof.section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids
+      I weight hweight_nonneg hbid hbudget history hnodup hcover
+      hepsilon hepsilon_le_one hweighted_small
+
+/-! ## Section 7 / Theorem 9: lower bound -/
 
 /-- The hard distribution in Theorem 9 is uniform over bidder permutations. -/
 noncomputable abbrev theorem9HardDistribution (N : ℕ) :
     PMF (Equiv.Perm (Fin N)) :=
-  uniformPermutationDistribution N
+  Proof.theorem9HardDistribution N
 
 /--
-Theorem 9 deterministic algorithms in this formalization: a finite integral
-prefix algorithm sees only the observed prefix and chooses at most one visible
-eligible bidder each round.
+Deterministic online integral prefix algorithms used as the concrete Theorem 9
+algorithm model.
 -/
 abbrev theorem9IntegralPrefixAlgorithm (N : ℕ) :=
-  BMatchingIntegralPrefixAlgorithm N
+  Proof.theorem9IntegralPrefixAlgorithm N
+
+/--
+Randomized online integral prefix algorithms: distributions over deterministic
+prefix algorithms.
+-/
+abbrev theorem9RandomizedOnlineAlgorithm (N : ℕ) :=
+  Proof.theorem9RandomizedOnlineAlgorithm N
+
+/--
+The broader finite online-information model for Theorem 9: feasible allocation
+rules that depend only on the observed prefix of the permutation instance.
+-/
+abbrev theorem9FeasiblePrefixRuleFamily
+    (Algorithm : ℕ → Type*)
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)] :=
+  Proof.theorem9FeasiblePrefixRuleFamily Algorithm
 
 /-- The capped normalized revenue expression used in the Section 7 proof. -/
 noncomputable abbrev theorem9CappedNormalizedRevenue
     (N : ℕ) (algorithm : theorem9IntegralPrefixAlgorithm N)
     (permutation : Equiv.Perm (Fin N)) : ℝ :=
-  paper_adwords_theorem9_integral_prefix_algorithm_family.normalizedRevenue
-    N algorithm permutation
+  Proof.theorem9CappedNormalizedRevenue N algorithm permutation
 
 /--
-Theorem 9 harmonic-cap lemma: the finite normalized hard-instance revenue cap
-is eventually within every positive additive error of `1 - 1/e`.
+The canonical payoff for integral prefix algorithms is definitionally the
+paper's capped normalized spend.
 -/
-theorem theorem9_harmonic_eventually_le_msvv_ratio_add_delta :
+theorem theorem9_capped_normalized_revenue_eq_prefix_spend
+    (N : ℕ) (algorithm : theorem9IntegralPrefixAlgorithm N)
+    (permutation : Equiv.Perm (Fin N)) :
+    theorem9CappedNormalizedRevenue N algorithm permutation =
+      (∑ bidder : Fin N,
+        min 1
+          (∑ round : Fin N,
+            BMatchingIntegralPrefixAlgorithm.prefixAllocation algorithm
+              (theorem9ObservedPrefix N permutation round)
+              round (permutation bidder))) /
+        (N : ℝ) := by
+  exact
+    Proof.theorem9_capped_normalized_revenue_eq_prefix_spend
+      N algorithm permutation
+
+/--
+Theorem 9, broad observed-prefix lower-bound endpoint. No randomized
+distribution over any finite family of feasible observed-prefix allocation rules
+can beat the MSVV ratio on every sufficiently large hard instance.
+-/
+theorem theorem9_no_randomized_feasible_prefix_rule_family_beats_msvv_ratio
+    {Algorithm : ℕ → Type*}
+    [∀ N, Fintype (Algorithm N)] [∀ N, DecidableEq (Algorithm N)]
+    (C : theorem9FeasiblePrefixRuleFamily Algorithm) :
     ∀ delta : ℝ, 0 < delta →
       ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
-        theorem9NormalizedRevenueUpperBound N ≤
-          paperMsvvRatio + delta := by
-  rw [paperMsvvRatio_eq_library]
-  exact paper_adwords_theorem9_harmonic_eventually_le_msvv_ratio_add_delta
+        ∀ randomizedAlgorithm : PMF (Algorithm N),
+          ¬ ∀ permutation,
+            paperMsvvRatio + delta <
+              EconCSLib.pmfExp randomizedAlgorithm
+                (fun algorithm =>
+                  C.normalizedRevenue N algorithm permutation) := by
+  exact
+    Proof.theorem9_no_randomized_feasible_prefix_rule_family_beats_msvv_ratio C
 
 /--
-Theorem 9, concrete integral-prefix endpoint. No randomized distribution over
-finite prefix algorithms can beat `1 - 1/e + delta` on every sufficiently large
-permutation instance of the hard b-matching family.
+Theorem 9, lower-bound endpoint for randomized distributions over deterministic
+integral prefix algorithms.
 -/
-theorem theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio
-    :
+theorem theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio :
     ∀ delta : ℝ, 0 < delta →
       ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
         ∀ randomizedAlgorithm : PMF (theorem9IntegralPrefixAlgorithm N),
@@ -468,34 +591,22 @@ theorem theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio
               EconCSLib.pmfExp randomizedAlgorithm
                 (fun algorithm =>
                   theorem9CappedNormalizedRevenue N algorithm permutation) := by
-  rw [paperMsvvRatio_eq_library]
-  exact
-    paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms
+  exact Proof.theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio
 
 /--
-Theorem 9, realized-revenue endpoint. The same lower bound applies to any
-richer realized-revenue model bounded pointwise by the capped prefix payoff.
+Theorem 9, paper-facing randomized online algorithm endpoint in the finite
+prefix model.
 -/
-theorem theorem9_no_randomized_realized_revenue_algorithm_beats_msvv_ratio
-    (normalizedRevenue :
-      (N : ℕ) → theorem9IntegralPrefixAlgorithm N →
-        Equiv.Perm (Fin N) → ℝ)
-    (hrealized_le_capped :
-      ∀ N algorithm permutation,
-        normalizedRevenue N algorithm permutation ≤
-          theorem9CappedNormalizedRevenue N algorithm permutation) :
+theorem theorem9_no_randomized_online_algorithm_beats_msvv_ratio :
     ∀ delta : ℝ, 0 < delta →
       ∃ N0 : ℕ, ∀ N : ℕ, N0 ≤ N →
-        ∀ randomizedAlgorithm : PMF (theorem9IntegralPrefixAlgorithm N),
+        ∀ randomizedAlgorithm : theorem9RandomizedOnlineAlgorithm N,
           ¬ ∀ permutation,
             paperMsvvRatio + delta <
               EconCSLib.pmfExp randomizedAlgorithm
                 (fun algorithm =>
-                  normalizedRevenue N algorithm permutation) := by
-  rw [paperMsvvRatio_eq_library]
-  exact
-    paper_adwords_theorem9_eventually_no_randomized_algorithm_beats_msvv_ratio_add_delta_of_integral_prefix_algorithms_of_realized_revenue
-      normalizedRevenue hrealized_le_capped
+                  theorem9CappedNormalizedRevenue N algorithm permutation) := by
+  exact Proof.theorem9_no_randomized_online_algorithm_beats_msvv_ratio
 
 end MSVV07PaperFacing
 end Online

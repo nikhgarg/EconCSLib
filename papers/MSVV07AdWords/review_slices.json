@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "slices": [
+    {
+      "id": "paper-facing-endpoints",
+      "title": "Paper-Facing Endpoints",
+      "line_start": 1
+    }
+  ]
+}

@@ -2492,7 +2492,7 @@ HTML_PAGE = """
     }
 
     function normalizeStatement(value) {
-      return String(value || "").replace(/\s+/g, " ").trim();
+      return String(value || "").replace(/\\s+/g, " ").trim();
     }
 
     function escapeHtml(value) {
@@ -2506,7 +2506,7 @@ HTML_PAGE = """
       if (!text) {
         return false;
       }
-      const words = text.split(/\s+/);
+      const words = text.split(/\\s+/);
       const longWords = words.filter((word) => word.length >= 4);
       return longWords.length > 12;
     }

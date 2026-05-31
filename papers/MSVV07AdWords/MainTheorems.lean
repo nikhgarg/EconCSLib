@@ -1,4 +1,5 @@
 import MSVV07AdWords.AdWordsExtensions
+import MSVV07AdWords.AdWordsBatch
 import MSVV07AdWords.AdWordsLowerBound
 
 /-!
@@ -1145,8 +1146,27 @@ instance: each algorithm is exactly a feasible prefix choice rule.
 def paper_adwords_theorem9_integral_prefix_algorithm_family :
     BMatchingTheorem9IntegralPrefixChoiceFamily
       (fun N => BMatchingIntegralPrefixAlgorithm N) :=
-  { choice := fun N algorithm => algorithm.1
-    choice_feasible := fun N algorithm => algorithm.2 }
+  { choice := fun _N algorithm => algorithm.1
+    choice_feasible := fun _N algorithm => algorithm.2 }
+
+/--
+For the concrete integral-prefix algorithm family, the normalized revenue used
+in the unconditional Theorem 9 endpoint is definitionally the capped normalized
+prefix-spend expression.
+-/
+theorem paper_adwords_theorem9_integral_prefix_algorithm_family_normalized_revenue_eq_capped_spend
+    (N : ℕ) (algorithm : BMatchingIntegralPrefixAlgorithm N)
+    (permutation : Equiv.Perm (Fin N)) :
+    paper_adwords_theorem9_integral_prefix_algorithm_family.normalizedRevenue
+      N algorithm permutation =
+      (∑ bidder : Fin N,
+        min 1
+          (∑ round : Fin N,
+            BMatchingIntegralPrefixAlgorithm.prefixAllocation algorithm
+              (theorem9ObservedPrefix N permutation round)
+              round (permutation bidder))) /
+        (N : ℝ) := by
+  rfl
 
 /--
 Paper-level Section 7 / Theorem 9 endpoint for finite families of concrete

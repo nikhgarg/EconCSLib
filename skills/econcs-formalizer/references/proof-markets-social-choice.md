@@ -122,6 +122,17 @@ division, rankings, Mallows models, and social-choice/ranking papers.
 - For finite fair-division allocation theorems, first prove a theorem for an
   abstract marginal bound, then instantiate it with the paper's finite maximum
   one-good marginal value.
+- For fair-division PTAS/FPTAS rounding arguments, keep the actual source
+  allocation, rounded allocation, selected search witness, comparison IP, and
+  output allocation tied together in the theorem surface. If an endpoint
+  returns both proof payload and an external runtime consequence, add tiny
+  projections for the verified payload and the external consequence so future
+  wrappers do not unpack nested conjunctions by hand.
+- For bounded-optimum or local-reallocation claims, close the finite exact
+  allocation source theorem first, then route it into rounded-supply or typed
+  high/low provider wrappers. Do not redo the descent proof while working on
+  finite-search, IP-realization, or output-transfer endpoints; those later
+  layers should consume the bounded-optimum wrapper as a source-shaped input.
 
 ## Rankings and Mallows
 

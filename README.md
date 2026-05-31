@@ -59,12 +59,14 @@ paper folder contains the detailed theorem ledger and caveats.
 | [Roth82 Stable Matching](papers/Roth82StableMatching) | Verified in Lean | Stable-matching definitions and named results are exposed in a compact 27-row paper interface, including strict-profile Theorems 3 and 7. |
 | [GS62 College Admissions](papers/GS62CollegeAdmissions) | Verified with OCR caveat | Stable-marriage and college-quota statements are formalized; source scan quality is documented. |
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | Bayesian rating-system results are formalized with a documented boundary correction. |
-| [MSVV07 AdWords](papers/MSVV07AdWords) | Main endpoints formalized | Core AdWords endpoints are closed with documented proof-structure deviations. |
+| [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed, including the source-shaped Section 6 top-`n_q` distinct-bidder page-level guarantee. |
 | [LG21 Test-Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | All named definitions and Section 3--4 results are closed under the paper-facing source models; human dashboard review remains external. |
 | [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | Named CTMC lemmas and Theorems 1-4 are exposed; zero-mass boundary behavior is audited separately. |
 
 For more detail, use:
 
+- [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md) for paper citation, build
+  target, status, caveat, and review entrypoint.
 - Individual `papers/<PaperName>/README.md` files for paper-specific caveats.
 
 ## Starting A New Paper With An Agent
@@ -80,13 +82,15 @@ This project is aligned to Lean/mathlib/CSLib `v4.30.0-rc2`.
 Useful commands:
 
 ```bash
-lake build EconCSLib.Foundations
+lake build EconCSLib
 python3 scripts/audit_repository.py
 ```
 
-The full `lake build EconCSLib` target can be temporarily blocked by active
-paper work. When that happens, use the narrower build target documented in the
-relevant maintenance notes rather than changing unrelated active files.
+`lake build EconCSLib` is the first fresh-clone check and should pass for the
+public repository. `python3 scripts/audit_repository.py` is a maintainer audit.
+In a fresh clone it may report missing ignored local artifacts such as source
+PDFs, rendered dependency-graph PDFs, or review-dashboard caches; those are not
+Lean verification failures.
 
 ## Review Theorem Statements
 
@@ -109,6 +113,8 @@ see [docs/REVIEW_DASHBOARD.md](docs/REVIEW_DASHBOARD.md).
   paper-folder contract, and maintenance notes.
 - [docs/ECONCSLIB_DOMAIN_INDEX.md](docs/ECONCSLIB_DOMAIN_INDEX.md): reusable
   library modules by domain.
+- [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md): public paper status, build
+  target, and review entrypoint.
 - [docs/PROBABILITY_LIBRARY_ROADMAP.md](docs/PROBABILITY_LIBRARY_ROADMAP.md):
   probability-library roadmap.
 - [docs/OPTIMIZATION_LIBRARY_ROADMAP.md](docs/OPTIMIZATION_LIBRARY_ROADMAP.md):

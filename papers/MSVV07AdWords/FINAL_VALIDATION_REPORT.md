@@ -1,50 +1,141 @@
 # Final Validation Report: MSVV07 AdWords
 
-## 1. Source and Scope
+## 1. Human Verdict
 
-- Paper: *AdWords and Generalized Online Matching*
-- Source version: Journal of the ACM 54(5), 2007, Article 22; DOI https://doi.org/10.1145/1284320.1284321
-- Lean folder: `papers/MSVV07AdWords`
-- Human-facing theorem file: `papers/MSVV07AdWords/PaperInterface.lean`
-- DAG artifacts: `papers/MSVV07AdWords/DependencyDAG.tex`, `papers/MSVV07AdWords/DependencyDAG.pdf`
+- Lean formalization status: complete for the paper-facing endpoints exposed in
+  `PaperInterface.lean`; no theorem-status endpoint is conditional.
+- Human dashboard review status: `0/39` saved human review entries, `0` stale,
+  `0` mismatch. This is an external review queue, not a Lean formalization gap.
+- Paper correctness verdict: no suspected paper error found.
+- Qualitative proof verdict: the main theorem endpoints are closed. Lean follows
+  the paper's Balance/MSVV structure, but uses finite LP weak duality,
+  explicit error bounds, and packaged limiting families to make the small-bids
+  and lower-bound arguments precise.
+- Lean footprint: `13228` root-inclusive MSVV Lean lines, including `13221`
+  under `papers/MSVV07AdWords/`; `PaperInterface.lean` has `613` lines and
+  exposes `39` review declarations.
 
-## 2. Theorem-by-Theorem Validation
+## 2. Source and Scope
 
-| Paper item | Lean declaration | Status | Statement match | Notes |
-|---|---|---|---|---|
-| Sections 2--3 model, revenue, feasibility, small bids | `MSVV07PaperFacing.PaperInstance`, `paperSpend`, `paperRevenue`, `paperFeasible`, `paperSmallBids` | fully formalized | minor deviation | Finite type model; formulas are visible in the ledger. |
-| Section 3 Balance/MSVV rule | `paperTradeoff`, `paperBalanceScore`, `paperIsBalanceChoice`, `section3_balance_choice_exists` | fully formalized | minor deviation | Uses continuous spent fraction and finite feasible maximizer rather than slab-only notation. |
-| LP weak duality support | `section2_fractional_lp_weak_duality`, `paper_adwords_lp_weak_duality` | fully formalized | exact for finite LP | Standard finite primal/dual formulation. |
-| Section 4 Lemmas 1--3 | none source-numbered | not formalized | major deviation | The equal-bids factor-revealing LP route was not reproduced one-for-one. |
-| Section 5 Lemmas 4--7 | none source-numbered | not formalized | major deviation | The tradeoff-revealing LP route was bypassed. |
-| Theorem 8 competitive ratio | `theorem8_finite_explicit_error`, `theorem8_balance_msvv_competitive_of_small_bids_limit_family`, `paper_adwords_balance_msvv_competitive_of_small_bids_limit_family` | fully formalized | minor deviation | Proved by direct finite dual-fitting/history accounting plus a small-bids limit family. |
-| Section 6 effective bids, CTRs, availability, slots | `section6_effective_bids_small_bids`, `section6_click_through_rates_small_bids`, `section6_availability_small_bids`, `section6_multiple_slots_small_bids` | fully formalized | minor deviation | Formalized as small-bids-preserving reductions. |
-| Section 7 Theorem 9 harmonic cap | `theorem9_harmonic_eventually_le_msvv_ratio_add_delta` | fully formalized | exact for finite cap | Proves the asymptotic hard-instance cap. |
-| Section 7 Theorem 9 lower bound | `theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio` | fully formalized for model | minor deviation | Covers finite randomized distributions over integral prefix algorithms with capped normalized spend. |
-| Section 7 realized-revenue bridge | `theorem9_no_randomized_realized_revenue_algorithm_beats_msvv_ratio` | conditional | exact conditional bridge | Requires `normalizedRevenue <= theorem9CappedNormalizedRevenue`. |
-| Section 8 weighted bids | `section8_weighted_bids_small_bids` | fully formalized | minor deviation | Formalized as an effective-bid reduction. |
+- Paper: *AdWords and Generalized Online Matching*.
+- Source version: Journal of the ACM 54(5), 2007, Article 22, DOI
+  `10.1145/1284320.1284321`; paper URL:
+  `https://people.eecs.berkeley.edu/~vazirani/pubs/adwords.pdf`.
+- Lean folder: `papers/MSVV07AdWords`.
+- Human-facing statement surface: `papers/MSVV07AdWords/PaperInterface.lean`.
+- Audit ledger: `papers/MSVV07AdWords/PostPaperAudit.lean`, imported by
+  `papers/MSVV07AdWords.lean`.
+- DAG artifacts: `papers/MSVV07AdWords/DependencyDAG.tex` and rendered
+  `papers/MSVV07AdWords/DependencyDAG.pdf`.
 
-## 3. Additional Assumptions Beyond Paper
+## 3. Paper Interface
 
-- `PaperSmallBidsLimitFamily`: packages the paper's limiting regime as explicit finite-instance fields: positive budgets, nonnegative bids, eventual small-bids threshold, and convergence of offline optimum and Balance/MSVV revenue.
-- `theorem9_no_randomized_realized_revenue_algorithm_beats_msvv_ratio`: the realized-revenue variant requires the explicit pointwise bound `normalizedRevenue <= theorem9CappedNormalizedRevenue`.
+The paper definitions exposed for human review are the AdWords instance,
+assignments, spend, revenue, budget feasibility, small-bids condition,
+fractional LP value and feasibility, Balance/MSVV tradeoff function, competitive
+ratio `1 - 1/e`, scaled Balance score, feasibility of assigning a query, and
+the Balance choice rule.
 
-## 4. Proof-Strategy Deviations
+The main Lean declarations are:
 
-- Theorem 8: Lean does not reproduce the source's factor-revealing/tradeoff-revealing LP proof steps as Lemmas 1--7. It proves the same competitive-ratio endpoint through finite LP weak duality, normalized MSVV dual variables, online history accounting, explicit small-bids error bounds, and a sequence-limit wrapper.
-- Theorem 9: Lean represents online deterministic algorithms by the finite `BMatchingIntegralPrefixAlgorithm` model: algorithms observe the prefix and select at most one visible eligible bidder each round. This is the formal model used for the closed lower-bound endpoint.
+- `PaperInstance`, `PaperAssignment`, `paperSpend`, `paperRevenue`,
+  `paperFeasible`, `paperSmallBids`.
+- `paperFractionalRevenue`, `PaperFractionalFeasible`.
+- `paperTradeoff`, `paperMsvvRatio`, `paperBalanceScore`, `paperCanAssign`,
+  `paperIsBalanceChoice`.
+- `PaperSmallBidsLimitFamily` for the finite-instance sequence used by the
+  paper's small-bids limiting theorem.
 
-## 5. Conditional Results and Remaining Gaps
+## 4. Named Results Checked
 
-- Section 4 Lemmas 1--3 and Section 5 Lemmas 4--7 are not source-numbered wrappers.
-- Theorem 9's richer realized-revenue endpoint remains conditional on `normalizedRevenue <= theorem9CappedNormalizedRevenue`.
-- No `sorry`, `admit`, or `axiom` remains in `papers/MSVV07AdWords` or `EconCSLib/Algorithms/Online` Lean files.
+- Balance/MSVV algorithm definition: formalized through `paperBalanceScore`,
+  `paperCanAssign`, and `paperIsBalanceChoice`.
+- Lemmas 1--3: formalized as the source-route order, factor-revealing LP row,
+  and geometric LP value/optimality statements used by the paper's equal-bids
+  argument.
+- Lemmas 4--7: formalized as the Section 5 LP optimality, right-hand-side
+  perturbation, per-query tradeoff, and weighted perturbation/accounting
+  statements used by the arbitrary-bids argument.
+- Theorem 8: formalized in finite explicit-error form as
+  `theorem8_finite_explicit_error`, and in limiting small-bids form as
+  `theorem8_balance_msvv_competitive_of_small_bids_limit_family`.
+- Section 6 extensions: formalized for different budgets, nonexhaustive optima,
+  effective bids/next-price charges, click-through rates, delayed availability,
+  slot expansion, the source-shaped page-level top-`n_q` distinct-bidder rule,
+  and the distinct-choice invariant.
+- Theorem 9: formalized for finite observed-prefix online algorithms, including
+  the hard permutation distribution, capped normalized spend payoff, harmonic
+  cap, and randomized lower-bound endpoints.
+- Section 8 weighted bids: formalized by weighted effective-bid reductions and
+  finite explicit-error Theorem 8 wrappers.
 
-## 6. Suspected Paper Errors or Inconsistencies
+No named source theorem, lemma, proposition, or corollary identified in the
+source audit is intentionally deferred or marked as not formalized.
 
-- None found during this validation pass.
+## 5. Modeling and Proof Notes
 
-## 7. Final Verdict
+- Theorem 8 is proved through concrete finite Balance history accounting and a
+  small-bids limiting wrapper. The source-route Lemmas 1--7 are also exposed in
+  the audit ledger, so the paper proof structure remains inspectable without
+  making those helper statements the final theorem endpoint.
+- Section 6 multiple slots are represented by a page-level model that selects
+  the top `n_q` distinct feasible bidders for each arriving page and compares
+  against a page-level offline optimum with the same budget and cardinality
+  constraints.
+- Theorem 9 uses a finite observed-prefix algorithm model. The paper-facing
+  randomized online endpoint is a specialization of a broader feasible-prefix
+  lower-bound theorem.
+- No additional assumption is hidden in prose. Side conditions that matter in
+  Lean, such as nonnegative bids, positive budgets, finite query histories,
+  distinct histories, and small-bids thresholds, appear in the theorem
+  statements.
 
-- Completion status: main endpoints formalized with documented proof-strategy deviations.
-- Summary: The paper's central positive result (Theorem 8) and lower-bound endpoint (Theorem 9) have compiling Lean theorem surfaces in `PaperInterface.lean`. The formalization is not a line-by-line proof of source Lemmas 1--7; those proof steps are explicitly listed as not one-for-one formalized.
+## 6. External Review and DAG
+
+- The dashboard has `39` rows: `22` paper definitions/formula objects and `17`
+  theorem endpoints. This is a conservative full paper-interface audit surface;
+  the headline theorem-only subset would be smaller.
+- The DAG was rendered with `latexmk` on 2026-05-25. The rendered PDF was
+  converted to an image and visually inspected: metadata, legend, nodes, labels,
+  and arrows are legible, with no observed text overlap or missing paper-facing
+  boxes.
+
+## 7. Verification Checks
+
+- `lake build MSVV07AdWords`: passed on 2026-05-25.
+- Full `lake build`: passed on 2026-05-25.
+- `python3 scripts/check_smoke.py --include-papers`: passed on 2026-05-25,
+  including the MSVV root and all non-active paper roots.
+- Dashboard cache/precheck: cache refreshed on 2026-05-25; precheck reports
+  `0/39` human review entries, `0` stale rows, and `0` mismatches. The strict
+  dashboard check exits nonzero only because the 39 optional human-review
+  entries have not been saved.
+- MSVV-filtered repository audit: passed on 2026-05-25 with no MSVV-specific
+  findings.
+- Full repository audit: rerun on 2026-05-25. It still reports unrelated
+  non-MSVV issues: missing cached source PDFs, absent dashboard caches or large
+  dashboard slices for other papers, and status-vocabulary issues in other
+  paper READMEs.
+- Placeholder audit over MSVV Lean files: no `sorry`, `admit`, or `axiom` in
+  the claimed MSVV paper files.
+- DAG render: paper-local `latexmk` succeeded and produced
+  `DependencyDAG.pdf`; the full `scripts/compile_dependency_dags.sh` pass also
+  succeeded after cleaning stale `latexmk` state and making the MiKTeX package
+  tree visible to TeX.
+- `git diff --check`: passed on 2026-05-25.
+
+## 8. Reusable Lessons
+
+- Keep the human statement surface compact and paper-shaped; keep exhaustive
+  helper inventories in `PostPaperAudit.lean`.
+- Package small-bids limit assumptions as explicit finite-instance families.
+- Separate online-run feasibility, revenue accounting, dual feasibility, and
+  explicit error terms before taking limits.
+- For lower bounds, separate the hard distribution, deterministic algorithm
+  model, payoff definition, harmonic cap, and randomized/Yao wrapper.
+
+## 9. Final Verdict
+
+The MSVV AdWords paper-facing Lean endpoints are complete and non-conditional.
+The remaining dashboard work is human review of the exposed declarations, not a
+missing formal proof. The DAG now renders locally and has been visually checked.

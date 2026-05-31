@@ -1,50 +1,54 @@
 # EconCSLib Roadmap
 
 ## Vision
-`EconCSLib` aims to become the standard Lean 4 library for the Economics and Computation (EC) community. By coupling mathematical foundations with rigorous paper formalizations, we are building a verifiable "textbook" of mechanism design, market algorithms, and game theory, alongside an "audit trail" proving the claims of canonical EC literature.
 
-## The Architecture is Set
-The repository is no longer a fresh scaffold. We have successfully completed the **"Textbook vs. Audit Trail"** architectural split:
-1. **The Textbook (`EconCSLib/`):** Generic, abstracted mathematical and economic primitives.
-2. **The Audit Trail (`papers/`):** Isolated, notation-exact formalizations of specific papers, backed by Dependency DAGs and rigorous theorem-status ledgers.
+EconCSLib aims to become a reusable Lean 4 library and audit trail for
+Economics and Computation. The repository separates paper-independent EC
+mathematics under `EconCSLib/` from source-faithful paper formalizations under
+`papers/`.
 
-This means our immediate roadmap is no longer about *how* to organize the repository, but *what* to formalize next.
+## Phase 1: Public Release Hardening
 
-## Phase 1: Completing the "Test of Time" Baseline
+- Keep `lake build EconCSLib` green on every public commit.
+- Keep each public paper folder reviewable from `FINAL_VALIDATION_REPORT.md`,
+  `PaperInterface.lean`, `DependencyDAG.tex`, and `README.md`.
+- Keep the top-level README concise and route detailed paper status to
+  `docs/PAPER_STATUS.md` and paper-local ledgers.
+- Publish additional paper formalizations only once their paper-facing ledger
+  and validation report are ready for public review.
 
-Our immediate priority is to finish the formalizations of the historic SIGecom Test-of-Time award papers. These foundational papers stress-test our core library and force us to build the most critical, reusable primitives.
+## Phase 2: Reusable EC Library Growth
 
-**Active Targets:**
-- **Combinatorial Auctions (LOS '02):** Complete the proof that single-minded bidders face truth-telling mechanisms.
-- **Fair Division (LMMS '04):** Close the polynomial-time and existence bounds for bounded-envy allocations.
-- **AdWords / MSVV (MSVV '07):** Finish the deterministic `(1 - 1/e)` lower bounds and competitive ratio accounting.
-- **Digital Goods (GHW '01):** Close the RSOP-style randomized approximation bounds.
+Upstream reusable facts when they pass the second-paper test: a definition,
+lemma, theorem interface, or proof pattern should move into `EconCSLib/` when
+it is likely to support more than one paper.
 
-## Phase 2: Expanding the 7 Core Pillars of `EconCSLib`
+Current high-value areas:
 
-As we formalize papers, we will aggressively upstream reusable math into the 7 pillars of our core library.
+- finite sums, inequalities, and asymptotic helpers;
+- finite and continuous probability primitives;
+- matching markets and stability;
+- mechanism-design interfaces for auctions and incentives;
+- online algorithms and competitive-analysis certificates;
+- fair-division primitives; and
+- recommender-system and fairness models.
 
-1. **Foundations (Math & Probability):** 
-   - *Next:* Expand asymptotic limit topologies (required for the continuum limits of Accuracy-Diversity and Monoculture) and continuous probability distributions.
-2. **Mechanism Design:** 
-   - *Next:* Myerson's Lemma, VCG mechanisms, and Revenue Equivalence.
-3. **Social Choice:** 
-   - *Next:* Arrow's Impossibility Theorem, Gibbard-Satterthwaite, and more general voting axioms.
-4. **Markets (Matching & Platforms):** 
-   - *Next:* Rural Hospitals Theorem, Top Trading Cycles (TTC).
-5. **Econometrics:** 
-   - *Next:* Causal inference primitives and structural estimation definitions.
-6. **Learning (Bandits & Games):** 
-   - *Next:* Multi-Armed Bandits (UCB proofs), No-Regret Dynamics, Correlated Equilibrium.
-7. **Algorithms (Online & Complexity):** 
-   - *Next:* Prophet Inequalities, PPAD definitions.
+## Phase 3: Paper Contribution Pipeline
 
-## Phase 3: AI Formalization Automation
+The public workflow should make it straightforward for contributors to develop
+paper formalizations privately and submit them when complete. A public paper
+contribution should include a compact `PaperInterface.lean`, a theorem-status
+ledger, a dependency DAG, a validation report, and a reproducible build target.
 
-As the core library grows robust, the final phase of the roadmap is transitioning this manual workflow into fully autonomous agent skills.
+Partially verified papers may remain in private repositories until their
+authors are ready to publish them. When a paper becomes public-ready, its
+paper-local history can be imported with filtered history rather than exposing
+unrelated unfinished work.
 
-We will refine the `econcs-formalizer` skill so that future agents can:
-- Ingest a new arXiv PDF.
-- Automatically construct the `DependencyDAG.tex` and `MainTheorems.lean` template.
-- Identify the necessary generic primitives to upstream into `EconCSLib`.
-- Synthesize the required Lean 4 proofs to connect the paper's claims to the generic library.
+## Phase 4: Agent-Assisted Formalization
+
+EconCSLib also serves as a testbed for AI-assisted formalization workflows.
+The `skills/econcs-formalizer/` bundle records reusable instructions and proof
+patterns for agents that ingest a source paper, build a theorem inventory,
+identify reusable library seams, and produce Lean code plus human-review
+artifacts.

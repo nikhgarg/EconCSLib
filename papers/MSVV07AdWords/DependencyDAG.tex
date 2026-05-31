@@ -10,16 +10,14 @@
 \dagPaperLegendRightOfMetadata{
 \node[dag_result, dag_template_legend] (legRes)
   {\textbf{Closed}\\paper-facing};
-\node[dag_conditional, right=0.35cm of legRes, dag_template_legend] (legCond)
-  {\textbf{Conditional}\\explicit bridge};
-\node[dag_model, right=0.35cm of legCond, dag_template_legend] (legDef)
+\node[dag_lemma, right=0.35cm of legRes, dag_template_legend] (legLem)
+  {\textbf{Lemma}\\source route};
+\node[dag_model, right=0.35cm of legLem, dag_template_legend] (legDef)
   {\textbf{Definition}\\model};
-\node[dag_unformalized, right=0.35cm of legDef, dag_template_legend] (legOpen)
-  {\textbf{Not one-for-one}\\source proof step};
 
 
 }
-\daglegend{(legRes)(legCond)(legDef)(legOpen)}{Legend}
+\daglegend{(legRes)(legLem)(legDef)}{Legend}
 
 \begin{dagPaperBody}
 \begin{scope}[xshift=5.6cm]
@@ -36,21 +34,21 @@
 \node[dag_result, below=of LP, text width=3.5cm] (History)
   {\textbf{Online History}\\run feasibility and revenue accounting};
 
-% Source LP proof route, recorded honestly as not one-for-one formalized.
-\node[dag_unformalized, right=of SmallBids, text width=3.7cm] (L1)
+% Source LP proof route, formalized as standalone source-route lemmas.
+\node[dag_lemma, right=of SmallBids, text width=3.7cm] (L1)
   {\textbf{Lemma 1 (Sec. 4)}\\OPT type implies Balance pays no later slab};
-\node[dag_unformalized, below=of L1, text width=3.7cm] (L2)
+\node[dag_lemma, below=of L1, text width=3.7cm] (L2)
   {\textbf{Lemma 2 (Sec. 4)}\\equal-bids factor-revealing LP constraints};
-\node[dag_unformalized, below=of L2, text width=3.7cm] (L3)
-  {\textbf{Lemma 3 (Sec. 4)}\\LP value tends to $Ne$};
-\node[dag_unformalized, below=of L3, text width=3.7cm] (L4)
-  {\textbf{Lemma 4 (Sec. 5)}\\dual $y^*$ optimal for $D(\pi,\psi)$};
-\node[dag_unformalized, below=of L4, text width=3.7cm] (L5)
+\node[dag_lemma, below=of L2, text width=3.7cm] (L3)
+  {\textbf{Lemma 3 (Sec. 4)}\\exact factor-LP optimizer, upper bound, and $N/e$ limit};
+\node[dag_lemma, below=of L3, text width=3.7cm] (L4)
+  {\textbf{Lemma 4 (Sec. 5)}\\standard-LP dual optimality certificate};
+\node[dag_lemma, below=of L4, text width=3.7cm] (L5)
   {\textbf{Lemma 5 (Sec. 5)}\\right side $l=b+\Delta(\pi,\psi)$};
-\node[dag_unformalized, below=of L5, text width=3.7cm] (L6)
+\node[dag_lemma, below=of L5, text width=3.7cm] (L6)
   {\textbf{Lemma 6 (Sec. 5)}\\per-query ALG/OPT tradeoff inequality};
-\node[dag_unformalized, below=of L6, text width=3.7cm] (L7)
-  {\textbf{Lemma 7 (Sec. 5)}\\weighted perturbation bounded by $N/k$};
+\node[dag_lemma, below=of L6, text width=3.7cm] (L7)
+  {\textbf{Lemma 7 (Sec. 5)}\\weighted perturbation exact $N/k$ form};
 
 % Lean route to Theorem 8
 \node[dag_result, left=of History, text width=3.5cm] (Charge)
@@ -58,7 +56,7 @@
 \node[dag_result, below=of Charge, text width=3.5cm] (Delta)
   {\textbf{Finite $\delta$ Theorem}\\explicit small-bids error bound};
 \node[dag_result, below=of Delta, text width=3.5cm] (T8)
-  {\textbf{Theorem 8 (Sec. 5)}\\$1-1/e$ small-bids limiting theorem};
+  {\textbf{Theorem 8 (Sec. 5)}\\exact $y^*$ source route and small-bids limit};
 
 % Extensions
 \node[dag_result, below=of T8, text width=3.5cm] (Sec6)
@@ -72,9 +70,7 @@
 \node[dag_result, below=of Yao, text width=3.7cm] (Harmonic)
   {\textbf{Harmonic Cap}\\finite layer count and asymptotic bound};
 \node[dag_result, below=of Harmonic, text width=3.7cm] (T9)
-  {\textbf{Theorem 9 (Sec. 7)}\\integral-prefix randomized lower bound};
-\node[dag_conditional, below=of T9, text width=3.7cm] (T9Realized)
-  {\textbf{Theorem 9 Bridge}\\richer realized revenue if bounded by capped spend};
+  {\textbf{Theorem 9 (Sec. 7)}\\randomized-online lower bound with capped spend};
 
 % Edges
 \draw[dag_arrow] (Model) -- (SmallBids);
@@ -101,7 +97,6 @@
 \draw[dag_arrow] (Model.east) -| (Yao.north);
 \draw[dag_arrow] (Yao) -- (Harmonic);
 \draw[dag_arrow] (Harmonic) -- (T9);
-\draw[dag_arrow] (T9) -- (T9Realized);
 \end{scope}
 \end{dagPaperBody}
 \end{tikzpicture}

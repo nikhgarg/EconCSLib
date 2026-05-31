@@ -299,6 +299,11 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   target directly (for example `lake build EconCSLib.Foundations.Probability.BivariateGaussian`)
   before rerunning the paper target. Do not debug theorem code until the same
   paper module reaches elaboration and reports an actual Lean error.
+- After adding a declaration to an imported paper module and exposing it through
+  `PaperInterface.lean`, rebuild the imported module or the paper target before
+  relying on `lake env lean PaperInterface.lean`; direct Lean checks can read
+  the previous `.olean` and report a false unknown-identifier error for a fresh
+  public alias.
 - For compile-repair passes, let the first `lake build PaperName` produce the
   error queue, then patch the first coherent cluster of errors by line number.
   Do not inspect the whole theorem file. Constructor-pattern errors are often
@@ -1119,6 +1124,13 @@ pass:
   handoff or an implementation inventory. It is the concise final assessment a
   human should read to decide whether the paper's definitions and named theorem
   statements were represented correctly.
+- Treat the final validation report itself as an audit target. Before final
+  handoff, reread the report as a human reviewer would: it must be paper-facing,
+  short enough to inspect, organized around source definitions and named theorem
+  boxes, explicit about what remains for human dashboard review, and free of
+  stale blocked-command language. If it reads like a helper-theorem ledger,
+  proof-script changelog, or shell transcript, rewrite it before claiming
+  post-validation is complete.
 - Write the final validation report in paper language, not Lean-internal
   implementation language. Near the top it must answer four questions directly:
   what has been proved, whether formalization found anything wrong or ambiguous
@@ -1176,6 +1188,12 @@ pass:
   `rg -c '^(noncomputable\\s+|private\\s+|protected\\s+)*(theorem|lemma|def|abbrev) ' papers/<Paper>/PaperInterface.lean`.
   If the declaration count is in the hundreds, split implementation endpoints
   out before asking a human to review it.
+- If a large `PaperInterface.lean` is intentionally broad, add a tracked
+  `review_slices.json` with line-, name-, or prefix-based slices of at most 80
+  review rows each. Validate the slice file with `scripts/audit_repository.py`
+  or `scripts.audit_repository.review_slice_counts`, then refresh the ignored
+  dashboard cache. Do not confuse "0/N reviewed" with stale or failed Lean
+  validation; it only means no human review entries have been saved.
 - Treat `PostPaperAudit.lean` as the exhaustive importable ledger, not the
   readable paper interface. Its header should say that explicitly and point to
   `PaperInterface.lean` for the DAG-shaped human-facing surface. It should

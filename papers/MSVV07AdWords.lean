@@ -1,4 +1,7 @@
 import MSVV07AdWords.MainTheorems
+import MSVV07AdWords.SourceLemmas
 import MSVV07AdWords.PaperInterface
+import MSVV07AdWords.PostPaperAudit
 import MSVV07AdWords.AdWordsExtensions
+import MSVV07AdWords.AdWordsBatch
 import MSVV07AdWords.AdWordsLowerBound

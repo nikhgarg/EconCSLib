@@ -23,6 +23,14 @@ surface that proves every reduction and exposes a narrow external-consequence
 wrapper. The README/DAG/handoff should say exactly which machine-level theorem
 is still external.
 
+For PTAS/FPTAS finite-search papers, use the same discipline: prove the finite
+enumeration, feasibility, IP/search summaries, and approximation-ratio transfer
+in Lean, but keep Lenstra-style fixed-dimension IP runtime or machine-model
+claims as an explicit `ExternalSolverConsequence` until the repository has the
+runtime semantics. A useful conditional endpoint is a compact conjunction of
+the verified solver/source-output payload and the external consequence, with
+public projections for each side.
+
 ## Reusable Lean Shapes
 
 Prefer reusable library interfaces over paper-local ad hoc predicates:

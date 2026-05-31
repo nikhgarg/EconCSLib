@@ -10,6 +10,8 @@ or what a completed formalization proves without reading proof internals.
 - [../README.md](../README.md): short project overview and review path.
 - [REVIEW_DASHBOARD.md](REVIEW_DASHBOARD.md): theorem-statement review
   dashboard workflow.
+- [PAPER_STATUS.md](PAPER_STATUS.md): public paper citation, build target,
+  status, caveat, and review entrypoint.
 - [PUBLIC_REPOSITORY_WORKFLOW.md](PUBLIC_REPOSITORY_WORKFLOW.md): public/private
   repository split, completed-paper imports, and private partial-paper policy.
 - Paper-level `FINAL_VALIDATION_REPORT.md`, `PaperInterface.lean`, and

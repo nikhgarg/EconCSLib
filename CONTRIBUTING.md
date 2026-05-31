@@ -101,6 +101,18 @@ The full target is desirable before release-oriented merges:
 lake build EconCSLib
 ```
 
+## Pull Request Checklist
+
+- [ ] This pull request is either a reusable-library change or one completed
+      paper formalization.
+- [ ] `lake build <target>` passes for the changed library or paper.
+- [ ] Paper theorem-status rows use the vocabulary in `docs/STATUS.md`.
+- [ ] `PaperInterface.lean` exposes the human-facing theorem statements.
+- [ ] Caveats and source-proof deviations are documented in the paper README or
+      `FINAL_VALIDATION_REPORT.md`.
+- [ ] Source PDFs, rendered local PDFs, dashboard caches, and other ignored
+      local artifacts are not added to Git.
+
 ## Review Standard
 
 Lean verifies proofs relative to the formal statements, imports, and
