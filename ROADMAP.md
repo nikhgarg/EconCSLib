@@ -16,6 +16,10 @@ mathematics under `EconCSLib/` from source-faithful paper formalizations under
   `docs/PAPER_STATUS.md` and paper-local ledgers.
 - Publish additional paper formalizations only once their paper-facing ledger
   and validation report are ready for public review.
+- Publish a partial paper only when the remaining assumption is explicit,
+  reusable, and useful to expose publicly. LMMS04 is the current example: its
+  open seam is a fixed-dimension IP runtime/complexity theorem, not a hidden
+  paper-specific fair-division lemma.
 
 ## Phase 2: Reusable EC Library Growth
 
@@ -32,6 +36,8 @@ Current high-value areas:
 - online algorithms and competitive-analysis certificates;
 - fair-division primitives; and
 - recommender-system and fairness models.
+- complexity and runtime interfaces for externally supplied algorithmic
+  certificates, starting with the LMMS04 fixed-dimension IP solver boundary.
 
 ## Phase 3: Paper Contribution Pipeline
 

@@ -62,12 +62,20 @@ paper folder contains the detailed theorem ledger and caveats.
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed, including the source-shaped Section 6 top-`n_q` distinct-bidder page-level guarantee. |
 | [LG21 Test-Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | All named definitions and Section 3--4 results are closed under the paper-facing source models; human dashboard review remains external. |
 | [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | Named CTMC lemmas and Theorems 1-4 are exposed; zero-mass boundary behavior is audited separately. |
+| [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | Public partial: Sections 2 and 4 are formalized; the final PTAS/FPTAS runtime claim remains behind `ExternalSolverConsequence`. |
 
 For more detail, use:
 
 - [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md) for paper citation, build
   target, status, caveat, and review entrypoint.
 - Individual `papers/<PaperName>/README.md` files for paper-specific caveats.
+
+Partial public formalizations are included when the remaining assumption seam is
+itself useful library work. LMMS04 is the current example: the paper-specific
+fair-division and rounding layers are public, while the final complexity claim
+is held behind an explicit fixed-dimension IP runtime boundary that should be
+discharged in reusable `EconCSLib`/CSLib-style infrastructure rather than hidden
+inside a paper folder.
 
 ## Starting A New Paper With An Agent
 

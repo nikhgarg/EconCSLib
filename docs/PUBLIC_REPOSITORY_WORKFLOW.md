@@ -9,8 +9,9 @@ EconCSLib.
   reusable library development, completed papers, partially verified papers,
   handoff notes, and full working history.
 - `EconCSLib`: public release repository. This repository should contain the
-  reusable `EconCSLib/` library, public tooling/docs, and completed paper
-  formalizations only.
+  reusable `EconCSLib/` library, public tooling/docs, completed paper
+  formalizations, and carefully documented partial formalizations whose
+  remaining seams are useful public library work.
 
 The private repository is the superset. The public repository is generated from
 an allowlist and should not be made by changing the visibility of the private
@@ -26,11 +27,15 @@ For public release, create a filtered repository that keeps only:
 
 - core Lean/library files and project configuration;
 - public scripts and documentation;
-- completed paper folders; and
-- completed paper root modules under `papers/<Paper>.lean`.
+- completed paper folders;
+- completed paper root modules under `papers/<Paper>.lean`; and
+- explicitly approved public partial paper folders whose remaining assumptions
+  are documented in their README, validation report, and `docs/PAPER_STATUS.md`.
 
 Partially verified papers remain private until their authors choose to publish
-them.
+them. A partial paper can be public when the remaining gap is not hidden
+paper-specific proof debt but a reusable external theorem or library seam that
+contributors may reasonably want to inspect or help discharge.
 
 ## Completed Paper Imports
 
@@ -66,4 +71,10 @@ Current public-ready candidates:
 - `MSVV07AdWords`
 - `Roth82StableMatching`
 
-Partial or in-progress paper work should remain in the private incubator until it is ready for public review.
+Current public partial candidates:
+
+- `LMMS04FairDivision`, because its open Theorem 3.3 PTAS/FPTAS runtime claim
+  is isolated behind a fixed-dimension IP solver/complexity seam.
+
+Other partial or in-progress paper work should remain in the private incubator
+until it is ready for public review.
