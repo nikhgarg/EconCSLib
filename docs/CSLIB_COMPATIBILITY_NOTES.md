@@ -144,6 +144,7 @@ domain-specific reduction and protocol libraries first.
 
 - Fair division 2025 Test-of-Time paper: high impact. `RelatesInSteps` closed
   the explicit simple-cycle extraction seam.
+- Imported paper modules: low direct impact. The proof obligations are
   finite probability and Mallows weight inequalities, not CS foundation gaps.
 - Digital-goods auction 2021 Test-of-Time paper: medium future impact. `TimeM`
   may help once executable auction algorithms and running-time claims matter.

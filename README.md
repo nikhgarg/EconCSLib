@@ -65,10 +65,7 @@ paper folder contains the detailed theorem ledger and caveats.
 
 For more detail, use:
 
-- [docs/ECONCSLEAN_CURRENT_STATUS.md](docs/ECONCSLEAN_CURRENT_STATUS.md) for the
-  current project status ledger.
 - Individual `papers/<PaperName>/README.md` files for paper-specific caveats.
-  for the author-paper formalization summary.
 
 ## Starting A New Paper With An Agent
 

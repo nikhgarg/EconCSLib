@@ -53,12 +53,14 @@ Next lemmas:
 ### 2. Finite feasible search
 
 Status: reusable core started in `Optimization.FiniteSearch`; richer
+paper-specific code records remain paper-local in diversity-aware recommendation.
 
 Common source pattern: encode an infinite-looking feasible family by a finite
 code, maximize by `Fintype`, then decode the optimizer.
 
 Useful for:
 
+- fixed-total count allocations in diversity-aware recommendation papers.
 - finite threshold/prefix policy families in digital-goods auctions.
 - finite action/menu searches in GLM/LG testing papers.
 
@@ -72,6 +74,7 @@ Reusable target:
 ### 3. Exchange and first-order conditions for integer allocations
 
 Status: reusable move-graph core started in `Optimization.MoveGraph`; concrete
+integer count-vector exchange lemmas remain paper-local in diversity-aware recommendation paper work and
 recommender allocation files.
 
 Common source pattern: a feasible integer allocation is optimal if every
@@ -80,6 +83,7 @@ has no improving one-unit move.
 
 Useful for:
 
+- diversity-aware recommendation diminishing-return allocation objectives.
 - recommendation exposure/item-fairness reallocations.
 - matching or assignment papers with local swap arguments.
 
@@ -228,12 +232,14 @@ Reusable target:
 
 ### 8. Asymptotic optimal profiles
 
+Status: paper-local in diversity-aware recommendation.
 
 Common source pattern: identify a finite optimum for each scale, normalize it,
 and prove convergence to an optimal continuous/profile limit.
 
 Useful for:
 
+- diversity-aware recommendation limits.
 - market-size asymptotics in matching and auctions.
 - GLM/LG testing policies under growing cohorts.
 

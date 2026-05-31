@@ -7,8 +7,10 @@ This tracks reusable probability work suggested by the current paper queue.
 - DSWG discretization: finite-label posterior vectors, aggregate posterior
   masses, indicator integrals, bounded-measurable integrability dischargers,
   and Bayes/tower-property bridges.
+- testing papers: finite signal kernels, conditional
   resampling, posterior estimates, equality of pushforward distributions, and
   eventually Gaussian posterior/CDF/hazard-rate certificates.
+- diversity-aware recommendation: order-statistic expectations, top-`k` value
   asymptotics, Bernoulli/product-law identities, and distribution-family
   certificate wrappers.
 - GN21 driver surge pricing: continuous set-integral algebra, with-density
@@ -89,6 +91,7 @@ This tracks reusable probability work suggested by the current paper queue.
 - Kernel/disintegration bridge: finite and standard-Borel Markov-kernel
   wrappers for joint laws, marginals, posterior kernels, and law-of-total
   probability identities.
+- Order-statistic analytic layer for diversity-aware recommendation papers: prove the concrete bounded,
   exponential, and Pareto integral/order-statistic asymptotics and instantiate
   `TopKExpectationOracle.ScaledMarginalLimitCertificate`; then connect those
   probability certificates to the existing separable optimization/FOC bridges.

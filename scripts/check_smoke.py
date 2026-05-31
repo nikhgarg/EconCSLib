@@ -18,9 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PAPERS = ROOT / "papers"
 EXAMPLES = ROOT / "examples"
-ACTIVE_PAPERS = {
-    "GCG24UserItemFairness",
-}
+ACTIVE_PAPERS: set[str] = set()
 
 
 def run(cmd: list[str], *, cwd: Path = ROOT) -> None:

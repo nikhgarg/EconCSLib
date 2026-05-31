@@ -97,6 +97,7 @@ searches, or endpoint/current-bound optimality proofs should start with
 Each paper folder is an audit artifact for one source paper. The folder name
 must use the citation-style convention
 `[AuthorInitials][2DigitYear][Descriptor]`, for example
+`MSVV07AdWords` or `Roth82StableMatching`.
 
 Every paper folder should contain:
 

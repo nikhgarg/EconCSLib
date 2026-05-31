@@ -31,13 +31,7 @@ rev = "v4.30.0-rc2"
 name = "EconCSLib"
 
 [[lean_lib]]
-srcDir = "papers"
-
-[[lean_lib]]
 name = "GCG24UserItemFairness"
-srcDir = "papers"
-
-[[lean_lib]]
 srcDir = "papers"
 
 [[lean_lib]]
@@ -46,9 +40,6 @@ srcDir = "papers"
 
 [[lean_lib]]
 name = "MBJG25ProducerFairness"
-srcDir = "papers"
-
-[[lean_lib]]
 srcDir = "papers"
 
 [[lean_lib]]
@@ -68,19 +59,7 @@ name = "GS62CollegeAdmissions"
 srcDir = "papers"
 
 [[lean_lib]]
-srcDir = "papers"
-
-[[lean_lib]]
-srcDir = "papers"
-
-[[lean_lib]]
 name = "GHW01DigitalGoods"
-srcDir = "papers"
-
-[[lean_lib]]
-srcDir = "papers"
-
-[[lean_lib]]
 srcDir = "papers"
 
 [[lean_lib]]

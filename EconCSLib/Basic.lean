@@ -6,7 +6,6 @@ import EconCSLib.Algorithms.Online.AdWords
 import EconCSLib.Algorithms.Online.Regret
 import EconCSLib.Learning.Bandits.ThompsonSampling
 import EconCSLib.MechanismDesign.Auctions
-import EconCSLib.MechanismDesign.Auctions.MainTheorems
 import EconCSLib.SocialChoice.FairDivision
 import EconCSLib.Markets.Matching
 import EconCSLib.Applications.RecommenderSystems

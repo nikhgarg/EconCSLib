@@ -66,5 +66,4 @@ Current public-ready candidates:
 - `MSVV07AdWords`
 - `Roth82StableMatching`
 
-Current private/incubator candidates:
-
+Partial or in-progress paper work should remain in the private incubator until it is ready for public review.

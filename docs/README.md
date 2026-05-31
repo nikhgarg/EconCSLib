@@ -8,9 +8,6 @@ These files are for readers who want to understand the project, paper status,
 or what a completed formalization proves without reading proof internals.
 
 - [../README.md](../README.md): short project overview and review path.
-- [ECONCSLEAN_CURRENT_STATUS.md](ECONCSLEAN_CURRENT_STATUS.md): current paper
-  status ledger.
-  author-paper formalization summary.
 - [REVIEW_DASHBOARD.md](REVIEW_DASHBOARD.md): theorem-statement review
   dashboard workflow.
 - [PUBLIC_REPOSITORY_WORKFLOW.md](PUBLIC_REPOSITORY_WORKFLOW.md): public/private

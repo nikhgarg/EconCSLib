@@ -19,9 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PAPERS = ROOT / "papers"
-ACTIVE_PAPERS = {
-    "GCG24UserItemFairness",
-}
+ACTIVE_PAPERS: set[str] = set()
 REQUIRED_PAPER_FILES = {
     ".gitignore",
     "DependencyDAG.tex",
