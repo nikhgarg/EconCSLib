@@ -64,6 +64,8 @@ FORBIDDEN_STATUS_LABEL_RE = re.compile(
     r"\bVerified in Lean(?: with source OCR caveat)?\b|"
     r"\bVerified with OCR caveat\b|"
     r"\bVerified with caveat\b|"
+    r"\b[Cc]urrent verification status\b|"
+    r"\b[Vv]erification status\b|"
     r"<td>\s*Verified\s*</td>|"
     r"\|\s*Verified\s*\|"
 )

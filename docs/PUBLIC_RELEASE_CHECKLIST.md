@@ -10,6 +10,12 @@ external contributions.
       incubator.
 - [ ] `docs/PAPER_STATUS.md` matches the paper folders included in the public
       repository.
+- [ ] Status labels use `Formalized`, `Formalized with caveat`, or
+      `Partially formalized`; do not publish `Verified in Lean` as a separate
+      status category.
+- [ ] `python3 scripts/audit_repository.py` reports 0 errors. Public-release
+      warnings for omitted source PDFs are acceptable when licensing requires
+      source PDFs to stay out of the repository.
 - [ ] `CONTRIBUTING.md` states the current contribution policy and contact
       email.
 - [ ] `CITATION.cff` has the current repository title, author, and release date.
@@ -38,3 +44,11 @@ Each public paper folder should have:
 - [ ] Merge the filtered history into the public repository.
 - [ ] Update `README.md`, `docs/PAPER_STATUS.md`, and the relevant roadmap or
       release notes.
+
+## GitHub Pages Readiness
+
+- [ ] Rebuild the workshop paper PDF and refresh
+      `site/assets/econcslib-workshop-draft.pdf`.
+- [ ] Confirm the site status table matches `docs/PAPER_STATUS.md`.
+- [ ] Keep `.github/workflows/pages.yml.disabled` disabled until the repository
+      is ready to publish Pages.

@@ -1244,9 +1244,10 @@ pass:
   `formalized` is the status for a paper/result whose Lean statement and proof
   compile with its caveats documented. Lean verification is the mechanism, not a
   separate status category. Do not use `Verified in Lean`, `Verified`, or
-  `Verified with caveat` as paper-status labels; use `Formalized`,
-  `Formalized with caveat`, `Partially formalized`, or the paper-local
-  lowercase equivalents from `docs/STATUS.md`.
+  `Verified with caveat` as paper-status labels, and do not title a status
+  section `verification status`; use `Formalized`, `Formalized with caveat`,
+  `Partially formalized`, or the paper-local lowercase equivalents from
+  `docs/STATUS.md`.
 - **CRITICAL MANDATE: Never lie by omission.** Your validation report MUST list all major theorems, propositions, and sections from the paper. If a result or section was deferred, skipped, or is otherwise unformalized, you MUST list it in the report, mark its status as `not formalized`, and explain why it was deferred. Always be honest and complete regarding the paper's contents.
 - The report must first present the paper interface: the definitions and
   formatted mathematical objects the reader needs to inspect, even when the
