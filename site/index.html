@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EconCSLib</title>
+    <meta
+      name="description"
+      content="EconCSLib is a Lean 4 library and verification workflow for Economics and Computation research."
+    >
+    <link rel="stylesheet" href="styles/site.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="#">EconCSLib</a>
+        <div class="nav-links">
+          <a href="#status">Status</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#contribute">Contribute</a>
+        </div>
+      </nav>
+
+      <section class="hero">
+        <p class="eyebrow">Lean 4 for Economics and Computation</p>
+        <h1>Machine-checked formalizations of EC research papers.</h1>
+        <p class="lede">
+          EconCSLib combines reusable Lean infrastructure with paper-specific
+          validation artifacts: theorem interfaces, source-aligned status
+          ledgers, dependency graphs, and human-readable audit reports.
+        </p>
+        <div class="actions">
+          <a class="button primary" href="https://github.com/nikhgarg/EconCSLib">View the repository</a>
+          <a class="button" href="assets/econcslib-workshop-draft.pdf">Workshop paper draft</a>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <section class="band intro" aria-labelledby="what">
+        <div class="section-heading">
+          <p class="eyebrow">Project</p>
+          <h2 id="what">What the repository is for</h2>
+        </div>
+        <div class="two-column">
+          <p>
+            The reusable library under <code>EconCSLib/</code> collects
+            foundations for probability, optimization, matching, auctions,
+            online algorithms, recommender systems, and fair division.
+          </p>
+          <p>
+            The paper folders under <code>papers/</code> preserve a source
+            paper's notation, theorem numbering, proof modules, validation
+            report, review dashboard configuration, and compact
+            <code>PaperInterface.lean</code> file.
+          </p>
+        </div>
+      </section>
+
+      <section class="band" id="status" aria-labelledby="status-title">
+        <div class="section-heading">
+          <p class="eyebrow">Current verification status</p>
+          <h2 id="status-title">Published paper artifacts</h2>
+          <p>
+            This site is a short human-facing snapshot. The source of truth is
+            the repository status ledger and the paper-local validation reports.
+          </p>
+        </div>
+
+        <div class="status-grid">
+          <article>
+            <h3>Verified or formalized</h3>
+            <p>
+              Public paper artifacts cover matching, digital-goods auctions,
+              online advertising, recommender-system fairness, test-optional
+              admissions, driver surge pricing, Bayesian rating design, and
+              discretization-induced bias.
+            </p>
+          </article>
+          <article>
+            <h3>Public partial</h3>
+            <p>
+              LMMS04 fair division is public because its remaining gap is an
+              explicit reusable fixed-dimension integer-program runtime seam,
+              represented in Lean as <code>ExternalSolverConsequence</code>.
+            </p>
+          </article>
+          <article>
+            <h3>Contribution path</h3>
+            <p>
+              New paper formalizations can be developed privately, then
+              proposed through a pull request once the theorem interface,
+              validation report, and caveats are ready for public review.
+            </p>
+          </article>
+        </div>
+
+        <p class="more-link">
+          Detailed status:
+          <a href="https://github.com/nikhgarg/EconCSLib/blob/main/docs/PAPER_STATUS.md">
+            docs/PAPER_STATUS.md
+          </a>
+        </p>
+      </section>
+
+      <section class="band" id="architecture" aria-labelledby="architecture-title">
+        <div class="section-heading">
+          <p class="eyebrow">Architecture</p>
+          <h2 id="architecture-title">Library code plus reviewable paper trails</h2>
+        </div>
+        <div class="architecture">
+          <div>
+            <h3>Reusable library</h3>
+            <p>
+              General definitions and lemmas live in the shared EC library when
+              they are likely to support more than one paper.
+            </p>
+          </div>
+          <div>
+            <h3>Paper folders</h3>
+            <p>
+              Paper-specific files keep source-faithful formal statements,
+              proof code, theorem ledgers, dependency graphs, and validation
+              notes together.
+            </p>
+          </div>
+          <div>
+            <h3>Agent workflow</h3>
+            <p>
+              The public formalizer skill bundle records the repeatable process
+              for ingesting a paper, translating claims, proving them in Lean,
+              and surfacing human-review seams.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band contact" id="contribute" aria-labelledby="contribute-title">
+        <div class="section-heading">
+          <p class="eyebrow">Contribute</p>
+          <h2 id="contribute-title">Interested in adding a verified paper?</h2>
+        </div>
+        <p>
+          The contribution policy is still a draft. If you want to contribute a
+          paper formalization or discuss the repository roadmap, contact
+          <a href="mailto:ngarg@cornell.edu">ngarg@cornell.edu</a>.
+        </p>
+        <p>
+          Contribution notes:
+          <a href="https://github.com/nikhgarg/EconCSLib/blob/main/CONTRIBUTING.md">
+            CONTRIBUTING.md
+          </a>
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        EconCSLib is maintained by Nikhil Garg. This draft site is not deployed
+        until GitHub Pages is explicitly enabled.
+      </p>
+    </footer>
+  </body>
+</html>
