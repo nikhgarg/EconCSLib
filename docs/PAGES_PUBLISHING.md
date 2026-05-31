@@ -18,7 +18,8 @@ repository are ready.
 2. Copy the latest PDF into `site/assets/econcslib-workshop-draft.pdf`.
 3. Review `site/index.html` for accurate paper status and contact text.
 4. Confirm `docs/PAPER_STATUS.md` matches the site status table.
-5. Preview the static site locally, for example:
+5. Run `python3 scripts/audit_repository.py` and confirm there are 0 errors.
+6. Preview the static site locally, for example:
 
    ```bash
    python3 -m http.server 8765 --directory site
@@ -26,10 +27,10 @@ repository are ready.
 
    Then check the home page and
    `site/assets/econcslib-workshop-draft.pdf`.
-6. Rename `.github/workflows/pages.yml.disabled` to
+7. Rename `.github/workflows/pages.yml.disabled` to
    `.github/workflows/pages.yml`.
-7. Push the branch or merge it into `main`.
-8. In GitHub repository settings, set Pages to deploy from GitHub Actions.
+8. Push the branch or merge it into `main`.
+9. In GitHub repository settings, set Pages to deploy from GitHub Actions.
 
 ## Updating After Publication
 
