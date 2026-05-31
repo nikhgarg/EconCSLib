@@ -9,7 +9,7 @@ Theorem 3.2's Graham-citation wrapper, Claim 3.4's finite exact-allocation
 source wrapper, Lemma 3.5 arithmetic transfer, the large Theorem 3.3
 finite-search/IP/source-output surface, and Section 4 compile.
 
-The paper is not fully verified because Theorem 3.3 still lacks a concrete
+The paper is not fully formalized because Theorem 3.3 still lacks a concrete
 Lenstra/fixed-dimension IP runtime theorem or equivalent machine-model proof.
 The current code exposes that as an abstract
 `EconCSLib.Complexity.ExternalSolverConsequence`, not as a proved PTAS/FPTAS

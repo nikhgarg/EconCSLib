@@ -398,7 +398,7 @@ def root_import_text(folder: str) -> str:
 def notes_text(title: str, namespace: str, args: argparse.Namespace) -> str:
     official_url = args.official_url or args.url
     title_text = title or "[Paper Title]"
-    return f"""# {title_text} Verification Notes
+    return f"""# {title_text} Formalization Notes
 
 This is a lightweight handoff document for source-to-Lean mapping.
 
@@ -407,7 +407,7 @@ This is a lightweight handoff document for source-to-Lean mapping.
 - Source PDF: `source.pdf`
 - Source text cache: `source.txt`
 
-## Verification checklist
+## Formalization checklist
 
 - [ ] Full named-result inventory copied to the README theorem table.
 - [ ] DAG graph includes all required paper-stage nodes and dependencies.
@@ -417,7 +417,7 @@ This is a lightweight handoff document for source-to-Lean mapping.
 ## Notes
 
 - Date reviewed:
-- Last theorem row verified:
+- Last theorem row formalized:
 - Outstanding assumptions / caveats:
 
 """

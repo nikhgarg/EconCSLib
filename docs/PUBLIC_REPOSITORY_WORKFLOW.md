@@ -6,7 +6,7 @@ EconCSLib.
 ## Repository Roles
 
 - `EconCSLib-private`: private full-history incubator. This repository keeps
-  reusable library development, completed papers, partially verified papers,
+  reusable library development, completed papers, partially formalized papers,
   handoff notes, and full working history.
 - `EconCSLib`: public release repository. This repository should contain the
   reusable `EconCSLib/` library, public tooling/docs, completed paper
@@ -32,7 +32,7 @@ For public release, create a filtered repository that keeps only:
 - explicitly approved public partial paper folders whose remaining assumptions
   are documented in their README, validation report, and `docs/PAPER_STATUS.md`.
 
-Partially verified papers remain private until their authors choose to publish
+Partially formalized papers remain private until their authors choose to publish
 them. A partial paper can be public when the remaining gap is not hidden
 paper-specific proof debt but a reusable external theorem or library seam that
 contributors may reasonably want to inspect or help discharge.

@@ -3,6 +3,10 @@
 Paper-local theorem ledgers use a controlled status vocabulary. Keep nuance in
 the `Remaining assumptions / notes` cell, not in the `Status` cell.
 
+Terminology rule: in this repository, a paper/result that is verified by Lean is
+called `formalized`. Do not use `Verified in Lean` as a separate status label;
+Lean verification is the mechanism, not a distinct paper-status category.
+
 Allowed paper-row statuses:
 
 - `formalized`: The listed Lean declaration(s) close the intended paper item.

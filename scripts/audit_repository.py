@@ -19,6 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PAPERS = ROOT / "papers"
+PUBLIC_RELEASE = (ROOT / "docs" / "PAPER_STATUS.md").exists()
 ACTIVE_PAPERS: set[str] = set()
 REQUIRED_PAPER_FILES = {
     ".gitignore",
@@ -50,9 +51,6 @@ ROOT_STATUS_VALUES = {
     "Partially formalized",
     "Not formalized",
     "Active validation",
-    "Verified in Lean",
-    "Verified with OCR caveat",
-    "Verified in Lean with source OCR caveat",
 }
 ROOT_INTERFACE_REQUIRED_STATUSES = {
     "Formalized",
@@ -60,10 +58,15 @@ ROOT_INTERFACE_REQUIRED_STATUSES = {
     "Formalized with documented caveat",
     "Main endpoints formalized",
     "Main endpoints formalized with documented deviations",
-    "Verified in Lean",
-    "Verified with OCR caveat",
-    "Verified in Lean with source OCR caveat",
 }
+FORBIDDEN_STATUS_LABEL_RE = re.compile(
+    r"\bverified in Lean(?: with source OCR caveat)?\b|"
+    r"\bVerified in Lean(?: with source OCR caveat)?\b|"
+    r"\bVerified with OCR caveat\b|"
+    r"\bVerified with caveat\b|"
+    r"<td>\s*Verified\s*</td>|"
+    r"\|\s*Verified\s*\|"
+)
 PAPER_STATUS_VALUES = {
     "formalized",
     "formalized with caveat",
@@ -271,7 +274,13 @@ def check_paper_contract(include_active: bool) -> list[Finding]:
                 )
 
         if not has_source_pdf(folder):
-            findings.append(Finding("ERROR", folder, "no cached source PDF found"))
+            severity = "WARN" if PUBLIC_RELEASE else "ERROR"
+            message = (
+                "no cached source PDF found; public-release checkouts may omit source PDFs for licensing"
+                if PUBLIC_RELEASE
+                else "no cached source PDF found"
+            )
+            findings.append(Finding(severity, folder, message))
         if not has_text_cache(folder):
             findings.append(Finding("ERROR", folder, "no cached `pdftotext` source text found"))
 
@@ -768,6 +777,31 @@ def check_root_status_table() -> list[Finding]:
     return findings
 
 
+def check_status_label_vocabulary() -> list[Finding]:
+    findings: list[Finding] = []
+    paths = [
+        ROOT / "README.md",
+        ROOT / "docs" / "PAPER_STATUS.md",
+        ROOT / "docs" / "ECONCSLEAN_CURRENT_STATUS.md",
+        ROOT / "docs" / "GARG_AUTHOR_FORMALIZATION_REPORT.md",
+        ROOT / "site" / "index.html",
+    ]
+    paths.extend(sorted(PAPERS.glob("*/FINAL_VALIDATION_REPORT.md")))
+    for path in paths:
+        if not path.exists():
+            continue
+        for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+            if FORBIDDEN_STATUS_LABEL_RE.search(line):
+                findings.append(
+                    Finding(
+                        "ERROR",
+                        path,
+                        f"legacy `Verified` status label at line {line_no}; use `Formalized` or `Formalized with caveat`",
+                    )
+                )
+    return findings
+
+
 def check_readme_status_tables(include_active: bool) -> list[Finding]:
     findings: list[Finding] = []
     suspicious_caveat = re.compile(
@@ -1004,6 +1038,7 @@ def run(include_active: bool, strict_style: bool) -> list[Finding]:
     findings.extend(check_dag_status_styles())
     findings.extend(check_paper_facing_ledgers(include_active))
     findings.extend(check_post_paper_audit_interfaces(include_active))
+    findings.extend(check_status_label_vocabulary())
     findings.extend(check_readme_status_tables(include_active))
     findings.extend(check_tracked_artifacts(include_active))
     findings.extend(check_stale_architecture_terms())

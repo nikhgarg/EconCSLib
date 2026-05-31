@@ -53,11 +53,11 @@ paper folder contains the detailed theorem ledger and caveats.
 
 | Paper | Status | Human summary |
 |---|---|---|
-| [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Verified in Lean | Main discretization-bias theorems are closed; report documents a proof-route deviation from the paper. |
-| [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Verified in Lean | Main digital-goods auction results are exposed in the human paper interface. |
-| [GCG24 User-Item Fairness](papers/GCG24UserItemFairness) | Verified in Lean | Recommendation fairness propositions and theorem statements are closed. |
-| [Roth82 Stable Matching](papers/Roth82StableMatching) | Verified in Lean | Stable-matching definitions and named results are exposed in a compact 27-row paper interface, including strict-profile Theorems 3 and 7. |
-| [GS62 College Admissions](papers/GS62CollegeAdmissions) | Verified with OCR caveat | Stable-marriage and college-quota statements are formalized; source scan quality is documented. |
+| [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | Main discretization-bias theorems are closed; report documents a proof-route deviation from the paper. |
+| [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | Main digital-goods auction results are exposed in the human paper interface. |
+| [GCG24 User-Item Fairness](papers/GCG24UserItemFairness) | Formalized | Recommendation fairness propositions and theorem statements are closed. |
+| [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | Stable-matching definitions and named results are exposed in a compact 27-row paper interface, including strict-profile Theorems 3 and 7. |
+| [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized with caveat | Stable-marriage and college-quota statements are formalized; source scan quality is documented. |
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | Bayesian rating-system results are formalized with a documented boundary correction. |
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed, including the source-shaped Section 6 top-`n_q` distinct-bidder page-level guarantee. |
 | [LG21 Test-Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | All named definitions and Section 3--4 results are closed under the paper-facing source models; human dashboard review remains external. |

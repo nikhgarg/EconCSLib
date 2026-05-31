@@ -5,7 +5,7 @@ Date: 2026-05-01
 ## Verdict
 
 The tracked paper-facing formalization for *User-item fairness tradeoffs in
-recommendations* is verified in Lean.
+recommendations* is formalized in Lean.
 
 The paper-local status ledger marks no active target remaining, and the targeted
 paper build completed successfully. A Lean-file placeholder scan found no real

@@ -249,7 +249,7 @@ DA infrastructure guidance, manipulation-rank warning, and IM05 repair notes.
 
 For papers with computational-complexity, hardness, approximation-hardness, or
 randomized-class claims, load `references/proof-algorithms-complexity.md` after
-the first status pass. It contains the workflow for separating Lean-verified
+the first status pass. It contains the workflow for separating Lean-checked
 reductions and solver transfers from external machine-level class semantics.
 
 ### 1.2 Library Layering Rule: Textbook vs. Audit Trail
@@ -529,7 +529,7 @@ the Lean statements against the paper.
     theorem/lemma/definition has been fully formalized under its stated Lean
     assumptions. It does not mean every lemma used in the paper's prose proof
     is independently closed. If the formal proof reaches the result by a
-    different verified path and does not need a paper lemma that remains
+    different formalized path and does not need a paper lemma that remains
     partial/open, the result may be green, but the DAG must not show that
     partial/open lemma as a required solid input. Either omit that non-used
     dependency, mark it as a dashed paper-route/caveat edge, or say in the node
@@ -539,7 +539,7 @@ the Lean statements against the paper.
     paper lemma to obtain the paper-level statement, it is **not green**. Use
     `dag_conditional`, `dag_partial`, or `dag_caveat` as appropriate, and make
     the remaining assumption explicit in the node text and README row.
-  - **Edge semantics:** Solid `dag_arrow` edges are verified dependencies in the
+  - **Edge semantics:** Solid `dag_arrow` edges are Lean-checked dependencies in the
     formalized proof path. Dashed `dag_dashed_arrow` edges are for paper-roadmap
     dependencies, unresolved/conditional inputs, caveat links, or dependency
     paths that are not yet fully discharged. A dashed edge into a green result
@@ -552,7 +552,7 @@ the Lean statements against the paper.
     README during active work and in the validation report only during
     post-validation. Keep the affected paper lemma partial/caveated, and mark
     any later theorem green only if Lean proves that theorem through a fully
-    verified alternate route or through weaker assumptions already discharged.
+    formalized alternate route or through weaker assumptions already discharged.
     If the later theorem merely assumes the problematic lemma, it is
     conditional/caveated, not green.
 - **DAG Formatting and Clarity Mandates:**
@@ -683,7 +683,7 @@ the Lean statements against the paper.
   partial progress. A `FINAL_VALIDATION_REPORT.md` is not a handoff note; it is
   the final one-page human assessment created only when making a final claim
   about a paper, or when the user explicitly asks for post-validation of a
-  completed proof phase. It must answer whether the paper is verified, what
+  completed proof phase. It must answer whether the paper is formalized, what
   additional assumptions were needed, whether mistakes were found, and whether
   the Lean proof followed the paper strategy or used a different route. When
   creating or updating a final validation report, also update the front
@@ -710,7 +710,7 @@ the Lean statements against the paper.
     status vocabulary from `docs/STATUS.md`, and every non-`formalized` row must
     name the exact remaining declaration, certificate, or reason for deferral.
   - DAG check: every named result node must have a style consistent with the
-    README row. Solid arrows mean verified Lean dependencies; dashed arrows
+    README row. Solid arrows mean Lean-checked dependencies; dashed arrows
     mean paper-route/context links or unresolved dependencies. A green node with
     a dashed incoming edge is allowed only if the README/audit says the dashed
     edge is not required by the formal proof.
@@ -720,7 +720,7 @@ the Lean statements against the paper.
     raw assumption lists in the audit theorem signatures; if a paper-model
     structure is used, the docstring must state the exact paper convention that
     the structure packages. The theorem body should be a thin call to the
-    paper-facing declaration, so a human can verify the endpoint in one file.
+    paper-facing declaration, so a human can inspect the endpoint in one file.
     Do not mark the paper complete until the root module imports this ledger.
   - One-stop endpoint check: for each main theorem, expose at least one audit
     wrapper whose conclusion is the paper-level result a human expects to read,
@@ -735,7 +735,7 @@ the Lean statements against the paper.
     in the signature only when they are genuine remaining paper obligations, and
     name them explicitly in the README/DAG.
   - Report check: create or update `FINAL_VALIDATION_REPORT.md` in the paper
-    folder. It must state whether the paper is verified, the exact source
+    folder. It must state whether the paper is formalized, the exact source
     version, the named-result inventory, any deliberate model conventions or
     proof-route deviations, the commands run, and links to the README, DAG, and
     audit ledger.
@@ -812,7 +812,7 @@ search.
   calls, but keep each output scoped: `sed` around named declarations, `rg -n`
   for exact theorem names, and `git diff --stat` before full diffs. Prefer one
   well-sized context read over many failed micro-reads when preparing an edit.
-- Before saying a paper is "done" or "fully verified," perform a paper-local
+- Before saying a paper is "done" or "fully formalized," perform a paper-local
   validation pass: read the paper README theorem-status rows, inspect the DAG
   status for the named main results, check the paper-facing theorem file for
   the strongest closed wrappers, run the targeted `lake build <module>`, and
@@ -1148,7 +1148,7 @@ pass:
   paper-local proof modules for thin wrappers around `EconCSLib`, generic
   lemmas that are not paper-specific, and repeated theorem patterns that would
   serve another paper. Extract small, targeted generic lemmas immediately when
-  the destination is clear and the build can be verified; otherwise record the
+  the destination is clear and the build can be checked; otherwise record the
   candidate and destination in the final report. Do not perform a risky broad
   move during final closeout.
 - Run a skill-update pass as a required post-verification step. If the paper
@@ -1202,8 +1202,8 @@ pass:
   claims. Do not add standalone proof-facing formula aliases when the formulas
   already appear in `PaperInterface.lean` or are only internal implementation
   plumbing.
-- For papers already marked `Verified in Lean`, `Formalized`, or `Formalized
-  with caveat`, backfill the same post-paper surface instead of leaving older
+- For papers already marked `Formalized` or `Formalized with caveat`, backfill
+  the same post-paper surface instead of leaving older
   validation artifacts in place: a readable `PaperInterface.lean`, an
   exhaustive `PostPaperAudit.lean` endpoint ledger when useful, a compact final
   validation report, and synchronized README/status-table text.
@@ -1223,7 +1223,7 @@ pass:
     lemma clusters, and `dag_result` for theorems, propositions, corollaries,
     and final paper-facing results. Keep the legend consistent with the styles
     actually used in the diagram.
-  - Check edge semantics. Solid arrows are verified Lean dependencies; dashed
+  - Check edge semantics. Solid arrows are Lean-checked dependencies; dashed
     arrows are caveats, bypassed paper routes, or non-required context. Remove
     redundant arrows if they make the diagram harder to inspect.
   - Render from the paper folder and visually inspect the PDF or a PNG
@@ -1239,12 +1239,14 @@ pass:
   `docs/ECONCSLEAN_CURRENT_STATUS.md` at the same time, using the exact caveats
   from the final report. Do not let the front README keep stale "partial" or
   "active" wording after a paper-local validation report says a paper is
-  verified.
-- Use one status vocabulary per artifact. For paper validation reports, prefer
-  `complete`, `conditionally complete`, and `incomplete`. For author-wide
-  inventory tables, prefer `Complete`, `Partial`, and `Deferred`. Do not mix
-  "Verified in Lean" and "Formalized" as parallel category names; use those only
-  as descriptive prose if needed.
+  formalized.
+- Use one status vocabulary per artifact. At paper and repository level,
+  `formalized` is the status for a paper/result whose Lean statement and proof
+  compile with its caveats documented. Lean verification is the mechanism, not a
+  separate status category. Do not use `Verified in Lean`, `Verified`, or
+  `Verified with caveat` as paper-status labels; use `Formalized`,
+  `Formalized with caveat`, `Partially formalized`, or the paper-local
+  lowercase equivalents from `docs/STATUS.md`.
 - **CRITICAL MANDATE: Never lie by omission.** Your validation report MUST list all major theorems, propositions, and sections from the paper. If a result or section was deferred, skipped, or is otherwise unformalized, you MUST list it in the report, mark its status as `not formalized`, and explain why it was deferred. Always be honest and complete regarding the paper's contents.
 - The report must first present the paper interface: the definitions and
   formatted mathematical objects the reader needs to inspect, even when the

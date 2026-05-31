@@ -1,4 +1,4 @@
-# Driver Surge Pricing Verification Notes
+# Driver Surge Pricing Formalization Notes
 
 This is a lightweight handoff document for source-to-Lean mapping.
 
@@ -7,7 +7,7 @@ This is a lightweight handoff document for source-to-Lean mapping.
 - Source PDF: `source.pdf`
 - Source text cache: `source.txt`
 
-## Verification checklist
+## Formalization checklist
 
 - [x] Full named-result inventory copied to the README theorem table.
 - [x] DAG graph includes all required paper-stage nodes and dependencies.
@@ -28,7 +28,7 @@ This is a lightweight handoff document for source-to-Lean mapping.
   `paper_lemma8_affine_negative_additive_response_strict_quasi_concave`; the
   remaining affine-response work is downstream Lemma 5/Theorem 4 optimizer
   selection, not a Lemma 7-8 theorem gap.
-- Last theorem row verified: Theorem 1 measured marginal add/remove steps,
+- Last theorem row formalized: Theorem 1 measured marginal add/remove steps,
   Proposition 3.1 measured affine reward step, Lemma 2 CTMC closed form,
   Lemma 1/Lemma 3 measured algebra support, Appendix D derivative-kernel
   algebra, measured Lemma 9/10 accept-all-to-current tightening including

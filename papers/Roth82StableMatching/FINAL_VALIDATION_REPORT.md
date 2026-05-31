@@ -191,7 +191,7 @@
 - None
 
 ## 7. Final Verdict
-- Completion status: verified in Lean; all named source results in the cached
+- Completion status: formalized in Lean; all named source results in the cached
   Roth 1982 text are source-domain formalized
 - Summary: The paper-facing definitions, Theorem 1 DA stable-complete existence,
   Theorem 2 source strict-domain men/women optimal stable outcomes, Theorem 3 strict-profile finite
