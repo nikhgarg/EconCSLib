@@ -40807,6 +40807,69 @@ theorem paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_to_ex
         model hsource_extensive.2.1 hno_overshoot)
 
 /--
+Clock-disciplined named-strategy histories satisfy the source-extensive
+rationality boundary once terminality is supplied. The source-shaped sequential
+rationality component is the named strategy's local-deviation theorem; the
+generated-history component is obtained by forgetting clock discipline.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_source_extensive_rationality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model state finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+      model state finalState
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    ⟨paper_theorem8_bstar_ranked_threshold_named_strategy_source_sequential_rationality
+        model state,
+      paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_strategy_history
+        model hhist,
+      terminal⟩
+
+/--
+Clock-disciplined source histories discharge both source-extensive rationality
+and exact finite `B*` dropout records. This is the positive timing route that
+replaces the false global ordinary-`StrategyStep` no-overshoot premise.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  exact
+    ⟨paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_source_extensive_rationality
+        model hhist terminal,
+      paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_exact_drop_history
+        model hhist hstate_no_overshoot⟩
+
+/--
 Belief object for the source-extensive terminal-record checker. A belief names
 the strategy whose generated source history is being used, together with the
 terminality proof for the same strategy.
