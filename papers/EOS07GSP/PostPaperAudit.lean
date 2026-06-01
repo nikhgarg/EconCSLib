@@ -3066,6 +3066,26 @@ theorem audit_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_s
     paper_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot
       model hhist hno_overshoot
 
+/-- Audit for the named source-timing seam in Theorem 8: once the concrete
+source semantics proves the realized-new-dropout no-overshoot statement, any
+ordinary generated named-strategy history upgrades to a no-overshoot history. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot_statement
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hno_overshoot :
+      paper_theorem8_bstar_ranked_threshold_realized_new_dropout_no_overshoot_statement
+        model) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot_statement
+      model hhist hno_overshoot
+
 /-- Audit for Theorem 8 source histories: an ordinary generated history plus
 realized-new-dropout no-overshoot evidence builds the terminal certificate
 expected by the source-extensive endpoint family. -/

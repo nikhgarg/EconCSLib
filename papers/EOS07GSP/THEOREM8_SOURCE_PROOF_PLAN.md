@@ -355,25 +355,25 @@ is the concrete generalized-English extensive-form argument:
    proves that some unscheduled rank remains active. Use completed-rank
    conclusions for finite checks, or introduce a finite-bidder source model.
 2. For the fully general paper statement, prove the source-side no-overshoot
-   timing fact for the real transition relation, then apply
-   `theorem8_strategy_history_to_exact_drop_history_of_no_overshoot_drop_steps`.
+   timing fact for the real transition relation as
+   `theorem8RealizedNewDropoutNoOvershootStatement`, then feed it through the
+   named-statement wrappers.
    At the single-transition level,
    `theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot`
    is the intended local bridge: once source semantics prove a realized
    named-strategy dropout did not overshoot, the recorded dropout price is
    exactly the finite `B*` threshold.
    At the history level,
-   `theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot`
+   `theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot_statement`
    upgrades an ordinary generated named-strategy history to the no-overshoot
-   history object from precisely those realized-new-dropout no-overshoot
-   premises.
+   history object from the named realized-new-dropout no-overshoot statement.
    If the target endpoint expects the packaged terminal certificate directly,
    use
-   `theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout`
+   `theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout_statement`
    with generated history, terminality, initial activity, and the same
-   step-local invariant.
+   named source-timing invariant.
    For the all-terminal VCG target, the one-stop wrapper is
-   `theorem8_strategy_history_realized_new_dropout_source_extensive_trace_all_terminal_vcg_conclusion`;
+   `theorem8_strategy_history_realized_new_dropout_statement_source_extensive_trace_all_terminal_vcg_conclusion`;
    it returns unique PBE, named strategy, generated-history/terminal/exact
    records, and VCG outcome/slot-payment/utility equality.
    Bare `StrategyHistory` cannot imply exact records; the overshoot witness

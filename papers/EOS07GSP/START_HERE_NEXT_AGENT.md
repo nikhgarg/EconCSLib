@@ -48,7 +48,7 @@ is the fully concrete generalized-English source proof:
    clock-disciplined history as input.
 
 The formal counterexample
-`paper_theorem8_bstar_ranked_threshold_ordinary_strategy_history_allows_overshoot_not_exact_drop_history`
+`paper_theorem8_bstar_ranked_threshold_ordinary_strategy_history_allows_overshoot_record`
 shows that ordinary `StrategyHistory` is too weak: a rank can drop after its
 finite `B*` threshold and therefore record the wrong terminal price.
 
@@ -57,11 +57,15 @@ finite `B*` threshold and therefore record the wrong terminal price.
 Use these as the strongest public entry points before adding new code:
 
 - `theorem8_no_overshoot_strategy_history_to_exact_drop_history`
+- `theorem8RealizedNewDropoutNoOvershootStatement`
 - `theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot`
 - `theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot`
+- `theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot_statement`
 - `theorem8_no_overshoot_terminal_certificate_of_strategy_history`
 - `theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout`
+- `theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout_statement`
 - `theorem8_strategy_history_realized_new_dropout_source_extensive_trace_all_terminal_vcg_conclusion`
+- `theorem8_strategy_history_realized_new_dropout_statement_source_extensive_trace_all_terminal_vcg_conclusion`
 - `theorem8_clock_disciplined_strategy_history_to_exact_drop_history`
 - `theorem8_clock_disciplined_strategy_history_final_record_eq_threshold`
 - `theorem8_cold_start_clock_disciplined_strategy_history_final_record_eq_threshold`
@@ -91,7 +95,8 @@ Do this next, in this order:
    by `theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot`
    and its one-step record form
    `theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot`,
-   or else identify the exact additional source assumption needed.
+   or else prove the named source-timing premise
+   `theorem8RealizedNewDropoutNoOvershootStatement`.
 3. Lift the one-transition invariant to histories.
 4. Feed the resulting history into the existing cold-start clock-disciplined or
    no-overshoot source-extensive endpoints.

@@ -63,6 +63,10 @@ abbrev theorem8_dropout_price_bstar :=
 abbrev theorem8_no_overshoot_dropout_step_exact_record :=
   @EOS07GSP.audit_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot
 
+/-- Theorem 8: named source-timing bridge for realized dropout no-overshoot. -/
+abbrev theorem8_realized_dropout_no_overshoot_source_timing_bridge :=
+  @EOS07GSP.audit_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot_statement
+
 /-- Theorem 8: source-extensive PBE iff named strategy. -/
 abbrev theorem8_source_extensive_pbe_iff_named_strategy_review :=
   @EOS07GSP.PaperInterface.theorem8_source_extensive_pbe_iff_named_strategy

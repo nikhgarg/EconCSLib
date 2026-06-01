@@ -24046,6 +24046,29 @@ inductive PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
           state finalState
 
 /--
+Source-semantic timing statement for the remaining Theorem 8 source proof.  At
+every realized new-dropout transition under the named finite `B*` strategy, the
+pre-dropout clock has not overshot the dropping rank's finite `B*` threshold.
+Behavioral optimality/tie-breaking do not imply this statement by themselves;
+it is the concrete source-transition invariant needed by the exact-record
+machinery.
+-/
+def paper_theorem8_bstar_ranked_threshold_realized_new_dropout_no_overshoot_statement
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    Prop :=
+  ∀ {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ},
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) state next →
+    state.IsActive rank →
+    ¬ next.IsActive rank →
+    state.clockPrice ≤
+      paper_theorem8_bstar_threshold_bid
+        model.value model.clickThroughRate (model.remaining + 1)
+        (rank + 1)
+
+/--
 An ordinary named-strategy history can be upgraded to a no-overshoot history
 when the source proof supplies no-overshoot exactly at realized new-dropout
 steps. This is the local source-invariant bridge: advances remain ordinary
@@ -24096,6 +24119,29 @@ theorem paper_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_s
                     PaperTheorem8GeneralizedEnglishAuctionState.recordDropout_not_active
                       state rank))
               ih
+
+/--
+Named-statement variant of the realized-new-dropout no-overshoot history
+bridge. This is the reusable source-proof seam: prove the source-timing
+statement once, then any ordinary generated named-strategy history upgrades to
+the strengthened no-overshoot history object.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot_statement
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hno_overshoot :
+      paper_theorem8_bstar_ranked_threshold_realized_new_dropout_no_overshoot_statement
+        model) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot
+      model hhist hno_overshoot
 
 /--
 Every no-overshoot named-strategy history is an ordinary strategy-consistent

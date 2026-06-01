@@ -49,6 +49,17 @@ abbrev theorem8BStarThresholdBid
   paper_theorem8_bstar_threshold_bid value clickThroughRate remaining rank
 
 /--
+The source-timing premise needed by the remaining Theorem 8 generalized-English
+source proof: every realized new dropout under the named finite `B*` strategy
+occurs without overshooting that rank's finite `B*` threshold.
+-/
+abbrev theorem8RealizedNewDropoutNoOvershootStatement
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    Prop :=
+  paper_theorem8_bstar_ranked_threshold_realized_new_dropout_no_overshoot_statement
+    model
+
+/--
 The continuation finite `B*` bid is weakly below the current finite `B*`
 threshold under the ordered assumptions used by Theorem 8.
 -/
@@ -3310,6 +3321,28 @@ theorem theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_n
           hno_overshoot hstep hactive hinactive)
 
 /--
+Named-statement form of the source-invariant bridge. A proof of
+`theorem8RealizedNewDropoutNoOvershootStatement model` upgrades any ordinary
+generated named-strategy history to the no-overshoot history object used by
+the terminal-record endpoints.
+-/
+theorem theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot_statement
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hno_overshoot :
+      theorem8RealizedNewDropoutNoOvershootStatement model) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  simpa [theorem8RealizedNewDropoutNoOvershootStatement] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot_statement
+      model hhist hno_overshoot
+
+/--
 No-overshoot source histories forget to ordinary named-strategy histories. This
 is the generated-history component of the tightest concrete timing certificate:
 the no-overshoot evidence is stored only at realized dropout steps.
@@ -3411,6 +3444,30 @@ def theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_
     (theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot
       model hhist hno_overshoot)
     terminal initially_active
+
+/--
+Build the no-overshoot terminal-history certificate from the named source
+timing statement rather than an anonymous higher-order premise.
+-/
+def theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout_statement
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hno_overshoot :
+      theorem8RealizedNewDropoutNoOvershootStatement model)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate :=
+  theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout
+    model hhist hno_overshoot terminal initially_active
 
 /--
 Raw no-overshoot history to source-extensive completed-rank conclusion using
@@ -8265,6 +8322,61 @@ theorem theorem8_strategy_history_realized_new_dropout_source_extensive_trace_al
       (theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout
         model hhist hno_overshoot terminal initially_active)
       hno_active
+
+/--
+Named-source-timing form of the one-stop all-terminal source-extensive
+endpoint. This is the stable target for a future concrete source proof: prove
+`theorem8RealizedNewDropoutNoOvershootStatement model`, generated history,
+terminality, initial activity, and all-terminality, then Lean returns unique
+PBE, named-strategy identity, generated/exact trace, and VCG conclusions.
+-/
+theorem theorem8_strategy_history_realized_new_dropout_statement_source_extensive_trace_all_terminal_vcg_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hno_overshoot :
+      theorem8RealizedNewDropoutNoOvershootStatement model)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout_statement
+        model hhist hno_overshoot terminal initially_active
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy state finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model state finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  dsimp
+  exact
+    theorem8_strategy_history_realized_new_dropout_source_extensive_trace_all_terminal_vcg_conclusion
+      model hhist hno_overshoot terminal initially_active hno_active
 
 /--
 One-stop source-extensive no-overshoot paper-checking endpoint.  The unique
