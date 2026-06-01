@@ -1,18 +1,24 @@
 # New Contributor Workflow
 
-This guide is for contributors starting from the public `EconCSLib` repository.
-It does not assume that you already have a private EconCSLib workspace.
+This guide is for contributors who want to build on the public `EconCSLib`
+repository. It does not assume that you already have a private EconCSLib
+workspace.
 
 The contribution policy is still provisional. Before starting substantial paper
 formalization work, contact Nikhil Garg at ngarg@cornell.edu so the intended
 scope, source-paper version, and public/private status are clear.
 
-## 1. Start From The Public Repository
+## 1. Use Public Main As A Read-Only Base
 
-Fork `nikhgarg/EconCSLib` on GitHub, then clone your fork:
+Do not work directly on the public repository. Treat
+`nikhgarg/EconCSLib/main` as the upstream base that you periodically sync from,
+and do the actual development in a private workspace until the contribution is
+ready for public review.
+
+Start with a local private clone:
 
 ```bash
-git clone git@github.com:<your-user>/EconCSLib.git
+git clone https://github.com/nikhgarg/EconCSLib.git
 cd EconCSLib
 git remote add upstream https://github.com/nikhgarg/EconCSLib.git
 git fetch upstream
@@ -20,14 +26,15 @@ git checkout main
 git merge --ff-only upstream/main
 ```
 
-Create a branch for one focused contribution:
+Then create a local working branch that you do not publish until it is ready:
 
 ```bash
 git checkout -b <short-topic-name>
 ```
 
-Keep `upstream/main` as the source of truth for public library code, public
-docs, and public paper folders.
+If you need cloud backup or collaboration before public review, use your own
+private repository or coordinate a private collaboration space with Nikhil. A
+public fork is not a private workspace.
 
 ## 2. Choose The Contribution Type
 
@@ -78,10 +85,11 @@ Use `PaperInterface.lean` as the human-facing statement surface. Keep theorem
 status, caveats, and dependency-graph styles synchronized when a result moves
 from partial or conditional to formalized.
 
-## 5. Start A New Paper
+## 5. Start A New Paper Privately
 
-If the paper is intended to be public from the beginning, create a branch from
-public `main` and scaffold the paper folder:
+New paper formalizations should start in a private workflow, even if the
+eventual goal is a public contribution. From a private local clone or private
+repository based on public `main`, scaffold the paper folder:
 
 ```bash
 python3 scripts/new_paper.py <paper-url> \
@@ -94,7 +102,8 @@ python3 scripts/new_paper.py <paper-url> \
 Use the existing folder naming convention, for example `MSVV07AdWords` or
 `Roth82StableMatching`.
 
-The first pull request for a new paper can be an intake PR if it contains:
+The first public pull request for a new paper should contain only public-safe
+work. It can be an intake PR if it contains:
 
 - source version metadata;
 - a named-result inventory;
@@ -107,10 +116,10 @@ Do not mark a result formalized until the corresponding Lean declaration
 compiles without `sorry`, `admit`, new unreviewed axioms, or hidden certificate
 assumptions.
 
-## 6. If The Paper Is Not Public-Ready
+## 6. Keep Unfinished Paper Work Private By Default
 
-You do not need an existing private EconCSLib repository to start thinking
-about a paper. You have three practical options:
+You do not need an existing private EconCSLib repository to start thinking about
+a paper, but unfinished paper work should stay private. Practical options are:
 
 - Work locally on a private branch that you do not push anywhere.
 - Create your own private repository or private fork, if your GitHub account
@@ -121,9 +130,17 @@ Do not push unfinished private-sensitive work to a public fork if the source
 paper, proof attempts, comments, or intermediate history should not be public.
 Public repositories and public forks have public Git history.
 
-When the paper becomes public-ready, open a focused pull request containing only
-the approved paper folder, its root `papers/<PaperName>.lean` file, and any
-public-safe reusable library changes.
+When the paper becomes public-ready, or when the project explicitly decides to
+publish a documented partial formalization, publish only a clean review branch
+and open a focused pull request containing the approved paper folder, its root
+`papers/<PaperName>.lean` file, and any public-safe reusable library changes.
+
+The pull request is the point at which the contribution becomes public. Review
+the branch history before opening it.
+
+Public partial formalizations are allowed when the remaining assumption seam is
+explicit and useful for public review or collaboration. That should be an
+intentional project decision, not the default for new paper work.
 
 ## 7. Pull Request Checklist
 
@@ -131,6 +148,8 @@ Before opening a pull request:
 
 - Rebase or merge from `upstream/main`.
 - Run the relevant `lake build` target.
+- Push only a public-safe review branch or fork after the work is ready for
+  review.
 - Keep source PDFs, rendered PDFs, dashboard caches, and local artifacts out of
   Git unless the repository already tracks that artifact type intentionally.
 - Update `README.md`, `DependencyDAG.tex`, `PaperInterface.lean`, and

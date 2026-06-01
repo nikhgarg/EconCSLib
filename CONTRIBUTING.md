@@ -7,8 +7,8 @@ Garg at ngarg@cornell.edu before starting substantial work.
 If you are starting from the public repository and do not already have a
 private EconCSLib workspace, begin with
 [`docs/NEW_CONTRIBUTOR_WORKFLOW.md`](docs/NEW_CONTRIBUTOR_WORKFLOW.md). It
-describes the fork/branch workflow, how to start a new paper, and when a
-private workspace is useful.
+describes the private-workspace-then-pull-request workflow, how to start a new
+paper, and when to publish a clean public review branch.
 
 EconCSLib has two connected goals:
 
@@ -18,6 +18,15 @@ EconCSLib has two connected goals:
 The public repository should contain reusable library code, tooling, docs, and
 completed paper formalizations. Partially formalized papers may be developed in
 private workspaces until their authors are ready to make them public.
+
+New contributors should not work directly on the public repository. Use a
+private local clone or private collaboration space first, then open a pull
+request containing only public-safe changes.
+
+In some cases, unfinished work may intentionally be made public as a documented
+partial formalization, as with current public partials in this repository. That
+should be an explicit project decision, not the default path for new paper
+work.
 
 ## What To Contribute
 
@@ -62,10 +71,11 @@ plumbing, helper endpoints, and implementation detail in `MainTheorems.lean`,
 
 ## Private Workflows For Unfinished Papers
 
-If a paper is not ready to be public, develop it in a private repository or
-private clone. Keep the full working history there.
+If a paper is not ready to be public by default, develop it in a private
+repository or private clone. Keep the full working history there.
 
-When the paper is complete, publish only the paper folder and any reusable
+When the paper is complete, or when the project explicitly decides to publish a
+documented partial formalization, publish only the paper folder and any reusable
 library updates that are ready for public review. If you want to preserve
 development history, prefer a private repository dedicated to that paper. That
 makes it possible to publish a filtered or subtree history later without
