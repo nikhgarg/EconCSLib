@@ -157,6 +157,13 @@ the main agent will just wait idle; do the blocker locally and send sidecar
 questions in parallel. Ask subagents for exact file paths, line anchors,
 declaration names, and recommended next lemmas, not broad summaries or repeated
 context. Close agents once their result has been integrated.
+When parallel edits are safe, do not artificially keep subagents read-only.
+Use worker subagents for bounded implementation in disjoint files or declaration
+clusters, tell them they are not alone in the codebase, and give each worker an
+explicit owned write set. Avoid overlapping edits to the same Lean file unless
+one agent owns a clearly separated section and integration order is obvious.
+Review worker patches before committing, run the relevant targeted builds, and
+stage only the paths owned by the integrated work.
 
 Do not avoid continuous, probabilistic, or measure-theoretic formalization when
 the source theorem requires it. Finite analogues are useful scaffolds only when
