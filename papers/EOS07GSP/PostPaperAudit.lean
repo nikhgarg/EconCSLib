@@ -1,0 +1,15802 @@
+import EOS07GSP.MainTheorems
+
+/-!
+# EOS07GSP post-paper audit
+
+This file is a post-paper audit surface for the current Lean formalization of
+Edelman, Ostrovsky, and Schwarz (2007), *Internet Advertising and the
+Generalized Second-Price Auction*. `PaperInterface.lean` is the compact
+human-facing theorem-review surface. Each declaration below is intentionally
+thin: it points a named paper result, caveat, or conditional certificate to the
+exact compiling Lean endpoint used by the paper folder.
+-/
+
+namespace EOS07GSP
+
+open EconCSLib.Auction
+
+/-- Audit for Sections 2--3 and the GSP witness: truthful bidding is not a
+dominant strategy in the concrete three-bidder/two-slot sorted-GSP model. -/
+theorem audit_gsp_not_dominant_strategy_truthful :
+    ¬ PositionMechanism.TruthfulDominantStrategy
+      gspCounterexampleEnvironment gsp3TwoSlotMechanism := by
+  exact paper_sorted_gsp_three_bidder_two_slot_not_truthful
+
+/-- Audit for the running example in Sections 2.2--2.3: the truthful bid vector
+`(10,4,2)` is a pure Nash equilibrium of the concrete sorted
+three-bidder/two-slot GSP mechanism. -/
+theorem audit_running_example_truthful_gsp_is_nash :
+    PositionMechanism.IsNashEquilibrium
+      paper_eos_running_example_environment
+      gsp3TwoSlotMechanism
+      paper_eos_running_example_values3
+      paper_eos_running_example_values3 := by
+  exact paper_eos_running_example_truthful_gsp_is_nash
+
+/-- Audit for the running example in Sections 2.2--2.3: the truthful GSP bid
+profile is locally envy-free in the formal static-game predicate. -/
+theorem audit_running_example_truthful_gsp_locally_envy_free_equilibrium :
+    gsp3TwoSlotMechanism.LocallyEnvyFreeEquilibrium
+      paper_eos_running_example_environment
+      paper_eos_running_example_values3
+      paper_eos_running_example_values3 := by
+  exact paper_eos_running_example_truthful_gsp_locally_envy_free_equilibrium
+
+/-- Audit for the running example and Lemma 5 bridge: the truthful GSP outcome
+is a stable assignment in the formal outcome predicate. -/
+theorem audit_running_example_truthful_gsp_stable_assignment :
+    (gsp3TwoSlotMechanism
+      paper_eos_running_example_values3).StableAssignment
+      paper_eos_running_example_environment
+      paper_eos_running_example_values3 := by
+  exact paper_eos_running_example_truthful_gsp_stable_assignment
+
+/-- Audit for the running example and Theorem 7 intuition: the VCG-equivalent
+locally-envy-free outcome with per-click payments `(3,2)` is stable. -/
+theorem audit_running_example_vcg_equivalent_outcome_stable_assignment :
+    paper_eos_running_example_vcg_equivalent_outcome.StableAssignment
+      paper_eos_running_example_environment
+      paper_eos_running_example_values3 := by
+  exact paper_eos_running_example_vcg_equivalent_outcome_stable_assignment
+
+/-- Audit for the running example and Theorem 7 intuition: the VCG-equivalent
+locally-envy-free outcome has expected revenue `800`. -/
+theorem audit_running_example_vcg_equivalent_outcome_revenue_eq :
+    paper_eos_running_example_vcg_equivalent_outcome.revenue
+      paper_eos_running_example_environment = 800 := by
+  exact paper_eos_running_example_vcg_equivalent_outcome_revenue_eq
+
+/-- Audit for the running example and Theorem 7 intuition: any same-assignment
+slot-envy-free outcome has revenue at least the VCG-equivalent outcome's
+revenue. -/
+theorem audit_running_example_vcg_equivalent_revenue_minimal
+    (other : PositionOutcome (Fin 3) (Fin 2))
+    (hother :
+      other.SlotEnvyFree
+        paper_eos_running_example_environment
+        paper_eos_running_example_values3)
+    (hsame :
+      ∀ i,
+        paper_eos_running_example_vcg_equivalent_outcome.slotOf i =
+          other.slotOf i) :
+    paper_eos_running_example_vcg_equivalent_outcome.revenue
+        paper_eos_running_example_environment ≤
+      other.revenue paper_eos_running_example_environment := by
+  exact
+    paper_eos_running_example_vcg_equivalent_revenue_minimal
+      other hother hsame
+
+/-- Audit for the running example in Sections 2.2--2.3: truthful GSP bids
+produce total payments `800` and `200`. -/
+theorem audit_running_example_truthful_gsp_total_payments :
+    paper_eos_running_example_clickThroughRate 0 *
+        paper_eos_running_example_value 1 = 800 ∧
+      paper_eos_running_example_clickThroughRate 1 *
+        paper_eos_running_example_value 2 = 200 := by
+  exact paper_eos_running_example_truthful_gsp_total_payments
+
+/-- Audit for the running example in Section 2.3: VCG total payments are `600`
+and `200`. -/
+theorem audit_running_example_vcg_total_payments :
+    paper_theorem7_ranked_vcg_tail_payment
+        paper_eos_running_example_value
+        paper_eos_running_example_clickThroughRate 0 2 = 600 ∧
+      paper_theorem7_ranked_vcg_tail_payment
+        paper_eos_running_example_value
+        paper_eos_running_example_clickThroughRate 1 1 = 200 := by
+  exact paper_eos_running_example_vcg_total_payments
+
+/-- Audit for the running example in Section 2.3: truthful-GSP revenue is
+strictly higher than VCG revenue. -/
+theorem audit_running_example_truthful_gsp_revenue_gt_vcg_revenue :
+    paper_eos_running_example_clickThroughRate 0 *
+          paper_eos_running_example_value 1 +
+        paper_eos_running_example_clickThroughRate 1 *
+          paper_eos_running_example_value 2 >
+      paper_theorem7_ranked_vcg_tail_payment
+          paper_eos_running_example_value
+          paper_eos_running_example_clickThroughRate 0 2 +
+        paper_theorem7_ranked_vcg_tail_payment
+          paper_eos_running_example_value
+          paper_eos_running_example_clickThroughRate 1 1 := by
+  exact paper_eos_running_example_truthful_gsp_revenue_gt_vcg_revenue
+
+/-- Audit for the running example in Section 2.3: truthful-GSP revenue is
+exactly `1000`. -/
+theorem audit_running_example_truthful_gsp_revenue_eq :
+    paper_eos_running_example_clickThroughRate 0 *
+          paper_eos_running_example_value 1 +
+        paper_eos_running_example_clickThroughRate 1 *
+          paper_eos_running_example_value 2 = 1000 := by
+  exact paper_eos_running_example_truthful_gsp_revenue_eq
+
+/-- Audit for the running example in Section 2.3: VCG revenue is exactly `800`. -/
+theorem audit_running_example_vcg_revenue_eq :
+    paper_theorem7_ranked_vcg_tail_payment
+          paper_eos_running_example_value
+          paper_eos_running_example_clickThroughRate 0 2 +
+        paper_theorem7_ranked_vcg_tail_payment
+          paper_eos_running_example_value
+          paper_eos_running_example_clickThroughRate 1 1 = 800 := by
+  exact paper_eos_running_example_vcg_revenue_eq
+
+/-- Audit for Definition 4 / Lemma 5 caveat boundary: the static-game locally
+envy-free equilibrium predicate gives the stable-assignment predicate once
+feasibility and individual rationality are supplied. -/
+theorem audit_lemma5_locally_envy_free_equilibrium_stable_assignment
+    {Bidder Slot : Type*} [DecidableEq Bidder]
+    (E : PositionEnvironment Slot) (M : PositionMechanism Bidder Slot)
+    (values bids : Bidder → ℝ)
+    (hfeasible : (M bids).FeasibleAssignment)
+    (hIR : (M bids).IndividuallyRational E values)
+    (h : M.LocallyEnvyFreeEquilibrium E values bids) :
+    (M bids).StableAssignment E values := by
+  exact
+    paper_position_locally_envy_free_equilibrium_stable_assignment
+      E M values bids hfeasible hIR h
+
+/-- Audit for Lemma 6 caveat boundary: the formal stable-assignment predicate
+contains the no-profitable-rematch inequalities needed for slot envy-freeness. -/
+theorem audit_lemma6_stable_assignment_slot_envy_free
+    {Bidder Slot : Type*}
+    (E : PositionEnvironment Slot)
+    (O : PositionOutcome Bidder Slot) (values : Bidder → ℝ)
+    (h : O.StableAssignment E values) :
+    O.SlotEnvyFree E values := by
+  exact paper_position_stable_assignment_slot_envy_free E O values h
+
+/-- Audit for Theorem 7 `B*` payment identity: the next `B*` bid reproduces
+the VCG total payment for the current rank. -/
+theorem audit_theorem7_bstar_payment_identity
+    (value vcgTotalPayment clickThroughRate : ℕ → ℝ) (i : ℕ)
+    (hclick_ne : clickThroughRate i ≠ 0) :
+    clickThroughRate i *
+      paper_theorem7_bstar_bid value vcgTotalPayment clickThroughRate (i + 1) =
+      vcgTotalPayment i := by
+  exact
+    paper_theorem7_bstar_next_bid_payment_eq_vcg
+      value vcgTotalPayment clickThroughRate i hclick_ne
+
+/-- Audit for Theorem 7 `B*` bids: the bid vector is nonnegative under the
+standard sign assumptions. -/
+theorem audit_theorem7_bstar_bid_nonnegative
+    {value vcgTotalPayment clickThroughRate : ℕ → ℝ}
+    (hvalue_zero_nonneg : 0 ≤ value 0)
+    (hvcg_nonneg : ∀ i, 0 ≤ vcgTotalPayment i)
+    (hclick_pos : ∀ i, 0 < clickThroughRate i)
+    (rank : ℕ) :
+    0 ≤ paper_theorem7_bstar_bid value vcgTotalPayment clickThroughRate rank := by
+  exact
+    paper_theorem7_bstar_bid_nonneg
+      hvalue_zero_nonneg hvcg_nonneg hclick_pos rank
+
+/-- Audit for Theorem 7 `B*` bid order: under the strict paper-side
+click-through and payment inequalities, every rank's bid is strictly above the
+next rank's bid. -/
+theorem audit_theorem7_bstar_bid_strictly_decreasing
+    {value vcgTotalPayment clickThroughRate : ℕ → ℝ}
+    (hclick_pos : ∀ i, 0 < clickThroughRate i)
+    (hclick_strict_mono : ∀ i, clickThroughRate (i + 1) < clickThroughRate i)
+    (hrec :
+      ∀ i : ℕ,
+        vcgTotalPayment i =
+          (clickThroughRate i - clickThroughRate (i + 1)) * value (i + 1) +
+            vcgTotalPayment (i + 1))
+    (hpayment_lt_value :
+      ∀ i : ℕ, vcgTotalPayment i < clickThroughRate i * value i)
+    (rank : ℕ) :
+    paper_theorem7_bstar_bid value vcgTotalPayment clickThroughRate rank >
+      paper_theorem7_bstar_bid value vcgTotalPayment clickThroughRate
+        (rank + 1) := by
+  exact
+    paper_theorem7_bstar_bid_gt_next_of_rank_conditions
+      hclick_pos hclick_strict_mono hrec hpayment_lt_value rank
+
+/-- Audit for the weak Theorem 7 `B*` bid order used by finite Theorem 8
+schedule sorting: weak click-through and payment inequalities imply adjacent
+`B*` bids are weakly decreasing. -/
+theorem audit_theorem7_bstar_bid_weakly_decreasing
+    {value vcgTotalPayment clickThroughRate : ℕ → ℝ}
+    (hclick_pos : ∀ i, 0 < clickThroughRate i)
+    (hclick_mono : ∀ i, clickThroughRate (i + 1) ≤ clickThroughRate i)
+    (hrec :
+      ∀ i : ℕ,
+        vcgTotalPayment i =
+          (clickThroughRate i - clickThroughRate (i + 1)) * value (i + 1) +
+            vcgTotalPayment (i + 1))
+    (hpayment_le_value :
+      ∀ i : ℕ, vcgTotalPayment i ≤ clickThroughRate i * value i)
+    (rank : ℕ) :
+    paper_theorem7_bstar_bid value vcgTotalPayment clickThroughRate (rank + 1) ≤
+      paper_theorem7_bstar_bid value vcgTotalPayment clickThroughRate rank := by
+  exact
+    paper_theorem7_bstar_bid_ge_next_of_rank_conditions
+      hclick_pos hclick_mono hrec hpayment_le_value rank
+
+/-- Audit for Theorem 7 finite ranked construction: the ranked `B*` outcome is
+feasible because each rank receives its own slot. -/
+theorem audit_theorem7_ranked_bstar_outcome_feasible
+    {n : ℕ} (value vcgTotalPayment clickThroughRate : ℕ → ℝ) :
+    (paper_theorem7_ranked_bstar_outcome
+      value vcgTotalPayment clickThroughRate :
+        PositionOutcome (Fin n) (Fin n)).FeasibleAssignment := by
+  exact
+    paper_theorem7_ranked_bstar_outcome_feasible
+      value vcgTotalPayment clickThroughRate
+
+/-- Audit for Theorem 7 finite ranked construction: the per-click payment in
+the ranked `B*` outcome reproduces the requested VCG total payment. -/
+theorem audit_theorem7_ranked_bstar_outcome_total_payment
+    {n : ℕ} (value vcgTotalPayment clickThroughRate : ℕ → ℝ) (i : Fin n)
+    (hclick_ne : clickThroughRate i.val ≠ 0) :
+    (paper_theorem7_ranked_environment clickThroughRate).clickThroughRate i *
+      (paper_theorem7_ranked_bstar_outcome
+        value vcgTotalPayment clickThroughRate).paymentPerClick i =
+      vcgTotalPayment i.val := by
+  exact
+    paper_theorem7_ranked_bstar_outcome_total_payment_eq_vcg
+      value vcgTotalPayment clickThroughRate i hclick_ne
+
+/-- Audit for Theorem 7 finite ranked construction: the ranked `B*` outcome is
+individually rational when each VCG total payment is below click-weighted
+value. -/
+theorem audit_theorem7_ranked_bstar_outcome_individually_rational
+    {n : ℕ} (value vcgTotalPayment clickThroughRate : ℕ → ℝ)
+    (hclick_ne : ∀ i : Fin n, clickThroughRate i.val ≠ 0)
+    (hpayment_le_value :
+      ∀ i : Fin n,
+        vcgTotalPayment i.val ≤ clickThroughRate i.val * value i.val) :
+    (paper_theorem7_ranked_bstar_outcome
+      value vcgTotalPayment clickThroughRate).IndividuallyRational
+        (paper_theorem7_ranked_environment clickThroughRate)
+        (fun i : Fin n => value i.val) := by
+  exact
+    paper_theorem7_ranked_bstar_outcome_individually_rational
+      value vcgTotalPayment clickThroughRate hclick_ne hpayment_le_value
+
+/-- Audit for Theorem 7 finite ranked construction: pairwise ranked envy
+inequalities imply the formal `SlotEnvyFree` predicate for the ranked `B*`
+outcome. -/
+theorem audit_theorem7_ranked_bstar_outcome_slot_envy_free_of_pairwise
+    {n : ℕ} (value vcgTotalPayment clickThroughRate : ℕ → ℝ)
+    (hpairwise :
+      ∀ i j : Fin n,
+        clickThroughRate j.val *
+            (value i.val -
+              (paper_theorem7_ranked_bstar_outcome
+                value vcgTotalPayment clickThroughRate).paymentPerClick j) ≤
+          clickThroughRate i.val *
+            (value i.val -
+              (paper_theorem7_ranked_bstar_outcome
+                value vcgTotalPayment clickThroughRate).paymentPerClick i)) :
+    (paper_theorem7_ranked_bstar_outcome
+      value vcgTotalPayment clickThroughRate).SlotEnvyFree
+        (paper_theorem7_ranked_environment clickThroughRate)
+        (fun i : Fin n => value i.val) := by
+  exact
+    paper_theorem7_ranked_bstar_outcome_slot_envy_free_of_pairwise
+      value vcgTotalPayment clickThroughRate hpairwise
+
+/-- Audit for Theorem 7 finite ranked construction: the formal slot-envy
+predicate is exactly the concrete pairwise ranked envy inequality family. -/
+theorem audit_theorem7_ranked_bstar_outcome_slot_envy_free_iff_pairwise
+    {n : ℕ} (value vcgTotalPayment clickThroughRate : ℕ → ℝ) :
+    (paper_theorem7_ranked_bstar_outcome
+      value vcgTotalPayment clickThroughRate).SlotEnvyFree
+        (paper_theorem7_ranked_environment clickThroughRate)
+        (fun i : Fin n => value i.val) ↔
+      ∀ i j : Fin n,
+        clickThroughRate j.val *
+            (value i.val -
+              (paper_theorem7_ranked_bstar_outcome
+                value vcgTotalPayment clickThroughRate).paymentPerClick j) ≤
+          clickThroughRate i.val *
+            (value i.val -
+              (paper_theorem7_ranked_bstar_outcome
+                value vcgTotalPayment clickThroughRate).paymentPerClick i) := by
+  exact
+    paper_theorem7_ranked_bstar_outcome_slot_envy_free_iff_pairwise
+      value vcgTotalPayment clickThroughRate
+
+/-- Audit for Theorem 7 adjacent-to-global bridge: VCG recursion gives adjacent
+local-envy inequalities, and ordered ranks telescope those inequalities to the
+full pairwise no-envy family used by `SlotEnvyFree`. -/
+theorem audit_theorem7_ranked_adjacent_vcg_recursion_pairwise_envy_bridge
+    {n : ℕ} {value vcgTotalPayment clickThroughRate : ℕ → ℝ}
+    (hclick_ne : ∀ r : Fin n, clickThroughRate r.val ≠ 0)
+    (hclick_mono : ∀ k : ℕ, clickThroughRate (k + 1) ≤ clickThroughRate k)
+    (hvalue_mono : ∀ a b : ℕ, a ≤ b → value b ≤ value a)
+    (hrec :
+      ∀ k : ℕ,
+        vcgTotalPayment k =
+          (clickThroughRate k - clickThroughRate (k + 1)) *
+              value (k + 1) +
+            vcgTotalPayment (k + 1)) :
+    paper_theorem7_ranked_adjacent_locally_envy_free
+        value vcgTotalPayment clickThroughRate ∧
+      ∀ i j : Fin n,
+        clickThroughRate j.val *
+            (value i.val -
+              (paper_theorem7_ranked_bstar_outcome
+                value vcgTotalPayment clickThroughRate).paymentPerClick j) ≤
+          clickThroughRate i.val *
+            (value i.val -
+              (paper_theorem7_ranked_bstar_outcome
+                value vcgTotalPayment clickThroughRate).paymentPerClick i) := by
+  exact
+    paper_theorem7_ranked_adjacent_vcg_recursion_pairwise_envy_bridge
+      hclick_ne hclick_mono hvalue_mono hrec
+
+/-- Audit for Theorem 7 finite ranked construction: feasibility,
+individual-rationality, and pairwise ranked envy inequalities imply the formal
+`StableAssignment` predicate. -/
+theorem audit_theorem7_ranked_bstar_outcome_stable_assignment_of_pairwise
+    {n : ℕ} (value vcgTotalPayment clickThroughRate : ℕ → ℝ)
+    (hclick_ne : ∀ i : Fin n, clickThroughRate i.val ≠ 0)
+    (hpayment_le_value :
+      ∀ i : Fin n,
+        vcgTotalPayment i.val ≤ clickThroughRate i.val * value i.val)
+    (hpairwise :
+      ∀ i j : Fin n,
+        clickThroughRate j.val *
+            (value i.val -
+              (paper_theorem7_ranked_bstar_outcome
+                value vcgTotalPayment clickThroughRate).paymentPerClick j) ≤
+          clickThroughRate i.val *
+            (value i.val -
+              (paper_theorem7_ranked_bstar_outcome
+                value vcgTotalPayment clickThroughRate).paymentPerClick i)) :
+    (paper_theorem7_ranked_bstar_outcome
+      value vcgTotalPayment clickThroughRate).StableAssignment
+        (paper_theorem7_ranked_environment clickThroughRate)
+        (fun i : Fin n => value i.val) := by
+  exact
+    paper_theorem7_ranked_bstar_outcome_stable_assignment_of_pairwise
+      value vcgTotalPayment clickThroughRate hclick_ne
+      hpayment_le_value hpairwise
+
+/-- Audit for Theorem 7 ranked certificate boundary: the finite ranked `B*`
+certificate specializes the generic VCG-equivalent local-envy-free and
+revenue-minimality theorem. -/
+theorem audit_theorem7_ranked_bstar_certificate_boundary
+    {n : ℕ} (model : PaperTheorem7RankedBStarCertificate n) :
+    ∃ O : PositionOutcome (Fin n) (Fin n),
+      O.SlotEnvyFree
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        (∀ i, O.slotOf i = model.vcgOutcome.slotOf i) ∧
+        (∀ i, O.paymentPerClick i = model.vcgOutcome.paymentPerClick i) ∧
+        ∀ other : PositionOutcome (Fin n) (Fin n),
+          other.FeasibleAssignment →
+          other.IndividuallyRational
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+          other.SlotEnvyFree
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+            (∀ i, O.slotOf i = other.slotOf i) →
+              O.revenue
+                  (paper_theorem7_ranked_environment model.clickThroughRate) ≤
+                other.revenue
+                  (paper_theorem7_ranked_environment model.clickThroughRate) := by
+  exact
+    paper_theorem7_ranked_bstar_vcg_equivalent_locally_envy_free_of_certificate
+      model
+
+/-- Audit for Theorem 7 ordered ranked certificate boundary: sorted values,
+monotone click-through rates, the VCG recursion, and a stable-assignment
+payment lower-bound theorem imply the ranked `B*` VCG-equivalent
+revenue-minimality conclusion. -/
+theorem audit_theorem7_ordered_ranked_bstar_certificate_boundary
+    {n : ℕ} (model : PaperTheorem7OrderedRankedBStarCertificate n) :
+    ∃ O : PositionOutcome (Fin n) (Fin n),
+      O.SlotEnvyFree
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        O.StableAssignment
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        (∀ i, O.slotOf i = model.vcgOutcome.slotOf i) ∧
+        (∀ i, O.paymentPerClick i = model.vcgOutcome.paymentPerClick i) ∧
+        ∀ other : PositionOutcome (Fin n) (Fin n),
+          other.FeasibleAssignment →
+          other.IndividuallyRational
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+          other.SlotEnvyFree
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+            (∀ i, O.slotOf i = other.slotOf i) →
+              O.revenue
+                  (paper_theorem7_ranked_environment model.clickThroughRate) ≤
+                other.revenue
+                  (paper_theorem7_ranked_environment model.clickThroughRate) := by
+  exact
+    paper_theorem7_ordered_ranked_bstar_vcg_equivalent_locally_envy_free_of_certificate
+      model
+
+/-- Audit for Theorem 7 stable-assignment pairwise payment lower-bound algebra. -/
+theorem audit_theorem7_stable_assignment_payment_lower_bound_pair
+    {n : ℕ}
+    (E : PositionEnvironment (Fin n))
+    (O : PositionOutcome (Fin n) (Fin n)) (values : Fin n → ℝ)
+    (hstable : O.StableAssignment E values)
+    (i j : Fin n)
+    (hslot_i : O.slotOf i = some i)
+    (hslot_j : O.slotOf j = some j) :
+    (E.clickThroughRate i - E.clickThroughRate j) * values j +
+        E.clickThroughRate j * O.paymentPerClick j ≤
+      E.clickThroughRate i * O.paymentPerClick i := by
+  exact
+    paper_position_stable_assignment_payment_lower_bound_pair
+      E O values hstable i j hslot_i hslot_j
+
+/-- Audit for Theorem 7 finite-tail lower-bound induction from adjacent total
+payment lower bounds. -/
+theorem audit_theorem7_vcg_tail_payment_le_of_adjacent_total_bounds
+    (value clickThroughRate otherTotalPayment : ℕ → ℝ)
+    (start remaining : ℕ)
+    (hterminal : 0 ≤ otherTotalPayment (start + remaining))
+    (hadj :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + remaining →
+            (clickThroughRate k - clickThroughRate (k + 1)) *
+                value (k + 1) +
+              otherTotalPayment (k + 1) ≤ otherTotalPayment k) :
+    paper_theorem7_ranked_vcg_tail_payment
+        value clickThroughRate start remaining ≤
+      otherTotalPayment start := by
+  exact
+    paper_theorem7_ranked_vcg_tail_payment_le_of_adjacent_total_bounds
+      value clickThroughRate otherTotalPayment start remaining
+      hterminal hadj
+
+/-- Audit for Theorem 7 direct `B*` payment lower bound from stable ranked
+comparison outcomes and finite VCG-tail equality. -/
+theorem audit_theorem7_bstar_payment_le_of_stable_assignment_tail
+    {n : ℕ} {value vcgTotalPayment clickThroughRate : ℕ → ℝ}
+    (O : PositionOutcome (Fin n) (Fin n)) (i : Fin n) (remaining : ℕ)
+    (hvcg_i :
+      vcgTotalPayment i.val =
+        paper_theorem7_ranked_vcg_tail_payment
+          value clickThroughRate i.val remaining)
+    (hclick_pos : 0 < clickThroughRate i.val)
+    (hbound : i.val + remaining < n)
+    (hstable :
+      O.StableAssignment
+        (paper_theorem7_ranked_environment clickThroughRate)
+        (fun r : Fin n => value r.val))
+    (hslots : ∀ r : Fin n, O.slotOf r = some r)
+    (hterminal :
+      0 ≤
+        paper_theorem7_ranked_outcome_total_payment
+          clickThroughRate O (i.val + remaining)) :
+    (paper_theorem7_ranked_bstar_outcome
+      value vcgTotalPayment clickThroughRate).paymentPerClick i ≤
+      O.paymentPerClick i := by
+  exact
+    paper_theorem7_ranked_bstar_payment_le_of_stable_assignment_tail
+      O i remaining hvcg_i hclick_pos hbound hstable hslots hterminal
+
+/-- Audit for Theorem 7 finite-tail ordered ranked certificate: the strongest
+current ranked `B*` wrapper derives the lower-bound comparison from finite-tail
+equality and terminal nonnegative comparison total payments. -/
+theorem audit_theorem7_ordered_ranked_finite_tail_certificate_boundary
+    {n : ℕ} (model : PaperTheorem7OrderedRankedFiniteTailCertificate n) :
+    ∃ O : PositionOutcome (Fin n) (Fin n),
+      O.SlotEnvyFree
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        O.StableAssignment
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        (∀ i, O.slotOf i = model.vcgOutcome.slotOf i) ∧
+        (∀ i, O.paymentPerClick i = model.vcgOutcome.paymentPerClick i) ∧
+        ∀ other : PositionOutcome (Fin n) (Fin n),
+          other.FeasibleAssignment →
+          other.IndividuallyRational
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+          other.SlotEnvyFree
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+            (∀ i, O.slotOf i = other.slotOf i) →
+              O.revenue
+                  (paper_theorem7_ranked_environment model.clickThroughRate) ≤
+                other.revenue
+                  (paper_theorem7_ranked_environment model.clickThroughRate) := by
+  exact
+    paper_theorem7_ordered_ranked_finite_tail_vcg_equivalent_locally_envy_free
+      model
+
+/-- Audit for Theorem 7 canonical finite-tail bound. -/
+theorem audit_theorem7_canonical_tail_remaining_bound
+    {n : ℕ} (i : Fin n) :
+    i.val + paper_theorem7_ranked_canonical_tail_remaining i < n := by
+  exact paper_theorem7_ranked_canonical_tail_remaining_bound i
+
+/-- Audit for Theorem 7 comparison outcomes: nonnegative click-through rates
+and nonnegative per-click payments imply nonnegative ranked total payments. -/
+theorem audit_theorem7_ranked_outcome_total_payment_nonnegative
+    {n : ℕ} (clickThroughRate : ℕ → ℝ)
+    (O : PositionOutcome (Fin n) (Fin n)) (i : Fin n)
+    (hclick_nonneg : 0 ≤ clickThroughRate i.val)
+    (hpayment_nonneg : 0 ≤ O.paymentPerClick i) :
+    0 ≤ paper_theorem7_ranked_outcome_total_payment clickThroughRate O i.val := by
+  exact
+    paper_theorem7_ranked_outcome_total_payment_nonneg_of_fin
+      clickThroughRate O i hclick_nonneg hpayment_nonneg
+
+/-- Audit for Theorem 7 canonical finite tails: ordinary nonnegative
+comparison payments discharge the terminal total-payment nonnegativity used by
+the finite-tail induction. -/
+theorem audit_theorem7_canonical_terminal_total_payment_nonnegative_of_payments
+    {n : ℕ} (clickThroughRate : ℕ → ℝ)
+    (O : PositionOutcome (Fin n) (Fin n))
+    (hclick_nonneg : ∀ i : Fin n, 0 ≤ clickThroughRate i.val)
+    (hpayment_nonneg : ∀ i : Fin n, 0 ≤ O.paymentPerClick i)
+    (i : Fin n) :
+    0 ≤
+      paper_theorem7_ranked_outcome_total_payment clickThroughRate O
+        (i.val + paper_theorem7_ranked_canonical_tail_remaining i) := by
+  exact
+    paper_theorem7_ranked_canonical_terminal_total_payment_nonneg_of_payments_nonneg
+      clickThroughRate O hclick_nonneg hpayment_nonneg i
+
+/-- Audit for Theorem 7 canonical-tail ordered ranked certificate: canonical
+tail lengths remove the explicit tail-length/bound fields from the finite-tail
+certificate. -/
+theorem audit_theorem7_ordered_ranked_canonical_tail_certificate_boundary
+    {n : ℕ} (model : PaperTheorem7OrderedRankedCanonicalTailCertificate n) :
+    ∃ O : PositionOutcome (Fin n) (Fin n),
+      O.SlotEnvyFree
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        O.StableAssignment
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        (∀ i, O.slotOf i = model.vcgOutcome.slotOf i) ∧
+        (∀ i, O.paymentPerClick i = model.vcgOutcome.paymentPerClick i) ∧
+        ∀ other : PositionOutcome (Fin n) (Fin n),
+          other.FeasibleAssignment →
+          other.IndividuallyRational
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+          other.SlotEnvyFree
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+            (∀ i, O.slotOf i = other.slotOf i) →
+              O.revenue
+                  (paper_theorem7_ranked_environment model.clickThroughRate) ≤
+                other.revenue
+                  (paper_theorem7_ranked_environment model.clickThroughRate) := by
+  exact
+    paper_theorem7_ordered_ranked_canonical_tail_vcg_equivalent_locally_envy_free
+      model
+
+/-- Audit for Theorem 7 canonical-tail nonnegative-payment certificate: the
+paper-facing payment sign condition replaces the raw terminal total-payment
+nonnegativity field. -/
+theorem audit_theorem7_ordered_ranked_canonical_tail_nonnegative_payment_certificate_boundary
+    {n : ℕ}
+    (model :
+      PaperTheorem7OrderedRankedCanonicalTailNonnegativePaymentCertificate n) :
+    ∃ O : PositionOutcome (Fin n) (Fin n),
+      O.SlotEnvyFree
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        O.StableAssignment
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        (∀ i, O.slotOf i = model.vcgOutcome.slotOf i) ∧
+        (∀ i, O.paymentPerClick i = model.vcgOutcome.paymentPerClick i) ∧
+        ∀ other : PositionOutcome (Fin n) (Fin n),
+          other.FeasibleAssignment →
+          other.IndividuallyRational
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+          other.SlotEnvyFree
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+            (∀ i, O.slotOf i = other.slotOf i) →
+              O.revenue
+                  (paper_theorem7_ranked_environment model.clickThroughRate) ≤
+                other.revenue
+                  (paper_theorem7_ranked_environment model.clickThroughRate) := by
+  exact
+    paper_theorem7_ordered_ranked_canonical_tail_nonnegative_payment_vcg_equivalent_locally_envy_free
+      model
+
+/-- Audit for Theorem 7 canonical-tail comparison-payment certificate: the
+comparison outcome's nonnegative payment condition appears as an explicit
+revenue-minimality premise. -/
+theorem audit_theorem7_ordered_ranked_canonical_tail_comparison_payment_certificate_boundary
+    {n : ℕ}
+    (model :
+      PaperTheorem7OrderedRankedCanonicalTailComparisonPaymentCertificate n) :
+    ∃ O : PositionOutcome (Fin n) (Fin n),
+      O.SlotEnvyFree
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        O.StableAssignment
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        (∀ i, O.slotOf i = model.vcgOutcome.slotOf i) ∧
+        (∀ i, O.paymentPerClick i = model.vcgOutcome.paymentPerClick i) ∧
+        ∀ other : PositionOutcome (Fin n) (Fin n),
+          other.FeasibleAssignment →
+          other.IndividuallyRational
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+          other.SlotEnvyFree
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+            (∀ i, O.slotOf i = other.slotOf i) →
+              (∀ i : Fin n, 0 ≤ other.paymentPerClick i) →
+                O.revenue
+                    (paper_theorem7_ranked_environment model.clickThroughRate) ≤
+                  other.revenue
+                    (paper_theorem7_ranked_environment model.clickThroughRate) := by
+  exact
+    paper_theorem7_ordered_ranked_canonical_tail_vcg_equivalent_locally_envy_free_among_nonnegative_payment_outcomes
+      model
+
+/-- Audit for the position-auction no-positive-transfers predicate: it is the
+paper-native name for nonnegative per-click payments. -/
+theorem audit_position_no_positive_transfers_iff_payment_nonnegative
+    {Bidder Slot : Type*} (O : PositionOutcome Bidder Slot) :
+    paper_position_no_positive_transfers O ↔
+      ∀ i, 0 ≤ O.paymentPerClick i := by
+  exact paper_position_no_positive_transfers_iff_payment_nonneg O
+
+/-- Audit for position-auction payment bounds: assigned positive-click
+individual rationality gives the upper payment/value bound. -/
+theorem audit_position_payment_le_value_of_individually_rational
+    {Bidder Slot : Type*}
+    (E : PositionEnvironment Slot) (O : PositionOutcome Bidder Slot)
+    (values : Bidder → ℝ) {i : Bidder} {s : Slot}
+    (hIR : O.IndividuallyRational E values)
+    (hslot : O.slotOf i = some s)
+    (hclick_pos : 0 < E.clickThroughRate s) :
+    O.paymentPerClick i ≤ values i := by
+  exact
+    paper_position_payment_le_value_of_individually_rational
+      E O values hIR hslot hclick_pos
+
+/-- Audit for position-auction payment bounds: individual rationality plus
+no-positive-transfers places assigned positive-click payments in `[0, value]`. -/
+theorem audit_position_payment_mem_value_interval_of_ir_no_positive_transfers
+    {Bidder Slot : Type*}
+    (E : PositionEnvironment Slot) (O : PositionOutcome Bidder Slot)
+    (values : Bidder → ℝ) {i : Bidder} {s : Slot}
+    (hIR : O.IndividuallyRational E values)
+    (hnpt : paper_position_no_positive_transfers O)
+    (hslot : O.slotOf i = some s)
+    (hclick_pos : 0 < E.clickThroughRate s) :
+    0 ≤ O.paymentPerClick i ∧ O.paymentPerClick i ≤ values i := by
+  exact
+    paper_position_payment_mem_value_interval_of_ir_no_positive_transfers
+      E O values hIR hnpt hslot hclick_pos
+
+/-- Audit for Theorem 7 canonical-tail no-positive-transfers certificate: the
+comparison outcome's payment-sign condition is exposed as the paper-native
+no-positive-transfers premise. -/
+theorem audit_theorem7_ordered_ranked_canonical_tail_no_positive_transfer_certificate_boundary
+    {n : ℕ}
+    (model :
+      PaperTheorem7OrderedRankedCanonicalTailComparisonPaymentCertificate n) :
+    ∃ O : PositionOutcome (Fin n) (Fin n),
+      O.SlotEnvyFree
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        O.StableAssignment
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        (∀ i, O.slotOf i = model.vcgOutcome.slotOf i) ∧
+        (∀ i, O.paymentPerClick i = model.vcgOutcome.paymentPerClick i) ∧
+        ∀ other : PositionOutcome (Fin n) (Fin n),
+          other.FeasibleAssignment →
+          other.IndividuallyRational
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+          other.SlotEnvyFree
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+            (∀ i, O.slotOf i = other.slotOf i) →
+              paper_position_no_positive_transfers other →
+                O.revenue
+                    (paper_theorem7_ranked_environment model.clickThroughRate) ≤
+                  other.revenue
+                    (paper_theorem7_ranked_environment model.clickThroughRate) := by
+  exact
+    paper_theorem7_ordered_ranked_canonical_tail_vcg_equivalent_locally_envy_free_among_no_positive_transfer_outcomes
+      model
+
+/-- Audit for Theorem 7 canonical-tail no-positive-transfers paper conclusion:
+with nonnegative values, the constructed `B*` outcome itself has no positive
+transfers while retaining the no-positive-transfer revenue-minimality result. -/
+theorem audit_theorem7_ordered_ranked_canonical_tail_no_positive_transfer_paper_conclusion
+    {n : ℕ}
+    (model :
+      PaperTheorem7OrderedRankedCanonicalTailComparisonPaymentCertificate n)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i) :
+    ∃ O : PositionOutcome (Fin n) (Fin n),
+      paper_position_no_positive_transfers O ∧
+        O.SlotEnvyFree
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        O.StableAssignment
+          (paper_theorem7_ranked_environment model.clickThroughRate)
+          (fun i : Fin n => model.value i.val) ∧
+        (∀ i, O.slotOf i = model.vcgOutcome.slotOf i) ∧
+        (∀ i, O.paymentPerClick i = model.vcgOutcome.paymentPerClick i) ∧
+        ∀ other : PositionOutcome (Fin n) (Fin n),
+          other.FeasibleAssignment →
+          other.IndividuallyRational
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+          other.SlotEnvyFree
+            (paper_theorem7_ranked_environment model.clickThroughRate)
+            (fun i : Fin n => model.value i.val) →
+            (∀ i, O.slotOf i = other.slotOf i) →
+              paper_position_no_positive_transfers other →
+                O.revenue
+                    (paper_theorem7_ranked_environment model.clickThroughRate) ≤
+                  other.revenue
+                    (paper_theorem7_ranked_environment model.clickThroughRate) := by
+  exact
+    paper_theorem7_ordered_ranked_canonical_tail_no_positive_transfer_paper_conclusion
+      model hvalue_nonneg
+
+/-- Audit for Theorem 7 finite VCG-tail payments: under monotone click-through
+rates and nonnegative values, every finite tail-payment prefix is nonnegative. -/
+theorem audit_theorem7_vcg_tail_payment_nonnegative
+    {value clickThroughRate : ℕ → ℝ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hclick_mono : ∀ i, clickThroughRate (i + 1) ≤ clickThroughRate i)
+    (i remaining : ℕ) :
+    0 ≤
+      paper_theorem7_ranked_vcg_tail_payment
+        value clickThroughRate i remaining := by
+  exact
+    paper_theorem7_ranked_vcg_tail_payment_nonneg
+      hvalue_nonneg hclick_mono i remaining
+
+/-- Audit for Theorem 7 finite VCG-tail payments: ordered nonnegative values
+and nonnegative click-through rates imply each finite tail payment is bounded
+by the rank's click-weighted value. -/
+theorem audit_theorem7_vcg_tail_payment_le_click_value
+    {value clickThroughRate : ℕ → ℝ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_nonneg : ∀ i, 0 ≤ clickThroughRate i)
+    (i remaining : ℕ) :
+    paper_theorem7_ranked_vcg_tail_payment
+        value clickThroughRate i remaining ≤
+      clickThroughRate i * value i := by
+  exact
+    paper_theorem7_ranked_vcg_tail_payment_le_click_value
+      hvalue_nonneg hvalue_mono hclick_nonneg i remaining
+
+/-- Audit for Remark 1: VCG per-click payments are weakly below truthful GSP
+next-bid payments under ordered nonnegative values and positive click-through
+rate at the displayed rank. -/
+theorem audit_remark1_truthful_gsp_payment_weakly_dominates_vcg_per_click
+    {value clickThroughRate : ℕ → ℝ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_nonneg : ∀ i, 0 ≤ clickThroughRate i)
+    {rank remaining : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank) :
+    paper_theorem7_ranked_vcg_tail_payment
+        value clickThroughRate rank remaining / clickThroughRate rank ≤
+      value (rank + 1) := by
+  exact
+    paper_remark1_ranked_vcg_per_click_le_truthful_gsp_payment
+      hvalue_nonneg hvalue_mono hclick_nonneg hclick_pos
+
+/-- Audit for Remark 2: VCG-style position mechanisms are truthful in
+dominant strategies when equipped with the welfare-maximization and
+externality-tax certificate. -/
+theorem audit_remark2_vcg_position_mechanism_truthful
+    {Bidder Slot : Type*} [Fintype Bidder] [DecidableEq Bidder]
+    {E : PositionEnvironment Slot} {M : PositionMechanism Bidder Slot}
+    (C : PositionMechanism.VCGDominantStrategyCertificate E M) :
+    PositionMechanism.TruthfulDominantStrategy E M := by
+  exact paper_remark2_vcg_position_mechanism_truthful C
+
+/-- Audit for Theorem 7 canonical finite VCG payments: ordered nonnegative
+values and nonnegative click-through rates imply each canonical finite payment
+is bounded by the rank's click-weighted value. -/
+theorem audit_theorem7_ranked_finite_vcg_payment_le_click_value
+    {n : ℕ} {value clickThroughRate : ℕ → ℝ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_nonneg : ∀ i, 0 ≤ clickThroughRate i)
+    (i : Fin n) :
+    paper_theorem7_ranked_finite_vcg_payment
+        n value clickThroughRate i.val ≤
+      clickThroughRate i.val * value i.val := by
+  exact
+    paper_theorem7_ranked_finite_vcg_payment_le_click_value
+      hvalue_nonneg hvalue_mono hclick_nonneg i
+
+/-- Audit for Theorem 7 canonical finite VCG payments: canonical tail equality
+discharges the VCG total-payment click-weighted value bound. -/
+theorem audit_theorem7_ranked_vcg_total_payment_le_click_value_of_tail_eq
+    {n : ℕ} {value vcgTotalPayment clickThroughRate : ℕ → ℝ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_nonneg : ∀ i, 0 ≤ clickThroughRate i)
+    (hvcg_tail_eq :
+      ∀ i : Fin n,
+        vcgTotalPayment i.val =
+          paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate i.val
+            (paper_theorem7_ranked_canonical_tail_remaining i))
+    (i : Fin n) :
+    vcgTotalPayment i.val ≤ clickThroughRate i.val * value i.val := by
+  exact
+    paper_theorem7_ranked_vcg_total_payment_le_click_value_of_tail_eq
+      hvalue_nonneg hvalue_mono hclick_nonneg hvcg_tail_eq i
+
+/-- Audit for Theorem 7 ranked construction: canonical finite-tail VCG
+payments make the constructed `B*` outcome's per-click payments nonnegative. -/
+theorem audit_theorem7_ranked_bstar_outcome_payment_nonnegative_of_canonical_tail
+    {n : ℕ} {value vcgTotalPayment clickThroughRate : ℕ → ℝ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hclick_pos : ∀ i : Fin n, 0 < clickThroughRate i.val)
+    (hclick_mono : ∀ i, clickThroughRate (i + 1) ≤ clickThroughRate i)
+    (hvcg_tail_eq :
+      ∀ i : Fin n,
+        vcgTotalPayment i.val =
+          paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate i.val
+            (paper_theorem7_ranked_canonical_tail_remaining i))
+    (i : Fin n) :
+    0 ≤
+      (paper_theorem7_ranked_bstar_outcome
+        value vcgTotalPayment clickThroughRate).paymentPerClick i := by
+  exact
+    paper_theorem7_ranked_bstar_outcome_payment_nonneg_of_canonical_vcg_tail
+      hvalue_nonneg hclick_pos hclick_mono hvcg_tail_eq i
+
+/-- Audit for Theorem 7 ranked construction: canonical finite-tail VCG
+payments make the constructed `B*` outcome no-positive-transfers in the
+paper-native position-auction sense. -/
+theorem audit_theorem7_ranked_bstar_outcome_no_positive_transfers_of_canonical_tail
+    {n : ℕ} {value vcgTotalPayment clickThroughRate : ℕ → ℝ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hclick_pos : ∀ i : Fin n, 0 < clickThroughRate i.val)
+    (hclick_mono : ∀ i, clickThroughRate (i + 1) ≤ clickThroughRate i)
+    (hvcg_tail_eq :
+      ∀ i : Fin n,
+        vcgTotalPayment i.val =
+          paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate i.val
+            (paper_theorem7_ranked_canonical_tail_remaining i)) :
+    paper_position_no_positive_transfers
+      (paper_theorem7_ranked_bstar_outcome (n := n)
+        value vcgTotalPayment clickThroughRate) := by
+  exact
+    paper_theorem7_ranked_bstar_outcome_no_positive_transfers_of_canonical_vcg_tail
+      hvalue_nonneg hclick_pos hclick_mono hvcg_tail_eq
+
+/-- Audit for Theorem 7 finite VCG-tail payments: the recursive formula gives
+exact adjacent indifference, hence the local-envy inequality used by the paper. -/
+theorem audit_theorem7_vcg_tail_adjacent_indifference
+    (value clickThroughRate : ℕ → ℝ) (i remaining : ℕ) :
+    clickThroughRate i * value (i + 1) -
+        paper_theorem7_ranked_vcg_tail_payment
+          value clickThroughRate i (remaining + 1) =
+      clickThroughRate (i + 1) * value (i + 1) -
+        paper_theorem7_ranked_vcg_tail_payment
+          value clickThroughRate (i + 1) remaining := by
+  exact
+    paper_theorem7_ranked_adjacent_indifferent_of_vcg_tail_payment
+      value clickThroughRate i remaining
+
+/-- Audit for Theorem 7 adjacent no-envy algebra: a lower-valued bidder weakly
+prefers the lower adjacent VCG slot/payment. -/
+theorem audit_theorem7_adjacent_no_envy_higher_of_value_le
+    {value totalPayment clickThroughRate : ℕ → ℝ} {bidder rank : ℕ}
+    (hclick_mono : clickThroughRate (rank + 1) ≤ clickThroughRate rank)
+    (hvalue_le : value bidder ≤ value (rank + 1))
+    (hrec :
+      totalPayment rank =
+        (clickThroughRate rank - clickThroughRate (rank + 1)) *
+            value (rank + 1) +
+          totalPayment (rank + 1)) :
+    clickThroughRate rank * value bidder - totalPayment rank ≤
+      clickThroughRate (rank + 1) * value bidder -
+        totalPayment (rank + 1) := by
+  exact
+    paper_theorem7_ranked_vcg_adjacent_no_envy_higher_of_value_le
+      hclick_mono hvalue_le hrec
+
+/-- Audit for Theorem 7 adjacent no-envy algebra: a higher-valued bidder weakly
+prefers the higher adjacent VCG slot/payment. -/
+theorem audit_theorem7_adjacent_no_envy_lower_of_value_ge
+    {value totalPayment clickThroughRate : ℕ → ℝ} {bidder rank : ℕ}
+    (hclick_mono : clickThroughRate (rank + 1) ≤ clickThroughRate rank)
+    (hvalue_ge : value (rank + 1) ≤ value bidder)
+    (hrec :
+      totalPayment rank =
+        (clickThroughRate rank - clickThroughRate (rank + 1)) *
+            value (rank + 1) +
+          totalPayment (rank + 1)) :
+    clickThroughRate (rank + 1) * value bidder -
+        totalPayment (rank + 1) ≤
+      clickThroughRate rank * value bidder - totalPayment rank := by
+  exact
+    paper_theorem7_ranked_vcg_adjacent_no_envy_lower_of_value_ge
+      hclick_mono hvalue_ge hrec
+
+/-- Audit for Theorem 7 telescoping algebra: adjacent weak increases imply the
+endpoint comparison. -/
+theorem audit_theorem7_ranked_chain_le_of_adjacent
+    (utility : ℕ → ℝ) (start steps : ℕ)
+    (hadj :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            utility k ≤ utility (k + 1)) :
+    utility start ≤ utility (start + steps) := by
+  exact paper_theorem7_ranked_chain_le_of_adjacent utility start steps hadj
+
+/-- Audit for Theorem 7 telescoped no-envy algebra for lower-valued bidders. -/
+theorem audit_theorem7_no_envy_higher_chain_of_value_le
+    {value totalPayment clickThroughRate : ℕ → ℝ} {bidder start steps : ℕ}
+    (hclick_mono :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            clickThroughRate (k + 1) ≤ clickThroughRate k)
+    (hvalue_le :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            value bidder ≤ value (k + 1))
+    (hrec :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            totalPayment k =
+              (clickThroughRate k - clickThroughRate (k + 1)) *
+                  value (k + 1) +
+                totalPayment (k + 1)) :
+    clickThroughRate start * value bidder - totalPayment start ≤
+      clickThroughRate (start + steps) * value bidder -
+        totalPayment (start + steps) := by
+  exact
+    paper_theorem7_ranked_vcg_no_envy_higher_chain_of_value_le
+      hclick_mono hvalue_le hrec
+
+/-- Audit for Theorem 7 telescoped no-envy algebra for higher-valued bidders. -/
+theorem audit_theorem7_no_envy_lower_chain_of_value_ge
+    {value totalPayment clickThroughRate : ℕ → ℝ} {bidder start steps : ℕ}
+    (hclick_mono :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            clickThroughRate (k + 1) ≤ clickThroughRate k)
+    (hvalue_ge :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            value (k + 1) ≤ value bidder)
+    (hrec :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            totalPayment k =
+              (clickThroughRate k - clickThroughRate (k + 1)) *
+                  value (k + 1) +
+                totalPayment (k + 1)) :
+    clickThroughRate (start + steps) * value bidder -
+        totalPayment (start + steps) ≤
+      clickThroughRate start * value bidder - totalPayment start := by
+  exact
+    paper_theorem7_ranked_vcg_no_envy_lower_chain_of_value_ge
+      hclick_mono hvalue_ge hrec
+
+/-- Audit for Theorem 7 endpoint no-envy algebra: the lower endpoint rank does
+not envy the higher endpoint rank under interval value ordering. -/
+theorem audit_theorem7_lower_rank_no_envy_higher_endpoint
+    {value totalPayment clickThroughRate : ℕ → ℝ} {start steps : ℕ}
+    (hclick_mono :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            clickThroughRate (k + 1) ≤ clickThroughRate k)
+    (hvalue_order :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            value (start + steps) ≤ value (k + 1))
+    (hrec :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            totalPayment k =
+              (clickThroughRate k - clickThroughRate (k + 1)) *
+                  value (k + 1) +
+                totalPayment (k + 1)) :
+    clickThroughRate start * value (start + steps) - totalPayment start ≤
+      clickThroughRate (start + steps) * value (start + steps) -
+        totalPayment (start + steps) := by
+  exact
+    paper_theorem7_ranked_vcg_lower_rank_no_envy_higher_endpoint
+      hclick_mono hvalue_order hrec
+
+/-- Audit for Theorem 7 endpoint no-envy algebra: the higher endpoint rank does
+not envy the lower endpoint rank under interval value ordering. -/
+theorem audit_theorem7_higher_rank_no_envy_lower_endpoint
+    {value totalPayment clickThroughRate : ℕ → ℝ} {start steps : ℕ}
+    (hclick_mono :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            clickThroughRate (k + 1) ≤ clickThroughRate k)
+    (hvalue_order :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            value (k + 1) ≤ value start)
+    (hrec :
+      ∀ k : ℕ,
+        start ≤ k →
+          k < start + steps →
+            totalPayment k =
+              (clickThroughRate k - clickThroughRate (k + 1)) *
+                  value (k + 1) +
+                totalPayment (k + 1)) :
+    clickThroughRate (start + steps) * value start -
+        totalPayment (start + steps) ≤
+      clickThroughRate start * value start - totalPayment start := by
+  exact
+    paper_theorem7_ranked_vcg_higher_rank_no_envy_lower_endpoint
+      hclick_mono hvalue_order hrec
+
+/-- Audit for Theorem 7 full finite ranked pairwise envy algebra from ordered
+values, monotone click rates, and the VCG recursion. -/
+theorem audit_theorem7_pairwise_envy_of_ordered_values
+    {n : ℕ} {value vcgTotalPayment clickThroughRate : ℕ → ℝ}
+    (hclick_ne : ∀ r : Fin n, clickThroughRate r.val ≠ 0)
+    (hclick_mono : ∀ k : ℕ, clickThroughRate (k + 1) ≤ clickThroughRate k)
+    (hvalue_mono : ∀ a b : ℕ, a ≤ b → value b ≤ value a)
+    (hrec :
+      ∀ k : ℕ,
+        vcgTotalPayment k =
+          (clickThroughRate k - clickThroughRate (k + 1)) *
+              value (k + 1) +
+            vcgTotalPayment (k + 1)) :
+    ∀ i j : Fin n,
+      clickThroughRate j.val *
+          (value i.val -
+            (paper_theorem7_ranked_bstar_outcome
+              value vcgTotalPayment clickThroughRate).paymentPerClick j) ≤
+        clickThroughRate i.val *
+          (value i.val -
+            (paper_theorem7_ranked_bstar_outcome
+              value vcgTotalPayment clickThroughRate).paymentPerClick i) := by
+  exact
+    paper_theorem7_ranked_bstar_outcome_pairwise_envy_of_ordered_values
+      hclick_ne hclick_mono hvalue_mono hrec
+
+/-- Audit for Theorem 7 full finite ranked slot-envy-freeness from ordered
+values, monotone click rates, and the VCG recursion. -/
+theorem audit_theorem7_slot_envy_free_of_ordered_values
+    {n : ℕ} {value vcgTotalPayment clickThroughRate : ℕ → ℝ}
+    (hclick_ne : ∀ r : Fin n, clickThroughRate r.val ≠ 0)
+    (hclick_mono : ∀ k : ℕ, clickThroughRate (k + 1) ≤ clickThroughRate k)
+    (hvalue_mono : ∀ a b : ℕ, a ≤ b → value b ≤ value a)
+    (hrec :
+      ∀ k : ℕ,
+        vcgTotalPayment k =
+          (clickThroughRate k - clickThroughRate (k + 1)) *
+              value (k + 1) +
+            vcgTotalPayment (k + 1)) :
+    (paper_theorem7_ranked_bstar_outcome
+      value vcgTotalPayment clickThroughRate).SlotEnvyFree
+        (paper_theorem7_ranked_environment clickThroughRate)
+        (fun i : Fin n => value i.val) := by
+  exact
+    paper_theorem7_ranked_bstar_outcome_slot_envy_free_of_ordered_values
+      hclick_ne hclick_mono hvalue_mono hrec
+
+/-- Audit for Theorem 7 full finite ranked stable-assignment bridge from
+ordered values, monotone click rates, the VCG recursion, and IR payment bounds. -/
+theorem audit_theorem7_stable_assignment_of_ordered_values
+    {n : ℕ} {value vcgTotalPayment clickThroughRate : ℕ → ℝ}
+    (hclick_ne : ∀ r : Fin n, clickThroughRate r.val ≠ 0)
+    (hclick_mono : ∀ k : ℕ, clickThroughRate (k + 1) ≤ clickThroughRate k)
+    (hvalue_mono : ∀ a b : ℕ, a ≤ b → value b ≤ value a)
+    (hrec :
+      ∀ k : ℕ,
+        vcgTotalPayment k =
+          (clickThroughRate k - clickThroughRate (k + 1)) *
+              value (k + 1) +
+            vcgTotalPayment (k + 1))
+    (hpayment_le_value :
+      ∀ i : Fin n,
+        vcgTotalPayment i.val ≤ clickThroughRate i.val * value i.val) :
+    (paper_theorem7_ranked_bstar_outcome
+      value vcgTotalPayment clickThroughRate).StableAssignment
+        (paper_theorem7_ranked_environment clickThroughRate)
+        (fun i : Fin n => value i.val) := by
+  exact
+    paper_theorem7_ranked_bstar_outcome_stable_assignment_of_ordered_values
+      hclick_ne hclick_mono hvalue_mono hrec hpayment_le_value
+
+/-- Audit for Theorem 7 certificate boundary: once the paper-specific
+`B*`/VCG-equivalent locally envy-free construction and VCG lower-bound
+certificate are supplied, Lean derives the revenue-minimality conclusion. -/
+theorem audit_theorem7_certificate_boundary
+    {Bidder Slot : Type*} [Fintype Bidder]
+    (model :
+      PaperTheorem7VCGEquivalentLocallyEnvyFreeCertificate Bidder Slot) :
+    ∃ O : PositionOutcome Bidder Slot,
+      O.SlotEnvyFree model.environment model.values ∧
+        (∀ i, O.slotOf i = model.vcgOutcome.slotOf i) ∧
+        (∀ i, O.paymentPerClick i = model.vcgOutcome.paymentPerClick i) ∧
+        ∀ other : PositionOutcome Bidder Slot,
+          other.FeasibleAssignment →
+          other.IndividuallyRational model.environment model.values →
+          other.SlotEnvyFree model.environment model.values →
+            (∀ i, O.slotOf i = other.slotOf i) →
+              O.revenue model.environment ≤ other.revenue model.environment := by
+  exact paper_theorem7_vcg_equivalent_locally_envy_free_of_certificate model
+
+/-- Audit for Theorem 8 dropout-price equation: the formal `q` satisfies the
+paper's indifference equality. -/
+theorem audit_theorem8_dropout_price_indifference
+    {alphaAbove alphaCurrent lastDropout value : ℝ}
+    (halphaAbove_ne : alphaAbove ≠ 0) :
+    alphaAbove *
+        (value -
+          paper_theorem8_generalized_english_indifference_price
+            alphaAbove alphaCurrent lastDropout value) =
+      alphaCurrent * (value - lastDropout) := by
+  exact
+    paper_theorem8_generalized_english_indifference_price_eq
+      halphaAbove_ne
+
+/-- Audit for Theorem 8 dropout-price bounds: under the usual click-through
+normalization and value condition, the threshold lies in the expected interval. -/
+theorem audit_theorem8_dropout_price_interval
+    {alphaAbove alphaCurrent lastDropout value : ℝ}
+    (halphaAbove_pos : 0 < alphaAbove)
+    (halphaCurrent_nonneg : 0 ≤ alphaCurrent)
+    (halphaCurrent_le : alphaCurrent ≤ alphaAbove)
+    (hlastDropout_le : lastDropout ≤ value) :
+    lastDropout ≤
+        paper_theorem8_generalized_english_indifference_price
+          alphaAbove alphaCurrent lastDropout value ∧
+      paper_theorem8_generalized_english_indifference_price
+          alphaAbove alphaCurrent lastDropout value ≤ value := by
+  exact
+    paper_theorem8_generalized_english_indifference_price_mem_interval
+      halphaAbove_pos halphaCurrent_nonneg halphaCurrent_le hlastDropout_le
+
+/-- Audit for Theorem 8 source-proof algebra: with positive affine coefficient
+on the bidder's value, the indifference price is unbounded above as value
+increases. -/
+theorem audit_theorem8_dropout_price_unbounded_value_of_coeff_pos
+    {alphaAbove alphaCurrent lastDropout : ℝ}
+    (hcoeff_pos : 0 < 1 - alphaCurrent / alphaAbove) (target : ℝ) :
+    ∃ value : ℝ,
+      target <
+        paper_theorem8_generalized_english_indifference_price
+          alphaAbove alphaCurrent lastDropout value := by
+  exact
+    paper_theorem8_generalized_english_indifference_price_unbounded_value_of_coeff_pos
+      hcoeff_pos target
+
+/-- Audit for Theorem 8 source-proof algebra: under the paper's strict adjacent
+click-rate condition, the indifference price is unbounded above as value
+increases. -/
+theorem audit_theorem8_dropout_price_unbounded_value_of_strict_click
+    {alphaAbove alphaCurrent lastDropout : ℝ}
+    (halphaAbove_pos : 0 < alphaAbove)
+    (halphaCurrent_lt : alphaCurrent < alphaAbove) (target : ℝ) :
+    ∃ value : ℝ,
+      target <
+        paper_theorem8_generalized_english_indifference_price
+          alphaAbove alphaCurrent lastDropout value := by
+  exact
+    paper_theorem8_generalized_english_indifference_price_unbounded_value_of_strict_click
+      halphaAbove_pos halphaCurrent_lt target
+
+/-- Audit for Theorem 8 dropout-price strict bounds: under strict click-rate
+separation and strict value slack, the threshold lies strictly inside the
+expected interval. -/
+theorem audit_theorem8_dropout_price_strict_interval
+    {alphaAbove alphaCurrent lastDropout value : ℝ}
+    (halphaAbove_pos : 0 < alphaAbove)
+    (halphaCurrent_pos : 0 < alphaCurrent)
+    (halphaCurrent_lt : alphaCurrent < alphaAbove)
+    (hlastDropout_lt : lastDropout < value) :
+    lastDropout <
+        paper_theorem8_generalized_english_indifference_price
+          alphaAbove alphaCurrent lastDropout value ∧
+      paper_theorem8_generalized_english_indifference_price
+          alphaAbove alphaCurrent lastDropout value < value := by
+  exact
+    paper_theorem8_generalized_english_indifference_price_strict_mem_interval
+      halphaAbove_pos halphaCurrent_pos halphaCurrent_lt hlastDropout_lt
+
+/-- Audit for Theorem 8 ranked dropout-price equation: the rank-indexed
+dropout formula satisfies the adjacent-slot utility indifference equation. -/
+theorem audit_theorem8_ranked_dropout_price_indifference
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hclick_ne : clickThroughRate rank ≠ 0) :
+    clickThroughRate rank *
+        (value (rank + 1) -
+          paper_theorem8_generalized_english_ranked_dropout_price
+            clickThroughRate lastDropout value rank) =
+      clickThroughRate (rank + 1) *
+        (value (rank + 1) - lastDropout rank) := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_eq
+      hclick_ne
+
+/-- Audit for Theorem 8 ranked dropout prices: with the previous dropout set to
+the next rank's VCG-tail per-click price, the current dropout threshold is the
+current finite VCG-tail per-click price. -/
+theorem audit_theorem8_ranked_dropout_price_eq_vcg_tail_per_click
+    (value clickThroughRate : ℕ → ℝ) (rank remaining : ℕ)
+    (hclick_ne : clickThroughRate rank ≠ 0)
+    (hnext_click_ne : clickThroughRate (rank + 1) ≠ 0) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate
+        (fun k =>
+          paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate (k + 1) remaining /
+              clickThroughRate (k + 1))
+        value rank =
+      paper_theorem7_ranked_vcg_tail_payment
+          value clickThroughRate rank (remaining + 1) /
+        clickThroughRate rank := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_eq_vcg_tail_per_click
+      value clickThroughRate rank remaining hclick_ne hnext_click_ne
+
+/-- Audit for Theorem 8 ranked dropout prices: using the Theorem 7 finite
+`B*` bid vector as continuation dropout prices makes the current dropout
+threshold exactly the current finite `B*` bid. -/
+theorem audit_theorem8_ranked_dropout_price_eq_bstar_bid_of_vcg_tail
+    (value clickThroughRate : ℕ → ℝ) (rank remaining : ℕ)
+    (hclick_ne : clickThroughRate rank ≠ 0)
+    (hnext_click_ne : clickThroughRate (rank + 1) ≠ 0) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate
+        (fun k =>
+          paper_theorem7_bstar_bid value
+            (fun j =>
+              paper_theorem7_ranked_vcg_tail_payment
+                value clickThroughRate j remaining)
+            clickThroughRate (k + 2))
+        value rank =
+      paper_theorem7_bstar_bid value
+        (fun j =>
+          paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate j (remaining + 1))
+        clickThroughRate (rank + 1) := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_eq_bstar_bid_of_vcg_tail
+      value clickThroughRate rank remaining hclick_ne hnext_click_ne
+
+/-- Audit for Theorem 8 ranked dropout-price interval bounds. -/
+theorem audit_theorem8_ranked_dropout_price_interval
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_nonneg : 0 ≤ clickThroughRate (rank + 1))
+    (hcurrent_le : clickThroughRate (rank + 1) ≤ clickThroughRate rank)
+    (hlastDropout_le : lastDropout rank ≤ value (rank + 1)) :
+    lastDropout rank ≤
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank ∧
+      paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank ≤ value (rank + 1) := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_mem_interval
+      hclick_pos hcurrent_nonneg hcurrent_le hlastDropout_le
+
+/-- Audit for Theorem 8 ranked dropout-price strict interval bounds. -/
+theorem audit_theorem8_ranked_dropout_price_strict_interval
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_pos : 0 < clickThroughRate (rank + 1))
+    (hcurrent_lt : clickThroughRate (rank + 1) < clickThroughRate rank)
+    (hlastDropout_lt : lastDropout rank < value (rank + 1)) :
+    lastDropout rank <
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank ∧
+      paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank < value (rank + 1) := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_strict_mem_interval
+      hclick_pos hcurrent_pos hcurrent_lt hlastDropout_lt
+
+/-- Audit for Theorem 8 ranked dropout-price affine form. -/
+theorem audit_theorem8_ranked_dropout_price_affine
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ} :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank =
+      (1 - clickThroughRate (rank + 1) / clickThroughRate rank) *
+          value (rank + 1) +
+        (clickThroughRate (rank + 1) / clickThroughRate rank) *
+          lastDropout rank := by
+  exact paper_theorem8_generalized_english_ranked_dropout_price_affine_eq
+
+/-- Audit for Theorem 8 ranked source-proof algebra: under a strict adjacent
+click-rate drop, the ranked dropout price is unbounded above in the relevant
+rank value. -/
+theorem audit_theorem8_ranked_dropout_price_unbounded_value_of_strict_click
+    {clickThroughRate lastDropout : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_lt : clickThroughRate (rank + 1) < clickThroughRate rank)
+    (target : ℝ) :
+    ∃ value : ℕ → ℝ,
+      target <
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_unbounded_value_of_strict_click
+      hclick_pos hcurrent_lt target
+
+/-- Audit for Theorem 8 ranked dropout-price strict value monotonicity. -/
+theorem audit_theorem8_ranked_dropout_price_strict_mono_value
+    {clickThroughRate lastDropout value value' : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_lt : clickThroughRate (rank + 1) < clickThroughRate rank)
+    (hvalue_lt : value (rank + 1) < value' (rank + 1)) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank <
+      paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value' rank := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_strict_mono_value
+      hclick_pos hcurrent_lt hvalue_lt
+
+/-- Audit for Theorem 8 ranked dropout-price direct lower and upper bounds. -/
+theorem audit_theorem8_ranked_dropout_price_direct_bounds
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_nonneg : 0 ≤ clickThroughRate (rank + 1))
+    (hcurrent_le : clickThroughRate (rank + 1) ≤ clickThroughRate rank)
+    (hlastDropout_le : lastDropout rank ≤ value (rank + 1)) :
+    lastDropout rank ≤
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank ∧
+      paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank ≤ value (rank + 1) := by
+  exact
+    ⟨paper_theorem8_generalized_english_ranked_dropout_price_lastDropout_le
+        hclick_pos hcurrent_le hlastDropout_le,
+      paper_theorem8_generalized_english_ranked_dropout_price_le_value
+        hclick_pos hcurrent_nonneg hlastDropout_le⟩
+
+/-- Audit for Theorem 8 ranked dropout-price monotonicity in the previous
+dropout price. -/
+theorem audit_theorem8_ranked_dropout_price_mono_lastDropout
+    {clickThroughRate lastDropout lastDropout' value : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_nonneg : 0 ≤ clickThroughRate (rank + 1))
+    (hlastDropout_le : lastDropout rank ≤ lastDropout' rank) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank ≤
+      paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout' value rank := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_mono_lastDropout
+      hclick_pos hcurrent_nonneg hlastDropout_le
+
+/-- Audit for Theorem 8 ranked dropout-price strict monotonicity in the
+previous dropout price. -/
+theorem audit_theorem8_ranked_dropout_price_strict_mono_lastDropout
+    {clickThroughRate lastDropout lastDropout' value : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_pos : 0 < clickThroughRate (rank + 1))
+    (hlastDropout_lt : lastDropout rank < lastDropout' rank) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank <
+      paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout' value rank := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_strict_mono_lastDropout
+      hclick_pos hcurrent_pos hlastDropout_lt
+
+/-- Audit for Theorem 8 ranked dropout-price zero-current endpoint. -/
+theorem audit_theorem8_ranked_dropout_price_zero_current
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hcurrent_zero : clickThroughRate (rank + 1) = 0) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank = value (rank + 1) := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_zero_current_eq
+      hcurrent_zero
+
+/-- Audit for Theorem 8 ranked dropout-price equal-current endpoint. -/
+theorem audit_theorem8_ranked_dropout_price_full_current
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hclick_ne : clickThroughRate rank ≠ 0)
+    (hcurrent_eq : clickThroughRate (rank + 1) = clickThroughRate rank) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank = lastDropout rank := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_full_current_eq
+      hclick_ne hcurrent_eq
+
+/-- Audit for Theorem 8 ranked dropout/PBE certificate boundary. -/
+theorem audit_theorem8_ranked_dropout_pbe_certificate_boundary
+    {StrategyProfile Outcome : Type*}
+    (model :
+      PaperTheorem8RankedDropoutPBECertificate StrategyProfile Outcome) :
+    (∀ rank,
+      model.dropoutPrice rank =
+        paper_theorem8_generalized_english_ranked_dropout_price
+          model.clickThroughRate model.lastDropout model.value rank) ∧
+      ∃ equilibrium : StrategyProfile,
+        model.pbe.isPerfectBayesianEquilibrium equilibrium ∧
+          (∀ strategy,
+            model.pbe.isPerfectBayesianEquilibrium strategy →
+              strategy = equilibrium) ∧
+          model.pbe.outcomeOf equilibrium = model.pbe.vcgOutcome := by
+  exact paper_theorem8_ranked_dropout_unique_pbe_of_certificate model
+
+/-- Audit for Theorem 8 concrete English-auction clock updates: advancing the
+clock sets the requested new clock price. -/
+theorem audit_theorem8_english_state_advance_clock
+    {Bidder : Type*}
+    (state : PaperTheorem8GeneralizedEnglishAuctionState Bidder)
+    (newPrice : ℝ) :
+    (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+      state newPrice).clockPrice = newPrice := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.advanceClock_clockPrice
+      state newPrice
+
+/-- Audit for Theorem 8 concrete English-auction clock updates: advancing the
+clock preserves all dropout records. -/
+theorem audit_theorem8_english_state_advance_clock_preserves_dropouts
+    {Bidder : Type*}
+    (state : PaperTheorem8GeneralizedEnglishAuctionState Bidder)
+    (newPrice : ℝ) (bidder : Bidder) :
+    (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+      state newPrice).lastDropout bidder = state.lastDropout bidder := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.advanceClock_preserves_lastDropout
+      state newPrice bidder
+
+/-- Audit for Theorem 8 concrete English-auction state updates: recording a
+dropout stores the current clock price for that bidder. -/
+theorem audit_theorem8_english_state_record_dropout
+    {Bidder : Type*} [DecidableEq Bidder]
+    (state : PaperTheorem8GeneralizedEnglishAuctionState Bidder)
+    (bidder : Bidder) :
+    (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+      state bidder).HasDropped bidder state.clockPrice := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.recordDropout_hasDropped
+      state bidder
+
+/-- Audit for Theorem 8 concrete English-auction state updates: recording a
+dropout preserves the clock price. -/
+theorem audit_theorem8_english_state_record_dropout_clock
+    {Bidder : Type*} [DecidableEq Bidder]
+    (state : PaperTheorem8GeneralizedEnglishAuctionState Bidder)
+    (bidder : Bidder) :
+    (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+      state bidder).clockPrice = state.clockPrice := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.recordDropout_clockPrice
+      state bidder
+
+/-- Audit for Theorem 8 concrete English-auction state updates: recording a
+dropout makes that bidder inactive. -/
+theorem audit_theorem8_english_state_record_dropout_not_active
+    {Bidder : Type*} [DecidableEq Bidder]
+    (state : PaperTheorem8GeneralizedEnglishAuctionState Bidder)
+    (bidder : Bidder) :
+    ¬ (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+      state bidder).IsActive bidder := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.recordDropout_not_active
+      state bidder
+
+/-- Audit for Theorem 8 concrete English-auction state updates: recording one
+dropout leaves other bidders' dropout records unchanged. -/
+theorem audit_theorem8_english_state_record_dropout_preserves_other
+    {Bidder : Type*} [DecidableEq Bidder]
+    (state : PaperTheorem8GeneralizedEnglishAuctionState Bidder)
+    {bidder other : Bidder} (hother : other ≠ bidder) :
+    (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+      state bidder).lastDropout other = state.lastDropout other := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.recordDropout_preserves_other
+      state hother
+
+/-- Audit for Theorem 8 concrete English-auction transitions: one transition
+never decreases the ascending clock. -/
+theorem audit_theorem8_english_step_clock_mono
+    {Bidder : Type*} [DecidableEq Bidder]
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hstep : PaperTheorem8GeneralizedEnglishAuctionState.Step state next) :
+    state.clockPrice ≤ next.clockPrice := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.Step_clock_mono hstep
+
+/-- Audit for Theorem 8 concrete English-auction transitions: a transition
+cannot reactivate a bidder. -/
+theorem audit_theorem8_english_step_active_of_next_active
+    {Bidder : Type*} [DecidableEq Bidder]
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hstep : PaperTheorem8GeneralizedEnglishAuctionState.Step state next)
+    {bidder : Bidder}
+    (hactive_next : next.IsActive bidder) :
+    state.IsActive bidder := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.Step_active_of_next_active
+      hstep hactive_next
+
+/-- Audit for Theorem 8 concrete English-auction transitions: a dropout record
+is either preserved or set to the previous current clock price. -/
+theorem audit_theorem8_english_step_lastDropout_eq_or_current_clock
+    {Bidder : Type*} [DecidableEq Bidder]
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hstep : PaperTheorem8GeneralizedEnglishAuctionState.Step state next)
+    (bidder : Bidder) :
+    next.lastDropout bidder = state.lastDropout bidder ∨
+      next.lastDropout bidder = some state.clockPrice := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.Step_lastDropout_eq_or_current_clock
+      hstep bidder
+
+/-- Audit for Theorem 8 concrete English-auction steps: once a bidder has
+dropped, a later step preserves that recorded dropout price. -/
+theorem audit_theorem8_english_step_lastDropout_eq_of_initial_some
+    {Bidder : Type*} [DecidableEq Bidder]
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hstep : PaperTheorem8GeneralizedEnglishAuctionState.Step state next)
+    {bidder : Bidder} {price : ℝ}
+    (hdropped : state.lastDropout bidder = some price) :
+    next.lastDropout bidder = some price := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.Step_lastDropout_eq_of_initial_some
+      hstep hdropped
+
+/-- Audit for Theorem 8 concrete English-auction histories: clocks are weakly
+increasing along every finite history. -/
+theorem audit_theorem8_english_history_clock_mono
+    {Bidder : Type*} [DecidableEq Bidder]
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.History state finalState) :
+    state.clockPrice ≤ finalState.clockPrice := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.History_clock_mono hhist
+
+/-- Audit for Theorem 8 concrete English-auction histories: histories cannot
+reactivate a bidder. -/
+theorem audit_theorem8_english_history_active_of_final_active
+    {Bidder : Type*} [DecidableEq Bidder]
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.History state finalState)
+    {bidder : Bidder}
+    (hactive_final : finalState.IsActive bidder) :
+    state.IsActive bidder := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.History_active_of_final_active
+      hhist hactive_final
+
+/-- Audit for Theorem 8 concrete English-auction histories: once no bidder is
+active, no future history can reactivate a bidder. -/
+theorem audit_theorem8_english_history_noActive_of_initial
+    {Bidder : Type*} [DecidableEq Bidder]
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.History state finalState)
+    (hno : state.NoActive) :
+    finalState.NoActive := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.History_noActive_of_initial
+      hhist hno
+
+/-- Audit for Theorem 8 concrete English-auction histories: once there is at
+most one active bidder, no future history can create two active bidders. -/
+theorem audit_theorem8_english_history_atMostOneActive_of_initial
+    {Bidder : Type*} [DecidableEq Bidder]
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.History state finalState)
+    (hatMostOne : state.AtMostOneActive) :
+    finalState.AtMostOneActive := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.History_atMostOneActive_of_initial
+      hhist hatMostOne
+
+/-- Audit for Theorem 8 concrete English-auction histories: once a bidder has
+dropped, a later history preserves that recorded dropout price. -/
+theorem audit_theorem8_english_history_lastDropout_eq_of_initial_some
+    {Bidder : Type*} [DecidableEq Bidder]
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.History state finalState)
+    {bidder : Bidder} {price : ℝ}
+    (hdropped : state.lastDropout bidder = some price) :
+    finalState.lastDropout bidder = some price := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.History_lastDropout_eq_of_initial_some
+      hhist hdropped
+
+/-- Audit for Theorem 8 strategy-consistent English-auction steps: every such
+step is a concrete English-auction step. -/
+theorem audit_theorem8_english_strategy_step_to_step
+    {Bidder : Type*} [DecidableEq Bidder]
+    {strategy :
+      PaperTheorem8GeneralizedEnglishAuctionState Bidder → Bidder → Prop}
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        strategy state next) :
+    PaperTheorem8GeneralizedEnglishAuctionState.Step state next := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep.toStep hstep
+
+/-- Audit for Theorem 8 strategy-consistent English-auction histories: every
+such history is a concrete English-auction history. -/
+theorem audit_theorem8_english_strategy_history_to_history
+    {Bidder : Type*} [DecidableEq Bidder]
+    {strategy :
+      PaperTheorem8GeneralizedEnglishAuctionState Bidder → Bidder → Prop}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        strategy state finalState) :
+    PaperTheorem8GeneralizedEnglishAuctionState.History state finalState := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory.toHistory hhist
+
+/-- Audit for Theorem 8 strategy-consistent English-auction histories: clocks
+are weakly increasing along every such history. -/
+theorem audit_theorem8_english_strategy_history_clock_mono
+    {Bidder : Type*} [DecidableEq Bidder]
+    {strategy :
+      PaperTheorem8GeneralizedEnglishAuctionState Bidder → Bidder → Prop}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        strategy state finalState) :
+    state.clockPrice ≤ finalState.clockPrice := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory_clock_mono
+      hhist
+
+/-- Audit for Theorem 8 strategy-consistent English-auction steps: a newly
+inactive bidder must have been instructed to drop by the strategy. -/
+theorem audit_theorem8_english_strategy_step_new_dropout_strategy
+    {Bidder : Type*} [DecidableEq Bidder]
+    {strategy :
+      PaperTheorem8GeneralizedEnglishAuctionState Bidder → Bidder → Prop}
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        strategy state next)
+    {bidder : Bidder}
+    (hactive : state.IsActive bidder) (hinactive : ¬ next.IsActive bidder) :
+    strategy state bidder := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep_new_dropout_strategy
+      hstep hactive hinactive
+
+/-- Audit for Theorem 8 strategy-consistent English-auction steps: a newly
+inactive bidder's dropout record is set to the previous clock price. -/
+theorem audit_theorem8_english_strategy_step_new_dropout_lastDropout_eq_current_clock
+    {Bidder : Type*} [DecidableEq Bidder]
+    {strategy :
+      PaperTheorem8GeneralizedEnglishAuctionState Bidder → Bidder → Prop}
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        strategy state next)
+    {bidder : Bidder}
+    (hactive : state.IsActive bidder) (hinactive : ¬ next.IsActive bidder) :
+    next.lastDropout bidder = some state.clockPrice := by
+  exact
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep_new_dropout_lastDropout_eq_current_clock
+      hstep hactive hinactive
+
+/-- Audit for Theorem 8 threshold strategies: a bidder drops exactly when the
+clock reaches the bidder's threshold. -/
+theorem audit_theorem8_threshold_dropout_strategy
+    {Bidder : Type*} (dropoutPrice : Bidder → ℝ)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState Bidder)
+    (bidder : Bidder) :
+    paper_theorem8_threshold_dropout_strategy dropoutPrice state bidder ↔
+      dropoutPrice bidder ≤ state.clockPrice := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_drops_iff
+      dropoutPrice state bidder
+
+/-- Audit for Theorem 8 threshold strategies: dropping is monotone in the
+ascending clock price. -/
+theorem audit_theorem8_threshold_dropout_strategy_monotone_clock
+    {Bidder : Type*} {dropoutPrice : Bidder → ℝ}
+    {state state' : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hclock : state.clockPrice ≤ state'.clockPrice)
+    (hdrop :
+      paper_theorem8_threshold_dropout_strategy dropoutPrice state bidder) :
+    paper_theorem8_threshold_dropout_strategy dropoutPrice state' bidder := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_monotone_clock hclock hdrop
+
+/-- Audit for Theorem 8 threshold strategies: dropping persists along concrete
+English-auction histories. -/
+theorem audit_theorem8_threshold_dropout_strategy_monotone_history
+    {Bidder : Type*} [DecidableEq Bidder]
+    {dropoutPrice : Bidder → ℝ}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.History state finalState)
+    (hdrop :
+      paper_theorem8_threshold_dropout_strategy dropoutPrice state bidder) :
+    paper_theorem8_threshold_dropout_strategy dropoutPrice finalState bidder := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_monotone_history hhist hdrop
+
+/-- Audit for Theorem 8 threshold strategies: a bidder cannot drop below the
+threshold price. -/
+theorem audit_theorem8_threshold_dropout_strategy_not_before_threshold
+    {Bidder : Type*} {dropoutPrice : Bidder → ℝ}
+    {state : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hclock_lt : state.clockPrice < dropoutPrice bidder) :
+    ¬ paper_theorem8_threshold_dropout_strategy dropoutPrice state bidder := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_not_drop_before_threshold
+      hclock_lt
+
+/-- Audit for Theorem 8 threshold strategies: a strategy-consistent step cannot
+newly drop a bidder before that bidder's threshold. -/
+theorem audit_theorem8_threshold_dropout_strategy_step_no_new_dropout_before_threshold
+    {Bidder : Type*} [DecidableEq Bidder] {dropoutPrice : Bidder → ℝ}
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice) state next)
+    (hclock_lt : state.clockPrice < dropoutPrice bidder)
+    (hactive : state.IsActive bidder) :
+    next.IsActive bidder := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_step_no_new_dropout_before_threshold
+      hstep hclock_lt hactive
+
+/-- Audit for Theorem 8 threshold strategies: a newly inactive bidder's record
+is set to the previous clock, and that clock reached the bidder's threshold. -/
+theorem audit_theorem8_threshold_dropout_strategy_step_new_dropout_record_eq_and_threshold_le
+    {Bidder : Type*} [DecidableEq Bidder] {dropoutPrice : Bidder → ℝ}
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice) state next)
+    (hactive : state.IsActive bidder) (hinactive : ¬ next.IsActive bidder) :
+    next.lastDropout bidder = some state.clockPrice ∧
+      dropoutPrice bidder ≤ state.clockPrice := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_step_new_dropout_record_eq_and_threshold_le
+      hstep hactive hinactive
+
+/-- Audit for Theorem 8 threshold strategies: a strategy-consistent history
+cannot newly drop a bidder if the final clock remains below that bidder's
+threshold. -/
+theorem audit_theorem8_threshold_dropout_strategy_history_no_new_dropout_before_threshold
+    {Bidder : Type*} [DecidableEq Bidder] {dropoutPrice : Bidder → ℝ}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice)
+        state finalState)
+    (hfinal_lt : finalState.clockPrice < dropoutPrice bidder)
+    (hactive : state.IsActive bidder) :
+    finalState.IsActive bidder := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_history_no_new_dropout_before_threshold
+      hhist hfinal_lt hactive
+
+/-- Audit for Theorem 8 threshold strategies: if a bidder starts active and is
+inactive after a strategy-consistent history, the final clock reached that
+bidder's threshold. -/
+theorem audit_theorem8_threshold_dropout_strategy_history_new_dropout_threshold_le
+    {Bidder : Type*} [DecidableEq Bidder] {dropoutPrice : Bidder → ℝ}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice)
+        state finalState)
+    (hactive : state.IsActive bidder) (hinactive : ¬ finalState.IsActive bidder) :
+    dropoutPrice bidder ≤ finalState.clockPrice := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_history_new_dropout_threshold_le
+      hhist hactive hinactive
+
+/-- Audit for Theorem 8 threshold strategies: if a bidder starts active and is
+inactive after a strategy-consistent history, the final state contains a
+dropout record at a threshold-reaching price no later than the final clock. -/
+theorem audit_theorem8_threshold_dropout_strategy_history_new_dropout_record_exists
+    {Bidder : Type*} [DecidableEq Bidder] {dropoutPrice : Bidder → ℝ}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice)
+        state finalState)
+    (hactive : state.IsActive bidder) (hinactive : ¬ finalState.IsActive bidder) :
+    ∃ price,
+      finalState.lastDropout bidder = some price ∧
+        dropoutPrice bidder ≤ price ∧
+          price ≤ finalState.clockPrice := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_history_new_dropout_record_exists
+      hhist hactive hinactive
+
+/-- Audit for Theorem 8 threshold strategies: in a terminal
+strategy-consistent history, final activity is exactly the below-threshold
+condition. -/
+theorem audit_theorem8_threshold_dropout_strategy_terminal_history_active_iff_clock_lt_threshold
+    {Bidder : Type*} [DecidableEq Bidder] {dropoutPrice : Bidder → ℝ}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice)
+        state finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice) finalState)
+    (hinitial_active : state.IsActive bidder) :
+    finalState.IsActive bidder ↔
+      finalState.clockPrice < dropoutPrice bidder := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_terminal_history_active_iff_clock_lt_threshold
+      hhist hterminal hinitial_active
+
+/-- Audit for Theorem 8 threshold strategies: in a terminal
+strategy-consistent history, final inactivity is exactly the threshold-reached
+condition. -/
+theorem audit_theorem8_threshold_dropout_strategy_terminal_history_inactive_iff_threshold_le_clock
+    {Bidder : Type*} [DecidableEq Bidder] {dropoutPrice : Bidder → ℝ}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice)
+        state finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice) finalState)
+    (hinitial_active : state.IsActive bidder) :
+    ¬ finalState.IsActive bidder ↔
+      dropoutPrice bidder ≤ finalState.clockPrice := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_terminal_history_inactive_iff_threshold_le_clock
+      hhist hterminal hinitial_active
+
+/-- Audit for Theorem 8 threshold strategies: in a terminal
+strategy-consistent history, final inactivity is exactly the terminal
+threshold-strategy drop predicate. -/
+theorem audit_theorem8_threshold_dropout_strategy_terminal_history_inactive_iff_strategy
+    {Bidder : Type*} [DecidableEq Bidder] {dropoutPrice : Bidder → ℝ}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice)
+        state finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice) finalState)
+    (hinitial_active : state.IsActive bidder) :
+    ¬ finalState.IsActive bidder ↔
+      paper_theorem8_threshold_dropout_strategy dropoutPrice finalState bidder := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_terminal_history_inactive_iff_strategy
+      hhist hterminal hinitial_active
+
+/-- Audit for Theorem 8 threshold strategies: in a terminal
+strategy-consistent history, final activity is exactly the terminal strategy's
+not-drop predicate. -/
+theorem audit_theorem8_threshold_dropout_strategy_terminal_history_active_iff_not_strategy
+    {Bidder : Type*} [DecidableEq Bidder] {dropoutPrice : Bidder → ℝ}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice)
+        state finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_threshold_dropout_strategy dropoutPrice) finalState)
+    (hinitial_active : state.IsActive bidder) :
+    finalState.IsActive bidder ↔
+      ¬ paper_theorem8_threshold_dropout_strategy dropoutPrice finalState bidder := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_terminal_history_active_iff_not_strategy
+      hhist hterminal hinitial_active
+
+/-- Audit for Theorem 8 threshold strategies: a bidder has not dropped exactly
+when the clock is still below the threshold price. -/
+theorem audit_theorem8_threshold_dropout_strategy_not_drop_iff_clock_lt_threshold
+    {Bidder : Type*} {dropoutPrice : Bidder → ℝ}
+    {state : PaperTheorem8GeneralizedEnglishAuctionState Bidder}
+    {bidder : Bidder} :
+    ¬ paper_theorem8_threshold_dropout_strategy dropoutPrice state bidder ↔
+      state.clockPrice < dropoutPrice bidder := by
+  exact
+    paper_theorem8_threshold_dropout_strategy_not_drop_iff_clock_lt_threshold
+
+/-- Audit for Theorem 8 threshold strategies: the threshold condition uniquely
+determines the threshold strategy extensionally. -/
+theorem audit_theorem8_strategy_eq_threshold_of_drops_iff
+    {Bidder : Type*}
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy Bidder)
+    (dropoutPrice : Bidder → ℝ)
+    (hstrategy :
+      ∀ state bidder,
+        strategy state bidder ↔ dropoutPrice bidder ≤ state.clockPrice) :
+    strategy = paper_theorem8_threshold_dropout_strategy dropoutPrice := by
+  exact
+    paper_theorem8_strategy_eq_threshold_of_drops_iff
+      strategy dropoutPrice hstrategy
+
+/-- Audit for Theorem 8 ranked threshold strategies: the threshold is exactly
+the ranked generalized-English dropout-price formula. -/
+theorem audit_theorem8_ranked_threshold_dropout_strategy
+    (clickThroughRate lastDropout value : ℕ → ℝ)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank : ℕ) :
+    paper_theorem8_ranked_threshold_dropout_strategy
+        clickThroughRate lastDropout value state rank ↔
+      paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank ≤ state.clockPrice := by
+  exact
+    paper_theorem8_ranked_threshold_dropout_strategy_drops_iff
+      clickThroughRate lastDropout value state rank
+
+/-- Audit for Theorem 8 ranked threshold strategies: with Theorem 7 finite
+`B*` continuation bids as previous dropout prices, dropout is exactly the
+current finite `B*` bid-threshold condition. -/
+theorem audit_theorem8_ranked_threshold_dropout_strategy_bstar_bid
+    (value clickThroughRate : ℕ → ℝ)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank remaining : ℕ)
+    (hclick_ne : clickThroughRate rank ≠ 0)
+    (hnext_click_ne : clickThroughRate (rank + 1) ≠ 0) :
+    paper_theorem8_ranked_threshold_dropout_strategy
+        clickThroughRate
+        (fun k =>
+          paper_theorem7_bstar_bid value
+            (fun j =>
+              paper_theorem7_ranked_vcg_tail_payment
+                value clickThroughRate j remaining)
+            clickThroughRate (k + 2))
+        value state rank ↔
+      paper_theorem7_bstar_bid value
+        (fun j =>
+          paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate j (remaining + 1))
+        clickThroughRate (rank + 1) ≤ state.clockPrice := by
+  exact
+    paper_theorem8_ranked_threshold_dropout_strategy_drops_iff_bstar_bid_of_vcg_tail
+      value clickThroughRate state rank remaining hclick_ne hnext_click_ne
+
+/-- Audit for finite Theorem 8 `B*` thresholds: under the ordered valuation
+and click-through assumptions, the continuation finite `B*` bid is weakly
+below the current dropout threshold. -/
+theorem audit_theorem8_bstar_continuation_threshold_le_current_of_ordered_tail
+    {value clickThroughRate : ℕ → ℝ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_pos : ∀ i, 0 < clickThroughRate i)
+    (hclick_mono : ∀ i, clickThroughRate (i + 1) ≤ clickThroughRate i)
+    (remaining rank : ℕ) :
+    paper_theorem8_bstar_threshold_bid
+        value clickThroughRate remaining (rank + 2) ≤
+      paper_theorem8_bstar_threshold_bid
+        value clickThroughRate (remaining + 1) (rank + 1) := by
+  exact
+    paper_theorem8_bstar_continuation_threshold_le_current_threshold_of_ordered_tail
+      hvalue_nonneg hvalue_mono hclick_pos hclick_mono remaining rank
+
+/-- Small ordered-values counterexample used to audit the finite-schedule
+boundary: same-tail adjacent finite `B*` thresholds need not be rank-sorted. -/
+noncomputable def audit_theorem8_same_tail_threshold_counterexample_value :
+    ℕ → ℝ :=
+  fun _ => 1
+
+/-- Click-through rates for the same-tail threshold-order counterexample:
+`1, 9/10, 1/10, 1/10, ...`. -/
+noncomputable def audit_theorem8_same_tail_threshold_counterexample_click :
+    ℕ → ℝ
+  | 0 => 1
+  | 1 => 9 / 10
+  | _ + 2 => 1 / 10
+
+/--
+Even with nonnegative weakly decreasing values and positive weakly decreasing
+click-through rates, same-tail finite `B*` thresholds may increase from rank
+`0` to rank `1`. Thus finite exact-drop schedules correctly keep
+same-tail threshold order as explicit schedule data or choose an order by
+threshold comparison.
+-/
+theorem audit_theorem8_same_tail_adjacent_threshold_order_counterexample :
+    (∀ i, 0 ≤ audit_theorem8_same_tail_threshold_counterexample_value i) ∧
+      (∀ i,
+        audit_theorem8_same_tail_threshold_counterexample_value (i + 1) ≤
+          audit_theorem8_same_tail_threshold_counterexample_value i) ∧
+      (∀ i, 0 < audit_theorem8_same_tail_threshold_counterexample_click i) ∧
+      (∀ i,
+        audit_theorem8_same_tail_threshold_counterexample_click (i + 1) ≤
+          audit_theorem8_same_tail_threshold_counterexample_click i) ∧
+      paper_theorem8_bstar_threshold_bid
+          audit_theorem8_same_tail_threshold_counterexample_value
+          audit_theorem8_same_tail_threshold_counterexample_click 1 1 <
+        paper_theorem8_bstar_threshold_bid
+          audit_theorem8_same_tail_threshold_counterexample_value
+          audit_theorem8_same_tail_threshold_counterexample_click 1 2 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · intro i
+    norm_num [audit_theorem8_same_tail_threshold_counterexample_value]
+  · intro i
+    norm_num [audit_theorem8_same_tail_threshold_counterexample_value]
+  · intro i
+    cases i with
+    | zero =>
+        norm_num [audit_theorem8_same_tail_threshold_counterexample_click]
+    | succ i =>
+        cases i with
+        | zero =>
+            norm_num [audit_theorem8_same_tail_threshold_counterexample_click]
+        | succ i =>
+            norm_num [audit_theorem8_same_tail_threshold_counterexample_click]
+  · intro i
+    cases i with
+    | zero =>
+        norm_num [audit_theorem8_same_tail_threshold_counterexample_click]
+    | succ i =>
+        cases i with
+        | zero =>
+            norm_num [audit_theorem8_same_tail_threshold_counterexample_click]
+        | succ i =>
+            norm_num [audit_theorem8_same_tail_threshold_counterexample_click]
+  · norm_num [paper_theorem8_bstar_threshold_bid, paper_theorem7_bstar_bid,
+      paper_theorem7_ranked_vcg_tail_payment,
+      audit_theorem8_same_tail_threshold_counterexample_value,
+      audit_theorem8_same_tail_threshold_counterexample_click]
+
+/-- Audit for Theorem 8 ranked threshold strategies: with Theorem 7 finite
+`B*` continuation bids, not dropping is exactly the strict-below-`B*` clock
+condition. -/
+theorem audit_theorem8_ranked_threshold_dropout_strategy_not_drop_iff_clock_lt_bstar_bid
+    (value clickThroughRate : ℕ → ℝ)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank remaining : ℕ)
+    (hclick_ne : clickThroughRate rank ≠ 0)
+    (hnext_click_ne : clickThroughRate (rank + 1) ≠ 0) :
+    ¬ paper_theorem8_ranked_threshold_dropout_strategy
+        clickThroughRate
+        (fun k =>
+          paper_theorem7_bstar_bid value
+            (fun j =>
+              paper_theorem7_ranked_vcg_tail_payment
+                value clickThroughRate j remaining)
+            clickThroughRate (k + 2))
+        value state rank ↔
+      state.clockPrice <
+        paper_theorem7_bstar_bid value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              value clickThroughRate j (remaining + 1))
+          clickThroughRate (rank + 1) := by
+  exact
+    paper_theorem8_ranked_threshold_dropout_strategy_not_drop_iff_clock_lt_bstar_bid_of_vcg_tail
+      value clickThroughRate state rank remaining hclick_ne hnext_click_ne
+
+/-- Audit for Theorem 8 ranked threshold strategies: the ranked threshold
+condition uniquely determines the ranked threshold strategy extensionally. -/
+theorem audit_theorem8_strategy_eq_ranked_threshold_of_drops_iff
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ)
+    (clickThroughRate lastDropout value : ℕ → ℝ)
+    (hstrategy :
+      ∀ state rank,
+        strategy state rank ↔
+          paper_theorem8_generalized_english_ranked_dropout_price
+            clickThroughRate lastDropout value rank ≤ state.clockPrice) :
+    strategy =
+      paper_theorem8_ranked_threshold_dropout_strategy
+        clickThroughRate lastDropout value := by
+  exact
+    paper_theorem8_strategy_eq_ranked_threshold_of_drops_iff
+      strategy clickThroughRate lastDropout value hstrategy
+
+/-- Audit for Theorem 8 ranked threshold strategies: dropping is monotone in
+the ascending clock price. -/
+theorem audit_theorem8_ranked_threshold_dropout_strategy_monotone_clock
+    {clickThroughRate lastDropout value : ℕ → ℝ}
+    {state state' : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hclock : state.clockPrice ≤ state'.clockPrice)
+    (hdrop :
+      paper_theorem8_ranked_threshold_dropout_strategy
+        clickThroughRate lastDropout value state rank) :
+    paper_theorem8_ranked_threshold_dropout_strategy
+      clickThroughRate lastDropout value state' rank := by
+  exact
+    paper_theorem8_ranked_threshold_dropout_strategy_monotone_clock
+      hclock hdrop
+
+/-- Audit for Theorem 8 ranked threshold strategies: dropping persists along
+concrete English-auction histories. -/
+theorem audit_theorem8_ranked_threshold_dropout_strategy_monotone_history
+    {clickThroughRate lastDropout value : ℕ → ℝ}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.History state finalState)
+    (hdrop :
+      paper_theorem8_ranked_threshold_dropout_strategy
+        clickThroughRate lastDropout value state rank) :
+    paper_theorem8_ranked_threshold_dropout_strategy
+      clickThroughRate lastDropout value finalState rank := by
+  exact
+    paper_theorem8_ranked_threshold_dropout_strategy_monotone_history
+      hhist hdrop
+
+/-- Audit for Theorem 8 ranked threshold strategies: a ranked bidder cannot
+drop below the ranked threshold price. -/
+theorem audit_theorem8_ranked_threshold_dropout_strategy_not_before_threshold
+    {clickThroughRate lastDropout value : ℕ → ℝ}
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hclock_lt :
+      state.clockPrice <
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank) :
+    ¬ paper_theorem8_ranked_threshold_dropout_strategy
+        clickThroughRate lastDropout value state rank := by
+  exact
+    paper_theorem8_ranked_threshold_dropout_strategy_not_drop_before_threshold
+      hclock_lt
+
+/-- Audit for Theorem 8 ranked threshold strategies: a ranked bidder has not
+dropped exactly when the clock is still below the rank-indexed dropout price. -/
+theorem audit_theorem8_ranked_threshold_dropout_strategy_not_drop_iff_clock_lt_threshold
+    {clickThroughRate lastDropout value : ℕ → ℝ}
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ} :
+    ¬ paper_theorem8_ranked_threshold_dropout_strategy
+        clickThroughRate lastDropout value state rank ↔
+      state.clockPrice <
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank := by
+  exact
+    paper_theorem8_ranked_threshold_dropout_strategy_not_drop_iff_clock_lt_threshold
+
+/-- Audit for Theorem 8 ranked threshold strategies: a ranked bidder cannot
+drop before the previous dropout price. -/
+theorem audit_theorem8_ranked_threshold_dropout_strategy_not_before_lastDropout
+    {clickThroughRate lastDropout value : ℕ → ℝ}
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_le : clickThroughRate (rank + 1) ≤ clickThroughRate rank)
+    (hlastDropout_le : lastDropout rank ≤ value (rank + 1))
+    (hclock_lt : state.clockPrice < lastDropout rank) :
+    ¬ paper_theorem8_ranked_threshold_dropout_strategy
+        clickThroughRate lastDropout value state rank := by
+  exact
+    paper_theorem8_ranked_threshold_dropout_strategy_not_before_lastDropout
+      hclick_pos hcurrent_le hlastDropout_le hclock_lt
+
+/-- Audit for Theorem 8 ranked threshold strategies: by the time the clock
+reaches the lower bidder's value, the ranked threshold strategy has dropped. -/
+theorem audit_theorem8_ranked_threshold_dropout_strategy_drops_by_value
+    {clickThroughRate lastDropout value : ℕ → ℝ}
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_nonneg : 0 ≤ clickThroughRate (rank + 1))
+    (hlastDropout_le : lastDropout rank ≤ value (rank + 1))
+    (hvalue_le_clock : value (rank + 1) ≤ state.clockPrice) :
+    paper_theorem8_ranked_threshold_dropout_strategy
+        clickThroughRate lastDropout value state rank := by
+  exact
+    paper_theorem8_ranked_threshold_dropout_strategy_drops_by_value
+      hclick_pos hcurrent_nonneg hlastDropout_le hvalue_le_clock
+
+/-- Audit for Theorem 8 ranked thresholds: at the threshold clock, the bidder
+is exactly indifferent between the higher and lower adjacent slots. -/
+theorem audit_theorem8_ranked_threshold_indifferent_at_clock
+    {clickThroughRate lastDropout value : ℕ → ℝ}
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hclick_ne : clickThroughRate rank ≠ 0)
+    (hclock_eq :
+      state.clockPrice =
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank) :
+    clickThroughRate rank * (value (rank + 1) - state.clockPrice) =
+      clickThroughRate (rank + 1) *
+        (value (rank + 1) - lastDropout rank) := by
+  exact
+    paper_theorem8_ranked_threshold_indifferent_at_clock
+      hclick_ne hclock_eq
+
+/-- Audit for Theorem 8 ranked thresholds: below threshold, the bidder strictly
+prefers continuing for the higher adjacent slot. -/
+theorem audit_theorem8_ranked_threshold_prefers_active_before_threshold
+    {clickThroughRate lastDropout value : ℕ → ℝ}
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hclock_lt :
+      state.clockPrice <
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank) :
+    clickThroughRate (rank + 1) *
+        (value (rank + 1) - lastDropout rank) <
+      clickThroughRate rank * (value (rank + 1) - state.clockPrice) := by
+  exact
+    paper_theorem8_ranked_threshold_prefers_active_before_threshold
+      hclick_pos hclock_lt
+
+/-- Audit for Theorem 8 ranked thresholds: above threshold, the bidder strictly
+prefers dropping to the lower adjacent slot. -/
+theorem audit_theorem8_ranked_threshold_prefers_drop_after_threshold
+    {clickThroughRate lastDropout value : ℕ → ℝ}
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hthreshold_lt :
+      paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank <
+        state.clockPrice) :
+    clickThroughRate rank * (value (rank + 1) - state.clockPrice) <
+      clickThroughRate (rank + 1) *
+        (value (rank + 1) - lastDropout rank) := by
+  exact
+    paper_theorem8_ranked_threshold_prefers_drop_after_threshold
+      hclick_pos hthreshold_lt
+
+/-- Audit for Theorem 8 ranked thresholds: at the finite `B*` threshold, the
+bidder is exactly indifferent between the higher and lower adjacent slots. -/
+theorem audit_theorem8_ranked_threshold_indifferent_at_bstar_bid
+    (value clickThroughRate : ℕ → ℝ)
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (rank remaining : ℕ)
+    (hclick_ne : clickThroughRate rank ≠ 0)
+    (hnext_click_ne : clickThroughRate (rank + 1) ≠ 0)
+    (hclock_eq :
+      state.clockPrice =
+        paper_theorem7_bstar_bid value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              value clickThroughRate j (remaining + 1))
+          clickThroughRate (rank + 1)) :
+    clickThroughRate rank * (value (rank + 1) - state.clockPrice) =
+      clickThroughRate (rank + 1) *
+        (value (rank + 1) -
+          paper_theorem7_bstar_bid value
+            (fun j =>
+              paper_theorem7_ranked_vcg_tail_payment
+                value clickThroughRate j remaining)
+            clickThroughRate (rank + 2)) := by
+  exact
+    paper_theorem8_ranked_threshold_indifferent_at_bstar_bid_of_vcg_tail
+      value clickThroughRate rank remaining hclick_ne hnext_click_ne hclock_eq
+
+/-- Audit for Theorem 8 ranked thresholds: below the finite `B*` threshold, the
+bidder strictly prefers continuing for the higher adjacent slot. -/
+theorem audit_theorem8_ranked_threshold_prefers_active_before_bstar_bid
+    (value clickThroughRate : ℕ → ℝ)
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (rank remaining : ℕ)
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hnext_click_ne : clickThroughRate (rank + 1) ≠ 0)
+    (hclock_lt :
+      state.clockPrice <
+        paper_theorem7_bstar_bid value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              value clickThroughRate j (remaining + 1))
+          clickThroughRate (rank + 1)) :
+    clickThroughRate (rank + 1) *
+        (value (rank + 1) -
+          paper_theorem7_bstar_bid value
+            (fun j =>
+              paper_theorem7_ranked_vcg_tail_payment
+                value clickThroughRate j remaining)
+            clickThroughRate (rank + 2)) <
+      clickThroughRate rank * (value (rank + 1) - state.clockPrice) := by
+  exact
+    paper_theorem8_ranked_threshold_prefers_active_before_bstar_bid_of_vcg_tail
+      value clickThroughRate rank remaining hclick_pos hnext_click_ne hclock_lt
+
+/-- Audit for Theorem 8 ranked thresholds: above the finite `B*` threshold, the
+bidder strictly prefers dropping to the lower adjacent slot. -/
+theorem audit_theorem8_ranked_threshold_prefers_drop_after_bstar_bid
+    (value clickThroughRate : ℕ → ℝ)
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (rank remaining : ℕ)
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hnext_click_ne : clickThroughRate (rank + 1) ≠ 0)
+    (hthreshold_lt :
+      paper_theorem7_bstar_bid value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              value clickThroughRate j (remaining + 1))
+          clickThroughRate (rank + 1) <
+        state.clockPrice) :
+    clickThroughRate rank * (value (rank + 1) - state.clockPrice) <
+      clickThroughRate (rank + 1) *
+        (value (rank + 1) -
+          paper_theorem7_bstar_bid value
+            (fun j =>
+              paper_theorem7_ranked_vcg_tail_payment
+                value clickThroughRate j remaining)
+            clickThroughRate (rank + 2)) := by
+  exact
+    paper_theorem8_ranked_threshold_prefers_drop_after_bstar_bid_of_vcg_tail
+      value clickThroughRate rank remaining hclick_pos hnext_click_ne hthreshold_lt
+
+/-- Audit for Theorem 8 exact finite-`B*` thresholds: with strict click-rate
+separation and strict continuation slack, the current `B*` threshold is
+strictly between the continuation `B*` bid and the lower bidder's value. -/
+theorem audit_theorem8_bstar_threshold_strict_interval
+    (value clickThroughRate : ℕ → ℝ) (rank remaining : ℕ)
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hnext_click_pos : 0 < clickThroughRate (rank + 1))
+    (hcurrent_lt : clickThroughRate (rank + 1) < clickThroughRate rank)
+    (hcontinuation_lt_value :
+      paper_theorem7_bstar_bid value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              value clickThroughRate j remaining)
+          clickThroughRate (rank + 2) <
+        value (rank + 1)) :
+    paper_theorem7_bstar_bid value
+        (fun j =>
+          paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate j remaining)
+        clickThroughRate (rank + 2) <
+        paper_theorem7_bstar_bid value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              value clickThroughRate j (remaining + 1))
+          clickThroughRate (rank + 1) ∧
+      paper_theorem7_bstar_bid value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              value clickThroughRate j (remaining + 1))
+          clickThroughRate (rank + 1) <
+        value (rank + 1) := by
+  exact
+    paper_theorem8_bstar_threshold_strict_interval_of_vcg_tail
+      value clickThroughRate rank remaining hclick_pos hnext_click_pos
+      hcurrent_lt hcontinuation_lt_value
+
+/-- Audit for Theorem 8 exact finite-`B*` local optimality: a strict VCG-tail
+total-payment bound implies the continuation `B*` per-click bid is strictly
+value-bounded. -/
+theorem audit_theorem8_bstar_continuation_bid_lt_value_of_tail_payment_lt
+    {value clickThroughRate : ℕ → ℝ} {rank remaining : ℕ}
+    (hclick_pos : 0 < clickThroughRate (rank + 1))
+    (htail_lt :
+      paper_theorem7_ranked_vcg_tail_payment
+          value clickThroughRate (rank + 1) remaining <
+        clickThroughRate (rank + 1) * value (rank + 1)) :
+    paper_theorem7_bstar_bid value
+        (fun j =>
+          paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate j remaining)
+        clickThroughRate (rank + 2) < value (rank + 1) := by
+  exact
+    paper_theorem8_bstar_continuation_bid_lt_value_of_tail_payment_lt
+      hclick_pos htail_lt
+
+/-- Audit for Theorem 8 exact finite-`B*` local optimality: the strict
+certificate reuses the weak local-optimality certificate obligations. -/
+def audit_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate :=
+  paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+    model
+
+/-- Audit for Theorem 8 exact finite-`B*` strict thresholds: the strict
+certificate makes each current finite `B*` threshold strictly between the
+continuation finite `B*` bid and the lower bidder's value. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_interval_certificate
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate) :
+    ∀ rank,
+      paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j model.remaining)
+          model.clickThroughRate (rank + 2) <
+        paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j (model.remaining + 1))
+          model.clickThroughRate (rank + 1) ∧
+      paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j (model.remaining + 1))
+          model.clickThroughRate (rank + 1) < model.value (rank + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_interval_of_certificate model
+
+/-- Audit for Theorem 8 exact finite-`B*` strict thresholds: the strict
+certificate leaves nonempty open clock regions before and after each current
+finite `B*` threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_nonempty_clock_regions
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate) :
+    ∀ rank,
+      (∃ clockPrice,
+        paper_theorem7_bstar_bid model.value
+            (fun j =>
+              paper_theorem7_ranked_vcg_tail_payment
+                model.value model.clickThroughRate j model.remaining)
+            model.clickThroughRate (rank + 2) < clockPrice ∧
+          clockPrice <
+            paper_theorem7_bstar_bid model.value
+              (fun j =>
+                paper_theorem7_ranked_vcg_tail_payment
+                  model.value model.clickThroughRate j (model.remaining + 1))
+              model.clickThroughRate (rank + 1)) ∧
+      (∃ clockPrice,
+        paper_theorem7_bstar_bid model.value
+            (fun j =>
+              paper_theorem7_ranked_vcg_tail_payment
+                model.value model.clickThroughRate j (model.remaining + 1))
+            model.clickThroughRate (rank + 1) < clockPrice ∧
+          clockPrice < model.value (rank + 1)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_nonempty_clock_regions_of_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` strict thresholds: the nonempty clock
+regions can be realized as concrete auction states where the named strategy has
+not dropped before the threshold and has dropped after it. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_strategy_nonempty_behavior_regions
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate) :
+    ∀ rank,
+      (∃ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate model.remaining (rank + 2) <
+          state.clockPrice ∧
+        state.clockPrice <
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) ∧
+        ¬ paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining state rank) ∧
+      (∃ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) <
+          state.clockPrice ∧
+        state.clockPrice < model.value (rank + 1) ∧
+        paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining state rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_strategy_nonempty_behavior_regions
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` local optimality: the long local
+threshold package is available as a named statement. -/
+theorem audit_theorem8_bstar_ranked_threshold_local_optimality_statement
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_local_optimality_statement
+      model.clickThroughRate model.value model.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_local_optimality_statement_of_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` local payoff accounting: continuing
+at the current clock uses the current rank's click-through rate and the
+current clock price. -/
+theorem audit_theorem8_bstar_ranked_threshold_continue_payoff
+    (clickThroughRate value : ℕ → ℝ)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_continue_payoff
+        clickThroughRate value state rank =
+      clickThroughRate rank * (value (rank + 1) - state.clockPrice) := by
+  rfl
+
+/-- Audit for Theorem 8 exact finite-`B*` local payoff accounting: dropping
+uses the next rank's click-through rate and the continuation finite `B*`
+threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_drop_payoff
+    (clickThroughRate value : ℕ → ℝ) (remaining rank : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_drop_payoff
+        clickThroughRate value remaining rank =
+      clickThroughRate (rank + 1) *
+        (value (rank + 1) -
+          paper_theorem8_bstar_threshold_bid
+            value clickThroughRate remaining (rank + 2)) := by
+  rfl
+
+/-- Audit for Theorem 8 exact finite-`B*` local sequential rationality: the
+named finite `B*` ranked-threshold strategy is a one-step best response at every
+state and rank under the local-optimality certificate. -/
+theorem audit_theorem8_bstar_ranked_threshold_named_strategy_one_step_best_response
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+      model.clickThroughRate model.value model.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_named_strategy_one_step_best_response
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` local sequential rationality: the
+global one-step target is equivalent to state-local best response at every
+generalized-English history state. -/
+theorem audit_theorem8_bstar_ranked_threshold_one_step_best_response_statement_iff_forall_state
+    (clickThroughRate value : ℕ → ℝ) (remaining : ℕ)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ) :
+    paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        clickThroughRate value remaining strategy ↔
+      ∀ state,
+        paper_theorem8_bstar_ranked_threshold_one_step_best_response_at_state
+          clickThroughRate value remaining strategy state := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement_iff_forall_state
+      clickThroughRate value remaining strategy
+
+/-- Audit for Theorem 8 exact finite-`B*` strict local sequential rationality:
+away from the current finite `B*` threshold, the named strategy chooses the
+strictly better one-step action. -/
+theorem audit_theorem8_bstar_ranked_threshold_named_strategy_off_threshold_strict_best_response
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_off_threshold_strict_best_response_statement
+      model.clickThroughRate model.value model.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_named_strategy_off_threshold_strict_best_response
+      model
+
+/-- Audit for Theorem 8 finite-`B*` behavioral characterization: one-step
+best response plus the paper's at-threshold drop tie-breaking implies the
+finite `B*` cutoff rule. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_iff_of_one_step_best_response_and_drop_at_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        model.clickThroughRate model.value model.remaining strategy)
+    (htie :
+      paper_theorem8_bstar_ranked_threshold_drop_at_threshold_statement
+        model.clickThroughRate model.value model.remaining strategy) :
+    ∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1) ≤ state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_iff_of_one_step_best_response_and_drop_at_threshold
+      model hbest htie
+
+/-- Audit for Theorem 8 finite-`B*` behavioral characterization: one-step
+best response plus the paper's at-threshold drop tie-breaking identifies the
+named finite `B*` ranked-threshold strategy extensionally. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_eq_of_one_step_best_response_and_drop_at_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        model.clickThroughRate model.value model.remaining strategy)
+    (htie :
+      paper_theorem8_bstar_ranked_threshold_drop_at_threshold_statement
+        model.clickThroughRate model.value model.remaining strategy) :
+    strategy =
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_eq_of_one_step_best_response_and_drop_at_threshold
+      model hbest htie
+
+/-- Audit for Theorem 8 finite-`B*` local-deviation target: the named finite
+`B*` ranked-threshold strategy satisfies local one-step optimality and the
+paper's threshold convention. -/
+theorem audit_theorem8_bstar_ranked_threshold_named_strategy_local_deviation_sequential_rationality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+      model.clickThroughRate model.value model.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_named_strategy_local_deviation_sequential_rationality
+      model
+
+/-- Audit for Theorem 8 source-shaped sequential rationality: splitting
+states into reachable and off-path cases is equivalent to the local-deviation
+target already used by downstream finite `B*` theorems. -/
+theorem audit_theorem8_bstar_ranked_threshold_source_sequential_rationality_iff_local_deviation
+    (clickThroughRate value : ℕ → ℝ) (remaining : ℕ)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ) :
+    paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+        clickThroughRate value remaining initialState strategy ↔
+      paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+        clickThroughRate value remaining strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_iff_local_deviation
+      clickThroughRate value remaining initialState strategy
+
+/-- Audit for Theorem 8 source-shaped sequential rationality: the named finite
+`B*` ranked-threshold strategy satisfies the reachable/off-path state-local
+target from any initial state. -/
+theorem audit_theorem8_bstar_ranked_threshold_named_strategy_source_sequential_rationality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ) :
+    paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+      model.clickThroughRate model.value model.remaining initialState
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_named_strategy_source_sequential_rationality
+      model initialState
+
+/-- Audit for Theorem 8 finite-`B*` local-deviation target: local-deviation
+sequential rationality implies the finite `B*` cutoff rule. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_iff_of_local_deviation_sequential_rationality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hlocal :
+      paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+        model.clickThroughRate model.value model.remaining strategy) :
+    ∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1) ≤ state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_iff_of_local_deviation_sequential_rationality
+      model hlocal
+
+/-- Audit for Theorem 8 finite-`B*` local-deviation target: local-deviation
+sequential rationality identifies the named finite `B*` ranked-threshold
+strategy extensionally. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_eq_of_local_deviation_sequential_rationality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hlocal :
+      paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+        model.clickThroughRate model.value model.remaining strategy) :
+    strategy =
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_eq_of_local_deviation_sequential_rationality
+      model hlocal
+
+/-- Audit for Theorem 8 finite-`B*` tie-breaking: the named finite `B*`
+strategy drops at exact threshold indifference. -/
+theorem audit_theorem8_bstar_ranked_threshold_named_strategy_drop_at_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_drop_at_threshold_statement
+      model.clickThroughRate model.value model.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_named_strategy_drop_at_threshold
+      model
+
+/-- Audit for Theorem 8 finite-`B*` local behavior: any one-step
+best-response strategy drops strictly after the finite `B*` threshold and does
+not drop strictly before it. -/
+theorem audit_theorem8_bstar_ranked_threshold_one_step_best_response_off_threshold_behavior
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        model.clickThroughRate model.value model.remaining strategy) :
+    paper_theorem8_bstar_ranked_threshold_one_step_off_threshold_behavior_statement
+      model.clickThroughRate model.value model.remaining strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_one_step_best_response_off_threshold_behavior
+      model hbest
+
+/-- Audit for Theorem 8 finite-`B*` local behavior: strict off-threshold
+behavior plus at-threshold drop tie-breaking gives the finite `B*` cutoff rule. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_iff_of_off_threshold_behavior_and_drop_at_threshold
+    {clickThroughRate value : ℕ → ℝ} {remaining : ℕ}
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hoff :
+      paper_theorem8_bstar_ranked_threshold_one_step_off_threshold_behavior_statement
+        clickThroughRate value remaining strategy)
+    (htie :
+      paper_theorem8_bstar_ranked_threshold_drop_at_threshold_statement
+        clickThroughRate value remaining strategy) :
+    ∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          value clickThroughRate (remaining + 1) (rank + 1) ≤
+          state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_iff_of_off_threshold_behavior_and_drop_at_threshold
+      hoff htie
+
+/-- Audit for Theorem 8 finite-`B*` local behavior: strict off-threshold
+behavior plus at-threshold drop tie-breaking identifies the named finite `B*`
+strategy extensionally. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_eq_of_off_threshold_behavior_and_drop_at_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hoff :
+      paper_theorem8_bstar_ranked_threshold_one_step_off_threshold_behavior_statement
+        model.clickThroughRate model.value model.remaining strategy)
+    (htie :
+      paper_theorem8_bstar_ranked_threshold_drop_at_threshold_statement
+        model.clickThroughRate model.value model.remaining strategy) :
+    strategy =
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_eq_of_off_threshold_behavior_and_drop_at_threshold
+      model hoff htie
+
+/-- Audit for Theorem 8 strict finite-`B*` local sequential rationality: the
+strict certificate exposes one-step best response for the named strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+    (model : PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+      model.clickThroughRate model.value model.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+      model
+
+/-- Audit for Theorem 8 strict ordered finite-`B*` local sequential rationality:
+the source-facing strict ordered certificate exposes one-step best response for
+the named strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_named_strategy_one_step_best_response
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+      model.clickThroughRate model.value model.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_named_strategy_one_step_best_response
+      model
+
+/-- Audit for Theorem 8 strict finite-`B*` source-shaped sequential
+rationality: the strict certificate exposes reachable/off-path state-local
+best response for the named strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_named_strategy_source_sequential_rationality
+    (model : PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ) :
+    paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+      model.clickThroughRate model.value model.remaining initialState
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_named_strategy_source_sequential_rationality
+      model initialState
+
+/-- Audit for Theorem 8 strict ordered finite-`B*` source-shaped sequential
+rationality: the source-facing strict ordered certificate exposes
+reachable/off-path state-local best response for the named strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_named_strategy_source_sequential_rationality
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ) :
+    paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+      model.clickThroughRate model.value model.remaining initialState
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_named_strategy_source_sequential_rationality
+      model initialState
+
+/-- Audit for Theorem 8 strict finite-`B*` tie-breaking: the strict certificate
+exposes drop-at-threshold tie-breaking for the named strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_named_strategy_drop_at_threshold
+    (model : PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_drop_at_threshold_statement
+      model.clickThroughRate model.value model.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_named_strategy_drop_at_threshold
+      model
+
+/-- Audit for Theorem 8 strict ordered finite-`B*` tie-breaking: the
+source-facing strict ordered certificate exposes drop-at-threshold tie-breaking
+for the named strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_named_strategy_drop_at_threshold
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_drop_at_threshold_statement
+      model.clickThroughRate model.value model.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_named_strategy_drop_at_threshold
+      model
+
+/-- Audit for Theorem 8 strict finite-`B*` local sequential rationality: the
+strict certificate exposes strict off-threshold best-response behavior for the
+named strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_named_strategy_off_threshold_strict_best_response
+    (model : PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_off_threshold_strict_best_response_statement
+      model.clickThroughRate model.value model.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_named_strategy_off_threshold_strict_best_response
+      model
+
+/-- Audit for Theorem 8 strict ordered finite-`B*` local sequential rationality:
+the source-facing strict ordered certificate exposes strict off-threshold
+best-response behavior for the named strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_named_strategy_off_threshold_strict_best_response
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_off_threshold_strict_best_response_statement
+      model.clickThroughRate model.value model.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_named_strategy_off_threshold_strict_best_response
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` strict thresholds: the strict
+threshold package is available as a named statement. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_interval_statement
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate) :
+    paper_theorem8_bstar_ranked_threshold_strict_interval_statement
+      model.clickThroughRate model.value model.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_interval_statement_of_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` strategy: the named finite `B*`
+ranked-threshold strategy drops exactly at the named finite `B*` threshold
+bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_drops_iff_threshold_bid
+    (value clickThroughRate : ℕ → ℝ)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank remaining : ℕ)
+    (hclick_ne : clickThroughRate rank ≠ 0)
+    (hnext_click_ne : clickThroughRate (rank + 1) ≠ 0) :
+    paper_theorem8_bstar_ranked_threshold_strategy
+        value clickThroughRate remaining state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        value clickThroughRate (remaining + 1) (rank + 1) ≤
+          state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_drops_iff_threshold_bid
+      value clickThroughRate state rank remaining hclick_ne hnext_click_ne
+
+/-- Audit for Theorem 8 exact finite-`B*` strategy: the named finite `B*`
+ranked-threshold strategy has not dropped exactly below the named finite `B*`
+threshold bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_not_drop_iff_clock_lt_threshold_bid
+    (value clickThroughRate : ℕ → ℝ)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank remaining : ℕ)
+    (hclick_ne : clickThroughRate rank ≠ 0)
+    (hnext_click_ne : clickThroughRate (rank + 1) ≠ 0) :
+    ¬ paper_theorem8_bstar_ranked_threshold_strategy
+        value clickThroughRate remaining state rank ↔
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          value clickThroughRate (remaining + 1) (rank + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_not_drop_iff_clock_lt_threshold_bid
+      value clickThroughRate state rank remaining hclick_ne hnext_click_ne
+
+/-- Audit for Theorem 8 exact finite-`B*` strategy: under strict thresholds,
+the bidder has not dropped at or before the continuation finite `B*` bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_not_drop_at_or_before_continuation
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock_le :
+      state.clockPrice ≤
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate model.remaining (rank + 2)) :
+    ¬ paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_not_drop_at_or_before_continuation
+      model state rank hclock_le
+
+/-- Audit for Theorem 8 exact finite-`B*` strategy: under strict thresholds,
+the bidder has dropped by the time the clock reaches the lower bidder's value. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_drops_at_or_after_value
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hvalue_le_clock : model.value (rank + 1) ≤ state.clockPrice) :
+    paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_drops_at_or_after_value
+      model state rank hvalue_le_clock
+
+/-- Audit for Theorem 8 exact finite-`B*` strategy-consistent steps: a newly
+inactive rank must have reached its finite `B*` threshold bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_threshold_le
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state next)
+    (hactive : state.IsActive rank) (hinactive : ¬ next.IsActive rank) :
+    paper_theorem8_bstar_threshold_bid
+      model.value model.clickThroughRate (model.remaining + 1) (rank + 1) ≤
+        state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_threshold_le
+      model hstep hactive hinactive
+
+/-- Audit for Theorem 8 exact finite-`B*` strategy-consistent steps: a newly
+inactive rank's record is set to the previous clock, and that clock reached
+its finite `B*` threshold bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_eq_and_threshold_le
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state next)
+    (hactive : state.IsActive rank) (hinactive : ¬ next.IsActive rank) :
+    next.lastDropout rank = some state.clockPrice ∧
+      paper_theorem8_bstar_threshold_bid
+        model.value model.clickThroughRate (model.remaining + 1) (rank + 1) ≤
+          state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_eq_and_threshold_le
+      model hstep hactive hinactive
+
+/-- Audit for Theorem 8 exact finite-`B*` strategy-consistent steps: a rank
+cannot newly drop before its finite `B*` threshold bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_step_no_new_dropout_before_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state next)
+    (hclock_lt :
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1) (rank + 1))
+    (hactive : state.IsActive rank) :
+    next.IsActive rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_step_no_new_dropout_before_threshold
+      model hstep hclock_lt hactive
+
+/-- Audit for Theorem 8 exact finite-`B*` strategy-consistent histories: a
+rank cannot newly drop if the final clock remains below its finite `B*`
+threshold bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_history_no_new_dropout_before_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state finalState)
+    (hfinal_lt :
+      finalState.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1) (rank + 1))
+    (hactive : state.IsActive rank) :
+    finalState.IsActive rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_history_no_new_dropout_before_threshold
+      model hhist hfinal_lt hactive
+
+/-- Audit for Theorem 8 exact finite-`B*` strategy-consistent histories: if a
+rank starts active and is inactive at the end, the final clock reached its
+finite `B*` threshold bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_history_new_dropout_threshold_le
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state finalState)
+    (hactive : state.IsActive rank) (hinactive : ¬ finalState.IsActive rank) :
+    paper_theorem8_bstar_threshold_bid
+      model.value model.clickThroughRate (model.remaining + 1) (rank + 1) ≤
+        finalState.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_history_new_dropout_threshold_le
+      model hhist hactive hinactive
+
+/-- Audit for Theorem 8 exact finite-`B*` strategy-consistent histories: if a
+rank starts active and is inactive at the end, the final state contains a
+dropout record at a finite-`B*`-threshold-reaching price no later than the
+final clock. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_history_new_dropout_record_exists
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state finalState)
+    (hactive : state.IsActive rank) (hinactive : ¬ finalState.IsActive rank) :
+    ∃ price,
+      finalState.lastDropout rank = some price ∧
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1) (rank + 1) ≤
+            price ∧
+          price ≤ finalState.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_history_new_dropout_record_exists
+      model hhist hactive hinactive
+
+/-- Audit for Theorem 8 exact finite-`B*` terminal strategy-consistent
+histories: final activity is exactly the below-finite-`B*`-threshold condition. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_terminal_history_active_iff_clock_lt_threshold_bid
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) finalState)
+    (hinitial_active : state.IsActive rank) :
+    finalState.IsActive rank ↔
+      finalState.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1) (rank + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_terminal_history_active_iff_clock_lt_threshold_bid
+      model hhist hterminal hinitial_active
+
+/-- Audit for Theorem 8 exact finite-`B*` terminal strategy-consistent
+histories: final inactivity is exactly the finite-`B*` threshold-reached
+condition. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_terminal_history_inactive_iff_threshold_le_clock
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) finalState)
+    (hinitial_active : state.IsActive rank) :
+    ¬ finalState.IsActive rank ↔
+      paper_theorem8_bstar_threshold_bid
+        model.value model.clickThroughRate (model.remaining + 1) (rank + 1) ≤
+          finalState.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_terminal_history_inactive_iff_threshold_le_clock
+      model hhist hterminal hinitial_active
+
+/-- Audit for Theorem 8 exact finite-`B*` terminal strategy-consistent
+histories: final inactivity is exactly the terminal named finite-`B*` strategy
+drop predicate. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_terminal_history_inactive_iff_strategy
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) finalState)
+    (hinitial_active : state.IsActive rank) :
+    ¬ finalState.IsActive rank ↔
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining finalState rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_terminal_history_inactive_iff_strategy
+      model hhist hterminal hinitial_active
+
+/-- Audit for Theorem 8 exact finite-`B*` terminal strategy-consistent
+histories: final activity is exactly the terminal named finite-`B*` strategy's
+not-drop predicate. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_terminal_history_active_iff_not_strategy
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) finalState)
+    (hinitial_active : state.IsActive rank) :
+    finalState.IsActive rank ↔
+      ¬ paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining finalState rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_terminal_history_active_iff_not_strategy
+      model hhist hterminal hinitial_active
+
+/-- Audit for Theorem 8 exact finite-`B*` terminal-history behavior
+certificates: terminal activity is exactly the below-finite-`B*`-threshold
+condition. -/
+theorem audit_theorem8_bstar_ranked_threshold_terminal_history_behavior_active_iff_clock_lt_threshold_bid
+    (cert :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (rank : ℕ) :
+    cert.finalState.IsActive rank ↔
+      cert.finalState.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          cert.localModel.value cert.localModel.clickThroughRate
+          (cert.localModel.remaining + 1) (rank + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_history_behavior_active_iff_clock_lt_threshold_bid
+      cert rank
+
+/-- Audit for Theorem 8 exact finite-`B*` terminal-history behavior
+certificates: terminal inactivity is exactly the finite-`B*` threshold-reached
+condition. -/
+theorem audit_theorem8_bstar_ranked_threshold_terminal_history_behavior_inactive_iff_threshold_le_clock
+    (cert :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (rank : ℕ) :
+    ¬ cert.finalState.IsActive rank ↔
+      paper_theorem8_bstar_threshold_bid
+        cert.localModel.value cert.localModel.clickThroughRate
+        (cert.localModel.remaining + 1) (rank + 1) ≤
+          cert.finalState.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_history_behavior_inactive_iff_threshold_le_clock
+      cert rank
+
+/-- Audit for Theorem 8 exact finite-`B*` terminal-history behavior
+certificates: terminal inactivity is exactly the named finite-`B*` strategy's
+terminal drop predicate. -/
+theorem audit_theorem8_bstar_ranked_threshold_terminal_history_behavior_inactive_iff_strategy
+    (cert :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (rank : ℕ) :
+    ¬ cert.finalState.IsActive rank ↔
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.localModel.value cert.localModel.clickThroughRate
+        cert.localModel.remaining cert.finalState rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_history_behavior_inactive_iff_strategy
+      cert rank
+
+/-- Audit for Theorem 8 exact finite-`B*` terminal-history behavior
+certificates: every inactive rank has a concrete final dropout record at a
+finite-`B*`-threshold-reaching price no later than the terminal clock. -/
+theorem audit_theorem8_bstar_ranked_threshold_terminal_history_behavior_inactive_record_exists
+    (cert :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    {rank : ℕ}
+    (hinactive : ¬ cert.finalState.IsActive rank) :
+    ∃ price,
+      cert.finalState.lastDropout rank = some price ∧
+        paper_theorem8_bstar_threshold_bid
+          cert.localModel.value cert.localModel.clickThroughRate
+          (cert.localModel.remaining + 1) (rank + 1) ≤
+            price ∧
+          price ≤ cert.finalState.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_history_behavior_inactive_record_exists
+      cert hinactive
+
+/-- Audit for Theorem 8 exact finite-`B*` terminal-history behavior
+certificates: terminal activity is exactly the named finite-`B*` strategy's
+terminal not-drop predicate. -/
+theorem audit_theorem8_bstar_ranked_threshold_terminal_history_behavior_active_iff_not_strategy
+    (cert :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (rank : ℕ) :
+    cert.finalState.IsActive rank ↔
+      ¬ paper_theorem8_bstar_ranked_threshold_strategy
+          cert.localModel.value cert.localModel.clickThroughRate
+          cert.localModel.remaining cert.finalState rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_history_behavior_active_iff_not_strategy
+      cert rank
+
+/-- Audit for Theorem 8 exact finite-`B*` terminal-history behavior
+certificates: one bundled endpoint gives the terminal active set, inactive set,
+drop predicate, and not-drop predicate. -/
+theorem audit_theorem8_bstar_ranked_threshold_terminal_history_behavior_paper_conclusion
+    (cert :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate) :
+    (∀ rank,
+      cert.finalState.IsActive rank ↔
+        cert.finalState.clockPrice <
+          paper_theorem8_bstar_threshold_bid
+            cert.localModel.value cert.localModel.clickThroughRate
+            (cert.localModel.remaining + 1) (rank + 1)) ∧
+      (∀ rank,
+        ¬ cert.finalState.IsActive rank ↔
+          paper_theorem8_bstar_threshold_bid
+            cert.localModel.value cert.localModel.clickThroughRate
+            (cert.localModel.remaining + 1) (rank + 1) ≤
+            cert.finalState.clockPrice) ∧
+        (∀ rank,
+          paper_theorem8_bstar_ranked_threshold_strategy
+              cert.localModel.value cert.localModel.clickThroughRate
+              cert.localModel.remaining cert.finalState rank ↔
+            ¬ cert.finalState.IsActive rank) ∧
+          (∀ rank,
+            ¬ paper_theorem8_bstar_ranked_threshold_strategy
+                cert.localModel.value cert.localModel.clickThroughRate
+                cert.localModel.remaining cert.finalState rank ↔
+              cert.finalState.IsActive rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_history_behavior_paper_conclusion
+      cert
+
+/-- Audit for the stronger Theorem 8 exact finite-`B*` terminal-history
+behavior certificate: the bundled endpoint also exposes a concrete recorded
+dropout price for every inactive rank. -/
+theorem audit_theorem8_bstar_ranked_threshold_terminal_history_behavior_paper_conclusion_with_records
+    (cert :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate) :
+    (∀ rank,
+      cert.finalState.IsActive rank ↔
+        cert.finalState.clockPrice <
+          paper_theorem8_bstar_threshold_bid
+            cert.localModel.value cert.localModel.clickThroughRate
+            (cert.localModel.remaining + 1) (rank + 1)) ∧
+      (∀ rank,
+        ¬ cert.finalState.IsActive rank ↔
+          paper_theorem8_bstar_threshold_bid
+            cert.localModel.value cert.localModel.clickThroughRate
+            (cert.localModel.remaining + 1) (rank + 1) ≤
+            cert.finalState.clockPrice) ∧
+        (∀ rank,
+          paper_theorem8_bstar_ranked_threshold_strategy
+              cert.localModel.value cert.localModel.clickThroughRate
+              cert.localModel.remaining cert.finalState rank ↔
+            ¬ cert.finalState.IsActive rank) ∧
+          (∀ rank,
+            ¬ paper_theorem8_bstar_ranked_threshold_strategy
+                cert.localModel.value cert.localModel.clickThroughRate
+                cert.localModel.remaining cert.finalState rank ↔
+              cert.finalState.IsActive rank) ∧
+            (∀ rank,
+              ¬ cert.finalState.IsActive rank →
+                ∃ price,
+                  cert.finalState.lastDropout rank = some price ∧
+                    paper_theorem8_bstar_threshold_bid
+                      cert.localModel.value cert.localModel.clickThroughRate
+                      (cert.localModel.remaining + 1) (rank + 1) ≤
+                      price ∧
+                    price ≤ cert.finalState.clockPrice) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_history_behavior_paper_conclusion_with_records
+      cert
+
+/-- Audit for Theorem 8 terminal histories: any strategy satisfying the
+finite-`B*` cutoff rule has terminal actions exactly matching inactive ranks,
+and every terminal action has a concrete dropout record. -/
+theorem audit_theorem8_bstar_ranked_threshold_terminal_history_cutoff_strategy_behavior_with_records
+    (cert :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ)
+    (hstrategy :
+      ∀ state rank,
+        strategy state rank ↔
+          paper_theorem8_bstar_threshold_bid
+            cert.localModel.value cert.localModel.clickThroughRate
+            (cert.localModel.remaining + 1) (rank + 1) ≤
+            state.clockPrice) :
+    (∀ rank, strategy cert.finalState rank ↔
+      ¬ cert.finalState.IsActive rank) ∧
+      (∀ rank, ¬ strategy cert.finalState rank ↔
+        cert.finalState.IsActive rank) ∧
+        (∀ rank,
+          strategy cert.finalState rank →
+            ∃ price,
+              cert.finalState.lastDropout rank = some price ∧
+                paper_theorem8_bstar_threshold_bid
+                  cert.localModel.value cert.localModel.clickThroughRate
+                  (cert.localModel.remaining + 1) (rank + 1) ≤
+                  price ∧
+                price ≤ cert.finalState.clockPrice) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_history_cutoff_strategy_behavior_with_records
+      cert strategy hstrategy
+
+/-- Audit for the terminal dropout-record outcome: rank `i` is assigned slot
+`i`. -/
+theorem audit_theorem8_terminal_dropout_record_outcome_slotOf
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (i : ℕ) :
+    (paper_theorem8_terminal_dropout_record_outcome state).slotOf i = some i := by
+  exact paper_theorem8_terminal_dropout_record_outcome_slotOf state i
+
+/-- Audit for the terminal dropout-record outcome: an exact terminal dropout
+record is used as the per-click payment. -/
+theorem audit_theorem8_terminal_dropout_record_outcome_paymentPerClick_of_lastDropout
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ} {i : ℕ}
+    {price : ℝ} (hrecord : state.lastDropout i = some price) :
+    (paper_theorem8_terminal_dropout_record_outcome state).paymentPerClick i =
+      price := by
+  exact
+    paper_theorem8_terminal_dropout_record_outcome_paymentPerClick_of_lastDropout
+      hrecord
+
+/-- Audit for the algebraic half of the Theorem 8 history-to-outcome obligation,
+without any local-optimality assumptions: exact terminal records at finite-`B*`
+threshold bids imply the constructed ranked `B*` outcome. -/
+theorem audit_theorem8_terminal_dropout_record_outcome_eq_bstar_ranked_threshold_outcome_of_exact_records'
+    (value clickThroughRate : ℕ → ℝ) (remaining : ℕ)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (hrecords :
+      ∀ rank,
+        state.lastDropout rank =
+          some
+            (paper_theorem8_bstar_threshold_bid
+              value clickThroughRate remaining (rank + 1))) :
+    paper_theorem8_terminal_dropout_record_outcome state =
+      paper_theorem8_bstar_ranked_threshold_outcome
+        value clickThroughRate remaining := by
+  exact
+    paper_theorem8_terminal_dropout_record_outcome_eq_bstar_ranked_threshold_outcome_of_exact_records'
+      value clickThroughRate remaining state hrecords
+
+/-- Audit for the algebraic half of the Theorem 8 history-to-outcome obligation:
+if the terminal records are exactly the finite-`B*` threshold bids, then the
+terminal dropout-record outcome is exactly the constructed ranked `B*` outcome. -/
+theorem audit_theorem8_terminal_dropout_record_outcome_eq_bstar_ranked_threshold_outcome_of_exact_records
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (hrecords :
+      ∀ rank,
+        state.lastDropout rank =
+          some
+            (paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate model.remaining (rank + 1))) :
+    paper_theorem8_terminal_dropout_record_outcome state =
+      paper_theorem8_bstar_ranked_threshold_outcome
+        model.value model.clickThroughRate model.remaining := by
+  exact
+    paper_theorem8_terminal_dropout_record_outcome_eq_bstar_ranked_threshold_outcome_of_exact_records
+      model state hrecords
+
+/-- Audit for the ordered paper conclusion of the terminal dropout-record
+outcome: exact finite-`B*` records plus ordered-rank assumptions give slots,
+payments, VCG-tail accounting, payment bounds, individual rationality, and
+no-positive-transfers directly for the terminal-record outcome. -/
+theorem audit_theorem8_terminal_dropout_record_outcome_ordered_paper_conclusion_of_exact_records
+    {value clickThroughRate : ℕ → ℝ} {remaining : ℕ}
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (hrecords :
+      ∀ rank,
+        state.lastDropout rank =
+          some
+            (paper_theorem8_bstar_threshold_bid
+              value clickThroughRate remaining (rank + 1)))
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_mono : ∀ i, clickThroughRate (i + 1) ≤ clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < clickThroughRate i) :
+    (∀ rank,
+      (paper_theorem8_terminal_dropout_record_outcome state).slotOf rank =
+        some rank) ∧
+      (∀ rank,
+        (paper_theorem8_terminal_dropout_record_outcome state).paymentPerClick rank =
+          paper_theorem8_bstar_threshold_bid
+            value clickThroughRate remaining (rank + 1)) ∧
+        (∀ rank,
+          clickThroughRate rank *
+              (paper_theorem8_terminal_dropout_record_outcome state).paymentPerClick rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              value clickThroughRate rank remaining) ∧
+          (∀ rank,
+            0 ≤
+              (paper_theorem8_terminal_dropout_record_outcome state).paymentPerClick rank ∧
+            (paper_theorem8_terminal_dropout_record_outcome state).paymentPerClick rank ≤
+              value rank) ∧
+            (paper_theorem8_terminal_dropout_record_outcome state).IndividuallyRational
+              ({ clickThroughRate := clickThroughRate } :
+                PositionEnvironment ℕ)
+              value ∧
+              paper_position_no_positive_transfers
+                (paper_theorem8_terminal_dropout_record_outcome state) := by
+  exact
+    paper_theorem8_terminal_dropout_record_outcome_ordered_paper_conclusion_of_exact_records
+      state hrecords hvalue_nonneg hvalue_mono hclick_mono hclick_pos
+
+/-- Audit for exact finite-`B*` drop histories: every exact-drop history is an
+ordinary history consistent with the named finite-`B*` threshold strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_history_to_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState) :
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining)
+      state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_history_to_strategy_history
+      model hhist
+
+/-- Audit for exact finite-`B*` drop histories: exact histories compose, so
+finite source histories can be assembled from checked exact-drop segments. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_history_trans
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState :
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hleft :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state midState)
+    (hright :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model midState finalState) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState := by
+  exact
+    PaperTheorem8BStarRankedThresholdExactDropHistory.trans
+      model hleft hright
+
+/-- Audit for the single-step exact finite-`B*` source-history constructor:
+advance to a rank's finite `B*` threshold and record the active rank's dropout. -/
+theorem audit_theorem8_bstar_ranked_threshold_single_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock :
+      state.clockPrice ≤
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1))
+    (hactive : state.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory model state
+      (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+        (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock state
+          (paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1)))
+        rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_single_exact_drop_history
+      model state rank hclock hactive
+
+/-- Audit for the single-step exact finite-`B*` source-history constructor:
+the dropped rank's terminal record is exactly its finite `B*` threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_single_exact_drop_terminal_record_eq_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+        (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock state
+          (paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1)))
+        rank).lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_single_exact_drop_terminal_record_eq_threshold
+      model state rank
+
+/-- Audit for state invariants: advancing the clock preserves active ranks. -/
+theorem audit_theorem8_generalized_english_advanceClock_isActive_iff
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (newPrice : ℝ) (rank : ℕ) :
+    (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+      state newPrice).IsActive rank ↔ state.IsActive rank := by
+  exact
+    paper_theorem8_generalized_english_advanceClock_isActive_iff
+      state newPrice rank
+
+/-- Audit for state invariants: recording a dropout makes that rank inactive. -/
+theorem audit_theorem8_generalized_english_recordDropout_not_isActive_self
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    ¬ (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+      state rank).IsActive rank := by
+  exact
+    paper_theorem8_generalized_english_recordDropout_not_isActive_self
+      state rank
+
+/-- Audit for state invariants: recording one rank's dropout preserves activity
+of every other rank. -/
+theorem audit_theorem8_generalized_english_recordDropout_isActive_of_ne
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {dropped rank : ℕ}
+    (hne : rank ≠ dropped)
+    (hactive : state.IsActive rank) :
+    (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+      state dropped).IsActive rank := by
+  exact
+    paper_theorem8_generalized_english_recordDropout_isActive_of_ne
+      hne hactive
+
+/-- Audit for schedule construction: a single exact finite-`B*` dropout
+preserves activity of every other initially active rank. -/
+theorem audit_theorem8_bstar_ranked_threshold_single_exact_drop_preserves_active_of_ne
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    {dropped rank : ℕ}
+    (hne : rank ≠ dropped)
+    (hactive : state.IsActive rank) :
+    (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+      (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock state
+        (paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (dropped + 1)))
+      dropped).IsActive rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_single_exact_drop_preserves_active_of_ne
+      model state hne hactive
+
+/-- Audit for appending one exact finite-`B*` dropout to an already checked
+exact-drop history. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_history_append_single
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state midState)
+    (rank : ℕ)
+    (hclock :
+      midState.clockPrice ≤
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1))
+    (hactive : midState.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory model state
+      (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+        (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock midState
+          (paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1)))
+        rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_history_append_single
+      model hhist rank hclock hactive
+
+/-- Audit for finite exact-drop schedules: every checked schedule is an
+exact-drop history. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_to_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {ranks : List ℕ}
+    (hsched :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule
+        model state ranks finalState) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_to_history
+      model hsched
+
+/-- Audit for finite exact-drop schedules: every scheduled rank has final
+terminal record equal to its finite `B*` threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_terminal_record_eq_threshold_of_mem
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {ranks : List ℕ}
+    (hsched :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule
+        model state ranks finalState) :
+    ∀ rank,
+      rank ∈ ranks →
+        finalState.lastDropout rank =
+          some
+            (paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_terminal_record_eq_threshold_of_mem
+      model hsched
+
+/-- Audit for finite exact-drop schedules: every scheduled rank is inactive in
+the final state. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_inactive_of_mem
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {ranks : List ℕ}
+    (hsched :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule
+        model state ranks finalState) :
+    ∀ rank, rank ∈ ranks → ¬ finalState.IsActive rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_inactive_of_mem
+      model hsched
+
+/-- Audit definition for the finite `B*` threshold price used by exact-drop
+schedules. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank : ℕ) : ℝ :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price model rank
+
+/-- Audit definition for the deterministic post-state after one scheduled
+exact drop. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank : ℕ) : PaperTheorem8GeneralizedEnglishAuctionState ℕ :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state
+    model state rank
+
+/-- Audit definition for the deterministic final state obtained by executing a
+finite exact-drop schedule list. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    PaperTheorem8GeneralizedEnglishAuctionState ℕ → List ℕ →
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state model
+
+/-- Audit helper: the empty exact-drop schedule preserves the current clock. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_clock_nil
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      model state []).clockPrice = state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_clock_nil
+      model state
+
+/-- Audit helper: unfold the final clock for a nonempty exact-drop schedule. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_clock_cons
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank : ℕ) (tail : List ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      model state (rank :: tail)).clockPrice =
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state
+          model state rank)
+        tail).clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_clock_cons
+      model state rank tail
+
+/-- Audit helper: a singleton schedule ends at that rank's finite `B*`
+threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_clock_singleton
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank : ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      model state [rank]).clockPrice =
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+        model rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_clock_singleton
+      model state rank
+
+/-- Audit helper: a two-rank schedule ends at the second rank's finite `B*`
+threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_clock_pair
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank nextRank : ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      model state [rank, nextRank]).clockPrice =
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+        model nextRank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_clock_pair
+      model state rank nextRank
+
+/-- Audit helper: a nonempty schedule written as `prefix ++ [lastRank]` ends
+at the last scheduled rank's finite `B*` threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_clock_append_singleton
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      model state (scheduledPrefix ++ [lastRank])).clockPrice =
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+        model lastRank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_clock_append_singleton
+      model state scheduledPrefix lastRank
+
+/-- Audit helper: terminality for a nonempty exact-drop schedule can be checked
+against the last scheduled threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              model lastRank <
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∀ rank,
+      rank ∉ scheduledPrefix ++ [lastRank] →
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model state (scheduledPrefix ++ [lastRank])).clockPrice <
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+      model state scheduledPrefix lastRank hunscheduled_last
+
+/-- Audit definition for the clock-sorted finite exact-drop schedule premise.
+It says the initial clock is at most the first scheduled threshold and the
+scheduled thresholds are weakly increasing along the list. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    ℝ → List ℕ → Prop :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted model
+
+/-- Audit helper: the empty finite exact-drop schedule is clock-sorted. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nil
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (clock : ℝ) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+      model clock [] := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nil
+      model clock
+
+/-- Audit helper: unfold the clock-sorted premise for a nonempty schedule. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_cons_iff
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (clock : ℝ) (rank : ℕ) (tail : List ℕ) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model clock (rank :: tail) ↔
+      clock ≤
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+            model rank ∧
+        audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+          model
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+            model rank)
+          tail := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_cons_iff
+      model clock rank tail
+
+/-- Audit helper: a one-rank schedule is clock-sorted if the current clock is
+at most that rank's threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_singleton
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {clock : ℝ} {rank : ℕ}
+    (hclock :
+      clock ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+      model clock [rank] := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_singleton
+      model hclock
+
+/-- Audit helper: a two-rank schedule is clock-sorted if the current clock is
+below the first threshold and the first threshold is below the second. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_pair
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {clock : ℝ} {rank nextRank : ℕ}
+    (hclock :
+      clock ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank)
+    (hnext :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model nextRank) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+      model clock [rank, nextRank] := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_pair
+      model hclock hnext
+
+/-- Audit definition for adjacent-threshold sorted exact-drop schedules. This
+checks only weakly increasing finite `B*` thresholds along the scheduled rank
+list, not the initial clock. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    List ℕ → Prop :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+    model
+
+/-- Audit helper: the empty exact-drop schedule is adjacent-threshold sorted. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_nil
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+      model [] := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_nil
+      model
+
+/-- Audit helper: singleton exact-drop schedules are adjacent-threshold
+sorted. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_singleton
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank : ℕ) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+      model [rank] := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_singleton
+      model rank
+
+/-- Audit helper: unfold adjacent-threshold sortedness for schedules with at
+least two ranks. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_cons_cons_iff
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank nextRank : ℕ) (tail : List ℕ) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        model (rank :: nextRank :: tail) ↔
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model nextRank ∧
+        audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+          model (nextRank :: tail) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_cons_cons_iff
+      model rank nextRank tail
+
+/-- Audit helper: a two-rank exact-drop schedule is adjacent-threshold sorted
+from one threshold-order inequality. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_pair
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank nextRank : ℕ)
+    (hnext :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model nextRank) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+      model [rank, nextRank] := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_pair
+      model rank nextRank hnext
+
+/-- Audit helper: every two-rank exact-drop schedule has a threshold-sorted
+order, either as displayed or swapped. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_pair_or_swap
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank nextRank : ℕ) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        model [rank, nextRank] ∨
+      audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        model [nextRank, rank] := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_pair_or_swap
+      model rank nextRank
+
+/-- Audit definition: boundary check needed when appending one rank to an
+adjacent-threshold sorted schedule. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    List ℕ → ℕ → Prop :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le
+    model
+
+/-- Audit helper: appending to the empty schedule has no boundary threshold
+check. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le_nil
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (lastRank : ℕ) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le
+      model [] lastRank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le_nil
+      model lastRank
+
+/-- Audit helper: boundary check for appending to a singleton schedule. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le_singleton
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank lastRank : ℕ)
+    (hle :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model lastRank) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le
+      model [rank] lastRank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le_singleton
+      model rank lastRank hle
+
+/-- Audit helper: unfold the append boundary check on schedules with at least
+two ranks. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le_cons_cons_iff
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank nextRank lastRank : ℕ) (tail : List ℕ) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le
+        model (rank :: nextRank :: tail) lastRank ↔
+      audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le
+        model (nextRank :: tail) lastRank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le_cons_cons_iff
+      model rank nextRank lastRank tail
+
+/-- Audit helper: append one rank to an adjacent-threshold sorted exact-drop
+schedule. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_append_singleton
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hsorted :
+      audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        model scheduledPrefix)
+    (hlast :
+      audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_last_threshold_le
+        model scheduledPrefix lastRank) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+      model (scheduledPrefix ++ [lastRank]) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted_append_singleton
+      model scheduledPrefix lastRank hsorted hlast
+
+/-- Audit helper: adjacent-threshold sortedness plus the first clock inequality
+implies recursive clock-sortedness. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_of_initial_le_and_threshold_sorted
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {clock : ℝ} {ranks : List ℕ}
+    (hclock :
+      match ranks with
+      | [] => True
+      | rank :: _ =>
+          clock ≤
+            paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              model rank)
+    (hsorted :
+      audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        model ranks) :
+    audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+      model clock ranks := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_of_initial_le_and_threshold_sorted
+      model hclock hsorted
+
+/-- Audit for sorted/no-duplicate schedule construction: a clock-sorted list of
+initially active distinct ranks generates an exact-drop schedule to the
+deterministic final state. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_of_clock_sorted_nodup
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdExactDropSchedule model state ranks
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_of_clock_sorted_nodup
+      model state ranks hsorted hnodup hinitial_active
+
+/-- Audit bridge: any finite exact-drop schedule is a named finite-`B*`
+strategy-consistent history. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_to_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {ranks : List ℕ}
+    (hsched :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule
+        model state ranks finalState) :
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining)
+      state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_to_strategy_history
+      model hsched
+
+/-- Audit bridge: a sorted/no-duplicate finite exact-drop schedule is directly
+reachable by a named finite-`B*` strategy-consistent history. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank) :
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining)
+      state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_strategy_history
+      model state ranks hsorted hnodup hinitial_active
+
+/-- Audit bridge: sorted/no-duplicate exact-drop schedules directly generate
+the scheduled rank's terminal record in the deterministic final state. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_terminal_record_eq_threshold_of_mem_of_clock_sorted_nodup
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    {rank : ℕ} (hrank : rank ∈ ranks) :
+    (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks).lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_terminal_record_eq_threshold_of_mem_of_clock_sorted_nodup
+      model state ranks hsorted hnodup hinitial_active hrank
+
+/-- Audit bridge: from an all-active initial state, the deterministic final
+state of a sorted/no-duplicate exact-drop schedule has exactly the unscheduled
+ranks active. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_active_iff_not_mem_of_clock_sorted_nodup
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (rank : ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks).IsActive rank ↔
+      rank ∉ ranks := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_active_iff_not_mem_of_clock_sorted_nodup
+      model state ranks hsorted hnodup hinitial_active rank
+
+/-- Audit bridge: unscheduled initially active ranks remain active after a
+finite exact-drop schedule. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_active_of_not_mem
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {ranks : List ℕ}
+    (hsched :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule
+        model state ranks finalState)
+    {rank : ℕ}
+    (hactive : state.IsActive rank)
+    (hnot_mem : rank ∉ ranks) :
+    finalState.IsActive rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_active_of_not_mem
+      model hsched hactive hnot_mem
+
+/-- Audit bridge: if unscheduled ranks' finite `B*` thresholds are above the
+final clock, an exact-drop schedule ends in a terminal state for the named
+finite `B*` strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_strategy_terminal_of_unscheduled_threshold_gt
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {ranks : List ℕ}
+    (hsched :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule
+        model state ranks finalState)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          finalState.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining)
+      finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_strategy_terminal_of_unscheduled_threshold_gt
+      model hsched hunscheduled
+
+/-- Audit constructor: exact schedule plus terminality gives the terminal
+history behavior certificate. -/
+def audit_theorem8_bstar_ranked_threshold_terminal_history_behavior_certificate_of_exact_drop_schedule
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {ranks : List ℕ}
+    (hsched :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule
+        model state ranks finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hinitial_active : ∀ rank, state.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate :=
+  paper_theorem8_bstar_ranked_threshold_terminal_history_behavior_certificate_of_exact_drop_schedule
+    model hsched hterminal hinitial_active
+
+/-- Audit constructor: exact schedule plus unscheduled-threshold check gives
+the terminal history behavior certificate. -/
+def audit_theorem8_bstar_ranked_threshold_terminal_history_behavior_certificate_of_exact_drop_schedule_unscheduled_threshold_gt
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {ranks : List ℕ}
+    (hsched :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule
+        model state ranks finalState)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          finalState.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_active : ∀ rank, state.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate :=
+  paper_theorem8_bstar_ranked_threshold_terminal_history_behavior_certificate_of_exact_drop_schedule_unscheduled_threshold_gt
+    model hsched hunscheduled hinitial_active
+
+/-- Audit constructor: sorted/no-duplicate exact schedule data plus the
+unscheduled-threshold check gives the terminal history behavior certificate. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_terminal_history_behavior_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate :=
+  paper_theorem8_bstar_ranked_threshold_terminal_history_behavior_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+    model state ranks hsorted hnodup hinitial_active hunscheduled
+
+/-- Audit for finite exact-drop schedules: any finite set of initially active
+ranks contained in the schedule has exact finite `B*` payments, VCG-tail
+accounting, and `[0, value]` payment bounds in the terminal-record outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_finset_outcome_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {schedule : List ℕ}
+    (hsched :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule
+        model state schedule finalState)
+    (rankSet : Finset ℕ)
+    (hsubset : ∀ rank, rank ∈ rankSet → rank ∈ schedule)
+    (hinitial_active : ∀ rank, rank ∈ rankSet → state.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono :
+      ∀ i, model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+    ∀ rank,
+      rank ∈ rankSet →
+        (paper_theorem8_terminal_dropout_record_outcome finalState).slotOf rank =
+            some rank ∧
+          (paper_theorem8_terminal_dropout_record_outcome
+            finalState).paymentPerClick rank =
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1) ∧
+            model.clickThroughRate rank *
+                (paper_theorem8_terminal_dropout_record_outcome
+                  finalState).paymentPerClick rank =
+              paper_theorem7_ranked_vcg_tail_payment
+                model.value model.clickThroughRate rank (model.remaining + 1) ∧
+              0 ≤
+                (paper_theorem8_terminal_dropout_record_outcome
+                  finalState).paymentPerClick rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  finalState).paymentPerClick rank ≤ model.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_finset_outcome_conclusion
+      model hsched rankSet hsubset hinitial_active hvalue_nonneg hvalue_mono
+      hclick_mono hclick_pos
+
+/-- Audit for exact finite-`B*` drop histories: if a rank starts active and is
+inactive at the final state, its terminal record is exactly the finite-`B*`
+threshold bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_history_final_record_eq_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState)
+    {rank : ℕ}
+    (hinitial_active : state.IsActive rank)
+    (hfinal_inactive : ¬ finalState.IsActive rank) :
+    finalState.lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_history_final_record_eq_threshold
+      model hhist hinitial_active hfinal_inactive
+
+/-- Audit for exact finite-`B*` drop histories: if all ranks start active and no
+rank remains active, every terminal record is exactly its finite-`B*`
+threshold bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_records_eq_thresholds
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    ∀ rank,
+      finalState.lastDropout rank =
+        some
+          (paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_records_eq_thresholds
+      model hhist hinitial_active hno_active
+
+/-- Audit for exact finite-`B*` drop histories: if all ranks start active and no
+rank remains active, the terminal dropout-record outcome is the constructed
+ranked `B*` outcome at the successor finite tail. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_record_outcome_eq_bstar
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    paper_theorem8_terminal_dropout_record_outcome finalState =
+      paper_theorem8_bstar_ranked_threshold_outcome
+        model.value model.clickThroughRate (model.remaining + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_record_outcome_eq_bstar
+      model hhist hinitial_active hno_active
+
+/-- Audit for exact finite-`B*` drop histories: if one rank starts active and
+is inactive at the final state, its terminal-record payment is the exact
+finite-`B*` threshold, its click-weighted payment is the finite VCG-tail
+payment, and ordered-rank assumptions place the payment in `[0, value]`. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_record_rank_outcome_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState)
+    {rank : ℕ}
+    (hinitial_active : state.IsActive rank)
+    (hfinal_inactive : ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono :
+      ∀ i, model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+    (paper_theorem8_terminal_dropout_record_outcome finalState).slotOf rank =
+        some rank ∧
+      (paper_theorem8_terminal_dropout_record_outcome finalState).paymentPerClick
+          rank =
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1) ∧
+        model.clickThroughRate rank *
+            (paper_theorem8_terminal_dropout_record_outcome
+              finalState).paymentPerClick rank =
+          paper_theorem7_ranked_vcg_tail_payment
+            model.value model.clickThroughRate rank (model.remaining + 1) ∧
+          0 ≤
+            (paper_theorem8_terminal_dropout_record_outcome
+              finalState).paymentPerClick rank ∧
+            (paper_theorem8_terminal_dropout_record_outcome
+              finalState).paymentPerClick rank ≤ model.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_record_rank_outcome_conclusion
+      model hhist hinitial_active hfinal_inactive hvalue_nonneg hvalue_mono
+      hclick_mono hclick_pos
+
+/-- Audit for exact finite-`B*` drop histories on a finite set of ranks: every
+completed rank in the set has exact finite-`B*` payment, VCG-tail accounting,
+and `[0, value]` payment bounds. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_record_finset_outcome_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState)
+    (ranks : Finset ℕ)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hfinal_inactive : ∀ rank, rank ∈ ranks → ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono :
+      ∀ i, model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+    ∀ rank,
+      rank ∈ ranks →
+        (paper_theorem8_terminal_dropout_record_outcome finalState).slotOf rank =
+            some rank ∧
+          (paper_theorem8_terminal_dropout_record_outcome
+            finalState).paymentPerClick rank =
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1) ∧
+            model.clickThroughRate rank *
+                (paper_theorem8_terminal_dropout_record_outcome
+                  finalState).paymentPerClick rank =
+              paper_theorem7_ranked_vcg_tail_payment
+                model.value model.clickThroughRate rank (model.remaining + 1) ∧
+              0 ≤
+                (paper_theorem8_terminal_dropout_record_outcome
+                  finalState).paymentPerClick rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  finalState).paymentPerClick rank ≤ model.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_record_finset_outcome_conclusion
+      model hhist ranks hinitial_active hfinal_inactive hvalue_nonneg
+      hvalue_mono hclick_mono hclick_pos
+
+/-- Audit for exact finite-`B*` drop histories: exact drop times plus
+ordered-rank assumptions give the full terminal dropout-record paper conclusion
+once all ranks start active and no rank remains active. -/
+theorem audit_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_record_ordered_paper_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono :
+      ∀ i, model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+    (∀ rank,
+      (paper_theorem8_terminal_dropout_record_outcome finalState).slotOf rank =
+        some rank) ∧
+      (∀ rank,
+        (paper_theorem8_terminal_dropout_record_outcome
+          finalState).paymentPerClick rank =
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1)) ∧
+        (∀ rank,
+          model.clickThroughRate rank *
+              (paper_theorem8_terminal_dropout_record_outcome
+                finalState).paymentPerClick rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate rank (model.remaining + 1)) ∧
+          (∀ rank,
+            0 ≤
+              (paper_theorem8_terminal_dropout_record_outcome
+                finalState).paymentPerClick rank ∧
+            (paper_theorem8_terminal_dropout_record_outcome
+              finalState).paymentPerClick rank ≤
+              model.value rank) ∧
+            (paper_theorem8_terminal_dropout_record_outcome
+              finalState).IndividuallyRational
+              ({ clickThroughRate := model.clickThroughRate } :
+                PositionEnvironment ℕ)
+              model.value ∧
+              paper_position_no_positive_transfers
+                (paper_theorem8_terminal_dropout_record_outcome finalState) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_record_ordered_paper_conclusion
+      model hhist hinitial_active hno_active hvalue_nonneg hvalue_mono
+      hclick_mono hclick_pos
+
+/-- Audit constructor for the strict ordered terminal-dynamic certificate
+augmented with a concrete exact-drop history and terminal inactivity. -/
+def audit_theorem8_strict_ordered_exact_history_terminal_dynamic_certificate
+    {Belief : Type*}
+    (integrated :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    (exact_history :
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        integrated.terminal.localModel
+        integrated.terminal.initialState
+        integrated.terminal.finalState)
+    (no_active : ∀ rank, ¬ integrated.terminal.finalState.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedExactHistoryTerminalDynamicCertificate
+      Belief where
+  integrated := integrated
+  exact_history := exact_history
+  no_active := no_active
+
+/-- Audit for the exact-history terminal-dynamic certificate: exact source
+history completion gives slots, finite `B*` payments, finite VCG-tail
+accounting, payment bounds, individual rationality, and no positive transfers
+for the terminal dropout-record outcome. -/
+theorem audit_theorem8_strict_ordered_exact_history_terminal_record_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExactHistoryTerminalDynamicCertificate
+        Belief) :
+    (∀ rank,
+      (paper_theorem8_terminal_dropout_record_outcome
+        cert.integrated.terminal.finalState).slotOf rank =
+        some rank) ∧
+      (∀ rank,
+        (paper_theorem8_terminal_dropout_record_outcome
+          cert.integrated.terminal.finalState).paymentPerClick rank =
+          paper_theorem8_bstar_threshold_bid
+            cert.integrated.terminal.localModel.value
+            cert.integrated.terminal.localModel.clickThroughRate
+            (cert.integrated.terminal.localModel.remaining + 1) (rank + 1)) ∧
+        (∀ rank,
+          cert.integrated.terminal.localModel.clickThroughRate rank *
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.integrated.terminal.finalState).paymentPerClick rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              cert.integrated.terminal.localModel.value
+              cert.integrated.terminal.localModel.clickThroughRate rank
+              (cert.integrated.terminal.localModel.remaining + 1)) ∧
+          (∀ rank,
+            0 ≤
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.integrated.terminal.finalState).paymentPerClick rank ∧
+            (paper_theorem8_terminal_dropout_record_outcome
+              cert.integrated.terminal.finalState).paymentPerClick rank ≤
+              cert.integrated.terminal.localModel.value rank) ∧
+            (paper_theorem8_terminal_dropout_record_outcome
+              cert.integrated.terminal.finalState).IndividuallyRational
+              ({ clickThroughRate :=
+                  cert.integrated.terminal.localModel.clickThroughRate } :
+                PositionEnvironment ℕ)
+              cert.integrated.terminal.localModel.value ∧
+              paper_position_no_positive_transfers
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.integrated.terminal.finalState) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_history_terminal_record_paper_conclusion
+      cert
+
+/-- Audit for the exact-history terminal-dynamic certificate: any certified PBE
+strategy has both the compact terminal/dynamic/VCG conclusion and the
+terminal-record ordered outcome conclusion. -/
+theorem audit_theorem8_strict_ordered_exact_history_terminal_dynamic_pbe_with_terminal_record_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExactHistoryTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+        cert.integrated strategy ∧
+      (∀ rank,
+        (paper_theorem8_terminal_dropout_record_outcome
+          cert.integrated.terminal.finalState).slotOf rank =
+          some rank) ∧
+        (∀ rank,
+          (paper_theorem8_terminal_dropout_record_outcome
+            cert.integrated.terminal.finalState).paymentPerClick rank =
+            paper_theorem8_bstar_threshold_bid
+              cert.integrated.terminal.localModel.value
+              cert.integrated.terminal.localModel.clickThroughRate
+              (cert.integrated.terminal.localModel.remaining + 1) (rank + 1)) ∧
+          (∀ rank,
+            cert.integrated.terminal.localModel.clickThroughRate rank *
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.integrated.terminal.finalState).paymentPerClick rank =
+              paper_theorem7_ranked_vcg_tail_payment
+                cert.integrated.terminal.localModel.value
+                cert.integrated.terminal.localModel.clickThroughRate rank
+                (cert.integrated.terminal.localModel.remaining + 1)) ∧
+            (∀ rank,
+              0 ≤
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.integrated.terminal.finalState).paymentPerClick rank ∧
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.integrated.terminal.finalState).paymentPerClick rank ≤
+                cert.integrated.terminal.localModel.value rank) ∧
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.integrated.terminal.finalState).IndividuallyRational
+                ({ clickThroughRate :=
+                    cert.integrated.terminal.localModel.clickThroughRate } :
+                  PositionEnvironment ℕ)
+                cert.integrated.terminal.localModel.value ∧
+                paper_position_no_positive_transfers
+                  (paper_theorem8_terminal_dropout_record_outcome
+                    cert.integrated.terminal.finalState) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_history_terminal_dynamic_pbe_with_terminal_record_conclusion
+      cert hpbe
+
+/-- Audit constructor for the finite-rank strict ordered terminal-dynamic
+certificate augmented with a concrete exact-drop history and completion of the
+listed ranks. -/
+def audit_theorem8_strict_ordered_finite_exact_history_terminal_dynamic_certificate
+    {Belief : Type*}
+    (integrated :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    (completedRanks : Finset ℕ)
+    (exact_history :
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        integrated.terminal.localModel
+        integrated.terminal.initialState
+        integrated.terminal.finalState)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks →
+        ¬ integrated.terminal.finalState.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryTerminalDynamicCertificate
+      Belief where
+  integrated := integrated
+  completedRanks := completedRanks
+  exact_history := exact_history
+  inactive_on_completed := inactive_on_completed
+
+/-- Audit for finite exact-history terminal completion: every completed rank
+has exact finite `B*` payment, VCG-tail accounting, and `[0, value]` payment
+bounds in the terminal dropout-record outcome. -/
+theorem audit_theorem8_strict_ordered_finite_exact_history_terminal_record_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryTerminalDynamicCertificate
+        Belief) :
+    ∀ rank,
+      rank ∈ cert.completedRanks →
+        (paper_theorem8_terminal_dropout_record_outcome
+          cert.integrated.terminal.finalState).slotOf rank =
+            some rank ∧
+          (paper_theorem8_terminal_dropout_record_outcome
+            cert.integrated.terminal.finalState).paymentPerClick rank =
+            paper_theorem8_bstar_threshold_bid
+              cert.integrated.terminal.localModel.value
+              cert.integrated.terminal.localModel.clickThroughRate
+              (cert.integrated.terminal.localModel.remaining + 1) (rank + 1) ∧
+            cert.integrated.terminal.localModel.clickThroughRate rank *
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.integrated.terminal.finalState).paymentPerClick rank =
+              paper_theorem7_ranked_vcg_tail_payment
+                cert.integrated.terminal.localModel.value
+                cert.integrated.terminal.localModel.clickThroughRate rank
+                (cert.integrated.terminal.localModel.remaining + 1) ∧
+              0 ≤
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.integrated.terminal.finalState).paymentPerClick rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.integrated.terminal.finalState).paymentPerClick rank ≤
+                  cert.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_terminal_record_paper_conclusion
+      cert
+
+/-- Audit for finite exact-history terminal completion: any certified PBE has
+the compact terminal/dynamic/VCG conclusion and the finite terminal-record
+outcome conclusion on every completed rank. -/
+theorem audit_theorem8_strict_ordered_finite_exact_history_terminal_dynamic_pbe_with_terminal_record_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+        cert.integrated strategy ∧
+      ∀ rank,
+        rank ∈ cert.completedRanks →
+          (paper_theorem8_terminal_dropout_record_outcome
+            cert.integrated.terminal.finalState).slotOf rank =
+              some rank ∧
+            (paper_theorem8_terminal_dropout_record_outcome
+              cert.integrated.terminal.finalState).paymentPerClick rank =
+              paper_theorem8_bstar_threshold_bid
+                cert.integrated.terminal.localModel.value
+                cert.integrated.terminal.localModel.clickThroughRate
+                (cert.integrated.terminal.localModel.remaining + 1)
+                (rank + 1) ∧
+              cert.integrated.terminal.localModel.clickThroughRate rank *
+                  (paper_theorem8_terminal_dropout_record_outcome
+                    cert.integrated.terminal.finalState).paymentPerClick rank =
+                paper_theorem7_ranked_vcg_tail_payment
+                  cert.integrated.terminal.localModel.value
+                  cert.integrated.terminal.localModel.clickThroughRate rank
+                  (cert.integrated.terminal.localModel.remaining + 1) ∧
+                0 ≤
+                  (paper_theorem8_terminal_dropout_record_outcome
+                    cert.integrated.terminal.finalState).paymentPerClick rank ∧
+                  (paper_theorem8_terminal_dropout_record_outcome
+                    cert.integrated.terminal.finalState).paymentPerClick rank ≤
+                    cert.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_terminal_dynamic_pbe_with_terminal_record_conclusion
+      cert hpbe
+
+/-- Audit constructor for the finite-schedule strict ordered terminal-dynamic
+certificate: source history is supplied as a concrete ordered rank list. -/
+def audit_theorem8_strict_ordered_finite_schedule_terminal_dynamic_certificate
+    {Belief : Type*}
+    (integrated :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    (completedRanks : Finset ℕ)
+    (scheduledRanks : List ℕ)
+    (schedule :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule
+        integrated.terminal.localModel
+        integrated.terminal.initialState
+        scheduledRanks
+        integrated.terminal.finalState)
+    (completed_subset_schedule :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleTerminalDynamicCertificate
+      Belief where
+  integrated := integrated
+  completedRanks := completedRanks
+  scheduledRanks := scheduledRanks
+  schedule := schedule
+  completed_subset_schedule := completed_subset_schedule
+
+/-- Audit bridge from a finite-schedule terminal-dynamic certificate to the
+finite exact-history terminal-dynamic certificate. -/
+def audit_theorem8_strict_ordered_finite_exact_history_terminal_dynamic_certificate_of_schedule
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleTerminalDynamicCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryTerminalDynamicCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_terminal_dynamic_certificate_of_schedule
+    cert
+
+/-- Audit for finite exact schedules: every completed rank has exact finite
+`B*` payment, VCG-tail accounting, and `[0, value]` payment bounds in the
+terminal dropout-record outcome. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_terminal_record_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleTerminalDynamicCertificate
+        Belief) :
+    ∀ rank,
+      rank ∈ cert.completedRanks →
+        (paper_theorem8_terminal_dropout_record_outcome
+          cert.integrated.terminal.finalState).slotOf rank =
+            some rank ∧
+          (paper_theorem8_terminal_dropout_record_outcome
+            cert.integrated.terminal.finalState).paymentPerClick rank =
+            paper_theorem8_bstar_threshold_bid
+              cert.integrated.terminal.localModel.value
+              cert.integrated.terminal.localModel.clickThroughRate
+              (cert.integrated.terminal.localModel.remaining + 1) (rank + 1) ∧
+            cert.integrated.terminal.localModel.clickThroughRate rank *
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.integrated.terminal.finalState).paymentPerClick rank =
+              paper_theorem7_ranked_vcg_tail_payment
+                cert.integrated.terminal.localModel.value
+                cert.integrated.terminal.localModel.clickThroughRate rank
+                (cert.integrated.terminal.localModel.remaining + 1) ∧
+              0 ≤
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.integrated.terminal.finalState).paymentPerClick rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.integrated.terminal.finalState).paymentPerClick rank ≤
+                  cert.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_terminal_record_paper_conclusion
+      cert
+
+/-- Audit for finite exact schedules: any certified PBE has the compact
+terminal/dynamic/VCG conclusion and terminal-record conclusions on every
+completed rank. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_terminal_dynamic_pbe_with_terminal_record_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+        cert.integrated strategy ∧
+      ∀ rank,
+        rank ∈ cert.completedRanks →
+          (paper_theorem8_terminal_dropout_record_outcome
+            cert.integrated.terminal.finalState).slotOf rank =
+              some rank ∧
+            (paper_theorem8_terminal_dropout_record_outcome
+              cert.integrated.terminal.finalState).paymentPerClick rank =
+              paper_theorem8_bstar_threshold_bid
+                cert.integrated.terminal.localModel.value
+                cert.integrated.terminal.localModel.clickThroughRate
+                (cert.integrated.terminal.localModel.remaining + 1)
+                (rank + 1) ∧
+              cert.integrated.terminal.localModel.clickThroughRate rank *
+                  (paper_theorem8_terminal_dropout_record_outcome
+                    cert.integrated.terminal.finalState).paymentPerClick rank =
+                paper_theorem7_ranked_vcg_tail_payment
+                  cert.integrated.terminal.localModel.value
+                  cert.integrated.terminal.localModel.clickThroughRate rank
+                  (cert.integrated.terminal.localModel.remaining + 1) ∧
+                0 ≤
+                  (paper_theorem8_terminal_dropout_record_outcome
+                    cert.integrated.terminal.finalState).paymentPerClick rank ∧
+                  (paper_theorem8_terminal_dropout_record_outcome
+                    cert.integrated.terminal.finalState).paymentPerClick rank ≤
+                    cert.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_terminal_dynamic_pbe_with_terminal_record_conclusion
+      cert hpbe
+
+/-- Audit for Theorem 8 terminal histories and dynamic PBE certificates: when
+the terminal-history and dynamic certificates use the same local model, every
+certified PBE strategy acts exactly on inactive terminal ranks and those actions
+have concrete dropout records. -/
+theorem audit_theorem8_bstar_ranked_threshold_terminal_history_pbe_strategy_behavior_with_records_of_local_optimality
+    {Belief : Type*}
+    (terminalCert :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (dynamicCert :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    (hmodel : dynamicCert.localModel = terminalCert.localModel)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : dynamicCert.game.PerfectBayesianEquilibrium strategy) :
+    (∀ rank, strategy terminalCert.finalState rank ↔
+      ¬ terminalCert.finalState.IsActive rank) ∧
+      (∀ rank, ¬ strategy terminalCert.finalState rank ↔
+        terminalCert.finalState.IsActive rank) ∧
+        (∀ rank,
+          strategy terminalCert.finalState rank →
+            ∃ price,
+              terminalCert.finalState.lastDropout rank = some price ∧
+                paper_theorem8_bstar_threshold_bid
+                  terminalCert.localModel.value
+                  terminalCert.localModel.clickThroughRate
+                  (terminalCert.localModel.remaining + 1) (rank + 1) ≤
+                  price ∧
+                price ≤ terminalCert.finalState.clockPrice) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_history_pbe_strategy_behavior_with_records_of_local_optimality_extensional_outcome_certificate
+      terminalCert dynamicCert hmodel hpbe
+
+/-- Audit for Theorem 8 terminal histories and strict dynamic PBE certificates:
+when the terminal-history certificate uses the weak model induced by the strict
+dynamic certificate, every certified PBE strategy acts exactly on inactive
+terminal ranks and those actions have concrete dropout records. -/
+theorem audit_theorem8_bstar_ranked_threshold_terminal_history_strict_pbe_strategy_behavior_with_records_of_local_optimality
+    {Belief : Type*}
+    (terminalCert :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (dynamicCert :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          dynamicCert.strictModel =
+        terminalCert.localModel)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : dynamicCert.game.PerfectBayesianEquilibrium strategy) :
+    (∀ rank, strategy terminalCert.finalState rank ↔
+      ¬ terminalCert.finalState.IsActive rank) ∧
+      (∀ rank, ¬ strategy terminalCert.finalState rank ↔
+        terminalCert.finalState.IsActive rank) ∧
+        (∀ rank,
+          strategy terminalCert.finalState rank →
+            ∃ price,
+              terminalCert.finalState.lastDropout rank = some price ∧
+                paper_theorem8_bstar_threshold_bid
+                  terminalCert.localModel.value
+                  terminalCert.localModel.clickThroughRate
+                  (terminalCert.localModel.remaining + 1) (rank + 1) ≤
+                  price ∧
+                price ≤ terminalCert.finalState.clockPrice) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_history_strict_pbe_strategy_behavior_with_records_of_local_optimality_extensional_outcome_certificate
+      terminalCert dynamicCert hmodel hpbe
+
+/-- Audit for Theorem 8 exact finite-`B*` local optimality: a VCG-tail
+total-payment bound implies the continuation `B*` per-click bid is
+value-bounded. -/
+theorem audit_theorem8_bstar_continuation_bid_le_value_of_tail_payment_le
+    {value clickThroughRate : ℕ → ℝ} {rank remaining : ℕ}
+    (hclick_pos : 0 < clickThroughRate (rank + 1))
+    (htail_le :
+      paper_theorem7_ranked_vcg_tail_payment
+          value clickThroughRate (rank + 1) remaining ≤
+        clickThroughRate (rank + 1) * value (rank + 1)) :
+    paper_theorem7_bstar_bid value
+        (fun j =>
+          paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate j remaining)
+        clickThroughRate (rank + 2) ≤ value (rank + 1) := by
+  exact
+    paper_theorem8_bstar_continuation_bid_le_value_of_tail_payment_le
+      hclick_pos htail_le
+
+/-- Audit for Theorem 8 exact finite-`B*` local optimality: ordered
+nonnegative values and nonnegative click-through rates imply the continuation
+`B*` bid is value-bounded. -/
+theorem audit_theorem8_bstar_continuation_bid_le_value_of_ordered_tail
+    {value clickThroughRate : ℕ → ℝ} {rank remaining : ℕ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_nonneg : ∀ i, 0 ≤ clickThroughRate i)
+    (hclick_pos : 0 < clickThroughRate (rank + 1)) :
+    paper_theorem7_bstar_bid value
+        (fun j =>
+          paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate j remaining)
+        clickThroughRate (rank + 2) ≤ value (rank + 1) := by
+  exact
+    paper_theorem8_bstar_continuation_bid_le_value_of_ordered_tail
+      hvalue_nonneg hvalue_mono hclick_nonneg hclick_pos
+
+/-- Audit for Theorem 8 exact finite-`B*` local optimality: the standard
+ordered-rank assumptions produce the exact local-optimality certificate. -/
+def audit_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_ordered
+    (model :
+      PaperTheorem8BStarRankedThresholdOrderedLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_ordered
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` local optimality: strict ordered
+paper-style assumptions forget to the strict certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` local optimality: strict ordered
+paper-style assumptions also forget to the ordered certificate used by the
+outcome-quality endpoint. -/
+def audit_theorem8_bstar_ranked_threshold_ordered_local_optimality_certificate_of_strict_ordered
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdOrderedLocalOptimalityCertificate := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_ordered_local_optimality_certificate_of_strict_ordered
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` local optimality: the standard
+ordered-rank assumptions directly imply the exact local-optimality conclusions. -/
+theorem audit_theorem8_bstar_ranked_threshold_local_optimality_of_ordered_certificate
+    (model :
+      PaperTheorem8BStarRankedThresholdOrderedLocalOptimalityCertificate) :
+    ∀ rank,
+      paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j model.remaining)
+          model.clickThroughRate (rank + 2) ≤
+        paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j (model.remaining + 1))
+          model.clickThroughRate (rank + 1) ∧
+      paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j (model.remaining + 1))
+          model.clickThroughRate (rank + 1) ≤ model.value (rank + 1) ∧
+      (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        state.clockPrice <
+            paper_theorem7_bstar_bid model.value
+              (fun j =>
+                paper_theorem7_ranked_vcg_tail_payment
+                  model.value model.clickThroughRate j model.remaining)
+              model.clickThroughRate (rank + 2) →
+          ¬ paper_theorem8_ranked_threshold_dropout_strategy
+              model.clickThroughRate
+              (fun k =>
+                paper_theorem7_bstar_bid model.value
+                  (fun j =>
+                    paper_theorem7_ranked_vcg_tail_payment
+                      model.value model.clickThroughRate j model.remaining)
+                  model.clickThroughRate (k + 2))
+              model.value state rank) ∧
+      (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        model.value (rank + 1) ≤ state.clockPrice →
+          paper_theorem8_ranked_threshold_dropout_strategy
+            model.clickThroughRate
+            (fun k =>
+              paper_theorem7_bstar_bid model.value
+                (fun j =>
+                  paper_theorem7_ranked_vcg_tail_payment
+                    model.value model.clickThroughRate j model.remaining)
+                model.clickThroughRate (k + 2))
+            model.value state rank) ∧
+      (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        state.clockPrice =
+            paper_theorem7_bstar_bid model.value
+              (fun j =>
+                paper_theorem7_ranked_vcg_tail_payment
+                  model.value model.clickThroughRate j (model.remaining + 1))
+              model.clickThroughRate (rank + 1) →
+          model.clickThroughRate rank *
+              (model.value (rank + 1) - state.clockPrice) =
+            model.clickThroughRate (rank + 1) *
+              (model.value (rank + 1) -
+                paper_theorem7_bstar_bid model.value
+                  (fun j =>
+                    paper_theorem7_ranked_vcg_tail_payment
+                      model.value model.clickThroughRate j model.remaining)
+                  model.clickThroughRate (rank + 2))) ∧
+      (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        state.clockPrice <
+            paper_theorem7_bstar_bid model.value
+              (fun j =>
+                paper_theorem7_ranked_vcg_tail_payment
+                  model.value model.clickThroughRate j (model.remaining + 1))
+              model.clickThroughRate (rank + 1) →
+          model.clickThroughRate (rank + 1) *
+              (model.value (rank + 1) -
+                paper_theorem7_bstar_bid model.value
+                  (fun j =>
+                    paper_theorem7_ranked_vcg_tail_payment
+                      model.value model.clickThroughRate j model.remaining)
+                  model.clickThroughRate (rank + 2)) <
+            model.clickThroughRate rank *
+              (model.value (rank + 1) - state.clockPrice)) ∧
+      (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        paper_theorem7_bstar_bid model.value
+            (fun j =>
+              paper_theorem7_ranked_vcg_tail_payment
+                model.value model.clickThroughRate j (model.remaining + 1))
+            model.clickThroughRate (rank + 1) < state.clockPrice →
+          model.clickThroughRate rank *
+              (model.value (rank + 1) - state.clockPrice) <
+            model.clickThroughRate (rank + 1) *
+              (model.value (rank + 1) -
+                paper_theorem7_bstar_bid model.value
+                  (fun j =>
+                    paper_theorem7_ranked_vcg_tail_payment
+                      model.value model.clickThroughRate j model.remaining)
+                  model.clickThroughRate (rank + 2))) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_local_optimality_of_ordered_certificate
+      model
+
+/-- Audit for Theorem 8 ranked threshold local optimality package. -/
+theorem audit_theorem8_ranked_threshold_local_optimality_certificate
+    (model : PaperTheorem8RankedThresholdLocalOptimalityCertificate) :
+    ∀ rank,
+      model.lastDropout rank ≤
+          paper_theorem8_generalized_english_ranked_dropout_price
+            model.clickThroughRate model.lastDropout model.value rank ∧
+        paper_theorem8_generalized_english_ranked_dropout_price
+            model.clickThroughRate model.lastDropout model.value rank ≤
+          model.value (rank + 1) ∧
+        (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+          state.clockPrice < model.lastDropout rank →
+            ¬ paper_theorem8_ranked_threshold_dropout_strategy
+                model.clickThroughRate model.lastDropout model.value
+                state rank) ∧
+        (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+          model.value (rank + 1) ≤ state.clockPrice →
+            paper_theorem8_ranked_threshold_dropout_strategy
+              model.clickThroughRate model.lastDropout model.value
+              state rank) ∧
+        (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+          state.clockPrice =
+              paper_theorem8_generalized_english_ranked_dropout_price
+                model.clickThroughRate model.lastDropout model.value rank →
+            model.clickThroughRate rank *
+                (model.value (rank + 1) - state.clockPrice) =
+              model.clickThroughRate (rank + 1) *
+                (model.value (rank + 1) - model.lastDropout rank)) ∧
+        (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+          state.clockPrice <
+              paper_theorem8_generalized_english_ranked_dropout_price
+                model.clickThroughRate model.lastDropout model.value rank →
+            model.clickThroughRate (rank + 1) *
+                (model.value (rank + 1) - model.lastDropout rank) <
+              model.clickThroughRate rank *
+                (model.value (rank + 1) - state.clockPrice)) ∧
+        (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+          paper_theorem8_generalized_english_ranked_dropout_price
+              model.clickThroughRate model.lastDropout model.value rank <
+            state.clockPrice →
+            model.clickThroughRate rank *
+                (model.value (rank + 1) - state.clockPrice) <
+            model.clickThroughRate (rank + 1) *
+                (model.value (rank + 1) - model.lastDropout rank)) := by
+  exact paper_theorem8_ranked_threshold_local_optimality_of_certificate model
+
+/-- Audit for Theorem 8 exact finite-`B*` ranked-threshold local optimality. -/
+theorem audit_theorem8_bstar_ranked_threshold_local_optimality_certificate
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    ∀ rank,
+      paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j model.remaining)
+          model.clickThroughRate (rank + 2) ≤
+        paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j (model.remaining + 1))
+          model.clickThroughRate (rank + 1) ∧
+      paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j (model.remaining + 1))
+          model.clickThroughRate (rank + 1) ≤ model.value (rank + 1) ∧
+      (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        state.clockPrice <
+            paper_theorem7_bstar_bid model.value
+              (fun j =>
+                paper_theorem7_ranked_vcg_tail_payment
+                  model.value model.clickThroughRate j model.remaining)
+              model.clickThroughRate (rank + 2) →
+          ¬ paper_theorem8_ranked_threshold_dropout_strategy
+              model.clickThroughRate
+              (fun k =>
+                paper_theorem7_bstar_bid model.value
+                  (fun j =>
+                    paper_theorem7_ranked_vcg_tail_payment
+                      model.value model.clickThroughRate j model.remaining)
+                  model.clickThroughRate (k + 2))
+              model.value state rank) ∧
+      (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        model.value (rank + 1) ≤ state.clockPrice →
+          paper_theorem8_ranked_threshold_dropout_strategy
+            model.clickThroughRate
+            (fun k =>
+              paper_theorem7_bstar_bid model.value
+                (fun j =>
+                  paper_theorem7_ranked_vcg_tail_payment
+                    model.value model.clickThroughRate j model.remaining)
+                model.clickThroughRate (k + 2))
+            model.value state rank) ∧
+      (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        state.clockPrice =
+            paper_theorem7_bstar_bid model.value
+              (fun j =>
+                paper_theorem7_ranked_vcg_tail_payment
+                  model.value model.clickThroughRate j (model.remaining + 1))
+              model.clickThroughRate (rank + 1) →
+          model.clickThroughRate rank *
+              (model.value (rank + 1) - state.clockPrice) =
+            model.clickThroughRate (rank + 1) *
+              (model.value (rank + 1) -
+                paper_theorem7_bstar_bid model.value
+                  (fun j =>
+                    paper_theorem7_ranked_vcg_tail_payment
+                      model.value model.clickThroughRate j model.remaining)
+                  model.clickThroughRate (rank + 2))) ∧
+      (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        state.clockPrice <
+            paper_theorem7_bstar_bid model.value
+              (fun j =>
+                paper_theorem7_ranked_vcg_tail_payment
+                  model.value model.clickThroughRate j (model.remaining + 1))
+              model.clickThroughRate (rank + 1) →
+          model.clickThroughRate (rank + 1) *
+              (model.value (rank + 1) -
+                paper_theorem7_bstar_bid model.value
+                  (fun j =>
+                    paper_theorem7_ranked_vcg_tail_payment
+                      model.value model.clickThroughRate j model.remaining)
+                  model.clickThroughRate (rank + 2)) <
+            model.clickThroughRate rank *
+              (model.value (rank + 1) - state.clockPrice)) ∧
+      (∀ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        paper_theorem7_bstar_bid model.value
+            (fun j =>
+              paper_theorem7_ranked_vcg_tail_payment
+                model.value model.clickThroughRate j (model.remaining + 1))
+            model.clickThroughRate (rank + 1) < state.clockPrice →
+          model.clickThroughRate rank *
+              (model.value (rank + 1) - state.clockPrice) <
+            model.clickThroughRate (rank + 1) *
+              (model.value (rank + 1) -
+                paper_theorem7_bstar_bid model.value
+                  (fun j =>
+                    paper_theorem7_ranked_vcg_tail_payment
+                      model.value model.clickThroughRate j model.remaining)
+                  model.clickThroughRate (rank + 2))) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_local_optimality_of_certificate model
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: the ranked
+natural-number `B*` outcome assigns rank `i` to slot `i`. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_slotOf
+    (value clickThroughRate : ℕ → ℝ) (remaining i : ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_outcome
+      value clickThroughRate remaining).slotOf i = some i := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_slotOf
+      value clickThroughRate remaining i
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: the ranked
+natural-number `B*` outcome charges the finite-tail `B*` bid per click. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_paymentPerClick
+    (value clickThroughRate : ℕ → ℝ) (remaining i : ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_outcome
+      value clickThroughRate remaining).paymentPerClick i =
+      paper_theorem8_bstar_threshold_bid
+        value clickThroughRate remaining (i + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_paymentPerClick
+      value clickThroughRate remaining i
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: total payments
+equal finite VCG-tail payments rank by rank. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_total_payment_eq_vcg_tail
+    (value clickThroughRate : ℕ → ℝ) (remaining i : ℕ)
+    (hclick_ne : clickThroughRate i ≠ 0) :
+    clickThroughRate i *
+        (paper_theorem8_bstar_ranked_threshold_outcome
+          value clickThroughRate remaining).paymentPerClick i =
+      paper_theorem7_ranked_vcg_tail_payment
+        value clickThroughRate i remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_total_payment_eq_vcg_tail
+      value clickThroughRate remaining i hclick_ne
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: finite-tail VCG
+total-payment upper bounds transfer to the constructed outcome's total payment. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_total_payment_le_click_value_of_tail_le
+    {value clickThroughRate : ℕ → ℝ} {remaining i : ℕ}
+    (hclick_ne : clickThroughRate i ≠ 0)
+    (htail_le :
+      paper_theorem7_ranked_vcg_tail_payment
+          value clickThroughRate i remaining ≤
+        clickThroughRate i * value i) :
+    clickThroughRate i *
+        (paper_theorem8_bstar_ranked_threshold_outcome
+          value clickThroughRate remaining).paymentPerClick i ≤
+      clickThroughRate i * value i := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_total_payment_le_click_value_of_tail_le
+      hclick_ne htail_le
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: finite-tail VCG
+total-payment upper bounds give the constructed outcome's per-click
+payment-at-most-value bound. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_payment_le_value_of_tail_le
+    {value clickThroughRate : ℕ → ℝ} {remaining i : ℕ}
+    (hclick_pos : 0 < clickThroughRate i)
+    (htail_le :
+      paper_theorem7_ranked_vcg_tail_payment
+          value clickThroughRate i remaining ≤
+        clickThroughRate i * value i) :
+    (paper_theorem8_bstar_ranked_threshold_outcome
+      value clickThroughRate remaining).paymentPerClick i ≤ value i := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_payment_le_value_of_tail_le
+      hclick_pos htail_le
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: rankwise
+finite-tail upper bounds give rankwise per-click payment-at-most-value bounds. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_payment_le_value_of_tail_bounds
+    {value clickThroughRate : ℕ → ℝ} {remaining : ℕ}
+    (hclick_pos : ∀ rank, 0 < clickThroughRate rank)
+    (htail_le :
+      ∀ rank,
+        paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate rank remaining ≤
+          clickThroughRate rank * value rank) :
+    ∀ rank,
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        value clickThroughRate remaining).paymentPerClick rank ≤
+        value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_payment_le_value_of_tail_bounds
+      hclick_pos htail_le
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: ordered values
+and nonnegative click-through rates give rankwise per-click
+payment-at-most-value bounds. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_payment_le_value_of_ordered
+    {value clickThroughRate : ℕ → ℝ} {remaining : ℕ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_nonneg : ∀ i, 0 ≤ clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < clickThroughRate i) :
+    ∀ rank,
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        value clickThroughRate remaining).paymentPerClick rank ≤
+        value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_payment_le_value_of_ordered
+      hvalue_nonneg hvalue_mono hclick_nonneg hclick_pos
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: ordered values
+and decreasing positive click-through rates imply nonnegative per-click
+payments. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_payment_nonneg_of_ordered
+    {value clickThroughRate : ℕ → ℝ} {remaining i : ℕ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hclick_mono : ∀ i, clickThroughRate (i + 1) ≤ clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < clickThroughRate i) :
+    0 ≤
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        value clickThroughRate remaining).paymentPerClick i := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_payment_nonneg_of_ordered
+      hvalue_nonneg hclick_mono hclick_pos
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: under ordered
+values and decreasing positive click-through rates, per-click payments lie
+between zero and value. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_payment_between_zero_and_value_of_ordered
+    {value clickThroughRate : ℕ → ℝ} {remaining : ℕ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_mono : ∀ i, clickThroughRate (i + 1) ≤ clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < clickThroughRate i) :
+    ∀ rank,
+      0 ≤
+        (paper_theorem8_bstar_ranked_threshold_outcome
+          value clickThroughRate remaining).paymentPerClick rank ∧
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        value clickThroughRate remaining).paymentPerClick rank ≤
+        value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_payment_between_zero_and_value_of_ordered
+      hvalue_nonneg hvalue_mono hclick_mono hclick_pos
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: rankwise
+finite-tail upper bounds make the constructed outcome individually rational. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_individually_rational_of_tail_bounds
+    {value clickThroughRate : ℕ → ℝ} {remaining : ℕ}
+    (hclick_nonneg : ∀ rank, 0 ≤ clickThroughRate rank)
+    (hclick_pos : ∀ rank, 0 < clickThroughRate rank)
+    (htail_le :
+      ∀ rank,
+        paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate rank remaining ≤
+          clickThroughRate rank * value rank) :
+    (paper_theorem8_bstar_ranked_threshold_outcome
+      value clickThroughRate remaining).IndividuallyRational
+        ({ clickThroughRate := clickThroughRate } : PositionEnvironment ℕ)
+        value := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_individually_rational_of_tail_bounds
+      hclick_nonneg hclick_pos htail_le
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: ordered values
+and positive click-through rates make the constructed outcome individually
+rational. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_individually_rational_of_ordered
+    {value clickThroughRate : ℕ → ℝ} {remaining : ℕ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_nonneg : ∀ i, 0 ≤ clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < clickThroughRate i) :
+    (paper_theorem8_bstar_ranked_threshold_outcome
+      value clickThroughRate remaining).IndividuallyRational
+        ({ clickThroughRate := clickThroughRate } : PositionEnvironment ℕ)
+        value := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_individually_rational_of_ordered
+      hvalue_nonneg hvalue_mono hclick_nonneg hclick_pos
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: under ordered
+paper-style assumptions, the constructed outcome is individually rational and
+has no positive transfers. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_ir_and_no_positive_transfers_of_ordered
+    {value clickThroughRate : ℕ → ℝ} {remaining : ℕ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_mono : ∀ i, clickThroughRate (i + 1) ≤ clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < clickThroughRate i) :
+    (paper_theorem8_bstar_ranked_threshold_outcome
+      value clickThroughRate remaining).IndividuallyRational
+        ({ clickThroughRate := clickThroughRate } : PositionEnvironment ℕ)
+        value ∧
+      paper_position_no_positive_transfers
+        (paper_theorem8_bstar_ranked_threshold_outcome
+          value clickThroughRate remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_ir_and_no_positive_transfers_of_ordered
+      hvalue_nonneg hvalue_mono hclick_mono hclick_pos
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: one endpoint
+records the assigned slots, per-click payments, VCG-tail total payments,
+payment interval, individual rationality, and no-positive-transfers properties
+under ordered assumptions. -/
+theorem audit_theorem8_bstar_ranked_threshold_constructed_outcome_ordered_paper_conclusion
+    {value clickThroughRate : ℕ → ℝ} {remaining : ℕ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hvalue_mono : ∀ i, value (i + 1) ≤ value i)
+    (hclick_mono : ∀ i, clickThroughRate (i + 1) ≤ clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < clickThroughRate i) :
+    (∀ rank,
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        value clickThroughRate remaining).slotOf rank = some rank) ∧
+      (∀ rank,
+        (paper_theorem8_bstar_ranked_threshold_outcome
+          value clickThroughRate remaining).paymentPerClick rank =
+          paper_theorem8_bstar_threshold_bid
+            value clickThroughRate remaining (rank + 1)) ∧
+        (∀ rank,
+          clickThroughRate rank *
+              (paper_theorem8_bstar_ranked_threshold_outcome
+                value clickThroughRate remaining).paymentPerClick rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              value clickThroughRate rank remaining) ∧
+          (∀ rank,
+            0 ≤
+              (paper_theorem8_bstar_ranked_threshold_outcome
+                value clickThroughRate remaining).paymentPerClick rank ∧
+            (paper_theorem8_bstar_ranked_threshold_outcome
+              value clickThroughRate remaining).paymentPerClick rank ≤
+              value rank) ∧
+            (paper_theorem8_bstar_ranked_threshold_outcome
+              value clickThroughRate remaining).IndividuallyRational
+                ({ clickThroughRate := clickThroughRate } :
+                  PositionEnvironment ℕ)
+                value ∧
+              paper_position_no_positive_transfers
+                (paper_theorem8_bstar_ranked_threshold_outcome
+                  value clickThroughRate remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_constructed_outcome_ordered_paper_conclusion
+      hvalue_nonneg hvalue_mono hclick_mono hclick_pos
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: the paper-style
+ordered local-optimality certificate directly supplies the one-stop constructed
+outcome conclusion. -/
+theorem audit_theorem8_bstar_ranked_threshold_ordered_constructed_outcome_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdOrderedLocalOptimalityCertificate) :
+    (∀ rank,
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        model.value model.clickThroughRate model.remaining).slotOf rank =
+        some rank) ∧
+      (∀ rank,
+        (paper_theorem8_bstar_ranked_threshold_outcome
+          model.value model.clickThroughRate model.remaining).paymentPerClick rank =
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate model.remaining (rank + 1)) ∧
+        (∀ rank,
+          model.clickThroughRate rank *
+              (paper_theorem8_bstar_ranked_threshold_outcome
+                model.value model.clickThroughRate model.remaining).paymentPerClick rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate rank model.remaining) ∧
+          (∀ rank,
+            0 ≤
+              (paper_theorem8_bstar_ranked_threshold_outcome
+                model.value model.clickThroughRate model.remaining).paymentPerClick rank ∧
+            (paper_theorem8_bstar_ranked_threshold_outcome
+              model.value model.clickThroughRate model.remaining).paymentPerClick rank ≤
+              model.value rank) ∧
+            (paper_theorem8_bstar_ranked_threshold_outcome
+              model.value model.clickThroughRate model.remaining).IndividuallyRational
+                ({ clickThroughRate := model.clickThroughRate } :
+                  PositionEnvironment ℕ)
+                model.value ∧
+              paper_position_no_positive_transfers
+                (paper_theorem8_bstar_ranked_threshold_outcome
+                  model.value model.clickThroughRate model.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_ordered_constructed_outcome_paper_conclusion
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: finite VCG-tail
+nonnegativity and positive click-through rates imply no positive transfers. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_no_positive_transfers_of_tail_nonneg
+    {value clickThroughRate : ℕ → ℝ} {remaining : ℕ}
+    (hvalue_zero_nonneg : 0 ≤ value 0)
+    (htail_nonneg :
+      ∀ rank,
+        0 ≤
+          paper_theorem7_ranked_vcg_tail_payment
+            value clickThroughRate rank remaining)
+    (hclick_pos : ∀ rank, 0 < clickThroughRate rank) :
+    paper_position_no_positive_transfers
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        value clickThroughRate remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_no_positive_transfers_of_tail_nonneg
+      hvalue_zero_nonneg htail_nonneg hclick_pos
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed outcome: ordered values
+and weakly decreasing click-through rates imply no positive transfers. -/
+theorem audit_theorem8_bstar_ranked_threshold_outcome_no_positive_transfers_of_ordered
+    {value clickThroughRate : ℕ → ℝ} {remaining : ℕ}
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    (hclick_mono : ∀ i, clickThroughRate (i + 1) ≤ clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < clickThroughRate i) :
+    paper_position_no_positive_transfers
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        value clickThroughRate remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_outcome_no_positive_transfers_of_ordered
+      hvalue_nonneg hclick_mono hclick_pos
+
+/-- Audit for Theorem 8 abstract dynamic-game PBE predicate: PBE means there
+exists a belief system making the strategy profile consistent and sequentially
+rational. -/
+theorem audit_theorem8_dynamic_game_pbe_iff
+    {Bidder Slot StrategyProfile Belief : Type*}
+    (G :
+      PaperTheorem8GeneralizedEnglishDynamicGame
+        Bidder Slot StrategyProfile Belief)
+    (strategy : StrategyProfile) :
+    G.PerfectBayesianEquilibrium strategy ↔
+      ∃ belief : Belief,
+        G.isConsistentBelief strategy belief ∧
+          G.isSequentiallyRational strategy belief := by
+  exact
+    paper_theorem8_dynamic_game_pbe_iff_exists_consistent_sequential_belief
+      G strategy
+
+/-- Audit for Theorem 8 abstract dynamic-game PBE predicate: every PBE exposes
+a belief-consistency witness. -/
+theorem audit_theorem8_dynamic_game_pbe_consistent_belief_exists
+    {Bidder Slot StrategyProfile Belief : Type*}
+    {G :
+      PaperTheorem8GeneralizedEnglishDynamicGame
+        Bidder Slot StrategyProfile Belief}
+    {strategy : StrategyProfile}
+    (hpbe : G.PerfectBayesianEquilibrium strategy) :
+    ∃ belief : Belief, G.isConsistentBelief strategy belief := by
+  exact paper_theorem8_dynamic_game_pbe_consistent_belief_exists hpbe
+
+/-- Audit for Theorem 8 abstract dynamic-game PBE predicate: every PBE exposes
+a sequential-rationality witness. -/
+theorem audit_theorem8_dynamic_game_pbe_sequentially_rational_belief_exists
+    {Bidder Slot StrategyProfile Belief : Type*}
+    {G :
+      PaperTheorem8GeneralizedEnglishDynamicGame
+        Bidder Slot StrategyProfile Belief}
+    {strategy : StrategyProfile}
+    (hpbe : G.PerfectBayesianEquilibrium strategy) :
+    ∃ belief : Belief, G.isSequentiallyRational strategy belief := by
+  exact
+    paper_theorem8_dynamic_game_pbe_sequentially_rational_belief_exists hpbe
+
+/-- Audit for Theorem 8 dynamic-game certificate boundary: explicit belief
+consistency, sequential rationality, uniqueness, and VCG outcome equivalence
+imply the unique-PBE theorem for the abstract generalized-English game. -/
+theorem audit_theorem8_dynamic_game_certificate_boundary
+    {Bidder Slot StrategyProfile Belief : Type*}
+    (model :
+      PaperTheorem8DynamicGamePBECertificate
+        Bidder Slot StrategyProfile Belief) :
+    ∃ equilibrium : StrategyProfile,
+      model.game.PerfectBayesianEquilibrium equilibrium ∧
+        (∀ strategy,
+          model.game.PerfectBayesianEquilibrium strategy →
+            strategy = equilibrium) ∧
+          model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact paper_theorem8_dynamic_game_unique_pbe_of_certificate model
+
+/-- Audit for Theorem 8 dynamic-game certificate boundary: the certified
+equilibrium characterizes PBE strategies by equality. -/
+theorem audit_theorem8_dynamic_game_pbe_iff_equilibrium
+    {Bidder Slot StrategyProfile Belief : Type*}
+    (model :
+      PaperTheorem8DynamicGamePBECertificate
+        Bidder Slot StrategyProfile Belief)
+    (strategy : StrategyProfile) :
+    model.game.PerfectBayesianEquilibrium strategy ↔
+      strategy = model.equilibrium := by
+  exact
+    paper_theorem8_dynamic_game_pbe_iff_equilibrium_of_certificate
+      model strategy
+
+/-- Audit for Theorem 8 dynamic-game certificate boundary: every certified PBE
+strategy induces the certified VCG outcome. -/
+theorem audit_theorem8_dynamic_game_pbe_outcome_eq_vcg
+    {Bidder Slot StrategyProfile Belief : Type*}
+    (model :
+      PaperTheorem8DynamicGamePBECertificate
+        Bidder Slot StrategyProfile Belief)
+    {strategy : StrategyProfile}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    model.game.outcomeOf strategy = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_dynamic_game_pbe_outcome_eq_vcg_of_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 dynamic-game certificate boundary: every certified PBE
+strategy has the VCG slot assignment and VCG per-click payments. -/
+theorem audit_theorem8_dynamic_game_pbe_slot_payment_eq_vcg
+    {Bidder Slot StrategyProfile Belief : Type*}
+    (model :
+      PaperTheorem8DynamicGamePBECertificate
+        Bidder Slot StrategyProfile Belief)
+    {strategy : StrategyProfile}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    (∀ bidder,
+      (model.game.outcomeOf strategy).slotOf bidder =
+        model.game.vcgOutcome.slotOf bidder) ∧
+      (∀ bidder,
+        (model.game.outcomeOf strategy).paymentPerClick bidder =
+          model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_dynamic_game_pbe_slot_payment_eq_vcg_of_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 integrated ranked-dropout dynamic-game certificate: the
+ranked dropout equations and belief-based unique-PBE/VCG outcome conclusion are
+exposed together. -/
+theorem audit_theorem8_ranked_dropout_dynamic_game_certificate_boundary
+    {Bidder Slot StrategyProfile Belief : Type*}
+    (model :
+      PaperTheorem8RankedDropoutDynamicGameCertificate
+        Bidder Slot StrategyProfile Belief) :
+    (∀ rank,
+      model.dropoutPrice rank =
+        paper_theorem8_generalized_english_ranked_dropout_price
+          model.clickThroughRate model.lastDropout model.value rank) ∧
+      ∃ equilibrium : StrategyProfile,
+        model.game.PerfectBayesianEquilibrium equilibrium ∧
+          (∀ strategy,
+            model.game.PerfectBayesianEquilibrium strategy →
+              strategy = equilibrium) ∧
+          model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_ranked_dropout_dynamic_game_unique_pbe_of_certificate
+      model
+
+/-- Audit for Theorem 8 concrete ranked-threshold dynamic-game certificate:
+the equilibrium strategy is the ranked threshold formula itself, and the
+remaining dynamic obligations imply unique PBE and VCG outcome equivalence. -/
+theorem audit_theorem8_ranked_threshold_strategy_dynamic_game_certificate_boundary
+    {Belief : Type*}
+    (model :
+      PaperTheorem8RankedThresholdStrategyDynamicGameCertificate Belief) :
+    (∀ state rank,
+      paper_theorem8_ranked_threshold_dropout_strategy
+          model.clickThroughRate model.lastDropout model.value state rank ↔
+        paper_theorem8_generalized_english_ranked_dropout_price
+          model.clickThroughRate model.lastDropout model.value rank ≤
+            state.clockPrice) ∧
+      ∃ equilibrium : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        model.game.PerfectBayesianEquilibrium equilibrium ∧
+          (∀ strategy,
+            model.game.PerfectBayesianEquilibrium strategy →
+              strategy = equilibrium) ∧
+          model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_ranked_threshold_strategy_dynamic_game_unique_pbe_of_certificate
+      model
+
+/-- Audit for Theorem 8 concrete ranked-threshold dynamic-game characterization
+certificate: uniqueness follows from the behavioral theorem that every PBE
+strategy has exactly the ranked threshold dropout condition. -/
+theorem audit_theorem8_ranked_threshold_strategy_dynamic_game_characterization_certificate_boundary
+    {Belief : Type*}
+    (model :
+      PaperTheorem8RankedThresholdStrategyDynamicGameCharacterizationCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_ranked_threshold_dropout_strategy
+          model.clickThroughRate model.lastDropout model.value state rank ↔
+        paper_theorem8_generalized_english_ranked_dropout_price
+          model.clickThroughRate model.lastDropout model.value rank ≤
+            state.clockPrice) ∧
+      ∃ equilibrium : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        model.game.PerfectBayesianEquilibrium equilibrium ∧
+          (∀ strategy,
+            model.game.PerfectBayesianEquilibrium strategy →
+              strategy = equilibrium) ∧
+          model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_ranked_threshold_strategy_dynamic_game_unique_pbe_of_characterization_certificate
+      model
+
+/-- Audit for Theorem 8 concrete ranked-threshold dynamic-game extensional
+outcome certificate: slot/payment equality with the VCG outcome implies the raw
+outcome equality used by the unique-PBE conclusion. -/
+theorem audit_theorem8_ranked_threshold_strategy_dynamic_game_extensional_outcome_certificate_boundary
+    {Belief : Type*}
+    (model :
+      PaperTheorem8RankedThresholdStrategyDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_ranked_threshold_dropout_strategy
+          model.clickThroughRate model.lastDropout model.value state rank ↔
+        paper_theorem8_generalized_english_ranked_dropout_price
+          model.clickThroughRate model.lastDropout model.value rank ≤
+            state.clockPrice) ∧
+      ∃ equilibrium : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        model.game.PerfectBayesianEquilibrium equilibrium ∧
+          (∀ strategy,
+            model.game.PerfectBayesianEquilibrium strategy →
+              strategy = equilibrium) ∧
+          model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_ranked_threshold_strategy_dynamic_game_unique_pbe_of_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact-`B*` ranked-threshold dynamic-game certificate:
+for the finite `B*` continuation strategy, the explicit dynamic obligations
+imply unique PBE and VCG outcome equivalence, and the strategy's dropout
+condition is exactly the finite `B*` bid threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_extensional_outcome_certificate_boundary
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_ranked_threshold_dropout_strategy
+          model.clickThroughRate
+          (fun k =>
+            paper_theorem7_bstar_bid model.value
+              (fun j =>
+                paper_theorem7_ranked_vcg_tail_payment
+                  model.value model.clickThroughRate j model.remaining)
+              model.clickThroughRate (k + 2))
+          model.value state rank ↔
+        paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j (model.remaining + 1))
+          model.clickThroughRate (rank + 1) ≤ state.clockPrice) ∧
+      ∃ equilibrium : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        model.game.PerfectBayesianEquilibrium equilibrium ∧
+          (∀ strategy,
+            model.game.PerfectBayesianEquilibrium strategy →
+              strategy = equilibrium) ∧
+          model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_unique_pbe_of_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact-`B*` ranked-threshold dynamic-game certificate:
+sequential rationality can be discharged from the named local-optimality
+package via a source-supplied bridge. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_local_optimality_certificate_boundary
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    paper_theorem8_bstar_ranked_threshold_local_optimality_statement
+      model.localModel.clickThroughRate model.localModel.value
+      model.localModel.remaining ∧
+    (∀ state rank,
+      paper_theorem8_ranked_threshold_dropout_strategy
+          model.localModel.clickThroughRate
+          (fun k =>
+            paper_theorem8_bstar_threshold_bid
+              model.localModel.value model.localModel.clickThroughRate
+              model.localModel.remaining (k + 2))
+          model.localModel.value state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      ∃ equilibrium : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        model.game.PerfectBayesianEquilibrium equilibrium ∧
+          (∀ strategy,
+            model.game.PerfectBayesianEquilibrium strategy →
+              strategy = equilibrium) ∧
+          model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_unique_pbe_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed-outcome boundary:
+constructed ranked-`B*` outcome equality induces the extensional VCG-outcome
+certificate used by the main dynamic-game theorem. -/
+def audit_theorem8_bstar_ranked_threshold_dynamic_game_extensional_outcome_certificate_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_dynamic_game_extensional_outcome_certificate_of_constructed_outcome_certificate
+    model
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed-outcome boundary:
+ordered constructed-outcome quality transfers to the certificate's VCG outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_constructed_certificate_vcg_outcome_ordered_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief)
+    (hvalue_nonneg : ∀ i, 0 ≤ cert.localModel.value i)
+    (hvalue_mono : ∀ i, cert.localModel.value (i + 1) ≤ cert.localModel.value i)
+    (hclick_mono :
+      ∀ i, cert.localModel.clickThroughRate (i + 1) ≤
+        cert.localModel.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < cert.localModel.clickThroughRate i) :
+    (∀ rank, cert.game.vcgOutcome.slotOf rank = some rank) ∧
+      (∀ rank,
+        cert.game.vcgOutcome.paymentPerClick rank =
+          paper_theorem8_bstar_threshold_bid
+            cert.localModel.value cert.localModel.clickThroughRate
+            cert.localModel.remaining (rank + 1)) ∧
+        (∀ rank,
+          cert.localModel.clickThroughRate rank *
+              cert.game.vcgOutcome.paymentPerClick rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              cert.localModel.value cert.localModel.clickThroughRate rank
+              cert.localModel.remaining) ∧
+          (∀ rank,
+            0 ≤ cert.game.vcgOutcome.paymentPerClick rank ∧
+            cert.game.vcgOutcome.paymentPerClick rank ≤
+              cert.localModel.value rank) ∧
+            cert.game.vcgOutcome.IndividuallyRational
+              ({ clickThroughRate := cert.localModel.clickThroughRate } :
+                PositionEnvironment ℕ)
+              cert.localModel.value ∧
+              paper_position_no_positive_transfers cert.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_constructed_certificate_vcg_outcome_ordered_paper_conclusion
+      cert hvalue_nonneg hvalue_mono hclick_mono hclick_pos
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed-outcome boundary:
+ordered constructed-outcome quality transfers to the named finite-`B*`
+strategy outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_constructed_certificate_named_strategy_outcome_ordered_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief)
+    (hvalue_nonneg : ∀ i, 0 ≤ cert.localModel.value i)
+    (hvalue_mono : ∀ i, cert.localModel.value (i + 1) ≤ cert.localModel.value i)
+    (hclick_mono :
+      ∀ i, cert.localModel.clickThroughRate (i + 1) ≤
+        cert.localModel.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < cert.localModel.clickThroughRate i) :
+    (∀ rank,
+      (cert.game.outcomeOf
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.localModel.value cert.localModel.clickThroughRate
+          cert.localModel.remaining)).slotOf rank = some rank) ∧
+      (∀ rank,
+        (cert.game.outcomeOf
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            cert.localModel.value cert.localModel.clickThroughRate
+            cert.localModel.remaining)).paymentPerClick rank =
+          paper_theorem8_bstar_threshold_bid
+            cert.localModel.value cert.localModel.clickThroughRate
+            cert.localModel.remaining (rank + 1)) ∧
+        (∀ rank,
+          cert.localModel.clickThroughRate rank *
+              (cert.game.outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  cert.localModel.value cert.localModel.clickThroughRate
+                  cert.localModel.remaining)).paymentPerClick rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              cert.localModel.value cert.localModel.clickThroughRate rank
+              cert.localModel.remaining) ∧
+          (∀ rank,
+            0 ≤
+              (cert.game.outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  cert.localModel.value cert.localModel.clickThroughRate
+                  cert.localModel.remaining)).paymentPerClick rank ∧
+            (cert.game.outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                cert.localModel.value cert.localModel.clickThroughRate
+                cert.localModel.remaining)).paymentPerClick rank ≤
+              cert.localModel.value rank) ∧
+            (cert.game.outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                cert.localModel.value cert.localModel.clickThroughRate
+                cert.localModel.remaining)).IndividuallyRational
+              ({ clickThroughRate := cert.localModel.clickThroughRate } :
+                PositionEnvironment ℕ)
+              cert.localModel.value ∧
+              paper_position_no_positive_transfers
+                (cert.game.outcomeOf
+                  (paper_theorem8_bstar_ranked_threshold_strategy
+                    cert.localModel.value cert.localModel.clickThroughRate
+                    cert.localModel.remaining)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_constructed_certificate_named_strategy_outcome_ordered_paper_conclusion
+      cert hvalue_nonneg hvalue_mono hclick_mono hclick_pos
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed-outcome boundary:
+constructed outcome equality induces the reusable abstract dynamic-game PBE
+certificate directly. -/
+def audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_certificate_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    PaperTheorem8DynamicGamePBECertificate
+      ℕ ℕ (PaperTheorem8GeneralizedEnglishStrategy ℕ) Belief :=
+  paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_certificate_of_constructed_outcome_certificate
+    model
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed-outcome boundary:
+once the constructed-outcome certificate is supplied, Lean derives the same
+local-optimality and unique-PBE/VCG conclusion as the extensional certificate. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_unique_pbe_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    paper_theorem8_bstar_ranked_threshold_local_optimality_statement
+      model.localModel.clickThroughRate model.localModel.value
+      model.localModel.remaining ∧
+    (∀ state rank,
+      paper_theorem8_ranked_threshold_dropout_strategy
+          model.localModel.clickThroughRate
+          (fun k =>
+            paper_theorem8_bstar_threshold_bid
+              model.localModel.value model.localModel.clickThroughRate
+              model.localModel.remaining (k + 2))
+          model.localModel.value state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      ∃ equilibrium : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        model.game.PerfectBayesianEquilibrium equilibrium ∧
+          (∀ strategy,
+            model.game.PerfectBayesianEquilibrium strategy →
+              strategy = equilibrium) ∧
+          model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_unique_pbe_of_local_optimality_extensional_outcome_certificate
+      (paper_theorem8_bstar_ranked_threshold_dynamic_game_extensional_outcome_certificate_of_constructed_outcome_certificate
+        model)
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed-outcome boundary: the
+constructed certificate directly exposes belief consistency for the named
+finite `B*` strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_consistent_belief_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    model.game.isConsistentBelief
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.localModel.value model.localModel.clickThroughRate
+        model.localModel.remaining)
+      model.belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_consistent_belief_of_constructed_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed-outcome boundary: the
+constructed certificate directly exposes sequential rationality for the named
+finite `B*` strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_sequentially_rational_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    model.game.isSequentiallyRational
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.localModel.value model.localModel.clickThroughRate
+        model.localModel.remaining)
+      model.belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_sequentially_rational_of_constructed_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic local-optimality boundary:
+the certificate exposes belief consistency for the named finite `B*` strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_consistent_belief_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    model.game.isConsistentBelief
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.localModel.value model.localModel.clickThroughRate
+        model.localModel.remaining)
+      model.belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_consistent_belief_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic local-optimality boundary:
+the certificate's local-optimality bridge exposes sequential rationality for
+the named finite `B*` strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_sequentially_rational_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    model.game.isSequentiallyRational
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.localModel.value model.localModel.clickThroughRate
+        model.localModel.remaining)
+      model.belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_sequentially_rational_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic one-step boundary: the
+one-step-best-response certificate forgets to the existing local-optimality
+dynamic certificate by applying the audited local best-response theorem. -/
+def audit_theorem8_bstar_ranked_threshold_local_optimality_extensional_outcome_certificate_of_one_step_best_response
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdOneStepBestResponseDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_local_optimality_extensional_outcome_certificate_of_one_step_best_response
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic one-step boundary: a
+game-level bridge from the audited one-step best-response predicate to
+sequential rationality exposes sequential rationality for the named finite
+`B*` strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_sequentially_rational_of_one_step_best_response
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdOneStepBestResponseDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    model.game.isSequentiallyRational
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.localModel.value model.localModel.clickThroughRate
+        model.localModel.remaining)
+      model.belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_sequentially_rational_of_one_step_best_response_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic one-step boundary: the named
+finite `B*` strategy is a PBE. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_pbe_of_one_step_best_response
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdOneStepBestResponseDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    model.game.PerfectBayesianEquilibrium
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.localModel.value model.localModel.clickThroughRate
+        model.localModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_pbe_of_one_step_best_response_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic one-step boundary: there is a
+unique PBE strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_exists_unique_pbe_of_one_step_best_response
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdOneStepBestResponseDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      model.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_exists_unique_pbe_of_one_step_best_response_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic one-step boundary: the named
+finite `B*` strategy has the cutoff complement and VCG slot/payment conclusion. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_one_step_best_response
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdOneStepBestResponseDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_bstar_ranked_threshold_strategy
+          model.localModel.value model.localModel.clickThroughRate
+          model.localModel.remaining state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ paper_theorem8_bstar_ranked_threshold_strategy
+            model.localModel.value model.localModel.clickThroughRate
+            model.localModel.remaining state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.localModel.value model.localModel.clickThroughRate
+              (model.localModel.remaining + 1) (rank + 1)) ∧
+        (∀ bidder,
+          (model.game.outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                model.localModel.value model.localModel.clickThroughRate
+                model.localModel.remaining)).slotOf bidder =
+            model.game.vcgOutcome.slotOf bidder) ∧
+          (∀ bidder,
+            (model.game.outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  model.localModel.value model.localModel.clickThroughRate
+                  model.localModel.remaining)).paymentPerClick bidder =
+              model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_one_step_best_response_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic one-step/tie-break boundary:
+one-step PBE best response plus at-threshold drop tie-breaking derives the
+one-step dynamic certificate. -/
+def audit_theorem8_bstar_ranked_threshold_one_step_best_response_extensional_outcome_certificate_of_tie_break
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdOneStepTieBreakDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdOneStepBestResponseDynamicGameExtensionalOutcomeCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_one_step_best_response_extensional_outcome_certificate_of_tie_break
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic source sequential rationality:
+if game-level sequential rationality implies local one-step best response and
+threshold tie-breaking, then Lean derives the one-step/tie-break dynamic
+certificate. -/
+def audit_theorem8_bstar_ranked_threshold_one_step_tie_break_extensional_outcome_certificate_of_sequential_rationality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdSequentialRationalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdOneStepTieBreakDynamicGameExtensionalOutcomeCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_one_step_tie_break_extensional_outcome_certificate_of_sequential_rationality
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic local-deviation boundary:
+a local-deviation characterization of sequential rationality derives the
+sequential-rationality source certificate. -/
+def audit_theorem8_bstar_ranked_threshold_sequential_rationality_extensional_outcome_certificate_of_local_deviation
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalDeviationDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdSequentialRationalityDynamicGameExtensionalOutcomeCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_sequential_rationality_extensional_outcome_certificate_of_local_deviation
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic source sequential rationality:
+unpacking the PBE sequential-rationality witness gives the finite `B*` cutoff
+rule for every PBE. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_drops_iff_threshold_bid_of_sequential_rationality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdSequentialRationalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        model.localModel.value model.localModel.clickThroughRate
+        (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_drops_iff_threshold_bid_of_one_step_tie_break_extensional_outcome_certificate
+      (paper_theorem8_bstar_ranked_threshold_one_step_tie_break_extensional_outcome_certificate_of_sequential_rationality
+        model)
+      hpbe state rank
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic source sequential rationality:
+the sequential-rationality source certificate gives uniqueness of PBE strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_exists_unique_pbe_of_sequential_rationality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdSequentialRationalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      model.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_exists_unique_pbe_of_one_step_tie_break_extensional_outcome_certificate
+      (paper_theorem8_bstar_ranked_threshold_one_step_tie_break_extensional_outcome_certificate_of_sequential_rationality
+        model)
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic source sequential rationality:
+the named finite `B*` strategy has the cutoff complement and VCG slot/payment
+conclusion. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_sequential_rationality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdSequentialRationalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_bstar_ranked_threshold_strategy
+          model.localModel.value model.localModel.clickThroughRate
+          model.localModel.remaining state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ paper_theorem8_bstar_ranked_threshold_strategy
+            model.localModel.value model.localModel.clickThroughRate
+            model.localModel.remaining state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.localModel.value model.localModel.clickThroughRate
+              (model.localModel.remaining + 1) (rank + 1)) ∧
+        (∀ bidder,
+          (model.game.outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                model.localModel.value model.localModel.clickThroughRate
+                model.localModel.remaining)).slotOf bidder =
+            model.game.vcgOutcome.slotOf bidder) ∧
+          (∀ bidder,
+            (model.game.outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  model.localModel.value model.localModel.clickThroughRate
+                  model.localModel.remaining)).paymentPerClick bidder =
+              model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_one_step_tie_break_extensional_outcome_certificate
+      (paper_theorem8_bstar_ranked_threshold_one_step_tie_break_extensional_outcome_certificate_of_sequential_rationality
+        model)
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic one-step/tie-break boundary:
+every PBE satisfies the finite `B*` cutoff rule. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_drops_iff_threshold_bid_of_one_step_tie_break
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdOneStepTieBreakDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        model.localModel.value model.localModel.clickThroughRate
+        (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_drops_iff_threshold_bid_of_one_step_tie_break_extensional_outcome_certificate
+      model hpbe state rank
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic one-step/tie-break boundary:
+there is a unique PBE strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_exists_unique_pbe_of_one_step_tie_break
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdOneStepTieBreakDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      model.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_exists_unique_pbe_of_one_step_tie_break_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` dynamic one-step/tie-break boundary:
+the named finite `B*` strategy has the cutoff complement and VCG slot/payment
+conclusion. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_one_step_tie_break
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdOneStepTieBreakDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_bstar_ranked_threshold_strategy
+          model.localModel.value model.localModel.clickThroughRate
+          model.localModel.remaining state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ paper_theorem8_bstar_ranked_threshold_strategy
+            model.localModel.value model.localModel.clickThroughRate
+            model.localModel.remaining state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.localModel.value model.localModel.clickThroughRate
+              (model.localModel.remaining + 1) (rank + 1)) ∧
+        (∀ bidder,
+          (model.game.outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                model.localModel.value model.localModel.clickThroughRate
+                model.localModel.remaining)).slotOf bidder =
+            model.game.vcgOutcome.slotOf bidder) ∧
+          (∀ bidder,
+            (model.game.outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  model.localModel.value model.localModel.clickThroughRate
+                  model.localModel.remaining)).paymentPerClick bidder =
+              model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_one_step_tie_break_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict ordered source-completion: the one-step/tie-break
+core source certificate derives the existing core source-completion
+certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_certificate_of_one_step_tie_break
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_certificate_of_one_step_tie_break
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: the one-step/tie-break
+core source certificate also derives the paper's one-sided Step 1/Step 2 source
+certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_certificate_of_one_step_tie_break
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_certificate_of_one_step_tie_break
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: the one-step/tie-break
+core source certificate derives the full source-completion certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_one_step_tie_break
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_one_step_tie_break
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: source-level
+sequential-rationality implications derive the one-step/tie-break core source
+certificate by unpacking each PBE witness. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_sequential_rationality
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_sequential_rationality
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: source-level
+sequential-rationality implications derive the existing core source-completion
+certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_certificate_of_sequential_rationality
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_certificate_of_sequential_rationality
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: source-level
+sequential-rationality implications also recover the paper's one-sided Step 1
+and Step 2 certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_certificate_of_sequential_rationality
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_certificate_of_sequential_rationality
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: source-level
+sequential-rationality implications derive the full source-completion
+certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_sequential_rationality
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_sequential_rationality
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: a source-shaped
+reachable/off-path sequential-rationality iff supplies the corresponding core
+source certificate; the named-strategy sequential-rationality field is derived
+from the audited strict finite `B*` source-shaped theorem. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_certificate_of_source_iff
+    {Belief : Type*}
+    (integrated :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (concrete_belief_consistency :
+      integrated.dynamic.base.game.isConsistentBelief
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          integrated.dynamic.base.strictModel.value
+          integrated.dynamic.base.strictModel.clickThroughRate
+          integrated.dynamic.base.strictModel.remaining)
+        integrated.dynamic.base.belief)
+    (sequential_rationality_iff_source_sequential :
+      ∀ strategy belief,
+        integrated.dynamic.base.game.isSequentiallyRational strategy belief ↔
+          paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+            integrated.dynamic.base.strictModel.clickThroughRate
+            integrated.dynamic.base.strictModel.value
+            integrated.dynamic.base.strictModel.remaining
+            initialState
+            strategy) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceSequentialRationalityCoreSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_certificate_of_source_iff
+      integrated initialState concrete_belief_consistency
+      sequential_rationality_iff_source_sequential
+
+/-- Audit for Theorem 8 strict ordered source-completion: the source-shaped
+reachable/off-path core certificate converts to the existing local-deviation
+core source-completion certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_certificate_of_source_sequential_rationality
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_certificate_of_source_sequential_rationality
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: a local-deviation
+characterization of sequential rationality derives the source sequential
+rationality core certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_certificate_of_local_deviation
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_certificate_of_local_deviation
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: a local-deviation
+characterization of sequential rationality derives the one-step/tie-break core
+source certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_local_deviation
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_local_deviation
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: a local-deviation
+characterization of sequential rationality derives the existing core
+source-completion certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_certificate_of_local_deviation
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_certificate_of_local_deviation
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: a local-deviation
+characterization of sequential rationality recovers the one-sided Step 1/Step 2
+source certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_certificate_of_local_deviation
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_certificate_of_local_deviation
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: a local-deviation
+characterization of sequential rationality derives the full source-completion
+certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_local_deviation
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_local_deviation
+      cert
+
+/-- Audit for Theorem 8 strict ordered local-deviation source-completion: the
+named finite `B*` ranked-threshold strategy is a PBE. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_named_strategy_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_named_strategy_pbe
+      cert
+
+/-- Audit for Theorem 8 strict ordered local-deviation source-completion: every
+PBE strategy is the named finite `B*` ranked-threshold strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_pbe_strategy_eq_named
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    strategy =
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_pbe_strategy_eq_named
+      cert hpbe
+
+/-- Audit for Theorem 8 strict ordered local-deviation source-completion:
+there is a unique PBE strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_exists_unique_named_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_exists_unique_named_pbe
+      cert
+
+/-- Audit for Theorem 8 strict ordered local-deviation source-completion: every
+PBE outcome equals the certified VCG outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_pbe_outcome_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    cert.integrated.dynamic.base.game.outcomeOf strategy =
+      cert.integrated.dynamic.base.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_pbe_outcome_eq_vcg
+      cert hpbe
+
+/-- Audit for Theorem 8 strict ordered source-sequential source-completion: the
+named finite `B*` ranked-threshold strategy is a PBE. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_named_strategy_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_named_strategy_pbe
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-sequential source-completion:
+every PBE strategy is the named finite `B*` ranked-threshold strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_pbe_strategy_eq_named
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceSequentialRationalityCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    strategy =
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_pbe_strategy_eq_named
+      cert hpbe
+
+/-- Audit for Theorem 8 strict ordered source-sequential source-completion:
+there is a unique PBE strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_exists_unique_named_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_exists_unique_named_pbe
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-sequential source-completion:
+every PBE outcome equals the certified VCG outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_pbe_outcome_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceSequentialRationalityCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    cert.integrated.dynamic.base.game.outcomeOf strategy =
+      cert.integrated.dynamic.base.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_pbe_outcome_eq_vcg
+      cert hpbe
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: PBE
+strategies are exactly the named finite `B*` threshold strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_iff_strategy_eq_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ) :
+    model.game.PerfectBayesianEquilibrium strategy ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          model.localModel.value model.localModel.clickThroughRate
+          model.localModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_iff_strategy_eq_of_local_optimality_extensional_outcome_certificate
+      model strategy
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: every
+certified PBE strategy has the same state/rank action as the named finite `B*`
+threshold strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_iff_named_strategy_action_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.localModel.value model.localModel.clickThroughRate
+        model.localModel.remaining state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_iff_named_strategy_action_of_local_optimality_extensional_outcome_certificate
+      model (strategy := strategy) hpbe state rank
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: any two
+certified PBE strategies agree at every state/rank action. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_actions_iff_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy otherStrategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (hother : model.game.PerfectBayesianEquilibrium otherStrategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔ otherStrategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_actions_iff_of_local_optimality_extensional_outcome_certificate
+      model (strategy := strategy) (otherStrategy := otherStrategy) hpbe
+      hother state rank
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: any two
+certified PBE strategies are equal. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_strategy_eq_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy otherStrategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (hother : model.game.PerfectBayesianEquilibrium otherStrategy) :
+    strategy = otherStrategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_strategy_eq_of_local_optimality_extensional_outcome_certificate
+      model (strategy := strategy) (otherStrategy := otherStrategy) hpbe
+      hother
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: the named
+finite `B*` ranked-threshold strategy is a PBE. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_pbe_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    model.game.PerfectBayesianEquilibrium
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.localModel.value model.localModel.clickThroughRate
+        model.localModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_pbe_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: there is
+a unique PBE strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_exists_unique_pbe_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      model.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_exists_unique_pbe_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: every PBE
+strategy follows the finite `B*` cutoff rule. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_drops_iff_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        model.localModel.value model.localModel.clickThroughRate
+        (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_drops_iff_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: every PBE
+strategy drops at the exact finite `B*` threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_drops_at_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock :
+      state.clockPrice =
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1)) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_drops_at_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank hclock
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: every PBE
+strategy drops strictly after the finite `B*` threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_drops_after_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hthreshold_lt :
+      paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) <
+        state.clockPrice) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_drops_after_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank hthreshold_lt
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: every PBE
+strategy has not dropped exactly when the clock is below the finite `B*`
+cutoff. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_not_drop_iff_clock_lt_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    ¬ strategy state rank ↔
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_not_drop_iff_clock_lt_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: every PBE
+strategy has not dropped strictly before the finite `B*` threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_not_drop_before_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock_lt :
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1)) :
+    ¬ strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_not_drop_before_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank hclock_lt
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: the named
+finite `B*` strategy follows the cutoff rule. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_drops_iff_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strategy
+        model.localModel.value model.localModel.clickThroughRate
+        model.localModel.remaining state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        model.localModel.value model.localModel.clickThroughRate
+        (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_drops_iff_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model state rank
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: the named
+finite `B*` strategy has not dropped exactly below the cutoff. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_not_drop_iff_clock_lt_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    ¬ paper_theorem8_bstar_ranked_threshold_strategy
+        model.localModel.value model.localModel.clickThroughRate
+        model.localModel.remaining state rank ↔
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_not_drop_iff_clock_lt_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model state rank
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: every PBE
+strategy induces the VCG outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_outcome_eq_vcg_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    model.game.outcomeOf strategy = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_outcome_eq_vcg_of_local_optimality_extensional_outcome_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: the named
+finite `B*` strategy induces the VCG outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_outcome_eq_vcg_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    model.game.outcomeOf
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.localModel.value model.localModel.clickThroughRate
+          model.localModel.remaining) =
+      model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_outcome_eq_vcg_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: any two
+certified PBE strategies induce the same paper outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_outcome_eq_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy otherStrategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (hother : model.game.PerfectBayesianEquilibrium otherStrategy) :
+    model.game.outcomeOf strategy = model.game.outcomeOf otherStrategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_outcome_eq_of_local_optimality_extensional_outcome_certificate
+      model (strategy := strategy) (otherStrategy := otherStrategy) hpbe
+      hother
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: every PBE
+strategy has the VCG slot assignment and VCG per-click payments. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_slot_payment_eq_vcg_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    (∀ bidder,
+      (model.game.outcomeOf strategy).slotOf bidder =
+        model.game.vcgOutcome.slotOf bidder) ∧
+      (∀ bidder,
+        (model.game.outcomeOf strategy).paymentPerClick bidder =
+          model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_slot_payment_eq_vcg_of_local_optimality_extensional_outcome_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: the named
+finite `B*` strategy has the VCG slot assignment and VCG per-click payments. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_slot_payment_eq_vcg_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ bidder,
+      (model.game.outcomeOf
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.localModel.value model.localModel.clickThroughRate
+          model.localModel.remaining)).slotOf bidder =
+        model.game.vcgOutcome.slotOf bidder) ∧
+      (∀ bidder,
+        (model.game.outcomeOf
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.localModel.value model.localModel.clickThroughRate
+            model.localModel.remaining)).paymentPerClick bidder =
+          model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_slot_payment_eq_vcg_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: the
+local-optimality extensional-outcome certificate induces the reusable abstract
+dynamic-game PBE certificate. -/
+def audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_certificate_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    PaperTheorem8DynamicGamePBECertificate
+      ℕ ℕ (PaperTheorem8GeneralizedEnglishStrategy ℕ) Belief :=
+  paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_certificate_of_local_optimality_extensional_outcome_certificate
+    model
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: applying
+the reusable abstract dynamic-game certificate gives the generic
+unique-PBE/VCG conclusion. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_generic_unique_pbe_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    ∃ equilibrium : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      model.game.PerfectBayesianEquilibrium equilibrium ∧
+        (∀ strategy,
+          model.game.PerfectBayesianEquilibrium strategy →
+            strategy = equilibrium) ∧
+        model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_generic_unique_pbe_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: any two
+certified PBE strategies have the same slots and per-click payments. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_slot_payment_eq_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy otherStrategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (hother : model.game.PerfectBayesianEquilibrium otherStrategy) :
+    (∀ bidder,
+      (model.game.outcomeOf strategy).slotOf bidder =
+        (model.game.outcomeOf otherStrategy).slotOf bidder) ∧
+      (∀ bidder,
+        (model.game.outcomeOf strategy).paymentPerClick bidder =
+          (model.game.outcomeOf otherStrategy).paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_slot_payment_eq_of_local_optimality_extensional_outcome_certificate
+      model (strategy := strategy) (otherStrategy := otherStrategy) hpbe
+      hother
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: one
+paper-facing endpoint bundles the PBE cutoff rule with VCG slot/payment
+equality. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_paper_conclusion_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    (∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ bidder,
+        (model.game.outcomeOf strategy).slotOf bidder =
+          model.game.vcgOutcome.slotOf bidder) ∧
+        (∀ bidder,
+          (model.game.outcomeOf strategy).paymentPerClick bidder =
+            model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_paper_conclusion_of_local_optimality_extensional_outcome_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: one
+paper-facing endpoint bundles the PBE drop cutoff, not-drop cutoff complement,
+and VCG slot/payment equality. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_paper_conclusion_with_cutoff_complement_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    (∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ strategy state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.localModel.value model.localModel.clickThroughRate
+              (model.localModel.remaining + 1) (rank + 1)) ∧
+        (∀ bidder,
+          (model.game.outcomeOf strategy).slotOf bidder =
+            model.game.vcgOutcome.slotOf bidder) ∧
+          (∀ bidder,
+            (model.game.outcomeOf strategy).paymentPerClick bidder =
+              model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_paper_conclusion_with_cutoff_complement_of_local_optimality_extensional_outcome_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed-outcome boundary: one
+paper-facing endpoint bundles the PBE drop cutoff, not-drop cutoff complement,
+and VCG slot/payment equality. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_pbe_paper_conclusion_with_cutoff_complement_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    (∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ strategy state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.localModel.value model.localModel.clickThroughRate
+              (model.localModel.remaining + 1) (rank + 1)) ∧
+        (∀ bidder,
+          (model.game.outcomeOf strategy).slotOf bidder =
+            model.game.vcgOutcome.slotOf bidder) ∧
+          (∀ bidder,
+            (model.game.outcomeOf strategy).paymentPerClick bidder =
+              model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_pbe_paper_conclusion_with_cutoff_complement_of_constructed_outcome_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: the named
+finite `B*` strategy itself has the cutoff rule and VCG slot/payment outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_bstar_ranked_threshold_strategy
+          model.localModel.value model.localModel.clickThroughRate
+          model.localModel.remaining state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ bidder,
+        (model.game.outcomeOf
+            (paper_theorem8_bstar_ranked_threshold_strategy
+              model.localModel.value model.localModel.clickThroughRate
+              model.localModel.remaining)).slotOf bidder =
+          model.game.vcgOutcome.slotOf bidder) ∧
+        (∀ bidder,
+          (model.game.outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                model.localModel.value model.localModel.clickThroughRate
+                model.localModel.remaining)).paymentPerClick bidder =
+            model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact-`B*` dynamic local-optimality boundary: the named
+finite `B*` strategy itself has the drop cutoff, not-drop cutoff complement,
+and VCG slot/payment outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_bstar_ranked_threshold_strategy
+          model.localModel.value model.localModel.clickThroughRate
+          model.localModel.remaining state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ paper_theorem8_bstar_ranked_threshold_strategy
+            model.localModel.value model.localModel.clickThroughRate
+            model.localModel.remaining state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.localModel.value model.localModel.clickThroughRate
+              (model.localModel.remaining + 1) (rank + 1)) ∧
+        (∀ bidder,
+          (model.game.outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                model.localModel.value model.localModel.clickThroughRate
+                model.localModel.remaining)).slotOf bidder =
+            model.game.vcgOutcome.slotOf bidder) ∧
+          (∀ bidder,
+            (model.game.outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  model.localModel.value model.localModel.clickThroughRate
+                  model.localModel.remaining)).paymentPerClick bidder =
+              model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 exact finite-`B*` constructed-outcome boundary: the
+named finite `B*` strategy itself has the drop cutoff, not-drop cutoff
+complement, and VCG slot/payment outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_bstar_ranked_threshold_strategy
+          model.localModel.value model.localModel.clickThroughRate
+          model.localModel.remaining state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.localModel.value model.localModel.clickThroughRate
+          (model.localModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ paper_theorem8_bstar_ranked_threshold_strategy
+            model.localModel.value model.localModel.clickThroughRate
+            model.localModel.remaining state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.localModel.value model.localModel.clickThroughRate
+              (model.localModel.remaining + 1) (rank + 1)) ∧
+        (∀ bidder,
+          (model.game.outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                model.localModel.value model.localModel.clickThroughRate
+                model.localModel.remaining)).slotOf bidder =
+            model.game.vcgOutcome.slotOf bidder) ∧
+          (∀ bidder,
+            (model.game.outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  model.localModel.value model.localModel.clickThroughRate
+                  model.localModel.remaining)).paymentPerClick bidder =
+              model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_constructed_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact-`B*` ranked-threshold dynamic-game
+certificate from local optimality: strict threshold facts, local optimality,
+exact threshold behavior, unique PBE, and VCG outcome equivalence are exposed
+together. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_local_optimality_certificate_boundary
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    paper_theorem8_bstar_ranked_threshold_strict_interval_statement
+      model.strictModel.clickThroughRate model.strictModel.value
+      model.strictModel.remaining ∧
+    paper_theorem8_bstar_ranked_threshold_local_optimality_statement
+      model.strictModel.clickThroughRate model.strictModel.value
+      model.strictModel.remaining ∧
+    (∀ state rank,
+      paper_theorem8_ranked_threshold_dropout_strategy
+          model.strictModel.clickThroughRate
+          (fun k =>
+            paper_theorem8_bstar_threshold_bid
+              model.strictModel.value model.strictModel.clickThroughRate
+              model.strictModel.remaining (k + 2))
+          model.strictModel.value state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      ∃ equilibrium : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        model.game.PerfectBayesianEquilibrium equilibrium ∧
+          (∀ strategy,
+            model.game.PerfectBayesianEquilibrium strategy →
+              strategy = equilibrium) ∧
+          model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_unique_pbe_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact finite-`B*` constructed-outcome boundary:
+constructed ranked-`B*` outcome equality induces the strict extensional
+VCG-outcome certificate used by the main dynamic-game theorem. -/
+def audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_extensional_outcome_certificate_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_extensional_outcome_certificate_of_constructed_outcome_certificate
+    model
+
+/-- Audit for Theorem 8 strict exact finite-`B*` constructed-outcome boundary:
+ordered constructed-outcome quality transfers to the certificate's VCG outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_constructed_certificate_vcg_outcome_ordered_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief)
+    (hvalue_nonneg : ∀ i, 0 ≤ cert.strictModel.value i)
+    (hvalue_mono :
+      ∀ i, cert.strictModel.value (i + 1) ≤ cert.strictModel.value i)
+    (hclick_mono :
+      ∀ i, cert.strictModel.clickThroughRate (i + 1) ≤
+        cert.strictModel.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < cert.strictModel.clickThroughRate i) :
+    (∀ rank, cert.game.vcgOutcome.slotOf rank = some rank) ∧
+      (∀ rank,
+        cert.game.vcgOutcome.paymentPerClick rank =
+          paper_theorem8_bstar_threshold_bid
+            cert.strictModel.value cert.strictModel.clickThroughRate
+            cert.strictModel.remaining (rank + 1)) ∧
+        (∀ rank,
+          cert.strictModel.clickThroughRate rank *
+              cert.game.vcgOutcome.paymentPerClick rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              cert.strictModel.value cert.strictModel.clickThroughRate rank
+              cert.strictModel.remaining) ∧
+          (∀ rank,
+            0 ≤ cert.game.vcgOutcome.paymentPerClick rank ∧
+            cert.game.vcgOutcome.paymentPerClick rank ≤
+              cert.strictModel.value rank) ∧
+            cert.game.vcgOutcome.IndividuallyRational
+              ({ clickThroughRate := cert.strictModel.clickThroughRate } :
+                PositionEnvironment ℕ)
+              cert.strictModel.value ∧
+              paper_position_no_positive_transfers cert.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_constructed_certificate_vcg_outcome_ordered_paper_conclusion
+      cert hvalue_nonneg hvalue_mono hclick_mono hclick_pos
+
+/-- Audit for Theorem 8 strict exact finite-`B*` constructed-outcome boundary:
+ordered constructed-outcome quality transfers to the named finite-`B*`
+strategy outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_constructed_certificate_named_strategy_outcome_ordered_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief)
+    (hvalue_nonneg : ∀ i, 0 ≤ cert.strictModel.value i)
+    (hvalue_mono :
+      ∀ i, cert.strictModel.value (i + 1) ≤ cert.strictModel.value i)
+    (hclick_mono :
+      ∀ i, cert.strictModel.clickThroughRate (i + 1) ≤
+        cert.strictModel.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < cert.strictModel.clickThroughRate i) :
+    (∀ rank,
+      (cert.game.outcomeOf
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.strictModel.value cert.strictModel.clickThroughRate
+          cert.strictModel.remaining)).slotOf rank = some rank) ∧
+      (∀ rank,
+        (cert.game.outcomeOf
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            cert.strictModel.value cert.strictModel.clickThroughRate
+            cert.strictModel.remaining)).paymentPerClick rank =
+          paper_theorem8_bstar_threshold_bid
+            cert.strictModel.value cert.strictModel.clickThroughRate
+            cert.strictModel.remaining (rank + 1)) ∧
+        (∀ rank,
+          cert.strictModel.clickThroughRate rank *
+              (cert.game.outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  cert.strictModel.value cert.strictModel.clickThroughRate
+                  cert.strictModel.remaining)).paymentPerClick rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              cert.strictModel.value cert.strictModel.clickThroughRate rank
+              cert.strictModel.remaining) ∧
+          (∀ rank,
+            0 ≤
+              (cert.game.outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  cert.strictModel.value cert.strictModel.clickThroughRate
+                  cert.strictModel.remaining)).paymentPerClick rank ∧
+            (cert.game.outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                cert.strictModel.value cert.strictModel.clickThroughRate
+                cert.strictModel.remaining)).paymentPerClick rank ≤
+              cert.strictModel.value rank) ∧
+            (cert.game.outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                cert.strictModel.value cert.strictModel.clickThroughRate
+                cert.strictModel.remaining)).IndividuallyRational
+              ({ clickThroughRate := cert.strictModel.clickThroughRate } :
+                PositionEnvironment ℕ)
+              cert.strictModel.value ∧
+              paper_position_no_positive_transfers
+                (cert.game.outcomeOf
+                  (paper_theorem8_bstar_ranked_threshold_strategy
+                    cert.strictModel.value cert.strictModel.clickThroughRate
+                    cert.strictModel.remaining)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_constructed_certificate_named_strategy_outcome_ordered_paper_conclusion
+      cert hvalue_nonneg hvalue_mono hclick_mono hclick_pos
+
+/-- Audit for Theorem 8 strict exact finite-`B*` constructed-outcome boundary:
+constructed outcome equality induces the reusable abstract dynamic-game PBE
+certificate directly. -/
+def audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_certificate_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    PaperTheorem8DynamicGamePBECertificate
+      ℕ ℕ (PaperTheorem8GeneralizedEnglishStrategy ℕ) Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_certificate_of_constructed_outcome_certificate
+    model
+
+/-- Audit for Theorem 8 strict exact finite-`B*` constructed-outcome boundary:
+once the constructed-outcome certificate is supplied, Lean derives the same
+strict local-optimality and unique-PBE/VCG conclusion as the extensional
+certificate. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_unique_pbe_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    paper_theorem8_bstar_ranked_threshold_strict_interval_statement
+      model.strictModel.clickThroughRate model.strictModel.value
+      model.strictModel.remaining ∧
+    paper_theorem8_bstar_ranked_threshold_local_optimality_statement
+      model.strictModel.clickThroughRate model.strictModel.value
+      model.strictModel.remaining ∧
+    (∀ state rank,
+      paper_theorem8_ranked_threshold_dropout_strategy
+          model.strictModel.clickThroughRate
+          (fun k =>
+            paper_theorem8_bstar_threshold_bid
+              model.strictModel.value model.strictModel.clickThroughRate
+              model.strictModel.remaining (k + 2))
+          model.strictModel.value state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      ∃ equilibrium : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        model.game.PerfectBayesianEquilibrium equilibrium ∧
+          (∀ strategy,
+            model.game.PerfectBayesianEquilibrium strategy →
+              strategy = equilibrium) ∧
+          model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_unique_pbe_of_local_optimality_extensional_outcome_certificate
+      (paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_extensional_outcome_certificate_of_constructed_outcome_certificate
+        model)
+
+/-- Audit for Theorem 8 strict exact finite-`B*` constructed-outcome boundary:
+the constructed certificate directly exposes belief consistency for the named
+finite `B*` strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_consistent_belief_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    model.game.isConsistentBelief
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.strictModel.value model.strictModel.clickThroughRate
+        model.strictModel.remaining)
+      model.belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_consistent_belief_of_constructed_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact finite-`B*` constructed-outcome boundary:
+the constructed certificate directly exposes sequential rationality for the
+named finite `B*` strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_sequentially_rational_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    model.game.isSequentiallyRational
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.strictModel.value model.strictModel.clickThroughRate
+        model.strictModel.remaining)
+      model.belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_sequentially_rational_of_constructed_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact finite-`B*` dynamic local-optimality
+boundary: the certificate exposes belief consistency for the named finite `B*`
+strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_consistent_belief_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    model.game.isConsistentBelief
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.strictModel.value model.strictModel.clickThroughRate
+        model.strictModel.remaining)
+      model.belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_consistent_belief_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact finite-`B*` dynamic local-optimality
+boundary: the certificate's strict local-optimality bridge exposes sequential
+rationality for the named finite `B*` strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_sequentially_rational_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    model.game.isSequentiallyRational
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.strictModel.value model.strictModel.clickThroughRate
+        model.strictModel.remaining)
+      model.belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_sequentially_rational_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+PBE strategies are exactly the named finite `B*` threshold strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_iff_strategy_eq_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ) :
+    model.game.PerfectBayesianEquilibrium strategy ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          model.strictModel.value model.strictModel.clickThroughRate
+          model.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_iff_strategy_eq_of_local_optimality_extensional_outcome_certificate
+      model strategy
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+every certified PBE strategy has the same state/rank action as the named finite
+`B*` threshold strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_iff_named_strategy_action_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.strictModel.value model.strictModel.clickThroughRate
+        model.strictModel.remaining state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_iff_named_strategy_action_of_local_optimality_extensional_outcome_certificate
+      model (strategy := strategy) hpbe state rank
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: any
+two certified PBE strategies agree at every state/rank action. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_actions_iff_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy otherStrategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (hother : model.game.PerfectBayesianEquilibrium otherStrategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔ otherStrategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_actions_iff_of_local_optimality_extensional_outcome_certificate
+      model (strategy := strategy) (otherStrategy := otherStrategy) hpbe
+      hother state rank
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: any
+two certified PBE strategies are equal. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_strategy_eq_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy otherStrategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (hother : model.game.PerfectBayesianEquilibrium otherStrategy) :
+    strategy = otherStrategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_strategy_eq_of_local_optimality_extensional_outcome_certificate
+      model (strategy := strategy) (otherStrategy := otherStrategy) hpbe
+      hother
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: the
+named finite `B*` ranked-threshold strategy is a PBE. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_pbe_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    model.game.PerfectBayesianEquilibrium
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.strictModel.value model.strictModel.clickThroughRate
+        model.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_pbe_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+there is a unique PBE strategy. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_exists_unique_pbe_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      model.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_exists_unique_pbe_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+every PBE strategy follows the finite `B*` cutoff rule. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_drops_iff_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        model.strictModel.value model.strictModel.clickThroughRate
+        (model.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_drops_iff_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+every PBE strategy drops at the exact finite `B*` threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_drops_at_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock :
+      state.clockPrice =
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1)) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_drops_at_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank hclock
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+every PBE strategy drops strictly after the finite `B*` threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_drops_after_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hthreshold_lt :
+      paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1) <
+        state.clockPrice) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_drops_after_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank hthreshold_lt
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+every PBE strategy has not dropped exactly when the clock is below the finite
+`B*` cutoff. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_not_drop_iff_clock_lt_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    ¬ strategy state rank ↔
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_not_drop_iff_clock_lt_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+every PBE strategy has not dropped strictly before the finite `B*` threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_not_drop_before_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock_lt :
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1)) :
+    ¬ strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_not_drop_before_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank hclock_lt
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: the
+named finite `B*` strategy follows the cutoff rule. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_drops_iff_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strategy
+        model.strictModel.value model.strictModel.clickThroughRate
+        model.strictModel.remaining state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        model.strictModel.value model.strictModel.clickThroughRate
+        (model.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_drops_iff_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model state rank
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: the
+named finite `B*` strategy has not dropped exactly below the cutoff. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_not_drop_iff_clock_lt_threshold_bid_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    ¬ paper_theorem8_bstar_ranked_threshold_strategy
+        model.strictModel.value model.strictModel.clickThroughRate
+        model.strictModel.remaining state rank ↔
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_not_drop_iff_clock_lt_threshold_bid_of_local_optimality_extensional_outcome_certificate
+      model state rank
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+every PBE strategy remains active at or before the continuation `B*` bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_not_drop_at_or_before_continuation_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock_le :
+      state.clockPrice ≤
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          model.strictModel.remaining (rank + 2)) :
+    ¬ strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_not_drop_at_or_before_continuation_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank hclock_le
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+every PBE strategy has dropped once the clock reaches the lower bidder's
+value. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_drops_at_or_after_value_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hvalue_le_clock : model.strictModel.value (rank + 1) ≤ state.clockPrice) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_drops_at_or_after_value_of_local_optimality_extensional_outcome_certificate
+      model hpbe state rank hvalue_le_clock
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+every certified PBE has concrete states before and after the finite `B*`
+threshold where it respectively has not dropped and has dropped. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_nonempty_behavior_regions_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    ∀ rank,
+      (∃ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        paper_theorem8_bstar_threshold_bid
+            model.strictModel.value model.strictModel.clickThroughRate
+            model.strictModel.remaining (rank + 2) <
+          state.clockPrice ∧
+        state.clockPrice <
+          paper_theorem8_bstar_threshold_bid
+            model.strictModel.value model.strictModel.clickThroughRate
+            (model.strictModel.remaining + 1) (rank + 1) ∧
+        ¬ strategy state rank) ∧
+      (∃ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        paper_theorem8_bstar_threshold_bid
+            model.strictModel.value model.strictModel.clickThroughRate
+            (model.strictModel.remaining + 1) (rank + 1) <
+          state.clockPrice ∧
+        state.clockPrice < model.strictModel.value (rank + 1) ∧
+        strategy state rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_nonempty_behavior_regions_of_local_optimality_extensional_outcome_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+the named finite `B*` strategy has concrete states before and after the finite
+`B*` threshold where it respectively has not dropped and has dropped. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_nonempty_behavior_regions_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    ∀ rank,
+      (∃ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        paper_theorem8_bstar_threshold_bid
+            model.strictModel.value model.strictModel.clickThroughRate
+            model.strictModel.remaining (rank + 2) <
+          state.clockPrice ∧
+        state.clockPrice <
+          paper_theorem8_bstar_threshold_bid
+            model.strictModel.value model.strictModel.clickThroughRate
+            (model.strictModel.remaining + 1) (rank + 1) ∧
+        ¬ paper_theorem8_bstar_ranked_threshold_strategy
+            model.strictModel.value model.strictModel.clickThroughRate
+            model.strictModel.remaining state rank) ∧
+      (∃ state : PaperTheorem8GeneralizedEnglishAuctionState ℕ,
+        paper_theorem8_bstar_threshold_bid
+            model.strictModel.value model.strictModel.clickThroughRate
+            (model.strictModel.remaining + 1) (rank + 1) <
+          state.clockPrice ∧
+        state.clockPrice < model.strictModel.value (rank + 1) ∧
+        paper_theorem8_bstar_ranked_threshold_strategy
+          model.strictModel.value model.strictModel.clickThroughRate
+          model.strictModel.remaining state rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_nonempty_behavior_regions_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+every PBE strategy induces the VCG outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_outcome_eq_vcg_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    model.game.outcomeOf strategy = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_outcome_eq_vcg_of_local_optimality_extensional_outcome_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: the
+named finite `B*` strategy induces the VCG outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_outcome_eq_vcg_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    model.game.outcomeOf
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.strictModel.value model.strictModel.clickThroughRate
+          model.strictModel.remaining) =
+      model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_outcome_eq_vcg_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+any two certified PBE strategies induce the same paper outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_outcome_eq_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy otherStrategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (hother : model.game.PerfectBayesianEquilibrium otherStrategy) :
+    model.game.outcomeOf strategy = model.game.outcomeOf otherStrategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_outcome_eq_of_local_optimality_extensional_outcome_certificate
+      model (strategy := strategy) (otherStrategy := otherStrategy) hpbe
+      hother
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+every PBE strategy has the VCG slot assignment and VCG per-click payments. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_slot_payment_eq_vcg_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    (∀ bidder,
+      (model.game.outcomeOf strategy).slotOf bidder =
+        model.game.vcgOutcome.slotOf bidder) ∧
+      (∀ bidder,
+        (model.game.outcomeOf strategy).paymentPerClick bidder =
+          model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_slot_payment_eq_vcg_of_local_optimality_extensional_outcome_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: the
+named finite `B*` strategy has the VCG slot assignment and VCG per-click
+payments. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_slot_payment_eq_vcg_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ bidder,
+      (model.game.outcomeOf
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.strictModel.value model.strictModel.clickThroughRate
+          model.strictModel.remaining)).slotOf bidder =
+        model.game.vcgOutcome.slotOf bidder) ∧
+      (∀ bidder,
+        (model.game.outcomeOf
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.strictModel.value model.strictModel.clickThroughRate
+            model.strictModel.remaining)).paymentPerClick bidder =
+          model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_slot_payment_eq_vcg_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: the
+local-optimality extensional-outcome certificate induces the reusable abstract
+dynamic-game PBE certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_certificate_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    PaperTheorem8DynamicGamePBECertificate
+      ℕ ℕ (PaperTheorem8GeneralizedEnglishStrategy ℕ) Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_certificate_of_local_optimality_extensional_outcome_certificate
+    model
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+applying the reusable abstract dynamic-game certificate gives the generic
+unique-PBE/VCG conclusion. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_generic_unique_pbe_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    ∃ equilibrium : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      model.game.PerfectBayesianEquilibrium equilibrium ∧
+        (∀ strategy,
+          model.game.PerfectBayesianEquilibrium strategy →
+            strategy = equilibrium) ∧
+        model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_generic_unique_pbe_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: any
+two certified PBE strategies have the same slots and per-click payments. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_slot_payment_eq_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy otherStrategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy)
+    (hother : model.game.PerfectBayesianEquilibrium otherStrategy) :
+    (∀ bidder,
+      (model.game.outcomeOf strategy).slotOf bidder =
+        (model.game.outcomeOf otherStrategy).slotOf bidder) ∧
+      (∀ bidder,
+        (model.game.outcomeOf strategy).paymentPerClick bidder =
+          (model.game.outcomeOf otherStrategy).paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_slot_payment_eq_of_local_optimality_extensional_outcome_certificate
+      model (strategy := strategy) (otherStrategy := otherStrategy) hpbe
+      hother
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: one
+paper-facing endpoint bundles the PBE cutoff rule, strict no-early/drop-by-value
+behavior, and VCG slot/payment equality. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_paper_conclusion_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    (∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        state.clockPrice ≤
+          paper_theorem8_bstar_threshold_bid
+            model.strictModel.value model.strictModel.clickThroughRate
+            model.strictModel.remaining (rank + 2) →
+          ¬ strategy state rank) ∧
+        (∀ state rank,
+          model.strictModel.value (rank + 1) ≤ state.clockPrice →
+            strategy state rank) ∧
+          (∀ bidder,
+            (model.game.outcomeOf strategy).slotOf bidder =
+              model.game.vcgOutcome.slotOf bidder) ∧
+            (∀ bidder,
+              (model.game.outcomeOf strategy).paymentPerClick bidder =
+                model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_paper_conclusion_of_local_optimality_extensional_outcome_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary:
+one paper-facing endpoint bundles the PBE drop cutoff, not-drop cutoff
+complement, strict no-early/drop-by-value behavior, and VCG slot/payment
+equality. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_paper_conclusion_with_cutoff_complement_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    (∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ strategy state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.strictModel.value model.strictModel.clickThroughRate
+              (model.strictModel.remaining + 1) (rank + 1)) ∧
+        (∀ state rank,
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.strictModel.value model.strictModel.clickThroughRate
+              model.strictModel.remaining (rank + 2) →
+            ¬ strategy state rank) ∧
+          (∀ state rank,
+            model.strictModel.value (rank + 1) ≤ state.clockPrice →
+              strategy state rank) ∧
+            (∀ bidder,
+              (model.game.outcomeOf strategy).slotOf bidder =
+                model.game.vcgOutcome.slotOf bidder) ∧
+              (∀ bidder,
+                (model.game.outcomeOf strategy).paymentPerClick bidder =
+                  model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_paper_conclusion_with_cutoff_complement_of_local_optimality_extensional_outcome_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 strict exact finite-`B*` constructed-outcome boundary:
+one paper-facing endpoint bundles the PBE drop cutoff, not-drop cutoff
+complement, strict no-early/drop-by-value behavior, and VCG slot/payment
+equality. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_paper_conclusion_with_cutoff_complement_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : model.game.PerfectBayesianEquilibrium strategy) :
+    (∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ strategy state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.strictModel.value model.strictModel.clickThroughRate
+              (model.strictModel.remaining + 1) (rank + 1)) ∧
+        (∀ state rank,
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.strictModel.value model.strictModel.clickThroughRate
+              model.strictModel.remaining (rank + 2) →
+            ¬ strategy state rank) ∧
+          (∀ state rank,
+            model.strictModel.value (rank + 1) ≤ state.clockPrice →
+              strategy state rank) ∧
+            (∀ bidder,
+              (model.game.outcomeOf strategy).slotOf bidder =
+                model.game.vcgOutcome.slotOf bidder) ∧
+              (∀ bidder,
+                (model.game.outcomeOf strategy).paymentPerClick bidder =
+                  model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_pbe_paper_conclusion_with_cutoff_complement_of_constructed_outcome_certificate
+      model hpbe
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: the
+named finite `B*` strategy itself has the cutoff rule, strict
+no-early/drop-by-value behavior, and VCG slot/payment outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_paper_conclusion_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_bstar_ranked_threshold_strategy
+          model.strictModel.value model.strictModel.clickThroughRate
+          model.strictModel.remaining state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        state.clockPrice ≤
+          paper_theorem8_bstar_threshold_bid
+            model.strictModel.value model.strictModel.clickThroughRate
+            model.strictModel.remaining (rank + 2) →
+          ¬ paper_theorem8_bstar_ranked_threshold_strategy
+              model.strictModel.value model.strictModel.clickThroughRate
+              model.strictModel.remaining state rank) ∧
+        (∀ state rank,
+          model.strictModel.value (rank + 1) ≤ state.clockPrice →
+            paper_theorem8_bstar_ranked_threshold_strategy
+              model.strictModel.value model.strictModel.clickThroughRate
+              model.strictModel.remaining state rank) ∧
+          (∀ bidder,
+            (model.game.outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  model.strictModel.value model.strictModel.clickThroughRate
+                  model.strictModel.remaining)).slotOf bidder =
+              model.game.vcgOutcome.slotOf bidder) ∧
+            (∀ bidder,
+              (model.game.outcomeOf
+                  (paper_theorem8_bstar_ranked_threshold_strategy
+                    model.strictModel.value model.strictModel.clickThroughRate
+                    model.strictModel.remaining)).paymentPerClick bidder =
+                model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_paper_conclusion_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact-`B*` dynamic local-optimality boundary: the
+named finite `B*` strategy itself has the drop cutoff, not-drop cutoff
+complement, strict no-early/drop-by-value behavior, and VCG slot/payment
+outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_local_optimality
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_bstar_ranked_threshold_strategy
+          model.strictModel.value model.strictModel.clickThroughRate
+          model.strictModel.remaining state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ paper_theorem8_bstar_ranked_threshold_strategy
+            model.strictModel.value model.strictModel.clickThroughRate
+            model.strictModel.remaining state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.strictModel.value model.strictModel.clickThroughRate
+              (model.strictModel.remaining + 1) (rank + 1)) ∧
+        (∀ state rank,
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.strictModel.value model.strictModel.clickThroughRate
+              model.strictModel.remaining (rank + 2) →
+            ¬ paper_theorem8_bstar_ranked_threshold_strategy
+                model.strictModel.value model.strictModel.clickThroughRate
+                model.strictModel.remaining state rank) ∧
+          (∀ state rank,
+            model.strictModel.value (rank + 1) ≤ state.clockPrice →
+              paper_theorem8_bstar_ranked_threshold_strategy
+                model.strictModel.value model.strictModel.clickThroughRate
+                model.strictModel.remaining state rank) ∧
+            (∀ bidder,
+              (model.game.outcomeOf
+                  (paper_theorem8_bstar_ranked_threshold_strategy
+                    model.strictModel.value model.strictModel.clickThroughRate
+                    model.strictModel.remaining)).slotOf bidder =
+                model.game.vcgOutcome.slotOf bidder) ∧
+              (∀ bidder,
+                (model.game.outcomeOf
+                    (paper_theorem8_bstar_ranked_threshold_strategy
+                      model.strictModel.value model.strictModel.clickThroughRate
+                      model.strictModel.remaining)).paymentPerClick bidder =
+                  model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_local_optimality_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact finite-`B*` constructed-outcome boundary:
+the named finite `B*` strategy itself has the drop cutoff, not-drop cutoff
+complement, strict no-early/drop-by-value behavior, and VCG slot/payment
+outcome. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_constructed_outcome_certificate
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    (∀ state rank,
+      paper_theorem8_bstar_ranked_threshold_strategy
+          model.strictModel.value model.strictModel.clickThroughRate
+          model.strictModel.remaining state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.strictModel.value model.strictModel.clickThroughRate
+          (model.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ paper_theorem8_bstar_ranked_threshold_strategy
+            model.strictModel.value model.strictModel.clickThroughRate
+            model.strictModel.remaining state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.strictModel.value model.strictModel.clickThroughRate
+              (model.strictModel.remaining + 1) (rank + 1)) ∧
+        (∀ state rank,
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.strictModel.value model.strictModel.clickThroughRate
+              model.strictModel.remaining (rank + 2) →
+            ¬ paper_theorem8_bstar_ranked_threshold_strategy
+                model.strictModel.value model.strictModel.clickThroughRate
+                model.strictModel.remaining state rank) ∧
+          (∀ state rank,
+            model.strictModel.value (rank + 1) ≤ state.clockPrice →
+              paper_theorem8_bstar_ranked_threshold_strategy
+                model.strictModel.value model.strictModel.clickThroughRate
+                model.strictModel.remaining state rank) ∧
+            (∀ bidder,
+              (model.game.outcomeOf
+                  (paper_theorem8_bstar_ranked_threshold_strategy
+                    model.strictModel.value model.strictModel.clickThroughRate
+                    model.strictModel.remaining)).slotOf bidder =
+                model.game.vcgOutcome.slotOf bidder) ∧
+              (∀ bidder,
+                (model.game.outcomeOf
+                    (paper_theorem8_bstar_ranked_threshold_strategy
+                      model.strictModel.value model.strictModel.clickThroughRate
+                      model.strictModel.remaining)).paymentPerClick bidder =
+                  model.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_named_strategy_paper_conclusion_with_cutoff_complement_of_constructed_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 strict exact finite-`B*` constructed-outcome boundary
+with ordered values: one named-strategy endpoint bundles strict cutoff
+behavior, VCG outcome equality, and named/VCG outcome-quality facts. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_constructed_certificate_named_strategy_ordered_full_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief)
+    (hvalue_nonneg : ∀ i, 0 ≤ cert.strictModel.value i)
+    (hvalue_mono :
+      ∀ i, cert.strictModel.value (i + 1) ≤ cert.strictModel.value i) :
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.strictModel.value cert.strictModel.clickThroughRate
+        cert.strictModel.remaining
+    (∀ state rank,
+      namedStrategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          cert.strictModel.value cert.strictModel.clickThroughRate
+          (cert.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ namedStrategy state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              cert.strictModel.value cert.strictModel.clickThroughRate
+              (cert.strictModel.remaining + 1) (rank + 1)) ∧
+        (∀ state rank,
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              cert.strictModel.value cert.strictModel.clickThroughRate
+              cert.strictModel.remaining (rank + 2) →
+            ¬ namedStrategy state rank) ∧
+          (∀ state rank,
+            cert.strictModel.value (rank + 1) ≤ state.clockPrice →
+              namedStrategy state rank) ∧
+            (∀ bidder,
+              (cert.game.outcomeOf namedStrategy).slotOf bidder =
+                cert.game.vcgOutcome.slotOf bidder) ∧
+              (∀ bidder,
+                (cert.game.outcomeOf namedStrategy).paymentPerClick bidder =
+                  cert.game.vcgOutcome.paymentPerClick bidder) ∧
+                (∀ rank,
+                  (cert.game.outcomeOf namedStrategy).slotOf rank = some rank) ∧
+                  (∀ rank,
+                    (cert.game.outcomeOf namedStrategy).paymentPerClick rank =
+                      paper_theorem8_bstar_threshold_bid
+                        cert.strictModel.value cert.strictModel.clickThroughRate
+                        cert.strictModel.remaining (rank + 1)) ∧
+                    (∀ rank, cert.game.vcgOutcome.slotOf rank = some rank) ∧
+                      (∀ rank,
+                        cert.game.vcgOutcome.paymentPerClick rank =
+                          paper_theorem8_bstar_threshold_bid
+                            cert.strictModel.value cert.strictModel.clickThroughRate
+                            cert.strictModel.remaining (rank + 1)) ∧
+                        (∀ rank,
+                          cert.strictModel.clickThroughRate rank *
+                              (cert.game.outcomeOf namedStrategy).paymentPerClick rank =
+                            paper_theorem7_ranked_vcg_tail_payment
+                              cert.strictModel.value cert.strictModel.clickThroughRate
+                              rank cert.strictModel.remaining) ∧
+                          (∀ rank,
+                            0 ≤
+                              (cert.game.outcomeOf namedStrategy).paymentPerClick rank ∧
+                            (cert.game.outcomeOf namedStrategy).paymentPerClick rank ≤
+                              cert.strictModel.value rank) ∧
+                            (cert.game.outcomeOf namedStrategy).IndividuallyRational
+                              ({ clickThroughRate :=
+                                  cert.strictModel.clickThroughRate } :
+                                PositionEnvironment ℕ)
+                              cert.strictModel.value ∧
+                              paper_position_no_positive_transfers
+                                (cert.game.outcomeOf namedStrategy) ∧
+                                cert.game.vcgOutcome.IndividuallyRational
+                                  ({ clickThroughRate :=
+                                      cert.strictModel.clickThroughRate } :
+                                    PositionEnvironment ℕ)
+                                  cert.strictModel.value ∧
+                                  paper_position_no_positive_transfers
+                                    cert.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_constructed_certificate_named_strategy_ordered_full_paper_conclusion
+      cert hvalue_nonneg hvalue_mono
+
+/-- Audit for Theorem 8 strict exact finite-`B*` constructed-outcome boundary
+with ordered values: every certified PBE strategy has strict cutoff behavior,
+VCG outcome equality, and ordered outcome-quality facts. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_constructed_certificate_pbe_ordered_full_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+        Belief)
+    (hvalue_nonneg : ∀ i, 0 ≤ cert.strictModel.value i)
+    (hvalue_mono :
+      ∀ i, cert.strictModel.value (i + 1) ≤ cert.strictModel.value i)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : cert.game.PerfectBayesianEquilibrium strategy) :
+    (∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          cert.strictModel.value cert.strictModel.clickThroughRate
+          (cert.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ strategy state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              cert.strictModel.value cert.strictModel.clickThroughRate
+              (cert.strictModel.remaining + 1) (rank + 1)) ∧
+        (∀ state rank,
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              cert.strictModel.value cert.strictModel.clickThroughRate
+              cert.strictModel.remaining (rank + 2) →
+            ¬ strategy state rank) ∧
+          (∀ state rank,
+            cert.strictModel.value (rank + 1) ≤ state.clockPrice →
+              strategy state rank) ∧
+            (∀ bidder,
+              (cert.game.outcomeOf strategy).slotOf bidder =
+                cert.game.vcgOutcome.slotOf bidder) ∧
+              (∀ bidder,
+                (cert.game.outcomeOf strategy).paymentPerClick bidder =
+                  cert.game.vcgOutcome.paymentPerClick bidder) ∧
+                (∀ rank,
+                  (cert.game.outcomeOf strategy).slotOf rank = some rank) ∧
+                  (∀ rank,
+                    (cert.game.outcomeOf strategy).paymentPerClick rank =
+                      paper_theorem8_bstar_threshold_bid
+                        cert.strictModel.value cert.strictModel.clickThroughRate
+                        cert.strictModel.remaining (rank + 1)) ∧
+                    (∀ rank, cert.game.vcgOutcome.slotOf rank = some rank) ∧
+                      (∀ rank,
+                        cert.game.vcgOutcome.paymentPerClick rank =
+                          paper_theorem8_bstar_threshold_bid
+                            cert.strictModel.value cert.strictModel.clickThroughRate
+                            cert.strictModel.remaining (rank + 1)) ∧
+                        (∀ rank,
+                          cert.strictModel.clickThroughRate rank *
+                              (cert.game.outcomeOf strategy).paymentPerClick rank =
+                            paper_theorem7_ranked_vcg_tail_payment
+                              cert.strictModel.value cert.strictModel.clickThroughRate
+                              rank cert.strictModel.remaining) ∧
+                          (∀ rank,
+                            0 ≤
+                              (cert.game.outcomeOf strategy).paymentPerClick rank ∧
+                            (cert.game.outcomeOf strategy).paymentPerClick rank ≤
+                              cert.strictModel.value rank) ∧
+                            (cert.game.outcomeOf strategy).IndividuallyRational
+                              ({ clickThroughRate :=
+                                  cert.strictModel.clickThroughRate } :
+                                PositionEnvironment ℕ)
+                              cert.strictModel.value ∧
+                              paper_position_no_positive_transfers
+                                (cert.game.outcomeOf strategy) ∧
+                                cert.game.vcgOutcome.IndividuallyRational
+                                  ({ clickThroughRate :=
+                                      cert.strictModel.clickThroughRate } :
+                                    PositionEnvironment ℕ)
+                                  cert.strictModel.value ∧
+                                  paper_position_no_positive_transfers
+                                    cert.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_constructed_certificate_pbe_ordered_full_paper_conclusion
+      cert hvalue_nonneg hvalue_mono hpbe
+
+/-- Audit for Theorem 8 strict ordered constructed-outcome certificates:
+the packaged certificate directly gives the full named-strategy strict behavior
+and outcome-quality conclusion, with no loose side hypotheses. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_constructed_certificate_named_strategy_full_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedDynamicGameConstructedOutcomeCertificate
+        Belief) :
+    let base := cert.base
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        base.strictModel.value base.strictModel.clickThroughRate
+        base.strictModel.remaining
+    (∀ state rank,
+      namedStrategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          base.strictModel.value base.strictModel.clickThroughRate
+          (base.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ namedStrategy state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              base.strictModel.value base.strictModel.clickThroughRate
+              (base.strictModel.remaining + 1) (rank + 1)) ∧
+        (∀ state rank,
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              base.strictModel.value base.strictModel.clickThroughRate
+              base.strictModel.remaining (rank + 2) →
+            ¬ namedStrategy state rank) ∧
+          (∀ state rank,
+            base.strictModel.value (rank + 1) ≤ state.clockPrice →
+              namedStrategy state rank) ∧
+            (∀ bidder,
+              (base.game.outcomeOf namedStrategy).slotOf bidder =
+                base.game.vcgOutcome.slotOf bidder) ∧
+              (∀ bidder,
+                (base.game.outcomeOf namedStrategy).paymentPerClick bidder =
+                  base.game.vcgOutcome.paymentPerClick bidder) ∧
+                (∀ rank,
+                  (base.game.outcomeOf namedStrategy).slotOf rank = some rank) ∧
+                  (∀ rank,
+                    (base.game.outcomeOf namedStrategy).paymentPerClick rank =
+                      paper_theorem8_bstar_threshold_bid
+                        base.strictModel.value base.strictModel.clickThroughRate
+                        base.strictModel.remaining (rank + 1)) ∧
+                    (∀ rank, base.game.vcgOutcome.slotOf rank = some rank) ∧
+                      (∀ rank,
+                        base.game.vcgOutcome.paymentPerClick rank =
+                          paper_theorem8_bstar_threshold_bid
+                            base.strictModel.value
+                            base.strictModel.clickThroughRate
+                            base.strictModel.remaining (rank + 1)) ∧
+                        (∀ rank,
+                          base.strictModel.clickThroughRate rank *
+                              (base.game.outcomeOf namedStrategy).paymentPerClick rank =
+                            paper_theorem7_ranked_vcg_tail_payment
+                              base.strictModel.value
+                              base.strictModel.clickThroughRate rank
+                              base.strictModel.remaining) ∧
+                          (∀ rank,
+                            0 ≤
+                              (base.game.outcomeOf namedStrategy).paymentPerClick rank ∧
+                            (base.game.outcomeOf namedStrategy).paymentPerClick rank ≤
+                              base.strictModel.value rank) ∧
+                            (base.game.outcomeOf namedStrategy).IndividuallyRational
+                              ({ clickThroughRate :=
+                                  base.strictModel.clickThroughRate } :
+                                PositionEnvironment ℕ)
+                              base.strictModel.value ∧
+                              paper_position_no_positive_transfers
+                                (base.game.outcomeOf namedStrategy) ∧
+                                base.game.vcgOutcome.IndividuallyRational
+                                  ({ clickThroughRate :=
+                                      base.strictModel.clickThroughRate } :
+                                    PositionEnvironment ℕ)
+                                  base.strictModel.value ∧
+                                  paper_position_no_positive_transfers
+                                    base.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_constructed_certificate_named_strategy_full_paper_conclusion
+      cert
+
+/-- Audit for Theorem 8 strict ordered constructed-outcome certificates:
+every certified PBE strategy has the full strict behavior, VCG equality, and
+outcome-quality conclusion from the packaged certificate. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_constructed_certificate_pbe_full_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedDynamicGameConstructedOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : cert.base.game.PerfectBayesianEquilibrium strategy) :
+    let base := cert.base
+    (∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          base.strictModel.value base.strictModel.clickThroughRate
+          (base.strictModel.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ strategy state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              base.strictModel.value base.strictModel.clickThroughRate
+              (base.strictModel.remaining + 1) (rank + 1)) ∧
+        (∀ state rank,
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              base.strictModel.value base.strictModel.clickThroughRate
+              base.strictModel.remaining (rank + 2) →
+            ¬ strategy state rank) ∧
+          (∀ state rank,
+            base.strictModel.value (rank + 1) ≤ state.clockPrice →
+              strategy state rank) ∧
+            (∀ bidder,
+              (base.game.outcomeOf strategy).slotOf bidder =
+                base.game.vcgOutcome.slotOf bidder) ∧
+              (∀ bidder,
+                (base.game.outcomeOf strategy).paymentPerClick bidder =
+                  base.game.vcgOutcome.paymentPerClick bidder) ∧
+                (∀ rank,
+                  (base.game.outcomeOf strategy).slotOf rank = some rank) ∧
+                  (∀ rank,
+                    (base.game.outcomeOf strategy).paymentPerClick rank =
+                      paper_theorem8_bstar_threshold_bid
+                        base.strictModel.value base.strictModel.clickThroughRate
+                        base.strictModel.remaining (rank + 1)) ∧
+                    (∀ rank, base.game.vcgOutcome.slotOf rank = some rank) ∧
+                      (∀ rank,
+                        base.game.vcgOutcome.paymentPerClick rank =
+                          paper_theorem8_bstar_threshold_bid
+                            base.strictModel.value
+                            base.strictModel.clickThroughRate
+                            base.strictModel.remaining (rank + 1)) ∧
+                        (∀ rank,
+                          base.strictModel.clickThroughRate rank *
+                              (base.game.outcomeOf strategy).paymentPerClick rank =
+                            paper_theorem7_ranked_vcg_tail_payment
+                              base.strictModel.value
+                              base.strictModel.clickThroughRate rank
+                              base.strictModel.remaining) ∧
+                          (∀ rank,
+                            0 ≤
+                              (base.game.outcomeOf strategy).paymentPerClick rank ∧
+                            (base.game.outcomeOf strategy).paymentPerClick rank ≤
+                              base.strictModel.value rank) ∧
+                            (base.game.outcomeOf strategy).IndividuallyRational
+                              ({ clickThroughRate :=
+                                  base.strictModel.clickThroughRate } :
+                                PositionEnvironment ℕ)
+                              base.strictModel.value ∧
+                              paper_position_no_positive_transfers
+                                (base.game.outcomeOf strategy) ∧
+                                base.game.vcgOutcome.IndividuallyRational
+                                  ({ clickThroughRate :=
+                                      base.strictModel.clickThroughRate } :
+                                    PositionEnvironment ℕ)
+                                  base.strictModel.value ∧
+                                  paper_position_no_positive_transfers
+                                    base.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_constructed_certificate_pbe_full_paper_conclusion
+      cert hpbe
+
+/-- Audit for Theorem 8 reduced-form scaffold: the reduced-form game recognizes
+exactly the named finite `B*` threshold strategy as PBE. This validates the
+certificate interface but is not the source extensive-form dynamic proof. -/
+theorem audit_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game_pbe_iff_named_strategy
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+      model.value model.clickThroughRate model.remaining).PerfectBayesianEquilibrium
+        strategy ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game_pbe_iff_named_strategy
+      model strategy
+
+/-- Audit for Theorem 8 reduced-form scaffold: its outcome is definitionally
+the same constructed ranked-`B*` outcome used by the main constructed-outcome
+boundary. -/
+theorem audit_theorem8_bstar_ranked_threshold_reduced_form_outcome_eq_constructed_outcome
+    (value clickThroughRate : ℕ → ℝ) (remaining : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_reduced_form_outcome
+      value clickThroughRate remaining =
+      paper_theorem8_bstar_ranked_threshold_outcome
+        value clickThroughRate remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_reduced_form_outcome_eq_constructed_outcome
+      value clickThroughRate remaining
+
+/-- Audit for Theorem 8 reduced-form scaffold: exact local optimality supplies a
+complete reduced-form dynamic-game certificate. This is a scaffold endpoint, not
+the source generalized-English extensive-form proof. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game_certificate_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game_certificate_of_local_optimality
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: exact local optimality also
+supplies the narrowed sequential-rationality certificate. This checks the new
+source-obligation split end-to-end on the reduced-form game, not on the source
+generalized-English extensive form. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_reduced_form_sequential_rationality_extensional_outcome_certificate_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdSequentialRationalityDynamicGameExtensionalOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_reduced_form_sequential_rationality_extensional_outcome_certificate_of_local_optimality
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: exact local optimality supplies
+the local-deviation characterization certificate for sequential rationality. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_reduced_form_local_deviation_extensional_outcome_certificate_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdLocalDeviationDynamicGameExtensionalOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_reduced_form_local_deviation_extensional_outcome_certificate_of_local_optimality
+      model
+
+/-- Audit for Theorem 8 local-deviation dynamic source seam: PBE is exactly the
+local-deviation sequential-rationality target. -/
+theorem audit_theorem8_bstar_ranked_threshold_local_deviation_dynamic_game_pbe_iff_local_deviation
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_local_deviation_dynamic_game
+      model).PerfectBayesianEquilibrium strategy ↔
+      paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+        model.clickThroughRate model.value model.remaining strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_local_deviation_dynamic_game_pbe_iff_local_deviation
+      model strategy
+
+/-- Audit for Theorem 8 local-deviation dynamic source seam: the local-deviation
+dynamic game has exactly the named finite `B*` strategy as PBE. -/
+theorem audit_theorem8_bstar_ranked_threshold_local_deviation_dynamic_game_pbe_iff_named_strategy
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_local_deviation_dynamic_game
+      model).PerfectBayesianEquilibrium strategy ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_local_deviation_dynamic_game_pbe_iff_named_strategy
+      model strategy
+
+/-- Audit for Theorem 8 source-shaped dynamic source seam: PBE is exactly the
+reachable/off-path source sequential-rationality target. -/
+theorem audit_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game_pbe_iff_source_sequential
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game
+      model initialState).PerfectBayesianEquilibrium strategy ↔
+      paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+        model.clickThroughRate model.value model.remaining initialState
+        strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game_pbe_iff_source_sequential
+      model initialState strategy
+
+/-- Audit for Theorem 8 source-shaped dynamic source seam: the source-shaped
+PBE predicate is equivalent to the local-deviation target. -/
+theorem audit_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game_pbe_iff_local_deviation
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game
+      model initialState).PerfectBayesianEquilibrium strategy ↔
+      paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+        model.clickThroughRate model.value model.remaining strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game_pbe_iff_local_deviation
+      model initialState strategy
+
+/-- Audit for Theorem 8 source-shaped dynamic source seam: the source-shaped
+PBE predicate is equivalent to one-step best response plus threshold tie-break. -/
+theorem audit_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game_pbe_iff_one_step_best_response_and_drop_at_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game
+      model initialState).PerfectBayesianEquilibrium strategy ↔
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+          model.clickThroughRate model.value model.remaining strategy ∧
+        paper_theorem8_bstar_ranked_threshold_drop_at_threshold_statement
+          model.clickThroughRate model.value model.remaining strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game_pbe_iff_one_step_best_response_and_drop_at_threshold
+      model initialState strategy
+
+/-- Audit for Theorem 8 source-shaped dynamic source seam: the source-shaped
+dynamic game has exactly the named finite `B*` strategy as PBE. -/
+theorem audit_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game_pbe_iff_named_strategy
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game
+      model initialState).PerfectBayesianEquilibrium strategy ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_source_sequential_dynamic_game_pbe_iff_named_strategy
+      model initialState strategy
+
+/-- Audit for Theorem 8 source-shaped dynamic source seam: local optimality
+supplies the local-deviation dynamic certificate through the source-shaped
+reachable/off-path predicate. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_source_sequential_extensional_outcome_certificate_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ) :
+    PaperTheorem8BStarRankedThresholdLocalDeviationDynamicGameExtensionalOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_source_sequential_extensional_outcome_certificate_of_local_optimality
+      model initialState
+
+/-- Audit for Theorem 8 source-shaped dynamic source seam: a strict model and
+initial auction state build a constructed-outcome certificate whose
+sequential-rationality predicate is the source-shaped statement itself. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_strict_source_sequential_constructed_outcome_certificate_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ) :
+    PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_source_sequential_constructed_outcome_certificate_of_local_optimality
+      model initialState
+
+/-- Audit for Theorem 8 source-shaped dynamic source seam: strict ordered
+assumptions build the source-shaped dynamic certificate with the ordered
+outcome side conditions used by the terminal schedule endpoint. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_constructed_outcome_certificate :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_constructed_outcome_certificate
+
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+/-- Audit aliases for the trace-refined source-shaped route: these endpoints
+expose the named finite `B*` strategy, generated history, terminality, and exact
+finite `B*` dropout records in the same unique-PBE statement. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+
+noncomputable def audit_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_certificate_of_clock_disciplined_strategy_history
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_certificate_of_clock_disciplined_strategy_history
+    Belief
+
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_conclusion_of_clock_disciplined_strategy_history
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_conclusion_of_clock_disciplined_strategy_history
+    Belief
+
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion
+    Belief
+
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+    Belief
+
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_clock_disciplined_strategy_history
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_clock_disciplined_strategy_history
+    Belief
+
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_conclusion_of_cold_start_clock_disciplined_strategy_history
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_conclusion_of_cold_start_clock_disciplined_strategy_history
+    Belief
+
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_cold_start_clock_disciplined_strategy_history
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_cold_start_clock_disciplined_strategy_history
+    Belief
+
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+
+noncomputable def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_iff_source_sequential :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_iff_source_sequential
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_iff_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_iff_local_deviation
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_iff_one_step_best_response_and_drop_at_threshold :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_iff_one_step_best_response_and_drop_at_threshold
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_iff_named_strategy :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_iff_named_strategy
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_outcome_eq_vcg_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_outcome_eq_vcg_of_exact_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_outcome_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_outcome_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_exact_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_utility_eq_vcg_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_utility_eq_vcg_of_exact_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_utility_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_utility_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_utility_eq_vcg_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_utility_eq_vcg_of_exact_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_utility_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_utility_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_exact_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_exact_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_exact_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_exact_history_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_exact_history_completed_threshold_le
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_no_overshoot_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_no_overshoot_completed_threshold_le
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_paper_conclusion_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_paper_conclusion_of_exact_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_paper_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_pbe_completed_rank_paper_conclusion_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_exact_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_exact_history_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_exact_history_completed_threshold_le
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_strict_ordered_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_strict_ordered_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+
+def audit_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement :=
+  paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+
+def audit_theorem8_bstar_ranked_threshold_source_extensive_rationality_iff_local_deviation_history_terminal :=
+  paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_iff_local_deviation_history_terminal
+
+abbrev audit_theorem8_bstar_ranked_threshold_source_extensive_belief :=
+  PaperTheorem8BStarRankedThresholdSourceExtensiveBelief
+
+noncomputable def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game
+
+noncomputable def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_named_belief :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_named_belief
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_named_belief_consistent :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_named_belief_consistent
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_named_belief_sequentially_rational :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_named_belief_sequentially_rational
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_named_strategy_pbe_from_named_belief :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_named_strategy_pbe_from_named_belief
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_iff_source_extensive :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_iff_source_extensive
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_iff_local_deviation_history_terminal :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_iff_local_deviation_history_terminal
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_iff_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_iff_local_deviation
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_iff_one_step_best_response_and_drop_at_threshold :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_iff_one_step_best_response_and_drop_at_threshold
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_iff_named_strategy :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_iff_named_strategy
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_history_terminal_exact_drop_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_history_terminal_exact_drop_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_outcome_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_outcome_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_slot_payment_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_slot_payment_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_utility_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_utility_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_all_terminal_vcg_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_all_terminal_vcg_conclusion_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_clock_disciplined_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_clock_disciplined_terminal_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_clock_disciplined_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_clock_disciplined_terminal_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_clock_disciplined_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_clock_disciplined_terminal_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_completed_rank_paper_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_pbe_completed_rank_paper_conclusion_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+noncomputable def audit_theorem8_bstar_ranked_threshold_single_active_overshoot_state :=
+  paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+
+def audit_theorem8_bstar_ranked_threshold_ordinary_strategy_history_allows_overshoot_record :=
+  paper_theorem8_bstar_ranked_threshold_ordinary_strategy_history_allows_overshoot_record
+
+def audit_theorem8_bstar_ranked_threshold_ordinary_strategy_history_allows_overshoot_not_exact_drop_history :=
+  paper_theorem8_bstar_ranked_threshold_ordinary_strategy_history_allows_overshoot_not_exact_drop_history
+
+abbrev audit_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history :=
+  PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+
+def audit_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_strategy_history :=
+  paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_strategy_history
+
+def audit_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_exact_drop_history :=
+  paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_exact_drop_history
+
+def audit_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_obligations :=
+  paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_obligations
+
+def audit_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_disciplined_strategy_history :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_disciplined_strategy_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_clock_disciplined_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_clock_disciplined_terminal_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_clock_disciplined_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_clock_disciplined_terminal_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_clock_disciplined_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_clock_disciplined_terminal_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_slot_payment_eq_vcg_of_clock_disciplined_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_slot_payment_eq_vcg_of_clock_disciplined_terminal_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_utility_eq_vcg_of_clock_disciplined_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_utility_eq_vcg_of_clock_disciplined_terminal_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_all_terminal_vcg_conclusion_of_clock_disciplined_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_all_terminal_vcg_conclusion_of_clock_disciplined_terminal_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_clock_disciplined_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_clock_disciplined_terminal_history
+
+def audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_le_price_of_mem :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_le_price_of_mem
+
+def audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_history :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_history
+
+def audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_history_obligations :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_history_obligations
+
+def audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_singleton_to_clock_disciplined_strategy_history :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_singleton_to_clock_disciplined_strategy_history
+
+def audit_theorem8_bstar_ranked_threshold_exact_drop_schedule_pair_to_clock_disciplined_strategy_history :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_pair_to_clock_disciplined_strategy_history
+
+noncomputable def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_iff_source_extensive :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_iff_source_extensive
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_iff_local_deviation_history_terminal :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_iff_local_deviation_history_terminal
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_iff_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_iff_local_deviation
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_iff_one_step_best_response_and_drop_at_threshold :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_iff_one_step_best_response_and_drop_at_threshold
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_strategy_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_strategy_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_terminal :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_terminal
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_history_terminal_exact_drop_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_history_terminal_exact_drop_history
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_iff_named_strategy :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_iff_named_strategy
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_outcome_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_outcome_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_slot_payment_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_slot_payment_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_slot_payment_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_slot_payment_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_utility_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_utility_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_utility_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_utility_eq_vcg_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_all_terminal_vcg_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_all_terminal_vcg_conclusion_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_completed_rank_paper_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_pbe_completed_rank_paper_conclusion_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_strict_ordered_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_strict_ordered_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+
+def audit_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_strict_ordered_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_strict_ordered_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+
+/-- Audit for Theorem 8 local-deviation dynamic source seam: local optimality
+supplies the local-deviation dynamic certificate directly. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_local_deviation_extensional_outcome_certificate_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdLocalDeviationDynamicGameExtensionalOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_local_deviation_extensional_outcome_certificate_of_local_optimality
+      model
+
+/-- Audit for Theorem 8 local-deviation dynamic source seam: local optimality
+supplies the constructed-outcome certificate directly. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_local_deviation_constructed_outcome_certificate_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_local_deviation_constructed_outcome_certificate_of_local_optimality
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: strict local optimality supplies
+a complete strict reduced-form dynamic-game certificate. This is a scaffold
+endpoint, not the source generalized-English extensive-form proof. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_strict_reduced_form_dynamic_game_certificate_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameExtensionalOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_reduced_form_dynamic_game_certificate_of_local_optimality
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: exact local optimality also
+supplies the constructed ranked-`B*` outcome certificate expected by the main
+paper-facing boundary. This keeps the reduced-form endpoint aligned with the
+concrete outcome formulas above. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_reduced_form_constructed_outcome_certificate_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_reduced_form_constructed_outcome_certificate_of_local_optimality
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: ordered paper-style assumptions
+directly supply the constructed ranked-`B*` outcome certificate expected by the
+main paper-facing boundary. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_reduced_form_constructed_outcome_certificate_of_ordered
+    (model : PaperTheorem8BStarRankedThresholdOrderedLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdLocalOptimalityDynamicGameConstructedOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_reduced_form_constructed_outcome_certificate_of_ordered
+      model
+
+/-- Audit for Theorem 8 local-deviation dynamic source seam: strict ordered
+paper-style assumptions supply the source-shaped constructed-outcome
+certificate. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedDynamicGameConstructedOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: under ordered paper-style
+assumptions, the reduced-form VCG outcome has the constructed ranked-`B*`
+slots, threshold payments, VCG-tail accounting, payment bounds, individual
+rationality, and no-positive-transfers property. -/
+theorem audit_theorem8_bstar_ranked_threshold_reduced_form_vcg_outcome_ordered_paper_conclusion
+    (model : PaperTheorem8BStarRankedThresholdOrderedLocalOptimalityCertificate) :
+    (∀ rank,
+      (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+        model.value model.clickThroughRate model.remaining).vcgOutcome.slotOf rank =
+        some rank) ∧
+      (∀ rank,
+        (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+          model.value model.clickThroughRate model.remaining).vcgOutcome.paymentPerClick rank =
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate model.remaining (rank + 1)) ∧
+        (∀ rank,
+          model.clickThroughRate rank *
+              (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+                model.value model.clickThroughRate model.remaining).vcgOutcome.paymentPerClick rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate rank model.remaining) ∧
+          (∀ rank,
+            0 ≤
+              (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+                model.value model.clickThroughRate model.remaining).vcgOutcome.paymentPerClick rank ∧
+            (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+              model.value model.clickThroughRate model.remaining).vcgOutcome.paymentPerClick rank ≤
+              model.value rank) ∧
+            (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+              model.value model.clickThroughRate model.remaining).vcgOutcome.IndividuallyRational
+              ({ clickThroughRate := model.clickThroughRate } :
+                PositionEnvironment ℕ)
+              model.value ∧
+              paper_position_no_positive_transfers
+                (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+                  model.value model.clickThroughRate model.remaining).vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_reduced_form_vcg_outcome_ordered_paper_conclusion
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: under ordered paper-style
+assumptions, the reduced-form named finite-`B*` strategy outcome has the
+constructed ranked-`B*` slots, threshold payments, VCG-tail accounting, payment
+bounds, individual rationality, and no-positive-transfers property. -/
+theorem audit_theorem8_bstar_ranked_threshold_reduced_form_named_strategy_outcome_ordered_paper_conclusion
+    (model : PaperTheorem8BStarRankedThresholdOrderedLocalOptimalityCertificate) :
+    (∀ rank,
+      ((paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+        model.value model.clickThroughRate model.remaining).outcomeOf
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)).slotOf rank =
+        some rank) ∧
+      (∀ rank,
+        ((paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+          model.value model.clickThroughRate model.remaining).outcomeOf
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)).paymentPerClick rank =
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate model.remaining (rank + 1)) ∧
+        (∀ rank,
+          model.clickThroughRate rank *
+              ((paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+                model.value model.clickThroughRate model.remaining).outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  model.value model.clickThroughRate model.remaining)).paymentPerClick rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate rank model.remaining) ∧
+          (∀ rank,
+            0 ≤
+              ((paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+                model.value model.clickThroughRate model.remaining).outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  model.value model.clickThroughRate model.remaining)).paymentPerClick rank ∧
+            ((paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+              model.value model.clickThroughRate model.remaining).outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                model.value model.clickThroughRate model.remaining)).paymentPerClick rank ≤
+              model.value rank) ∧
+            ((paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+              model.value model.clickThroughRate model.remaining).outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                model.value model.clickThroughRate model.remaining)).IndividuallyRational
+              ({ clickThroughRate := model.clickThroughRate } :
+                PositionEnvironment ℕ)
+              model.value ∧
+              paper_position_no_positive_transfers
+                ((paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+                  model.value model.clickThroughRate model.remaining).outcomeOf
+                  (paper_theorem8_bstar_ranked_threshold_strategy
+                    model.value model.clickThroughRate model.remaining)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_reduced_form_named_strategy_outcome_ordered_paper_conclusion
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: one ordered paper-style endpoint
+bundles the cutoff rule, named-outcome/VCG componentwise equality, and the
+constructed ranked-`B*` outcome-quality facts for both named and VCG outcomes.
+-/
+theorem audit_theorem8_bstar_ranked_threshold_reduced_form_ordered_paper_conclusion
+    (model : PaperTheorem8BStarRankedThresholdOrderedLocalOptimalityCertificate) :
+    let game :=
+      paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+        model.value model.clickThroughRate model.remaining
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    (∀ state rank,
+      namedStrategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate
+          (model.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ bidder,
+        (game.outcomeOf namedStrategy).slotOf bidder =
+          game.vcgOutcome.slotOf bidder) ∧
+        (∀ bidder,
+          (game.outcomeOf namedStrategy).paymentPerClick bidder =
+            game.vcgOutcome.paymentPerClick bidder) ∧
+          (∀ rank,
+            (game.outcomeOf namedStrategy).slotOf rank = some rank) ∧
+            (∀ rank,
+              (game.outcomeOf namedStrategy).paymentPerClick rank =
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate model.remaining
+                  (rank + 1)) ∧
+              (∀ rank, game.vcgOutcome.slotOf rank = some rank) ∧
+                (∀ rank,
+                  game.vcgOutcome.paymentPerClick rank =
+                    paper_theorem8_bstar_threshold_bid
+                      model.value model.clickThroughRate model.remaining
+                      (rank + 1)) ∧
+                  (∀ rank,
+                    model.clickThroughRate rank *
+                        (game.outcomeOf namedStrategy).paymentPerClick rank =
+                      paper_theorem7_ranked_vcg_tail_payment
+                        model.value model.clickThroughRate rank
+                        model.remaining) ∧
+                    (∀ rank,
+                      0 ≤
+                        (game.outcomeOf namedStrategy).paymentPerClick rank ∧
+                      (game.outcomeOf namedStrategy).paymentPerClick rank ≤
+                        model.value rank) ∧
+                      (game.outcomeOf namedStrategy).IndividuallyRational
+                        ({ clickThroughRate := model.clickThroughRate } :
+                          PositionEnvironment ℕ)
+                        model.value ∧
+                        paper_position_no_positive_transfers
+                          (game.outcomeOf namedStrategy) ∧
+                          game.vcgOutcome.IndividuallyRational
+                            ({ clickThroughRate := model.clickThroughRate } :
+                              PositionEnvironment ℕ)
+                            model.value ∧
+                            paper_position_no_positive_transfers
+                              game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_reduced_form_ordered_paper_conclusion
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: strict ordered paper-style
+assumptions bundle strict no-early/drop-by-value behavior with ordered
+named/VCG outcome-quality facts. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate) :
+    let game :=
+      paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+        model.value model.clickThroughRate model.remaining
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    (∀ state rank,
+      namedStrategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate
+          (model.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        state.clockPrice ≤
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate model.remaining (rank + 2) →
+          ¬ namedStrategy state rank) ∧
+        (∀ state rank,
+          model.value (rank + 1) ≤ state.clockPrice →
+            namedStrategy state rank) ∧
+          (∀ bidder,
+            (game.outcomeOf namedStrategy).slotOf bidder =
+              game.vcgOutcome.slotOf bidder) ∧
+            (∀ bidder,
+              (game.outcomeOf namedStrategy).paymentPerClick bidder =
+                game.vcgOutcome.paymentPerClick bidder) ∧
+              (∀ rank,
+                (game.outcomeOf namedStrategy).slotOf rank = some rank) ∧
+                (∀ rank,
+                  (game.outcomeOf namedStrategy).paymentPerClick rank =
+                    paper_theorem8_bstar_threshold_bid
+                      model.value model.clickThroughRate model.remaining
+                      (rank + 1)) ∧
+                  (∀ rank, game.vcgOutcome.slotOf rank = some rank) ∧
+                    (∀ rank,
+                      game.vcgOutcome.paymentPerClick rank =
+                        paper_theorem8_bstar_threshold_bid
+                          model.value model.clickThroughRate model.remaining
+                          (rank + 1)) ∧
+                      (∀ rank,
+                        model.clickThroughRate rank *
+                            (game.outcomeOf namedStrategy).paymentPerClick rank =
+                          paper_theorem7_ranked_vcg_tail_payment
+                            model.value model.clickThroughRate rank
+                            model.remaining) ∧
+                        (∀ rank,
+                          0 ≤
+                            (game.outcomeOf namedStrategy).paymentPerClick rank ∧
+                          (game.outcomeOf namedStrategy).paymentPerClick rank ≤
+                            model.value rank) ∧
+                          (game.outcomeOf namedStrategy).IndividuallyRational
+                            ({ clickThroughRate := model.clickThroughRate } :
+                              PositionEnvironment ℕ)
+                            model.value ∧
+                            paper_position_no_positive_transfers
+                              (game.outcomeOf namedStrategy) ∧
+                              game.vcgOutcome.IndividuallyRational
+                                ({ clickThroughRate := model.clickThroughRate } :
+                                  PositionEnvironment ℕ)
+                                model.value ∧
+                                paper_position_no_positive_transfers
+                                  game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_paper_conclusion
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: strict local optimality also
+supplies the constructed ranked-`B*` outcome certificate expected by the strict
+paper-facing boundary. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_strict_reduced_form_constructed_outcome_certificate_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdStrictLocalOptimalityDynamicGameConstructedOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_reduced_form_constructed_outcome_certificate_of_local_optimality
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: strict ordered paper-style
+assumptions directly supply the packaged strict ordered constructed-outcome
+certificate. -/
+noncomputable def audit_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_constructed_outcome_certificate
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedDynamicGameConstructedOutcomeCertificate
+      Unit := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_constructed_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: every strict ordered
+reduced-form PBE strategy has the full strict cutoff, VCG equality, and
+outcome-quality conclusion. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_pbe_full_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+        model.value model.clickThroughRate model.remaining).PerfectBayesianEquilibrium
+        strategy) :
+    let game :=
+      paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+        model.value model.clickThroughRate model.remaining
+    (∀ state rank,
+      strategy state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate
+          (model.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        ¬ strategy state rank ↔
+          state.clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate
+              (model.remaining + 1) (rank + 1)) ∧
+        (∀ state rank,
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate model.remaining (rank + 2) →
+          ¬ strategy state rank) ∧
+          (∀ state rank,
+            model.value (rank + 1) ≤ state.clockPrice →
+              strategy state rank) ∧
+            (∀ bidder,
+              (game.outcomeOf strategy).slotOf bidder =
+                game.vcgOutcome.slotOf bidder) ∧
+              (∀ bidder,
+                (game.outcomeOf strategy).paymentPerClick bidder =
+                  game.vcgOutcome.paymentPerClick bidder) ∧
+                (∀ rank,
+                  (game.outcomeOf strategy).slotOf rank = some rank) ∧
+                  (∀ rank,
+                    (game.outcomeOf strategy).paymentPerClick rank =
+                      paper_theorem8_bstar_threshold_bid
+                        model.value model.clickThroughRate model.remaining
+                        (rank + 1)) ∧
+                    (∀ rank, game.vcgOutcome.slotOf rank = some rank) ∧
+                      (∀ rank,
+                        game.vcgOutcome.paymentPerClick rank =
+                          paper_theorem8_bstar_threshold_bid
+                            model.value model.clickThroughRate model.remaining
+                            (rank + 1)) ∧
+                        (∀ rank,
+                          model.clickThroughRate rank *
+                              (game.outcomeOf strategy).paymentPerClick rank =
+                            paper_theorem7_ranked_vcg_tail_payment
+                              model.value model.clickThroughRate rank
+                              model.remaining) ∧
+                          (∀ rank,
+                            0 ≤
+                              (game.outcomeOf strategy).paymentPerClick rank ∧
+                            (game.outcomeOf strategy).paymentPerClick rank ≤
+                              model.value rank) ∧
+                            (game.outcomeOf strategy).IndividuallyRational
+                              ({ clickThroughRate := model.clickThroughRate } :
+                                PositionEnvironment ℕ)
+                              model.value ∧
+                              paper_position_no_positive_transfers
+                                (game.outcomeOf strategy) ∧
+                                game.vcgOutcome.IndividuallyRational
+                                  ({ clickThroughRate :=
+                                      model.clickThroughRate } :
+                                    PositionEnvironment ℕ)
+                                  model.value ∧
+                                  paper_position_no_positive_transfers
+                                    game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_pbe_full_paper_conclusion
+      model hpbe
+
+/-- Audit for Theorem 8 reduced-form scaffold: direct named-strategy conclusion
+for the exact reduced-form dynamic game. -/
+theorem audit_theorem8_bstar_ranked_threshold_reduced_form_named_strategy_paper_conclusion_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    (∀ state rank,
+      paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate
+          (model.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ bidder,
+        ((paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+            model.value model.clickThroughRate model.remaining).outcomeOf
+            (paper_theorem8_bstar_ranked_threshold_strategy
+              model.value model.clickThroughRate model.remaining)).slotOf bidder =
+          (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+            model.value model.clickThroughRate model.remaining).vcgOutcome.slotOf bidder) ∧
+        (∀ bidder,
+          ((paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+              model.value model.clickThroughRate model.remaining).outcomeOf
+              (paper_theorem8_bstar_ranked_threshold_strategy
+                model.value model.clickThroughRate model.remaining)).paymentPerClick bidder =
+            (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+              model.value model.clickThroughRate model.remaining).vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_reduced_form_named_strategy_paper_conclusion_of_local_optimality
+      model
+
+/-- Audit for Theorem 8 reduced-form scaffold: direct named-strategy conclusion
+for the strict reduced-form dynamic game. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_reduced_form_named_strategy_paper_conclusion_of_local_optimality
+    (model : PaperTheorem8BStarRankedThresholdStrictLocalOptimalityCertificate) :
+    (∀ state rank,
+      paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining state rank ↔
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate
+          (model.remaining + 1) (rank + 1) ≤ state.clockPrice) ∧
+      (∀ state rank,
+        state.clockPrice ≤
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate model.remaining (rank + 2) →
+          ¬ paper_theorem8_bstar_ranked_threshold_strategy
+              model.value model.clickThroughRate model.remaining state rank) ∧
+        (∀ state rank,
+          model.value (rank + 1) ≤ state.clockPrice →
+            paper_theorem8_bstar_ranked_threshold_strategy
+              model.value model.clickThroughRate model.remaining state rank) ∧
+          (∀ bidder,
+            ((paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+                model.value model.clickThroughRate model.remaining).outcomeOf
+                (paper_theorem8_bstar_ranked_threshold_strategy
+                  model.value model.clickThroughRate model.remaining)).slotOf bidder =
+              (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+                model.value model.clickThroughRate model.remaining).vcgOutcome.slotOf bidder) ∧
+            (∀ bidder,
+              ((paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+                  model.value model.clickThroughRate model.remaining).outcomeOf
+                  (paper_theorem8_bstar_ranked_threshold_strategy
+                    model.value model.clickThroughRate model.remaining)).paymentPerClick bidder =
+                (paper_theorem8_bstar_ranked_threshold_reduced_form_dynamic_game
+                  model.value model.clickThroughRate model.remaining).vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_reduced_form_named_strategy_paper_conclusion_of_local_optimality
+      model
+
+/-- Audit for Theorem 8 strict exact-`B*` ranked-threshold dynamic-game
+certificate: one certificate exposes strict threshold intervals, exact finite
+`B*` dropout behavior, unique PBE, and VCG outcome equivalence. -/
+theorem audit_theorem8_bstar_ranked_threshold_strict_dynamic_game_extensional_outcome_certificate_boundary
+    {Belief : Type*}
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictDynamicGameExtensionalOutcomeCertificate
+        Belief) :
+    (∀ rank,
+      paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j model.remaining)
+          model.clickThroughRate (rank + 2) <
+        paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j (model.remaining + 1))
+          model.clickThroughRate (rank + 1) ∧
+      paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j (model.remaining + 1))
+          model.clickThroughRate (rank + 1) < model.value (rank + 1)) ∧
+    (∀ state rank,
+      paper_theorem8_ranked_threshold_dropout_strategy
+          model.clickThroughRate
+          (fun k =>
+            paper_theorem7_bstar_bid model.value
+              (fun j =>
+                paper_theorem7_ranked_vcg_tail_payment
+                  model.value model.clickThroughRate j model.remaining)
+              model.clickThroughRate (k + 2))
+          model.value state rank ↔
+        paper_theorem7_bstar_bid model.value
+          (fun j =>
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate j (model.remaining + 1))
+          model.clickThroughRate (rank + 1) ≤ state.clockPrice) ∧
+      ∃ equilibrium : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        model.game.PerfectBayesianEquilibrium equilibrium ∧
+          (∀ strategy,
+            model.game.PerfectBayesianEquilibrium strategy →
+              strategy = equilibrium) ∧
+          model.game.outcomeOf equilibrium = model.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_dynamic_game_unique_pbe_of_extensional_outcome_certificate
+      model
+
+/-- Audit for Theorem 8 certificate boundary: once a dynamic generalized
+English auction PBE model is supplied, Lean derives uniqueness and VCG outcome
+equivalence. -/
+theorem audit_theorem8_certificate_boundary
+    {StrategyProfile Outcome : Type*}
+    (model :
+      PaperTheorem8GeneralizedEnglishPBECertificate StrategyProfile Outcome) :
+    ∃ equilibrium : StrategyProfile,
+      model.isPerfectBayesianEquilibrium equilibrium ∧
+        (∀ strategy,
+          model.isPerfectBayesianEquilibrium strategy →
+            strategy = equilibrium) ∧
+        model.outcomeOf equilibrium = model.vcgOutcome := by
+  exact paper_theorem8_generalized_english_unique_pbe_of_certificate model
+
+/-- Audit for the integrated Theorem 8 model-agreement bridge: the abstract
+local-model equality is exposed as field-level value, click-through-rate, and
+remaining-slot equalities. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_model_fields_eq
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief) :
+    (∀ rank,
+      cert.terminal.localModel.value rank =
+        cert.dynamic.base.strictModel.value rank) ∧
+      (∀ rank,
+        cert.terminal.localModel.clickThroughRate rank =
+          cert.dynamic.base.strictModel.clickThroughRate rank) ∧
+        cert.terminal.localModel.remaining =
+          cert.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_model_fields_eq
+      cert
+
+/-- Audit for the strongest integrated Theorem 8 terminal-dynamic boundary:
+the terminal-history certificate and strict ordered dynamic constructed-outcome
+certificate are tied by an explicit local-model equality, so every certified
+PBE exposes inactive-rank terminal actions and concrete dropout records. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_pbe_terminal_behavior_with_records
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : cert.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    (∀ rank,
+      strategy cert.terminal.finalState rank ↔
+        ¬ cert.terminal.finalState.IsActive rank) ∧
+      (∀ rank,
+        ¬ strategy cert.terminal.finalState rank ↔
+          cert.terminal.finalState.IsActive rank) ∧
+        (∀ rank,
+          strategy cert.terminal.finalState rank →
+            ∃ price,
+              cert.terminal.finalState.lastDropout rank = some price ∧
+                paper_theorem8_bstar_threshold_bid
+                    cert.terminal.localModel.value
+                    cert.terminal.localModel.clickThroughRate
+                    (cert.terminal.localModel.remaining + 1) (rank + 1) ≤
+                  price ∧
+                  price ≤ cert.terminal.finalState.clockPrice) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_pbe_terminal_behavior_with_records
+      cert hpbe
+
+/-- Audit for the integrated Theorem 8 bridge that checks terminal dropout
+records and the global strict finite-`B*` PBE cutoff rule from the same strict
+ordered terminal-dynamic certificate. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_pbe_terminal_behavior_and_global_cutoff
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : cert.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    ((∀ rank,
+      strategy cert.terminal.finalState rank ↔
+        ¬ cert.terminal.finalState.IsActive rank) ∧
+      (∀ rank,
+        ¬ strategy cert.terminal.finalState rank ↔
+          cert.terminal.finalState.IsActive rank) ∧
+        (∀ rank,
+          strategy cert.terminal.finalState rank →
+            ∃ price,
+              cert.terminal.finalState.lastDropout rank = some price ∧
+                paper_theorem8_bstar_threshold_bid
+                    cert.terminal.localModel.value
+                    cert.terminal.localModel.clickThroughRate
+                    (cert.terminal.localModel.remaining + 1) (rank + 1) ≤
+                  price ∧
+                  price ≤ cert.terminal.finalState.clockPrice)) ∧
+      (∀ state rank,
+        strategy state rank ↔
+          paper_theorem8_bstar_threshold_bid
+            cert.dynamic.base.strictModel.value
+            cert.dynamic.base.strictModel.clickThroughRate
+            (cert.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+              state.clockPrice) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_pbe_terminal_behavior_and_global_cutoff
+      cert hpbe
+
+/-- Audit for the integrated Theorem 8 endpoint that checks terminal dropout
+records, global strict finite-`B*` cutoff behavior, and componentwise PBE
+outcome equality with the certified VCG outcome from one certificate. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_pbe_terminal_cutoff_and_vcg_components
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : cert.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    ((∀ rank,
+      strategy cert.terminal.finalState rank ↔
+        ¬ cert.terminal.finalState.IsActive rank) ∧
+      (∀ rank,
+        ¬ strategy cert.terminal.finalState rank ↔
+          cert.terminal.finalState.IsActive rank) ∧
+        (∀ rank,
+          strategy cert.terminal.finalState rank →
+            ∃ price,
+              cert.terminal.finalState.lastDropout rank = some price ∧
+                paper_theorem8_bstar_threshold_bid
+                    cert.terminal.localModel.value
+                    cert.terminal.localModel.clickThroughRate
+                    (cert.terminal.localModel.remaining + 1) (rank + 1) ≤
+                  price ∧
+                  price ≤ cert.terminal.finalState.clockPrice)) ∧
+      (∀ state rank,
+        strategy state rank ↔
+          paper_theorem8_bstar_threshold_bid
+            cert.dynamic.base.strictModel.value
+            cert.dynamic.base.strictModel.clickThroughRate
+            (cert.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+              state.clockPrice) ∧
+        (∀ bidder,
+          (cert.dynamic.base.game.outcomeOf strategy).slotOf bidder =
+            cert.dynamic.base.game.vcgOutcome.slotOf bidder) ∧
+          (∀ bidder,
+            (cert.dynamic.base.game.outcomeOf strategy).paymentPerClick bidder =
+              cert.dynamic.base.game.vcgOutcome.paymentPerClick bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_pbe_terminal_cutoff_and_vcg_components
+      cert hpbe
+
+/-- Audit for terminal dropout records restated in the strict dynamic model's
+coordinates, avoiding a manual local-model rewrite during human verification. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_pbe_terminal_records_with_dynamic_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : cert.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    ∀ rank,
+      strategy cert.terminal.finalState rank →
+        ∃ price,
+          cert.terminal.finalState.lastDropout rank = some price ∧
+            paper_theorem8_bstar_threshold_bid
+                cert.dynamic.base.strictModel.value
+                cert.dynamic.base.strictModel.clickThroughRate
+                (cert.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+              price ∧
+              price ≤ cert.terminal.finalState.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_pbe_terminal_records_with_dynamic_model
+      cert hpbe
+
+/-- Audit for the compact terminal/dynamic/VCG Theorem 8 PBE conclusion. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_pbe_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : cert.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+      cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_pbe_conclusion
+      cert hpbe
+
+/-- Audit for the remaining concrete extensive-form obligations for Theorem 8,
+packaged as one source-completion certificate. -/
+theorem audit_theorem8_strict_ordered_source_completion_obligations
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.isConsistentBelief
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        cert.integrated.dynamic.base.belief ∧
+      cert.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        cert.integrated.dynamic.base.belief ∧
+        (∀ strategy,
+          cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy →
+            ∀ state rank,
+              strategy state rank ↔
+                paper_theorem8_bstar_threshold_bid
+                  cert.integrated.dynamic.base.strictModel.value
+                  cert.integrated.dynamic.base.strictModel.clickThroughRate
+                  (cert.integrated.dynamic.base.strictModel.remaining + 1)
+                  (rank + 1) ≤ state.clockPrice) ∧
+          (∀ strategy,
+            cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+              strategy →
+              ∀ bidder,
+                (cert.integrated.dynamic.base.game.outcomeOf strategy).slotOf
+                    bidder =
+                  cert.integrated.dynamic.base.game.vcgOutcome.slotOf bidder) ∧
+            (∀ strategy,
+              cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+                strategy →
+                ∀ bidder,
+                  (cert.integrated.dynamic.base.game.outcomeOf
+                      strategy).paymentPerClick bidder =
+                    cert.integrated.dynamic.base.game.vcgOutcome.paymentPerClick
+                      bidder) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_obligations
+      cert
+
+/-- Audit for the minimized core source obligations: consistency, sequential
+rationality, and PBE behavioral characterization. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_obligations
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.isConsistentBelief
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        cert.integrated.dynamic.base.belief ∧
+      cert.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        cert.integrated.dynamic.base.belief ∧
+        (∀ strategy,
+          cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy →
+            ∀ state rank,
+              strategy state rank ↔
+                paper_theorem8_bstar_threshold_bid
+                  cert.integrated.dynamic.base.strictModel.value
+                  cert.integrated.dynamic.base.strictModel.clickThroughRate
+                  (cert.integrated.dynamic.base.strictModel.remaining + 1)
+                  (rank + 1) ≤ state.clockPrice) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_obligations
+      cert
+
+/-- Audit for the sharpest local-deviation source obligations: consistency,
+one-step-to-sequential-rationality, and the exact source sequential-rationality
+iff local-deviation characterization. -/
+theorem audit_theorem8_strict_ordered_local_deviation_core_source_completion_obligations
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.isConsistentBelief
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        cert.integrated.dynamic.base.belief ∧
+      (paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.remaining
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            cert.integrated.dynamic.base.strictModel.value
+            cert.integrated.dynamic.base.strictModel.clickThroughRate
+            cert.integrated.dynamic.base.strictModel.remaining) →
+        cert.integrated.dynamic.base.game.isSequentiallyRational
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            cert.integrated.dynamic.base.strictModel.value
+            cert.integrated.dynamic.base.strictModel.clickThroughRate
+            cert.integrated.dynamic.base.strictModel.remaining)
+          cert.integrated.dynamic.base.belief) ∧
+        (∀ strategy belief,
+          cert.integrated.dynamic.base.game.isSequentiallyRational
+              strategy belief ↔
+            paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+              cert.integrated.dynamic.base.strictModel.clickThroughRate
+              cert.integrated.dynamic.base.strictModel.value
+              cert.integrated.dynamic.base.strictModel.remaining
+              strategy) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_obligations
+      cert
+
+/-- Audit for the one-step/tie-break core source obligations. -/
+theorem audit_theorem8_strict_ordered_one_step_tie_break_core_source_completion_obligations
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.isConsistentBelief
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        cert.integrated.dynamic.base.belief ∧
+      (paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.remaining
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            cert.integrated.dynamic.base.strictModel.value
+            cert.integrated.dynamic.base.strictModel.clickThroughRate
+            cert.integrated.dynamic.base.strictModel.remaining) →
+        cert.integrated.dynamic.base.game.isSequentiallyRational
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            cert.integrated.dynamic.base.strictModel.value
+            cert.integrated.dynamic.base.strictModel.clickThroughRate
+            cert.integrated.dynamic.base.strictModel.remaining)
+          cert.integrated.dynamic.base.belief) ∧
+        (∀ strategy,
+          cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy →
+            paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+              cert.integrated.dynamic.base.strictModel.clickThroughRate
+              cert.integrated.dynamic.base.strictModel.value
+              cert.integrated.dynamic.base.strictModel.remaining
+              strategy) ∧
+          (∀ strategy,
+            cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+                strategy →
+              paper_theorem8_bstar_ranked_threshold_drop_at_threshold_statement
+                cert.integrated.dynamic.base.strictModel.clickThroughRate
+                cert.integrated.dynamic.base.strictModel.value
+                cert.integrated.dynamic.base.strictModel.remaining
+                strategy) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_obligations
+      cert
+
+/-- Audit for the sequential-rationality core source obligations. -/
+theorem audit_theorem8_strict_ordered_sequential_rationality_core_source_completion_obligations
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.isConsistentBelief
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        cert.integrated.dynamic.base.belief ∧
+      (paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.remaining
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            cert.integrated.dynamic.base.strictModel.value
+            cert.integrated.dynamic.base.strictModel.clickThroughRate
+            cert.integrated.dynamic.base.strictModel.remaining) →
+        cert.integrated.dynamic.base.game.isSequentiallyRational
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            cert.integrated.dynamic.base.strictModel.value
+            cert.integrated.dynamic.base.strictModel.clickThroughRate
+            cert.integrated.dynamic.base.strictModel.remaining)
+          cert.integrated.dynamic.base.belief) ∧
+        (∀ strategy belief,
+          cert.integrated.dynamic.base.game.isSequentiallyRational strategy
+              belief →
+            paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+              cert.integrated.dynamic.base.strictModel.clickThroughRate
+              cert.integrated.dynamic.base.strictModel.value
+              cert.integrated.dynamic.base.strictModel.remaining
+              strategy) ∧
+          (∀ strategy belief,
+            cert.integrated.dynamic.base.game.isSequentiallyRational strategy
+                belief →
+              paper_theorem8_bstar_ranked_threshold_drop_at_threshold_statement
+                cert.integrated.dynamic.base.strictModel.clickThroughRate
+                cert.integrated.dynamic.base.strictModel.value
+                cert.integrated.dynamic.base.strictModel.remaining
+                strategy) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_obligations
+      cert
+
+/-- Audit for the one-sided Step 1/Step 2 source obligations. -/
+theorem audit_theorem8_strict_ordered_one_sided_source_completion_obligations
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.isConsistentBelief
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        cert.integrated.dynamic.base.belief ∧
+      cert.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        cert.integrated.dynamic.base.belief ∧
+        (∀ strategy,
+          cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy →
+            ∀ state rank,
+              paper_theorem8_bstar_threshold_bid
+                  cert.integrated.dynamic.base.strictModel.value
+                  cert.integrated.dynamic.base.strictModel.clickThroughRate
+                  (cert.integrated.dynamic.base.strictModel.remaining + 1)
+                  (rank + 1) ≤ state.clockPrice →
+                strategy state rank) ∧
+          (∀ strategy,
+            cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+                strategy →
+              ∀ state rank,
+                state.clockPrice <
+                  paper_theorem8_bstar_threshold_bid
+                    cert.integrated.dynamic.base.strictModel.value
+                    cert.integrated.dynamic.base.strictModel.clickThroughRate
+                    (cert.integrated.dynamic.base.strictModel.remaining + 1)
+                    (rank + 1) →
+                ¬ strategy state rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_obligations
+      cert
+
+/-- Audit for the ex-post one-sided source obligations. -/
+theorem audit_theorem8_strict_ordered_ex_post_one_sided_source_completion_obligations
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.isConsistentBelief
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        cert.integrated.dynamic.base.belief ∧
+      (∀ belief,
+        cert.integrated.dynamic.base.game.isSequentiallyRational
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            cert.integrated.dynamic.base.strictModel.value
+            cert.integrated.dynamic.base.strictModel.clickThroughRate
+            cert.integrated.dynamic.base.strictModel.remaining)
+          belief) ∧
+        (∀ strategy,
+          cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy →
+            ∀ state rank,
+              paper_theorem8_bstar_threshold_bid
+                  cert.integrated.dynamic.base.strictModel.value
+                  cert.integrated.dynamic.base.strictModel.clickThroughRate
+                  (cert.integrated.dynamic.base.strictModel.remaining + 1)
+                  (rank + 1) ≤ state.clockPrice →
+                strategy state rank) ∧
+          (∀ strategy,
+            cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+                strategy →
+              ∀ state rank,
+                state.clockPrice <
+                  paper_theorem8_bstar_threshold_bid
+                    cert.integrated.dynamic.base.strictModel.value
+                    cert.integrated.dynamic.base.strictModel.clickThroughRate
+                    (cert.integrated.dynamic.base.strictModel.remaining + 1)
+                    (rank + 1) →
+                ¬ strategy state rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_one_sided_source_completion_obligations
+      cert
+
+/-- Audit conversion from the ex-post one-sided certificate to the core source
+certificate. -/
+def audit_theorem8_strict_ordered_core_source_completion_certificate_of_ex_post_one_sided
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_certificate_of_ex_post_one_sided
+    cert
+
+/-- Audit endpoint: the one-sided certificate proves the named finite `B*`
+strategy is a PBE. -/
+theorem audit_theorem8_strict_ordered_one_sided_source_completion_named_strategy_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_named_strategy_pbe
+      cert
+
+/-- Audit endpoint: the one-sided certificate gives uniqueness of the PBE
+strategy. -/
+theorem audit_theorem8_strict_ordered_one_sided_source_completion_exists_unique_named_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_exists_unique_named_pbe
+      cert
+
+/-- Audit endpoint: the one-sided certificate gives VCG outcome equality for
+every PBE strategy. -/
+theorem audit_theorem8_strict_ordered_one_sided_source_completion_pbe_outcome_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    cert.integrated.dynamic.base.game.outcomeOf strategy =
+      cert.integrated.dynamic.base.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_pbe_outcome_eq_vcg
+      cert hpbe
+
+/-- Audit endpoint: the ex-post one-sided certificate proves the named finite
+`B*` strategy is a PBE. -/
+theorem audit_theorem8_strict_ordered_ex_post_one_sided_source_completion_named_strategy_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_one_sided_source_completion_named_strategy_pbe
+      cert
+
+/-- Audit endpoint: the ex-post one-sided certificate gives uniqueness of the
+PBE strategy. -/
+theorem audit_theorem8_strict_ordered_ex_post_one_sided_source_completion_exists_unique_named_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_one_sided_source_completion_exists_unique_named_pbe
+      cert
+
+/-- Audit endpoint: the ex-post one-sided certificate gives VCG outcome equality
+for every PBE strategy. -/
+theorem audit_theorem8_strict_ordered_ex_post_one_sided_source_completion_pbe_outcome_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    cert.integrated.dynamic.base.game.outcomeOf strategy =
+      cert.integrated.dynamic.base.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_one_sided_source_completion_pbe_outcome_eq_vcg
+      cert hpbe
+
+/-- Audit endpoint: the one-step/tie-break core certificate proves the named
+finite `B*` strategy is a PBE. -/
+theorem audit_theorem8_strict_ordered_one_step_tie_break_core_source_completion_named_strategy_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_named_strategy_pbe
+      cert
+
+/-- Audit endpoint: the one-step/tie-break core certificate gives uniqueness of
+the PBE strategy. -/
+theorem audit_theorem8_strict_ordered_one_step_tie_break_core_source_completion_exists_unique_named_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_exists_unique_named_pbe
+      cert
+
+/-- Audit endpoint: the one-step/tie-break core certificate gives VCG outcome
+equality for every PBE strategy. -/
+theorem audit_theorem8_strict_ordered_one_step_tie_break_core_source_completion_pbe_outcome_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    cert.integrated.dynamic.base.game.outcomeOf strategy =
+      cert.integrated.dynamic.base.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_pbe_outcome_eq_vcg
+      cert hpbe
+
+/-- Audit endpoint: the sequential-rationality core certificate proves the named
+finite `B*` strategy is a PBE. -/
+theorem audit_theorem8_strict_ordered_sequential_rationality_core_source_completion_named_strategy_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_named_strategy_pbe
+      cert
+
+/-- Audit endpoint: the sequential-rationality core certificate gives uniqueness
+of the PBE strategy. -/
+theorem audit_theorem8_strict_ordered_sequential_rationality_core_source_completion_exists_unique_named_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_exists_unique_named_pbe
+      cert
+
+/-- Audit endpoint: the sequential-rationality core certificate gives VCG
+outcome equality for every PBE strategy. -/
+theorem audit_theorem8_strict_ordered_sequential_rationality_core_source_completion_pbe_outcome_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    cert.integrated.dynamic.base.game.outcomeOf strategy =
+      cert.integrated.dynamic.base.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_pbe_outcome_eq_vcg
+      cert hpbe
+
+/-- Audit endpoint: under the one-step/tie-break core certificate, every PBE
+strategy is the named finite `B*` strategy. -/
+theorem audit_theorem8_strict_ordered_one_step_tie_break_core_source_completion_pbe_strategy_eq_named
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    strategy =
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_pbe_strategy_eq_named
+      cert hpbe
+
+/-- Audit endpoint: under the sequential-rationality core certificate, every
+PBE strategy is the named finite `B*` strategy. -/
+theorem audit_theorem8_strict_ordered_sequential_rationality_core_source_completion_pbe_strategy_eq_named
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    strategy =
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_pbe_strategy_eq_named
+      cert hpbe
+
+/-- Audit endpoint: under the one-sided source certificate, every PBE strategy
+is the named finite `B*` strategy. -/
+theorem audit_theorem8_strict_ordered_one_sided_source_completion_pbe_strategy_eq_named
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    strategy =
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_pbe_strategy_eq_named
+      cert hpbe
+
+/-- Audit endpoint: under the ex-post one-sided source certificate, every PBE
+strategy is the named finite `B*` strategy. -/
+theorem audit_theorem8_strict_ordered_ex_post_one_sided_source_completion_pbe_strategy_eq_named
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    strategy =
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_one_sided_source_completion_pbe_strategy_eq_named
+      cert hpbe
+
+/-- Audit endpoint: the one-step/tie-break core certificate gives the PBE
+cutoff rule directly. -/
+theorem audit_theorem8_strict_ordered_one_step_tie_break_core_source_completion_pbe_drops_iff_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_pbe_drops_iff_threshold_bid
+      cert hpbe state rank
+
+/-- Audit endpoint: the sequential-rationality core certificate gives the PBE
+cutoff rule directly. -/
+theorem audit_theorem8_strict_ordered_sequential_rationality_core_source_completion_pbe_drops_iff_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_pbe_drops_iff_threshold_bid
+      cert hpbe state rank
+
+/-- Audit endpoint: the one-sided source certificate gives the PBE cutoff rule
+directly. -/
+theorem audit_theorem8_strict_ordered_one_sided_source_completion_pbe_drops_iff_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_pbe_drops_iff_threshold_bid
+      cert hpbe state rank
+
+/-- Audit endpoint: the ex-post one-sided source certificate gives the PBE
+cutoff rule directly. -/
+theorem audit_theorem8_strict_ordered_ex_post_one_sided_source_completion_pbe_drops_iff_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_one_sided_source_completion_pbe_drops_iff_threshold_bid
+      cert hpbe state rank
+
+/-- Audit endpoint: the full source-completion certificate gives the PBE cutoff
+rule directly. -/
+theorem audit_theorem8_strict_ordered_source_completion_pbe_drops_iff_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_pbe_drops_iff_threshold_bid
+      cert hpbe state rank
+
+/-- Audit endpoint: the core source-completion certificate gives the PBE cutoff
+rule directly. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_pbe_drops_iff_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_pbe_drops_iff_threshold_bid
+      cert hpbe state rank
+
+/-- Audit endpoint: the local-deviation core source certificate gives the PBE
+cutoff rule directly. -/
+theorem audit_theorem8_strict_ordered_local_deviation_core_source_completion_pbe_drops_iff_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :
+    strategy state rank ↔
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_pbe_drops_iff_threshold_bid
+      cert hpbe state rank
+
+/-- Audit endpoint: the full source-completion certificate gives Step 1,
+drop at or after the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_source_completion_pbe_drops_at_or_after_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hthreshold :
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_pbe_drops_at_or_after_threshold_bid
+      cert hpbe state rank hthreshold
+
+/-- Audit endpoint: the full source-completion certificate gives Step 2, no
+drop before the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_source_completion_pbe_not_drop_before_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock :
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1)) :
+    ¬ strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_pbe_not_drop_before_threshold_bid
+      cert hpbe state rank hclock
+
+/-- Audit endpoint: the core source-completion certificate gives Step 1,
+drop at or after the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_pbe_drops_at_or_after_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hthreshold :
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_pbe_drops_at_or_after_threshold_bid
+      cert hpbe state rank hthreshold
+
+/-- Audit endpoint: the core source-completion certificate gives Step 2, no
+drop before the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_pbe_not_drop_before_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock :
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1)) :
+    ¬ strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_pbe_not_drop_before_threshold_bid
+      cert hpbe state rank hclock
+
+/-- Audit endpoint: the local-deviation core source certificate gives Step 1,
+drop at or after the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_local_deviation_core_source_completion_pbe_drops_at_or_after_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hthreshold :
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_pbe_drops_at_or_after_threshold_bid
+      cert hpbe state rank hthreshold
+
+/-- Audit endpoint: the local-deviation core source certificate gives Step 2,
+no drop before the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_local_deviation_core_source_completion_pbe_not_drop_before_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock :
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1)) :
+    ¬ strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_pbe_not_drop_before_threshold_bid
+      cert hpbe state rank hclock
+
+/-- Audit endpoint: the one-step/tie-break core certificate gives Step 1,
+drop at or after the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_one_step_tie_break_core_source_completion_pbe_drops_at_or_after_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hthreshold :
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_pbe_drops_at_or_after_threshold_bid
+      cert hpbe state rank hthreshold
+
+/-- Audit endpoint: the one-step/tie-break core certificate gives Step 2, no
+drop before the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_one_step_tie_break_core_source_completion_pbe_not_drop_before_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock :
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1)) :
+    ¬ strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_pbe_not_drop_before_threshold_bid
+      cert hpbe state rank hclock
+
+/-- Audit endpoint: the sequential-rationality core certificate gives Step 1,
+drop at or after the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_sequential_rationality_core_source_completion_pbe_drops_at_or_after_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hthreshold :
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_pbe_drops_at_or_after_threshold_bid
+      cert hpbe state rank hthreshold
+
+/-- Audit endpoint: the sequential-rationality core certificate gives Step 2,
+no drop before the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_sequential_rationality_core_source_completion_pbe_not_drop_before_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock :
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1)) :
+    ¬ strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_pbe_not_drop_before_threshold_bid
+      cert hpbe state rank hclock
+
+/-- Audit endpoint: the one-sided source certificate gives Step 1, drop at or
+after the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_one_sided_source_completion_pbe_drops_at_or_after_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hthreshold :
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_pbe_drops_at_or_after_threshold_bid
+      cert hpbe state rank hthreshold
+
+/-- Audit endpoint: the one-sided source certificate gives Step 2, no drop
+before the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_one_sided_source_completion_pbe_not_drop_before_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock :
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1)) :
+    ¬ strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_pbe_not_drop_before_threshold_bid
+      cert hpbe state rank hclock
+
+/-- Audit endpoint: the ex-post one-sided source certificate gives Step 1, drop
+at or after the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_ex_post_one_sided_source_completion_pbe_drops_at_or_after_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hthreshold :
+      paper_theorem8_bstar_threshold_bid
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1) ≤
+          state.clockPrice) :
+    strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_one_sided_source_completion_pbe_drops_at_or_after_threshold_bid
+      cert hpbe state rank hthreshold
+
+/-- Audit endpoint: the ex-post one-sided source certificate gives Step 2, no
+drop before the finite `B*` threshold. -/
+theorem audit_theorem8_strict_ordered_ex_post_one_sided_source_completion_pbe_not_drop_before_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ)
+    (hclock :
+      state.clockPrice <
+        paper_theorem8_bstar_threshold_bid
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          (cert.integrated.dynamic.base.strictModel.remaining + 1) (rank + 1)) :
+    ¬ strategy state rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_one_sided_source_completion_pbe_not_drop_before_threshold_bid
+      cert hpbe state rank hclock
+
+/-- Audit that the strict ordered terminal-dynamic certificate constructs the
+source-completion certificate without additional assumptions. -/
+def audit_theorem8_strict_ordered_source_completion_certificate_of_terminal_dynamic_certificate
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_terminal_dynamic_certificate
+    cert
+
+/-- Audit for the final conditional Theorem 8 conclusion once the
+source-completion certificate is instantiated. -/
+theorem audit_theorem8_strict_ordered_source_completion_pbe_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+      cert.integrated strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_pbe_conclusion
+      cert hpbe
+
+/-- Audit for the source-completion route starting directly from the strict
+ordered terminal-dynamic certificate. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_source_completion_pbe_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : cert.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+      cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_source_completion_pbe_conclusion
+      cert hpbe
+
+/-- Audit for the payoff part of Theorem 8 at the terminal-dynamic boundary:
+same VCG slots and payments imply equal position-auction utility. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_pbe_utility_eq_vcg_of_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hconclusion :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+        cert strategy)
+    (bidder : ℕ) :
+    (cert.dynamic.base.game.outcomeOf strategy).utility
+        cert.dynamic.base.game.environment cert.dynamic.base.game.values bidder =
+      cert.dynamic.base.game.vcgOutcome.utility
+        cert.dynamic.base.game.environment cert.dynamic.base.game.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_pbe_utility_eq_vcg_of_conclusion
+      cert hconclusion bidder
+
+/-- Audit for the payoff part of Theorem 8 for any certified
+terminal-dynamic PBE strategy. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_pbe_utility_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : cert.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (bidder : ℕ) :
+    (cert.dynamic.base.game.outcomeOf strategy).utility
+        cert.dynamic.base.game.environment cert.dynamic.base.game.values bidder =
+      cert.dynamic.base.game.vcgOutcome.utility
+        cert.dynamic.base.game.environment cert.dynamic.base.game.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_pbe_utility_eq_vcg
+      cert hpbe bidder
+
+/-- Audit that the source-completion certificate makes the named finite-`B*`
+threshold strategy a PBE. -/
+theorem audit_theorem8_strict_ordered_source_completion_named_strategy_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_named_strategy_pbe
+      cert
+
+/-- Audit for the named finite-`B*` strategy's compact
+terminal/dynamic/VCG conclusion under the source-completion certificate. -/
+theorem audit_theorem8_strict_ordered_source_completion_named_strategy_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+      cert.integrated
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_named_strategy_conclusion
+      cert
+
+/-- Audit for the named finite-`B*` strategy conclusion starting directly from
+the strict ordered terminal-dynamic certificate. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_named_strategy_source_completion_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+      cert
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.dynamic.base.strictModel.value
+        cert.dynamic.base.strictModel.clickThroughRate
+        cert.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_named_strategy_source_completion_conclusion
+      cert
+
+/-- Audit that every source-completion PBE strategy is the named finite-`B*`
+threshold strategy. -/
+theorem audit_theorem8_strict_ordered_source_completion_pbe_strategy_eq_named
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    strategy =
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_pbe_strategy_eq_named
+      cert hpbe
+
+/-- Audit for the unique-PBE statement with the named finite-`B*` threshold
+strategy as the unique equilibrium. -/
+theorem audit_theorem8_strict_ordered_source_completion_exists_unique_named_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_exists_unique_named_pbe
+      cert
+
+/-- Audit for unique PBE starting directly from the strict ordered
+terminal-dynamic certificate. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_exists_unique_named_pbe_of_source_completion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.dynamic.base.game.PerfectBayesianEquilibrium strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_exists_unique_named_pbe_of_source_completion
+      cert
+
+/-- Audit for the direct source-completion characterization: PBE iff the
+strategy is the named finite-`B*` threshold strategy. -/
+theorem audit_theorem8_strict_ordered_source_completion_pbe_iff_named_strategy
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ} :
+    cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_pbe_iff_named_strategy
+      cert
+
+/-- Audit for PBE iff named finite-`B*` threshold strategy starting directly
+from the strict ordered terminal-dynamic certificate. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_pbe_iff_named_strategy_of_source_completion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ} :
+    cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          cert.dynamic.base.strictModel.value
+          cert.dynamic.base.strictModel.clickThroughRate
+          cert.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_pbe_iff_named_strategy_of_source_completion
+      cert
+
+/-- Audit for the source-completion characterization: PBE with full
+terminal/dynamic/ordered-outcome conclusion iff named finite-`B*` strategy. -/
+theorem audit_theorem8_strict_ordered_source_completion_pbe_with_full_conclusion_iff_named_strategy
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ} :
+    (cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          cert.integrated strategy) ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_pbe_with_full_conclusion_iff_named_strategy
+      cert
+
+/-- Audit for PBE with full conclusion iff named finite-`B*` strategy starting
+directly from the strict ordered terminal-dynamic certificate. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_pbe_with_full_conclusion_iff_named_strategy_of_source_completion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ} :
+    (cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          cert strategy) ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          cert.dynamic.base.strictModel.value
+          cert.dynamic.base.strictModel.clickThroughRate
+          cert.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_pbe_with_full_conclusion_iff_named_strategy_of_source_completion
+      cert
+
+/-- Audit constructor for the core source-completion certificate generated from
+the strict ordered terminal-dynamic certificate. This exposes the three
+independent source-PBE obligations separately from the derived VCG outcome
+fields. -/
+def audit_theorem8_strict_ordered_core_source_completion_certificate_of_terminal_dynamic_certificate
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_certificate_of_terminal_dynamic_certificate
+    cert
+
+/-- Audit bridge from the core source-completion certificate to the full
+source-completion certificate; PBE-to-VCG outcome equality is derived, not an
+extra source assumption. -/
+def audit_theorem8_strict_ordered_source_completion_certificate_of_core
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_core
+    cert
+
+/-- Audit bridge from the one-sided Step 1/Step 2 source-completion certificate
+to the core source-completion certificate. -/
+def audit_theorem8_strict_ordered_core_source_completion_certificate_of_one_sided
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_certificate_of_one_sided
+    cert
+
+/-- Audit bridge from the one-sided Step 1/Step 2 source-completion certificate
+directly to the full source-completion certificate. -/
+def audit_theorem8_strict_ordered_source_completion_certificate_of_one_sided
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_one_sided
+    cert
+
+/-- Audit bridge from the terminal-dynamic certificate to the one-sided Step
+1/Step 2 source-completion certificate. This shows the existing full
+behavioral characterization implies the two paper proof exclusions directly. -/
+def audit_theorem8_strict_ordered_one_sided_source_completion_certificate_of_terminal_dynamic_certificate
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_certificate_of_terminal_dynamic_certificate
+    cert
+
+/-- Audit constructor for the integrated terminal-dynamic certificate from a
+strict ordered dynamic certificate and sorted finite exact-drop schedule data. -/
+noncomputable def audit_theorem8_strict_ordered_terminal_dynamic_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+    {Belief : Type*}
+    (dynamic :
+      PaperTheorem8BStarRankedThresholdStrictOrderedDynamicGameConstructedOutcomeCertificate
+        Belief)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          dynamic.base.strictModel)
+        state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+              dynamic.base.strictModel)
+            state ranks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              dynamic.base.strictModel.value
+              dynamic.base.strictModel.clickThroughRate
+              (dynamic.base.strictModel.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+    dynamic state ranks hsorted hnodup hinitial_active hunscheduled
+
+/-- Audit bridge from the ex-post one-sided source-completion certificate to
+the one-sided source-completion certificate. -/
+def audit_theorem8_strict_ordered_one_sided_source_completion_certificate_of_ex_post
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_certificate_of_ex_post
+    cert
+
+/-- Audit for named-strategy PBE at the core source-completion boundary. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_named_strategy_pbe
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief) :
+    cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_named_strategy_pbe
+      cert
+
+/-- Audit for uniqueness of PBE behavior at the core source-completion
+boundary. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_pbe_strategy_eq_named
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    strategy =
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_pbe_strategy_eq_named
+      cert hpbe
+
+/-- Audit that arbitrary PBE outcomes equal the VCG outcome at the core
+source-completion boundary. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_pbe_outcome_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    cert.integrated.dynamic.base.game.outcomeOf strategy =
+      cert.integrated.dynamic.base.game.vcgOutcome := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_pbe_outcome_eq_vcg
+      cert hpbe
+
+/-- Audit for PBE slot equality at the core source-completion boundary. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_pbe_slots_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (bidder : ℕ) :
+    (cert.integrated.dynamic.base.game.outcomeOf strategy).slotOf bidder =
+      cert.integrated.dynamic.base.game.vcgOutcome.slotOf bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_pbe_slots_eq_vcg
+      cert hpbe bidder
+
+/-- Audit for PBE payment equality at the core source-completion boundary. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_pbe_payments_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (bidder : ℕ) :
+    (cert.integrated.dynamic.base.game.outcomeOf strategy).paymentPerClick
+        bidder =
+      cert.integrated.dynamic.base.game.vcgOutcome.paymentPerClick bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_pbe_payments_eq_vcg
+      cert hpbe bidder
+
+/-- Audit for PBE utility equality at the core source-completion boundary. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_pbe_utility_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (bidder : ℕ) :
+    (cert.integrated.dynamic.base.game.outcomeOf strategy).utility
+        cert.integrated.dynamic.base.game.environment
+        cert.integrated.dynamic.base.game.values bidder =
+      cert.integrated.dynamic.base.game.vcgOutcome.utility
+        cert.integrated.dynamic.base.game.environment
+        cert.integrated.dynamic.base.game.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_pbe_utility_eq_vcg
+      cert hpbe bidder
+
+/-- Audit for same-payoff utility equality at the full source-completion
+boundary. -/
+theorem audit_theorem8_strict_ordered_source_completion_pbe_utility_eq_vcg
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (bidder : ℕ) :
+    (cert.integrated.dynamic.base.game.outcomeOf strategy).utility
+        cert.integrated.dynamic.base.game.environment
+        cert.integrated.dynamic.base.game.values bidder =
+      cert.integrated.dynamic.base.game.vcgOutcome.utility
+        cert.integrated.dynamic.base.game.environment
+        cert.integrated.dynamic.base.game.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_pbe_utility_eq_vcg
+      cert hpbe bidder
+
+/-- Audit for the compact paper-facing Theorem 8 conclusion at the
+source-completion boundary. -/
+theorem audit_theorem8_strict_ordered_source_completion_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionPaperConclusion
+      cert := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_paper_conclusion
+      cert
+
+/-- Audit for the compact paper-facing Theorem 8 conclusion at the core
+source-completion boundary. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionPaperConclusion
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_core
+        cert) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_paper_conclusion
+      cert
+
+/-- Audit for the compact paper-facing Theorem 8 conclusion from the
+one-step/tie-break core source certificate. -/
+theorem audit_theorem8_strict_ordered_one_step_tie_break_core_source_completion_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionPaperConclusion
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_one_step_tie_break
+        cert) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_paper_conclusion
+      cert
+
+/-- Audit for the compact paper-facing Theorem 8 conclusion from the
+sequential-rationality core source certificate. -/
+theorem audit_theorem8_strict_ordered_sequential_rationality_core_source_completion_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionPaperConclusion
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_sequential_rationality
+        cert) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_paper_conclusion
+      cert
+
+/-- Audit for the compact paper-facing Theorem 8 conclusion from the
+local-deviation core source certificate. -/
+theorem audit_theorem8_strict_ordered_local_deviation_core_source_completion_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionPaperConclusion
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_local_deviation
+        cert) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_paper_conclusion
+      cert
+
+/-- Audit for the compact paper-facing Theorem 8 conclusion from the one-sided
+source certificate. -/
+theorem audit_theorem8_strict_ordered_one_sided_source_completion_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionPaperConclusion
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_one_sided
+        cert) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_paper_conclusion
+      cert
+
+/-- Audit for the compact paper-facing Theorem 8 conclusion from the ex-post
+one-sided source certificate. -/
+theorem audit_theorem8_strict_ordered_ex_post_one_sided_source_completion_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionPaperConclusion
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_ex_post
+        cert) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_one_sided_source_completion_paper_conclusion
+      cert
+
+/-- Audit for the compact paper-facing Theorem 8 conclusion starting directly
+from the strict ordered terminal-dynamic certificate. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_source_completion_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionPaperConclusion
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_terminal_dynamic_certificate
+        cert) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_source_completion_paper_conclusion
+      cert
+
+/-- Audit for the unique PBE strategy together with the compact
+terminal/dynamic/VCG conclusion at the source-completion boundary. -/
+theorem audit_theorem8_strict_ordered_source_completion_exists_unique_pbe_with_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.integrated strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_exists_unique_pbe_with_conclusion
+      cert
+
+/-- Audit for the unique PBE strategy with compact conclusion starting directly
+from the strict ordered terminal-dynamic certificate. -/
+theorem audit_theorem8_strict_ordered_core_source_completion_exists_unique_pbe_with_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.integrated strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_exists_unique_pbe_with_conclusion
+      cert
+
+theorem audit_theorem8_strict_ordered_one_step_tie_break_core_source_completion_exists_unique_pbe_with_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.integrated strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_exists_unique_pbe_with_conclusion
+      cert
+
+theorem audit_theorem8_strict_ordered_sequential_rationality_core_source_completion_exists_unique_pbe_with_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSequentialRationalityCoreSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.integrated strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_sequential_rationality_core_source_completion_exists_unique_pbe_with_conclusion
+      cert
+
+theorem audit_theorem8_strict_ordered_local_deviation_core_source_completion_exists_unique_pbe_with_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.integrated strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_exists_unique_pbe_with_conclusion
+      cert
+
+theorem audit_theorem8_strict_ordered_one_sided_source_completion_exists_unique_pbe_with_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.integrated strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_exists_unique_pbe_with_conclusion
+      cert
+
+theorem audit_theorem8_strict_ordered_ex_post_one_sided_source_completion_exists_unique_pbe_with_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.integrated strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_one_sided_source_completion_exists_unique_pbe_with_conclusion
+      cert
+
+theorem audit_theorem8_strict_ordered_terminal_dynamic_exists_unique_pbe_with_conclusion_of_source_completion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_exists_unique_pbe_with_conclusion_of_source_completion
+      cert
+
+/-- Audit for the long strict ordered constructed-outcome PBE theorem through
+the named full-conclusion proposition. -/
+theorem audit_theorem8_strict_ordered_constructed_certificate_pbe_full_conclusion_prop
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedDynamicGameConstructedOutcomeCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : cert.base.game.PerfectBayesianEquilibrium strategy) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedConstructedPBEFullConclusion
+      cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_constructed_certificate_pbe_full_conclusion_prop
+      cert hpbe
+
+/-- Audit for the full terminal/dynamic/ordered-outcome PBE conclusion. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_full_pbe_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe : cert.dynamic.base.game.PerfectBayesianEquilibrium strategy) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+      cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_full_pbe_conclusion
+      cert hpbe
+
+/-- Audit for the named finite-`B*` strategy's full
+terminal/dynamic/ordered-outcome conclusion under the source-completion
+certificate. -/
+theorem audit_theorem8_strict_ordered_source_completion_named_strategy_full_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+      cert.integrated
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_named_strategy_full_conclusion
+      cert
+
+/-- Audit for the named finite-`B*` strategy's full conclusion starting directly
+from the strict ordered terminal-dynamic certificate. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_named_strategy_full_source_completion_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+      cert
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.dynamic.base.strictModel.value
+        cert.dynamic.base.strictModel.clickThroughRate
+        cert.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_named_strategy_full_source_completion_conclusion
+      cert
+
+/-- Audit for unique PBE together with the full terminal/dynamic/ordered-outcome
+conclusion at the source-completion boundary. -/
+theorem audit_theorem8_strict_ordered_source_completion_exists_unique_pbe_with_full_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          cert.integrated strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_exists_unique_pbe_with_full_conclusion
+      cert
+
+/-- Audit for unique PBE with full terminal/dynamic/ordered-outcome conclusion
+starting directly from the strict ordered terminal-dynamic certificate. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_source_completion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_source_completion
+      cert
+
+/-- Audit constructor for the reduced-form strict ordered terminal-dynamic
+certificate. -/
+noncomputable def audit_theorem8_strict_ordered_reduced_form_terminal_dynamic_certificate
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_constructed_outcome_certificate
+            model).base.strictModel =
+        terminal.localModel) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+      Unit :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+    terminal model hmodel
+
+/-- Audit constructor for the reduced-form strict ordered local-deviation core
+source-completion certificate. This validates the sharpest current
+source-obligation interface on the reduced-form checker. -/
+noncomputable def audit_theorem8_strict_ordered_reduced_form_local_deviation_core_source_completion_certificate
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_constructed_outcome_certificate
+            model).base.strictModel =
+        terminal.localModel) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+      Unit :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_local_deviation_core_source_completion_certificate
+    terminal model hmodel
+
+/-- Audit constructor for the strict ordered local-deviation terminal-dynamic
+certificate. This uses the local-deviation dynamic game rather than the
+reduced-form equality-to-named-strategy game. -/
+noncomputable def audit_theorem8_strict_ordered_local_deviation_terminal_dynamic_certificate
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+            model).base.strictModel =
+        terminal.localModel) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+      Unit :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_certificate
+    terminal model hmodel
+
+/-- Audit constructor for the strict ordered local-deviation core
+source-completion certificate. This is the current source-shaped checker for
+the hard sequential-rationality obligation. -/
+noncomputable def audit_theorem8_strict_ordered_local_deviation_core_source_completion_certificate
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+            model).base.strictModel =
+        terminal.localModel) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedLocalDeviationCoreSourceCompletionCertificate
+      Unit :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_certificate
+    terminal model hmodel
+
+/-- Audit for the strict ordered local-deviation terminal-dynamic certificate's
+unique PBE with full terminal/dynamic/ordered-outcome conclusion. -/
+theorem audit_theorem8_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+            model).base.strictModel =
+        terminal.localModel) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_certificate
+          terminal model hmodel).dynamic.base.game.PerfectBayesianEquilibrium
+        strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_certificate
+            terminal model hmodel)
+          strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion
+      terminal model hmodel
+
+/-- Audit for the strict ordered local-deviation terminal-dynamic certificate's
+plain PBE iff named finite-`B*` strategy characterization. -/
+theorem audit_theorem8_strict_ordered_local_deviation_terminal_dynamic_pbe_iff_named_strategy
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+            model).base.strictModel =
+        terminal.localModel)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ} :
+    (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_certificate
+        terminal model hmodel).dynamic.base.game.PerfectBayesianEquilibrium
+      strategy ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_certificate
+            terminal model hmodel).dynamic.base.strictModel.value
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_certificate
+            terminal model hmodel).dynamic.base.strictModel.clickThroughRate
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_certificate
+            terminal model hmodel).dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_pbe_iff_named_strategy
+      terminal model hmodel
+
+/-- Audit for the reduced-form strict ordered terminal-dynamic certificate's
+unique PBE with full terminal/dynamic/ordered-outcome conclusion. -/
+theorem audit_theorem8_strict_ordered_reduced_form_terminal_dynamic_exists_unique_pbe_with_full_conclusion
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_constructed_outcome_certificate
+            model).base.strictModel =
+        terminal.localModel) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+          terminal model hmodel).dynamic.base.game.PerfectBayesianEquilibrium
+        strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+            terminal model hmodel)
+          strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_exists_unique_pbe_with_full_conclusion
+      terminal model hmodel
+
+/-- Audit for the reduced-form strict ordered terminal-dynamic certificate's
+PBE iff named finite-`B*` strategy characterization. -/
+theorem audit_theorem8_strict_ordered_reduced_form_terminal_dynamic_pbe_iff_named_strategy
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_constructed_outcome_certificate
+            model).base.strictModel =
+        terminal.localModel)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ} :
+    (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+        terminal model hmodel).dynamic.base.game.PerfectBayesianEquilibrium
+        strategy ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+            terminal model hmodel).dynamic.base.strictModel.value
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+            terminal model hmodel).dynamic.base.strictModel.clickThroughRate
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+            terminal model hmodel).dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_pbe_iff_named_strategy
+      terminal model hmodel
+
+/-- Audit for the reduced-form PBE-with-full-conclusion iff named finite-`B*`
+strategy endpoint. -/
+theorem audit_theorem8_strict_ordered_reduced_form_terminal_dynamic_pbe_with_full_conclusion_iff_named_strategy
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_constructed_outcome_certificate
+            model).base.strictModel =
+        terminal.localModel)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ} :
+    ((paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+        terminal model hmodel).dynamic.base.game.PerfectBayesianEquilibrium
+        strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+            terminal model hmodel)
+          strategy) ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+            terminal model hmodel).dynamic.base.strictModel.value
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+            terminal model hmodel).dynamic.base.strictModel.clickThroughRate
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate
+            terminal model hmodel).dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_pbe_with_full_conclusion_iff_named_strategy
+      terminal model hmodel
+
+/-- Audit constructor for the reduced-form strict ordered terminal-dynamic
+certificate from readable terminal/local-model agreement. -/
+noncomputable def audit_theorem8_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      terminal.localModel =
+        paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered
+            model)) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+      Unit :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+    terminal model hmodel
+
+/-- Audit for the readable reduced-form terminal/local-model agreement's unique
+PBE with full terminal/dynamic/ordered-outcome conclusion. -/
+theorem audit_theorem8_strict_ordered_reduced_form_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_terminal_model_eq
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      terminal.localModel =
+        paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered
+            model)) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+          terminal model hmodel).dynamic.base.game.PerfectBayesianEquilibrium
+        strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+            terminal model hmodel)
+          strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_terminal_model_eq
+      terminal model hmodel
+
+/-- Audit for PBE iff named finite-`B*` strategy under readable reduced-form
+terminal/local-model agreement. -/
+theorem audit_theorem8_strict_ordered_reduced_form_terminal_dynamic_pbe_iff_named_strategy_of_terminal_model_eq
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      terminal.localModel =
+        paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered
+            model))
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ} :
+    (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+        terminal model hmodel).dynamic.base.game.PerfectBayesianEquilibrium
+        strategy ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+            terminal model hmodel).dynamic.base.strictModel.value
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+            terminal model hmodel).dynamic.base.strictModel.clickThroughRate
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+            terminal model hmodel).dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_pbe_iff_named_strategy_of_terminal_model_eq
+      terminal model hmodel
+
+/-- Audit for PBE with full conclusion iff named finite-`B*` strategy under
+readable reduced-form terminal/local-model agreement. -/
+theorem audit_theorem8_strict_ordered_reduced_form_terminal_dynamic_pbe_with_full_conclusion_iff_named_strategy_of_terminal_model_eq
+    (terminal :
+      PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      terminal.localModel =
+        paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered
+            model))
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ} :
+    ((paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+        terminal model hmodel).dynamic.base.game.PerfectBayesianEquilibrium
+        strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+            terminal model hmodel)
+          strategy) ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+            terminal model hmodel).dynamic.base.strictModel.value
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+            terminal model hmodel).dynamic.base.strictModel.clickThroughRate
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_certificate_of_terminal_model_eq
+            terminal model hmodel).dynamic.base.strictModel.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_reduced_form_terminal_dynamic_pbe_with_full_conclusion_iff_named_strategy_of_terminal_model_eq
+      terminal model hmodel
+
+/-- Audit constructor for the cold-start formal-terminal witness generated
+directly from strict ordered Theorem 8 assumptions. This is a quiescent
+reduced-form checker witness, not a source auction-completion history. -/
+noncomputable def audit_theorem8_strict_ordered_cold_start_terminal_history_behavior_certificate
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate) :
+    PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_terminal_history_behavior_certificate
+    model
+
+/-- Audit for the closed cold-start reduced-form checker: from only the strict
+ordered local model and a quiescent formal-terminal witness, the reduced-form
+terminal-dynamic game has a unique PBE with the full terminal/dynamic/ordered-
+outcome conclusion. -/
+theorem audit_theorem8_strict_ordered_cold_start_reduced_form_exists_unique_pbe_with_full_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_reduced_form_terminal_dynamic_certificate
+          model).dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_reduced_form_terminal_dynamic_certificate
+            model)
+          strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_reduced_form_exists_unique_pbe_with_full_conclusion
+      model
+
+/-- Audit for the closed cold-start reduced-form checker: PBE plus the full
+paper-facing conclusion is equivalent to the named finite-`B*`
+ranked-threshold strategy. -/
+theorem audit_theorem8_strict_ordered_cold_start_reduced_form_pbe_with_full_conclusion_iff_named_strategy
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ} :
+    ((paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_reduced_form_terminal_dynamic_certificate
+        model).dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_reduced_form_terminal_dynamic_certificate
+            model)
+          strategy) ↔
+      strategy =
+        paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_reduced_form_pbe_with_full_conclusion_iff_named_strategy
+      model
+
+/-- Audit constructor for the finite exact-history source-completion
+certificate: source PBE obligations plus exact completion of a finite rank set. -/
+def audit_theorem8_strict_ordered_finite_exact_history_source_completion_certificate
+    {Belief : Type*}
+    (source :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief)
+    (completedRanks : Finset ℕ)
+    (exact_history :
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        source.integrated.terminal.localModel
+        source.integrated.terminal.initialState
+        source.integrated.terminal.finalState)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks →
+        ¬ source.integrated.terminal.finalState.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistorySourceCompletionCertificate
+      Belief where
+  source := source
+  completedRanks := completedRanks
+  exact_history := exact_history
+  inactive_on_completed := inactive_on_completed
+
+/-- Audit for finite exact-history source completion: the completed source
+certificate gives a unique PBE with compact terminal/dynamic/VCG behavior and
+finite terminal-record payment/VCG-tail conclusions on every completed rank. -/
+theorem audit_theorem8_strict_ordered_finite_exact_history_source_completion_exists_unique_pbe_with_terminal_record_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistorySourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_source_completion_exists_unique_pbe_with_terminal_record_conclusion
+      cert
+
+/-- Audit constructor for the finite exact-schedule source-completion
+certificate: source PBE obligations plus an ordered exact-drop schedule
+completing a finite rank set. -/
+def audit_theorem8_strict_ordered_finite_schedule_source_completion_certificate
+    {Belief : Type*}
+    (source :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief)
+    (completedRanks : Finset ℕ)
+    (scheduledRanks : List ℕ)
+    (schedule :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule
+        source.integrated.terminal.localModel
+        source.integrated.terminal.initialState
+        scheduledRanks
+        source.integrated.terminal.finalState)
+    (completed_subset_schedule :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleSourceCompletionCertificate
+      Belief where
+  source := source
+  completedRanks := completedRanks
+  scheduledRanks := scheduledRanks
+  schedule := schedule
+  completed_subset_schedule := completed_subset_schedule
+
+/-- Audit bridge from finite exact-schedule source completion to finite
+exact-history source completion. -/
+def audit_theorem8_strict_ordered_finite_exact_history_source_completion_certificate_of_schedule
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistorySourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_source_completion_certificate_of_schedule
+    cert
+
+/-- Audit for finite exact-schedule source completion: the completed source
+certificate gives a unique PBE with compact terminal/dynamic/VCG behavior and
+finite terminal-record payment/VCG-tail conclusions on every completed rank. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_source_completion_exists_unique_pbe_with_terminal_record_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleSourceCompletionCertificate
+        Belief) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_source_completion_exists_unique_pbe_with_terminal_record_conclusion
+      cert
+
+/-- Audit for sorted finite-schedule source completion: source PBE obligations
+plus a sorted no-duplicate rank list yield unique PBE and terminal-record
+conclusions on the completed finite rank set. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_source_completion_of_clock_sorted_nodup
+    {Belief : Type*}
+    (source :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hfinal :
+      source.integrated.terminal.finalState =
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          source.integrated.terminal.localModel
+          source.integrated.terminal.initialState
+          scheduledRanks)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        source.integrated.terminal.localModel
+        source.integrated.terminal.initialState.clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    source.integrated.terminal.localModel.value
+                    source.integrated.terminal.localModel.clickThroughRate
+                    (source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  source.integrated.terminal.localModel.clickThroughRate rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      source.integrated.terminal.localModel.value
+                      source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_source_completion_of_clock_sorted_nodup
+      source completedRanks scheduledRanks hfinal hsorted hnodup hsubset
+
+/-- Audit constructor for the finite exact-schedule core source-completion
+certificate from the terminal-dynamic certificate plus clock-sorted schedule
+data. This is the compact object consumed by the long finite terminal-record
+unique-PBE theorem. -/
+def audit_theorem8_strict_ordered_finite_schedule_core_source_completion_certificate_of_terminal_dynamic_clock_sorted_nodup
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hfinal :
+      cert.terminal.finalState =
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          cert.terminal.localModel
+          cert.terminal.initialState
+          scheduledRanks)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        cert.terminal.localModel
+        cert.terminal.initialState.clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleCoreSourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_core_source_completion_certificate_of_terminal_dynamic_clock_sorted_nodup
+    cert completedRanks scheduledRanks hfinal hsorted hnodup hsubset
+
+/-- Audit constructor for finite-schedule core source completion directly from
+a strict ordered dynamic-game certificate and sorted exact-drop schedule data. -/
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_core_source_completion_certificate_of_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    {Belief : Type*}
+    (dynamic :
+      PaperTheorem8BStarRankedThresholdStrictOrderedDynamicGameConstructedOutcomeCertificate
+        Belief)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          dynamic.base.strictModel)
+        state.clockPrice scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ scheduledRanks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+              dynamic.base.strictModel)
+            state scheduledRanks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              dynamic.base.strictModel.value
+              dynamic.base.strictModel.clickThroughRate
+              (dynamic.base.strictModel.remaining + 1)
+              (rank + 1))
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleCoreSourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_core_source_completion_certificate_of_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    dynamic state completedRanks scheduledRanks hsorted hnodup hinitial_active
+    hunscheduled hsubset
+
+/-- Audit constructor for finite-schedule core source completion specialized to
+the strict ordered local-deviation dynamic game. -/
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_core_source_completion_certificate_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+            model).base.strictModel)
+        state.clockPrice scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ scheduledRanks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel)
+            state scheduledRanks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.remaining + 1)
+              (rank + 1))
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleCoreSourceCompletionCertificate
+      Unit :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_core_source_completion_certificate_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    model state completedRanks scheduledRanks hsorted hnodup hinitial_active
+    hunscheduled hsubset
+
+/-- Audit helper: in the canonical cold-start state, the clock is below every
+finite `B*` exact-schedule threshold for the strict ordered local-deviation
+model. -/
+theorem audit_theorem8_strict_ordered_cold_start_clock_le_local_deviation_exact_schedule_price
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (rank : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice ≤
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_clock_le_local_deviation_exact_schedule_price
+      model rank
+
+/-- Audit helper: cold-start singleton local-deviation schedules are
+clock-sorted automatically. -/
+theorem audit_theorem8_strict_ordered_local_deviation_cold_start_clock_sorted_singleton
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (rank : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model)
+      paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+      [rank] := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_singleton
+      model rank
+
+/-- Audit helper: cold-start two-rank local-deviation schedules only need the
+adjacent threshold-order check. -/
+theorem audit_theorem8_strict_ordered_local_deviation_cold_start_clock_sorted_pair
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (rank nextRank : ℕ)
+    (hnext :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          rank ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          nextRank) :
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model)
+      paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+      [rank, nextRank] := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_pair
+      model rank nextRank hnext
+
+/-- Audit helper: every cold-start two-rank local-deviation schedule has a
+clock-sorted order, either as displayed or swapped. -/
+theorem audit_theorem8_strict_ordered_local_deviation_cold_start_clock_sorted_pair_or_swap
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (rank nextRank : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+        [rank, nextRank] ∨
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+        [nextRank, rank] := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_pair_or_swap
+      model rank nextRank
+
+/-- Audit helper: cold-start local-deviation schedules are clock-sorted when
+their finite `B*` thresholds are adjacent-sorted. -/
+theorem audit_theorem8_strict_ordered_local_deviation_cold_start_clock_sorted_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        scheduledRanks) :
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model)
+      paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+      scheduledRanks := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_of_threshold_sorted
+      model scheduledRanks hsorted
+
+/-- Audit helper: cold-start threshold-sorted local-deviation schedules directly
+generate exact terminal records in the deterministic final state. -/
+theorem audit_theorem8_strict_ordered_local_deviation_cold_start_threshold_sorted_final_state_terminal_record_eq_threshold_of_mem
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledRanks : List ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    {rank : ℕ} (hrank : rank ∈ scheduledRanks) :
+    (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state
+        scheduledRanks).lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).value
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).clickThroughRate
+          ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).remaining + 1)
+          (rank + 1)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_threshold_sorted_final_state_terminal_record_eq_threshold_of_mem
+      model scheduledRanks hthreshold_sorted hnodup hrank
+
+/-- Audit helper: cold-start threshold-sorted local-deviation schedules leave
+exactly the unscheduled ranks active in the deterministic final state. -/
+theorem audit_theorem8_strict_ordered_local_deviation_cold_start_threshold_sorted_final_state_active_iff_not_mem
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledRanks : List ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (rank : ℕ) :
+    (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state
+        scheduledRanks).IsActive rank ↔
+      rank ∉ scheduledRanks := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_threshold_sorted_final_state_active_iff_not_mem
+      model scheduledRanks hthreshold_sorted hnodup rank
+
+/-- Audit constructor for the all-scheduled finite-schedule core source
+completion path specialized to the strict ordered local-deviation dynamic game. -/
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+            model).base.strictModel)
+        state.clockPrice scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ scheduledRanks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel)
+            state scheduledRanks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleCoreSourceCompletionCertificate
+      Unit :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    model state scheduledRanks hsorted hnodup hinitial_active hunscheduled
+
+/-- Audit endpoint from the strict ordered local-deviation dynamic game and
+sorted finite exact-drop schedule data to unique PBE plus terminal-record
+conclusions on the completed finite ranks. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_core_source_completion_exists_unique_pbe_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+            model).base.strictModel)
+        state.clockPrice scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ scheduledRanks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel)
+            state scheduledRanks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.remaining + 1)
+              (rank + 1))
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_core_source_completion_certificate_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+        model state completedRanks scheduledRanks hsorted hnodup
+        hinitial_active hunscheduled hsubset
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_core_source_completion_exists_unique_pbe_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+      model state completedRanks scheduledRanks hsorted hnodup hinitial_active
+      hunscheduled hsubset
+
+/-- Audit endpoint for the all-scheduled strict ordered local-deviation path:
+the completed rank set is `scheduledRanks.toFinset`, so no separate finite-rank
+inclusion proof is needed. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_all_scheduled_core_source_completion_exists_unique_pbe_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+            model).base.strictModel)
+        state.clockPrice scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ scheduledRanks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel)
+            state scheduledRanks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.remaining + 1)
+              (rank + 1)) :
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+        model state scheduledRanks hsorted hnodup hinitial_active hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_exists_unique_pbe_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+      model state scheduledRanks hsorted hnodup hinitial_active hunscheduled
+
+/-- Audit endpoint for a nonempty all-scheduled strict ordered local-deviation
+path. The terminality premise compares unscheduled thresholds with the last
+scheduled threshold, rather than with the recursive final-state clock. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_all_scheduled_core_source_completion_exists_unique_pbe_of_local_deviation_dynamic_clock_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        state.clockPrice (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    let hunscheduled :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        state scheduledPrefix lastRank hunscheduled_last
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+        model state (scheduledPrefix ++ [lastRank]) hsorted hnodup
+        hinitial_active hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_exists_unique_pbe_of_local_deviation_dynamic_clock_sorted_nodup_last_threshold_lt_unscheduled
+      model state scheduledPrefix lastRank hsorted hnodup hinitial_active
+      hunscheduled_last
+
+/-- Audit endpoint for the cold-start all-scheduled strict ordered
+local-deviation path with nonempty schedule terminality checked against the
+last scheduled threshold. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_all_scheduled_core_source_completion_exists_unique_pbe_of_local_deviation_cold_start_clock_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    let hunscheduled :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state scheduledPrefix
+        lastRank hunscheduled_last
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        (scheduledPrefix ++ [lastRank]) hsorted hnodup
+        (fun rank => by rfl) hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_exists_unique_pbe_of_local_deviation_cold_start_clock_sorted_nodup_last_threshold_lt_unscheduled
+      model scheduledPrefix lastRank hsorted hnodup hunscheduled_last
+
+/-- Audit wrapper for the cold-start local-deviation terminal-history behavior
+certificate using adjacent-threshold sortedness. This exposes the concrete
+strategy-consistent terminal history object before it is packaged into the
+terminal-dynamic certificate. -/
+noncomputable def audit_theorem8_strict_ordered_local_deviation_terminal_history_behavior_certificate_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_behavior_certificate_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    model scheduledPrefix lastRank hthreshold_sorted hnodup
+    hunscheduled_last
+
+/-- Audit endpoint: the cold-start threshold-sorted terminal-history certificate
+has exact dropout records for every scheduled rank. -/
+theorem audit_theorem8_strict_ordered_local_deviation_terminal_history_certificate_final_state_terminal_record_eq_threshold_of_mem
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1))
+    {rank : ℕ} (hrank : rank ∈ scheduledPrefix ++ [lastRank]) :
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_behavior_certificate_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+        model scheduledPrefix lastRank hthreshold_sorted hnodup
+        hunscheduled_last
+    cert.finalState.lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          cert.localModel.value cert.localModel.clickThroughRate
+          (cert.localModel.remaining + 1)
+          (rank + 1)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_certificate_final_state_terminal_record_eq_threshold_of_mem
+      model scheduledPrefix lastRank hthreshold_sorted hnodup
+      hunscheduled_last hrank
+
+/-- Audit endpoint: the cold-start threshold-sorted terminal-history
+certificate has exactly unscheduled ranks active in its final state. -/
+theorem audit_theorem8_strict_ordered_local_deviation_terminal_history_certificate_final_state_active_iff_not_mem
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1))
+    (rank : ℕ) :
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_behavior_certificate_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+        model scheduledPrefix lastRank hthreshold_sorted hnodup
+        hunscheduled_last
+    cert.finalState.IsActive rank ↔ rank ∉ scheduledPrefix ++ [lastRank] := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_certificate_final_state_active_iff_not_mem
+      model scheduledPrefix lastRank hthreshold_sorted hnodup
+      hunscheduled_last rank
+
+/-- Audit certificate wrapper for the cold-start local-deviation terminal-dynamic
+path using adjacent-threshold sortedness. This exposes the reusable certificate
+object before taking the final unique-PBE conclusion. -/
+noncomputable def audit_theorem8_strict_ordered_local_deviation_terminal_dynamic_certificate_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+      Unit :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_certificate_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    model scheduledPrefix lastRank hthreshold_sorted hnodup
+    hunscheduled_last
+
+/-- Audit certificate wrapper for the cold-start all-scheduled
+source-completion path using adjacent-threshold sortedness. This is the
+source-facing certificate object behind the threshold-sorted endpoint. -/
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_local_deviation_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedFiniteScheduleCoreSourceCompletionCertificate
+      Unit :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_local_deviation_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    model scheduledPrefix lastRank hthreshold_sorted hnodup
+    hunscheduled_last
+
+/-- Audit endpoint for a cold-start all-scheduled strict ordered
+local-deviation path using adjacent-threshold sortedness instead of recursive
+clock-sortedness. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_all_scheduled_core_source_completion_exists_unique_pbe_of_local_deviation_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    let hsorted :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_of_threshold_sorted
+        model (scheduledPrefix ++ [lastRank]) hthreshold_sorted
+    let hunscheduled :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state scheduledPrefix
+        lastRank hunscheduled_last
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        (scheduledPrefix ++ [lastRank]) hsorted hnodup
+        (fun rank => by rfl) hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_exists_unique_pbe_of_local_deviation_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+      model scheduledPrefix lastRank hthreshold_sorted hnodup
+      hunscheduled_last
+
+/-- Audit endpoint for the cold-start threshold-sorted route with terminal-record
+conclusions named explicitly. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_all_scheduled_core_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_local_deviation_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+        model scheduledPrefix lastRank hthreshold_sorted hnodup
+        hunscheduled_last
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+      model scheduledPrefix lastRank hthreshold_sorted hnodup
+      hunscheduled_last
+
+/-- Audit endpoint for a cold-start singleton exact schedule. Sortedness,
+no-duplication, and initial activity are automatic. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_singleton_core_source_completion_exists_unique_pbe_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (lastRank : ℕ)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ≠ lastRank →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    let hscheduled :
+      ∀ rank,
+        rank ∉ ([] : List ℕ) ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1) :=
+      fun rank hrank => hunscheduled_last rank (by simpa using hrank)
+    let hunscheduled :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state []
+        lastRank hscheduled
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        [lastRank]
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_singleton
+          model lastRank)
+        (by simp) (fun rank => by rfl) hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_singleton_core_source_completion_exists_unique_pbe_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+      model lastRank hunscheduled_last
+
+/-- Audit endpoint for a cold-start two-rank exact schedule. Initial
+clock-sortedness is automatic; reviewers check adjacent threshold order,
+distinct ranks, and unscheduled thresholds above the second threshold. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_pair_core_source_completion_exists_unique_pbe_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (rank nextRank : ℕ)
+    (hnext :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          rank ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          nextRank)
+    (hne : rank ≠ nextRank)
+    (hunscheduled_last :
+      ∀ otherRank,
+        otherRank ≠ rank →
+          otherRank ≠ nextRank →
+            paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model)
+                nextRank <
+              paper_theorem8_bstar_threshold_bid
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).value
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).clickThroughRate
+                ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).remaining + 1)
+                (otherRank + 1)) :
+    let hscheduled :
+      ∀ otherRank,
+        otherRank ∉ [rank] ++ [nextRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              nextRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (otherRank + 1) :=
+      fun otherRank hmem => by
+        have hnot : otherRank ≠ rank ∧ otherRank ≠ nextRank := by
+          simpa using hmem
+        exact hunscheduled_last otherRank hnot.1 hnot.2
+    let hunscheduled :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state [rank]
+        nextRank hscheduled
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_local_deviation_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        [rank, nextRank]
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_pair
+          model rank nextRank hnext)
+        (by simpa using hne) (fun rank => by rfl) hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_pair_core_source_completion_exists_unique_pbe_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+      model rank nextRank hnext hne hunscheduled_last
+
+/-- Audit alias for the cold-start singleton endpoint with terminal-record
+conclusions named explicitly. -/
+def audit_theorem8_strict_ordered_finite_schedule_singleton_core_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (lastRank : ℕ)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ≠ lastRank →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_singleton_core_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+    model lastRank hunscheduled_last
+
+/-- Audit alias for the cold-start pair endpoint with terminal-record
+conclusions named explicitly. -/
+def audit_theorem8_strict_ordered_finite_schedule_pair_core_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (rank nextRank : ℕ)
+    (hnext :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          rank ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          nextRank)
+    (hne : rank ≠ nextRank)
+    (hunscheduled_last :
+      ∀ otherRank,
+        otherRank ≠ rank →
+          otherRank ≠ nextRank →
+            paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model)
+                nextRank <
+              paper_theorem8_bstar_threshold_bid
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).value
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).clickThroughRate
+                ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).remaining + 1)
+                (otherRank + 1)) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_pair_core_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+    model rank nextRank hnext hne hunscheduled_last
+
+/-- Audit endpoint from a strict ordered dynamic-game certificate and sorted
+finite exact-drop schedule data to unique PBE plus terminal-record conclusions
+on the completed finite ranks. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_core_source_completion_exists_unique_pbe_of_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    {Belief : Type*}
+    (dynamic :
+      PaperTheorem8BStarRankedThresholdStrictOrderedDynamicGameConstructedOutcomeCertificate
+        Belief)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          dynamic.base.strictModel)
+        state.clockPrice scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ scheduledRanks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+              dynamic.base.strictModel)
+            state scheduledRanks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              dynamic.base.strictModel.value
+              dynamic.base.strictModel.clickThroughRate
+              (dynamic.base.strictModel.remaining + 1)
+              (rank + 1))
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_core_source_completion_certificate_of_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+        dynamic state completedRanks scheduledRanks hsorted hnodup
+        hinitial_active hunscheduled hsubset
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_core_source_completion_exists_unique_pbe_of_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+      dynamic state completedRanks scheduledRanks hsorted hnodup hinitial_active
+      hunscheduled hsubset
+
+/-- Audit endpoint from a strict ordered dynamic-game certificate and sorted
+finite exact-drop schedule data to unique PBE plus the full
+terminal/dynamic/ordered-outcome conclusion. -/
+theorem audit_theorem8_strict_ordered_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    {Belief : Type*}
+    (dynamic :
+      PaperTheorem8BStarRankedThresholdStrictOrderedDynamicGameConstructedOutcomeCertificate
+        Belief)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          dynamic.base.strictModel)
+        state.clockPrice scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ scheduledRanks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+              dynamic.base.strictModel)
+            state scheduledRanks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              dynamic.base.strictModel.value
+              dynamic.base.strictModel.clickThroughRate
+              (dynamic.base.strictModel.remaining + 1)
+              (rank + 1)) :
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+        dynamic state scheduledRanks hsorted hnodup hinitial_active hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+      dynamic state scheduledRanks hsorted hnodup hinitial_active hunscheduled
+
+/-- Audit endpoint specialized to the strict ordered local-deviation dynamic
+game: sorted exact-drop schedule data yields unique PBE plus the full
+terminal/dynamic/ordered-outcome conclusion. -/
+theorem audit_theorem8_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+            model).base.strictModel)
+        state.clockPrice scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ scheduledRanks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel)
+            state scheduledRanks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+                model).base.strictModel.remaining + 1)
+              (rank + 1)) :
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+          model)
+        state scheduledRanks hsorted hnodup hinitial_active hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+      model state scheduledRanks hsorted hnodup hinitial_active hunscheduled
+
+/-- Audit endpoint for the local-deviation full-conclusion path with nonempty
+schedule terminality checked against the last scheduled threshold. -/
+theorem audit_theorem8_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        state.clockPrice (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    let hunscheduled :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        state scheduledPrefix lastRank hunscheduled_last
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+          model)
+        state (scheduledPrefix ++ [lastRank]) hsorted hnodup
+        hinitial_active hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_last_threshold_lt_unscheduled
+      model state scheduledPrefix lastRank hsorted hnodup hinitial_active
+      hunscheduled_last
+
+/-- Audit endpoint for the cold-start local-deviation full-conclusion path with
+nonempty schedule terminality checked against the last scheduled threshold. -/
+theorem audit_theorem8_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_clock_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    let hunscheduled :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state scheduledPrefix
+        lastRank hunscheduled_last
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state
+        (scheduledPrefix ++ [lastRank]) hsorted hnodup
+        (fun rank => by rfl) hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_clock_sorted_nodup_last_threshold_lt_unscheduled
+      model scheduledPrefix lastRank hsorted hnodup hunscheduled_last
+
+/-- Audit endpoint for the cold-start full-conclusion path using
+adjacent-threshold sortedness instead of recursive clock-sortedness. -/
+theorem audit_theorem8_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    let hsorted :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_of_threshold_sorted
+        model (scheduledPrefix ++ [lastRank]) hthreshold_sorted
+    let hunscheduled :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state scheduledPrefix
+        lastRank hunscheduled_last
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state
+        (scheduledPrefix ++ [lastRank]) hsorted hnodup
+        (fun rank => by rfl) hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+      model scheduledPrefix lastRank hthreshold_sorted hnodup
+      hunscheduled_last
+
+/-- Audit wrapper for the cold-start singleton terminal-history behavior
+certificate. Sortedness, no-duplication, and initial activity are automatic. -/
+noncomputable def audit_theorem8_strict_ordered_local_deviation_terminal_history_behavior_certificate_of_cold_start_singleton_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (lastRank : ℕ)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ≠ lastRank →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_behavior_certificate_of_cold_start_singleton_last_threshold_lt_unscheduled
+    model lastRank hunscheduled_last
+
+/-- Audit wrapper for the cold-start two-rank terminal-history behavior
+certificate. -/
+noncomputable def audit_theorem8_strict_ordered_local_deviation_terminal_history_behavior_certificate_of_cold_start_pair_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (rank nextRank : ℕ)
+    (hnext :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          rank ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          nextRank)
+    (hne : rank ≠ nextRank)
+    (hunscheduled_last :
+      ∀ otherRank,
+        otherRank ≠ rank →
+          otherRank ≠ nextRank →
+            paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model)
+                nextRank <
+              paper_theorem8_bstar_threshold_bid
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).value
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).clickThroughRate
+                ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).remaining + 1)
+                (otherRank + 1)) :
+    PaperTheorem8BStarRankedThresholdTerminalHistoryBehaviorCertificate :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_behavior_certificate_of_cold_start_pair_last_threshold_lt_unscheduled
+    model rank nextRank hnext hne hunscheduled_last
+
+def audit_theorem8_strict_ordered_local_deviation_terminal_history_certificate_singleton_final_state_terminal_record_eq_threshold :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_certificate_singleton_final_state_terminal_record_eq_threshold
+
+def audit_theorem8_strict_ordered_local_deviation_terminal_history_certificate_singleton_final_state_active_iff_ne :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_certificate_singleton_final_state_active_iff_ne
+
+def audit_theorem8_strict_ordered_local_deviation_terminal_history_certificate_pair_first_final_state_terminal_record_eq_threshold :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_certificate_pair_first_final_state_terminal_record_eq_threshold
+
+def audit_theorem8_strict_ordered_local_deviation_terminal_history_certificate_pair_second_final_state_terminal_record_eq_threshold :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_certificate_pair_second_final_state_terminal_record_eq_threshold
+
+def audit_theorem8_strict_ordered_local_deviation_terminal_history_certificate_pair_final_state_active_iff_ne :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_history_certificate_pair_final_state_active_iff_ne
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_core_source_completion_obligations
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_obligations
+    cert
+
+def audit_theorem8_strict_ordered_local_deviation_core_source_completion_certificate_of_ex_post_local_deviation
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_certificate_of_ex_post_local_deviation
+    cert
+
+def audit_theorem8_strict_ordered_ex_post_one_sided_source_completion_certificate_of_ex_post_local_deviation
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_one_sided_source_completion_certificate_of_ex_post_local_deviation
+    cert
+
+noncomputable def audit_theorem8_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_certificate :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_certificate
+
+def audit_theorem8_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_named_strategy_sequentially_rational_for_all_beliefs :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_named_strategy_sequentially_rational_for_all_beliefs
+
+def audit_theorem8_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_named_strategy_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_named_strategy_local_deviation
+
+def audit_theorem8_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_pbe_history_obligations_of_no_overshoot_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_pbe_history_obligations_of_no_overshoot_terminal_history
+
+def audit_theorem8_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_pbe_completed_rank_terminal_record_paper_conclusion_of_no_overshoot_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_pbe_completed_rank_terminal_record_paper_conclusion_of_no_overshoot_terminal_history
+
+def audit_theorem8_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_pbe_completed_rank_terminal_record_paper_conclusion_of_no_overshoot_terminal_history_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_pbe_completed_rank_terminal_record_paper_conclusion_of_no_overshoot_terminal_history_completed_threshold_le
+
+def audit_theorem8_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_exists_unique_pbe_with_completed_rank_terminal_record_paper_conclusion_of_no_overshoot_terminal_history_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_exists_unique_pbe_with_completed_rank_terminal_record_paper_conclusion_of_no_overshoot_terminal_history_completed_threshold_le
+
+noncomputable def audit_theorem8_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_certificate :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_certificate
+
+def audit_theorem8_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+def audit_theorem8_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_pbe_ordered_terminal_record_paper_conclusion_of_no_overshoot_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_pbe_ordered_terminal_record_paper_conclusion_of_no_overshoot_terminal_history
+
+def audit_theorem8_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_exists_unique_pbe_with_ordered_terminal_record_paper_conclusion_of_no_overshoot_terminal_history :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_ex_post_local_deviation_core_source_completion_exists_unique_pbe_with_ordered_terminal_record_paper_conclusion_of_no_overshoot_terminal_history
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_core_source_completion_pbe_drops_iff_threshold_bid
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      cert.integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) (rank : ℕ) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_pbe_drops_iff_threshold_bid
+    cert hpbe state rank
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_core_source_completion_paper_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_paper_conclusion
+    cert
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_core_source_completion_exists_unique_pbe_with_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_exists_unique_pbe_with_conclusion
+    cert
+
+def audit_theorem8_strict_ordered_exact_history_terminal_record_outcome_eq_bstar
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExactHistoryTerminalDynamicCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_history_terminal_record_outcome_eq_bstar
+    cert
+
+def audit_theorem8_strict_ordered_exact_history_terminal_dynamic_exists_unique_pbe_with_terminal_record_outcome_eq_bstar
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExactHistoryTerminalDynamicCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_history_terminal_dynamic_exists_unique_pbe_with_terminal_record_outcome_eq_bstar
+    cert
+
+def audit_theorem8_strict_ordered_exact_history_terminal_dynamic_certificate_of_ex_post_local_deviation_exact_history_source_completion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_history_terminal_dynamic_certificate_of_ex_post_local_deviation_exact_history_source_completion
+    cert
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_exact_history_source_completion_exists_unique_pbe_with_terminal_record_outcome_eq_bstar
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_exists_unique_pbe_with_terminal_record_outcome_eq_bstar
+    cert
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_exact_history_source_completion_exists_unique_pbe_with_full_conclusion_and_terminal_record_outcome_eq_bstar
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_exists_unique_pbe_with_full_conclusion_and_terminal_record_outcome_eq_bstar
+    cert
+
+def audit_theorem8_strict_ordered_finite_exact_history_source_completion_certificate_of_ex_post_local_deviation
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_source_completion_certificate_of_ex_post_local_deviation
+    cert
+
+def audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion
+    cert
+
+/-- Audit endpoint for a cold-start singleton exact schedule with full
+terminal/dynamic/ordered-outcome conclusion. Sortedness, no-duplication, and
+initial activity are automatic. -/
+theorem audit_theorem8_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_singleton_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (lastRank : ℕ)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ≠ lastRank →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :
+    let hscheduled :
+      ∀ rank,
+        rank ∉ ([] : List ℕ) ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1) :=
+      fun rank hrank => hunscheduled_last rank (by simpa using hrank)
+    let hunscheduled :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state []
+        lastRank hscheduled
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state
+        [lastRank]
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_singleton
+          model lastRank)
+        (by simp) (fun rank => by rfl) hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_singleton_last_threshold_lt_unscheduled
+      model lastRank hunscheduled_last
+
+/-- Audit endpoint for a cold-start two-rank exact schedule with full
+terminal/dynamic/ordered-outcome conclusion. -/
+theorem audit_theorem8_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_pair_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (rank nextRank : ℕ)
+    (hnext :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          rank ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          nextRank)
+    (hne : rank ≠ nextRank)
+    (hunscheduled_last :
+      ∀ otherRank,
+        otherRank ≠ rank →
+          otherRank ≠ nextRank →
+            paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model)
+                nextRank <
+              paper_theorem8_bstar_threshold_bid
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).value
+                (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).clickThroughRate
+                ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                  model).remaining + 1)
+                (otherRank + 1)) :
+    let hscheduled :
+      ∀ otherRank,
+        otherRank ∉ [rank] ++ [nextRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              nextRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (otherRank + 1) :=
+      fun otherRank hmem => by
+        have hnot : otherRank ≠ rank ∧ otherRank ≠ nextRank := by
+          simpa using hmem
+        exact hunscheduled_last otherRank hnot.1 hnot.2
+    let hunscheduled :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_threshold_gt_of_append_singleton
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state [rank]
+        nextRank hscheduled
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_dynamic_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+          model)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state
+        [rank, nextRank]
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_pair
+          model rank nextRank hnext)
+        (by simpa using hne) (fun rank => by rfl) hunscheduled
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicFullPBEConclusion
+          cert strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_pair_last_threshold_lt_unscheduled
+      model rank nextRank hnext hne hunscheduled_last
+
+/-- Audit for sorted finite-schedule core source completion: the three core
+source-PBE obligations plus a sorted no-duplicate rank list yield unique PBE and
+terminal-record conclusions on the completed finite rank set. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_core_source_completion_of_clock_sorted_nodup
+    {Belief : Type*}
+    (source :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hfinal :
+      source.integrated.terminal.finalState =
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          source.integrated.terminal.localModel
+          source.integrated.terminal.initialState
+          scheduledRanks)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        source.integrated.terminal.localModel
+        source.integrated.terminal.initialState.clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    source.integrated.terminal.localModel.value
+                    source.integrated.terminal.localModel.clickThroughRate
+                    (source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  source.integrated.terminal.localModel.clickThroughRate rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      source.integrated.terminal.localModel.value
+                      source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_core_source_completion_of_clock_sorted_nodup
+      source completedRanks scheduledRanks hfinal hsorted hnodup hsubset
+
+/-- Audit for sorted finite-schedule source-shaped core source completion:
+belief consistency plus a game-level iff between sequential rationality and the
+reachable/off-path source predicate yields unique PBE and terminal-record
+conclusions on the completed finite rank set. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_source_sequential_rationality_core_source_completion_of_clock_sorted_nodup
+    {Belief : Type*}
+    (source :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceSequentialRationalityCoreSourceCompletionCertificate
+        Belief)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hfinal :
+      source.integrated.terminal.finalState =
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          source.integrated.terminal.localModel
+          source.integrated.terminal.initialState
+          scheduledRanks)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        source.integrated.terminal.localModel
+        source.integrated.terminal.initialState.clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    source.integrated.terminal.localModel.value
+                    source.integrated.terminal.localModel.clickThroughRate
+                    (source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  source.integrated.terminal.localModel.clickThroughRate rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      source.integrated.terminal.localModel.value
+                      source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_source_sequential_rationality_core_source_completion_of_clock_sorted_nodup
+      source completedRanks scheduledRanks hfinal hsorted hnodup hsubset
+
+/-- Audit for the one-stop sorted finite-schedule source-shaped route:
+terminal-dynamic certificate, concrete belief consistency, a game-level
+sequential-rationality iff for the reachable/off-path source predicate, and a
+sorted no-duplicate rank schedule yield unique PBE and completed-rank
+terminal-record formulas. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_source_sequential_rationality_core_source_completion_of_source_iff_clock_sorted_nodup
+    {Belief : Type*}
+    (integrated :
+      PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicCertificate
+        Belief)
+    (initialState : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (concrete_belief_consistency :
+      integrated.dynamic.base.game.isConsistentBelief
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          integrated.dynamic.base.strictModel.value
+          integrated.dynamic.base.strictModel.clickThroughRate
+          integrated.dynamic.base.strictModel.remaining)
+        integrated.dynamic.base.belief)
+    (sequential_rationality_iff_source_sequential :
+      ∀ strategy belief,
+        integrated.dynamic.base.game.isSequentiallyRational strategy belief ↔
+          paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+            integrated.dynamic.base.strictModel.clickThroughRate
+            integrated.dynamic.base.strictModel.value
+            integrated.dynamic.base.strictModel.remaining
+            initialState
+            strategy)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hfinal :
+      integrated.terminal.finalState =
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          integrated.terminal.localModel
+          integrated.terminal.initialState
+          scheduledRanks)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        integrated.terminal.localModel
+        integrated.terminal.initialState.clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      integrated.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          integrated strategy ∧
+          ∀ rank,
+            rank ∈ completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  integrated.terminal.finalState).paymentPerClick rank =
+                  paper_theorem8_bstar_threshold_bid
+                    integrated.terminal.localModel.value
+                    integrated.terminal.localModel.clickThroughRate
+                    (integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  integrated.terminal.localModel.clickThroughRate rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        integrated.terminal.finalState).paymentPerClick rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      integrated.terminal.localModel.value
+                      integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        integrated.terminal.finalState).paymentPerClick rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        integrated.terminal.finalState).paymentPerClick rank ≤
+                        integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_source_sequential_rationality_core_source_completion_of_source_iff_clock_sorted_nodup
+      integrated initialState concrete_belief_consistency
+      sequential_rationality_iff_source_sequential completedRanks
+      scheduledRanks hfinal hsorted hnodup hsubset
+
+/-- Audit for sorted finite-schedule one-sided source completion: source Step 1,
+source Step 2, and a sorted no-duplicate rank list yield unique PBE and
+terminal-record conclusions on the completed finite rank set. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_one_sided_source_completion_of_clock_sorted_nodup
+    {Belief : Type*}
+    (source :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hfinal :
+      source.integrated.terminal.finalState =
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          source.integrated.terminal.localModel
+          source.integrated.terminal.initialState
+          scheduledRanks)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        source.integrated.terminal.localModel
+        source.integrated.terminal.initialState.clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    source.integrated.terminal.localModel.value
+                    source.integrated.terminal.localModel.clickThroughRate
+                    (source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  source.integrated.terminal.localModel.clickThroughRate rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      source.integrated.terminal.localModel.value
+                      source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_one_sided_source_completion_of_clock_sorted_nodup
+      source completedRanks scheduledRanks hfinal hsorted hnodup hsubset
+
+/-- Audit for sorted finite-schedule ex-post one-sided source completion:
+ex-post sequential rationality, source Step 1, source Step 2, and a sorted
+no-duplicate rank list yield unique PBE and terminal-record conclusions on the
+completed finite rank set. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_ex_post_one_sided_source_completion_of_clock_sorted_nodup
+    {Belief : Type*}
+    (source :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hfinal :
+      source.integrated.terminal.finalState =
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          source.integrated.terminal.localModel
+          source.integrated.terminal.initialState
+          scheduledRanks)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        source.integrated.terminal.localModel
+        source.integrated.terminal.initialState.clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    source.integrated.terminal.localModel.value
+                    source.integrated.terminal.localModel.clickThroughRate
+                    (source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  source.integrated.terminal.localModel.clickThroughRate rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      source.integrated.terminal.localModel.value
+                      source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_ex_post_one_sided_source_completion_of_clock_sorted_nodup
+      source completedRanks scheduledRanks hfinal hsorted hnodup hsubset
+
+/-- Audit for the Theorem 8 proof Step 2 strict payoff comparison below the
+indifference price `q`. -/
+theorem audit_theorem8_source_step2_waiting_before_q_strictly_better
+    {clickThroughRate lastDropout value : ℕ → ℝ}
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hclock_lt :
+      state.clockPrice <
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank) :
+    clickThroughRate (rank + 1) * (value (rank + 1) - lastDropout rank) <
+      clickThroughRate rank * (value (rank + 1) - state.clockPrice) := by
+  exact
+    paper_theorem8_source_step2_waiting_before_q_strictly_better
+      hclick_pos hclock_lt
+
+/-- Audit for the Theorem 8 proof Step 1 strict payoff comparison above the
+indifference price `q`. -/
+theorem audit_theorem8_source_step1_dropping_after_q_strictly_better
+    {clickThroughRate lastDropout value : ℕ → ℝ}
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hthreshold_lt :
+      paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank <
+        state.clockPrice) :
+    clickThroughRate rank * (value (rank + 1) - state.clockPrice) <
+      clickThroughRate (rank + 1) * (value (rank + 1) - lastDropout rank) := by
+  exact
+    paper_theorem8_source_step1_dropping_after_q_strictly_better
+      hclick_pos hthreshold_lt
+
+/-- Audit for the Theorem 8 proof-line strict monotonicity of `q` in value. -/
+theorem audit_theorem8_source_q_strict_mono_value
+    {clickThroughRate lastDropout value value' : ℕ → ℝ}
+    {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_lt : clickThroughRate (rank + 1) < clickThroughRate rank)
+    (hvalue_lt : value (rank + 1) < value' (rank + 1)) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank <
+      paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value' rank := by
+  exact
+    paper_theorem8_source_q_strict_mono_value
+      hclick_pos hcurrent_lt hvalue_lt
+
+noncomputable def audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_certificate_of_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_certificate_of_local_deviation
+
+noncomputable def audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation
+
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_ex_post_local_deviation_source_completion_certificate_of_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_ex_post_local_deviation_source_completion_certificate_of_local_deviation
+
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation
+
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_all_scheduled_ex_post_local_deviation_source_completion_certificate_of_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_ex_post_local_deviation_source_completion_certificate_of_local_deviation
+
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_all_scheduled_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation
+
+/-- Audit for the sorted finite-schedule ex-post local-deviation route: the
+belief-independent local-deviation source certificate plus a clock-sorted
+no-duplicate exact schedule yields unique PBE with terminal-record conclusions
+on the completed finite ranks. -/
+theorem audit_theorem8_strict_ordered_finite_schedule_ex_post_local_deviation_source_completion_of_clock_sorted_nodup
+    {Belief : Type*}
+    (source :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hfinal :
+      source.integrated.terminal.finalState =
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          source.integrated.terminal.localModel
+          source.integrated.terminal.initialState
+          scheduledRanks)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        source.integrated.terminal.localModel
+        source.integrated.terminal.initialState.clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  paper_theorem8_bstar_threshold_bid
+                    source.integrated.terminal.localModel.value
+                    source.integrated.terminal.localModel.clickThroughRate
+                    (source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  source.integrated.terminal.localModel.clickThroughRate rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      source.integrated.terminal.localModel.value
+                      source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_ex_post_local_deviation_source_completion_of_clock_sorted_nodup
+      source completedRanks scheduledRanks hfinal hsorted hnodup hsubset
+
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_all_scheduled_ex_post_local_deviation_source_completion_of_clock_sorted_nodup
+    {Belief : Type*}
+    (source :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    (scheduledRanks : List ℕ)
+    (hfinal :
+      source.integrated.terminal.finalState =
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          source.integrated.terminal.localModel
+          source.integrated.terminal.initialState
+          scheduledRanks)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        source.integrated.terminal.localModel
+        source.integrated.terminal.initialState.clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_ex_post_local_deviation_source_completion_of_clock_sorted_nodup
+    source scheduledRanks hfinal hsorted hnodup
+
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_all_scheduled_ex_post_local_deviation_source_completion_certificate_of_local_deviation_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_ex_post_local_deviation_source_completion_certificate_of_local_deviation_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    model scheduledPrefix lastRank hthreshold_sorted hnodup hunscheduled_last
+
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_all_scheduled_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledPrefix : List ℕ) (lastRank : ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (scheduledPrefix ++ [lastRank]))
+    (hnodup : (scheduledPrefix ++ [lastRank]).Nodup)
+    (hunscheduled_last :
+      ∀ rank,
+        rank ∉ scheduledPrefix ++ [lastRank] →
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              lastRank <
+            paper_theorem8_bstar_threshold_bid
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).value
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).clickThroughRate
+              ((paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model).remaining + 1)
+              (rank + 1)) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+    model scheduledPrefix lastRank hthreshold_sorted hnodup hunscheduled_last
+
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_singleton_ex_post_local_deviation_source_completion_certificate_of_local_deviation_cold_start_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_singleton_ex_post_local_deviation_source_completion_certificate_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_singleton_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_singleton_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_pair_ex_post_local_deviation_source_completion_certificate_of_local_deviation_cold_start_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_pair_ex_post_local_deviation_source_completion_certificate_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+
+noncomputable def audit_theorem8_strict_ordered_finite_schedule_pair_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_pair_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation_cold_start_last_threshold_lt_unscheduled
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_exact_history_source_completion_obligations
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_obligations
+    cert
+
+def audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_obligations
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_obligations
+    cert
+
+/-- Audit for Theorem 8's continuity restriction: the scalar dropout-price
+formula is continuous in the bidder's valuation. -/
+theorem audit_theorem8_generalized_english_indifference_price_continuous_value
+    (alphaAbove alphaCurrent lastDropout : ℝ) :
+    Continuous
+      (fun value : ℝ =>
+        paper_theorem8_generalized_english_indifference_price
+          alphaAbove alphaCurrent lastDropout value) := by
+  exact
+    paper_theorem8_generalized_english_indifference_price_continuous_value
+      alphaAbove alphaCurrent lastDropout
+
+/-- Audit for Theorem 8's ranked continuity restriction: for a fixed history
+and fixed other values, the rank-indexed dropout price is continuous in the
+current bidder's valuation. -/
+theorem audit_theorem8_generalized_english_ranked_dropout_price_continuous_value_update
+    (clickThroughRate lastDropout value : ℕ → ℝ) (rank : ℕ) :
+    Continuous
+      (fun bidderValue : ℝ =>
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout
+          (Function.update value (rank + 1) bidderValue)
+          rank) := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_continuous_value_update
+      clickThroughRate lastDropout value rank
+
+/-- Audit for the generic payoff bridge: equal slots and per-click payments
+give equal position-auction utility. -/
+theorem audit_position_utility_eq_of_slot_payment_eq
+    {Bidder Slot : Type*}
+    (E : PositionEnvironment Slot)
+    (O P : PositionOutcome Bidder Slot) (values : Bidder → ℝ)
+    (hslot : ∀ i, O.slotOf i = P.slotOf i)
+    (hpay : ∀ i, O.paymentPerClick i = P.paymentPerClick i)
+    (i : Bidder) :
+    O.utility E values i = P.utility E values i := by
+  exact
+    paper_position_utility_eq_of_slot_payment_eq
+      E O P values hslot hpay i
+
+/-- Audit for Theorem 8 exact-history payoff equality: terminal dropout
+records and the constructed successor-tail ranked `B*` outcome give the same
+utility to every rank. -/
+theorem audit_theorem8_strict_ordered_exact_history_terminal_record_utility_eq_bstar
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExactHistoryTerminalDynamicCertificate
+        Belief)
+    (rank : ℕ) :
+    (paper_theorem8_terminal_dropout_record_outcome
+        cert.integrated.terminal.finalState).utility
+        ({ clickThroughRate :=
+            cert.integrated.terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        cert.integrated.terminal.localModel.value rank =
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        cert.integrated.terminal.localModel.value
+        cert.integrated.terminal.localModel.clickThroughRate
+        (cert.integrated.terminal.localModel.remaining + 1)).utility
+        ({ clickThroughRate :=
+            cert.integrated.terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        cert.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_history_terminal_record_utility_eq_bstar
+      cert rank
+
+/-- Audit for the all-rank ex-post exact-history payoff equality endpoint. -/
+theorem audit_theorem8_strict_ordered_ex_post_local_deviation_exact_history_source_completion_terminal_record_utility_eq_bstar
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief)
+    (rank : ℕ) :
+    (paper_theorem8_terminal_dropout_record_outcome
+        cert.source.integrated.terminal.finalState).utility
+        ({ clickThroughRate :=
+            cert.source.integrated.terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        cert.source.integrated.terminal.localModel.value rank =
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        cert.source.integrated.terminal.localModel.value
+        cert.source.integrated.terminal.localModel.clickThroughRate
+        (cert.source.integrated.terminal.localModel.remaining + 1)).utility
+        ({ clickThroughRate :=
+            cert.source.integrated.terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_terminal_record_utility_eq_bstar
+      cert rank
+
+/-- Audit for finite exact-history payoff equality on completed ranks. -/
+theorem audit_theorem8_strict_ordered_finite_exact_history_terminal_record_utility_eq_bstar_of_mem
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryTerminalDynamicCertificate
+        Belief)
+    {rank : ℕ} (hrank : rank ∈ cert.completedRanks) :
+    (paper_theorem8_terminal_dropout_record_outcome
+        cert.integrated.terminal.finalState).utility
+        ({ clickThroughRate :=
+            cert.integrated.terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        cert.integrated.terminal.localModel.value rank =
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        cert.integrated.terminal.localModel.value
+        cert.integrated.terminal.localModel.clickThroughRate
+        (cert.integrated.terminal.localModel.remaining + 1)).utility
+        ({ clickThroughRate :=
+            cert.integrated.terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        cert.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_terminal_record_utility_eq_bstar_of_mem
+      cert hrank
+
+/-- Audit for finite ex-post exact-history payoff equality on completed ranks. -/
+theorem audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_mem
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief)
+    {rank : ℕ} (hrank : rank ∈ cert.completedRanks) :
+    (paper_theorem8_terminal_dropout_record_outcome
+        cert.source.integrated.terminal.finalState).utility
+        ({ clickThroughRate :=
+            cert.source.integrated.terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        cert.source.integrated.terminal.localModel.value rank =
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        cert.source.integrated.terminal.localModel.value
+        cert.source.integrated.terminal.localModel.clickThroughRate
+        (cert.source.integrated.terminal.localModel.remaining + 1)).utility
+        ({ clickThroughRate :=
+            cert.source.integrated.terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        cert.source.integrated.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_mem
+      cert hrank
+
+/-- Audit for the Theorem 8 empty-history convention `b_{k+1} = 0` in the
+scalar dropout-price formula. -/
+theorem audit_theorem8_generalized_english_indifference_price_empty_history_eq
+    {alphaAbove alphaCurrent value : ℝ} :
+    paper_theorem8_generalized_english_indifference_price
+        alphaAbove alphaCurrent 0 value =
+      (1 - alphaCurrent / alphaAbove) * value := by
+  exact paper_theorem8_generalized_english_indifference_price_empty_history_eq
+
+/-- Audit for the ranked empty-history convention in Theorem 8. -/
+theorem audit_theorem8_generalized_english_ranked_dropout_price_empty_history_eq
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hlast : lastDropout rank = 0) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank =
+      (1 - clickThroughRate (rank + 1) / clickThroughRate rank) *
+        value (rank + 1) := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_empty_history_eq
+      hlast
+
+/-- Audit for Theorem 8 uniqueness algebra: strict adjacent click-through rates
+make the scalar dropout price injective in valuation. -/
+theorem audit_theorem8_generalized_english_indifference_price_injective_value_of_strict_click
+    {alphaAbove alphaCurrent lastDropout : ℝ}
+    (halphaAbove_pos : 0 < alphaAbove)
+    (halphaCurrent_lt : alphaCurrent < alphaAbove) :
+    Function.Injective
+      (fun value : ℝ =>
+        paper_theorem8_generalized_english_indifference_price
+          alphaAbove alphaCurrent lastDropout value) := by
+  exact
+    paper_theorem8_generalized_english_indifference_price_injective_value_of_strict_click
+      halphaAbove_pos halphaCurrent_lt
+
+/-- Audit for Theorem 8 ranked uniqueness algebra: holding history and other
+values fixed, the ranked dropout price is injective in the current bidder's
+valuation. -/
+theorem audit_theorem8_generalized_english_ranked_dropout_price_injective_value_update_of_strict_click
+    (clickThroughRate lastDropout value : ℕ → ℝ) (rank : ℕ)
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_lt : clickThroughRate (rank + 1) < clickThroughRate rank) :
+    Function.Injective
+      (fun bidderValue : ℝ =>
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout
+          (Function.update value (rank + 1) bidderValue)
+          rank) := by
+  exact
+    paper_theorem8_generalized_english_ranked_dropout_price_injective_value_update_of_strict_click
+      clickThroughRate lastDropout value rank hclick_pos hcurrent_lt
+
+/-- Audit for the Theorem 8 source proof-line continuity of `q` in value. -/
+theorem audit_theorem8_source_q_continuous_value
+    (clickThroughRate lastDropout value : ℕ → ℝ) (rank : ℕ) :
+    Continuous
+      (fun bidderValue : ℝ =>
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout
+          (Function.update value (rank + 1) bidderValue)
+          rank) := by
+  exact paper_theorem8_source_q_continuous_value clickThroughRate lastDropout value rank
+
+/-- Audit for the Theorem 8 source proof-line empty-history convention for
+`q`. -/
+theorem audit_theorem8_source_q_empty_history_eq
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hlast : lastDropout rank = 0) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank =
+      (1 - clickThroughRate (rank + 1) / clickThroughRate rank) *
+        value (rank + 1) := by
+  exact paper_theorem8_source_q_empty_history_eq hlast
+
+/-- Audit for the Theorem 8 source proof-line injectivity of `q` in value. -/
+theorem audit_theorem8_source_q_injective_value
+    (clickThroughRate lastDropout value : ℕ → ℝ) (rank : ℕ)
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_lt : clickThroughRate (rank + 1) < clickThroughRate rank) :
+    Function.Injective
+      (fun bidderValue : ℝ =>
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout
+          (Function.update value (rank + 1) bidderValue)
+          rank) := by
+  exact
+    paper_theorem8_source_q_injective_value
+      clickThroughRate lastDropout value rank hclick_pos hcurrent_lt
+
+/-- Audit for the Theorem 8 source proof-line affine form of `q`. -/
+theorem audit_theorem8_source_q_affine_eq
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ} :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank =
+      (1 - clickThroughRate (rank + 1) / clickThroughRate rank) *
+          value (rank + 1) +
+        (clickThroughRate (rank + 1) / clickThroughRate rank) *
+          lastDropout rank := by
+  exact paper_theorem8_source_q_affine_eq
+
+/-- Audit for the Theorem 8 source proof-line lower bound for `q`. -/
+theorem audit_theorem8_source_q_lastDropout_le
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_le : clickThroughRate (rank + 1) ≤ clickThroughRate rank)
+    (hlastDropout_le : lastDropout rank ≤ value (rank + 1)) :
+    lastDropout rank ≤
+      paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank := by
+  exact
+    paper_theorem8_source_q_lastDropout_le
+      hclick_pos hcurrent_le hlastDropout_le
+
+/-- Audit for the Theorem 8 source proof-line upper bound for `q`. -/
+theorem audit_theorem8_source_q_le_value
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_nonneg : 0 ≤ clickThroughRate (rank + 1))
+    (hlastDropout_le : lastDropout rank ≤ value (rank + 1)) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank ≤
+      value (rank + 1) := by
+  exact
+    paper_theorem8_source_q_le_value
+      hclick_pos hcurrent_nonneg hlastDropout_le
+
+/-- Audit for the Theorem 8 source proof-line interval certificate for `q`. -/
+theorem audit_theorem8_source_q_mem_interval
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_nonneg : 0 ≤ clickThroughRate (rank + 1))
+    (hcurrent_le : clickThroughRate (rank + 1) ≤ clickThroughRate rank)
+    (hlastDropout_le : lastDropout rank ≤ value (rank + 1)) :
+    lastDropout rank ≤
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank ∧
+      paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank ≤ value (rank + 1) := by
+  exact
+    paper_theorem8_source_q_mem_interval
+      hclick_pos hcurrent_nonneg hcurrent_le hlastDropout_le
+
+/-- Audit for the Theorem 8 source proof-line strict interval certificate for
+`q`. -/
+theorem audit_theorem8_source_q_strict_mem_interval
+    {clickThroughRate lastDropout value : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_pos : 0 < clickThroughRate (rank + 1))
+    (hcurrent_lt : clickThroughRate (rank + 1) < clickThroughRate rank)
+    (hlastDropout_lt : lastDropout rank < value (rank + 1)) :
+    lastDropout rank <
+        paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank ∧
+      paper_theorem8_generalized_english_ranked_dropout_price
+          clickThroughRate lastDropout value rank < value (rank + 1) := by
+  exact
+    paper_theorem8_source_q_strict_mem_interval
+      hclick_pos hcurrent_pos hcurrent_lt hlastDropout_lt
+
+/-- Audit for the Theorem 8 source proof-line monotonicity in previous dropout
+prices for `q`. -/
+theorem audit_theorem8_source_q_mono_lastDropout
+    {clickThroughRate lastDropout lastDropout' value : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_nonneg : 0 ≤ clickThroughRate (rank + 1))
+    (hlastDropout_le : lastDropout rank ≤ lastDropout' rank) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank ≤
+      paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout' value rank := by
+  exact
+    paper_theorem8_source_q_mono_lastDropout
+      hclick_pos hcurrent_nonneg hlastDropout_le
+
+/-- Audit for the Theorem 8 source proof-line strict monotonicity in previous
+dropout prices for `q`. -/
+theorem audit_theorem8_source_q_strict_mono_lastDropout
+    {clickThroughRate lastDropout lastDropout' value : ℕ → ℝ} {rank : ℕ}
+    (hclick_pos : 0 < clickThroughRate rank)
+    (hcurrent_pos : 0 < clickThroughRate (rank + 1))
+    (hlastDropout_lt : lastDropout rank < lastDropout' rank) :
+    paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout value rank <
+      paper_theorem8_generalized_english_ranked_dropout_price
+        clickThroughRate lastDropout' value rank := by
+  exact
+    paper_theorem8_source_q_strict_mono_lastDropout
+      hclick_pos hcurrent_pos hlastDropout_lt
+
+/-- Audit for the dynamic-game payoff bridge: same slots and per-click
+payments as VCG imply same utility. -/
+theorem audit_theorem8_dynamic_game_utility_eq_vcg_of_same_slots_payments
+    {Bidder Slot StrategyProfile Belief : Type*}
+    (G :
+      PaperTheorem8GeneralizedEnglishDynamicGame
+        Bidder Slot StrategyProfile Belief)
+    (strategy : StrategyProfile)
+    (hslot :
+      ∀ bidder,
+        (G.outcomeOf strategy).slotOf bidder =
+          G.vcgOutcome.slotOf bidder)
+    (hpay :
+      ∀ bidder,
+        (G.outcomeOf strategy).paymentPerClick bidder =
+          G.vcgOutcome.paymentPerClick bidder)
+    (bidder : Bidder) :
+    (G.outcomeOf strategy).utility G.environment G.values bidder =
+      G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_dynamic_game_utility_eq_vcg_of_same_slots_payments
+      G strategy hslot hpay bidder
+
+/-- Audit for the dynamic-game payoff bridge from full outcome equality. -/
+theorem audit_theorem8_dynamic_game_utility_eq_vcg_of_outcome_eq
+    {Bidder Slot StrategyProfile Belief : Type*}
+    (G :
+      PaperTheorem8GeneralizedEnglishDynamicGame
+        Bidder Slot StrategyProfile Belief)
+    (strategy : StrategyProfile)
+    (houtcome : G.outcomeOf strategy = G.vcgOutcome)
+    (bidder : Bidder) :
+    (G.outcomeOf strategy).utility G.environment G.values bidder =
+      G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_dynamic_game_utility_eq_vcg_of_outcome_eq
+      G strategy houtcome bidder
+
+/-- Audit for the ex-post source boundary: one-step best response of the named
+finite `B*` strategy implies sequential rationality for every belief. -/
+theorem audit_theorem8_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_sequentially_rational_for_all_beliefs
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)) :
+    ∀ belief : Belief,
+      cert.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_sequentially_rational_for_all_beliefs
+      cert hbest
+
+/-- Audit for the ex-post source boundary: arbitrary source sequential
+rationality is equivalent to the local-deviation predicate for every belief. -/
+theorem audit_theorem8_strict_ordered_ex_post_local_deviation_core_source_completion_sequential_rationality_iff_local_deviation
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ)
+    (belief : Belief) :
+    cert.integrated.dynamic.base.game.isSequentiallyRational strategy belief ↔
+      paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.remaining
+        strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_sequential_rationality_iff_local_deviation
+      cert strategy belief
+
+/-- Audit for the all-rank ex-post exact-history source boundary: one-step
+best response of the named finite `B*` strategy implies sequential rationality
+for every belief. -/
+theorem audit_theorem8_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_sequentially_rational_for_all_beliefs
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief)
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)) :
+    ∀ belief : Belief,
+      cert.source.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)
+        belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_sequentially_rational_for_all_beliefs
+      cert hbest
+
+/-- Audit for the all-rank ex-post exact-history source boundary: arbitrary
+source sequential rationality is equivalent to the local-deviation predicate
+for every belief. -/
+theorem audit_theorem8_strict_ordered_ex_post_local_deviation_exact_history_source_completion_sequential_rationality_iff_local_deviation
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ)
+    (belief : Belief) :
+    cert.source.integrated.dynamic.base.game.isSequentiallyRational strategy belief ↔
+      paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.remaining
+        strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_sequential_rationality_iff_local_deviation
+      cert strategy belief
+
+/-- Audit for the finite exact-history ex-post source boundary: one-step best
+response of the named finite `B*` strategy implies sequential rationality for
+every belief. -/
+theorem audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_sequentially_rational_for_all_beliefs
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief)
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)) :
+    ∀ belief : Belief,
+      cert.source.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)
+        belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_sequentially_rational_for_all_beliefs
+      cert hbest
+
+/-- Audit for the finite exact-history ex-post source boundary: arbitrary
+source sequential rationality is equivalent to the local-deviation predicate
+for every belief. -/
+theorem audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_sequential_rationality_iff_local_deviation
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ)
+    (belief : Belief) :
+    cert.source.integrated.dynamic.base.game.isSequentiallyRational strategy belief ↔
+      paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.remaining
+        strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_sequential_rationality_iff_local_deviation
+      cert strategy belief
+
+/-- Audit for the core ex-post source boundary: one-step best response
+discharges the named finite `B*` local-deviation predicate. -/
+theorem audit_theorem8_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_local_deviation_of_one_step_best_response
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    (belief : Belief)
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)) :
+    paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+      cert.integrated.dynamic.base.strictModel.clickThroughRate
+      cert.integrated.dynamic.base.strictModel.value
+      cert.integrated.dynamic.base.strictModel.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_local_deviation_of_one_step_best_response
+      cert belief hbest
+
+/-- Audit for the all-rank ex-post exact-history source boundary: one-step
+best response discharges the named finite `B*` local-deviation predicate. -/
+theorem audit_theorem8_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_local_deviation_of_one_step_best_response
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief)
+    (belief : Belief)
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)) :
+    paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+      cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+      cert.source.integrated.dynamic.base.strictModel.value
+      cert.source.integrated.dynamic.base.strictModel.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_local_deviation_of_one_step_best_response
+      cert belief hbest
+
+/-- Audit for the finite exact-history ex-post source boundary: one-step best
+response discharges the named finite `B*` local-deviation predicate. -/
+theorem audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_local_deviation_of_one_step_best_response
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief)
+    (belief : Belief)
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)) :
+    paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+      cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+      cert.source.integrated.dynamic.base.strictModel.value
+      cert.source.integrated.dynamic.base.strictModel.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_local_deviation_of_one_step_best_response
+      cert belief hbest
+
+/-- Audit for the core ex-post source boundary: belief-free citation form for
+the named finite `B*` local-deviation discharge. -/
+theorem audit_theorem8_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_local_deviation_of_one_step_best_response_of_nonempty_beliefs
+    {Belief : Type*}
+    [hbelief : Nonempty Belief]
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief)
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)) :
+    paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+      cert.integrated.dynamic.base.strictModel.clickThroughRate
+      cert.integrated.dynamic.base.strictModel.value
+      cert.integrated.dynamic.base.strictModel.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_local_deviation_of_one_step_best_response_of_nonempty_beliefs
+      cert hbest
+
+/-- Audit for the all-rank ex-post exact-history source boundary: belief-free
+citation form for the named finite `B*` local-deviation discharge. -/
+theorem audit_theorem8_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_local_deviation_of_one_step_best_response_of_nonempty_beliefs
+    {Belief : Type*}
+    [hbelief : Nonempty Belief]
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief)
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)) :
+    paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+      cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+      cert.source.integrated.dynamic.base.strictModel.value
+      cert.source.integrated.dynamic.base.strictModel.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_local_deviation_of_one_step_best_response_of_nonempty_beliefs
+      cert hbest
+
+/-- Audit for the finite exact-history ex-post source boundary: belief-free
+citation form for the named finite `B*` local-deviation discharge. -/
+theorem audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_local_deviation_of_one_step_best_response_of_nonempty_beliefs
+    {Belief : Type*}
+    [hbelief : Nonempty Belief]
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief)
+    (hbest :
+      paper_theorem8_bstar_ranked_threshold_one_step_best_response_statement
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)) :
+    paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+      cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+      cert.source.integrated.dynamic.base.strictModel.value
+      cert.source.integrated.dynamic.base.strictModel.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_local_deviation_of_one_step_best_response_of_nonempty_beliefs
+      cert hbest
+
+/-- Audit for the core ex-post source boundary: belief-independent
+named-strategy sequential rationality iff local deviation. -/
+theorem audit_theorem8_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_sequentially_rational_for_all_beliefs_iff_local_deviation_of_nonempty_beliefs
+    {Belief : Type*}
+    [hbelief : Nonempty Belief]
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    (∀ belief : Belief,
+      cert.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        belief) ↔
+      paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_sequentially_rational_for_all_beliefs_iff_local_deviation_of_nonempty_beliefs
+      cert
+
+/-- Audit for the all-rank ex-post exact-history source boundary:
+belief-independent named-strategy sequential rationality iff local deviation. -/
+theorem audit_theorem8_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_sequentially_rational_for_all_beliefs_iff_local_deviation_of_nonempty_beliefs
+    {Belief : Type*}
+    [hbelief : Nonempty Belief]
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief) :
+    (∀ belief : Belief,
+      cert.source.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)
+        belief) ↔
+      paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_sequentially_rational_for_all_beliefs_iff_local_deviation_of_nonempty_beliefs
+      cert
+
+/-- Audit for the finite exact-history ex-post source boundary:
+belief-independent named-strategy sequential rationality iff local deviation. -/
+theorem audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_sequentially_rational_for_all_beliefs_iff_local_deviation_of_nonempty_beliefs
+    {Belief : Type*}
+    [hbelief : Nonempty Belief]
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief) :
+    (∀ belief : Belief,
+      cert.source.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)
+        belief) ↔
+      paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.remaining
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_sequentially_rational_for_all_beliefs_iff_local_deviation_of_nonempty_beliefs
+      cert
+
+/-
+Theorem 8 no-overshoot finite-history audit aliases. These expose the current
+preferred source-history route directly from the paper folder: a finite history
+records no-overshoot only at actual dropout transitions, and Lean derives the
+ordinary strategy history, exact finite `B*` records, source-completion
+certificates, and unique-PBE conclusions from that local evidence.
+-/
+
+def audit_theorem8_no_overshoot_strategy_history_to_strategy_history :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_strategy_history_to_strategy_history
+
+def audit_theorem8_no_overshoot_strategy_history_to_strategy_history_of_strategy_eq :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_strategy_history_to_strategy_history_of_strategy_eq
+
+def audit_theorem8_no_overshoot_strategy_history_to_exact_drop_history :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_strategy_history_to_exact_drop_history
+
+def audit_theorem8_exact_drop_schedule_to_no_overshoot_strategy_history :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_to_no_overshoot_strategy_history
+
+def audit_theorem8_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+
+def audit_theorem8_no_overshoot_terminal_history_behavior_history_obligations :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_history_obligations
+
+def audit_theorem8_no_overshoot_terminal_history_behavior_active_iff_clock_lt_threshold_bid :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_active_iff_clock_lt_threshold_bid
+
+def audit_theorem8_no_overshoot_terminal_history_behavior_inactive_iff_threshold_le_clock :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_inactive_iff_threshold_le_clock
+
+def audit_theorem8_no_overshoot_terminal_history_behavior_inactive_iff_strategy :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_inactive_iff_strategy
+
+noncomputable def audit_theorem8_no_overshoot_terminal_history_behavior_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+def audit_theorem8_no_overshoot_strategy_history_terminal_records_eq_thresholds :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_strategy_history_terminal_records_eq_thresholds
+
+def audit_theorem8_no_overshoot_strategy_history_terminal_record_outcome_eq_bstar :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_strategy_history_terminal_record_outcome_eq_bstar
+
+def audit_theorem8_no_overshoot_strategy_history_terminal_record_finset_outcome_conclusion :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_strategy_history_terminal_record_finset_outcome_conclusion
+
+def audit_theorem8_no_overshoot_strategy_history_terminal_record_ordered_paper_conclusion :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_strategy_history_terminal_record_ordered_paper_conclusion
+
+def audit_theorem8_no_overshoot_terminal_history_behavior_final_record_eq_threshold :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_final_record_eq_threshold
+
+def audit_theorem8_no_overshoot_terminal_history_behavior_finset_outcome_conclusion :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_finset_outcome_conclusion
+
+def audit_theorem8_no_overshoot_terminal_history_behavior_ordered_paper_conclusion :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_ordered_paper_conclusion
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_certificate_to_terminal_dynamic_certificate
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_certificate_to_terminal_dynamic_certificate
+    Belief
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_history_obligations
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_history_obligations
+    Belief
+
+noncomputable def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_certificate_of_clock_sorted_nodup_unscheduled_threshold_gt
+    Belief
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_model_fields_eq
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_model_fields_eq
+    Belief
+
+def audit_theorem8_strict_ordered_core_source_completion_certificate_of_no_overshoot_terminal_dynamic_certificate
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_core_source_completion_certificate_of_no_overshoot_terminal_dynamic_certificate
+    Belief
+
+def audit_theorem8_strict_ordered_source_completion_certificate_of_no_overshoot_terminal_dynamic_certificate
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_no_overshoot_terminal_dynamic_certificate
+    Belief
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_named_pbe_of_source_completion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_named_pbe_of_source_completion
+    Belief
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_pbe_iff_named_strategy_of_source_completion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_pbe_iff_named_strategy_of_source_completion
+    Belief
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_source_completion_paper_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_source_completion_paper_conclusion
+    Belief
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_source_completion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_source_completion
+    Belief
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_dynamic_clock_sorted_nodup_unscheduled_threshold_gt
+    Belief
+
+def audit_theorem8_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+def audit_theorem8_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_clock_sorted_nodup_last_threshold_lt_unscheduled
+
+def audit_theorem8_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_clock_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_clock_sorted_nodup_last_threshold_lt_unscheduled
+
+def audit_theorem8_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+
+def audit_theorem8_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_singleton_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_singleton_last_threshold_lt_unscheduled
+
+def audit_theorem8_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_pair_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_no_overshoot_terminal_dynamic_exists_unique_pbe_with_full_conclusion_of_cold_start_pair_last_threshold_lt_unscheduled
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_source_completion_pbe_strategy_history_finset_outcome_conclusion_of_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_source_completion_pbe_strategy_history_finset_outcome_conclusion_of_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_source_completion_pbe_strategy_history_ordered_paper_conclusion_of_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_source_completion_pbe_strategy_history_ordered_paper_conclusion_of_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_source_completion_pbe_strategy_history_game_outcome_eq_bstar_of_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_source_completion_pbe_strategy_history_game_outcome_eq_bstar_of_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_source_completion_pbe_strategy_history_game_outcome_components_eq_bstar_of_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_source_completion_pbe_strategy_history_game_outcome_components_eq_bstar_of_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_source_completion_all_pbe_slot_payment_eq_vcg_of_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_source_completion_all_pbe_slot_payment_eq_vcg_of_histories_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_source_completion_all_pbe_outcome_eq_vcg_of_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_source_completion_all_pbe_outcome_eq_vcg_of_histories_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_ex_post_local_deviation_source_completion_all_pbe_utility_eq_vcg_of_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_source_completion_all_pbe_utility_eq_vcg_of_histories_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_local_deviation_core_source_completion_pbe_strategy_history_finset_outcome_conclusion_of_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_pbe_strategy_history_finset_outcome_conclusion_of_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_local_deviation_core_source_completion_pbe_strategy_history_ordered_paper_conclusion_of_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_pbe_strategy_history_ordered_paper_conclusion_of_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_local_deviation_core_source_completion_pbe_strategy_history_game_outcome_eq_bstar_of_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_pbe_strategy_history_game_outcome_eq_bstar_of_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_local_deviation_core_source_completion_all_pbe_slot_payment_eq_vcg_of_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_all_pbe_slot_payment_eq_vcg_of_histories_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_local_deviation_core_source_completion_all_pbe_outcome_eq_vcg_of_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_all_pbe_outcome_eq_vcg_of_histories_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_local_deviation_core_source_completion_all_pbe_utility_eq_vcg_of_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_core_source_completion_all_pbe_utility_eq_vcg_of_histories_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_source_sequential_rationality_core_source_completion_all_pbe_outcome_eq_vcg_of_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_all_pbe_outcome_eq_vcg_of_histories_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_source_sequential_rationality_core_source_completion_all_pbe_slot_payment_eq_vcg_of_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_all_pbe_slot_payment_eq_vcg_of_histories_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_source_sequential_rationality_core_source_completion_all_pbe_utility_eq_vcg_of_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_core_source_completion_all_pbe_utility_eq_vcg_of_histories_no_overshoot
+    Belief
+
+noncomputable def audit_theorem8_strict_ordered_source_completion_certificate_of_local_deviation_and_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_local_deviation_and_histories_no_overshoot
+    Belief
+
+noncomputable def audit_theorem8_strict_ordered_source_completion_certificate_of_source_sequential_rationality_and_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_source_sequential_rationality_and_histories_no_overshoot
+    Belief
+
+def audit_theorem8_strict_ordered_local_deviation_histories_no_overshoot_exists_unique_pbe_with_full_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_histories_no_overshoot_exists_unique_pbe_with_full_conclusion
+    Belief
+
+def audit_theorem8_strict_ordered_source_sequential_rationality_histories_no_overshoot_exists_unique_pbe_with_full_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_rationality_histories_no_overshoot_exists_unique_pbe_with_full_conclusion
+    Belief
+
+def audit_theorem8_strict_ordered_source_iff_histories_no_overshoot_exists_unique_pbe_with_full_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_iff_histories_no_overshoot_exists_unique_pbe_with_full_conclusion
+    Belief
+
+noncomputable def audit_theorem8_strict_ordered_source_completion_certificate_of_no_overshoot_terminal_dynamic_source_sequential_rationality
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_no_overshoot_terminal_dynamic_source_sequential_rationality
+    Belief
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_source_sequential_rationality_exists_unique_pbe_with_full_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_source_sequential_rationality_exists_unique_pbe_with_full_conclusion
+    Belief
+
+noncomputable def audit_theorem8_strict_ordered_finite_exact_history_core_source_completion_certificate_of_no_overshoot_terminal_dynamic_source_sequential_rationality
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_core_source_completion_certificate_of_no_overshoot_terminal_dynamic_source_sequential_rationality
+    Belief
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_source_sequential_rationality_finite_exact_history_exists_unique_pbe_with_terminal_record_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_source_sequential_rationality_finite_exact_history_exists_unique_pbe_with_terminal_record_conclusion
+    Belief
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_dynamic_source_sequential_rationality_finite_exact_history_terminal_record_utility_eq_bstar_of_mem
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_source_sequential_rationality_finite_exact_history_terminal_record_utility_eq_bstar_of_mem
+    Belief
+
+noncomputable def audit_theorem8_terminal_record_local_deviation_dynamic_game :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_iff_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_iff_local_deviation
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_iff_named_strategy :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_iff_named_strategy
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_outcome_eq_vcg_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_outcome_eq_vcg_of_exact_history
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_outcome_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_outcome_eq_vcg_of_no_overshoot
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_utility_eq_vcg_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_utility_eq_vcg_of_exact_history
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_utility_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_utility_eq_vcg_of_no_overshoot
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_exact_history
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_exact_history
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_exact_history_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_exact_history_completed_threshold_le
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_exact_history_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_exact_history_completed_threshold_le
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_no_overshoot
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_no_overshoot
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_no_overshoot_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_no_overshoot_completed_threshold_le
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_no_overshoot_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_no_overshoot_completed_threshold_le
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_paper_conclusion_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_paper_conclusion_of_exact_history
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_paper_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_paper_conclusion_of_no_overshoot
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_exact_history
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_exact_history_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_exact_history_completed_threshold_le
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_no_overshoot_completed_threshold_le
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_paper_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_paper_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_cold_start_singleton_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_cold_start_singleton_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_cold_start_singleton_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_cold_start_singleton_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_paper_conclusion_of_cold_start_singleton_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_paper_conclusion_of_cold_start_singleton_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_cold_start_pair_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_slot_payment_eq_vcg_of_cold_start_pair_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_cold_start_pair_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_utility_eq_vcg_of_cold_start_pair_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_paper_conclusion_of_cold_start_pair_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_pbe_completed_rank_paper_conclusion_of_cold_start_pair_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_exact_history
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_outcome_eq_vcg_of_no_overshoot
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_exact_history :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_exact_history
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_exact_history_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_exact_history_completed_threshold_le
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_no_overshoot
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_no_overshoot_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_no_overshoot_completed_threshold_le
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_cold_start_threshold_sorted_nodup_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_cold_start_singleton_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_cold_start_singleton_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_cold_start_pair_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_conclusion_of_cold_start_pair_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_cold_start_singleton_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_cold_start_singleton_last_threshold_lt_unscheduled
+
+def audit_theorem8_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_cold_start_pair_last_threshold_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_local_deviation_dynamic_game_exists_unique_pbe_with_completed_rank_paper_conclusion_of_cold_start_pair_last_threshold_lt_unscheduled
+
+noncomputable def audit_theorem8_strict_ordered_source_completion_certificate_of_ex_post_local_deviation_and_histories_no_overshoot
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_ex_post_local_deviation_and_histories_no_overshoot
+    Belief
+
+noncomputable def audit_theorem8_strict_ordered_finite_strategy_history_ex_post_local_deviation_source_completion_certificate_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_strategy_history_ex_post_local_deviation_source_completion_certificate_of_no_overshoot
+
+noncomputable def audit_theorem8_strict_ordered_terminal_history_ex_post_local_deviation_source_completion_certificate_of_no_overshoot :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_history_ex_post_local_deviation_source_completion_certificate_of_no_overshoot
+
+noncomputable def audit_theorem8_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_certificate_of_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_certificate_of_local_deviation
+
+noncomputable def audit_theorem8_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_certificate_of_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_certificate_of_completed_threshold_le
+
+noncomputable def audit_theorem8_strict_ordered_terminal_history_ex_post_local_deviation_source_completion_certificate_of_no_overshoot_and_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_history_ex_post_local_deviation_source_completion_certificate_of_no_overshoot_and_completed_threshold_le
+
+noncomputable def audit_theorem8_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation
+
+noncomputable def audit_theorem8_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_completed_threshold_le
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_local_deviation :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_local_deviation
+
+def audit_theorem8_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+noncomputable def audit_theorem8_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_certificate :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_certificate
+
+def audit_theorem8_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_sequential_rationality_iff_source_sequential :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_sequential_rationality_iff_source_sequential
+
+def audit_theorem8_strict_ordered_local_optimality_certificate_of_local_model :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_optimality_certificate_of_local_model
+
+def audit_theorem8_local_optimality_certificate_of_strict_ordered_local_model_eq :=
+  paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict_ordered_local_model_eq
+
+def audit_theorem8_strict_ordered_source_sequential_no_overshoot_terminal_history_exists_unique_pbe_with_full_conclusion_of_terminal_model :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_history_exists_unique_pbe_with_full_conclusion_of_terminal_model
+
+def audit_theorem8_strict_ordered_source_sequential_no_overshoot_terminal_history_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_history_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_completed_threshold_le
+
+def audit_theorem8_strict_ordered_source_sequential_no_overshoot_terminal_history_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_history_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+def audit_theorem8_strict_ordered_source_sequential_no_overshoot_terminal_history_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_history_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+def audit_theorem8_strict_ordered_source_sequential_no_overshoot_terminal_history_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_terminal_model :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_history_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_terminal_model
+
+def audit_theorem8_finite_active_cold_start_clock_sorted_schedule_no_active :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_no_active_of_finite_active_cold_start_covers
+
+def audit_theorem8_finite_active_exact_record_cold_start_terminal_record_outcome_eq_bstar :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_terminal_record_outcome_eq_bstar_of_finite_active_exact_record_cold_start_covers
+
+def audit_theorem8_finite_active_exact_record_cold_start_clock_sorted_schedule_no_active :=
+  paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_no_active_of_finite_active_exact_record_cold_start_covers
+
+def audit_theorem8_finite_active_exact_record_cold_start_active_iff :=
+  paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_active_iff
+
+def audit_theorem8_finite_active_exact_record_cold_start_lastDropout_of_not_mem :=
+  paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_lastDropout_of_not_mem
+
+def audit_theorem8_finite_active_exact_record_source_game_unique_pbe_outcome_eq_bstar :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_of_states_exists_unique_pbe_with_outcome_eq_vcg_of_finite_active_exact_record_cold_start_covers
+
+def audit_theorem8_finite_active_exact_record_source_game_full_vcg_conclusion :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_of_states_exists_unique_pbe_with_all_terminal_vcg_conclusion_of_finite_active_exact_record_cold_start_covers
+
+def audit_theorem8_finite_active_exact_record_source_game_trace_full_vcg_conclusion :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_finite_active_exact_record_cold_start_covers
+
+def audit_theorem8_finite_active_exact_record_schedule_trace_full_vcg_conclusion :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_sequential_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_finite_active_exact_record_schedule
+
+def audit_theorem8_strict_ordered_finite_active_exact_record_schedule_trace_full_vcg_conclusion_of_threshold_sorted :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_trace_full_vcg_conclusion_of_threshold_sorted
+
+def audit_theorem8_strict_ordered_finite_active_exact_record_schedule_source_extensive_trace_full_vcg_conclusion_of_threshold_sorted :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_source_extensive_trace_full_vcg_conclusion_of_threshold_sorted
+
+def audit_theorem8_strict_ordered_finite_active_exact_record_schedule_belief_source_extensive_trace_full_vcg_conclusion_of_threshold_sorted :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_belief_source_extensive_trace_full_vcg_conclusion_of_threshold_sorted
+
+def audit_theorem8_source_extensive_state_game_pbe_iff_one_step_tiebreak_history_terminal :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_iff_one_step_best_response_drop_at_threshold_history_terminal
+
+def audit_theorem8_belief_source_extensive_state_game_pbe_iff_one_step_tiebreak_history_terminal :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_iff_one_step_best_response_drop_at_threshold_history_terminal
+
+def audit_theorem8_source_extensive_state_game_pbe_iff_named_strategy_history_terminal :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_iff_named_strategy_history_terminal
+
+def audit_theorem8_belief_source_extensive_state_game_pbe_iff_named_strategy_history_terminal :=
+  paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_iff_named_strategy_history_terminal
+
+end EOS07GSP

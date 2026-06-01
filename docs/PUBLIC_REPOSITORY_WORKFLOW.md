@@ -5,20 +5,25 @@ EconCSLib.
 
 ## Repository Roles
 
-- `EconCSLib-private`: private full-history incubator. This repository keeps
-  reusable library development, completed papers, partially formalized papers,
-  handoff notes, and full working history.
+- `EconCSLib-private`: private incubator based on public `main`. This
+  repository keeps reusable library development, completed papers, partially
+  formalized papers, and handoff notes while preserving public ancestry for
+  clean private-to-public PRs.
+- `EconCSLib-private-archive-20260601`: archived copy of the old standalone
+  private repository history before the public-based private repo migration.
 - `EconCSLib`: public release repository. This repository should contain the
   reusable `EconCSLib/` library, public tooling/docs, completed paper
   formalizations, and carefully documented partial formalizations whose
   remaining seams are useful public library work.
 
-The private repository is the superset. The public repository is generated from
-an allowlist and should not be made by changing the visibility of the private
-repository.
+The active private repository is the working superset. The public repository is
+the public release surface. The archived private repository is retained only for
+history lookup.
 
 For the current launch state and Pages activation sequence, see
 [`docs/REPOSITORY_LAUNCH_PLAN.md`](REPOSITORY_LAUNCH_PLAN.md).
+For day-to-day private branching and sync, see
+[`docs/PRIVATE_DEVELOPMENT_WORKFLOW.md`](PRIVATE_DEVELOPMENT_WORKFLOW.md).
 
 ## Public Release Rule
 
@@ -26,7 +31,8 @@ Do not make the full-history private repository public. Git history is
 reachable even after files are deleted from the tip, so removing partial paper
 folders from `main` is not enough to hide them.
 
-For public release, create a filtered repository that keeps only:
+For public release from the archived old private history, create a filtered
+repository that keeps only:
 
 - core Lean/library files and project configuration;
 - public scripts and documentation;
@@ -43,9 +49,13 @@ contributors may reasonably want to inspect or help discharge.
 
 ## Completed Paper Imports
 
-When a private paper becomes public-ready, preserve its development history by
-filtering only that paper's paths from the private repository and merging that
-filtered history into the public repository.
+When a paper in the active public-based private repository becomes
+public-ready, prefer a topic branch forked from public `main` and open a normal
+pull request against `EconCSLib`.
+
+If the relevant work only exists in the archived standalone private history,
+preserve its development history by filtering only that paper's paths from the
+archive and merging that filtered history into the public repository.
 
 The filtered import should keep:
 

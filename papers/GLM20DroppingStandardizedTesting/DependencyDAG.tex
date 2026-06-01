@@ -1,0 +1,177 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={outer sep=4pt, font=\sffamily\small}
+]
+
+\dagPaperMetadata{Dropping Standardized Testing for Admissions Trades Off Information and Access}{Nikhil Garg, Hannah Li, and Faidra Monachou}{Management Science accepted version}{2026}{https://arxiv.org/pdf/2010.04396}
+\dagPaperLegendRightOfMetadata{
+  \node[dag_result, dag_template_legend] (legRes) at (0,0) {formalized\\result};
+  \node[dag_lemma, dag_template_legend] (legLem) at (3.6,0) {formalized\\lemma/support};
+  \node[dag_model, dag_template_legend] (legDef) at (7.2,0) {formalized\\definition/model};
+  \node[dag_caveat_legend] (legCav) at (10.8,0) {formalized\\with caveat};
+  \node[dag_partial, dag_template_legend] (legPartial) at (0,-1.85) {partially\\formalized};
+  \node[dag_conditional, dag_template_legend] (legCond) at (3.6,-1.85) {conditional};
+  \node[dag_scaffold, dag_template_legend] (legScaffold) at (7.2,-1.85) {scaffold};
+  \node[dag_unformalized, dag_template_legend] (legOpen) at (10.8,-1.85) {not started /\\not formalized};
+}
+\daglegend{(legRes)(legLem)(legDef)(legCav)(legPartial)(legCond)(legScaffold)(legOpen)}{Legend}
+
+\begin{dagPaperBody}
+
+\node[dag_lemma, text width=4.6cm] (AuxFinite) at (0,0) {
+  \textbf{Finite admissions support}\\
+  With-test/no-test selection mass, admitted welfare, and conditioning
+  decompositions
+};
+
+\node[dag_lemma, text width=4.8cm] (SharedProb) at (6.1,0) {
+  \textbf{Shared testing probability library}\\
+  posterior Gaussian laws, strict tail comparisons and left-tail dominance,
+  mixture capacity cutoffs, bivariate/Owen mass and moment identities, and
+  moving-threshold mass facts
+};
+
+\node[dag_partial, text width=4.8cm] (Model) at (12.2,0) {
+  \textbf{Source model (Sec. 3)}\\
+  \texttt{GLM20Model} plus metric surface; concrete Gaussian features,
+  precisions, barriers, and thresholds remain open
+};
+
+\node[dag_lemma, text width=4.8cm] (Lemma1) at (18.3,0) {
+  \textbf{Lemma 1 (Sec. 3)}\\
+  \( \tilde q(\theta,g) \) is the precision-weighted posterior mean, and
+  \( \tilde q\mid g,P_S \) is normal with the displayed mean and variance
+};
+
+% Baseline fixed-policy results
+\node[dag_caveat, aspect=2.7, text width=4.6cm] (Prop1) at (25.8,-0.2) {
+  \textbf{Proposition 1 (Sec. 4.1)}\\
+  fixed-policy metric inequalities and comparative statics proved.  Caveat:
+  source metric-surface premises remain visible
+};
+
+\node[dag_caveat, aspect=2.7, text width=4.6cm] (Lemma2) at (25.8,-3.2) {
+  \textbf{Lemma 2 (Sec. 4.1)}\\
+  tail decrease and limit-zero result proved.  Caveat: conditional
+  posterior-law source-surface premises remain visible
+};
+
+\node[dag_caveat, aspect=2.1, text width=5.2cm] (Thm1) at (34.0,-0.5) {
+  \textbf{Theorem 1 (Sec. 4.2)}\\
+  diversity improves iff \( \gamma_B<\bar\gamma \); group merit improves iff
+  \( \gamma_g\le\bar\gamma_g \); canonical standard-Gaussian source model
+  proved.  Caveat: full access sweep assumes
+  \(2c<\pi\gamma_B\) and \(2c<(1-\pi)\gamma_A\);
+  this regime is nonempty
+};
+
+\node[dag_caveat, aspect=2.1, text width=5.2cm] (Thm2) at (34.0,-7.6) {
+  \textbf{Theorem 2 (Sec. 4.2)}\\
+  no-barrier Gaussian source model proves diversity iff Eq. (3), cutoff
+  crossings, merit decrease, and the main-text high-skill gap direction under
+  the prose-consistent extra assumption \(subB<subA\).  Caveat: Appendix D.4
+  proves the opposite crossed-order high-skill direction; Lean proves the two
+  eventual directions are inconsistent together
+};
+
+% Strategic two-school results
+\node[dag_conditional, text width=4.8cm] (Strategic) at (0,-7.0) {
+  \textbf{Strategic two-school model (Sec. 5)}\\
+  two-school equilibrium surface encoded; binary policy-pair equilibria reduce
+  to unilateral school-deviation inequalities.  Concrete Gaussian objectives
+  remain to instantiate
+};
+
+\node[dag_lemma, text width=5.0cm] (Lemma3) at (6.1,-7.0) {
+  \textbf{Lemma 3 (Sec. 5)}\\
+  There is a unique one-school threshold equilibrium with the displayed
+  application cutoff, best-response region, and Eq. (35) applicant mass.
+  Eq. (35) finite-sum and source-event regularity bridges are internal support
+};
+
+\node[dag_conditional, text width=4.8cm] (Prop2) at (12.2,-7.0) {
+  \textbf{Proposition 2 (Sec. 5)}\\
+  two-school application region, a.e. binary best response and uniqueness,
+  threshold equilibrium, diversity-ratio criteria, and \(\lambda<\kappa\)
+  formula layer are proved.  Caveat: source applicant-pool, affine mass,
+  \(\tau\), and concrete Gaussian game bookkeeping remain
+};
+
+\node[dag_conditional, text width=4.8cm] (Thm3) at (18.3,-7.0) {
+  \textbf{Theorem 3 (Sec. 5)}\\
+  displayed conditions (10)--(14), \(K_g(q)\), exactly-one-group clauses, and
+  cost-threshold conclusions are formalized.  Proposition 5 bridges derive
+  these conditions from generated source-family rows, fixed-law posterior
+  cost rows, cutoff/threshold-order assumptions, and school-\(J_2\) keep-test
+  or survivor rows.  Concrete Gaussian game premises remain
+};
+
+\node[dag_conditional, text width=4.8cm] (Prop5_6) at (24.4,-7.0) {
+  \textbf{Propositions 5--6 (App. D.6)}\\
+  Proposition 5 now has a typed source-condition surface for the strategic
+  merit objective bridges; Proposition 6 diversity formulas are encoded. The
+  full-policy side is a correlated-Gaussian vertical
+  strip and the test-free side is the displayed group-B upper tail.  Concrete
+  school-deviation/objective identification remains
+};
+
+% Appendix support and extensions
+\node[dag_conditional, text width=4.8cm] (AppD15) at (0,-10.8) {
+  \textbf{Lemmas D.1--D.5 (App. D)}\\
+  Gaussian closure, truncated-normal expectation, hazard-rate certificate
+};
+
+\node[dag_conditional, text width=4.8cm] (AppD612) at (6.1,-10.8) {
+  \textbf{Lemmas D.6--D.12 (App. D)}\\
+  threshold and equilibrium-support endpoints exposed as certificate
+};
+
+\node[dag_conditional, text width=4.8cm] (Prop3_4) at (12.2,-10.8) {
+  \textbf{Propositions 3--4 (App. D)}\\
+  full-policy selection core, \(\tau_g\), diversity-ratio criterion, and
+  Owen/bivariate mass identities are proved.  Caveat: verified first-moment
+  merit differs from displayed \(\lambda\) by a boundary term; source scaling
+  and Proposition 4 consequences remain
+};
+
+\node[dag_conditional, text width=4.8cm] (AppF) at (0,-14.3) {
+  \textbf{Definition 1, Lemmas F.1--F.4 (App. F)}\\
+  finite Blackwell garbling, deterministic post-processing, reflexivity, and
+  transitivity proved; SSD bridge certificate open
+};
+
+\node[dag_conditional, text width=4.8cm] (Prop7_9) at (6.1,-14.3) {
+  \textbf{Propositions 7--9 (App. F)}\\
+  generalized and affirmative-action endpoints exposed
+};
+
+% Edges: solid only for verified auxiliary support; dashed for source roadmap debt.
+\draw[dag_arrow] (AuxFinite.east) -- (SharedProb.west);
+\draw[dag_dashed_arrow] (SharedProb.east) -- (Model.west);
+\draw[dag_dashed_arrow] (SharedProb.south) -- ++(0,-1.1) -| (-3.0,-10.8) -- (AppD15.west);
+\draw[dag_dashed_arrow] (Model.east) -- (Lemma1.west);
+\draw[dag_dashed_arrow] (Lemma1.east) -- (Prop1.west);
+\draw[dag_dashed_arrow] (Prop1.south) -- (Lemma2.north);
+\draw[dag_dashed_arrow] (Prop1.east) -- (Thm1.west);
+\draw[dag_dashed_arrow] (Lemma2.east) -- (Thm2.west);
+
+\draw[dag_dashed_arrow] (Model.south) -- ++(0,-1.1) -| (Strategic.north);
+\draw[dag_arrow] (SharedProb.south) -- ++(0,-4.0) -- (Lemma3.north);
+\draw[dag_dashed_arrow] (Strategic.east) -- (Lemma3.west);
+\draw[dag_dashed_arrow] (Lemma3.east) -- (Prop2.west);
+\draw[dag_dashed_arrow] (Prop2.east) -- (Thm3.west);
+\draw[dag_dashed_arrow] (Prop5_6.west) -- (Thm3.east);
+
+\draw[dag_dashed_arrow] (AppD15.east) -- (AppD612.west);
+\draw[dag_dashed_arrow] (AppD612.east) -- (Prop3_4.west);
+
+\draw[dag_dashed_arrow] (AppF.east) -- (Prop7_9.west);
+
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

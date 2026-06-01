@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "id": "IM05MarriageHonestyStability",
+  "title": "Marriage, Honesty, and Stability",
+  "authors": "Nicole Immorlica and Mohammad Mahdian",
+  "source_version": "MIT-LCS-TR-913 / SODA 2005",
+  "build_target": "lake build IM05MarriageHonestyStability",
+  "status": "partially formalized",
+  "main_caveat": "Matching preliminaries and several theorem wrappers are formalized, but Algorithm 4.1, repaired Lemma 4.4 tail variance, and Section 6 experiment construction remain stronger-model pickup targets.",
+  "review_entrypoint": "papers/IM05MarriageHonestyStability/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 6,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/IM05MarriageHonestyStability/PaperInterface.lean",
+    "line_count": 106,
+    "declaration_rows": 6,
+    "review_rows": 6,
+    "oversized": false,
+    "maintainability_issue": null
+  },
+  "artifacts": {
+    "readme": "papers/IM05MarriageHonestyStability/README.md",
+    "paper_interface": "papers/IM05MarriageHonestyStability/PaperInterface.lean",
+    "final_validation_report": "papers/IM05MarriageHonestyStability/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/IM05MarriageHonestyStability/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/IM05MarriageHonestyStability/DependencyDAG.pdf"
+  },
+  "review_surface": {
+    "source_file": "papers/IM05MarriageHonestyStability/PaperInterface.lean",
+    "include_names": [
+      "stableMatching",
+      "strictMarriageDomain",
+      "theoremA_men_proposing_finds_stable",
+      "theoremB_any_men_optimal_output_eq_deferredAcceptance",
+      "theoremC_same_singles_on_complete_domain",
+      "theoremD_optimal_side_truthful_on_strict_domain_of_card_eq"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "stableMatching",
+          "strictMarriageDomain",
+          "theoremA_men_proposing_finds_stable",
+          "theoremB_any_men_optimal_output_eq_deferredAcceptance",
+          "theoremC_same_singles_on_complete_domain",
+          "theoremD_optimal_side_truthful_on_strict_domain_of_card_eq"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+
+% Visual validation loop:
+% 1. Compile this file after every substantive DAG edit.
+% 2. Inspect the rendered PDF/PNG, not just the TeX source.
+% 3. Increase spacing or reroute arrows until no box, legend, edge, or label overlaps.
+%
+% This DAG is paper-facing: primary nodes are source definitions, examples,
+% lemmas, propositions, theorems, and corollaries. Implementation interfaces and
+% certificate seams are tracked in the README rather than as graph nodes.
+
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={font=\sffamily\small, outer sep=4pt}
+]
+
+% --- Legend: README status vocabulary plus formalized node-type styles. ---
+  \dagPaperMetadata{Reconciling the accuracy-diversity trade-off in recommendations}{Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg}{arXiv:2307.15142v1}{2023}{https://arxiv.org/pdf/2307.15142}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) at (0,0) {formalized\\result};
+\node[dag_lemma, dag_template_legend] (legLem) at (4.2,0) {formalized\\lemma};
+\node[dag_model, dag_template_legend] (legDef) at (8.4,0) {formalized\\definition};
+\node[dag_caveat_legend] (legCav) at (12.6,0) {formalized\\with caveat};
+\node[dag_partial, dag_template_legend] (legPart) at (0,-2.6) {partially\\formalized};
+\node[dag_conditional, dag_template_legend] (legCond) at (4.2,-2.6) {conditional};
+\node[dag_scaffold, dag_template_legend] (legScaf) at (8.4,-2.6) {scaffold};
+\node[dag_unformalized, dag_template_legend] (legNot) at (12.6,-2.6) {not started /\\not formalized};
+
+
+}
+\daglegend{(legRes)(legLem)(legDef)(legCav)(legPart)(legCond)(legScaf)(legNot)}{Legend}
+
+\begin{dagPaperBody}
+\begin{scope}[yshift=6.6cm]
+
+% --- Source definitions and motivating example. ---
+\node[dag_caveat] (Def1) at (0,-6.6) {
+  \textbf{Definition 1 (Sec. 2)} \\
+  $\gamma$-homogeneity profile \\
+  formula formalized
+};
+\node[dag_model] (Def2) at (0,-11.2) {
+  \textbf{Definition 2 (Sec. 2)} \\
+  sequence-limit homogeneity \\
+  equation (6) exposed
+};
+\node[dag_caveat] (Ex1) at (0,-15.8) {
+  \textbf{Example 1 (Sec. 1.2)} \\
+  exponential calibration \\
+  log relaxation closed
+};
+\node[dag_caveat] (Def3) at (0,-21.0) {
+  \textbf{Definition 3 (Sec. 4)} \\
+  order-statistic mean \\
+  abstract top-$k$ oracle
+};
+
+% --- Appendix proof architecture. ---
+\node[dag_partial] (LemmaD2) at (7.2,-6.2) {
+  \textbf{Lemma D.2 (App. D.2)} \\
+  bounded-tail integral \\
+  rescaled kernel closed \\
+  gamma coefficient closed \\
+  source split/change closed \\
+  growing rescaled split closed \\
+  bounded-support integrability closed \\
+  geometric tail negligible closed \\
+  split/dominated bridge closed \\
+  direct near-zero field open
+};
+\node[dag_partial] (Lemma1) at (7.2,-10.0) {
+  \textbf{Lemma 1 (Sec. 4)} \\
+  bounded-support top-$k$ \\
+  uniform $\beta=1$ endpoint closed \\
+  Lemma D.2 gamma assembly closed \\
+  power marginal/FOC closed \\
+  general asymptotic open
+};
+\node[dag_partial] (Prop5) at (7.2,-13.8) {
+  \textbf{Proposition 5 (App. D.2)} \\
+  top-$k$ order statistic \\
+  uniform instance closed
+};
+\node[dag_partial] (LemmaD1) at (7.2,-17.6) {
+  \textbf{Lemma D.1 (App. D.1)} \\
+  optimizer limit bridge \\
+  analytic regimes open
+};
+\node[dag_lemma] (LemmaD3) at (7.2,-22.4) {
+  \textbf{Lemma D.3 (App. D.2)} \\
+  exponential order statistics \\
+  top-one sample expectation closed \\
+  top-$k$ oracle/FOC closed \\
+  threshold count/Fubini closed \\
+  beta mass simplification closed \\
+  top-$k$ sample integral closed
+};
+\node[dag_partial] (LemmaD4) at (7.2,-27.0) {
+  \textbf{Lemma D.4 (App. D.2)} \\
+  Pareto order statistics \\
+  power marginal closed
+};
+\node[dag_partial] (LemmaD5) at (7.2,-31.0) {
+  \textbf{Lemma D.5 (App. D.4)} \\
+  rounding real optima \\
+  finite analogue closed
+};
+
+% --- Main paper results. ---
+\node[dag_conditional] (Thm1) at (15.0,-10.0) {
+  \textbf{Theorem 1 (Sec. 3.1)} \\
+  i.i.d. values \\
+  finite-discrete sqrt gap closed \\
+  exponential top-one expectation closed \\
+  exponential top-$k$ oracle/sample layer closed \\
+  bounded D.2 gamma assembly closed \\
+  bounded/Pareto power marginal closed \\
+  scaled marginal seam added \\
+  continuous floor-FOC seams added \\
+  distribution certificates open
+};
+\node[dag_conditional] (Cor1) at (22.8,-10.0) {
+  \textbf{Corollary 1 (Sec. 3.1)} \\
+  any $\gamma \ge 0$ attainable \\
+  parameter split closed \\
+  distribution construction open
+};
+\node[dag_partial] (Prop2) at (15.0,-15.2) {
+  \textbf{Proposition 2 (Sec. 3.1)} \\
+  uniform $[0,1]$ finite result \\
+  finite analogue closed \\
+  sharp constant open
+};
+\node[dag_result] (Cor3) at (22.8,-18.8) {
+  \textbf{Corollary 3 (Sec. 3.2)} \\
+  i.i.d. Bernoulli \\
+  $0$-homogeneity closed
+};
+\node[dag_caveat] (Thm2) at (15.0,-20.4) {
+  \textbf{Theorem 2 (Sec. 3.2.1)} \\
+  decaying Bernoulli \\
+  $\alpha = 0$ target caveat
+};
+\node[dag_result] (Thm3) at (22.8,-24.0) {
+  \textbf{Theorem 3 (Sec. 3.2.2)} \\
+  varying success rates \\
+  log-share closed
+};
+\node[dag_unformalized] (Prop4) at (15.0,-28.0) {
+  \textbf{Proposition 4 (App. C)} \\
+  continuous sphere extension \\
+  open
+};
+
+% --- Definition edges. ---
+\draw[dag_arrow] (Def1) -- (Def2);
+\draw[dag_arrow] (Def3.east) -- ++(1.8,0) |- (Prop5.west);
+
+% --- Appendix-to-main proof architecture. ---
+\draw[dag_arrow] (LemmaD2) -- (Lemma1);
+\draw[dag_dashed_arrow] (Lemma1) -- (Thm1);
+\draw[dag_arrow] (Prop5) -- (LemmaD1);
+\draw[dag_arrow] (LemmaD1.north east) -- (Thm1.south west);
+\draw[dag_arrow] (Thm1) -- (Cor1);
+
+% --- Result-specific dependencies and Lean proof routes. ---
+\draw[dag_arrow] (Prop5.east) -- ++(1.6,0) |- (Prop2.west);
+\draw[dag_arrow] (LemmaD5.20) -- ++(2.1,0) |- (Prop2.south west);
+\draw[dag_arrow] (LemmaD1.south east) -- (Thm2.north west);
+\draw[dag_arrow] (Thm3) -- (Cor3);
+\draw[dag_arrow] (LemmaD5.340) -- ++(12.0,0) -| (Thm3.south);
+
+\end{scope}
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

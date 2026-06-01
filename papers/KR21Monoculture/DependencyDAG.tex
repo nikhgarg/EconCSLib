@@ -1,0 +1,107 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={font=\sffamily\scriptsize},
+  every path/.append style={font=\sffamily\scriptsize}
+]
+
+\dagPaperMetadata{Algorithmic Monoculture and Social Welfare}{Jon Kleinberg and Manish Raghavan}{PNAS}{2021}{https://arxiv.org/pdf/2101.05853}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) at (0,0) {Formalized};
+\node[dag_lemma, dag_template_legend] (legLem) at (3.4,0) {Formalized Lemma};
+\node[dag_model, dag_template_legend] (legDef) at (6.8,0) {Definition / Model};
+\node[dag_unformalized, dag_template_legend] (legOpen) at (10.2,0) {Not Formalized};
+\node[dag_conditional, dag_template_legend] (legCond) at (13.6,0) {Conditional};
+\node[dag_caveat_legend] (legCav) at (17.0,0) {Validation Caveat};
+
+}
+\daglegend{(legRes)(legLem)(legDef)(legOpen)(legCond)(legCav)}{Legend}
+
+\begin{dagPaperBody}
+\begin{scope}[xshift=5.8cm,yshift=4.0cm]
+% --- Main paper definitions and theorem ---
+\node[dag_model, text width=4.8cm] (Def1) at (0,-4.0)
+  {\textbf{Definition 1 (Sec. 2.1)}\\Noisy permutation family};
+\node[dag_model, text width=4.8cm] (Def2) at (0,-6.4)
+  {\textbf{Definition 2 (Sec. 2.3)}\\Preference for first position};
+\node[dag_model, text width=4.8cm] (Def3) at (0,-8.8)
+  {\textbf{Definition 3 (Sec. 2.3)}\\Preference for weaker competition};
+\node[dag_result, text width=4.9cm] (Thm1) at (6.4,-6.4)
+  {\textbf{Theorem 1 (Sec. 2.3)}\\Monoculture paradox from Definitions 1--3};
+
+% --- Mallows branch ---
+\node[dag_result, text width=4.8cm] (Thm9) at (6.4,-4.2)
+  {\textbf{Theorem 9 (App. D)}\\Mallows family satisfies Definition 1};
+\node[dag_lemma, text width=4.8cm] (Lemma4) at (12.6,-3.4)
+  {\textbf{Lemma 4 (App. F)}\\Weighted-average monotonicity under decreasing ratios};
+\node[dag_lemma, text width=4.8cm] (Lemma5) at (12.6,-5.5)
+  {\textbf{Lemma 5 (App. F)}\\Top-two correct order is $\phi$ times the swap};
+\node[dag_lemma, text width=4.8cm] (Lemma6) at (12.6,-7.6)
+  {\textbf{Lemma 6 (App. F)}\\First-choice probability under Mallows};
+\node[dag_lemma, text width=4.8cm] (Lemma7) at (12.6,-9.7)
+  {\textbf{Lemma 7 (App. F)}\\First human mover beats second human};
+\node[dag_result, text width=4.8cm] (Thm3) at (18.8,-6.4)
+  {\textbf{Theorem 3 (Sec. 3 / App. E)}\\Mallows satisfies Definitions 2 and 3};
+\node[dag_lemma, text width=4.8cm] (Lemma8) at (18.8,-9.7)
+  {\textbf{Lemma 8 (App. F.1)}\\Pairwise correct-ranking probability increases with $\phi$};
+\node[dag_unformalized, text width=4.9cm] (Thm4Lift) at (25.0,-9.7)
+  {\textbf{Remaining-set lift}\\Best-in-set fiber MLR bridge, two-candidate, three-candidate, four-candidate, center-convex, and co-singleton routes, layer-cake prefix bridge, aggregate insertion route, all-history bridge, and adjacent dominance formalized; open arbitrary-size fiber MLR / adjacent Mallows dominance};
+\node[dag_conditional, text width=4.9cm] (Thm4) at (31.2,-9.7)
+  {\textbf{Theorem 4 (Sec. 4 / App. F.1)}\\Sequential backward induction closed conditional on arbitrary-size adjacent dominance; three- and four-candidate weak forms closed};
+
+\begin{scope}
+% --- Random utility model branch ---
+\node[dag_unformalized, text width=4.8cm] (Thm5) at (-5.8,-12.0)
+  {\textbf{Theorem 5 (App. A)}\\RUMs with differentiable full-support noise satisfy Definition 1};
+\node[dag_model, text width=4.8cm] (Def4) at (0,-13.4)
+  {\textbf{Definition 4 (App. C)}\\Well-ordered noise};
+\node[dag_caveat, text width=4.4cm] (Lemma1) at (0,-17.2)
+  {\textbf{Lemma 1 (App. C)}\\Gaussian strict; Laplacian strict statement false};
+\node[dag_lemma, text width=4.8cm] (Lemma2) at (6.4,-12.3)
+  {\textbf{Lemma 2 (App. C)}\\Bottom-candidate probability decreases under contraction};
+\node[dag_lemma, text width=4.8cm] (Lemma3) at (6.4,-15.4)
+  {\textbf{Lemma 3 (App. C)}\\Top gain dominates middle-candidate gain};
+\node[dag_result, text width=4.8cm] (Thm6) at (12.6,-13.8)
+  {\textbf{Theorem 6 (App. C)}\\Three-candidate well-ordered RUM gives Definition 3};
+\node[dag_conditional, text width=4.8cm] (Thm7) at (18.8,-12.0)
+  {\textbf{Theorem 7 (App. C)}\\C.3 split-integral derivative formalized; probability bridge open};
+\node[dag_result, text width=4.8cm] (Thm8) at (18.8,-15.8)
+  {\textbf{Theorem 8 (App. C)}\\Gaussian conditional derivative formalized};
+\node[dag_unformalized, text width=4.8cm] (Thm2) at (25.0,-13.8)
+  {\textbf{Theorem 2 (Sec. 3 / App. C)}\\Gaussian/Laplacian RUMs satisfy Theorem 1 conditions};
+
+\end{scope}
+
+% --- Main theorem edges ---
+\draw[dag_arrow] (Def1.east) -- (Thm1.north west);
+\draw[dag_arrow] (Def2.east) -- (Thm1.west);
+\draw[dag_arrow] (Def3.east) -- (Thm1.south west);
+
+% --- Mallows edges ---
+\draw[dag_arrow] (Thm9.west) -- (Def1.east);
+\draw[dag_arrow] (Lemma4.east) -- (Thm3.north west);
+\draw[dag_arrow] (Lemma5.east) -- (Thm3.west);
+\draw[dag_arrow] (Lemma6.east) -- (Thm3.south west);
+\draw[dag_dashed_arrow] (Lemma7.east) -- (Thm3.south);
+\draw[dag_dashed_arrow] (Lemma8.east) -- (Thm4Lift.west);
+\draw[dag_dashed_arrow] (Thm4Lift.east) -- (Thm4.west);
+
+% --- RUM edges ---
+\draw[dag_arrow] (Def4.east) -- (Lemma2.west);
+\draw[dag_arrow] (Def4.east) -- (Lemma3.west);
+\draw[dag_arrow] (Def4.south) -- (Lemma1.north);
+\draw[dag_arrow] (Lemma2.east) -- (Thm6.west);
+\draw[dag_arrow] (Lemma3.east) -- (Thm6.west);
+\draw[dag_dashed_arrow] (Lemma1.east) -- ++(1.0,0) -- (8.8,-19.4) -| (Thm6.south);
+\draw[dag_dashed_arrow] (Thm5.south) -- ++(0,-8.7) -| (Thm2.south);
+\draw[dag_dashed_arrow] (Thm6.east) -- (Thm2.west);
+\draw[dag_dashed_arrow] (Thm7.east) -- (Thm2.north west);
+\draw[dag_dashed_arrow] (Thm8.east) -- (Thm2.south west);
+\end{scope}
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

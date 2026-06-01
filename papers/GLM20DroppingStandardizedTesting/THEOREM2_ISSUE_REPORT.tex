@@ -1,0 +1,101 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\def\UrlBreaks{\do\_\do\-}
+
+\newcommand{\Pfull}{P_{\mathrm{full}}}
+\newcommand{\Psub}{P_{\mathrm{sub}}}
+\newcommand{\source}[1]{\path{#1}}
+\newcommand{\lean}[1]{\par\smallskip\noindent\begingroup\footnotesize\path{#1}\endgroup\par\smallskip}
+
+\title{Theorem 2 High-Skill Individual-Fairness Direction Audit}
+\author{GLM20 Dropping Standardized Testing Formalization}
+\date{May 16, 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Summary}
+
+The current source TeX supports the existing formalization caveat for
+Theorem 2(ii).  The main theorem statement says that, after dropping tests,
+the high-skill individual-fairness gap increases.  The appendix proof derives
+the opposite high-skill comparison:
+\[
+  I(q;\Pfull) > I(q;\Psub)
+\]
+for all sufficiently high \(q\), and explicitly describes this as the gap
+decreasing.  These two eventual high-skill directions cannot both be true for
+the same gap definition and the same two policies.
+
+\section*{Source Evidence}
+
+The model defines the individual-fairness gap as
+\[
+  I(q;P) =
+  \Pr(Y=1 \mid q,A,P) - \Pr(Y=1 \mid q,B,P),
+\]
+so a larger value of \(I(q;P)\) means a larger group-A-minus-group-B admission
+probability gap.  This definition is in
+\source{source_tex/model.tex:47--50}.
+
+Theorem 2(ii), in the main theorem statement, says that there is a threshold
+\(\hat q\) such that the individual-fairness gap increases for all
+\(q>\hat q\) after dropping the test.  In context this is the comparison
+\[
+  I(q;\Psub) > I(q;\Pfull).
+\]
+This statement appears in \source{source_tex/theory.tex:184--186}.
+
+The appendix proof of Theorem 2(ii) instead concludes the reverse comparison.
+In Step 2 it sets out to discuss the high-skill direction, but the derived
+sufficient condition and final conclusion are
+\[
+  I(q;\Pfull) > I(q;\Psub)
+\]
+for all sufficiently high \(q\), followed by the prose conclusion that the
+gap decreases.  The relevant lines are
+\source{source_tex/proofs.tex:559--596}.
+
+\section*{Formalization Status}
+
+Lean keeps the two directions separate.
+
+The appendix-direction source-model endpoint is formalized by:
+\lean{paper_theorem2_dropping_tests_without_barriers_standardGaussian_source_model_appendix_direction}
+
+The main-text direction is now proved under the extra same-side precision
+assumption that the remaining non-test features still favor group A:
+\[
+  subB < subA.
+\]
+The paper-facing endpoint is:
+\lean{paper_interface_theorem2_high_skill_individual_fairness_gap_sub_gt_full_source_surface_of_precision_order}
+
+This assumption matches the model/prose convention that group-B features are
+less informative than group-A features, but it is not stated explicitly in the
+main theorem statement.  The proof uses the reusable Gaussian left-tail
+dominance lemma:
+\lean{standardGaussianCDF_affine_leftTail_lt_mul_eventually_of_slope_lt}
+
+Lean also records the direct incompatibility of the two eventual high-skill
+claims:
+\lean{paper_theorem2_eventual_high_skill_gap_directions_inconsistent}
+
+\section*{Recommendation}
+
+Keep Theorem 2 marked with a validation caveat.  If the authors intended the
+main-text direction, the theorem statement should include the extra test-free
+precision-order assumption \(subB < subA\), or otherwise clarify that the
+``less informative for group B'' convention applies to the remaining features
+after dropping the test.  Appendix Step 2 should then be corrected: its crossed
+precision-order argument proves the opposite high-skill direction.  The
+formalization should not mark both high-skill directions as unconditional paper
+statements.
+
+\end{document}

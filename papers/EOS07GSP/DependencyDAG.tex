@@ -1,0 +1,83 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={outer sep=4pt}
+]
+
+\dagPaperMetadata{Internet Advertising and the Generalized Second-Price Auction: Selling Billions of Dollars Worth of Keywords}{Benjamin Edelman, Michael Ostrovsky, and Michael Schwarz}{American Economic Review}{2007}{https://www.nber.org/papers/w11765}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) at (0,0) {formalized\\result};
+\node[dag_lemma, dag_template_legend] (legLem) at (4.2,0) {formalized\\lemma};
+\node[dag_model, dag_template_legend] (legDef) at (8.4,0) {formalized\\definition};
+\node[dag_caveat_legend] (legCav) at (12.6,0) {formalized\\with caveat};
+\node[dag_partial, dag_template_legend] (legPart) at (0,-2.6) {partially\\formalized};
+\node[dag_conditional, dag_template_legend] (legCond) at (4.2,-2.6) {conditional};
+\node[dag_scaffold, dag_template_legend] (legScaf) at (8.4,-2.6) {scaffold};
+\node[dag_unformalized, dag_template_legend] (legNot) at (12.6,-2.6) {not started /\\not formalized};
+
+}
+\daglegend{(legRes)(legLem)(legDef)(legCav)(legPart)(legCond)(legScaf)(legNot)}{Legend}
+
+\begin{dagPaperBody}
+\begin{scope}[xshift=1.2cm]
+
+\node[dag_model, text width=4.6cm] (Position) at (0,0)
+  {\textbf{Sections 2--3}\\slots, click rates, values, GSP and VCG payments, truthfulness and equilibrium predicates};
+\node[dag_result, text width=4.6cm] (Remark1) at (-6.6,-4.4)
+  {\textbf{Remark 1}\\same-bid GSP per-click payment weakly dominates VCG by a generic ranked tail-payment induction};
+\node[dag_result, text width=4.6cm] (Remark2) at (0,-4.4)
+  {\textbf{Remark 2}\\VCG-style position mechanisms are dominant-strategy truthful from the welfare-maximization/externality-tax certificate};
+\node[dag_result, text width=4.6cm] (Remark3) at (6.6,-4.4)
+  {\textbf{Remark 3}\\truth-telling is not dominant under GSP, by the paper's three-bidder/two-slot deviation};
+\node[dag_result, text width=4.6cm] (Examples) at (6.6,-8.1)
+  {\textbf{Sections 2.2--2.3}\\concrete GSP witness; running example Nash, LEF, payments, and VCG-minimality};
+
+\node[dag_model, text width=4.6cm] (Def4) at (13.2,0)
+  {\textbf{Definition 4}\\locally envy-free equilibrium};
+\node[dag_caveat, text width=3.9cm] (Lemma5) at (13.2,-5.5)
+  {\textbf{Lemma 5}\\LEF $\Rightarrow$ formal stable assignment; caveat: stronger no-rematch envy predicate};
+\node[dag_caveat, text width=3.9cm] (Lemma6) at (13.2,-12.0)
+  {\textbf{Lemma 6}\\stable assignment $\Rightarrow$ slot envy-free; caveat: VCG-payment lattice comparison open};
+
+\node[dag_conditional, text width=4.8cm] (Thm7) at (21.0,-5.5)
+  {\textbf{Theorem 7}\\$B^*$ has VCG-equivalent payoffs and LEF/stability consequences under explicit ranked/canonical-tail certificate hypotheses};
+\node[dag_conditional, text width=4.8cm] (Thm8) at (28.8,-5.5)
+  {\textbf{Theorem 8}\\generalized-English auction has unique PBE with finite-$B^*$ threshold strategy and VCG outcome, conditional on source-game PBE and exact/no-overshoot history obligations};
+
+\node[dag_template_note, text width=19.0cm] (AuditNote) at (18.5,-17.4) {
+  \textbf{Initial source inventory.} The refreshed NBER Working Paper 11765 text
+  exposes Remarks 1--3, Definition 4, Lemmas 5--6, and Theorems 7--8. This DAG
+  intentionally keeps implementation certificate layers out of the main graph.
+  The detailed Lean endpoints, finite schedule wrappers, and no-overshoot
+  review interfaces are recorded in the README, PaperInterface, post-paper
+  audit report, and Theorem 8 source proof plan.
+};
+\node[dag_template_note, text width=19.0cm, below=0.65cm of AuditNote] (Thm8Note) {
+  \textbf{Current Theorem 8 boundary.} The finite payoff algebra, threshold
+  strategy behavior, terminal-record formulas, completed-rank and all-rank
+  no-overshoot endpoints, shifted continuation-threshold bridge, and
+  source-completion certificate plumbing compile.
+  The full paper theorem remains conditional until the real generalized-English
+  source game supplies belief consistency, source sequential rationality, and
+  no-overshoot/exact terminal-record generation for arbitrary source histories.
+};
+
+\draw[dag_dashed_arrow] (Position.south) |- (Remark1.north);
+\draw[dag_dashed_arrow] (Position) -- (Remark2);
+\draw[dag_arrow] (Position.south) |- (Remark3.north);
+\draw[dag_arrow] (Remark3) -- (Examples);
+\draw[dag_arrow] (Position) -- (Def4);
+\draw[dag_arrow] (Def4) -- (Lemma5);
+\draw[dag_dashed_arrow] (Lemma5) -- (Lemma6);
+\draw[dag_dashed_arrow] (Lemma5.east) -- (Thm7.west);
+\draw[dag_dashed_arrow] (Lemma6.east) -| (Thm7.south);
+\draw[dag_dashed_arrow] (Thm7) -- (Thm8);
+
+\end{scope}
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

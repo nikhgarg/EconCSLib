@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "id": "KR21Monoculture",
+  "title": "Algorithmic Monoculture and Social Welfare",
+  "authors": "Jon Kleinberg and Manish Raghavan",
+  "source_version": "arXiv:2101.05853",
+  "build_target": "lake build KR21Monoculture",
+  "status": "partially formalized",
+  "main_caveat": "Concrete continuous RUM Theorem 6 and Appendix C Theorem 8 endpoints are exposed; arbitrary-size Mallows dominance and remaining RUM paper-scope bridges remain open.",
+  "review_entrypoint": "papers/KR21Monoculture/README.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 6,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/KR21Monoculture/PaperInterface.lean",
+    "line_count": 82,
+    "declaration_rows": 6,
+    "review_rows": 6,
+    "oversized": false,
+    "maintainability_issue": null
+  },
+  "artifacts": {
+    "readme": "papers/KR21Monoculture/README.md",
+    "paper_interface": "papers/KR21Monoculture/PaperInterface.lean",
+    "final_validation_report": "papers/KR21Monoculture/README.md",
+    "dependency_dag_tex": "papers/KR21Monoculture/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/KR21Monoculture/DependencyDAG.pdf"
+  },
+  "review_surface": {
+    "source_file": "papers/KR21Monoculture/PaperInterface.lean",
+    "include_names": [
+      "mallowsSpec",
+      "strictlyWellOrderedNoise",
+      "definition1_concreteMallowsSpec_atom_continuity",
+      "definition1_concreteMallowsSpec_asymptotic_first_dominance",
+      "lemma1_gaussian_strictlyWellOrdered",
+      "lemma1_laplacian_weaklyWellOrdered"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "mallowsSpec",
+          "strictlyWellOrderedNoise",
+          "definition1_concreteMallowsSpec_atom_continuity",
+          "definition1_concreteMallowsSpec_asymptotic_first_dominance",
+          "lemma1_gaussian_strictlyWellOrdered",
+          "lemma1_laplacian_weaklyWellOrdered"
+        ]
+      }
+    ]
+  }
+}

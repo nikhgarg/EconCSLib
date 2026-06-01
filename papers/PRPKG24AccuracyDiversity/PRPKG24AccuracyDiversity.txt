@@ -1,0 +1,4191 @@
+Reconciling the accuracy-diversity trade-off in recommendations
+Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg† , Nikhil Garg†
+
+arXiv:2307.15142v1 [cs.IR] 27 Jul 2023
+
+Abstract
+In recommendation settings, there is an apparent trade-off between the goals of accuracy (to recommend items a user is most likely to want) and diversity (to recommend items representing a range of
+categories). As such, real-world recommender systems often explicitly incorporate diversity separately
+from accuracy. This approach, however, leaves a basic question unanswered: Why is there a trade-off in
+the first place?
+We show how the trade-off can be explained via a user’s consumption constraints—users typically
+only consume a few of the items they are recommended. In a stylized model we introduce, objectives
+that account for this constraint induce diverse recommendations, while objectives that do not account for
+this constraint induce homogeneous recommendations. This suggests that accuracy and diversity appear
+misaligned because standard accuracy metrics do not consider consumption constraints. Our model yields
+precise and interpretable characterizations of diversity in different settings, giving practical insights into
+the design of diverse recommendations.
+
+1
+
+Introduction
+
+A large body of work in recommendations has developed methods to navigate an apparent trade-off between
+the goals of accuracy (to recommend items a user is most likely to want) and diversity (to recommend
+items from a range of categories) [1–23]. Real-world recommender systems use heuristics to directly incorporate diversity into recommendations [24, 25], and empirical evidence demonstrates that users prefer diverse
+recommendations [26–29].
+A fundamental question remains: Why is there a trade-off in the first place? More specifically, why is
+“accuracy” unaligned with a user’s true preference for diversity? Without a principled understanding of the
+accuracy-diversity trade-off, attempts to diversify recommendations have difficulty moving beyond a heuristic
+basis—and difficulty articulating what they are accomplishing at a deeper level.
+In this work, we introduce and analyze a stylized model of recommendations that helps explain and
+reconcile the apparent accuracy-diversity trade-off. Our model studies this trade-off through the lens of
+a user’s consumption constraints: users typically examine a list of recommendations and use only the top
+(highest value) options. (A person can watch only one movie in an evening, a recruiter can select only a
+handful of candidates to interview.) This lens has strong explanatory power:
+• When the goal is to maximize the expected value of the top recommended items, diverse recommendations
+are often optimal in our model. By accounting for a user’s consumption constraints, optimizing for what
+they are most likely to want is aligned with recommending a diverse set of items.
+• Without accounting for consumption constraints, optimal recommendations in our model are homogeneous.
+This suggests that the trade-off between accuracy and diversity can be explained by commonly-used accuracy metrics not accounting for consumption constraints.
+A strength of our model is that we can precisely and interpretably analyze the optimal amount of diversity
+in different settings, allowing us to isolate the effect of consumption constraints. This precision also yields
+practical insights about the role of diversity in recommendations. In Theorem 3, for example, we uncover
+natural settings where optimal recommendations overrepresent the category of item a user is least likely to
+want—a paradox that appears in grocery stores, where even though customers are less likely to buy ice cream
+than milk, stores allocate much more space to ice cream.
+∗ Kenny Peng, Cornell Tech, kennypeng@cs.cornell.edu; Manish Raghavan, MIT; Emma Pierson, Cornell Tech; Jon Kleinberg, Cornell University; Nikhil Garg, Cornell Tech, ngarg@cornell.edu. † Joint senior author.
+
+1
+
+1.1
+
+Model
+
+There are m types of items indexed by [m] = {1, 2, · · · , m}. A user prefers exactly one type of item, preferring
+(t)
+type t ∈ [m] with probability pt . The value of the i-th item of type t is a random variable Xi if the user
+(t)
+(t)
+prefers type t and 0 otherwise (so its expected value is pt E[Xi ]). The recommender knows only how Xi
+are distributed, not their realizations. We refer to pt as the likelihood of a type and the random variable
+(t)
+Xi as a conditional item value (the value of an item conditional on the user preferring the item’s type).
+Let Sn,k be the set of n items that maximizes the expected total value of the k items with the highest
+realized values. We call Sn,k the optimal set of n recommendations with respect to this objective. (We omit
+the dependency of Sn,k on the other model parameters, as these will be clear from context.)
+Sn,k arises naturally from an assumption that the user can only use k items, so that they derive value
+from the k highest value recommended items. So Sn,1 results from an assumption that the user uses only
+one item, while Sn,n results from an assumption that the user uses every recommended item.
+Sn,n maximizes the expected total value of all of the recommended items, so by linearity of expectation,
+Sn,n contains the n items with the highest individual expected values.
+Meanwhile, Sn,1 maximizes the expected value of the highest-value item, an objective that—importantly—
+is not maximized by choosing the individual items with the highest expected values.
+Our overarching technical result and interpretation.
+across several settings that:
+
+Our main results (summarized in Table 1) show
+
+Sn,k is diverse for k fixed and n growing. Meanwhile, Sn,n is homogeneous.
+This technical result has an interpretation explaining the accuracy-diversity trade-off. Objectives that account
+for a user’s consumption constraints naturally induce diversity, while objectives that do not account for
+consumption constraints can produce homogeneous recommendations. Thus, the observed trade-off is (partly)
+a consequence of common accuracy metrics not modeling consumption constraints.
+One might suggest that our results show homogeneity is desirable when users can use all recommended
+items. We do not emphasize this interpretation since there are additional reasons outside of our model to
+incorporate diversity. Thus, our results are best interpreted as showing (1) that diversity arises under minimal
+assumptions, and (2) that standard objectives can (mistakenly) induce homogeneity.
+Evaluating diversity. To evaluate diversity, we consider the representation of each type in Sn,k . In many of
+our results, representation falls on an interpretable continuum: from complete diversity (each type represented
+equally) to proportional diversity (each type represented proportionally to its likelihood pt ) to homogeneity
+(only the highest likelihood type represented). We formalize our measure of diversity in Section 2.
+Discussion and limitations. Our model is purposefully stylized and minimal so that we can abstract
+a small set of ingredients common to a wide set of domains—namely, those where users prefer a certain
+category of items and a recommender has noisy estimates of user preferences and item values. Importantly,
+our model captures the consumption constraints of users: when a user is given a set of recommendations,
+they can typically use only the best few recommendations—a person can watch only one movie in an evening,
+a recruiter can select only a handful of candidates to interview.
+Other reasons for diversity. Importantly, when we refer to optimal sets of recommendations, we mean
+optimal with respect to our stylized optimization problem—maximizing the expected sum of the k highest
+item values. In real-world contexts, there are many reasons to incorporate diversity that we do not consider
+here. For example, our model does not consider any explicit preferences users have for diversity. While such
+a preference may be empirically well-grounded, omitting such a preference makes our conclusions stronger:
+simply by modeling user consumption constraints, we show that diversity arises naturally in optimal recommendations even when our model does not explicitly value diversity.
+Model generalizations. Real-world settings can differ from our model in natural ways. For example, users
+can prefer multiple types of items at a time and some items may fall under multiple types. We discuss
+generalizations in Appendix C. Here, the assumptions that users prefer only one type and items each fall
+under one type allow us to analyze diversity in an interpretable way: characterizing how represented each
+item type is in comparison to the user’s likelihood of preferring that type.
+2
+
+Table 1: Our main results broadly show: (1) consumption constraints induce diverse recommendations, and
+(2) without accounting for consumption constraints, recommendations tend to be homogeneous.
+Setting
+Thm. 1.
+(t)
+
+Xi
+
+∼D
+
+With consumption constraints
+
+Without consumption constraints
+
+As n grows large for fixed k,
+Sn,k exhibits diversity depending on the tail behavior of D.
+
+Sn,n contains only one type of
+item.
+
+For non-heavy-tailed D, Sn,k is
+at least proportionally diverse.
+Thm. 2.
+(t)
+Xi ∼ Ber(qi )
+
+for q1 , q2 , · · · decaying by a
+power law (roughly, qi ∝ i−α ).
+Thm. 3.
+(t)
+
+Xi
+
+∼ Ber(qt )
+
+for q1 , q2 , · · · , qm .
+
+For moderate amounts of decay (α < 1), as n grows large,
+Sn,1 represents each item type
+equally.
+
+For moderate amounts of decay (α < 1), as n grows large,
+Sn,n is less than proportionally
+diverse.
+
+For large n, Sn,1 represents
+each item type in proportion
+to
+1
+1 ,
+log 1−q
+t
+
+Sn,n contains only one type of
+item.
+
+so that items of lower success
+probability are recommended
+more.
+
+1.2
+
+An illustrative example: Recovering Steck’s standard of calibration
+
+We now consider a simple instantiation of our model, motivated by a thought experiment suggested by the
+Netflix researcher Harald Steck [30]. A user watches romance movies 70 percent of the time and action
+movies the other 30 percent of the time. Steck raises a concern that an accuracy-maximizing algorithm can
+produce entirely homogeneous recommendations in this setting, and proposes a standard of calibration, where
+70 percent of recommended movies here are romance and 30 percent are action. The example below reflects
+Steck’s concern by showing that—before accounting for consumption constraints—optimal recommendations
+are homogeneous. Yet, by assuming a user can only watch one movie, the optimal recommendations in the
+example are in fact naturally calibrated.
+Example 1 (Recovering calibration). Suppose there are two genres of movies, romance and action, indexed 1
+and 2 respectively. A user prefers romance with probability p1 and action with probability p2 , with p1 > p2 .
+Movies from the user’s preferred genre have values drawn i.i.d. from an exponential distribution Exp(λ),
+(t) iid
+
+while other movies have value 0. In the language of our model, Xi ∼ Exp(λ).
+Sn,n maximizes the expected total value of recommended items, so by linearity of expectation it contains
+the items of highest individual expected value. The expected value of each romance and action movie are
+p1 E[Exp(λ)] and p2 E[Exp(λ)] respectively, so Sn,n contains only romance movies.
+Sn,1 maximizes the expected value of the best recommended movie. The expected value of the best item
+among a1 romance movies and a2 action movies (where a1 + a2 = n) is
+p1 · E[max of a1 draws from Exp(λ)] + p2 · E[max of a2 draws from Exp(λ)]
+
+(1)
+
+p1
+p2
+log(a1 ) +
+log(a2 ),
+(2)
+λ
+λ
+which is maximized when a1 = p1 n and a2 = p2 n (as shown using Lagrange multipliers). Therefore, Sn,1 has
+proportional representation, recovering Steck’s standard of calibration.
+≈
+
+3
+
+1.3
+
+Intuition for our overarching result
+
+In the model we propose, a user’s value depends only on the recommended items from the user’s preferred type.
+Therefore, conditional on a user preferring type t, the user’s expected value from a set of recommendations
+with at items of type t is given by ht (at ) for some function ht . Then the user’s expected value from a set of
+recommendations with at items of type t for all t ∈ [m] is of the form
+m
+X
+
+pt ht (at ).
+
+(3)
+
+t=1
+
+The key idea of our work is that when accounting for consumption constraints, the function ht reflects
+diminishing returns: recommending additional items from a type becomes less and less valuable when we care
+only about the value of the best recommended items—when a user can only watch one movie, recommending
+three options for romance movies might be significantly better than two, because the platform doesn’t know
+which exact romance movie the user may like; however, recommending 20 such movies is barely better than
+19. Thus, when maximizing (3), it becomes preferable to recommend items from other types. Meanwhile,
+without modeling user consumption constraints, there are not necessarily diminishing returns since the user
+can use all of the additional items recommended.
+The particular shape of the diminishing returns regulates the amount of resulting diversity. In Example 1,
+we had that ht (x) ∝ log x, in which case (3) is maximized when at ∝ pt , yielding proportional representation.1
+Our technical work thus involves analyzing the functions ht in different settings (this reduces to analyzing
+the large order statistics of different distributions). Roughly speaking, heavier-tailed conditional item values
+imply larger marginal returns, resulting in less diversity.
+
+1.4
+
+Related work
+
+As we have noted, there is a wide literature devoted to developing methods to navigate the accuracy-diversity
+trade-off [1–23]. Such work is supported by empirical evidence suggesting that a combination of these two
+metrics is preferred by users [26–29]. Of particular interest to us, however, is work that focuses on objectives
+that implicitly correspond to diversity. In the context of web search, optimizing for the probability that the
+user is shown a satisfactory search result has been associated with diversification [33,34], since effective search
+results must account for different intents of queries (“pandas” can refer to an animal or a Python package).
+More recent work has adapted this objective to the recommender system setting as a metric that unifies
+accuracy and diversity [35]. Our work, by explicitly characterizing optimal amounts of diversity, identifies
+consumption constraints as the underlying reason for why such approaches result in diversity. We discuss
+additional related work in Appendix A.
+
+2
+
+Evaluating diversity
+
+We now formalize our approach to evaluating diversity. For a set S of items, we define
+rt (S) :=
+
+# of items in S of type t
+,
+|S|
+
+(4)
+
+the representation of type t in S. Intuitively, a set of recommendations is diverse if all types are well
+represented. We now define an interpretable family of representations that interpolates between maximum
+diversity and maximum homogeneity, and which arises naturally in many of our results.
+Definition 1 (γ-homogeneity). A set S is γ-homogeneous if for all t ∈ [m],
+pγ
+rt (S) = Pmt
+
+γ.
+i=1 pi
+
+(5)
+
+γ-homogeneity captures several intuitive notions of diversity, using p1 , · · · , pm as a benchmark:
+1 The mathematical result in this example also appears in the context of resource allocation (e.g., [31]) and betting (e.g.,
+§22.2 in [32]) in the presence of logarithmic utility.
+
+4
+
+1
+• When γ = 0, rt (S) = m
+. There is “equal representation.”
+
+• When γ = 1, rt (S) = pt . There is “proportional representation,” where an item type is represented in
+proportion to its likelihood.
+• When γ = ∞, rt (S) = 1 for t = arg maxi∈[m] pi and rt (S) = 0 otherwise. There is “complete homogeneity,”
+where only the highest-likelihood item type is represented.
+A smaller γ corresponds to more diversity, with γ ≤ 1 indicating at least proportional representation. In
+practice, it is challenging to show that individual sets are γ-homogeneous; for one, since sets have an integer
+number of items from each type, it is typically impossible to obtain the exact ratios in (5). Instead, we will give
+primarily asymptotic results, showing that as n grows large, the optimal set Sn,k approaches γ-homogeneity.
+Formally, we define γ-homogeneity over sequences of sets:
+Definition 2 (γ-homogeneity for set sequences). A sequence of sets {Sn }∞
+n=1 is γ-homogeneous if for all
+t ∈ [m],
+pγ
+(6)
+lim rt (Sn ) = Pmt γ .
+n→∞
+i=1 pi
+One perhaps surprising aspect of our results is that γ-homogeneity is sufficient to characterize diversity
+in a large class of settings, as opposed to requiring more complicated functions of proportions pt .
+
+3
+
+Main results
+
+We now state our main results, which consider several settings reflecting different assumptions about the
+(t)
+(t) iid
+conditional item values Xi . In Section 3.1, we assume that Xi ∼ D are drawn from a shared distribution,
+which implies that the recommender has little information about the value of specific items. In Section 3.2,
+(t)
+Xi are Bernoulli random variables with success probabilities differing depending on i and t, meaning that
+the recommender has information about which items are more likely to satisfy a user.
+In each setting, we analyze the diversity of optimal sets Sn,k for when k is fixed (i.e., accounting for
+consumption constraints) and k = n (i.e., not accounting for consumption constraints). We sketch our proof
+strategy in Section 4 and defer full proofs to Appendix D.
+
+3.1
+
+i.i.d. conditional item values
+(t) iid
+
+Consider the setting in which Xi ∼ D, i.e., conditional item values are drawn from a shared distribution.
+This implies that the values of items behave similarly across types and within types, and the platform cannot
+easily distinguish between the items in a type. From the perspective of a hiring platform, there may be many
+candidates with similar backgrounds (e.g., education or work history), none of whom can be distinguished
+from another by the platform. Conditional on a recruiter preferring this background, candidate values can
+be modeled as coming from a shared distribution.
+We show that for a fixed k, as n grows large, the diversity of Sn,k theoretically varies between equal
+representation, proportional representation, and near-complete homogeneity depending on the tail-behavior
+of D. In particular, distributions that are bounded or have exponential tails induce at least proportional
+representation. Meanwhile, Sn,n is completely homogeneous.
+(t) iid
+
+Theorem 1. Suppose Xi
+
+∼ D where D has finite mean. Then the following statements hold.
+
+(i) [Finite Discrete] If D is a finite discrete distribution, {Sn,k }∞
+n=1 is 0-homogeneous.
+(ii) [Bounded] If D has support bounded from above by M with pdf fD satisfying
+fD (x)
+lim
+=c
+x→M (M − x)β−1
+β
+for some β, c > 0, then {Sn,k }∞
+n=1 is β+1 -homogeneous.
+(This pdf class contains beta distributions, including the uniform distribution.)
+
+5
+
+(7)
+
+(t) iid
+
+Table 2: A summary of Theorem 1. For Xi
+
+∼ D, distributions D with heavier tails induce less diversity.
+
+bounded
+Thm. 1(ii)
+example D
+
+Beta(·, β)
+0<β<1
+
+β=1
+
+β>1
+
+exp. tail
+Thm. 1(iii)
+
+heavy tail
+Thm. 1(iv)
+
+Exp(λ)
+
+Pareto(α)
+
+λ>0
+
+α>1
+
+graph of pdf
+
+M
+
+M
+
+M
+
+M
+
+M
+
+M
+
+{Sn,k }∞
+n=1
+
+γ-homog.
+for γ ∈
+
+(0, 1/2)
+
+1/2
+
+(1/2, 1)
+
+1
+(i.e., proportional)
+
+←− more diverse
+
+(1, ∞)
+
+less diverse −→
+
+(iii) [Exponential tail] If D = Exp(λ) for λ > 0, then {Sn,k }∞
+n=1 is 1-homogeneous.
+α
+(iv) [Heavy tail] If D = Pareto(α) for α > 1, then {Sn,k }∞
+n=1 is α−1 -homogeneous.
+
+Additionally,
+(v) Sn,n contains only items of type t = arg maxt∈[m] pt .
+As Table 2 illustrates, the theorem shows how for fixed k, the diversity of optimal solutions depends on
+the tail behavior of D. In fact, we can obtain γ-homogeneity for any γ:
+(t) iid
+
+Corollary 1. For any γ ≥ 0, there exists D such that when Xi
+homogeneous.
+
+∼ D and k is fixed, {Sn,k }∞
+n=1 is γ-
+
+Intuitively, heavy-tailed distributions (part (iv)) induce less diverse recommendations since the marginal
+returns of recommending more items from the same type remains high: drawing more samples from a heavytailed distribution produces ever-increasing item values. This contrasts with bounded distributions like the
+uniform distribution (part (ii)), where once an item has close to the maximum value, additional draws of
+that type will not further improve the utility significantly.
+A result for finite n and larger k. One limitation of our main results is that they are asymptotic (n → ∞)
+and are restricted to fixed consumption constraints k. Stronger results can be obtained by considering specific
+distributions. For example, the result below characterizes for any n, k the representation of each type when
+conditional item values are uniformly distributed on [0, 1].
+(t) iid
+
+Proposition 2. When Xi
+
+∼ U ([0, 1]),
+
+√
+pt
+rt (Sn,k ) − Pm √
+i=1
+
+6
+
+pi
+
+≤
+
+m+1
+.
+n
+
+(8)
+
+√
+
+p
+
+for all k ≤ Pm m√pi n − m − 1.
+i=1
+
+Therefore, for any n, Sn,k is approximately 21 -homogeneous. In addition, for any k that is smaller than a
+constant fraction of n, the diversity Sn,k does not depend on k. Thus, even for small sets of recommendations
+and large consumption constraints, diversity is optimal in this setting. We further give simulated results for
+small n and large k in Appendix B corroborating our theoretical results.
+
+3.2
+
+Heterogeneous Bernoulli conditional item values
+(t)
+
+(t)
+
+Now consider when Xi are independent random variables drawn from Ber(qi ), reflecting a model in which
+items have binary values (i.e., a user is either satisfied or not satisfied by an item). In this section, we allow
+(t)
+qi to differ across i and t, implying that the recommender has knowledge about which items are more likely
+(t)
+to be successful conditional on a user’s preferred type. Specifically, in Section 3.2.1 we allow qi to vary
+(t)
+across i and in Section 3.2.2 we allow qi to vary across t.
+Our results will focus on Sn,1 and Sn,n , which both have natural interpretations in this setting:
+• Sn,1 maximizes the probability that the user will be satisfied by at least one recommended item.
+• Sn,n maximizes the the expected number of recommended items the user will be satisfied by, which is
+equivalent to the standard metric of accuracy.
+(t)
+
+Before proceeding, we note that the basic case qi
+rem 1(i).
+
+= q for all i, t is handled as a direct corollary of Theo(t) iid
+
+Corollary 3 (Conditional item values are i.i.d. Bernoulli). When Xi
+0-homogeneous.
+
+∼ Ber(q) for q > 0, then Sn,1 is
+
+Therefore, if the success probability is the same for all items, optimal solutions are 0-homogeneous (each
+item is equally represented) for large n, even as the likelihoods pt vary across type.
+3.2.1
+
+Decaying success probabilities
+
+We now consider a setting in which among items of the same type, the recommender knows that some items
+have higher success probability. This maps onto settings where the recommender knows which items of a
+type are most likely to be satisfactory, e.g., some action movies are more commonly liked than are others.
+Thus, we assume that the recommender has access to items with decaying success probabilities.
+(t) iid
+
+(t)
+
+Theorem 2 (Decaying success probabilities). Suppose that Xi ∼ Ber(qi ) are i.i.d. Bernoulli random
+(t)
+variables such that qi = c(i + d)−α for all i ≥ 1 and some α, c, d ≥ 0. Then the following statements hold.
+(i) {Sn,1 }∞
+n=1 is 0-homogeneous for α < 1.
+
+1
+(ii) {Sn,1 }∞
+n=1 is 1+c -homogeneous for α = 1.
+1
+(iii) {Sn,1 }∞
+n=1 is α -homogeneous for α > 1.
+
+Additionally,
+1
+(iv) {Sn,n }∞
+n=1 is α -homogeneous for α ≥ 0.
+
+When the success probabilities of items have moderate decay (α < 1), then 0-homogeneity is maintained in the case k = 1 (note that α = 0 recovers Corollary 3). Moreover, for all rates of decay, optimal
+recommendations reflect at least proportional diversity for large n and k = 1.
+Theorem 2 also reveals surprising non-monotonic behavior. In particular, there is a discontinuity at
+α = 1, where homogeneity suddenly increases, but then decreases as α continues to increase. At α = 1, the
+optimal amount of diversity when α = 1 can range between 0 and 1 depending on c.
+When k = n, a larger rate of decay induces more diverse recommendations. Intuitively, when there is a
+larger rate of decay, the recommender has fewer high-quality options of a given type and is more incentivized
+to recommend high-quality options of other types. Note that for moderate rates of decay (α < 1), Sn,n
+remains less than proportionally diverse for large n, unlike Sn,1 .
+7
+
+Figure 1: Theorem 2 considers items decay in quality within each type. Here, we plot optimal diversity as a
+function of the rate of decay α. For realistic rates of decay we (α < 1), Sn,k is completely diverse for large n
+while Sn,n is less than proportionally diverse.
+Rate of quality decay vs. diversity
+
+3
+less diverse ↑
+
+{Sn,1 }∞
+n=1
+{Sn,n }∞
+n=1
+
+2
+
+γ-homog. for γ =
+1
+1
+more diverse ↓ 1+c
+0
+0
+
+1
+
+2
+
+3
+
+α (rate of conditional item quality decay)
+
+3.2.2
+
+Varying success probability across types
+
+We now consider a setting in which the success probability of an item varies across types. This can arise
+when a users are more picky for some types of items, or when the recommender has more information about
+items from one type than another.
+(t) iid
+
+Theorem 3 (Varying success probability across types). Suppose that for each fixed t, Xi
+i.i.d. Bernoulli random variables. Then
+lim rt (Sn,1 ) ∝
+
+n→∞
+
+1
+1
+log 1−q
+t
+
+∼ Ber(qt ) are
+(9)
+
+while Sn,n contains only items of type t = arg maxt∈[m] pt qt .
+The surprising high-level takeaway from Theorem 3 is that, for large n, a smaller success probability qt
+results in more representation of type t. The less likely an item of a given type is satisfactory, the more that
+type is recommended. Moreover, note that the amount of representation in this setting is independent of the
+popularities p1 , · · · , pm .
+This paradox is illustrated in grocery stores, where more space is devoted to ice cream than milk, despite
+milk being much more popular than ice cream. Here, p1 (the popularity of milk) is higher than p2 (the
+popularity of ice cream). However, q1 (the likelihood a given milk product satisfies a shopper looking for
+milk) is also higher than q2 (the likelihood a given ice cream product satisfies a shopper looking for ice cream),
+since people tend to have more specific tastes for ice cream. Thus, since q2 is smaller than q1 and the grocery
+store should “recommend” many more ice creams than milks, explaining why more space is devoted to ice
+cream. Intuitively, while more shoppers want milk, these consumers can be satisfied with a small selection
+of milk; thus, it is more beneficial to devote more space to ice cream, for which shoppers have more specific
+tastes.
+
+4
+
+Sketch of Proofs
+
+We now sketch the proof of Theorem 1(ii). (The general strategy applies to the rest of Theorem 1, as well
+as Theorem 2 and Theorem 3.) First, recall the general setup in Theorem 1, where the conditional item
+(t)
+values Xi are drawn i.i.d. from a shared distribution D. In other words, a user prefers type t ∈ [m] with
+probability pt such that the user prefers exactly one type of item, and conditioned on the user preferring type
+8
+
+t, the value of an item of that type is drawn i.i.d. from D. We are interested in analyzing, depending on D,
+the composition of Sn,k , the set of n items maximizing the expected sum of the k highest value items in the
+(n)
+set. If Sn,k contains at items of type t, we need to analyze
+(n)
+
+at
+.
+n→∞ n
+
+lim rt (Sn,k ) = lim
+
+n→∞
+
+(10)
+
+We first provide an expression for the expected sum of the k highest value items in a set S with at items of
+type t. The following definition will be useful.
+Definition 3. Define µD (i, a) to be the expected value of the i-th order statistic2 of a random variables
+drawn i.i.d. from D. (Thus, µD (1, a) is the expected minimum of a i.i.d. draws from D and µD (a, a) is the
+expected maximum.)
+Then conditioned on the user preferring type t, the expected sum of the k highest value of items in S is
+Pmin{k,at }
+equal to h(at ) := i=1
+µD (at − i + 1, at ), whichPfollows from the linearity of expectation. Therefore,
+m
+the expected sum of the k highest value items in S is t=1 pt h(at ). Define An to be the set of tuples of nonPm
+(n) (n)
+(n)
+negative integers whose entries sum to n. Then (a1 , a2 , · · · , am ) = arg max(a1 ,··· ,am )∈An t=1 pt h(at ).
+We can then determine the limit in (10) given asymptotic information about h. In Lemma D.1 in the
+appendix, we develop general technical machinery for this task. Below, we state Lemma D.1(ii), which can
+be used to prove Theorem 1(ii).
+Lemma D.1(ii). If h is monotonically increasing and there exist constants A, B > 0 and σ < 0 such that
+lima→∞ A−h(a)
+= 1, then limn→∞
+Baσ
+
+(n)
+
+at
+n
+
+1
+
+p 1−σ
+
+=P t
+
+1
+1−σ
+m
+i=1 pi
+
+.
+
+Then, considering D as in Theorem 1(ii), we can prove the necessary asymptotic result about h:
+D (x)
+Lemma 1. If D has support bounded from above by M with pdf fD such that limx→M (Mf−x)
+β−1 = c for some
+
+β, c > 0, then lima→∞ M k−h(a)
+= 1.
+−1
+Ba
+
+β
+
+Combining Lemma 1 with Lemma D.1(ii), with σ = − β1 , we show that for D as in Theorem 1(ii),
+β
+
+(n)
+
+a
+p β+1
+lim t = P t
+β .
+n→∞ n
+m
+β+1
+i=1 pi
+
+5
+
+(11)
+
+Conclusion
+
+We introduce and analyze a stylized model that reconciles the apparent accuracy-diversity trade-off in recommendations. We characterize the diversity of optimal sets both when “optimality” captures and does not
+capture user consumption constraints. Broadly speaking, we show that the former naturally induces diversity
+while the latter results in homogeneity. Therefore, the apparent accuracy-diversity trade-off is partially due
+to traditional accuracy metrics not accounting for consumption constraints.
+Limitations and future work. A particular strength of our model is that we were able to derive precise
+and interpretable characterizations of diversity in many settings. One limitation of our work is that many
+of our results are asymptotic (i.e., n → ∞). We expect that it is possible to obtain further results in our
+model for finite n. We gave Proposition 2 as one such example, and outline additional possible directions in
+Appendix B.
+The purposefully stylized nature of our model—in which users prefer only one type of item and items
+fall under only one type—allows for a particularly interpretable evaluation of diversity where we compare
+the representation of each type in comparison to the likelihood that the user prefers that type. This simple
+2 The i-th order statistic of n random variables is the i-th smallest of the n realized values.
+
+9
+
+model is expressive enough to admit a wide range of results. Still, it would be interesting to generalize our
+findings in more complex models of users and items. In Appendix C, we discuss these possibilities further,
+providing some basic results both when users can prefer multiple types of items and when users and items
+are represented by embeddings.
+Finally, there are possible model characteristics beyond consumption constraints that implicitly reward
+diversity. As discussed in Section 1.3, diversity in our model is a consequence of diminishing returns when
+recommending additional items of a type. Diminishing returns may arise from other assumptions, such as
+decaying user attention (e.g., [18]). We point those interested in considering these alternate assumptions to
+Lemma D.1 in the appendix, in which we abstract the technical relationship between diminishing returns
+and diversity.
+Broader impacts. Recommender systems have broad societal consequences, particularly in high-stakes
+settings like employment. Our work does not model many additional reasons for diversity in these settings,
+including those based on fairness and equity. We emphasize again that our results are intended to convey
+minimal assumptions that induce diversity and illustrate the tendency of certain objectives to produce
+homogeneous recommendations. Designers of recommender systems, and researchers in the area, should take
+a broader view when making decisions regarding diversity.
+
+10
+
+References
+[1] Matevž Kunaver and Tomaž Požrl. Diversity in recommender systems–a survey. Knowledge-based systems,
+123:154–162, 2017.
+[2] Gediminas Adomavicius and YoungOk Kwon. Improving aggregate recommendation diversity using rankingbased techniques. IEEE Transactions on Knowledge and Data Engineering, 24:896–911, 2012.
+[3] Shaina Raza and Chen Ding. Deep neural network to tradeoff between accuracy and diversity in a news recommender system. 2021 IEEE International Conference on Big Data (Big Data), pages 5246–5256, 2021.
+[4] Elvin Isufi, Matteo Pocchiari, and Alan Hanjalic. Accuracy-diversity trade-off in recommender systems via graph
+convolutions. Inf. Process. Manag., 58:102459, 2021.
+[5] Georgios Alexandridis, Georgios Siolas, and Andreas Stafylopatis. Accuracy versus novelty and diversity in
+recommender systems: A nonuniform random walk approach. In Recommendation and Search in Social Networks,
+2015.
+[6] Zhipeng Hou and Jing Liu. A two-phase evolutionary algorithm for solving the accuracy-diversity dilemma in
+recommendation. 2020 IEEE Congress on Evolutionary Computation (CEC), pages 1–8, 2020.
+[7] Bushra Alhijawi, Salam Fraihat, and Arafat A. Awajan. Multi-factor ranking method for trading-off accuracy,
+diversity, novelty, and coverage of recommender systems. International Journal of Information Technology,
+15:1427 – 1433, 2023.
+[8] Bibek Paudel, Thilo Haas, and Abraham Bernstein. Fewer flops at the top: Accuracy, diversity, and regularization
+in two-class collaborative filtering. Proceedings of the Eleventh ACM Conference on Recommender Systems, 2017.
+[9] Xiaoyun He. Does utilizing online social relations improve the diversity of personalized recommendations? Int.
+J. Strateg. Decis. Sci., 13:1–15, 2022.
+[10] Ignacio Fernández-Tobı́as, Paolo Tomeo, Iván Cantador, T. D. Noia, and Eugenio Di Sciascio. Accuracy and
+diversity in cross-domain recommendations for cold-start users with positive-only feedback. Proceedings of the
+10th ACM Conference on Recommender Systems, 2016.
+[11] Anupriya Gogna and Angshul Majumdar. Balancing accuracy and diversity in recommendations using matrix
+completion framework. Knowl. Based Syst., 125:83–95, 2017.
+[12] Maurizio Ferrari Dacrema. Demonstrating the equivalence of list based and aggregate metrics to measure the
+diversity of recommendations (student abstract). Proceedings of the AAAI Conference on Artificial Intelligence,
+2021.
+[13] Jianguo Liu, Kerui Shi, and Qiang Guo. Solving the accuracy-diversity dilemma via directed random walks.
+Physical review. E, Statistical, nonlinear, and soft matter physics, 85 1 Pt 2:016118, 2012.
+[14] Farzad Eskandanian and Bamshad Mobasher. Using stable matching to optimize the balance between accuracy
+and diversity in recommendation. Proceedings of the 28th ACM Conference on User Modeling, Adaptation and
+Personalization, 2020.
+[15] Shengqi Wu, Huaizhen Kou, Chao Lv, Wanli Huang, Lianyong Qi, and Hongya Wang. Service recommendation
+with high accuracy and diversity. Wirel. Commun. Mob. Comput., 2020:8822992:1–8822992:10, 2020.
+[16] Emanuel Lacić, Dominik Kowald, Markus Reiter-Haas, Valentin Slawicek, and E. Lex. Beyond accuracy optimization: On the value of item embeddings for student job recommendations. ArXiv, abs/1711.07762, 2017.
+[17] Amin Javari and Mahdi Jalili. A probabilistic model to resolve diversity–accuracy challenge of recommendation
+systems. Knowledge and Information Systems, 44:609–627, 2015.
+[18] Jon M. Kleinberg, Emily Ryu, and Éva Tardos. Calibrated recommendations for users with decaying attention.
+ArXiv, abs/2302.03239, 2023.
+[19] Sinan Seymen, Himan Abdollahpouri, and Edward C. Malthouse. A constrained optimization approach for
+calibrated recommendations. Proceedings of the 15th ACM Conference on Recommender Systems, 2021.
+[20] Himan Abdollahpouri, Zahra Nazari, Alex Gain, Clay Gibson, Maria Dimakopoulou, J. Anderton, Benjamin
+Carterette, Mounia Lalmas, and Tony Jebara. Calibrated recommendations as a minimum-cost flow problem.
+Proceedings of the Sixteenth ACM International Conference on Web Search and Data Mining, 2023.
+[21] Mi Zhang and Neil J. Hurley. Avoiding monotony: improving the diversity of recommendation lists. In ACM
+Conference on Recommender Systems, 2008.
+[22] Azin Ashkan, Branislav Kveton, Shlomo Berkovsky, and Zheng Wen. Optimal greedy diversity for recommendation. In International Joint Conference on Artificial Intelligence, 2015.
+
+11
+
+[23] Tao Zhou, Zoltan Kuscsik, Jianguo Liu, Matus Medo, Joseph R. Wakeling, and Yi-Cheng Zhang. Solving the
+apparent diversity-accuracy dilemma of recommender systems. Proceedings of the National Academy of Sciences,
+107:4511 – 4515, 2008.
+[24] Ivan Medvedev, Taylor Gordong, and Haotian Wu. Powered by ai: Instagram’s explore recommender system.
+2019.
+[25] David Goldberg. Diversity in search. 2014.
+[26] Ashton Anderson, Lucas Maystre, Ian Anderson, Rishabh Mehrotra, and Mounia Lalmas. Algorithmic effects on
+the diversity of consumption on spotify. In Proceedings of The Web Conference 2020, WWW ’20, page 2155–2165,
+New York, NY, USA, 2020. Association for Computing Machinery.
+[27] João Sá, Vanessa Queiroz Marinho, Ana Rita Magalhães, Tiago Lacerda, and Diogo Gonçalves. Diversity vs
+relevance: A practical multi-objective study in luxury fashion recommendations. Proceedings of the 45th International ACM SIGIR Conference on Research and Development in Information Retrieval, 2022.
+[28] Jae kyeong Kim, Il Young Choi, and Qinglong Li. Customer satisfaction of recommender system: Examining
+accuracy and diversity in several types of recommendation approaches. Sustainability, 13:6165, 2021.
+[29] Sung-Hyuk Park and Sang Pil Han. From accuracy to diversity in product recommendations: Relationship
+between diversity and customer retention. International Journal of Electronic Commerce, 18:51 – 72, 2013.
+[30] Harald Steck. Calibrated recommendations. In Proceedings of the 12th ACM conference on recommender systems,
+pages 154–162, 2018.
+[31] Mo Ghorbanzadeh, Ahmed Abdel-Hadi, and Thomas Charles Clancy. A utility proportional fairness radio
+resource block allocation in cellular networks. 2015 International Conference on Computing, Networking and
+Communications (ICNC), pages 499–504, 2014.
+[32] David Easley and Jon Kleinberg. Networks, crowds, and markets: Reasoning about a highly connected world.
+Cambridge university press, 2010.
+[33] Rakesh Agrawal, Sreenivas Gollapudi, Alan Halverson, and Samuel Ieong. Diversifying search results. In Proceedings of the Second ACM International Conference on Web Search and Data Mining, WSDM ’09, page 5–14,
+New York, NY, USA, 2009. Association for Computing Machinery.
+[34] Filip Radlinski, Robert D. Kleinberg, and Thorsten Joachims. Learning diverse rankings with multi-armed
+bandits. In International Conference on Machine Learning, 2008.
+[35] Javier Parapar and Filip Radlinski. Towards unified metrics for accuracy and diversity for recommender systems.
+Proceedings of the 15th ACM Conference on Recommender Systems, 2021.
+[36] Scott Page. The Difference. Princeton University Press, 2008.
+[37] Lu Hong and Scott E Page. Groups of diverse problem solvers can outperform groups of high-ability problem
+solvers. Proceedings of the National Academy of Sciences, 101(46):16385–16389, 2004.
+[38] Jon Kleinberg and Maithra Raghu. Team performance with test scores. ACM Transactions on Economics and
+Computation (TEAC), 6(3-4):1–26, 2018.
+[39] Jon Kleinberg and Manish Raghavan. Selection problems in the presence of implicit bias. arXiv preprint
+arXiv:1801.03533, 2018.
+[40] Wenshuo Guo, Karl Krauth, Michael Jordan, and Nikhil Garg. The stereotyping problem in collaboratively
+filtered recommender systems. In Equity and Access in Algorithms, Mechanisms, and Optimization, pages 1–10.
+2021.
+[41] A Gürhan Kök and Marshall L Fisher. Demand estimation and assortment optimization under substitution:
+Methodology and application. Operations Research, 55(6):1001–1021, 2007.
+[42] Paat Rusmevichientong, Zuo-Jun Max Shen, and David B Shmoys. Dynamic assortment optimization with a
+multinomial logit choice model and capacity constraint. Operations research, 58(6):1666–1680, 2010.
+[43] James Mario Davis, Guillermo Gallego, and Huseyin Topaloglu. Assortment optimization under variants of the
+nested logit model. Oper. Res., 62:250–273, 2014.
+[44] Srikanth Jagabathula. Assortment optimization under general choice. Available at SSRN 2512831, 2014.
+[45] Paat Rusmevichientong, David Shmoys, Chaoxu Tong, and Huseyin Topaloglu. Assortment optimization under the multinomial logit model with random choice parameters. Production and Operations Management,
+23(11):2023–2039, 2014.
+[46] Guillermo Gallego and Huseyin Topaloglu. Constrained assortment optimization for the nested logit model.
+Management Science, 60(10):2583–2601, 2014.
+
+12
+
+[47] Dimitris Bertsimas and Velibor V Mišic. Data-driven assortment optimization. Management Science, 1:1–35,
+2015.
+[48] Omar El Housni, Omar Mouchtaki, Guillermo Gallego, Vineet Goyal, Salal Humair, Sangjo Kim, Ali Sadighian,
+and Jingchen Wu. Joint assortment and inventory planning for heavy tailed demand. Columbia Business School
+Research Paper Forthcoming, 2021.
+[49] Qinyi Chen, Negin Golrezaei, Fransisca Susan, and Edy Baskoro. Fair assortment planning. arXiv preprint
+arXiv:2208.07341, 2022.
+[50] Omar El Housni and Huseyin Topaloglu. Joint assortment optimization and customization under a mixture of
+multinomial logit models: On the value of personalized assortments. Operations Research, 2022.
+[51] Jaime Carbonell and Jade Goldstein. The use of mmr, diversity-based reranking for reordering documents and
+producing summaries. In Proceedings of the 21st annual international ACM SIGIR conference on Research and
+development in information retrieval, pages 335–336, 1998.
+[52] Kevin Gimpel, Dhruv Batra, Chris Dyer, and Gregory Shakhnarovich. A systematic exploration of diversity in
+machine translation. In Proceedings of the 2013 Conference on Empirical Methods in Natural Language Processing,
+pages 1100–1111, 2013.
+[53] William Brown and Arpit Agarwal. Diversified recommendations for agents with adaptive preferences. In Alice H.
+Oh, Alekh Agarwal, Danielle Belgrave, and Kyunghyun Cho, editors, Advances in Neural Information Processing
+Systems, 2022.
+[54] Gourab K Patro, Lorenzo Porcaro, Laura Mitchell, Qiuyue Zhang, Meike Zehlike, and Nikhil Garg. Fair ranking:
+a critical review, challenges, and future directions. In 2022 ACM Conference on Fairness, Accountability, and
+Transparency, pages 1929–1942, 2022.
+[55] Meike Zehlike, Ke Yang, and Julia Stoyanovich. Fairness in ranking: A survey. arXiv preprint arXiv:2103.14000,
+2021.
+[56] Kit T Rodolfa, Hemank Lamba, and Rayid Ghani. Empirical observation of negligible fairness–accuracy trade-offs
+in machine learning for public policy. Nature Machine Intelligence, 3(10):896–904, 2021.
+
+13
+
+A
+
+Additional related work
+
+Our work sits at the intersection of two broad sets of work. On the one hand are arguments that diversity is
+key to achieving efficiency. On the other are those that cast diversity as in conflict with efficiency or accuracy,
+but perhaps that diversity should nevertheless be pursued as an axiomatic good.
+Broadly, our work seeks to understand this tension by sharply characterizing the amount of diversity in
+efficient solutions, as a function of key setting characteristics: user utilities and consumption constraints,
+and uncertainty in the item quality distribution. In particular, our results characterize in what settings the
+intuition regarding diversity being efficient holds, and in what settings they may be in conflict.
+The (efficiency) benefits of diversity The importance of diversity for efficiency is an old idea present
+across many fields; [36] synthesizes the conceptual and empirical arguments in support of this principle. [37]
+develop a model in which a randomly selected team of problem solvers outperforms a team of the individually
+best-performing agents, due to diversity in problem solving perspective ( [38] show that, in some settings,
+there exist tests under which selecting the best-performing agents again becomes optimal). [39] show that
+constraints promoting diversity can improve efficiency when they work to counteract a decision-maker’s
+biases. [33] develop an algorithm to diversify search results, to minimize the risk of user dissatisfaction. We
+are particularly influenced by the work of [30], who presents the intuition that recommendations should be
+calibrated : “When a user has watched, say, 70 romance movies and 30 action movies, then it is reasonable to
+expect the personalized list of recommended movies to be comprised of about 70% romance and 30% action
+movies as well.” [40] show that collaborative filtering-based recommendations may not be able to effectively
+show users such a diverse set of content, harming efficiency.
+More broadly, researchers studying various combinatorial optimization problems may find it obvious that
+homogeneous solutions can be sub-optimal; indeed, in classical problems like maximum coverage, redundancy
+is undesirable.
+Our work particularly is intimately connected to the large literature on assortment optimization [41–50].
+That literature also considers consumption-constrained consumer item selections based on an intermediary’s
+recommendations (e.g., that customers picks one item according to a multinomial choice model). The literature primarily devises approximation algorithms to find the optimal recommendation (“assortment”) as a
+function of the consumer’s choice model, platform objective, and the item distribution. In other words, an
+implicit premise of this literature is that the naive approach of presenting the items with highest individual
+expected values is sub-optimal, i.e., that optimal assortments are not completely ‘homogeneous.’ On the
+other hand, optimal assortments are not necessarily diverse; roughly speaking, the results of [50] imply that
+a standard assortment approach (Mixed MNL) might produce solutions that are not “diverse” enough to
+satisfy multiple customer types, and so there is benefit to personalize to each type.34 Our work contributes
+to this literature by (a) examining the implicit premise that optimal assortments are not homogeneous (i.e.,
+when is the naive5 approach sufficient?); and (b) showing the characteristics under which optimal assortments
+are not diverse.
+Diversity and fairness as a contrast to efficiency and accuracy On the other hand, many works
+start with the premise that—although diversity may conflict with efficiency or accuracy—it is an axiomatic
+good that should be pursued. For example, diversity is often considered to be inherently desirable from a
+fairness perspective and user satisfaction perspective. As a result, there is a wide body of work devoted to
+optimizing for various metrics of diversity. A common approach (taken, for example, in [51] and [52]) is to
+consider an objective function that balances a weighted measure of “accuracy” or “relevance” with a measure
+of diversity. More recently, [53] consider set recommendation for an agent with adaptive preferences, to
+ensure that consumption over time is diverse. Numerous metrics for diversity have been proposed—we refer
+the reader to [1] for a survey. Similarly, the fair ranking and recommendation literature (see [54] and [55] for
+recent surveys) considers metrics and methods for fairness in such problems. On the other hand, empirical
+3 We thank the authors for highlighting this connection to us.
+4 Furthermore, as [49] recently characterize, standard assortment optimization approaches may be “unfair” to items in other
+ways.
+5 Note that naive is much simpler than the greedy approach studied in the literature, which picks items iteratively potentially
+as a function of previous items picked.
+
+14
+
+Figure 2: Optimal recommendations when there are two types (say, comedy movies and action movies) and
+(t)
+Xi are i.i.d. Bernoulli random variables with success probability 0.4. For large n, optimal recommendations
+have equal representation. Here, we plot the optimal representation of type 1 depending on the popularities
+p1 and p2 for small n. When popularities are very skewed (e.g., the user prefers comedy with probability
+0.9), then the recommendations are relatively homogeneous for small n.
+
+proportion of type 1
+
+1
+
+p1 = 0.6, p2 = 0.4
+p1 = 0.7, p2 = 0.3
+p1 = 0.8, p2 = 0.2
+p1 = 0.9, p2 = 0.1
+
+0.9
+0.8
+0.7
+0.6
+0.5
+0
+
+10
+20
+30
+40
+n (number of recommendations)
+
+50
+
+work has demonstrated that such tradeoffs may be small in practice [56]. Such formulations imply that there
+is a tension between diversity and measures of accuracy.
+
+B
+
+Computational results for finite n and general k
+
+One limitation of our general theoretical approach is that it does not directly yield results for a fixed number
+of recommended items n or for intermediate values of k. In particular, a finer-grained theoretical analysis
+requires closed-form solutions for the order statistics of general distributions, which are often not available.
+We were able to overcome this in Proposition 2, where we leveraged the simplicity of uniform order statistics.
+Here, we take a computational approach to determine the optimal amount of diversity for small n and
+arbitrary k. Figure 3 shows the results of a computational approach to calculate the diversity of the optimal
+set for finite n and general k for a spectrum of Beta and Pareto distributions. For each particular distribution
+D, we take n = 30, m = 2, p1 = 0.7, p2 = 0.3 and find the optimal choice of a1 and a2 by calculating
+2
+X
+t=1
+
+min{at ,k}
+
+pt
+
+X
+i=1
+
+µD (at − i + 1, at )
+
+(12)
+
+for each possible pair (a1 , a2 ) summing to 30. To do this, we obtained empirical estimates of µD (a − i + 1, a)
+by computationally sampling 106 sets of a points from D. Our computational results corroborate Theorem 1,
+showing how the optimal amount of diversity can range from equal representation to homogeneity.
+We also compute how diverse optimal solutions are in the case of a Bernoulli distribution as n, the number
+of recommendations, varies. In Figure 2, we consider the distribution Ber(0.4) and different pairs of popularities (p1 , p2 ). We find that as n grows, optimal solutions indeed approach having equal representation,
+corroborating Theorem 1(i). For small n, optimal solutions tend to be more homogeneous—especially when
+
+15
+
+Figure 3: Computational estimates for the diversity of optimal sets across a range of beta and Pareto
+distributions. Here, dark blue corresponds to equal representation (γ = 0), grey corresponds to proportional
+representation (γ = 1), and brown corresponds to homogeneous (γ = ∞). Observe that tighter consumption
+constraints (smaller k) correspond to more diversity. Notice in particular that when β √
+= 1 (corresponding
+to
+√
+√
+the uniform distribution), the optimal solution is 12 -homogeneous for all k ≤ cn for c ≈ 0.3/( 0.3+ 0.7) ≈
+0.4, matching our theoretical result in Proposition 2.
+
+the popularities are heavily skewed. Indeed, this aligns with intuition: if a user almost exclusively prefers
+romance, a recommender should still recommend mostly romance movies (even if as the number of recommendations grows very large, the recommendations should become more diverse according to Theorem 1(i)).
+
+C
+
+Generalizations
+
+In this section, we consider two directions in which our model can be extended. First, we consider a model in
+which users can prefer multiple item types at a time. Second, we consider a model in which users and items
+are both represented by vector embeddings, a common paradigm in recommender systems.
+
+C.1
+
+Preference for multiple item types
+
+In this section, we consider an extension of our model in which a user can prefer multiple types of items.
+In particular, we focus on the case when m = 2 and when the user prefers only type 1 with probability p1 ,
+only type 2 with probability p2 , and both types with probability p12 . We also assume that an item of type i
+satisfies a user that prefers type i independently with probability q. We consider when k = 1, when the user
+can only use one item. Then, we would like to minimize the probability of having no satisfying items:
+p1 (1 − q)a1 + p2 (1 − q)a2 + p12 (1 − q)n ,
+
+(13)
+
+where a1 + a2 = n. This is equivalent to minimizing
+p1 (1 − q)a1 + p2 (1 − q)a2 ,
+
+(14)
+
+which is mathematically equivalent to Theorem 1(i). Thus, we have that as n grows large, both item types
+are represented equally, irrespective of p1 , p2 , and p12 —in other words, allowing for the possibility that the
+user prefers multiple item types does not change the result in this setting.
+16
+
+The setup here can be naturally generalized to the case in which there are more than two types, and
+where item values can come from distributions other than Bernoulli. We leave these generalizations to future
+work.
+
+C.2
+
+User and item embeddings
+
+In this section, we consider the setting in which users and items each correspond to vector embeddings, and
+where the likelihood a user u is satisfied by an item v is a function of their cosine distance. Suppose that
+a user has preference u drawn according to a probability measure µ supported on the unit d−dimensional
+sphere Sd ⊂ Rd . Further suppose that for a movie v ∈ Sd , the probability that a user is not satisfied by the
+movie is p(u, v) = q(∥u − v∥), a function of the cosine distance between u and v.
+If the goal is to maximize the probability a user is satisfied by at least one item, what is the optimal choice
+of items to recommend as the number of recommendations we can make grows large? Here, we will show
+that items should be chosen “uniformly” from Sd —a result that may seem surprising as it is independent of
+the distribution of user preferences, and which can be viewed as an analog of Theorem 1(i).
+To make things precise and tractable, rather than consider the recommendation of individual items, we
+will focus on the recommendation of a “distribution of items.” This is analogous to making a continuous
+relaxation of the discrete item recommendation problem. For a set of items V = {v1 , · · · , vn }, the probability
+a user with preference drawn according to a probability measure µ does not like any item in V is
+Z
+Z
+Y
+X
+µ(u)
+p(u, v) du =
+µ(u) exp
+log p(u, v) du.
+(15)
+Sd
+
+Sd
+
+v∈V
+
+v∈V
+
+Then for a density function α : Sd → [0, ∞), we can consider the expression
+ Z
+
+Z
+µ(u) exp n
+α(v) log p(u, v) dv du,
+Sd
+
+(16)
+
+Sd
+
+which can be thought of splitting the n item recommendations continuously across Sd according to the density
+function α. We can think of α as representing some “profile” of items to show. Going forward, we consider
+optimal distributions rather than optimal discrete sets of items.
+Proposition 4. Consider a non-constant function p(u, v) : Sd × Sd → (0, 1], interpreted as the probability
+that item v does not satisfy a user with preference u, such that p(u, v) = q(∥u − v∥) can be expressed as
+a function of the cosine distance between u and v. Then let µ be a probability measure with support Sd ,
+representing the distribution of user preferences. Then for a probability measure α on Sd , define
+ Z
+
+Z
+1
+log
+µ(u) exp n
+α(v) log p(u, v) dv du.
+(17)
+Γ(α) = lim
+n→∞ n
+Sd
+Sd
+Then
+Γ(π) ∈ inf Γ(α),
+
+(18)
+
+α
+
+where π is the uniform probability measure over Sd .
+Proof. Let
+Z
+ρ(u; α) =
+
+α(v) log p(u, v) dv.
+
+(19)
+
+Sd
+
+Then
+
+1
+log
+n→∞ n
+
+Z
+
+Γ(α) = lim
+
+Sd
+
+1
+log
+n→∞ n
+
+enρ(u;α) µ(u) du = lim
+
+17
+
+Z
+Sd
+
+enρ(u;α) du = sup ρ(u; α),
+u∈Sd
+
+(20)
+
+where the final equality follows from the Laplace principle from large deviations theory. Now note that
+Z
+Z Z
+ρ(u; α) du =
+α(v) log p(u, v) dv du
+(21)
+Sd
+Sd Sd
+Z
+Z
+=
+α(v)
+log p(u, v) du dv
+(22)
+Sd
+Sd
+Z
+=
+α(v)C dv
+(23)
+Sd
+
+= C,
+
+(24)
+
+where the second to last equality follows from the observation that
+Z
+Z
+log p(u, v) du =
+log q(∥u − v∥) du = C
+Sd
+
+(25)
+
+Sd
+
+C
+, so supu∈A ρ(u; α) ≥
+for a constant C independent of v. Therefore, there exists u such that ρ(u; α) ≥ m(A)
+C
+m(A) . Now note that when π is the uniform probability measure over A, we have
+
+Z
+ρ(u; π) =
+
+π(v) log p(u, v) dv =
+Sd
+
+C
+for all u, so supu∈A ρ(u; π) = m(A)
+. So Γ(π) = inf α Γ(α).
+
+18
+
+C
+m(A)
+
+(26)
+
+D
+
+Proofs
+
+In this section, we prove each of our results. In Appendix D.1, we prove a technical lemma that plays
+a central role in the proofs of each part of Theorem 1 and Theorem 2, which we prove in Appendix D.2
+and Appendix D.3 respectively. In Appendix D.4, we prove another useful lemma—showing that integer
+solutions are close to real solutions for a class of optimization problems—which will be helpful in the proofs
+of Proposition 2 and Theorem 3, which we give in Appendix D.5 and Appendix D.6 respectively.
+
+D.1
+
+A central lemma
+
+Let Z≥0 denote the set of non-negative integers and An ⊂ Zm
+≥0 denote the set of m-tuples whose elements
+sum to n. We will say that a function h : Z≥0 → R is strictly concave if h(a + 1) − h(a) < h(a) − h(a − 1)
+for all a.
+Lemma D.1. Consider an integer m and p1 , p2 , · · · , pm ≥ 0. Let h : Z≥0 → R be monotonically increasing.
+(n)
+(n)
+For each positive integer n, choose (a1 , · · · , am ) such that
+(n)
+
+(a1 , · · · , a(n)
+m )∈
+
+arg max
+
+m
+X
+
+pt h(at ),
+
+(27)
+
+(a1 ,··· ,am )∈An t=1
+
+and define
+(n)
+
+rt
+
+(n)
+
+at
+.
+n
+
+:=
+
+(28)
+
+Then the following statements hold.
+(i) Suppose there exist constants A, B > 0 and σ < 0 such that
+lim
+
+a→∞
+
+log(A − h(a))
+= 1.
+Baσ
+
+Then
+(n)
+
+lim rt
+
+n→∞
+
+=
+
+1
+.
+m
+
+(29)
+
+(30)
+
+(ii) Suppose there exist constants A, B > 0 and σ < 0 such that
+lim
+
+a→∞
+
+A − h(a)
+= 1.
+Baσ
+
+Then
+
+(31)
+
+1
+1−σ
+
+p
+(n)
+lim rt = P t
+.
+1
+n→∞
+m
+1−σ
+i=1 pi
+
+(32)
+
+(iii) Suppose h is strictly concave, and that there exist constants B, C > 0 such that
+lim h(a) − B log a − C = 0.
+
+(33)
+
+(n)
+
+(34)
+
+a→∞
+
+Then
+
+lim rt
+
+n→∞
+
+= pt .
+
+(iv) Suppose h is strictly concave, and that there exist constants B > 0 and 0 < σ < 1 such that
+lim
+
+h(a)
+
+a→∞ Baσ
+
+Then
+
+= 1.
+
+(35)
+
+1
+1−σ
+
+p
+(n)
+lim rt = P t
+.
+1
+n→∞
+m
+1−σ
+p
+i=1 i
+19
+
+(36)
+
+We spend the remainder of the section proving Lemma D.1. A useful first step is to show that in each of
+parts (i)-(iv), we have that
+(n)
+lim at = ∞
+(37)
+n→∞
+
+for each t ∈ [m], allowing us to use the asymptotic assumptions in the lemma’s statement.
+Assume for the sake of contradiction that there exists t ∈ [m] and an integer d such that for any integer
+(n)
+N there exists n > N for which at < d. Since h is strictly increasing and d is finite, there exists δ > 0 such
+that
+h(a + 1) − h(a) > δ
+(38)
+for all a < d. Also, there exists an integer N ′ such that for all a > N ′ ,
+pt
+.
+i∈[m] pi
+
+h(a) − h(a − 1) < δ · min
+
+(39)
+
+(39) holds in parts (i)-(ii) because h is monotonically increasing and is upper bounded by A, and in parts
+(iii)-(iv) because h is strictly concave.
+Pm (n)
+(n)
+Now consider N = N ′ m. Then there exists n > N such that at < d. Since t=1 at = n > N ′ m, there
+(n)
+exists t′ ∈ [m] such that at′ > N ′ . Thus,
+(n)
+
+(n)
+
+(n)
+
+pt′ h(at′ ) − pt′ h(at′ − 1) < pt δ < pt h(at
+(n)
+
+which implies that the switch at
+
+(n)
+
+→ at
+
+(n)
+
++ 1) − pt h(at ),
+
+(40)
+
+(n)
+
+(n)
+
++ 1, at′ → at′ − 1 increases
+m
+X
+
+(n)
+
+pt h(at ),
+
+(41)
+
+t=1
+(n)
+
+(n)
+
+contradicting the optimality of (a1 , · · · , am ).
+With (37) in hand, we turn to the bulk of the proof. In each part, we would like to show that
+(n)
+
+(n)
+lim (r1 , · · · , rm
+) = (b
+r1 , · · · , rbm )
+
+(42)
+
+n→∞
+
+for some specified (b
+r1 , · · · , rbm ) depending on the part. We assume for the sake of contradiction that
+(n)
+(n) ∞
+r1 , · · · , rbm ). If this is the case, then by the Bolzano-Weierstrass
+{(r1 , · · · , rm )}n=1 does not converge to (b
+theorem, since [0, 1]m is compact, there is a subsequence
+(s )
+
+(si ) ∞
+{(r1 i , · · · , rm
+)}i=1
+(s )
+
+(43)
+
+(s )
+
+r1 , · · · , rbm ). For notational ease,
+such that limi→∞ (r1 i , · · · , rmi ) = (r1 , · · · , rm ) for some (r1 , · · · , rm ) ̸= (b
+we will simply assume that
+(n)
+(n)
+lim (r1 , · · · , rm
+) = (r1 , · · · , rm )
+(44)
+n→∞
+
+(s )
+
+(s )
+
+for some (r1 , · · · , rm ) ̸= (b
+r1 , · · · , rbm ). The proof holds analogously when the subsequence {(r1 i , · · · , rmi )}∞
+i=1
+(n)
+(n)
+differs from {(r1 , · · · , rm )}∞
+.
+n=1
+(n)
+(n)
+Then consider any sequence {(b
+a1 , · · · , b
+am )}∞
+n=1 such that
+!
+(n)
+(n)
+b
+a1
+b
+am
+lim
+,··· ,
+= (b
+r1 , · · · , rbm ).
+(45)
+n→∞
+n
+n
+(Clearly, such a sequence exists.) In each part, we will show that for sufficiently large n,
+m
+X
+
+(n)
+pt h(at ) <
+
+t=1
+(n)
+
+m
+X
+
+(n)
+
+pt h(b
+at ),
+
+(46)
+
+t=1
+(n)
+
+contradicting the optimality of (a1 , · · · , am ). To complete the proof, we analyze each part separately:
+20
+
+(i) In this part, there exist constants A, B > 0 and σ < 0 such that
+lim
+
+a→∞
+
+log(A − h(a))
+= 1.
+Baσ
+
+(47)
+
+1
+We set rbt := m
+for each t ∈ [m]. Observe that
+
+lim
+
+a→∞
+
+log(A − h(a))
+=1
+Baσ
+
+(48)
+
+implies that for all ϵ > 0, there exists c such that for all a > c,
+σ
+
+σ
+
+e(1−ϵ)Ba ≤ A − h(a) ≤ e(1+ϵ)Ba .
+Then observe that by taking sufficiently small ϵ, we have
+Pm
+Pm
+(n)
+(n) σ
+pt (A − h(at ))
+t=1 pt exp[(1 − ϵ)B(at ) )]
+lim Pt=1
+≥
+lim
+Pm
+(n)
+(n)
+m
+n→∞
+at )) n→∞ t=1 pt exp[(1 + ϵ)B(b
+at )σ )]
+t=1 pt (A − h(b
+Pm
+σ
+t=1 pt exp[(1 − ϵ)B(nrt ) ]
+= lim
+n→∞
+exp[(1 + ϵ)B(n/m)σ ]
+m
+X
+= lim
+pt exp[Bnσ ((1 − ϵ)rtσ − (1 + ϵ)(1/m)σ )] = ∞
+n→∞
+
+(49)
+
+(50)
+(51)
+(52)
+
+t=1
+
+1
+where the last limit holds for ϵ sufficiently small because rt − m
+> 0 for some t.
+Pm
+P
+(n)
+(n)
+m
+It follows that for n sufficiently large, t=1 pt h(at ) < t=1 pt h(b
+at ), as desired.
+
+(ii) In this part, there exist constants A, B > 0 and σ < 0 such that
+lim
+
+a→∞
+
+A − h(a)
+= 1.
+Baσ
+
+We set
+
+(53)
+
+1
+
+rbt := P
+
+pt1−σ
+1
+
+m
+1−σ
+i=1 pi
+
+(54)
+
+for each t ∈ [m]. Then observe that
+Pm
+
+lim Pt=1
+m
+
+(n)
+
+pt (A − h(at ))
+
+(n)
+at ))
+t=1 pt (A − h(b
+Pm
+Pm
+Pm
+(n) σ
+(n)
+(n)
+pt (A − h(at ))
+at ))
+t=1 pt B(at )
+t=1 pt (A − h(b
+= lim Pt=1
+·
+lim
+·
+lim
+Pm
+Pm
+(n)
+(n)
+(n)
+m
+n→∞
+at )) n→∞ t=1 pt (A − h(at )) n→∞
+at )σ
+t=1 pt (A − h(b
+t=1 pt B(b
+Pm
+Pm
+Pm
+(n)
+(n) σ
+(n)
+at ))
+t=1 pt (A − h(at ))
+t=1 pt B(at )
+t=1 pt (A − h(b
+= lim Pm
+·
+·
+P
+P
+(n)
+(n)
+(n)
+m
+m
+n→∞
+at ))
+a t )σ
+t=1 pt (A − h(b
+t=1 pt (A − h(at ))
+t=1 pt B(b
+Pm
+(n)
+pt B(at )σ
+= lim Pt=1
+(n)
+m
+n→∞
+at )σ
+t=1 pt B(b
+Pm
+σ
+t=1 pt rt
+= Pm
+> 1,
+btσ
+t=1 pt r
+n→∞
+
+(55)
+(56)
+(57)
+(58)
+(59)
+
+where (56) follows from the latter two limits being equal to 1, (57) follows from the product rule for
+limits, and (59) follows from the observation that for σ < 0
+m
+X
+t=1
+
+21
+
+pt xσt ,
+
+(60)
+
+Pm
+subject to the constraint t=1 xt = 1 for xt ≥ 0 has a unique minimum at (x1 , · · · , xm ) = (b
+r1 , · · · , rbm ).
+This is direct, for example, by using Lagrange multipliers. (59) implies that
+Pm
+(n)
+pt h(at )
+lim Pt=1
+< 1.
+(n)
+m
+n→∞
+at )
+t=1 pt h(b
+It follows that for n sufficiently large,
+
+(61)
+
+Pm
+(n)
+(n)
+at ), as desired.
+t=1 pt h(at ) <
+t=1 pt h(b
+
+Pm
+
+(iii) In this part, h is strictly concave, and there exist constants B, C > 0 such that
+lim h(a) − B log a − C = 0.
+
+(62)
+
+a→∞
+
+We set rbt := pt for each t ∈ [m]. Then observe that
+lim
+
+n→∞
+
+m
+X
+t=1
+
+(n)
+
+pt h(at ) −
+
+m
+X
+
+m
+X
+
+(n)
+
+pt h(b
+at ) = lim
+
+t=1
+
+n→∞
+
+(n)
+
+pt B log at
+
+t=1
+
+= B log n + B
+
+m
+X
+t=1
+
+−
+
+m
+X
+
+(n)
+
+pt B log b
+at
+
+(63)
+
+t=1
+
+pt log rt − B log n − B
+
+m
+X
+
+pt log rbt
+
+(64)
+
+t=1
+
+< 0.
+
+(65)
+
+The final inequality here follows from the observation that
+m
+X
+
+pt log xt ,
+
+(66)
+
+t=1
+
+Pm
+subject to the constraint t=1 xt = 1 for xt > 0 has a unique minimum at (x1 , · · · , xm ) = (b
+r1 , · · · , rbm ).
+This is direct, for example, by using Lagrange multipliers.
+Pm
+Pm
+(n)
+(n)
+It follows that for n sufficiently large, t=1 pt h(at ) < t=1 pt h(b
+at ), as desired.
+(iv) In this part, h is strictly concave, and there exist constants B > 0 and 0 < σ < 1 such that
+lim
+
+h(a)
+
+a→∞ Baσ
+
+We set
+
+= 1.
+
+(67)
+
+1
+
+rbt := P
+
+pt1−σ
+1
+
+m
+1−σ
+i=1 pi
+
+(68)
+
+for each t ∈ [m]. Then observe that
+Pm
+Pm
+(n)
+(n) σ
+σ
+t=1 pt h(at )
+t=1 pt B(at )
+t=1 pt rt
+P
+lim Pm
+=
+lim
+=
+< 1.
+P
+m
+(n)
+(n)
+m
+n→∞
+btσ
+at ) n→∞ t=1 pt B(b
+at )σ
+t=1 pt r
+t=1 pt h(b
+Pm
+
+(69)
+
+The first equality is a consequence of the asymptotic assumption on h and the product rule for limits
+(as in part (ii). The final inequality here follows from the observation that for σ > 0,
+m
+X
+
+pt xσt ,
+
+(70)
+
+t=1
+
+Pm
+subject to the constraint t=1 xt = 1 for xt > 0 has a unique maximum at (x1 , · · · , xm ) = (b
+r1 , · · · , rbm ).
+This is direct, for example, by using Lagrange multipliers.
+Pm
+Pm
+(n)
+(n)
+It follows that for n sufficiently large, t=1 pt h(at ) < t=1 pt h(b
+at ), as desired.
+
+22
+
+D.2
+
+Proof of Theorem 1
+
+We now turn to the proofs of Theorem 1(i)-(iv). In each of these parts, we consider a set of recommendations
+with at items of type t for each t ∈ [m]. Then observe that the expected total value of the k highest value
+recommended items is equal to
+m
+X
+pt h(at ),
+(71)
+t=1
+
+for
+
+h
+i
+iid
+h : a 7→ E topk {X1 , · · · , Xa ∼ D} ,
+
+h : Z≥0 → R,
+
+(72)
+
+where topk evaluates the sum of the k highest values in a set. Intuitively, conditional on a user preferring
+type t, the top k items are just the top k items recommended of type t. The sum of their values, conditioned
+on the user preferring type t, is simply the sum of the k highest values among a random draws from D.
+Clearly, h here is monotonically increasing.
+Then, with Lemma D.1 in hand, parts (i)-(iv) reduces to showing the following:
+(i) If D is a finite discrete distribution, there exist constants A, B > 0 and σ > 0 such that
+lim
+
+a→∞
+
+log(A − h(a))
+= 1.
+Baσ
+
+(73)
+
+(ii) If D has support bounded from above by M with pdf fD satisfying
+fD (x)
+=c
+x→M (M − x)β−1
+
+(74)
+
+A − h(a)
+
+(75)
+
+lim
+
+for some β, c > 0, then there exist constants A, B > 0 such that
+lim
+
+a→∞
+
+1
+
+Ba− β
+
+= 1.
+
+(iii) If D = Exp(λ) for λ > 0, then h is strictly concave and there exists a constant B > 0 such that
+h(a)
+
+lim
+
+a→∞ B log a
+
+= 1.
+
+(76)
+
+(iv) If D = Pareto(α) for α > 1, then h is strictly concave and there exists a constant B > 0 such that
+lim
+
+h(a)
+1
+
+a→∞ Ba α
+
+= 1.
+
+(77)
+
+The following identity, mentioned in Section 4, will be useful for parts (ii)-(iv).
+(t) iid
+
+Proposition 5. For Xi
+
+∼ D,
+
+min{k,a}
+
+h(a) =
+
+X
+i=1
+
+µD (a − i + 1, a).
+
+(78)
+
+Recall that µD (i, a) is the expected value of the i-th order statistic of a random variables drawn i.i.d.
+from D.
+Proof. Let Yk,n be the k-th order statistic of n random variables distributed i.i.d. from D. Then
+min{k,a}
+(t)
+
+topk {X1 , · · · , Xa(t) } =
+
+X
+
+Ya−i+1,a .
+
+(79)
+
+i=1
+
+So, as desired,
+min{k,a}
+h
+i min{k,a}
+X
+X
+(t)
+E topk {X1 , · · · , Xa(t) } =
+E [Ya−i+1,a ] =
+µD (a − i + 1, a),
+i=1
+
+i=1
+
+where the first equality follows from (79) and the linearity of expectation.
+23
+
+(80)
+
+Proof of Theorem 1(i). Suppose D has support {x1 , · · · , xr } with x1 > · · · > xr such that for X ∼ D,
+Pr[X = x1 ] = q. Now consider a set of recommendations with at items of type t for each t ∈ [m]. Then
+iid
+
+consider X1 , · · · , Xa ∼ D. Let E be the event that at least k of X1 , · · · , Xa equal x1 . Then,
+h(a) ≥ E[topk {X1 , · · · , Xa }|E] · Pr[E]
+
+
+k−1
+X a
+= x1 k · 1 −
+(1 − q)a−j q j 
+j
+j=0
+≥ x1 k(1 − ak (1 − q)a−k+1 )
+
+(81)
+(82)
+(83)
+
+for all a > 2. Now let E ′ be the event that at least one of X1 , · · · , Xa equals x1 . Then,
+
+h(a) = E[topk {X1 , · · · , Xa }|E ′ ] · Pr[E ′ ] + E[topk {X1 , · · · , Xa }|E ′ ] · (1 − Pr[E ′ ])
+a
+
+≤ x1 k(1 − (1 − q) ) + x2 k(1 − q)
+x2
+= x1 k(1 − (1 − )(1 − q)a ).
+x1
+
+a
+
+(84)
+(85)
+(86)
+
+Now note that for A = x1 k, we have that
+x2
+x1 k(1 − )(1 − q)a ≤ A − h(a) ≤ x1 kak (1 − q)a−k+1
+(87)
+x1
+x2
+log(x1 k(1 − )(1 − q)a ) ≤ log(A − h(a)) ≤ log(x1 kak (1 − q)a−k+1 )
+(88)
+x1
+x2
+log(x1 k) + log(1 − ) + a log(1 − q) ≤ log(A − h(a)) ≤ log(x1 k) + k log(a) + (a − k + 1) log(1 − q). (89)
+x1
+It follows that for B = log(1 − q),
+
+log(A − h(a))
+= 1,
+Ba
+as desired. The result follows from Lemma D.1(i).
+lim
+
+(90)
+
+a→∞
+
+Proof of Theorem 1(ii).
+
+First recall from Proposition 5 that
+min{k,a}
+
+h(a) =
+
+X
+i=1
+
+We will show that
+lim
+
+µD (a − i + 1, a).
+
+(91)
+
+M k − h(a)
+
+=1
+(92)
+1
+Ba− β
+for a constant B > 0. Theorem 1(ii) then follows immediately by applying Lemma D.1(ii) with σ = − β1 .
+Consider a probability distribution D′ with pdf gX (x) = fX (M − x) and cdf GX (x). Then
+a→∞
+
+µD (a − i + 1, a) = M − µD′ (i, a),
+
+(93)
+
+which implies that
+Mk −
+Since
+µD′ (i, a) =
+
+k
+X
+i=1
+
+µD (a − i + 1, a) =
+
+i−1 Z ∞  
+X
+a
+j=0
+
+it remains to show that for all fixed j,
+R ∞ a
+0
+
+j
+
+0
+
+j
+
+k
+X
+i=1
+
+µD′ (i, a)
+
+GX (x)j (1 − GX (x))a−j dx,
+
+GX (x)j (1 − GX (x))a−j dx
+
+(94)
+
+(95)
+
+=B
+(96)
+1
+a− β
+for some constant B (that can vary depending on j). Verifying (96) comprises the bulk of the technical work
+of the proof, and we isolate it in the following lemma.
+lim
+
+a→∞
+
+24
+
+Lemma D.2. For β > 0,
+
+Z ∞ 
+1
+a
+GX (x)j (1 − GX (x))a−j dx ∝ a− β .
+j
+0
+
+(97)
+
+fX (x)
+gX (x)
+= lim −
+=1
+lim
+x→M c(M − x)β−1
+x→0+ cxβ−1
+
+(98)
+
+(1 − ϵ)cxβ−1 ≤ gX (x) ≤ (1 + ϵ)cxβ−1
+
+(99)
+
+Proof. We have that
+
+for a positive constant c. So for all ϵ > 0 there exists δ > 0 such that
+
+for all x < δ. Now note that gX (x) ≤ (1 + ϵ)cxβ−1 implies that
+Z x
+Z x
+c
+GX (x) =
+gX (u) du ≤ (1 + ϵ)
+cuβ−1 du = (1 + ϵ) xβ .
+β
+0
+0
+
+(100)
+
+Likewise, gX (x) ≥ (1 − ϵ)cxβ−1 implies that
+Z x
+Z x
+c
+GX (x) =
+gX (u) du ≥ (1 − ϵ)
+cuβ−1 du = (1 − ϵ) xβ .
+β
+0
+0
+
+(101)
+
+Now write
+Z ∞ 
+a
+GX (x)j (1 − GX (x))a−j dx
+j
+0
+Z δ 
+Z ∞ 
+1
+1
+a
+a
+= aβ
+GX (x)j (1 − GX (x))a−j dx + a β
+GX (x)j (1 − GX (x))a−j dx.
+j
+j
+0
+δ
+1
+
+aβ
+
+(102)
+(103)
+
+We will analyze these two integral separately. It will turn out that the second integral vanishes as a grows.
+The first integral. We have that
+Z δ 
+1
+a
+GX (x)j (1 − GX (x))a−j dx
+aβ
+j
+0
+ j
+Z δ 
+1
+a
+c
+c
+j
+β
+≤a
+(1 + ϵ)
+xβj (1 − (1 − ϵ) xβ )a−j dx
+j
+β
+β
+0
+ j  βj
+ β !a−j
+Z δa β1  
+a
+c
+x
+x
+c
+j
+=
+(1 + ϵ)
+1 − (1 − ϵ)
+dx
+1
+j
+β
+β a β1
+0
+aβ
+ j β 
+a−j
+Z δa β1  
+a
+c
+x j
+cx
+=
+(1 + ϵ)j
+1
+−
+(1
+−
+ϵ)
+dx.
+β
+aj
+βa
+j
+0
+Then
+
+(104)
+(105)
+(106)
+
+(107)
+
+a−j
+ j β 
+Z ∞
+Z δa β1  
+x j
+a
+c
+cx
+dx
+=
+ϕa (x) dx,
+(1 + ϵ)j
+1
+−
+(1
+−
+ϵ)
+j
+β
+aj
+βa
+0
+0
+
+where
+ϕa (x) :=
+
+
+ a
+j
+
+(1 + ϵ)j
+
+0
+
+ j
+c
+β
+
+xβ j
+aj
+
+
+
+1 − (1 − ϵ) βc xa
+
+We have that
+1
+lim ϕa (x) = (1 + ϵ)j
+a→∞
+j!
+and
+1
+ϕa (x) ≤ (1 + ϵ)j
+j!
+
+a−j
+
+dx
+
+(108)
+1
+
+for 0 ≤ x ≤ δa β
+1
+
+ j
+c β
+c
+xβj e−(1−ϵ) β x
+β
+
+ j
+c β
+c β
+c
+c
+xβj e−(1−ϵ) β x (1 − (1 − ϵ) ϵβ ))−j = C(j, ϵ)xβj e−(1−ϵ) β x
+β
+β
+25
+
+(109)
+
+for x > δa β .
+
+(110)
+
+(111)
+
+R∞
+
+xβj e−(1−ϵ) β x < ∞. It follows from the dominated
+
+Z ∞
+
+1
+(1 + ϵ)j
+j!
+
+for a constant C(j, ϵ) independent of a. Now note that
+convergence theorem that
+lim
+
+a→∞
+
+Z ∞
+
+ϕa (x) dx =
+
+Z ∞
+
+0
+
+lim ϕa (x) dx =
+
+a→∞
+
+0
+
+0
+
+0
+
+c
+
+β
+
+ j
+c β
+c
+xβj e−(1−ϵ) β x dx < ∞.
+β
+
+(112)
+
+Therefore, for a sufficiently large,
+ j
+Z δ 
+Z ∞
+1
+c β
+a
+1
+c
+−β
+j
+a−j
+j
+GX (x) (1 − GX (x))
+dx ≤ a (1 + ϵ)
+(1 + ϵ)
+xβj e−(1−ϵ) β x dx.
+j
+j!
+β
+0
+0
+
+(113)
+
+Analogously, we can show that for a sufficiently large,
+ j
+Z δ 
+Z ∞
+1
+c β
+a
+c
+1
+−β
+j
+a−j
+j
+GX (x) (1 − GX (x))
+dx ≥ a (1 − ϵ)
+(1 − ϵ)
+xβj e−(1+ϵ) β x dx.
+j!
+β
+j
+0
+0
+
+(114)
+
+Now observe that
+lim (1 + ϵ)
+
+Z ∞
+
+ϵ→0+
+
+0
+
+1
+(1 + ϵ)j
+j!
+
+ j
+c β
+c
+xβj e−(1−ϵ) β x dx
+β
+
+ j
+c β
+c
+=
+xβj e− β x dx
+β
+0
+ j
+Z ∞
+c β
+c
+1
+= lim+ (1 − ϵ)
+(1 − ϵ)j
+xβj e−(1+ϵ) β x dx,
+j!
+β
+ϵ→0
+0
+Z ∞
+
+1
+j!
+
+(115)
+(116)
+(117)
+
+where we once again apply the dominated convergence theorem. It follows that
+Rδ
+lim
+
+a→∞
+
+0
+
+ 
+a
+j
+a−j
+dx Z ∞ 1 c j βj − c xβ
+j GX (x) (1 − GX (x))
+=
+x e β dx.
+1
+j! β
+0
+a− β
+
+
+The second integral. We now analyze
+Z ∞ 
+1
+a
+β
+a
+GX (x)j (1 − GX (x))a−j dx.
+j
+δ
+
+(118)
+
+(119)
+
+Observe that
+1
+
+aβ
+
+ Z ∞
+Z ∞ 
+1
+a
+a
+GX (x)j (1 − GX (x))a−j dx < a β
+(1 − GX (x))a−j dx
+j
+j
+δ
+δ
+ 
+Z ∞
+1
+a
+(1 − GX (δ))a−j
+1 − GX (x) dx
+< aβ
+j
+δ
+ 
+1
+a
+< aβ
+(1 − GX (δ))a−j E[X].
+j
+
+Thus,
+
+R ∞ a
+lim
+
+a→∞
+
+δ
+
+j
+
+GX (x)j (1 − GX (x))a−j dx
+1
+
+aβ
+
+= 0.
+
+Combining (118) and (123) gives us that
+Z ∞ 
+1
+a
+GX (x)j (1 − GX (x))a−j dx ∝ a− β ,
+j
+0
+as desired.
+
+26
+
+(120)
+(121)
+(122)
+
+(123)
+
+(124)
+
+Proof of Theorem 1(iii).
+
+Recall again that
+min{k,a}
+
+X
+
+h(a) :=
+
+µD (a − i + 1, a).
+
+i=1
+
+(125)
+
+We show that h is strictly concave and
+lim h(a) − B log a − C = 0
+
+a→∞
+
+(126)
+
+for constants B, C > 0. Both of these facts follow directly from the lemma below. Theorem 1(iii) then follows
+immediately by applying Lemma D.1(iii).
+Lemma D.3. For D an exponential distribution with rate parameter λ, so that fX (x) = λe−λx for λ > 0,
+lim µD (a − i, a) − log a − B(j) = 0
+
+a→∞
+
+(127)
+
+for a constant B(j) > 0. Moreover, µD (a − i, a) is strictly concave.
+Proof. For an exponential distribution with rate parameter λ, it is well known that
+µD (a − i, a) =
+
+a
+X
+
+1
+.
+λn
+j=i+1
+
+It is clear, then, that µD (a − i, a) is strictly concave. (128) is equal to
+
+
+i
+X
+1
+1
+log n + γ + ϵ(a) −
+,
+λ
+j
+j=1
+
+(128)
+
+(129)
+
+where γ is the Euler-Mascheroni constant and lima→∞ ϵ(a) = 0, from which (127) follows.
+Proof of Theorem 1(iv).
+
+Recall again that
+min{k,a}
+
+X
+
+h(a) :=
+
+µD (a − i + 1, a).
+
+i=1
+
+(130)
+
+Then it suffices to show that h is strictly concave and
+lim
+
+h(a)
+1
+
+a→∞ Ba α
+
+=1
+
+(131)
+
+for a constant B > 0. Both of these facts follow directly from the lemma below. Theorem 1(iv) then follows
+immediately by applying Lemma D.1(iv).
+Lemma D.4. For D a Pareto distribution with pdf fX (x) = x−α−1 for α > 1,
+lim
+
+at →∞
+
+µD (a − i, a)
+1
+
+aα
+
+=C
+
+(132)
+
+for a constant C > 0. Moreover, µD (a − i, a) is strictly concave.
+Proof. The result follows directly from Lemmas D.10 and D.11 in [39], where it is shown (in our notation)
+that
+
+
+µD (a, a)
+α−1
+lim
+=
+Γ
+(133)
+1
+a→∞
+α
+aα
+and
+µD (a − i, a) =
+
+i 
+Y
+j=1
+
+1−
+
+27
+
+1
+jα
+
+
+µD (a, a).
+
+(134)
+
+Thus,
+Pk
+
+i=1 µD (a − i + 1, a)
+
+lim
+
+B log a
+
+a→∞
+
+=1
+
+(135)
+
+for a constant B. Also, note that µD (a − i, a) is a constant multiple of µD (a, a), and that µD (a, a) is strictly
+concave, since the mean of the largest order statistic of a distribution is strictly concave in sample size. Thus,
+µD (a − i, a) is strictly concave.
+
+D.3
+
+Proof of Theorem 2
+(t)
+
+Suppose that for each fixed i, Xi are i.i.d. Bernoulli random variables with success probability qi such that
+qi = c(i + d)−β for some β, c, d ≥ 0. We begin by proving parts (i),(ii), and (iii), wherein the user only utilizes
+the highest value recommended item. In the Bernoulli setting, this amounts to determining the probability
+that at least one movie is satisfactory, i.e.,
+m
+X
+pt h(at ),
+(136)
+t=1
+
+where
+a
+Y
+
+h(a) = 1 −
+
+i=1
+
+(1 − c(i + d)−β ).
+
+(137)
+
+It suffices now to show the desired asymptotic properties for h depending on β, and applying Lemma D.1.
+We note the following fact, which will be helpful in our analysis:
+1 − x > e−x−x
+D.3.1
+
+2
+
+1
+.
+2
+
+(138)
+
+(1 − ci−β ),
+
+(139)
+
+for 0 < x <
+
+Proof of Theorem 2(i)
+
+We now consider the case 0 ≤ β < 1. We analyze
+1 − h(a) =
+
+a
+Y
+
+(1 − c(i + d)−β ) =
+
+i=1
+
+a+d
+Y
+
+i=d+1
+
+and bound it from above and below. Let i′ be the smallest i′ such that c(i′ )−β < 21 . Bounding from above,
+a+d
+Y
+
+(1 − ci
+
+i=i′ +1
+
+−β
+
+)<
+
+a+d
+Y
+
+e−ci
+
+−β
+
+(140)
+
+i=i′ +1
+
+= exp
+
+"a+d
+X
+i=i′
+
+"Z
+
+#
+−ci−β
+
+a+d+1
+
+(141)
+#
+−β
+
+−cx
+
+< exp
+i′
+
+dx
+
+" 
+a+d+1 #
+cx1−β
+= exp −
+1 − β i′
+
+
+
+c
+= exp −
+(a + d + 1)1−β − (i′ )1−β
+1−β
+
+28
+
+(142)
+(143)
+(144)
+
+Now, bounding from below,
+a+d
+Y
+i=i′
+
+−β
+
+(1 − ci
+
+)>
+
+a+d
+Y
+
+e−ci
+
+−β
+
+−c2 i−2β
+
+(145)
+
+i=i′
+
+= exp
+
+"a+d
+X
+i=i′
+
+"Z
+
+#
+−ci
+
+−β
+
+2 −2β
+
+−c i
+
+#
+
+a+d
+
+> exp
+i′ −1
+
+(146)
+
+−cx
+
+−β
+
+2 −2β
+
+−c x
+
+dx
+
+(147)
+
+" 
+a+d #
+c2 x2−β
+cx1−β
++
+= exp −
+1−β
+2 − β i′ −1
+
+
+
+
+c
+c2
+= exp −
+(a + d)1−β − (i′ − 1)1−β −
+(a + d)2−β − (i′ − 1)2−β ,
+1−β
+1 − 2β
+
+(148)
+(149)
+
+where the first inequality follows from (138). Then observing that
+1 − h(a) =
+
+′
+iY
+−1
+
+(1 − ci−β ) ·
+
+i=d+1
+
+a+d
+Y
+i=i′
+
+(1 − ci−β ),
+
+(150)
+
+where the first product is constant in a, it follows that
+log(1 − h(a))
+= 1,
+a→∞ − c a1−β
+1−β
+lim
+
+(151)
+
+as desired. The result follows from Lemma D.1(i).
+D.3.2
+
+Proof of Theorem 2(ii)
+
+We turn to the case β = 1. We have that
+1 − h(a) =
+
+a+d
+Y
+i=d+1
+
+
+
+1−
+
+a+d−c
+c d + 1 − c d + 2 − c
+·
+· ... ·
+,
+=
+i
+d
+d+1
+a+d
+
+which telescopes to
+
+c
+Y
+
+d+i−c
+.
+a
++
+d−i+1
+i=1
+Now note that
+
+Qc
+lim
+
+a→∞
+
+d+i−c
+i=1 a+d−i+1
+a−c
+
+=
+
+c
+Y
+
+(d + i − c)
+
+(152)
+
+(153)
+
+(154)
+
+i=1
+
+is a finite constant. Therefore,
+lim
+
+a→∞
+
+1 − h(a)
+=1
+Ba−c
+
+(155)
+
+for constant B.
+D.3.3
+
+Proof of Theorem 2(iii)
+
+We now consider the case β > 1. In this case, we will again bound (137) from above and below. First note
+that
+∞
+Y
+1 − h(a) =
+(1 − ci−β ) = S
+(156)
+i=d+1
+
+29
+
+for a finite constant S.
+We have that
+∞
+Y
+
+(1 − ci−β ) <
+
+i=a+d+1
+
+∞
+Y
+
+e−ci
+
+−β
+
+(157)
+
+i=a+d+1
+
+"
+= exp
+
+∞
+X
+
+#
+−β
+
+i=a+d+1
+Z ∞
+
+−ci
+
+(158)
+
+
+−cx−β dx
+a+d+1
+#
+" 
+∞
+cx1−β
+= exp −
+1 − β a+d+1
+
+
+c
+1−β
+= exp −
+(a + d + 1)
+1−β
+< exp
+
+(159)
+(160)
+(161)
+
+Therefore,
+a+d
+Y
+i=1
+
+(1 − ci
+
+−β
+
+S
+
+) = Q∞
+
+i=a+d+1
+
+(1 − ci
+
+−β
+
+
+) > S/ exp −
+
+
+c
+1−β
+(a + d + 1)
+.
+1−β
+
+(162)
+
+Also,
+∞
+Y
+
+(1 − ci−β ) >
+
+i=a+d+1
+
+∞
+Y
+
+e−ci
+
+−β
+
+−c2 i−2β
+
+(163)
+
+i=a+d+1
+
+"
+= exp
+
+∞
+X
+
+#
+−β
+
+i=a+d+1
+Z ∞
+
+−ci
+
+2 −2β
+
+−c i
+
+
+< exp
+−cx − c x
+dx
+a+d
+" 
+∞ #
+c2 x2−β
+cx1−β
++
+= exp −
+1−β
+2 − β a+d
+
+
+c
+c2
+1−β
+2−β
+= exp −
+(a + d)
+−
+(a + d)
+,
+1−β
+1 − 2β
+−β
+
+2 −2β
+
+(164)
+(165)
+(166)
+(167)
+
+where the first inequality holds for a sufficiently large due to (138).
+Therefore,
+a+d
+Y
+i=1
+
+−β
+
+(1 − ci
+
+) = Q∞
+
+S
+
+−β
+
+i=a+d+1
+
+(1 − ci
+
+
+c
+c2
+1−β
+2−β
+) < S/ exp −
+(a + d − 1)
+−
+(a + d)
+.
+1−β
+1 − 2β
+
+
+Now observe that
+
+c
+(a + d + 1)1−β = 0
+1−β
+
+(169)
+
+c
+c2
+(a + d − 1)1−β −
+(a + d)2−β = 0.
+1−β
+1 − 2β
+
+(170)
+
+lim −
+
+a→∞
+
+and
+lim −
+
+a→∞
+
+Therefore,
+
+(168)
+
+Qa+d
+
+−β
+)
+i=1 (1 − ci
+S
+a→∞
+c
+1− 1−β
+(a+d+1)1−β
+
+lim
+
+Also note that
+
+= 1.
+
+c
+S 1−β
+S
+=
+S
+−
+c
+c
+(a + d + 1)1−β
+1 − 1−β
+(a + d + 1)β−1 + 1−β
+
+30
+
+(171)
+
+(172)
+
+Also,
+Qa+d
+
+−β
+)
+i=1 (1 − ci
+S
+a→∞
+c
+c2
+1− 1−β
+(a+d−1)1−β − 1−2β
+(a+d)2−β
+
+lim
+
+and
+
+=1
+
+(173)
+
+2
+
+c
+c
+1 − 1−β
+(a + d)1−β − 1−2β
+(a + d)2−β
+
+lim
+
+c
+1 − 1−β
+(a + d)1−β
+
+a→∞
+
+It follows that
+lim
+
+a→∞
+
+= 1.
+
+1 − S − h(a)
+=1
+Sc 1−β
+− 1−β
+a
+
+(174)
+
+(175)
+
+as desired. The result follows from Lemma D.1(ii).
+D.3.4
+
+Proof of Theorem 2(iv)
+
+We now prove part (iv), where we consider the expected total value of all recommended items, which is equal
+to
+m
+X
+pt h(at ),
+(176)
+t=1
+
+where
+h(a) =
+
+a
+X
+
+c(i + d)−β .
+
+(177)
+
+i=1
+
+Again, we consider three cases, 0 < β < 1, β = 1, β > 1.
+Case 1: 0 < β < 1.
+
+For 0 < β < 1, observe that
+
+Z a+d
+a
+X
+−β
+−β
+c(i + d) <
+cx dx =
+
+a+d
+c
+1−β
+x
+1−β
+d
+c
+c
+=
+(a + d)1−β −
+d1−β
+1−β
+1−β
+
+d
+
+i=1
+
+(178)
+(179)
+
+and
+a
+X
+i=1
+
+c(i + d)−β >
+
+Z a+d+1
+
+a+d+1
+c
+x1−β
+1−β
+d+1
+c
+c
+=
+(a + d + 1)1−β −
+(d + 1)1−β .
+1−β
+1−β
+
+cx−β dx =
+
+d+1
+
+
+
+(180)
+(181)
+
+It follows that
+lim
+
+h(a)
+
+a→∞ a1−β
+
+=
+
+c
+,
+1−β
+
+(182)
+
+and the result in this case follows by applying Lemma D.1(iv).
+Case 2: β = 1.
+
+Now for β = 1, we have that
+a
+X
+
+c(i + d)−β = c
+
+i=1
+
+a+d
+X
+i=d+1
+
+lim h(a) − c log a + cγ − c
+
+a→∞
+
+1
+.
+i
+
+d
+X
+1
+i=1
+
+i
+
+(183)
+
+= 0,
+
+where γ is the Euler-Mascheroni constant The result in this case follows by applying Lemma D.1(iii).
+31
+
+(184)
+
+Case 3: β > 1.
+
+Finally, for β > 1, we have that
+∞
+X
+
+c(i + d)−β = S
+
+(185)
+
+i=1
+
+for some finite S. Then note that
+a
+X
+i=1
+
+c(i + d)−β = S −
+
+∞
+X
+
+c(i + d)−β .
+
+(186)
+
+i=a+1
+
+Then we have
+∞
+X
+
+c(i + d)−β <
+
+Z ∞
+
+cx−β dx =
+
+a
+
+i=a+1
+
+
+
+∞
+c
+c
+x1−β
+a1−β
+=−
+1−β
+1
+−
+β
+a
+
+(187)
+
+and
+∞
+X
+
+−β
+
+c(i + d)
+
+>
+
+Z ∞
+
+−β
+
+cx
+
+a+1
+
+i=a+1
+
+∞
+c
+c
+1−β
+x
+=−
+(a + 1)1−β
+dx =
+1−β
+1−β
+a+1
+
+
+It follows that
+lim
+
+a→∞ S −
+
+h(a)
+= 1.
+c
+1−β
+β−1 a
+
+(188)
+
+(189)
+
+The result in this case follows again by applying Lemma D.1(ii).
+
+D.4
+
+A rounding lemma
+
+The following lemma is useful for showing that—for the class of problems we consider here—optimal integer
+solutions are well-approximated by optimal real solutions.
+Lemma D.5. Let g1 , g2 , · · · , gm : [0, ∞)m → R be strictly convex functions over the non-negative reals. Then
+define
+m
+X
+gt (xt ).
+(190)
+g(x1 , · · · , xm ) :=
+t=1
+
+Pm
+
+∗
+∗
+t=1 xt = n, if (x1 , · · · , xm ) is the maximum of g over the non-negative
+
+Then, under the constraint that
+reals and (a∗1 , · · · , a∗m ) is the maximum of g over the non-negative integers, then
+⌊x∗t ⌋ − m < a∗t < ⌊x∗t ⌋ + m
+
+(191)
+
+for all t.
+Proof. The key idea is to show that there cannot be i, j such that a∗i ≥ ⌈xi ⌉ + 1 and a∗j ≤ ⌈xj ⌉ − 1. If such a
+pair does exist, we show that
+g(· · · , a∗i − 1, · · · , a∗j + 1, · · · ) ≥ g(· · · , a∗i , · · · , a∗j , · · · ),
+
+(192)
+
+contradicting the optimality of a∗1 , · · · , a∗m . It suffices to show that
+or equivalently,
+This holds, as
+
+gi (a∗i − 1) + gj (a∗j + 1) ≥ gi (a∗i ) + gj (a∗j ),
+
+(193)
+
+gj (a∗j + 1) − gj (a∗j ) ≥ gi (a∗i ) − gi (a∗i − 1).
+
+(194)
+
+gj (a∗j + 1) − gj (a∗j ) ≥
+
+∂gi
+∂gj
+=
+≥ gi (a∗i ) − gi (a∗i − 1).
+∂xj
+∂xi
+
+32
+
+(195)
+
+D.5
+
+Proof of Proposition 2
+
+For ease of exposition, we will begin by proving the result for k = 1 and then handle the more general case.
+First case (k = 1). Let us first consider the case k = 1. We would like to find an ordered tuple of
+non-negative integers (a1 , · · · , am ) that maximizes
+m
+X
+t=1
+
+m
+X
+
+pt µD (at , at ) =
+
+t=1
+
+
+pt 1 −
+
+1
+at + 1
+
+
+(196)
+
+Pm
+subject to the constraint t=1 at = n. Our strategy will be to solve the relaxed optimization problem over
+non-negative reals, and then show that the optimal integer solution is “close to” the optimal real solution.
+Consider the function g : [0, ∞)m → R, where
+g(x1 , · · · , xm ) =
+Subject to the constraint
+
+m
+X
+t=1
+
+
+pt
+
+1
+1−
+xt + 1
+
+
+.
+
+(197)
+
+Pm
+
+t=1 xt = n, g(x1 , · · · , xm ) is maximized exactly when
+
+∂g
+∂g
+∂g
+=
+= ··· =
+.
+∂x1
+∂x2
+∂xm
+
+(198)
+
+This is clear after noting that g is convex on its domain and applying Lagrange multipliers. We have that
+2
+
+∂g
+1
+.
+= pt
+∂xt
+xt + 1
+√
+So if (x∗1 , · · · , x∗m ) is a maximum, then x∗t + 1 ∝ pt , meaning that
+ √
+
+pt
+x∗t = Pm √
+n − 1.
+i=1 pi
+
+(199)
+
+(200)
+
+We now apply Lemma D.5: if (a∗1 , · · · , a∗m ) is the optimal integer solution, then |a∗t − x∗t | ≤ m. Thus,
+√
+pt
+∗
+P
+at − m √ n ≤ m + 1
+(201)
+i=1 pi
+for all n.
+General case k.
+
+More generally, we would like to maximize
+m
+X
+
+min{at ,k(n)}
+
+X
+
+pt
+
+t=1
+
+subject to the constraint
+of the inner summation:
+
+i=1
+
+µD (at − i + 1, at ).
+
+(202)
+
+Pm
+
+t=1 at = n, where we let k = k(n) be a function of n. We first analyze each case
+
+min{at ,k(n)}
+
+X
+
+i=1
+
+(
+µD (at , at − i + 1) =
+
+at
+2
+P
+k(n)
+
+2
+
+k(n) +k(n)
+i
+i=1 1 − at +1 = k(n) − 2(at +1)
+
+at ≤ k(n)
+
+at > k(n)
+
+.
+
+(203)
+
+The top case at ≤ k(n) follows from all at items of that type contributing to the objective, each with a mean
+value of 21 .
+Then define
+m
+X
+g : [0, ∞)m → R, (x1 , · · · , xm ) 7→
+pt h(xt )
+(204)
+t=1
+
+33
+
+where
+
+(
+h(x) :=
+
+x
+2
+P
+k(n)
+
+x ≤ k(n)
+
+2
+
+k(n) +k(n)
+i
+i=1 1 − x+1 = k(n) −
+2(x+1)
+
+So we have
+
+
+ pt x
+
+x > k(n)
+
+xt ≤ k(n)
+
+∂g
+2
+2
+
+=
+1
+pt (k(n)2 + k(n))
+∂xt
+x +1
+
+xt > k(n)
+
+t
+
+.
+
+.
+
+(205)
+
+(206)
+
+We first consider possible solutions where xt > k(n) for all t ∈ [m]. In this case,
+∂g
+= pt (k(n)2 + k(n))
+∂xt
+
+
+
+1
+xt + 1
+
+2
+(207)
+
+is equal for all t at the maximum, as before. Remarkably, the new k(n)2 + k(n) term drops out. So if
+√
+(x∗1 , · · · , x∗m ) is the optimal real solution, again, x∗t + 1 ∝ pt , and the result follows as in the first case.
+√
+p
+Here, x∗t > k(n) holds whenever k ≤ Pm m√pi n − m − 1.
+i=1
+
+D.6
+
+Proof of Theorem 3
+
+Proof. We would like to find a1 , · · · , am that maximizes
+m
+X
+t=1
+
+subject to the constraint
+
+pt (1 − (1 − qt )at ) = 1 −
+
+m
+X
+t=1
+
+(208)
+
+Pm
+
+t=1 pt = n. This is equivalent to minimizing
+m
+X
+t=1
+
+pt (1 − qt )at .
+
+Now define a function
+g : [0, ∞)m → R,
+Subject to the constraint
+
+pt (1 − qt )at .
+
+(x1 , · · · , xm ) 7→
+
+(209)
+
+m
+X
+t=1
+
+pt (1 − qt )xt .
+
+(210)
+
+Pm
+
+t=1 xt = n, g(x1 , · · · , xm ) is maximized exactly when
+
+We have
+
+∂g
+∂g
+∂g
+=
+= ··· =
+.
+∂x1
+∂x2
+∂xm
+
+(211)
+
+∂g
+= −pt (1 − qt )xt log(1 − qt ).
+∂xt
+
+(212)
+
+Solving ∂g/∂xi = ∂g/∂xj gives
+pi (1 − qi )xi log(1 − qi ) = pj (1 − qj )xj log(1 − qj )
+
+=⇒ log pi + xi log(1 − qi ) + log log(1 − qi ) = log pj + xj log(1 − qj ) + log log(1 − qj )
+1
+It follows that at ∝ log(1−q
+for all t, where we have once again applied Lemma D.5.
+t)
+
+34
+
+(213)
+(214)
+
+

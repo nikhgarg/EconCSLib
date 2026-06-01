@@ -1,0 +1,837 @@
+                                           Marriage, Honesty, and Stability
+
+                                    Nicole Immorlica∗                   Mohammad Mahdian∗
+
+
+Abstract                                                                  admissions [19], sorority and fraternity rush [14], and assign-
+Many centralized two-sided markets form a matching between par- ment of graduating rabbis to their first congregation [3]. Since
+ticipants by running a stable marriage algorithm. It is a well-known most applications of the stable marriage algorithm involve the
+fact that no matching mechanism based on a stable marriage algo- participation of independent agents, it is natural to investigate
+rithm can guarantee truthfulness as a dominant strategy for partic- how we should expect these agents to behave. In particular,
+ipants. However, as we will show in this paper, in a probabilistic we would like to know whether agents can benefit by being
+setting where the preference lists of one side of the market are com- dishonest about their preference lists. Ideally, in economic
+posed of only a constant (independent of the the size of the market) settings such as job markets, we would like to design mech-
+number of entries, each drawn from an arbitrary distribution, the anisms in which truth-telling is a dominant strategy, i.e., it is
+number of participants that have more than one stable partner is van- in the best interest of each individual agent to tell the truth,
+ishingly small. This proves (and generalizes) a conjecture of Roth no matter what other agents do. We call such a mechanism a
+and Peranson [23]. As a corollary of this result, we show that, with truthful mechanism. Truthful mechanisms have received sig-
+high probability, the truthful strategy is the best response for a given nificant attention in the computer science community (see, for
+player when the other players are truthful. We also analyze equilib- example, [1, 5, 15]). Unfortunately, as shown by Roth [20],
+ria of the deferred acceptance stable marriage game. We show that there is no mechanism for the stable marriage problem in
+the game with complete information has an equilibrium in which a which truth-telling is a dominant strategy for both men and
+(1−o(1)) fraction of the strategies are truthful in expectation. In the women. See the book by Roth and Sotomayor [24] for a dis-
+more realistic setting of a game of incomplete information, we will cussion about this problem and other problems related to the
+show that the set of truthful strategies form a (1+o(1))-approximate economic aspects of the stable marriage problem.
+Bayesian-Nash equilibrium. Our results have implications in many               Nonetheless, stable matching algorithms have had spec-
+practical settings and were inspired by the work of Roth and Peran-       tacular success in practical applications. One particular job
+son [23] on the National Residency Matching Program.                      market  —  the medical residency market — has been using a
+                                                                          centralized stable marriage market system called the National
+1 Introduction                                                            Residency Matching Program (NRMP) since the 1950s [21].
+Suppose all the eligible bachelors and bachelorettes in a town To this day, most medical residences are formed through an
+confide in the town’s matchmaker their ideal spouses. Each updated version of this centralized market system redesigned
+man submits an ordered preference list of the women he in 1998 by Roth [22]. It seems surprising that an algorithm
+would like to marry. Similarly, each woman submits an like the one used by the NRMP which provably admits strate-
+ordered preference list of the men she would like to marry. gic behavior can be so successful. Roth and Peranson [23]
+The matchmaker must arrange marriages such that no one is noted that, in practice, very few students and hospitals could
+tempted to ask for a divorce. In particular, the matchmaker have benefited by submitting false preferences. For exam-
+must be sure that there is no pair of young lovers who prefer ple, in 1996, out of 24,749 applicants, just 21 could have
+each other to their assigned spouses. Such a set of marriages affected their match by submitting false preferences (assum-
+is called stable, and finding a set of stable marriages is known ing, of course, that no one lied in 1996). Roth and Peran-
+as the stable marriage problem. Gale and Shapley [6] showed son [23] conjectured that the main reason for this peculiarity
+that the stable marriage problem always has a solution and is the sheer size of the job market. In a small town, every
+developed an algorithm to find it. Since the seminal work man knows every woman, but in the medical market, a stu-
+of Gale and Shapley, there has been a significant amount of dent can not possibly interview at every hospital. In practice,
+work on the mathematical structure of stable marriages and the length of applicant preference lists is quite small, about
+related algorithmic questions. See, for example, the book by 15, while the number of positions is large, about 20,000. Ex-
+Knuth [10], the book by Gusfield and Irving [8], or the book perimentally, Roth and Peranson [23] showed that in a model
+by Roth and Sotomayoror [24].                                             where random preference lists of limited length are generated
+      The stable marriage problem has many promising appli- for participants, the number of participants who have more
+cations in two-sided markets such as job markets [19], college than one stable partner (and therefore the number of those
+                                                                          who can benefit by lying) is small. They conjectured that in
+   ∗ Computer Science and Artificial Intelligence Lab, MIT, Cambridge, MA this probabilistic setting, the fraction of such people tends to
+02139. Email: {nickle,mahdian}@theory.lcs.mit.edu.
+zero as the size of the market tends to infinity.                  considerable amount of work on this area, mostly assuming
+     In this paper, we prove a statement that proves and           complete preference lists for participants, and none motivated
+generalizes this conjecture. More precisely, we prove the          by the economic aspects of the problem. See, for example,
+following: Assume there are n men and n women in the               [11, 12, 18, 17]. We will use some of the techniques devel-
+town, and each woman has an arbitrary ordering of all men as       oped in these papers in our analysis.
+her preference list. Each man independently picks a random              Mechanisms that are truthful in a randomized sense (i.e.,
+preference list of a constant (i.e., independent of n) number of   in expectation, or with high probability) have been a subject
+women, each according to an arbitrary distribution D. These        of research in theoretical computer science [1, 2]. These
+are the true preference lists. We show that in this setting the    mechanisms seeks to encourage truthfulness by introducing
+expected number of people with more than one stable spouse         randomization into the mechanism. Our results are of a
+is vanishingly small. This result has a number of interesting      different flavor. We show that one can conclude statements
+economic implications. We can interpret the preference lists       regarding truthfulness by introducing randomization into the
+together with a stable marriage algorithm as a game G, in          players utility functions. To the best of our knowledge, our
+which everybody submits a preference list (not necessarily         result is the first result of this type.
+their true preference list) to the algorithm and receives a             Structure of the paper. The rest of the paper is orga-
+spouse. The goal for each player is to receive the best spouse     nized as follows. In Section 2, we define the stable marriage
+possible according to their true preference list. First, we show   problem and discuss the relevant known results from the lit-
+that, with probability 1 − o(1) (as n approaches infinity),        erature. In Section 3, we formalize our probabilistic setting
+in any stable marriage mechanism, the truthful strategy is         and summarize our results. In Section 4, we prove our main
+the best response for a given player when the other players        technical result, the experimental conjecture of Roth and Per-
+are truthful. We also show that when a deferred acceptance         anson [23]. In Section 6, we strengthen our technical result
+mechanism is used, there is an equilibrium of this game in         for the special case of uniformly distributed preference lists.
+which a majority of the players are truthful. Finally, we prove    Finally, in Section 7, we conclude with interesting open ques-
+that in the more realistic setting of a game of incomplete         tions concerning stable marriage algorithms and two-sided
+information (where each player only knows the distribution         markets.
+of the preference lists), the set of truthful strategies in the
+game induced by the women-proposing mechanism form a               2 Stable marriage preliminaries
+(1 + o(1))-approximate Bayesian-Nash equilibrium. It is            Consider a community consisting of a set W of n women and
+important to note that our results hold for any distribution       a set M of n men. Each person in this community has a
+D of women. For the special case of uniform distributions          preference list, which is a strictly ordered list of a subset of
+(which includes the conjecture of Roth and Peranson), the          the members of the opposite sex. A matching is a mapping µ
+o(1) in the above bounds is roughly ek /n, and thus the bounds     from M ∪ W to M ∪ W in such a way that for every x ∈ M ,
+converge quite quickly.                                            µ(x) ∈ W ∪ {x} and for every x ∈ W , µ(x) ∈ M ∪ {x},
+     We use the following technique for our proof: First,          and also for every x, y ∈ M ∪ W , x = µ(y) if and only if
+we design an algorithm, based on an algorithm of Knuth et          y = µ(x). If for some m ∈ M and w ∈ W , µ(m) = w,
+al. [11, 12], that for a given woman checks whether she has        we say that w is the wife of m and m is the husband of w
+more than one stable husband in one run of proposals. Using        in µ; or, if for some x ∈ M ∪ W , µ(x) = x, we say that
+this algorithm, we prove a relationship between the probabil-      x remains single in µ. A pair m ∈ M , w ∈ W is called a
+ity that a given woman has more than one stable husband and        blocking pair for a matching µ, if m prefers w to µ(m), and
+the number of single women who are more popular than she.          w prefers m to µ(w). A matching with no blocking pair is
+This relationship, essential to our main result, seems difficult   called a stable matching. If a man m and a woman w are a
+to derive directly, without going through the algorithm. Given     couple in some stable matching µ, we say that m is a stable
+this relationship, we are able to derive our result by comput-     husband of w, and w is a stable wife of m. Naturally, each
+ing bounds on the expectation and variance of the number of        person might have more than one stable partner. In the stable
+single popular women.                                              marriage problem, the objective is to find a stable matching
+     Related work. This paper is motivated by experimen-           given the preference lists of all men and women.
+tal results and a conjecture in the paper by Roth and Per-              The stable marriage problem was first introduced and
+anson [23]. Sethuraman et al. [25, 26] have studied the            studied by Gale and Shapley [6] in 1962. They proved that a
+stable matching game when participants are required to an-         stable matching always exists, and a simple algorithm called
+nounce complete preference lists, and have given an optimal        the deferred acceptance procedure can find such a matching.
+cheating algorithm and several experimental results regard-        This procedure iteratively selects an unmarried man m and
+ing the chances that an agent can benefit by lying in this         creates a proposal from him to the next woman on his list.
+game. One can also view our results as an analysis of sta-         If this woman prefers m to her current assignment, then she
+ble matching with random preferences. There has been a             tentatively accepts m’s proposal, and rejects the man she
+was previously matched to (if any); otherwise, she rejects                 lists of k women, and the preference list of each woman is
+the proposal of m. The algorithm ends when every man                       picked independently and uniformly at random from the set
+either finds a wife that accepts him, or gets rejected by all              of all orderings of all men. We are concerned about bounding
+the women on his list, in which case he remains single. This               the expected number of people who might be tempted to lie to
+algorithm is sometimes called the men-proposing algorithm.                 the mechanism about their preferences when the other play-
+Similarly, one can define the women-proposing algorithm.                   ers are truthful. As we will show, only people who have more
+Gale and Shapley [6] proved the following.                                 than one stable partner might be able to influence their final
+                                                                           match by altering their preference lists. Therefore, we focus
+T HEOREM A. The men-proposing algorithm always finds a                     on bounding the expected number of women with more than
+stable matching µ. Furthermore, this stable matching is men-               one stable husband in this model. Notice that this number
+optimal, i.e., for every man m and every stable wife w of m                is equal to the expected number of men with more than one
+other than µ(m), m prefers µ(m) to w. At the same time, µ                  stable wife, since the number of single and uniquely matched
+is the worst possible stable matching for women, i.e., for any             men must equal the number of single and uniquely matched
+woman w and any stable husband m of w other than µ(w),                     women. Roth and Peranson [23] conjectured the following.
+w prefers m to µ(w).
+                                                                           C ONJECTURE 1. Let ck (n) denote the expected number of
+     The men-optimal stable matching is unique, and so the                 women who have more than one stable husband in the above
+above theorem implies that the order of proposals does not                 model. Then for all fixed k,
+affect the output of the men-proposing algorithm.
+                                                                                                    ck (n)
+                                                                                              lim            = 0.
+T HEOREM B. The men-proposing algorithm always finds the                                    n→∞        n
+same stable matching, independent of the order in which the We prove this conjecture in this paper. In fact, we will prove
+proposals are made.                                            the following stronger result. Let D be an arbitrary fixed
+                                                               distribution over the set of women such that the probability
+     We will also need the following theorem of Roth [21] of each woman in D is nonzero.1 Intuitively, having a
+and McVitie and Wilson [13], which says that the choice of high probability in D indicates that a woman is popular.
+the stable matching algorithm does not affect the number of The preference lists are constructed by picking each entry
+people who remain unmarried at the end of the algorithm.       of the list according to D, and removing the repetitions.
+T HEOREM C. In all stable matchings, the set of people who More precisely, we construct a random list (l1 , . . . , lk ) of k
+remain single is the same.                                     women as follows. At step i, repeatedly select women w
+                                                               independently according to D until w 6∈ {l1 , . . . , li−1 } and
+     A stable matching mechanism is an algorithm that elicits then set li = w. Let D be the distribution over lists of size
+                                                                                               k
+
+a preference list from each participant, and outputs a match- k produced by this process. Notice that if D is the uniform
+                                                                                                    2
+
+ing that is stable with respect to the announced preferences. distribution, D is nothing but the uniform distribution over
+                                                                                   k
+
+We say that truthfulness is a dominant strategy for a partic- the set of all lists of size k of women. Therefore, the model
+ipant a if, no matter what strategy other participants use, a of Roth and Peranson [23] is a special case of our model. We
+cannot benefit (i.e., improve his or her match according to also generalize their result in another respect: we assume that
+his or her true preferences) by submitting a list other than women have arbitrary complete preference lists, as opposed
+his or her true preference list. Ideally, we would like to de- to the assumption in [23] that they have random complete
+sign mechanisms in which truthfulness is a dominant strategy preference lists. Our main result is the following theorem.
+for all participants. However, Roth [20] proved that there is T HEOREM 3.1. Consider a situation where each woman has
+no such mechanism for the stable marriage problem. On the an arbitrary complete preference list, and each man has a
+positive side, the following theorem (due to Roth [20] and preference list chosen independently at random according to
+Dubins and Freedman [4]) shows that in deferred acceptance D k . Then, for all fixed k,
+mechanisms, truthfulness is a dominant strategy for half the
+population.                                                                                         ck (n)
+                                                                                              lim            = 0.
+                                                                                            n→∞        n
+T HEOREM D. In the men-optimal stable marriage mecha-                 Even though we state and prove our results assuming that
+nism, truth-telling is a dominant strategy for men. Similarly, all preference lists are of size exactly k, it is straightforward
+in the women-optimal mechanism, truth-telling is a dominant to see that our proof carries over to the case where preference
+strategy for women.                                            lists are of size at most k. For uniform distributions, we can
+                                                               prove a strong result on the rate of convergence of this limit.
+3 Our results
+Consider a situation where there are n men and n women.            1 This assumption is needed to make sure that the problem is well-defined.
+Assume the preference list of each man is chosen indepen-          2 See the conclusion for a discussion of why this is the most general setting
+
+dently and uniformly at random from the set of all ordered in which we can hope to get a positive result.
+                                                                       3
+T HEOREM 3.2. Consider a situation where each woman has            player’s goal is to alter his/her preference list and announce it
+an arbitrary complete preference list, and each man has a          to the mechanism in a way that the expected rank of his/her
+preference list of k women chosen uniformly and indepen-           assigned spouse is as high as possible. A strategy for a player
+dently. Then, the expected number of women who have more           is a function that outputs an announced preference list for any
+than one stable husband is bounded by ek+1 + k 2 , a constant      input preference list. Hence the truthful strategy is the identity
+that only depends on k (and not on n).                             function. We wish to analyze the Bayesian-Nash equilibria in
+                                                                   this incomplete information game. A (1 + ε)-approximate
+     There are a number of interesting economic implications       Bayesian-Nash equilibrium for this game is a collection of
+of this theorem. Our first result states that, with high proba-    strategies, one for each player, such that no single player can
+bility, a given player’s best strategy is truth-telling when the   improve his/her situation by more than a multiplicative factor
+other players are truthful. Thus, a dishonest player who be-       of 1 + ε by deviating from his/her equilibrium strategy.
+lieves in the honesty of the other players has an economic
+incentive to be honest. This is similar (but not identical) to  C OROLLARY 3.3. Consider the game described above with
+the notion of ex post Nash equilibria.                          the women-optimal mechanism. Then for every ε > 0, if n
+                                                                is large enough, the above game has a (1 + ε)-approximate
+C OROLLARY 3.1. Fix any stable matching mechanism, and Nash equilibrium in which everybody is truthful.
+consider an instance with n women with arbitrary complete
+preference lists and n men with preference lists drawn from          The proofs of these corollaries are presented in Section 5.
+D k (as in Theorem 3.1). Then, for any given person x, the
+probability (over the men’s preference lists) that for x, the 4 Proof of Theorem 3.1
+truthful strategy is not the best response in a situation where In this section, we will prove our main technical result,
+the other players are truthful is o(1) (at most O(ek /n) for Theorem 3.1. The proof consists of three main components.
+uniform distributions).                                         First, we present an algorithm that, given the preference lists,
+     The previous corollary states that a player can benefit       counts the number of stable husbands of a given woman
+by lying only with a vanishingly small probability when the        (Section 4.1). We would like to analyze the probability
+other players are truthful. Now we turn to the situation           that the output of this algorithm is more than one, over
+in which the other players are not necessarily truthful, but       a distribution of inputs. In Section 4.2, we bound this
+are playing an equilibrium strategy of the game induced by         probability assuming a lemma concerning the number of
+the stable matching mechanism. There are two ways to               singles in a stable marriage. This lemma is proved in
+interpret our stable marriage setting as a game. One way           Section 4.3 by bounding the expectation of the number of
+is to consider it as a game of complete information: Let           singles and proving that it is concentrated around its expected
+Pm and Pw denote the preference lists of men and women.            value using the Chebyschev inequality.
+Knowing these preferences, each player chooses a strategy
+from the strategy space of all possible preference lists. The    4.1 Counting the number of stable husbands The sim-
+corresponding preference lists are submitted to a fixed stable   plest way to check whether a woman g has more than one
+marriage algorithm and a matching is returned. A player’s        stable husband or not is to compute the men-optimal and the
+goal is to choose the strategy that gets him/her a spouse        women-optimal stable matchings using the algorithm of Gale
+as high on his/her preference list as possible. Let GPm ,Pw      and Shapley (See Theorem A) and then check if g has the
+denote this game. An equilibrium of a game is a set of           same husband in both these matchings. However, analyzing
+strategies, one for each player, such that no single player      the probability that g has more than one stable husband us-
+can improve his/her situation by deviating from his or her       ing this algorithm is not easy, since we will not be able to
+equilibrium strategy [16].                                       use the principle of deferred decisions (as described later in
+                                                                 Section 4.2). In this section we present a different algorithm
+C OROLLARY 3.2. Assume the preference lists Pw of women that outputs all stable husbands of a given woman in an ar-
+are arbitrary, and the preference lists Pm of men are drawn bitrary stable marriage problem in one run of a men-propose
+from D k (as in Theorem 3.1). The game GPm ,Pw induced algorithm. This algorithm is a generalization of the algorithm
+by these preferences and the men-proposing (or women- of Knuth et al. [11, 12] to the case of incomplete preference
+proposing) mechanism has an equilibrium in which, in ex- lists.
+pectation, a (1 − o(1)) fraction of strategies are truthful.          Suppose we want the stable husbands of woman g.
+                                                                 Initially all the people are unmarried (the matching is empty).
+     In the above setting, we assume that each player knows The algorithm closely follows the man-proposing algorithm
+the preference lists of the other players when he/she is select- for finding a stable matching. However, g’s objective is
+ing a strategy, i.e., we have a game of complete information. to explore all her options, therefore, every time the men-
+A more realistic assumption is that each player only knows proposing algorithm finds a stable marriage, g divorces her
+the distribution of preference lists of the other players. Each husband and lets the algorithm continue.
+A LGORITHM 4.1.                                               g preferred mi+1 to mi . Thus mi+1 is on g’s truncated prefer-
+                                                              ence list, and so the tentative matchings of the two algorithms
+ 1. Initialization: Run the man-proposing algorithm to find are the same. Furthermore, m
+                                                                                              i+1 is the first proposal g has ac-
+    the men-optimal stable matching. If g is unmarried, cepted in the man-proposing algorithm. All other women who
+    output ∅.                                                 get married in the set of stable matchings already have hus-
+ 2. Selection of the suitor: Output the husband m of g as one bands since they have husbands in Algorithm 4.1, and so the
+    of her stable husbands. Remove the pair (m, g) from the man-proposing algorithm terminates with the current match-
+    matching (woman g and man m are now unmarried) and ing. Thus, mi+1 is the worst possible stable husband for g
+    set b = m. (the variable b is the current proposing man.) which is better than mi .
+ 3. Selection of the courted: If b has already proposed to all        4.2 Analyzing the expectation We are interested in the ex-
+    the women on his preference list, terminate. Otherwise,           pected number of women with more than one stable husband,
+    let w be his favorite woman among those he hasn’t                 or, equivalently, the probability that a fixed woman g has more
+    proposed to yet.                                                  than one stable husband. We can compute this probability by
+                                                                      analyzing the output of Algorithm 4.1 on male preference lists
+ 4. The courtship:                                                    drawn from the distribution D k . We simulate this experiment
+      (a) If w has received a proposal from a man she                 using the principle of deferred decisions: a man only needs
+          likes better than b, she rejects b and the algorithm        to determine his i’th favorite woman when he makes his i’th
+          continues at the third step.                                proposal. If we make these deferred decisions independently
+                                                                      according to D, then the distribution of the output of this new
+      (b) If not, w accepts b. If w = g, the algorithm
+                                                                      algorithm over its coin flips will be exactly the same as the
+          continues at the second step. Otherwise, if w was
+                                                                      distribution of the output of the old algorithm over its input.
+          previously married, her previous husband becomes
+                                                                      This motivates the definition of the following algorithm. At
+          the suitor b and the algorithm continues at the third
+                                                                      any point in this algorithm, the variable Ai denotes the set of
+          step. If w was previously unmarried, terminate the
+                                                                      women that man i has proposed to so far. Men and women
+          algorithm.
+                                                                      are indexed by numbers between 1 and n.
+     Notice that in step 4(a) of the algorithm, w compares b          A LGORITHM 4.2.
+to the best man who has proposed to her so far, and not to the
+man she is currently matched to. Therefore, after g divorces           1. Initialization: Let l = 1, ∀ 1 ≤ i ≤ n, Ai = ∅,
+one of her stable husbands, she has a higher standard, and will           xg = 0. (The matching is empty and no men have made
+not accept any man worse than the man she has divorced. For               any proposals).
+w 6= g, step 4(a) is equivalent to comparing b to the man w is
+                                                                       2. Selection of the suitor:
+matched to at the moment.
+     We must prove that this algorithm outputs all stable                   (a) If l ≤ n, let b be the l’th man and increase l by one.
+husbands of g. In fact, we will prove something slightly
+                                                                            (b) Otherwise, we have found a stable matching. If
+stronger.
+                                                                                g is single in this stable matching, then terminate.
+T HEOREM 4.1. Algorithm 4.1 outputs all stable husbands of                      Otherwise, increment xg , remove the pair (m, g)
+g in order of her preference from her worst stable husband to                   from the matching (man m and woman g who
+her best stable husband.                                                        were previously married to each other are now
+                                                                                unmarried) and set b = m.
+Proof. We prove the theorem by induction. As the man-
+                                                                       3. Selection of the courted:
+proposing algorithm returns the worst possible matching for
+the women (by Theorem A), the first output is g’s worst stable              (a) If |Ab | ≥ k, then do the following:
+husband. Now suppose the i’th output is g’s i’th worst stable
+                                                                                   – If xg ≥ 1, then terminate. Otherwise, return
+husband mi . Consider running the man-proposing algorithm
+                                                                                     to step two.
+with g’s preference list truncated just before man mi . As the
+order of proposals do not affect the outcome (Theorem B), let               (b) Repeatedly select w randomly according to distri-
+the order of proposals be the same as Algorithm 4.1. Then,                      bution D from the set of all women until w 6∈ Ab .
+up until Algorithm 4.1 outputs the i + 1’st output mi+1 , its                   Add w to Ab .
+tentative matching during the j’th proposal is the same as the         4. The courtship:
+tentative matching of the man-proposing algorithm during the
+j’th proposal (except, possibly, woman g is matched in Al-                  (a) If w has received a proposal from a man she
+gorithm 4.1 and unmatched in the man-proposing algorithm).                      likes better than b, she rejects b and the algorithm
+Now since mi+1 was accepted, the fourth step guarantees that                    continues at step 3.
+                                                                  5
+      (b) If not, w accepts b. If w was previously married,         we pick a woman randomly according to D, the probability
+          her previous husband becomes the suitor b and             that w is picked is at least as large as the probability that g
+          the algorithm continues at the third step. If w           is picked. Therefore, the probability that g appears before all
+          was previously single and xg = 0, the algorithm           elements of Sµ (g) in a sequence whose elements are picked
+          continues at the second step. If w was previously         according to D is at most the probability the g appears first in
+          single and xg ≥ 1, the algorithm continues at the         a random permutation on the elements of {g} ∪ Sµ (g), which
+          second step if w = g and terminates if w 6= g.            is 1/(Xµ (g) + 1). Thus, for every µ,
+      Before giving a proof of Theorem 3.1, we introduce a few                                              1
+                                                                    (4.1)           Pr[xg > 1 | µ] ≤
+notations. For every woman i, let pi denote the probability of                                          Xµ (g) + 1
+i in the distribution D. We say that a woman i is more popular
+than another woman j, if pi ≥ pj . Assume, without loss of          Thus,                      h                i
+generality, that women are ordered in the decreasing order of                  Pr[xg > 1] = Eµ Pr[xg > 1 | µ]
+popularity, i.e., p1 ≥ p2 ≥ · · · ≥ pn .
+                                                                                                           
+                                                                                                     1
+                                                                    (4.2)                 ≤ Eµ                .
+Proof of Theorem 3.1.             Recall that ck (n) is the ex-                                  Xµ (g) + 1
+pected number of women with more than one stable hus-
+band. We show that for every  > 0, if n is large                      We complete the proof assuming the following lemma,
+enough, thenPck (n)/n ≤ . By linearity of expectation,             whose proof is given in Section 4.3.
+ck (n) =          g∈W Pr[g has more than one stable husband].
+Fix a woman g ∈ W . We want to bound the probability that           L EMMA 4.1. For every g > 4k,
+g has more than one stable husband. By Theorem 4.1 and the                                                   12e8nk/g
+                                                                                   E[1/(Xµ (g) + 1)] ≤                .
+principle of deferred decisions, this is the same as bounding                                                   g
+the probability that the random variable xg in Algorithm 4.2
+                                                                                                                         16nk
+is more than one.                                                       Thus, using Equation (4.2) and Lemma 4.1 for g ≥ ln(n) ,
+     We divide the execution of Algorithm 4.2 into two              and Pr[xg > 1] ≤ 1 for smaller g’s, we obtain
+phases: the first phase is from the beginning of the algorithm
+until it finds the first stable matching, and the second phase is                               n
+                                                                                        16nk    X    12e8nk/g
+from that point until the algorithm terminates. Assume at the               ck (n) ≤          +
+                                                                                        ln(n)   16nk
+                                                                                                        g
+end of the first phase, Algorithm 4.2 has found the first stable                                  g= ln(n)
+                                                                                                n
+matching µ. We bound the probability that xg > 1 condi-                                 16nk    X    3 ln(n)eln(n)/2
+                                                                                   ≤          +
+tioned on the event that µ is the matching found at the end of                          ln(n)             4nk
+                                                                                                16nk
+                                                                                                  g= ln(n)
+the first phase (we denote this by Pr[xg > 1 | µ]), and then                                     √
+                                                                                        16nk
+take the expectation of this bound over µ.                                         ≤          + 3 n ln(n)/(4k) = o(n),
+     Let the set Sµ (g) denote the set of women more popular                            ln(n)
+than g that remain single in the stable matching µ and              and so for every constant k, the fraction of women with more
+Xµ (g) = |Sµ (g)|. If g is single in µ, then xg = 0                 than one stable husband, ck (n)/n, goes to zero as n tends to
+and therefore Pr[xg > 1 | µ] = 0. Otherwise, xg >                   infinity.                                                  
+1 if only if woman g accepts another proposal before the
+algorithm terminates. We bound this by the probability that              For the case of uniform distributions, it is possible to
+g receives another proposal before the end of the algorithm.        modify the above proof to get a much tighter bound of O(e8k )
+The algorithm may terminate in several ways, but we will            on the expected number of women with more than one stable
+concentrate on the termination condition in step 4(b), i.e.,        husband. We derive an even tighter bound in this case, as
+that some man proposes to a previously single woman. Thus,          stated in Theorem 3.2, using a slightly different technique.
+we are interested in the probability that in the second phase       This bound is proved in Section 6.
+of Algorithm 4.2 some man proposes to a previously single
+woman before any man proposes to g.                                 4.3 Number of singles In this section we prove
+     Note that at the end of the first phase of the algorithm,      Lemma 4.1. This completes the proof of Theorem 3.1.
+all Ai ’s are disjoint from Sµ (g), since women have complete       We start with the following simple fact: the probability that
+preference lists. Thus whenever the random oracle in step           a woman w remains single is greater than or equal to the
+3(b) outputs a woman from set Sµ (g), the algorithm will            probability that w does not appear on the preference list
+advance to step 4(b) and terminate. Thus, the probability           of any man. More precisely, let Ew denote the event that
+Pr[xg > 1 | µ] is less than or equal to the probability that        the woman w does not appear on the preference list of any
+in a sequence whose elements are independently picked from          man when these preferences are drawn from D k . Let Yg
+the distribution D, g appears before any woman in Sµ (g).           denote the number of women w ≤ g for which the event Ew
+By the definition of Sµ (g), for every w ∈ Sµ (g), every time       happens. Then we have the following lemma.
+L EMMA 4.2. For every g, we always have Xµ (g) ≥ Yg .3                     Let M be an arbitrarily large constant. The following
+                                                                      process is one way to simulate the selection of one prefer-
+Proof. Every woman w < g for which Ew happens is a                    ence list L = (l1 , . . . , lk ): Consider the multiset Σ consisting
+woman who is at least as popular as g and will remain                 of bpi M c copies of the name of woman i. Pick a random
+unmarried in any stable matching.                                    permutation π of Σ. Let li be the i’th distinct name in π.
+                                                                      It is not hard to see that as M → ∞, the probability of a
+    We now bound the expectation of 1/(Yg + 1) in a                   given list L in this process converges to its probability un-
+sequence of two lemmas. In Lemma 4.3 we bound the                     der distribution D k . Therefore, Pr[Fi ] is equal to the limit as
+expectation of Yg . Then, in Lemma 4.4 we show the variance           M → ∞ of the probability that k distinct names occur be-
+of Yg is small and therefore it does not deviate far from its         fore i in π. Similarly, if Σ0 denotes the multiset obtained by
+mean.                                                                 removing all copies of woman j from Σ, then Pr[Fi |Fj ] is
+                                                                      equal to the limit as M → ∞ of the probability that k distinct
+L EMMA 4.3. For g > 4k, the expected number E[Xµ (g)]
+                                                                      names occur before i in a random permutation of Σ0 . How-
+of single women more popular than woman g is at least
+g −8nk/g                                                              ever, this is precisely equal to the probability that k distinct
+2e        .
+                                                                      names other than j occur before i in a random permutation π
+                     Pk                                               of Σ. But that certainly implies that k distinct names (includ-
+Proof. Let Q = j=1 pj denote the total probability of the
+                                                                      ing j) occur before i in π, and so for every π where Fi |Fj hap-
+first k women under D. The probability that a man m does
+                                                                      pens, Fi also happens. Therefore, Pr[Fi |Fj ] ≤ Pr[Fi ]. Thus,
+not list a woman w as his i’th preference given that he picks
+                                                                      Pr[Ei ∧ Ej ] ≤ Pr[Ei ].Pr[Ej ], and so the variance σ 2 (Yg ) is
+w1 , . . . , wi−1 as his first i − 1 women, is equal to
+                         pw                  pw                            σ 2 (Yg )   = E[Yg2 ] − E[Yg ]2
+             1−         Pi−1        ≥1−         .
+                   1−     j=1 pwj
+                                            1−Q                                          Xg                X
+                                                                                       =    Pr[Ei ] + 2                 Pr[Ei ∧ Ej ]
+Thus the probability that m does not list w at all is at least                             i=1               1≤i<j≤g
+      pw k
+(1 − 1−Q ) , and so the probability that woman w is not listed                                 g
+                                                                                               X                    X
+by any man is at least (1 − 1−Qpw nk
+                                  ) . If w > k, there are at                               −         Pr[Ei ]2 − 2       Pr[Ei ].Pr[Ej ]
+                                                                                               i=1             1≤i<j≤g
+least w − k women who are at least as popular as w, but not
+                                                        1−Q                                g
+among the k most popular women. Therefore, pw ≤ w−k           .                            X
+By these two inequalities, for every w > 2k we have                                    ≤         Pr[Ei ] = E[Yg ]
+                                                                                           i=1
+                     1                                                                                                                    
+   Pr[Ew ] ≥ (1 −       )nk ≥ e−2nk/(w−k) ≥ e−4nk/w
+                    w−k
+                                                                      Proof of Lemma 4.1.     Let q be the probability that Yg <
+Therefore, for every g > 4k, the expectation of Yg is at least
+                                                                      E[Yg ]/2. By the Chebyshev inequality and Lemma 4.4,
+                        g
+                        X                 g
+                                          X
+          E[Yg ]   =          Pr[Ew ] ≥          e−4nk/j
+                                                                                           h                       i
+                                                                                   q   ≤ Pr Yg − E[Yg ] > E[Yg ]/2
+                        w=1               j=2k
+                         g
+                                            g −8nk/g                                         σ 2 (Yg )     4
+                                                                                       ≤               ≤        .
+                         X
+                   ≥            e−8nk/g =     e      .                                     (E[Yg ]/2)2   E[Yg ]
+                                            2
+                        j=g/2
+                                                                   Therefore, by Lemma 4.2 and the fact that 1/(Yg + 1) is
+                                                                      always at most one, we have
+L EMMA 4.4. The variance σ 2 (Yg ) of the random variable
+Yg is at most its expectation E[Yg ].                                          
+                                                                                      1
+                                                                                                     
+                                                                                                            1
+                                                                                                                 
+                                                                             E                  ≤ E
+Proof. We show the events Ei are negatively correlated, i.e.,                    Xµ (g) + 1             Yg + 1
+                                                                                                                    1
+for every i and j, Pr[Ei ∧ Ej ] ≤ Pr[Ei ].Pr[Ej ]. Let Fi be                                    ≤   (1 −  q)               +q
+                                                                                                              E[Yg ]/2 + 1
+the event that a given man does not include woman i on his                                             6
+preference list. By the independence and symmetry of the                                        ≤           ,
+                                                                                                     E[Yg ]
+                                                            n
+preference lists of men, we have Pr[Ei ] = (Pr[Fi ]) , and
+Pr[Ei ∧ Ej ] = (Pr[Fi ∧ Fj ])n . Therefore, it is enough to which together with Lemma 4.3 completes the proof.                    
+show that for every i and j, Pr[Fi |Fj ] ≤ Pr[Fi ].
+                                                                      5 Proofs of economic implications
+   3 In more mathematical terms, this means that X (g) stochastically
+                                                  µ
+                                                                      In this section, we prove the corollaries stated in Section 3.
+dominates Yg .                                                        The first of these results argues that a dishonest player has
+                                                                  7
+economic incentives to be honest when other players are            then everybody being truthful is an approximate Bayesian
+honest.                                                            Nash equilibrium.
+Proof of Corollary 3.1.     Fix a person, say a man named          Proof of Corollary 3.3. Since the women-optimal mecha-
+Adam and suppose all other players are truthful. Theorem 3.1       nism is used, we know by Theorem D that truthfulness is a
+implies that with probability at least 1 − o(1), Adam has at       dominant strategy for women. It is enough to show that if
+most one stable wife, Eve, with respect to the true preference     all men and women are truthful, then no man can improve
+lists of the players. Suppose all other players are truthful.      his match by more than a (1 + ε) factor if he uses a dishonest
+We claim Adam’s best response is truth-telling. Suppose            strategy. Fix a man, Charlie. With probability 1−o(1), prefer-
+not. Allow Adam to play his best response p and let µ be           ences are such that Charlie does not have more than one stable
+the matching that the stable matching mechanism outputs.           wife. In this case, the argument used in the proof of the pre-
+Now run the men-optimal algorithm with the same preference         vious two corollaries shows that Charlie cannot gain by being
+lists (i.e., p for Adam, and true preference lists for others)     dishonest about his preferences. With probability o(1), Char-
+and let µM be the resulting matching. By Theorem A,                lie has more than one stable wife, and in that case, he might
+Adam must prefer his match in µM to his match in µ.                be able to improve his match from someone ranked at most k
+However, by Theorem D, in the men-proposing algorithm,             in his list to someone ranked first. However, k is a constant.
+Adam’s dominant strategy is truth-telling and, by assumption,      Using this, it is easy to verify that on average, he can improve
+matches him to Eve. Therefore, Adam must prefer Eve to             his match by at most a factor of 1 + k 2 × o(1) = 1 + o(1).
+his match in µM and thus to his match in µ. But Eve is the         Thus, everyone being truthful is an approximate equilibrium
+woman that Adam would have been matched to in the original         in this game.                                                 
+mechanism if he had been truthful (since it was his unique
+stable match), and so his altered strategy p was not his best
+response.                                                          6 Tighter analysis for the uniform distribution
+                                                                    For the case of uniform distributions, it is possible to derive a
+     The second corollary shows that the game GPm ,Pw de- much tighter bound on the expected number of women with
+fined in Section 3 has an equilibrium in which in expectation more than one stable husband.
+a (1 − o(1)) fraction of participants are truthful.                      Recall that in the proof of Theorem 3.1, we bounded the
+Proof of Corollary 3.2.          Suppose we are using the men- probability that a fixed woman g is single by Eµ [1/(Xµ (g) +
+proposing mechanism (the women-proposing situation is 1)], where Xµ (g) is the number of women at least as popular
+analogous). We prove that the following set of strategies as g that are single in matching µ. In the case of the uniform
+forms an equilibrium in the game GPm ,Pw : all men announce distribution, for every woman g, Xµ (g) is equal to the number
+their true preferences; all women who have at most one stable of singles in µ. Therefore, if we define the random variable X
+husband (with respect to Pm , Pw ) announce their true prefer- as the number of women who remain unmarried in the men-
+ences; and all women who have more than one stable husband optimal stable matching (recall that by Theorem C, the set of
+truncate their preference lists just after their optimal stable unmarried women is independent of the choice of the stable
+husband. We denote the altered preference lists of women marriage algorithm), then we have
+by Pw0 . By Theorem D, men cannot improve their situation
+                                                                                                      1 
+by altering their strategy. Consider a woman, say Alice, and                             ck (n) ≤ nE            .
+assume Alice will be assigned to Bob if the players use the                                           X +1
+strategies in (Pm , Pw0 ). It is easy to see that there is a unique      Thus, the following lemma shows that if men have
+stable matching with respect to (Pm , Pw0 ). Therefore, if we random preference lists of size k, then the expected number
+run the women-optimal mechanism on (Pm , Pw0 ), we get the of women who have more than one stable partner is at most
+same outcome as in the men-optimal mechanism. However, ek+1 + k 2 . This completes the proof of Theorem 3.2.
+by Theorem D we know that no woman can benefit from alter-
+ing her preferences in a women-optimal mechanism. Thus, if L EMMA 6.1. Let X denote the random variable defined
+Alice changes her strategy from the one dictated by Pw0 , then above. Then,
+she gets a match, say Tom, that according to Pw0 is not better
+than Bob. However, by the definition of Pw0 , this implies that                           1  ek+1 + k 2
+                                                                                       E           ≤              .
+Tom is not better than Bob according to the true preferences                               X +1           n
+of Alice. This shows that the set of strategies (Pm , Pw0 ) is
+                                                                    The proof of the above lemma is based on a connection be-
+an equilibrium. By Theorem 3.1, we know that all men and
+                                                                    tween the stable marriage problem and the classical occu-
+all but at most a o(1) fraction of women are truthful in this
+                                                                    pancy problem. In the occupancy problem, m balls are dis-
+equilibrium.                                                     
+                                                                    tributed amongst n bins. The distribution of the number of
+     Finally, we prove the third corollary, which says that if balls that end up in each bin has been studied extensively
+we model the situation as a game of incomplete information, from the perspective of probability theory [9]. We denote the
+occupancy problem with m balls and n bins by the (m, n)-                   Now, we show how the random variables X1 through X5
+occupancy problem. The following lemma establishes the                are related. It is easy to see that for any set of men’s prefer-
+connection between the number of singles in the stable mar-           ence lists, the number of unmarried women in Experiment 1
+riage game and the number of empty bins in the occupancy              is at least the number of women who are not named in Ex-
+problem.                                                              periment 2. Therefore, X1 ≥ X2 . Also, it is clear from the
+                                                                      description of Experiments 2 and 3 that X2 = X3 .
+L EMMA 6.2. Let Ym,n denote the number of empty bins in                    In order to relate X3 and X4 , we use the principle of
+the (m, n)-occupancy problem and X denote the random                  negligible perturbations. Experiments 4 is essentially the
+variable in Lemma 6.1. Then,                                          same as Experiment 3, except in X4 we only count women
+              1                  1         k2                     who are not named by any man as one of his first k + 1
+          E            ≤E                      + .                    choices. Let E denote the event that no man names more
+              X +1            Y(k+1)n,n + 1       n
+                                                                      than k + 1 women in Experiment 3. We first show that
+Proof. We use the techniques of amnesia, the principle of de-
+                                                                      Pr[Ē] < k 2 /n. Fix a man, say Homer. We want to bound the
+ferred decisions, and the principle of negligible perturbations
+                                                                      probability that Homer names at least k + 2 women before
+used by Knuth [10] and Knuth, Motwani, and Pittel [11, 12].
+                                                                      the number of different women he has named reaches k. By
+Assume every woman has an arbitrary ordering of all men.
+                                                                      the union bound, this probability is at most the sum, over
+We define the following five random experiments:
+                                                                      all pairs {i, j} ⊂ {1, . . . , k + 2} that both i’th and j’th
+                                                                      proposal of Homer are redundant. It is easy to see that for
+  • Experiment 1 is the experiment defined before
+                                                                      any such pair, this probability is at most 1/n2 . Therefore,
+    Lemma 6.1: every man chooses a random list of at most
+                                                                      the probability that
+                                                                                        2Homer2makes      more than k + 1 proposals
+    k different women as his preference list. Then, we run
+                                                                      is at most k+2     /n   <  k  /n 2
+                                                                                                         . Thus, by the union bound,
+    the men-proposing stable marriage algorithm, and let the                         2
+                                                                      the probability of this happens for at least one man is less
+    random variable X1 = X indicates the number of single
+                                                                      than k 2 /n. That is, Pr[Ē] < k 2 /n. Now, notice that
+    women at the end of this experiment. Notice that in this
+                                                                      by the definition of X3 and X4 , the random variables X3
+    experiment, men do not have to select their entire pref-
+                                                                      and X4 are equal when conditioned       on the occurrence   of
+    erence list before running the algorithm. Instead, every
+                                                                      E. Therefore, E X31+1 |E = E X41+1 |E . Let C =
+                                                                                                                       
+    time a man has to propose to the next woman on his list,
+                                                                       E X31+1 − E X41+1 be the unconditioned difference of
+                                                                                            
+    he chooses a random woman among the women he has
+    not proposed to so far, and proposes to that woman. It            these expectations. Then,
+    is clear that this does not change the experiment. This is
+    called the principle of deferred decisions.                                            1
+                                                                                                         1           
+                                                                            C    =    qE        |E + q̄E           |Ē
+                                                                                         X3 + 1            X3 + 1
+  • In Experiment 2, each man names k different women                                     1                1           
+    at random. We let X2 be the number of women that no                             − qE           |E − q̄E           |Ē
+                                                                                          X4 + 1             X4 + 1
+    man names in this game.                                                              1              1           
+                                                                                 = q̄ E          |Ē − E          |Ē
+  • Experiment 3 is the same as experiment 2, except here                                X3 + 1            X4 + 1
+    the men are amnesiacs. That is, every time a man wants                       ≤ q̄
+    to name a woman, he picks a woman at random from the                            k2
+                                                                                 <
+    set of all women. Therefore, there is a chance that he                          n
+    names a woman that he has already named. However, where q = Pr[E] and q̄ = Pr[Ē]. Finally, we observe that
+    each man stops as soon as he names k different women. by the definition of Experiments 4 and 5, we have X ≥ X .
+                                                                                                              4  5
+    Let X3 be the number of women who are not named in The above observations imply
+    this process.
+                                                                       1                1       
+                                                                    E             ≤ E
+  • In Experiment 4, we restrict every man to name at most             X +1                X2 + 1
+                                                                                          1
+    k + 1 women. Therefore, each man stops as soon as
+                                                                                                   
+                                                                                  = E
+    either he names k different women, or when he names                                    X 3 + 1
+    k + 1 women in total (counting repetitions). Let X4                                   1        k2
+                                                                                  ≤ E                +
+    denote the number of women who are not named in this                                   X4 + 1      n
+    experiment.                                                                                 1        k2
+                                                                                  ≤ E                     + .
+                                                                                           Y(k+1)n,n + 1   n
+  • In Experiment 5 every man names exactly k + 1 (not
+                                                            This completes the proof of the lemma.
+    necessarily different) women. The number of women
+    who are not named in this experiment is denoted by X5 .      By the above lemma, the only thing we need to do
+    Clearly, X5 = Y(k+1)n,n .                               is to analyze the expected value of 1/(Ym,n + 1) in the
+                                                                  9
+occupancy problem. We do this by writing the expected value The value of S can be bounded easily using a combinatorial
+of 1/(Ym,n +1) as a summation and bounding this summation argument.
+by comparing it term-by-term to another summation whose            Consider the (m, n + 1)-occupancy problem. The prob-
+value is known.                                             ability that at least one bin is empty is the sum, over r =
+                                                            1, . . . , n + 1, of Pr (m, n + 1). We denote this probability by
+L EMMA 6.3. Let Ym,n denote the number of empty bins in S. By Equation (6.5) we have
+the (m, n)-occupancy problem. Then,
+                                                                          n+1
+                                                                          X n+1−r
+                                em/n
+                                                                                                  
+                         1                                                                i n+1           r+i m
+                                                                               X
+                  E             ≤       .                           S=               (−1)            (1 −       ) ≤ 1,
+                      Ym,n + 1      n                                     r=1 i=0
+                                                                                              r, i        n +1
+
+Proof. Let Pr (m, n) be the probability that exactly r bins are         where the inequality follows from the fact that S is the prob-
+empty in the (m, n)-occupancy problem. Then P0 (m, n), the              ability of an event. The summation in Equation (6.6) and
+probability of no empty bin, can be written as the following            S have the same number of terms, and the ratio of each
+summation by the principle of inclusion-exclusion.4                     term in the summation in Equation (6.6) to the correspond-
+                          n                                           ing term in S is equal to (1 − r+i−1      m
+                                                                                                            n ) /(1 − n+1 )
+                                                                                                                            r+i m
+                                                                                                                                    =
+                                 i n          i
+                        X                                                 n−r−i+1 m     n+1−r−i m           1 m
+(6.3)       P0 (m, n) =     (−1)        (1 − )m                         (     n    ) /(   n+1    ) =   (1 + n ) . Therefore,
+                        i=0
+                                    i         n
+                                                                                                1          1         1         em/n
+The probability Pr (m, n) of exactly r empty bins can be                                 E[          ]=       (1 + )m S <            .
+                                                                                            Ym,n + 1     n+1         n           n
+written in term of the probability of no empty bin in the
+(m, n − r)-occupancy problem:                                                Lemma 6.1 immediately follows from Lemmas 6.2 and 6.3.
+                              
+                               n            r                                7 Conclusion
+(6.4)        Pr (m, n) =             (1 − )m P0 (m, n − r).
+                               r            n
+                                                                             In this paper we studied the stable marriage game in a
+By Equations (6.3) and (6.4),                                                probabilistic setting and showed that dishonesty almost surely
+                                                                             does not benefit a player. This answers a question asked
+                         n−r
+                                                                             by Roth and Peranson [23], and generalizes their model to
+                                        
+                         X               n            r  + i
+(6.5) Pr (m, n) =             (−1)i             (1 −         )m ,            one where women have arbitrary preferences and each man
+                                        r, i             n
+                         i=0
+                                                                             independently picks a preference list from D k , where D is an
+            n                                                      n!
+                                                                           . arbitrary distribution. One might hope to further generalize
+              
+where a,b       denotes the multinomial coefficient a! b! (n−a−b)!
+Using Equation (6.5) and the definition of expected value we this model to one where each man picks a random list from
+have, using the notation E = E[ Ym,n              1        0                 an arbitrary distribution over lists of size k. However, the
+                                                    +1 ], n = n + 1, and
+                                                                             following example shows that Theorem 3.1 is not true in this
+r0 = r + 1,
+                                                                             model: Assume women 1, . . . , n/2 rank men in the order
+                   X n
+                         1                                                   1, 2, . . . , n, and women n/2 + 1, . . . , n rank them in the
+(6.6) E =                 0
+                             Pr (m, n)                                       reverse order. Each man picks a random i ∈ {1, . . . , n/2},
+                        r
+                   r=0                                                       and with probability 1/2 picks preference list (i, i + n/2) and
+                     n n−r
+                        X (−1)i  n                                         otherwise picks preference list (i + n/2, i). It is not difficult
+                   X                                    r+i m
+              =                    0
+                                                 (1 −         )              to see that with these preferences, at least a 1/(8e) fraction of
+                   r=0 i=0
+                                 r       r, i             n
+                                                                             women will have more than one stable husband.
+                     n n−r
+                        X (−1)i  n0 
+                   X                                     r+i m                    There are many other interesting open questions sur-
+              =                    0       0, i
+                                                 (1 −          )             rounding the application of the stable matching algorithm in
+                   r=0 i=0
+                                 n       r                n
+                                                                             centralized markets. For example, in the NRMP market, the
+                    n0 nX 0
+                            −r
+                               (−1)i n0                                      algorithm has to accommodate couples among students who
+                                         
+                   X                                    r+i−1 m
+              =                      0
+                                                 (1 −             ) .        want to live in the same city. Such couples can submit a joint
+                   r=1 i=0
+                                 n        r,  i              n
+                                                                             preference list of pairs of hospitals, and the algorithm has to
+It is probably impossible to simplify the above summation as match them to one of the pairs in their list. With this extra
+a closed-form formula. Therefore, we use the following trick: twist, there are instances for which no stable matching ex-
+we consider another summation S with the same number of ist. However, so far every year the NRMP algorithm has been
+terms, and bound the ratio between the corresponding terms able to find a stable matching. A theoretical justification for
+in these two summations. This gives us a bound on the this (in a reasonable probabilistic model), and a study of in-
+ratio of the summation in Equation (6.6) to the summation S. centive properties in mechanisms with couples are interesting
+                                                                             open directions for future research. Finally, it would be in-
+    4 This can also be derived by dividing a well-known formula for Stirling teresting to find other examples where one can prove that in a
+numbers of the second kind (see, for example, [7, 27]) by nm .               probabilistic setting, truthfulness is probably the best strategy.
+Acknowledgments. We are grateful to Al Roth for invaluable [19] Alvin E. Roth. The economist as engineer: Game theory,
+discussions about the problem. We would also like to thank    experimentation, and computation as tools for design economics.
+Kamal Jain, Dana Randall, Amin Saberi, and Mike Saks for      forthcoming in Econometrica.
+helpful discussions about the stable marriage problem.     [20] Alvin E. Roth. The economics of matching: stability and
+                                                                               incentives. Mathematics of Operations Research, 7:617–628,
+                                                                               1982.
+References                                                                  [21] Alvin E. Roth. The evolution of the labor market for medical
+                                                                               interns and residents: A case study in game theory. Journal of
+[1] A. Archer and E. Tardos. Truthful mechanisms for one-                      Political Economy, 92:991–1016, 1984.
+   parameter agents. In Proceedings of the 42nd IEEE Symposium              [22] Alvin E. Roth. The national residency matching program as
+   on Foundations of Computer Science, pages 482–491, 2001.                    a labor market. Journal of the American Medical Association,
+[2] Aaron Archer, Christos Papadimitriou, Kunal Talwar, and Eva                275(13):1054–1056, 1996.
+   Tardos. An approximate truthful mechanism for combinatorial              [23] Alvin E. Roth and Elliott Peranson. The redesign of the match-
+   auctions with single parameter agents. In Proceedings of the                ing market for american physicians: Some engineering aspects
+   14th Annual ACM-SIAM Symposium on Discrete Algorithms,                      of economic design. American Economic Review, 89:748–780,
+   2003.                                                                       1999.
+[3] Lawrence Bodin and (Rabbi) Aaron Panken. High tech for                  [24] Alvin E. Roth and Marilda A. Oliveira Sotomayor. Two-sided
+   a Higher authority: the placement of graduating rabbis from                 Matching; A Study in Game-theoretic Modeling and Analysis.
+   Hebrew Union College–Jewish Institute of Religion. INTER-                   Cambridge University Press, 1990.
+   FACES, 33(3):1–11, May-June 2003.                                        [25] Jay Sethuraman, Chung-Piaw Teo, and Wee-Peng Tan. The
+[4] L.E. Dubins and D.A. Freedman.              Machiavelli and the            Gale-Shapley stable marriage problem revisited: strategic issues
+   Gale-Shapley algorithm. American Mathematical Monthly,                      and applications. In IPCO’99, pages 429–438, 1999.
+   88(7):485–494, 1981.                                                     [26] Jay Sethuraman, Chung-Piaw Teo, and Wee-Peng Tan. The
+[5] Joan Feigenbaum, Christos Papadimitriou, Rahul Sami, and                   Gale-Shapley stable marriage problem revisited: strategic is-
+   Scott Shenker. A bgp-based mechanism for lowest-cost routing.               sues and applications. Management Science, 47(9):1252–1267,
+   In ACM Symposium on Principles of Distributed Computing,                    September 2001.
+   2002.                                                                    [27] J. H. van Lint and R. M. Wilson. A Course in Combinatorics.
+[6] D. Gale and L. S. Shapley. College admissions and the stability            Cambridge Univ. Press, 1992.
+   of marriage. American Mathematical Monthly, 69:9–15, 1962.
+[7] Ronald L. Graham, Donald E. Knuth, and Oren Patashnik.                  A Number of singles revisited
+   Concrete Mathematics, 2nd ed. Addison-Wesley, 1994.
+[8] Dan Gusfield and Robert W. Irving. The Stable Marriage                  In this paper, we presented an analysis of the expected
+   Problem: Structure and Algorithms. Foundations of Computing.             number of players that remain single in a stable marriage
+   MIT Press, 1989.                                                         mechanism, and used this lemma to prove the main result
+[9] N. Johnson and S. Kotz. Urn models and their application: an            of the paper. However, analyzing the expected number of
+   approach to modern discrete probability theory. John Wiley &             singles in a probabilistic setting is of independent interest.
+   Sons, 1977.                                                              In this appendix, we present a tighter analysis of the expected
+[10] D.E. Knuth.      Marriages Stables et leurs relations avec             number of singles when men have random preference lists of
+   d’autres problémes combinatoires. Les Presses de l’Université          size k, and women have random complete preference lists. If,
+   de Montréal, 1976.                                                      in addition to the results of this appendix, one can prove that
+[11] Donald E. Knuth, Rajeev Motwani, and Boris Pittel. Stable
+                                                                            the number of singles is concentrated around its expectation,
+   husbands. In Proceedings of the First Annual ACM-SIAM
+   Symposium on Discrete Algorithms, pages 397–404, 1990.
+                                                                            then the bound (ek + k 2 )/n proven in this paper would be
+[12] Donald E. Knuth, Rajeev Motwani, and Boris Pittel. Stable              improved.
+   husbands. Random Structures and Algorithms, 1:1–14, 1990.                L EMMA A.1. Consider a collection of n men and n women,
+[13] D. G. McVitie and L. B. Wilson. Stable marriage assignments            each man having a random ordering of k random women, and
+   for unequal sets. BIT, 10:295–309, 1970.
+                                                                            each woman having a random ordering of men. Let pk (n)
+[14] S.J. Mongell and A.E. Roth. Sorority rush as a two-sided
+   matching mechanism. American Economic Review, 81:441–464,
+                                                                            denote the probability that in a stable matching with respect
+   1991.                                                                    to these preference lists a fixed man remains single. Then
+                                                                                       1
+[15] Noam Nisan and Amir Ronen. Algorithmic mechanism de-                   pk (n) ≥ ek2 k.
+
+   sign. Annual ACM Symposium on Theory of Computing, pages                      In order to prove the above lemma, we first generalize
+   129–140, 1999.
+                                                                            the scenario defined in the lemma to a case where there
+[16] Martin J. Osborne and Ariel Rubinstein. A course in game
+   theory. MIT Press, 1994.
+                                                                            are m men and n women (m ≤ n). Let pk (m, n) denote
+[17] Boris Pittel. The average number of stable matchings. SIAM             the probability that a fixed man remains unmarried in this
+   J. Disc. Math, pages 530–549, 1989.                                      scenario. Therefore, pk (n) = pk (n, n). We start by proving
+[18] Boris Pittel. On likely solutions of a stable matching problem.        that if the population of women remains constant, an increase
+   In Proceedings of the third annual ACM-SIAM symposium on                 in the number of men can only make it harder for a man to
+   Discrete algorithms table of contents, pages 10–15, 1992.                find a stable wife.
+                                                                       11
+L EMMA A.2. For every k, n, m1 , and m2 , if m1 ≤ m2 then               Now, we prove inequality (1.7). We use a similar
+pk (m1 , n) ≤ pk (m2 , n).                                        argument: consider a situation where there are dcne + 1
+                                                                  men and n women, and fix a man, say Oscar. We prove
+Proof. It is sufficient to prove that for every k, n, and m, that the probability that Oscar remains single is at least
+pk (m, n) ≤ pk (m + 1, n). Consider a fixed man, Bert, in the       c
+                                                                                            k
+scenario where there are m + 1 men. We want to compute the          2 (1 − pk (dcne, n)) . To prove this, consider the men-
+                                                                  proposing algorithm, and let everyone other than Oscar make
+probability that after running the men-proposing algorithm,
+                                                                  proposals. After they finish proposing, Oscar enters and
+Bert remains single. By Theorem B we know that the order
+                                                                  proposes to the first woman in his list. Let M denote the
+of proposals does not affect the outcome of the algorithm.
+                                                                  set of married women at this point. The expected size of
+Therefore, we can assume that one of the m + 1 men, say
+                                                                  M , is the same as the expected number of married men,
+Ernie, starts proposing to women only after everyone else
+                                                                  which is (1 − pk (dcne, n))dcne by the definition of pk (m, n).
+is done with his or her proposals. Therefore, by definition,
+before Ernie starts proposing, the probability that Bert is       Therefore,    there is a probability of dcne  n (1 − pk (dcne, n)) ≥
+single is precisely pk (m, n). If Bert is married at this point,  c(1  −  p k (dcne, n))  that Oscar   proposes   to a married woman.
+then there is a chance that after Ernie starts proposing, he      A   married    woman    rejects  a  new   proposal   with probability
+becomes single, since his wife might leave him and he might       at  least  1/2.  Thus,   there  is a  probability   of at least 2c (1 −
+not have anyone else in his list. However, if he is single before pk (dcne, n)) that Oscar’s marriage proposal is rejected by
+Ernie starts proposing, there is no chance that he gets married her favorite woman. Similarly, the same can happen for
+as a result of Ernie’s proposal. Therefore, the probability that her second favorite woman, and so on. Therefore,         k
+                                                                                                                                 there is
+                                                                                                   c
+Bert remains single is not less than pk (m, n).                   a  probability   of  at least    2 (1 −  p k (dcne, n))     that Oscar
+                                                                  faces rejection immediately after each of his proposals, in
+Proof of Lemma A.1. Let c < 1 be a constant that will be which case, he ends up single.
+fixed later. By Lemma A.2, we have pk (n) = pk (n, n) ≥                 Inequalities 1.7 and 1.8 imply the following
+pk (dcne + 1, n). Therefore, we only need to prove that                                                  c             k
+pk (dcne + 1, n) ≥ ek21
+                        k . The proof of this fact is based on                      pk (dcne + 1, n) ≥         (1 − ck ) .
+                                                                                                           2
+the following two inequalities:
+                                                                                             −1/k
+                                                                          Choosing c = k            in the above inequality completes
+                              c                      k             the proof of the lemma.                                       
+(1.7)    pk (dcne + 1, n) ≥         (1 − pk (dcne, n))
+                                2
+(1.8)                  pk (dcne, n) ≤ ck
+      We start by proving inequality (1.8). Consider the
+situation where there are dcne men and n women. Fix a
+man, say Kermit. The probability that Kermit remains single
+is pk (dcne, n). Now, consider the men-proposing algorithm.
+Since the order of proposals does not change the outcome,
+we can assume that Kermit will wait until everyone else stops
+proposing, and then he will make his first proposal. At this
+moment, there are at most dcne − 1 < cn women who are
+married, and at least (1 − c)n women who are still single. Let
+S denote the set of single women at this point. Since Kermit’s
+list consists of k randomly chosen women, the probability that
+none of them is in S is at most ck . We claim that if at least
+one of the women in Kermit’s list is in S then Kermit will
+find a wife. The reason is that every time Kermit makes a
+proposal, if he proposes to a single woman, the proposal will
+be accepted and the algorithm ends. But if he proposes to a
+married woman, he might start a chain of proposals that will
+either end at a single woman, in which case Kermit ends up
+married, or gets back to Kermit, in which case the set of single
+women does not change and we can repeat the same argument
+for the next proposal of Kermit until he reaches a woman in
+her list that is in S. By this claim, the probability that Kermit
+remains single is upper bounded by the probability that none
+of the women in her list is in S, which is at most ck .
+

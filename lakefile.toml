@@ -76,7 +76,27 @@ name = "GHW01DigitalGoods"
 srcDir = "papers"
 
 [[lean_lib]]
+name = "EOS07GSP"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "GLM20DroppingStandardizedTesting"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "IM05MarriageHonestyStability"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "KR21Monoculture"
+srcDir = "papers"
+
+[[lean_lib]]
 name = "MSVV07AdWords"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "PRPKG24AccuracyDiversity"
 srcDir = "papers"
 
 [[lean_lib]]

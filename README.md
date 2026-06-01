@@ -122,5 +122,6 @@ or publication terms.
 - [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md): public paper status.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): repository architecture.
 - [docs/ECONCSLIB_DOMAIN_INDEX.md](docs/ECONCSLIB_DOMAIN_INDEX.md): library modules by domain.
+- [docs/PRIVATE_DEVELOPMENT_WORKFLOW.md](docs/PRIVATE_DEVELOPMENT_WORKFLOW.md): private development and public PR workflow.
 - [docs/LEAN_STYLE.md](docs/LEAN_STYLE.md) and [docs/STATUS.md](docs/STATUS.md): contribution conventions.
 - [ROADMAP.md](ROADMAP.md): high-level project roadmap.

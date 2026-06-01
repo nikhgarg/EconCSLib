@@ -10,8 +10,8 @@ or what a completed formalization proves without reading proof internals.
 - [../README.md](../README.md): short project overview and review path.
 - [REVIEW_DASHBOARD.md](REVIEW_DASHBOARD.md): theorem-statement review
   dashboard workflow.
-- [PAPER_STATUS.md](PAPER_STATUS.md): generated public paper citation, status
-  labels linked to validation reports, human-review, Lean LOC, and note table.
+- [PAPER_STATUS.md](PAPER_STATUS.md): generated paper citation, status labels
+  linked to validation reports, human-review, Lean LOC, and note table.
 - `../papers/<PaperName>/status.json`: paper-local machine-readable source of
   truth for status, review rows, and artifact paths.
 - [../papers/human_status.json](../papers/human_status.json): generated compact
@@ -23,6 +23,8 @@ or what a completed formalization proves without reading proof internals.
   a public-safe pull request when ready.
 - [PUBLIC_REPOSITORY_WORKFLOW.md](PUBLIC_REPOSITORY_WORKFLOW.md): public/private
   repository split, completed-paper imports, and private partial-paper policy.
+- [PRIVATE_DEVELOPMENT_WORKFLOW.md](PRIVATE_DEVELOPMENT_WORKFLOW.md):
+  public-based private repository workflow and private-to-public paper PR path.
 - [PUBLIC_RELEASE_CHECKLIST.md](PUBLIC_RELEASE_CHECKLIST.md): checks before a
   public announcement or broad external contribution request.
 - [REPOSITORY_LAUNCH_PLAN.md](REPOSITORY_LAUNCH_PLAN.md): current launch plan

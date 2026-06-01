@@ -372,11 +372,11 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   mistakes is not.
 - Before editing a paper lane, identify which repository you are in and which
   paper set it exposes. Typical local sibling names are `EconCSLib-private`
-  for the private full-history incubator and `EconCSLib-public` for the
-  filtered public release repository, though the public GitHub repository may
-  be named `EconCSLib`. Confirm with `pwd`, `git remote -v`, and
-  `find papers -maxdepth 1 -type d | sort`; do not infer privacy from the
-  repository title alone.
+  for the public-based private incubator and `EconCSLib-public` or
+  `EconCSLib` for the public release repository. Older standalone private
+  history belongs in the archive repository. Confirm with `pwd`,
+  `git remote -v`, and `find papers -maxdepth 1 -type d | sort`; do not infer
+  privacy from the repository title alone.
 - Treat any older `EconCSLean` checkout as a legacy private working copy unless
   the user explicitly says otherwise. If it points at the same
   `EconCSLib-private` remote, do not start new work there by default; inspect it
@@ -395,6 +395,11 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   `GHW01DigitalGoods` (sometimes referred to informally as `GW01`) is a public
   formalized lane: edit `papers/GHW01DigitalGoods/`, its root module, reusable
   public library files, and public status/docs in `EconCSLib-public`.
+- For private papers that may later be published, prefer a topic branch forked
+  from public `main` and keep the branch scoped to the paper folder, root paper
+  module, paper-local `status.json`, and required reusable library changes.
+  Push public-ready branches to the public repository for review rather than
+  opening a broad PR from the private superset branch.
 - When a paper exists in both private and public, choose one primary worktree
   for the current task and keep all builds, dashboard refreshes, reports, DAGs,
   and commits in that same repo. Use the public repo as primary for public

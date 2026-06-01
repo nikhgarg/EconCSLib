@@ -1,0 +1,103 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[node distance=0.9cm and 1.3cm,
+  every node/.style={font=\sffamily\small},
+  im05_caveat/.style={
+    dag_caveat,
+    minimum width=3.8cm,
+    minimum height=2.5cm,
+    text width=3.25cm,
+    inner sep=1pt,
+    font=\sffamily\scriptsize
+  }]
+
+\dagPaperMetadata{Marriage, Honesty, and Stability}{N. Immorlica and M. Mahdian}{MIT-LCS-TR-913 / SODA}{2005}{https://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-913.pdf}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) {\textbf{Closed}\\paper-facing};
+\node[dag_partial, right=0.35cm of legRes, dag_template_legend] (legPart) {\textbf{Partial}\\incomplete};
+\node[dag_conditional, right=0.35cm of legPart, dag_template_legend] (legCond) {\textbf{Conditional}\\bridge};
+\node[dag_caveat_legend, right=0.35cm of legCond] (legCav) {\textbf{Caveat}\\encoded};
+\node[dag_unformalized, right=0.35cm of legCav, dag_template_legend] (legOpen) {\textbf{Open}\\not started};
+}
+\daglegend{(legRes)(legPart)(legCond)(legCav)(legOpen)}{Legend}
+
+\begin{dagPaperBody}
+\node[dag_model] (Defs) at (0,0)
+  {\textbf{Definitions (Sec. 2--3)}\\stable partners, multi-stable counts, popularity};
+\node[im05_caveat] (ThmA) at (0,-3.4)
+  {\textbf{Theorem A (Sec. 2)}\\DA stable/optimal; strict complete domain};
+\node[im05_caveat] (ThmB) at (0,-7.9)
+  {\textbf{Theorem B (Sec. 2)}\\proposal order via uniqueness};
+\node[im05_caveat] (ThmC) at (-0.8,-12.4)
+  {\textbf{Theorem C (Sec. 2)}\\same singles on complete domain};
+\node[im05_caveat] (ThmD) at (0,-16.9)
+  {\textbf{Theorem D (Sec. 2)}\\truthfulness via Roth82 strict domain};
+
+\node[dag_unformalized] (Conj) at (5,-1.5)
+  {\textbf{Conjecture 1 (Sec. 3)}\\Roth--Peranson vanishing fraction};
+\node[dag_partial] (Thm31) at (5,-5)
+  {\textbf{Theorem 3.1}\\finite summation/asymptotics closed; needs Theorem 4.1, Algorithm 4.2 wiring, and repaired Lemma 4.4 input};
+\node[dag_result] (Thm32Bridge) at (5,-8.5)
+  {\textbf{Theorem 3.2 bridge}\\constant bound implies vanishing fraction};
+\node[dag_conditional] (Thm32) at (5,-12)
+  {\textbf{Theorem 3.2}\\constant-bound endpoint conditional on Lemma 6.2 experiments and Algorithm 4 reduction};
+
+\node[dag_conditional] (Alg41) at (10.5,0)
+  {\textbf{Algorithm 4.1}\\target-divorcing trace, nodup/order, and invariants; pair-witness certificate open};
+\node[dag_conditional] (Thm41) at (10.5,-3)
+  {\textbf{Theorem 4.1}\\accepted men equal stable husbands from pair-witness completion plus equal cardinality};
+\node[dag_partial] (Alg42) at (10.5,-7)
+  {\textbf{Algorithm 4.2}\\fresh-list PMF and prefix laws closed; stable-market random-variable wiring open};
+\node[im05_caveat] (L42) at (14.1,-10.5)
+  {\textbf{Lemma 4.2}\\$X_\mu(g) \ge Y_g$ stable-sample wrapper};
+\node[dag_partial] (L43) at (10.5,-13.3)
+  {\textbf{Lemma 4.3}\\ranked-tail expectation route and concrete fresh-list product bound closed};
+\node[im05_caveat] (L44) at (8.2,-17.2)
+  {\textbf{Lemma 4.4}\\printed variance false; tail bridge encoded};
+\node[dag_partial] (L41) at (10.5,-21.2)
+  {\textbf{Lemma 4.1}\\Chebyshev reciprocal algebra and corrected tail bridge closed; concrete inputs remain};
+
+\node[dag_partial] (Cor31) at (16,-3)
+  {\textbf{Corollary 3.1}\\fixed-agent probability/asymptotic bridge; best-response wrapper open};
+\node[dag_partial] (Cor32) at (16,-6)
+  {\textbf{Corollary 3.2}\\equilibrium wrapper still needs mechanism/incentive bridge};
+\node[dag_partial] (Cor33) at (18,-9)
+  {\textbf{Corollary 3.3}\\approximate-BN wrapper still needs mechanism/incentive bridge};
+
+\node[dag_conditional] (L62) at (16,-13.2)
+  {\textbf{Lemma 6.2}\\five-experiment chain closed under explicit coupling and per-pair probability inputs};
+\node[dag_conditional] (L62Pert) at (20,-11.3)
+  {\textbf{Lemma 6.2 perturbation}\\bad-prefix union bound and $k \ge 4$ algebra; source per-pair reduction open};
+\node[dag_result] (L63) at (16,-17)
+  {\textbf{Lemma 6.3}\\empty-bin reciprocal bound};
+\node[dag_conditional] (L61) at (16,-21.2)
+  {\textbf{Lemma 6.1}\\uniform reciprocal-singles bound from Lemma 6.2 and Lemma 6.3};
+
+\node[dag_unformalized] (LA2) at (21,-15)
+  {\textbf{Lemma A.2 (App. A)}\\single probability monotonicity};
+\node[dag_unformalized] (LA1) at (21,-18.8)
+  {\textbf{Lemma A.1 (App. A)}\\fixed-man single probability lower bound};
+
+\draw[dag_arrow] (Defs) -- (ThmA);
+\draw[dag_arrow] (ThmA) -- (ThmB);
+\draw[dag_dashed_arrow] (Thm31) -- (Conj);
+
+\draw[dag_dashed_arrow] (Alg41) -- (Thm41);
+\draw[dag_dashed_arrow] (Thm41) -- (Alg42);
+\draw[dag_dashed_arrow] (Alg42.east) -- ++(0.8,0) |- (L42.north);
+\draw[dag_dashed_arrow] (Alg42.south west) -- ++(0,-0.8) -| (L43.north west);
+\draw[dag_dashed_arrow] (L43.south east) -- ++(0,-1.2) -| (L41.north east);
+\draw[dag_dashed_arrow] (L44.south east) -- (L41.north west);
+
+\draw[dag_dashed_arrow] (L62.south) -- ++(1.4,-0.6) |- (L61.north east);
+\draw[dag_dashed_arrow] (L62Pert) -- (L62);
+\draw[dag_dashed_arrow] (L63) -- (L61);
+\draw[dag_dashed_arrow] (L61.west) -- ++(-2.0,0) |- (Thm32.east);
+\draw[dag_dashed_arrow] (Thm32) -- (Thm32Bridge);
+
+\draw[dag_dashed_arrow] (LA2) -- (LA1);
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

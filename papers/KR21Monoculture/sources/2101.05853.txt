@@ -1,0 +1,3184 @@
+Algorithmic Monoculture and Social Welfare∗
+Jon Kleinberg
+
+Manish Raghavan
+
+arXiv:2101.05853v2 [cs.GT] 1 Jun 2021
+
+Abstract
+As algorithms are increasingly applied to screen applicants for high-stakes decisions in employment,
+lending, and other domains, concerns have been raised about the effects of algorithmic monoculture, in
+which many decision-makers all rely on the same algorithm. This concern invokes analogies to agriculture,
+where a monocultural system runs the risk of severe harm from unexpected shocks. Here we show that
+the dangers of algorithmic monoculture run much deeper, in that monocultural convergence on a single
+algorithm by a group of decision-making agents, even when the algorithm is more accurate for any one
+agent in isolation, can reduce the overall quality of the decisions being made by the full collection of
+agents. Unexpected shocks are therefore not needed to expose the risks of monoculture; it can hurt
+accuracy even under “normal” operations, and even for algorithms that are more accurate when used by
+only a single decision-maker. Our results rely on minimal assumptions, and involve the development of a
+probabilistic framework for analyzing systems that use multiple noisy estimates of a set of alternatives.
+
+1
+
+Introduction
+
+The rise of algorithms used to shape societal choices has been accompanied by concerns over monoculture—
+the notion that choices and preferences will become homogeneous in the face of algorithmic curation. One
+of many canonical articulations of this concern was expressed in the New York Times by Farhad Manjoo,
+who wrote, “Despite the barrage of choice, more of us are enjoying more of the same songs, movies and
+TV shows” [15]. Because of algorithmic curation, trained on collective social feedback [20], our choices are
+converging.
+When we move from the influence of algorithms on media consumption and entertainment to their
+influence on high-stakes screening decisions about whom to offer a job or whom to offer a loan, the concerns
+about algorithmic monoculture become even starker. Even if algorithms are more accurate on a case-bycase basis, a world in which everyone uses the same algorithm is susceptible to correlated failures when
+the algorithm finds itself in adverse conditions. This type of concern invokes an analogy to agriculture,
+where monoculture makes crops susceptible to the attack of a single pathogen [18]; the analogy has become
+a mainstay of the computer security literature [3], and it has recently become a source of concern about
+screening decisions for jobs or loans as well. Discussing the post-recession financial system, Citron and
+Pasquale write, “Like monocultural-farming technology vulnerable to one unanticipated bug, the converging
+methods of credit assessment failed spectacularly when macroeconomic conditions changed” [6].
+The narrative around algorithmic monoculture thus suggests a trade-off: in “normal” conditions, a more
+accurate algorithm will improve the average quality of screening decisions, but when conditions change
+through an unexpected shock, the results can be dramatically worse. But is this trade-off genuine? In the
+absence of shocks, does monocultural convergence on a single, more accurate screening algorithm necessarily
+lead to better average outcomes?
+In this work, we show that algorithmic monoculture poses risks even in the absence of shocks. We
+investigate a model involving minimal assumptions, in which two competing firms can either use their own
+independent heuristics to perform screening decisions or they can use a more accurate algorithm that is
+accessible to both of them. (Again, we think of screening job applicants or loan applicants as a motivating
+scenario.) We find that even though it would be rational for each firm in isolation to adopt the algorithm, it
+is possible for the use of the algorithm by both firms to result in decisions that are worse on average. This
+∗ A version of this paper appears in Proceedings of the National Academy of Sciences at https://www.pnas.org/content/
+118/22/e2018340118
+
+1
+
+in turn leads, in the language of game theory, to a type of “Braess’ paradox” [5] for screening algorithms:
+the introduction of a more accurate algorithm can drive the firms into a unique equilibrium that is worse for
+society than the one that was present before the algorithm existed.
+Note that the harm here is to overall performance. Another common concern about algorithmic monoculture in screening decisions is the harm it can cause to specific individuals: if all employers or lenders use
+the same algorithm for their screening decisions, then particular applicants might find themselves locked
+out of the market when this shared algorithm doesn’t like their application for some reason. While this is
+clearly also a significant concern, our results show that it would be a mistake to view the harm to particular
+applicants as necessarily balanced against the gains in overall accuracy — rather, it is possible for algorithmic
+monoculture to cause harm not just to particular applicants but also to the average quality of decisions as
+well.
+Our results thus have a counterintuitive flavor to them: if an algorithm is clearly more accurate than
+the alternatives when one entity uses it, why does the accuracy become worse than the alternatives when
+multiple entities use it? The analysis relies on deriving some novel probabilistic properties of rankings,
+establishing that when we are constructing a ranking from a probability distribution representing a “noisy”
+version of a true ordering, we can sometimes achieve less error through an incremental construction of the
+ranking — building it one element at a time — than we can by constructing it in a single draw from the
+distribution. We now set up the basic model, and then frame the probabilistic questions that underpin its
+analysis.
+
+Firm 1
+
+Firm 2
+
+Firm 1’s ranking
+
+Algorithmic ranking
+
+Firm 2’s ranking
+
+B
+A
+D
+C
+
+A
+C
+B
+D
+
+C
+A
+B
+D
+
+Figure 1: Each firm has the choice to use either their own private ranking or the common algorithmic
+ranking to order the n candidates. In a random order, each firm hires the highest-ranked available candidate
+according to the ranking they chose. For example, if Firm 1 uses their private ranking and Firm 2 uses the
+algorithmic ranking, then Firm 1 hires candidate B and Firm 2 hires candidate A. If both firms use the
+algorithmic ranking, then the firm randomly selected to hire first hires candidate A and the firm randomly
+selected to hire second hires candidate C.
+
+2
+
+Algorithmic hiring as a case study
+
+To instantiate the ideas introduced thus far, we’ll focus on the case of algorithmic hiring, where recruiters
+make decisions based in part on scores or recommendations provided by data-driven algorithms. In this
+setting, we’ll propose and analyze a stylized model of algorithmic hiring with which we can begin to investigate
+the effects of algorithmic monoculture.
+Informally, we can think of a simplified hiring process as follows: rank all of the candidates and select
+the first available one. We suppose that each firm has two options to form this ranking: either develop
+their own, private ranking (which we will refer to as using a “human evaluator”), or use an algorithmically
+produced ranking. We assume that there is a single vendor of algorithmic rankings, so all firms choosing
+to use the algorithm receive the same ranking. The firms proceed in a random order, each hiring their
+favorite remaining candidate according to the ranking they’re using—human-generated or algorithmic (see
+Figure 1 for an example). Thus, we can frame the effects of monoculture as follows: are firms better off using
+the more accurate, common algorithm, or should they instead employ their own less accurate, but private,
+evaluations?
+2
+
+In what follows, we’ll introduce a formal model of evaluation and selection, using it to analyze a setting
+in which firms seek to hire candidates.
+
+2.1
+
+Modeling ranking
+
+More formally, we model the n candidates as having intrinsic values x1 , . . . , xn , where any employer would
+derive utility xi from hiring candidate i. Throughout the paper, we assume without loss of generality that
+x1 > x2 > · · · > xn . These values, however, are unknown to the employer; instead, they must use some
+noisy procedure to rank the candidates. We model such a procedure as a randomized mechanism R that
+takes in the true candidate values and draws a permutation π over those candidates from some distribution.
+Our main results hold for families of distributions over permutations as defined below:
+Definition 1 (Noisy permutation family). A noisy permutation family Fθ is a family of distributions over
+permutations that satisfies the following conditions for any θ > 0 and set of candidates x:
+1. (Differentiability) For any permutation π, PrFθ [π] is continuous and differentiable in θ.
+2. (Asymptotic optimality) For the true ranking π ∗ , limθ→∞ PrFθ [π ∗ ] = 1.
+3. (Monotonicity) For any (possibly empty) S ⊂ x, let π (−S) be the partial ranking produced by removing
+(−S)
+the items in S from π. Let π1
+denote the value of the top-ranked candidate according to π (−S) . For
+0
+any θ > θ,
+h
+i
+h
+i
+(−S)
+(−S)
+EFθ0 π1
+≥ EFθ π1
+.
+(1)
+Moreover, for S = ∅, (1) holds with strict inequality.
+θ serves as an “accuracy parameter”: for large θ, the noisy ranking converges to the true ranking over
+candidates. The monotonicity condition states that a higher value of θ leads to a better first choice, even
+if some of the candidates are removed after ranking. Removal after ranking (as opposed to before) is
+important because some of the ranking models we will consider later do not satisfy Independence of Irrelevant
+Alternatives. Examples of noisy permutation families include Random Utility Models [23] and the Mallows
+Model [14], both of which we will discuss in detail later.
+As an objective function to evaluate the effects of different approaches to ranking and selection, we’ll
+consider each individual employer’s utility as well as the sum of employers’ utilities. We think of this latter
+sum as the social welfare, since it represents the total quality of the applicants who are hired by any firm.
+(For example, if all firms deterministically used the correct ranking, then the top applicants would be the
+ones hired, leading to the highest possible social welfare.)
+
+2.2
+
+Modeling selection
+
+Each firm in our model has access to the same underlying pool of n candidates, which they rank using
+a randomized mechanism R to get a permutation π as described above. Then, in a random order, each
+firm hires the highest-ranked remaining candidate according to their ranking. Thus, if two firms both rank
+candidate i first, only one of them can hire i; the other must hire the next available candidate according to
+their ranking. In our model, candidates automatically accept the offer they get from a firm. For the sake
+of simplicity, throughout this paper, we restrict ourselves to the case where there are two firms hiring one
+candidate each, although our model readily generalizes to more complex cases.
+As described earlier, each firm can choose to use either a private “human evaluator” or an algorithmically
+generated ranking as its randomized mechanism R. We assume that both candidate mechanisms come from
+a noisy permutation family Fθ , with differing values of the accuracy parameter θ: human evaluators all have
+the same accuracy θH , and the algorithm has accuracy θA . However, while the human evaluator produces a
+ranking independent of any other firm, the algorithmically generated ranking is identical for all firms who
+choose to use it. In other words, if two firms choose to use the algorithmically generated ranking, they will
+both receive the same permutation π.
+The choice of which ranking mechanism to use leads to a game-theoretic setting: both firms know the
+accuracy parameters of the human evaluators (θH ) and the algorithm (θA ), and they must decide whether to
+3
+
+use a human evaluator or the algorithm. This choice introduces a subtlety: for many ranking models, a firm’s
+rational behavior depends not only on the accuracy of the ranking mechanism, but also on the underlying
+candidate values x1 , . . . , xn . Thus, to fully specify a firm’s behavior, we assume that x1 , . . . , xn are drawn
+from a known joint distribution D. Our main results will hold for any D, meaning they apply even when the
+candidate values (but not their identities) are deterministically known.
+
+2.3
+
+Stating the main result
+
+Our main result is a pair of intuitive conditions under which a Braess’ Paradox-style result occurs—in other
+words, conditions under which there are accuracy parameters for which both firms rationally choose to use
+the algorithmic ranking, but social welfare (and each individual firm’s utility) would be higher if both firms
+used independent human evaluators. Recall that the two firms hire in a random order. For a permutation
+π, let πi denote the value of the ith-ranked candidate according to π.
+We first state the two conditions, and then the theorem based on them.
+Definition 2 (Preference for the first position.). A candidate distribution D and noisy permutation family
+Fθ exhibits a preference for the first position if for all θ > 0, if π, σ ∼ Fθ ,
+E [π1 − π2 | π1 6= σ1 ] > 0.
+
+In other words, for any θ > 0, suppose we draw two permutations π and σ independently from Fθ , and
+suppose that the first-ranked candidates differ in π and σ. Then the expected value of the first-ranked
+candidate in π is strictly greater than the expected value of the second-ranked candidate in π.
+Definition 3 (Preference for weaker competition.). A candidate distribution D and noisy permutation family
+Fθ , exhibits a preference for weaker competition if the following holds: for all θ1 > θ2 , σ ∼ Fθ1 and
+π, τ ∼ Fθ2 ,
+h
+i
+h
+i
+(−{σ1 })
+
+E π1
+
+(−{τ1 })
+
+< E π1
+
+.
+
+Intuitively, suppose we have a higher accuracy parameter θ1 and a lower accuracy parameter θ2 < θ1 ; we
+draw a permutation π from Fθ2 ; and we then derive two permutations from π: π (−{σ1 }) obtained by deleting
+the first-ranked element of a permutation σ drawn from the more accurate distribution Fθ1 , and π (−{τ1 })
+obtained by deleting the first-ranked element of a permutation τ drawn from the less accurate distribution
+Fθ2 .
+Then the expected value of the first-ranked candidate in π (−{τ1 }) is strictly greater than the expected
+value of the first-ranked candidate in π (−{σ1 }) — that is, when a random candidate is removed from π, the
+best remaining candidate is better in expectation when the randomly removed candidate is chosen based on
+a noisier ranking.
+Using these two conditions, we can state our theorem.
+Theorem 1. Suppose that a given candidate distribution D and noisy permutation family Fθ satisfy Definition 2 (preference for the first position) and Definition 3 (preference for weaker competition).
+Then, for any θH , there exists θA > θH such that using the algorithmic ranking is a strictly dominant
+strategy for both firms, but social welfare would be higher if both firms used human evaluators.
+
+2.4
+
+A Preference for Independence
+
+Before we prove Theorem 1, we provide some intuition for the two conditions in Definitions 2 and 3. The
+second condition essentially says that it is better to have a worse competitor: the firm randomly selected
+to hire second is better off if the firm that hires first uses a less accurate ranking (in this case, a human
+evaluator instead of the algorithmic ranking).
+The first condition states that when two identically distributed permutations disagree on their first
+element, the first-ranked candidate according to either permutation is still better, in expectation, than the
+4
+
+second-ranked candidate according to either permutation. In what follows, we’ll demonstrate that this
+condition implies that firms in our model rationally prefer to make decisions using independent (but equally
+accurate) rankings.
+To do so, we need to introduce some notation. Recall that the two firms hire in a random order. Given
+a candidate distribution D, let Us (θA , θH ) denote the expected utility of the first firm to hire a candidate
+when using ranking s, where s ∈ {A, H} is either the algorithmic ranking or the ranking generated by a
+human evaluator respectively. Similarly, let Us1 s2 (θA , θH ) be the expected utility of the second firm to hire
+given that the first firm used strategy s1 and the second firm uses strategy s2 , where again s1 , s2 ∈ {A, H}.
+Finally, let π, σ ∼ Fθ .
+In what follows, we will show that for any θ,
+E [π1 − π2 | π1 6= σ1 ] > 0 ⇐⇒ UAH (θ, θ) > UAA (θ, θ).
+
+(2)
+
+In other words, whenever a ranking model meets Definition 2, the firm chosen to select second will prefer to
+use an independent ranking mechanism from it’s competitor, given that the ranking mechanisms are equally
+accurate.
+First, we can write
+UAH (θA , θH ) = E [π1 · 1π1 6=σ1 + π2 · 1π1 =σ1 ]
+UAA (θA , θH ) = E [σ2 ]
+= E [σ2 · 1π1 6=σ1 + σ2 · 1π1 =σ1 ]
+Thus,
+UAH (θA , θH ) − UAA (θA , θH )
+= E [(π1 − σ2 ) · 1π1 6=σ1 + (π2 − σ2 ) · 1π1 =σ1 ] .
+Conditioned on either π1 = σ1 or π1 6= σ1 , π2 and σ2 are identically distributed and therefore have equal
+expectations. As a result,
+UAH (θA , θH ) − UAA (θA , θH ) = E [(π1 − π2 ) · 1π1 6=σ1 ] ,
+
+(3)
+
+which implies (2). Thus, whenever a ranking model meets Definition 2, firms rationally prefer independent
+assessments, all else equal.
+To provide some intuition for what this preference for independence entails, consider a setting where
+a hiring committee seeks to hire two candidates. They meet, produce a ranking σ, and hire σ1 (the best
+candidate according to σ). Suppose they have the option to either hire σ2 or reconvene the next day to form
+an independent ranking π and hire the best remaining candidate according to π; which option should they
+choose? It’s not immediately clear why one option should be better than the other. However, whenever
+Definition 2 is met, the committee should prefer to reconvene and make their second hire according to a
+new ranking π. After proving Theorem 1, we will provide natural ranking models that meet Definition 2,
+implying that under these ranking models, independent re-ranking can be beneficial.
+
+2.5
+
+Proving Theorem 1
+
+With this intuition, we are ready to prove Theorem 1.
+Proof of Theorem 1. For given values of θA and θH , using the algorithmic ranking is a strictly dominant
+strategy as long as
+UA (θA , θH ) + UAA (θA , θH ) > UH (θA , θH ) + UAH (θA , θH )
+
+(4)
+
+UA (θA , θH ) + UHA (θA , θH ) > UH (θA , θH ) + UHH (θA , θH )
+
+(5)
+
+Note that (5) is always true for θA > θH by the monotonicity assumption on Fθ : UA (θA , θH ) ≥ UH (θA , θH )
+because a more accurate ranking produces a top-ranked candidate with higher expected value, and UHA (θA , θH ) ≥
+UHH (θA , θH ) because this holds even conditioned on removing any candidate from the pool (in this case, the
+5
+
+candidate randomly selected by the firm that hires first). Crucially, in (5), the first firm’s random selection
+is independent from the second firm’s selection; the same logic could not be used to argue that (4) always
+holds for θA ≥ θH . Moreover, when θA > θH , UA (θA , θH ) > UH (θA , θH ) by the monotonicity assumption,
+meaning (5) holds.
+Let Ws1 s2 (θA , θH ) denote social welfare when the two firms employ strategies s1 , s2 ∈ {A, H}. Then,
+when both firms use the algorithmic ranking, social welfare is
+WAA (θA , θH ) = UA (θA , θH ) + UAA (θA , θH ).
+By (2), Definition 2 implies that for any θ, UAA (θ, θ) < UAH (θ, θ), implying
+UA (θH , θH ) + UAA (θH , θH ) < UH (θH , θH ) + UAH (θH , θH ).
+However, by the optimality assumption on Fθ in Definition 1, for sufficiently large θ̂A ,
+UA (θ̂A , θH ) + UAA (θ̂A , θH ) > UH (θ̂A , θH ) + UAH (θ̂A , θH ).
+Note that Us1 (θA , θH ) and Us1 s2 (θA , θH ) are continuous with respect to θA for any s1 , s2 ∈ {A, H} since
+they are expectations over discrete distributions with probabilities that are by assumption differentiable with
+∗
+> θH
+respect to θA . Therefore, by the Differentiability assumption on Fθ from Definition 1, there is some θA
+such that
+∗
+∗
+∗
+∗
+UA (θA
+, θH ) + UAA (θA
+, θH ) = UH (θA
+, θH ) + UAH (θA
+, θH ),
+(6)
+i.e., given that its competitor uses the algorithmic ranking, a firm is indifferent between the two strategies.
+∗
+, using the algorithmic ranking is still a weakly dominant strategy. By definition of WAA ,
+For such θA
+∗
+∗
+∗
+WAA (θA
+, θH ) = UH (θA
+, θH ) + UAH (θA
+, θH ).
+
+If both firms had instead used human evaluators, social welfare would be
+∗
+∗
+∗
+WHH (θA
+, θH ) = UH (θA
+, θH ) + UHH (θA
+, θH ).
+
+By Definition 3, for σ ∼ FθA∗ and π, τ ∼ FθH ,
+h
+i
+h
+i
+(−{σ })
+(−{τ })
+E π1 1
+< E π1 1 .
+Note that
+h
+i
+(−{σ })
+∗
+UAH (θA
+, θH ) = E π1 1
+h
+i
+(−{τ })
+∗
+UHH (θA
+, θH ) = E π1 1
+∗
+∗
+, θH ). As a result for θA∗ > θH , using
+Thus, Definition 3 implies that for θA∗ > θH , UHH (θA
+, θH ) > UAH (θA
+the algorithmic ranking is a weakly dominant strategy, but
+∗
+∗
+∗
+WHH (θA
+, θH ) = UH (θA
+, θH ) + UHH (θA
+, θH )
+∗
+∗
+> UH (θA
+, θH ) + UAH (θA
+, θH )
+∗
+∗
+= UA (θA
+, θH ) + UAA (θA
+, θH )
+∗
+= WAA (θA
+, θH ),
+
+meaning social welfare would have been higher had both firms used human evaluators.
+0
+We can show that this effect persists for a value θA
+such that using the algorithmic ranking is a strictly
+∗
+dominant strategy. Intuitively, this is simply by slightly increasing θA
+so the algorithmic ranking is strictly
+dominant. For fixed θH , define
+f (θA ) = UA (θA , θH ) + UAA (θA , θH )
+g(θA ) = UH (θA , θH ) + UAH (θA , θH )
+h(θA ) = UH (θA , θH ) + UHH (θA , θH )
+6
+
+0
+0
+0
+Because (5) always holds for θA > θH , it suffices to show that there exists θA
+such that g(θA
+) < f (θA
+)<
+0
+0
+0
+0
+0
+0
+h(θA ). This is because g(θA ) < f (θA ) is equivalent to (4) and f (θA ) < h(θA ) is equivalent to WAA (θA , θH ) <
+0
+WHH (θA
+, θH ).
+First, note that h(θA ) is a constant, and by Definition 3, g(θA ) < h(θA ) for all θA > θH . By the
+optimality assumption of Definition 1, there exists sufficiently large θ̂A such that f (θ̂A ) > g(θ̂A ). Recall
+∗
+∗
+∗
+that by definition of θA
+, f (θA
+) = g(θA
+). Both f and g are continuous by the Differentiability assumption in
+0
+∗
+0
+0
+0
+Definition 1. Thus, there must exist some θA
+> θA
+such that g(θA
+) < f (θA
+) < h(θA
+). This means that for
+0
+θA , using the algorithmic ranking is a strictly dominant strategy, but social welfare would still be larger if
+both firms used human evaluators.
+
+3
+
+Instantiating with Ranking Models
+
+Thus far, we have described a general set of conditions under which algorithmic monoculture can lead to
+a reduction in social welfare. Under which ranking models do these conditions hold? In the remainder
+of this paper, we instantiate the model with two well-studied ranking models: Random Utility Models
+(RUMs) [23] and the Mallows Model [14]. While RUMs do not always satisfy Definitions 2 and 3, they
+do under some realistic parameterizations, regardless of the candidate distribution D. Under the Mallows
+Model, Definitions 2 and 3 are always met, meaning that for any candidate distribution D and human
+evaluator accuracy θH , there exists an accuracy parameter θA such that a common algorithmic ranking with
+accuracy θA decreases social welfare.
+
+Figure 2: UAH (θ, θ) − UAA (θ, θ) for three noise models with n candidates whose utilities are drawn from a
+uniform distribution with unit variance for n = 3, n = 5, and n = 15. Note that for n = 15, UAH (θ, θ) −
+UAA (θ, θ) < 0 for Laplacian noise, meaning Definition 2 is not met.
+
+3.1
+
+Random Utility Models
+
+In Random Utility Models, the underlying candidate values xi are perturbed by independent and identically
+distributed noise εi ∼ E, and the perturbed values are ranked to produce π. Originally conceived in the
+psychology literature [23], this model has been well-studied over nearly a century, [7, 4, 9, 24, 16, 22],
+including more recently in the computer science and machine learning literature [2, 1, 19, 25, 13].
+First, we must define a family of RUMs that satisfies the conditions of Definition 1. Assume without loss of
+generality that the noise distribution E has unit variance. Then, consider the family of RUMs parameterized
+by θ in which candidates are ranked according to xi + εθi . By this definition, the standard deviation of the
+noise for a particular value of θ is simply 1/θ. Intuitively, larger values of θ reduce the effect of the noise,
+making the ranking more accurate. In Theorem 5 in Appendix A, we show as long as the noise distribution
+E has positive support on (−∞, ∞), this definition of Fθ meets the differentiability, asymptotic optimality,
+and monotonicity conditions in Definition 1. For distributions with finite support, many of our results can
+be generalized by relaxing strict inequalities in Definition 1 and Theorem 1 to weak inequalities.
+Because RUMs are notoriously difficult to work with analytically, we restrict ourselves to the case where
+n = 3, i.e., there are 3 candidates. Under this restriction, we can show that for Gaussian and Laplacian noise
+7
+
+Figure 3: Regions for different equilibria. When human evaluators are more accurate than the algorithm,
+both firms decide to employ humans (HH). When the algorithm is significantly more accurate, both firms
+use the algorithm (AA). When the algorithm is slightly more accurate than human evaluators, two possible
+equilibria exist: (1) one firm uses the algorithm and the other employs a human (AH), or (2) both decide
+whether to use the algorithm with some probability p. The shaded portion of the green AA region depicts
+where social welfare is smaller at the AA equilibrium than it would be if both firms used human evaluators.
+distributions, Definition 2 and 3 — the two conditions of Theorem 1 — are met, regardless of the candidate
+distribution D. We defer the proof to Appendix C.
+Theorem 2. Let Fθ be the family of RUMs with either Gaussian or Laplacian noise with standard deviation
+1/θ. Then, for any candidate distribution D over 3 candidates, the conditions of Theorem 1 are satisfied.
+It might be tempting to generalize Theorem 2 to other distributions and more candidates; however,
+certain noise and candidate distributions violate the conditions of Theorem 1. Even for 3-candidate RUMs,
+there exist distributions for which each of the conditions is violated; we provide such examples in Appendix B.
+Moreover, while Gaussian and Laplacian distributions provably meet Definitions 2 and 3 with only 3
+candidates, this doesn’t necessarily extend to larger candidate sets. Figure 2 shows that Definition 2 can be
+violated under a particular candidate distribution D for Laplacian noise with 15 candidates. This challenges
+the intuition that independence is preferable—under some conditions, it can actually better in expectation
+for a firm to use the same algorithmic ranking as its competitor, even if an independent human evaluator
+is equally accurate overall. Unlike Theorem 2, which applies for any candidate distribution D, certain noise
+models may violate Definition 2 only for particular D. It is an open question as to whether Theorem 2 can
+be extended to larger numbers of candidates under Gaussian noise.
+Finally, there exist noise distributions that violate Definition 2 for any candidate distribution D. In
+particular, the RUM family defined by the Gumbel distribution is well-known to be equivalent to the PlackettLuce model of ranking, which is generated by sequentially selecting candidate i with probability
+exp(θxi )
+,
+j∈S exp(θxj )
+
+P
+
+(7)
+
+where S is the set of remaining candidates [12, 4]. Under the Plackett-Luce model, for any θ, UAH (θ, θ) =
+UAA (θ, θ). To see this, suppose the firm that hires first selects candidate i∗ . Then, the firm that hires second
+8
+
+gets each candidate i with probability given by (7) with S = {1, . . . , n}\i∗ . As a result, by (3), if π, σ ∼ Fθ ,
+E [π1 − π2 | π1 6= σ1 ] = 0
+for any candidate distribution D, meaning the Plackett-Luce model never meets Definition 2. Thus, under
+the Plackett-Luce model, monoculture has no effect—the optimal strategy is always to use the best available
+ranking, regardless of competitors’ strategies.
+Given the analytic intractability of most RUMs, it might appear that testing the conditions of Theorem 1,
+especially for a particular noise and candidate distributions, may not be possible; however, they can be
+efficiently tested via simulation: as long as the noise distribution E and the candidate distribution D can
+be sampled from, it is possible to test whether the conditions of Theorem 1 are satisfied. Thus, even if the
+conditions of Theorem 1 are not met for every candidate distribution D, it is possible to efficiently determine
+whether they are met for any particular D.
+It is also interesting to ask about the magnitude of the negative impact produced by monoculture. Our
+model allows for the qualities of candidates to be either positive or negative (capturing the fact that a
+worker’s productivity can be either more or less than their cost to the firm in wages); using this, we can
+construct instances of the model in which the optimal social welfare is positive but the welfare under the
+(unique) monocultural equilibrium implied by Theorem 1 is negative. This is a strong type of negative result,
+in which sub-optimality reverses the sign of the objective function, and it means that in general we cannot
+compare the optimum and equilibrium by taking a ratio of two non-negative quantities, as is standard in
+Price of Anarchy results. However, as a future direction, it would be interesting to explore such Price of
+Anarchy bounds in special cases of the problem where structural assumptions on the input are sufficient to
+guarantee that the welfare at both the social optimum and the equilibrium are non-negative. As one simple
+example, if the qualities for three candidates are drawn independently from a uniform distribution centered
+at 0, and the noise distribution is Gaussian, then there exist parameters θA > θH such that expected social
+welfare at the equilibrium where both firm use the algorithmic ranking is non-negative, and approximately
+4% less than it would be had both firms used human evaluators instead.
+
+3.2
+
+The Mallows Model
+
+The Mallows Model also appears frequently in the ranking literature [8, 11], and is much more analytically
+tractable than RUMs. Under the Mallows Model, the likelihood of a permutation is related to its distance
+from the true ranking π ∗ :
+∗
+1
+(8)
+Pr[π] = φ−d(π,π ) ,
+Z
+where Z is a normalizing constant. In this model, φ > 1 is the accuracy parameter: the larger φ is, the
+more likely the ranking procedure is to output a ranking π that is close to the true ranking r. To instantiate
+this model, we need a notion of distance d(·, ·) over permutations. For this, we’ll use Kendall tau distance,
+another standard notion in the literature, which is simply the number of pairs of elements in π that are
+incorrectly ordered [10]. In Appendix D, we verify that the family of distributions Fθ given by the Mallows
+Model satisfies Definition 1, defining θ = φ − 1 (for consistency, so θ is well-defined on (0, ∞)).
+In contrast to RUMs, the Mallows Model always satisfies the conditions of Theorem 1 for any candidate
+distribution D, which we prove in Appendix E.
+Theorem 3. Let Fθ be the family of Mallows Model distributions with parameter θ = φ − 1. Then, for any
+candidate distribution D, the conditions of Theorem 1 are satisfied.
+Figure 3 characterizes firms’ rational behavior at equilibrium in the (θH , θA ) plane under the Mallows
+Model. The decrease in social welfare found in Theorem 3 is depicted by the shaded portion of the green
+region labeled AA, where social welfare would be higher if both firms used human evaluators.
+While the result of Theorem 3 is certainly stronger than that of Theorem 2, in that it applies to all
+instances of the Mallows Model without restrictions, it should be interpreted with some caution. The
+Mallows Model does not depend on the underlying candidate values, so according to this model, monoculture
+can produce arbitrarily large negative effects. While insensitivity to candidate values may not necessarily be
+reasonable in practice, our results hold for any candidate distribution D. Thus, to the extent that the Mallows
+Model can reasonably approximate ranking in particular contexts, our results imply that monoculture can
+have negative welfare effects.
+9
+
+4
+
+Models with Multiple Firms
+
+Our main focus in this work has been on models with two competing firms. However, it is also interesting to
+consider the case of more than two firms; we will see that the complex and sometimes counterintuitive effects
+that we found in the two-firm case are further enriched by additional phenomena. Primarily, we will present
+the result of computational experiments with the model, exposing some fundamental structural properties
+in the multi-firm problem for which a formal analysis remains an intriguing open problem. For concreteness,
+we will focus on a model in which rankings are drawn from the Mallows model. As before, each firm must
+choose to order candidates according to either an independent, human-produced ranking or an algorithmic
+ranking common to all firms who choose it. These rankings come from instances of the Mallows model with
+accuracy parameters φH and φA respectively as defined in (8).
+Braess’ Paradox for k > 2 firms. First, we ask whether the Braess’ Paradox effect persists with k > 2
+firms. We find that it is possible to construct instances of the problem with k > 2 for which Braess’ Paradox
+occurs — using an algorithmic evaluation is a dominant strategy, but social welfare would be higher if all
+firms used human evaluators instead. For example, suppose n = 4, k = 3, φA = 2, φH = 1.75, and candidate
+qualities are drawn from a uniform distribution on [0, 1]. We find via computation that at equilibrium, each
+firm will rationally decide to use the algorithmic evaluator and experience utility ≈ .551, but if all firms
+instead used human evaluators, they would experience utility ≈ .552. Thus, Braess’ Paradox can occur
+for k > 2 firms. Proving a generalization of Theorem 3, to show that Braess’ Paradox can occur for any
+candidate distribution D and any value of φH for k > 2 firms remains an open question.
+
+Figure 4: Regions for different optimal strategy profiles, where each strategy profile is a sequence of ‘A’ and
+‘H’ representing the optimal strategies of each firm sequentially. For this plot, there are 5 firms (k = 5) and
+6 candidates (n = 6) whose values are drawn from a uniform distribution. Note that when φA is much larger
+than φH , all firms use the algorithmic ranking, but when φA is only slightly larger than φH , only the first
+firm uses the algorithmic ranking.
+Sequential decision-making. Since the equilibrium behaviors we are studying take place in a model
+where firms make decisions in a random order, a crucial first step is to characterize firms’ optimal behavior
+when making decisions sequentially—that is, when firms hire in a fixed, known order as opposed to a random
+
+10
+
+order. In this context, consider the rational behavior of each firm: given a distribution over candidate values,
+which ranking should each firm use? Clearly, the first firm to make a selection should use the more accurate
+ranking mechanism; however, as shown previously, subsequent firms’ decisions are less clear-cut. For a fixed
+number of firms, number of candidates, and distribution over candidate values, we can explore the firms’
+optimal strategies over the possible space of (φH , φA ) values.
+An optimal choice of strategies for the k firms moving sequentially can be written as a sequence of length
+k made up of the symbols A and H; the ith term in the sequence is equal to A if the ith firm to move
+sequentially uses the algorithm as its optimal strategy (given the choices of the previous i − 1 firms), and it
+is equal to H if the ith firm uses an independent human evaluation. We can therefore represent the choice
+of optimal strategies, as the parameters (φH , φA ) vary, by a labeling of the (φH , φA )-plane: we label each
+point (φH , φA ) with the length-k sequence that specifies the optimal sequence of strategies.
+We can make the following initial formal observation about these optimal sequences:
+Theorem 4. When φH ≥ φA , one optimal sequence is for all firms to choose H. When φH > φA , the
+unique optimal sequence is for all firms to choose H.
+We prove this formally in Appendix F.1, but we provide a sketch here. When φH ≥ φA , the first firm
+to move in sequence will simply use the more accurate strategy, and hence will choose H. Now, proceeding
+by induction, suppose that the first i firms have all chosen H, and consider the (i + 1)st firm to move in
+sequence. Regardless of whether this firm chooses A or H, it will be making a selection that is independent
+of the previous i selections, and hence it is optimal for it to choose H as well. Hence, by induction, it is an
+optimal solution for all firms to choose H when φH ≥ φA . (This argument, slightly adapted, also directly
+establishes that it is uniquely optimal for all firms to choose H when φH > φA .)
+Beyond this observation, if we wish to extend to the case when φA > φH , the mathematical analysis of this
+multi-firm model remains an open question; but it is possible to determine optimal strategies computationally
+for each choice of (φH , φA ), and then to look at how these strategies vary over the (φH , φA )-plane. Figure 4
+shows the result of doing this — producing a labeling of the (φH , φA )-plane as described above — for k = 5
+firms and n = 6 candidates, with the values of the candidates drawn from a uniform distribution.
+We observe a number of interesting phenomena from this labeling of the plane. First, the region where
+φH ≥ φA is labeled with the all-H sequence, reflecting the argument above; for the half-plane φA > φH , on
+the other hand, all optimal sequences begin with A, since it is always optimal for the first firm to use the
+more accurate method. The labeling of the half-plane φA > φH becomes quite complex; in principle, any
+sequence over the binary alphabet {A, H} that begins with A could be possible, and in fact we see that all
+24 = 16 of these sequences appear as labels in some portion of the plane. This means that the sequential
+choice of optimal strategies for the firms can display arbitrary non-monotonicities in the choice of algorithmic
+or human decisions, with firms alternating between them; for example, even after the first firm chooses A
+and the second chooses H, the third may choose A or H depending on the values (φH , φA ).
+The boundaries of the regions labeled by different optimal sequences are similarly complex; some of the
+regions (such as AAAHH) appear to be bounded, while others (such as AHAHA and AHHAH) appear to
+only emerge for sufficiently large values of φH .
+Perhaps the most intriguing observation about the arrangement of regions is the following. Suppose we
+think of the sequences of symbols over {A, H} as binary representations of numbers, with A corresponding to
+the binary digit 1 and H correspnding to the binary digit 0. (Thus, for example, AAAHH would correspond
+to the number 16 + 8 + 4 = 28, while AHAHA would correspond to the number 16 + 4 + 1 = 21.) The
+observation is then the following: if we choose any vertical line φH = x (for a fixed x), and we follow it
+upward in the plane, we encounter regions in increasing order of the numbers corresponding to their labels,
+in this binary representation. (First HHHHH, then AHHHH, then AHHHA, then AHHAH, and so
+forth.)
+We do not know a proof for this fact, or how generally it holds, but we can verify it computationally for
+the regions of the (φH , φA )-plane mapped out in Figure 4, as well as similar computational experiments not
+shown here for other choices of k and n. This binary-counter property suggests a rich body of additional
+structure to the optimal strategies in the k-firm case, and we leave it as an open question to analyze this
+structure mathematically.
+
+11
+
+5
+
+Conclusion
+
+Concerns about monoculture in the use of algorithms have focused on the danger of unexpected, correlated
+shocks, and on the harm to particular individuals who may fare poorly under the algorithm’s decision. Our
+work here shows that concerns about algorithmic monoculture are in a sense more fundamental, in that
+it is possible for monoculture to cause decisions of globally lower average quality, even in the absence of
+shocks. In addition to telling us something about the pervasiveness of the phenomenon, it also suggests that
+it might be difficult to notice its negative effects even while they’re occurring — these effects can persist at
+low levels even without a shock-like disruption to call our attention to them. Our results also make clear
+that algorithmic monoculture in decision-making doesn’t always lead to adverse outcomes; rather, we given
+natural conditions under which such outcomes become possible, and show that these conditions hold in a
+wide range of standard models.
+Our results suggest a number of natural directions for further work. To begin with, we have noted earlier
+in the paper that it would be interesting to give more comprehensive quantitative bounds on the magnitude
+of monoculture’s possible negative effects in decisions such as hiring — how much worse can the quality of
+candidates be when selected with an equilibrium strategy involving shared algorithms than with a socially
+optimal one? In formulating such questions, it will be important to take into account how the noise model
+for rankings relates to the numerical qualities of the candidates.
+We have also focused here on the case of two firms and a single shared algorithm that is available to
+both. It would be natural to consider generalizations involving more firms and potentially more algorithms
+as well. With more algorithms, we might see solutions in which firms cluster around different algorithms of
+varying accuracies, as they balance the level of accuracy and the amount of correlation in their decisions. It
+would also be interesting to explore the ways in which correlations in firms’ decisions can be decomposed
+into constituent parts, such as the use of standardized tests that form input features for algorithms, and how
+quantifying these forms of correlation might help firms assess their decisions.
+Finally, it will be interesting to consider how these types of results apply to further domains. While
+the analysis presented here illustrates the consequences of monoculture as applied to algorithmic hiring, our
+findings have potential implications in a broader range of settings. Algorithmic monoculture not only leads
+to a lack of heterogeneity in decision-making; by allowing valuable options to slip through the cracks — be
+they job candidates, potential hit songs, or budding entrepreneurs — it reduces total social welfare, even
+when the individual decisions are more accurate on a case-by-case basis. These concerns extend beyond the
+use of algorithms; whenever decision-makers rely on identical or highly correlated evaluations, they miss out
+on hidden gems, and in this way diminish the overall quality of their decisions.
+Acknowledgements. This work has been supported in part by a Simons Investigator Award, a Vannevar
+Bush Faculty Fellowship, a MURI grant, an NSF Graduate Research Fellowship, and grants from the ARO,
+AFOSR, and the MacArthur Foundation.
+
+References
+[1] Hossein Azari Soufiani, Hansheng Diao, Zhenyu Lai, and David C Parkes. Generalized random utility
+models with multiple types. In Advances in Neural Information Processing Systems, pages 73–81, 2013.
+[2] Hossein Azari Soufiani, David C Parkes, and Lirong Xia. Random utility theory for social choice. In
+Advances in Neural Information Processing Systems, pages 126–134, 2012.
+[3] Kenneth P Birman and Fred B Schneider. The monoculture risk put into context. IEEE Security &
+Privacy, 7(1):14–17, 2009.
+[4] HD Block and J Marschak. Random orderings and stochastic theories of responses. In I. Olkin, S. G.
+Ghurye, W. Hoeffding, W. G. Madow, and H. B. Mann, editors, Contributions to probability and statistics, pages 97–132. Stanford University Press, 1960.
+[5] Dietrich Braess. Über ein paradoxon aus der verkehrsplanung. Unternehmensforschung, 12(1):258–268,
+1968.
+12
+
+[6] Danielle Keats Citron and Frank Pasquale. The scored society: Due process for automated predictions.
+Wash. L. Rev., 89:1, 2014.
+[7] HE Daniels. Rank correlation and population models. Journal of the Royal Statistical Society. Series
+B (Methodological), 12(2):171–191, 1950.
+[8] Sanmay Das and Zhuoshu Li. The role of common and private signals in two-sided matching with
+interviews. In International Conference on Web and Internet Economics, pages 492–497. Springer,
+2014.
+[9] Harry Joe. Inequalities for random utility models, with applications to ranking and subset choice data.
+Methodology and computing in Applied Probability, 2(4):359–372, 2000.
+[10] Maurice G Kendall. A new measure of rank correlation. Biometrika, 30(1/2):81–93, 1938.
+[11] Tyler Lu and Craig Boutilier. Learning mallows models with pairwise preferences. International Conference on Machine Learning, 2011.
+[12] R Duncan Luce. Individual choice behavior: A theoretical analysis. Wiley, 1959.
+[13] Rahul Makhijani and Johan Ugander. Parametric models for intransitivity in pairwise rankings. In The
+World Wide Web Conference, pages 3056–3062, 2019.
+[14] Colin L Mallows. Non-null ranking models. I. Biometrika, 44(1/2):114–130, 1957.
+[15] Farhad Manjoo. This summer stinks. But at least we’ve got ‘Old Town Road.’. New York Times
+Opinion, 2019.
+[16] Charles F Manski. The structure of random utility models. Theory and decision, 8(3):229, 1977.
+[17] John P Mills. Table of the ratio: area to bounding ordinate, for any portion of normal curve. Biometrika,
+pages 395–400, 1926.
+[18] JF Power and RF Follett. Monoculture. Scientific American, 256(3):78–87, 1987.
+[19] Stephen Ragain and Johan Ugander. Pairwise choice markov chains. In Advances in Neural Information
+Processing Systems, pages 3198–3206, 2016.
+[20] Matthew J Salganik, Peter Sheridan Dodds, and Duncan J Watts. Experimental study of inequality
+and unpredictability in an artificial cultural market. Science, 311(5762):854–856, 2006.
+[21] Michael R Sampford. Some inequalities on Mill’s ratio and related functions. The Annals of Mathematical Statistics, 24(1):130–132, 1953.
+[22] David Strauss. Some results on random utility models. Journal of Mathematical Psychology, 20(1):35–52,
+1979.
+[23] Louis L Thurstone. A law of comparative judgment. Psychological review, 34(4):273, 1927.
+[24] John I Yellott Jr. The relationship between luce’s choice axiom, thurstone’s theory of comparative
+judgment, and the double exponential distribution. Journal of Mathematical Psychology, 15(2):109–
+144, 1977.
+[25] Zhibing Zhao, Tristan Villamil, and Lirong Xia. Learning mixtures of random utility models. In ThirtySecond AAAI Conference on Artificial Intelligence, 2018.
+
+13
+
+A
+
+Random Utility Models satisfying Definition 1
+
+Theorem 5. Let f be the pdf of E. The family of RUMs Fθ given by ranking xi + εθi with εi ∼ E satisfies
+the conditions of Definition 1 if:
+• f is differentiable
+• f has positive support on (−∞, ∞)
+Proof. We need to show that Fθ satisfies the differentiability, asymptotic optimality, and monotonicity
+conditions in Definition 1.
+Qn
+Differentiability: The probability density of any realization of the n noise samples εi /θ is i=1 f (εi /θ).
+Let ε = [ε1 /θ, . . . , εn /θ] be the vector of noise values and let M (π) ⊆ Rn be the region such that any ε ∈ M (π)
+will produces the ranking π. The probability of any permutation π is
+n
+ε 
+Y
+i
+dn z.
+Pr[π] =
+f
+θ
+θ
+M (π) i=1
+
+Z
+
+Because f is differentiable,
+x  x 
+d x
+f
+= f0
+· − 2
+dθ
+θ
+θ
+θ
+Because Pr θ(π) is an integral of the product of differentiable functions over a fixed region, it is differentiable.
+Asymptotic optimality: We will show that for any pair of elements and any δ > 0, there exists
+sufficiently large θ such that the probability that they incorrectly ranked is at most δ. We will conclude with
+a union bound over the n − 1 pairs of adjacent candidates that there exists sufficiently large θ such that the
+probability of outputting the correct ranking must be at least 1 − (n − 1)δ.
+Consider two candidates xi > xi+1 . Let ν be the difference xi − xi+1 . Then, they will be correctly ranked
+if
+εi
+ν
+>−
+θ
+2
+ν
+εi+1
+<
+θ
+2
+Let q and q be the 1 − 2δ and 2δ quantiles of E respectively, and let q = max(|q|, |q|). For θ > 2q
+ν ,
+
+
+νi
+νθ
+<−
+= Pr εi < −
+Pr
+θ
+2
+2
+hε
+
+i
+
+< Pr [εi < −q]
+
+
+≤ Pr εi < q
+δ
+=
+2 
+
+hε
+νi
+νθ
+i+1
+Pr
+>
+= Pr εi+1 >
+θ
+2
+2
+< Pr [εi+1 > q]
+≤ Pr [εi+1 > q]
+δ
+=
+2
+Thus, for sufficiently large θ, the probability that xi and xi+1 are incorrectly ordered is at most δ.
+Repeating this analysis for all n − 1 pairs of adjacent elements, taking the maximum of all the θ’s, and
+taking a union bound yields that the probability of incorrectly ordering any pair of elements is at most
+(n − 1)δ, meaning the probability of outputting the correct ranking is at least 1 − (n − 1)δ. Since δ is
+arbitrary, this probability can be made arbitrarily close to 1, satisfying the asymptotic optimality condition.
+14
+
+Monotonicity: The removal of any elements does not alter the distribution of the remaining elements,
+meaning that the distribution of π (−S) is equivalent to a RUM with n − |S| elements. Thus, it suffices to
+show that for a RUM with positive support on (−∞, ∞), the probability of ranking the best candidate first
+strictly increases with θ.
+Recall that by definition, the candidates are ranked according to xi + εθi . The probability that x1 is
+ranked first is
+
+
+
+
+εi
+εi
+ε1
+ε1
+Pr x1 +
+> max xi +
+= Pr
+> max xi − x1 +
+2≤i≤n
+2≤i≤n
+θ
+θ
+θ
+θ
+
+
+= Pr ε1 > max θ(xi − x1 ) + εi
+2≤i≤n
+
+
+= Eε2 ,...,εn Pr ε1 > max θ(xi − x1 ) + εi | ε2 , . . . , εn
+(A.1)
+2≤i≤n
+
+We want to show that (A.1) is increasing in θ. Intuitively, this is because as θ increases, the right hand
+side of the inequality inside the probability decreases. To prove this formally, it suffices to show that the
+subderivative of (A.1) with respect to θ only includes strictly positive numbers. First, we have
+
+
+∂
+Eε2 ,...,εn Pr ε1 > max θ(xi − x1 ) + εi | ε2 , . . . , εn ⊂ R>0
+2≤i≤n
+∂θ
+
+
+∂
+Pr ε1 > max θ(xi − x1 ) + εi | ε2 , . . . , εn ⊂ R>0
+⇐⇒
+2≤i≤n
+∂θ
+Let F and f be the cumulative density function and probability density function of E respectively. Then,
+
+
+
+
+Pr ε1 > max θ(xi − x1 ) + εi | ε2 , . . . , εn = 1 − F max θ(xi − x1 ) + εi
+2≤i≤n
+
+2≤i≤n
+
+Note that F (·) is strictly increasing (since f is assumed to have positive support on (−∞, ∞)), so it suffices
+to show that
+∂
+max θ(xi − x1 ) + εi ⊂ R<0
+∂θ 2≤i≤n
+For any i,
+
+d
+θ(xi − x1 ) + εi = xi − x1 < 0.
+dθ
+Thus, the subderivative of the max of such functions includes only strictly negative numbers, which completes
+the proof.
+
+B
+
+3-candidate RUM Counterexamples
+
+B.1
+
+Violating Definition 2
+
+Here, we provide a noise mode E, accuracy parameter θ, and candidate distribution D such that UAH < UAA .
+Choose the noise distribution E and accuracy parameter θ such that
+
+1
+w.p. 2δ
+ε 
+= 0
+w.p.1 − δ
+θ 
+
+−1 w.p. 2δ
+Note that this distribution does not satisfy Definition 1 because it is neither differentiable nor supported on
+(−∞, ∞); however, we can provide a “smooth” approximation to this distribution by expressing it as the
+sum of arbitrarily tightly concentrated Gaussians with the same results.
+
+15
+
+We choose the candidate distribution D such that x1 − 1 > x2 > x3 > x1 − 2. For example,
+7
+4
+1
+x2 =
+2
+x3 = 0
+x1 =
+
+Under this condition, assuming x3 = 0 without loss of generality,
+UAH (θ, θ) − UAA (θ, θ) =
+
+
+δ2 3
+δ x1 − 4δ 2 x1 + 4δx1 + 2δ 3 x2 − 14δ 2 x2 + 20δx2 − 8x2
+32
+2
+
+Notice that the lowest-power δ term is − δ 4x2 . Therefore, for sufficiently small δ, this is negative. For
+example, plugging in the values given above with δ = .1, UAH (θ, θ) − UAA (θ, θ) ≈ −0.00076.
+
+B.2
+
+Violating Definition 3
+
+Next, we’ll give a 3-candidate RUM for which UAH < UHH does not hold in general. Consider the following
+3-candidate example.
+x1 = 3
+x2 = 2
+x3 = 0
+Choose E and θ such that
+
+
+1
+
+
+
+
+−1
+ε
+=
+θ 
+10
+
+
+
+−10
+
+w.p. 1−δ
+2
+w.p. 1−δ
+2
+w.p. 2δ
+w.p. 2δ
+
+Again, while this noise model doesn’t satisfy Definition 1, we can approximate it arbitrarily closely with the
+sum of tightly concentrated Gaussians. Let the θA = 1.1θ and θH = 0.9θ.
+We will show that for these parameters, UAH (θA , θH ) > UHH (θA , θH ), i.e., it is somehow better to choose
+after a better opponent than after a worse opponent. At a high level, the reasoning for this is as follows:
+1. When choosing first, the only difference between the algorithm and the human evaluator is that the
+algorithm is more likely to choose x2 than x3 . Both strategies have identical probabilities of selecting
+x1 .
+2. When choosing second, the human evaluator’s utility is higher when x2 has already been chosen than
+when x3 has already been chosen. This is because when x2 is unavailable, the human evaluator
+is almost guaranteed to get x1 ; when x3 is unavailable, the human evaluator will choose x2 with
+probability ≈ 1/4.
+Let τ and π be rankings generated by the algorithm and human evaluator respectively. First, we will
+show that
+Pr[τ1 = x1 ] = Pr[π1 = x1 ]
+
+(B.1)
+
+Pr[τ1 = x2 ] > Pr[π1 = x2 ]
+
+(B.2)
+
+To do so, consider the realizations of ε1 , ε2 , ε3 that result in different rankings under θA and θH . In fact,
+the only set of realizations that result in different rankings are when ε2 /θ = −1 and ε3 /θ = 1. Thus,
+the algorithm and human evaluator always rank x1 in the same position, conditioned on a realization,
+which proves (B.1); the only difference is that the algorithm sometimes ranks x2 above x3 when the human
+16
+
+evaluator does not. Moreover, whenever ε1 /θ = −10, x2 is more strictly more likely to be ranked first under
+the algorithm than the human evaluator, which proves (B.2).
+Next, we must show that when choosing second, the human evaluator is better off when x2 is unavailable
+than when x3 is unavailable. This is clearly true because for the human evaluator,
+
+
+ε1 θH
+ε3 θH
+Pr x1 +
+> x3 +
+≈ 1 − O(δ)
+θ
+θ
+
+
+ε1 θH
+ε3 θH
+3
+Pr x1 +
+> x2 +
+≈
+θ
+θ
+4
+Thus, conditioned on x2 being unavailable, the human evaluator gets utility ≈ 3, whereas when x3 is
+unavailable, the human evaluator gets utility ≈ 2.75. Let u−i be the expected utility for the human evaluator
+when xi is unavailable. Putting this together, we get
+UAH (θA , θH ) − UHH (θA , θH )
+=
+
+3
+X
+
+(Pr[τ1 = xi ] − Pr[π1 = xi ])u−i
+
+i=1
+
+= (Pr[τ1 = x1 ] − Pr[π1 = x1 ])u−1 + (Pr[τ1 = x2 ] − Pr[π1 = x2 ])u−2 + (Pr[τ1 = x3 ] − Pr[π1 = x3 ])u−3
+= (Pr[τ1 = x2 ] − Pr[π1 = x2 ])u−2 + (Pr[τ1 = x3 ] − Pr[π1 = x3 ])u−3
+(Pr[τ1 = x1 = Pr[π1 = x1 ])
+P3
+P3
+= (Pr[τ1 = x2 ] − Pr[π1 = x2 ])(u−2 − u−3 )
+( i=1 Pr[τ1 = xi ] = i=1 Pr[π1 = xi ])
+>0
+The last step follows from (B.2) and because u−2 > u−3 .
+
+C
+
+Proof of Theorem 2
+
+C.1
+
+Verifying Definition 2
+
+By (2), we can equivalently show that for any θ, UAH (θ, θ) > UAA (θ, θ). Let τ and π be the algorithmic and
+human-generated rankings respectively. Note that they’re identically distributed because θA = θH . Define
+(
+π1 π1 6= τ1
+Y ,
+π2 otherwise
+Note that UAH (θ, θ) = E [Y ] and UAA (θ, θ) = E [τ2 ]. We want to show that UAH (θ, θ) − UAA (θ, θ) =
+E [xY − xτ2 ] > 0. It is sufficient to show that for any k, E [Y − τ2 | τ1 = xk ] > 0. Let Xi = xi + εi /θ. Note
+that for distinct i, j, k and xi > xj ,
+E [Y − τ2 | τ1 = xk ] > 0 ⇐=
+
+Pr[τ2 = xi | τ1 = xk ]
+Pr[Y = xi | τ1 = xk ]
+>
+Pr[Y = xj | τ1 = xk ]
+Pr[τ2 = xj | τ1 = xk ]
+
+⇐⇒ Pr[Y = xi | τ1 = xk ] > Pr[τ2 = xi | τ1 = xk ]
+(numerator and denominator sum to 1)
+⇐⇒ Pr[Xi > Xj ] > Pr[Xi > Xj | Xk > Xi ∩ Xk > Xj ]
+⇐⇒ Pr[Xi > Xj ] > EXk [Pr[Xi > Xj | Xk = a, Xi < a, Xj < a]].
+Thus, it suffices to show that for any a,
+Pr[Xi > Xj ] > Pr[Xi > Xj | Xi < a, Xj < a].
+
+(C.1)
+
+Since Pr[Xi > Xj ] = lima→∞ Pr[Xi > Xj | Xi < a, Xj < a], it suffices to show that for all a,
+d
+Pr[Xi > Xj | Xi < a, Xj < a] ≥ 0,
+(C.2)
+da
+and that it is strictly positive for some a. In other words, the higher a is, the more likely i and j are to be
+correctly ordered. In Theorems 7 and 8, we show that (C.2) holds for both Laplacian and Gaussian noise
+respectively, which proves that RUMs based on both distributions satisfy Definition 2.
+17
+
+C.2
+
+Verifying Definition 3
+
+Next, we show that for both Laplacian and Gaussian distributions, UAH (θA , θH ) < UHH (θA , θH ) for all
+θA > θH . In fact, for 3-candidate RUM families, we will show that this is always true for any well-ordered
+distribution, defined as follows.
+Definition 4. A noise model with density f (·) is well-ordered if for any a > b and c > d,
+f (a − c)f (b − d) > f (a − d)f (b − c).
+In other words, for a well-ordered noise model, given two numbers, two candidates are more likely to be
+correctly ordered than inverted conditioned on realizing those two numbers in some order. Lemma 1 shows
+that both Gaussian and Laplacian distributions are well-ordered.
+Thus, it suffices to show that for any 3-candidate RUM with a well-ordered noise model, UAH (θA , θH ) <
+UHH (θA , θH ) when θA > θH .
+Theorem 6. For 3 candidates with unique values x1 > x2 > x3 and well-ordered i.i.d. noise with support
+(−∞, ∞), if θA > θH , then UAH (θA , θH ) < UHH (θA , θH ).
+Proof. Define u−i to be the expected utility of the maximum element of the human-generated ranking when
+i is not available. Because we’re in the 3-candidate setting, we have
+u−1 = λ1 x2 + (1 − λ1 )x3
+u−2 = λ2 x1 + (1 − λ2 )x3
+u−3 = λ3 x1 + (1 − λ3 )x2
+where 1/2 < λi < 1. This is because the noise has support everywhere, so it is impossible to correctly rank
+any two candidates with probability 1, and any two candidates are more likely than not to be correctly
+ordered:
+
+
+i
+hε
+εj
+εi − εj
+1
+i
+−
+> −δ = Pr[εi − εj ≥ 0] + Pr 0 >
+> −δ >
+Pr
+θ
+θ
+θ
+2
+Note that λ2 > λ1 and λ2 > λ3 , since
+λ2 = Pr[ε1 − ε3 > −θ(x1 − x3 )] > max {Pr[ε1 − ε3 > −θ(x2 − x3 )], Pr[ε1 − ε3 > −θ(x1 − x2 )]} = max{λ1 , λ3 }.
+Let τ ∼ FθA and π ∼ FθH . With this, we can write
+UAH (θA , θH ) =
+
+3
+X
+
+Pr[τ1 = i]u−i
+
+i=1
+
+UHH (θA , θH ) =
+
+3
+X
+
+Pr[π1 = i]u−i
+
+i=1
+
+Define
+∆pi = Pr[τ1 = i] − Pr[π1 = i]
+Using Lemmas 2, and 3, we have
+∆p1 > 0
+
+(By monotonicity of RUM families, see Appendix A)
+
+∆p1 ≥ ∆p2
+∆p3 ≤ 0
+Also, ∆p1 + ∆p2 + ∆p3 = 0. We must show that
+UAH (θA , θH ) − UHH (θA , θH ) =
+
+3
+X
+i=1
+
+18
+
+∆pi u−i < 0.
+
+We consider 2 cases.
+Case 1: ∆p2 ≤ 0.
+Then, ∆p1 = −(∆p2 + ∆p3 ). This yields
+3
+X
+
+∆pi u−i = ∆p1 u−1 + ∆p2 u−2 + ∆p3 u−3
+
+i=1
+
+≤ ∆p1 u−1 − ∆p1 min(u−2 , u−3 )
+= ∆p1 (λ1 x2 + (1 − λ1 )x3 − min {λ2 x1 + (1 − λ2 )x3 , λ3 x1 + (1 − λ3 )x2 })
+≤ ∆p1 (λ1 x2 + (1 − λ1 )x3 − min {λ2 x1 + (1 − λ2 )x3 , x2 })
+We can show that this is at most 0 regardless of which term attains the minimum. Because λ2 > λ1 ,
+λ1 x2 + (1 − λ1 )x3 − λ2 x1 − (1 − λ2 )x3 = λ1 x2 + x3 − λ1 x3 − λ2 x1 − x3 + λ2 x3
+= λ1 x2 − λ1 x3 − λ2 x1 + λ2 x3
+= λ1 (x2 − x3 ) + λ2 (x3 − x1 )
+< λ1 (x2 − x3 ) + λ1 (x3 − x1 )
+= λ1 (x2 − x1 )
+<0
+For the second term, we have
+λ1 x2 + (1 − λ1 )x3 − x2 = (1 − λ1 )(x3 − x2 ) < 0.
+Thus,
+3
+X
+
+∆pi u−i < 0.
+
+i=1
+
+Case 2: ∆p2 > 0. Note that u−1 < x2 < u−3 . Then, using ∆p3 = −(∆p1 + ∆p2 ),
+3
+X
+
+∆pi u−i = ∆p1 u−1 + ∆p2 u−2 + ∆p3 u−3
+
+i=1
+
+= ∆p1 (u−1 − u−3 ) + ∆p2 (u−2 − u−3 )
+≤ ∆p2 (u−1 − u−3 ) + ∆p2 (u−2 − u−3 )
+
+(∆p1 ≥ ∆p2 and u−1 < u−3 )
+
+= ∆p2 (u−1 + u−2 − 2u−3 )
+≤ ∆p2 (x2 + x1 − 2(λ3 x1 + (1 − λ3 )x2 ))
+
+
+
+1
+1
+x1 + x2
+< ∆p2 x2 + x1 − 2
+2
+2
+=0
+Thus, UAH (θA , θH ) < UHH (θA , θH ).
+
+C.3
+
+Supplementary Lemmas for Random Utility Models
+
+Lemma 1. Both Gaussian and Laplacian distributions are well-ordered.
+Proof. The Gaussian noise model is well-ordered:
+1
+exp(−(a − c)2 − (b − d)2 )
+2σ 2 π
+1
+=
+exp(−(a − d)2 − (b − c)2 − 2(ac + bd − ad − bc))
+2σ 2 π
+= f (a − d)f (b − c) exp(−2((a − b)(c − d)))
+
+f (a − c)f (b − d) =
+
+< f (a − d)f (b − c)
+19
+
+(λ3 > 21 )
+
+Laplacian noise is as well:
+1
+exp(−|a − c| − |b − d|)
+4
+1
+f (a − d)f (b − c) = exp(−|a − d| − |b − c|)
+4
+
+f (a − c)f (b − d) =
+
+It suffices to show that for a > b and c > d, |a − c| + |b − d| < |a − d| + |b − c|. To show this, plot
+(a, b) and (c, d) in the (x, y) plane. Note that they’re both below the y = x line, and that the `1 distance
+between them is |a − c| + |b − d|. Moreover, the `1 distance between any two points must be realized by
+some Manhattan path, which is a combination of horizontal and vertical line segments. Consider the point
+(b, a), which is above the y = x line. Any Manhattan path from (b, a) to (c, d) must cross the y = x line at
+some point (w, w). Since (b, a) and (a, b) are equidistant from (w, w), for any Manhattan path from (b, a)
+to (c, d), there exists a Manhattan path from (a, b) to (c, d) passing through (w, w) of the same length,
+meaning the `1 distance from (a, b) to (c, d) is smaller than the `1 distance from (b, a) to (c, d). As a result,
+|a − c| + |b − d| < |a − d| + |b − c|.
+Next, we show a few basic facts. Let fA (r) be the density function of the joint realization R =
+[X1 , . . . , Xn ] = [x1 +ε1 /θA , . . . , xn +εn /θA ] under the algorithmic ranking and fH (r) be the similarly defined
+density function under the human-generated ranking. Consider the “contraction” operation r0 = cont(r) such
+that ri0 = xi + (ri − xi ) · θθH
+. Essentially, the contraction defines a coupling between fA (·) and fH (·), since
+A
+for r0 = cont(r), fA (r0 ) dr0 = fH (r) dr. Let π(r) be the ranking induced by r. Note that contraction cannot
+introduce any new inversions in π(r)—that is, if i is ranked above j in π(r) for i < j, then i is ranked above
+j in π(cont(r)). Intuitively, this is because contraction pulls values closer to their means, and can therefore
+only correct existing inversions, not introduce new ones. This fact will allow us to prove some useful lemmas.
+Lemma 2. If Fθ is a RUM family satisfying Definition 1, then for τ ∼ FθA and π ∼ FθH ,
+Pr[τ1 = xn ] ≤ Pr[π1 = xn ]
+
+Proof. Consider any realization r. Because inversions can only be corrected, not generated, by contraction,
+if π1 (r0 ) = n, then π1 (r) = n where r0 = cont(r). Since r0 and r have equal measure under fA and fH
+respectively, we have
+Z
+Pr[π1 = xn ] =
+fH (r)1π1 (r)=xn dr
+n
+ZR
+=
+fA (cont(r))1π1 (r)=xn d cont(r)
+n
+ZR
+≥
+fA (cont(r))1π1 (cont(r))=xn d cont(r)
+Rn
+Z
+=
+fA (r)1π1 (r)=xn dr
+Rn
+
+= Pr[τ1 = xn ]
+
+Next, we prove the following result for well-ordered noise models.
+Lemma 3. For any i > 1, if the noise model E is well-ordered, for θA ≥ θH , τ ∼ FθA , and π ∼ FθH ,
+Pr[τ1 = x1 ] − Pr[π1 = x1 ] ≥ Pr[τ1 = xi ] − Pr[π1 = xi ]
+
+20
+
+Proof. For j 6= i, let Sj→i ⊆ Rn be the set of realizations r such that π1 (r) = xj and π1 (cont(r)) = xi . Note
+that Sj→i = ∅ for j < i because contraction cannot create inversions. Then, we have that
+XZ
+XZ
+XZ
+Pr[τ1 = xi ] − Pr[π1 = xi ] =
+fH (r)1r∈Sj→i dr −
+fH (r)1r∈Si→j dr ≤
+fH (r)1r∈Sj→i dr
+j>i
+
+Rn
+
+j<i
+
+Rn
+
+j>i
+
+Rn
+
+Define
+swapi (r) = r0 ,
+where
+
+
+
+rj
+rj0 = r1
+
+
+ri
+
+j∈
+/ {1, i}
+j=i
+j=1
+
+Intuitively, the swapi operation simply swaps the realizations in positions 1 and i. Note that this is a
+bijection. Also, if r ∈ Sj→i , then swapi (r) ∈ Sj→1 , since
+cont(swapi (r))1 ≥ cont(r)i ≥ max cont(r)j ≥ max cont(swapi (r))j
+j
+
+j ∈{1,i}
+/
+
+cont(swapi (r))1 ≥ cont(r)i ≥ cont(r)1 ≥ cont(swapi (r))i
+Furthermore for r ∈ Sj→i , fH (r) ≤ fH (swapi (r)) since
+f (ri − x1 )f (r1 − xi )
+fH (swapi (r))
+=
+≥1
+fH (r)
+f (r1 − x1 )f (ri − xi )
+because the noise is well-ordered and r ∈ Sj→i implies ri > r1 . Thus,
+XZ
+XZ
+fH (r)1r∈Sj→i dr ≤
+fH (swapi (r))1r∈Sj→i dr
+j>i
+
+Rn
+
+j>i
+
+≤
+
+j>i
+
+≤
+
+Rn
+
+XZ
+j>i
+
+≤
+
+Rn
+
+XZ
+
+Rn
+
+XZ
+j>1
+
+Rn
+
+fH (swapi (r))1swapi (r)∈Sj→1 dr
+fH (r)1r∈Sj→1 dr
+fH (r)1r∈Sj→1 dr
+
+= Pr[τ1 = x1 ] − Pr[π1 = x1 ]
+
+Finally, we show that (C.2) holds for both Laplacian and Gaussian noise.
+Theorem 7. For any a ∈ R and Xi = xi + σεi where εi is Laplacian with unit variance,
+d
+Pr[Xi > Xj | Xi < a, Xj < a] ≥ 0.
+da
+Moreover, it is strictly positive for some a.
+Proof. First, we must derive an expression for Pr[Xi > Xj | Xi < a, Xj < a]. Recall that the Laplace
+distribution parameterized by µ and λ has pdf
+f (x; µ, λ) =
+and cdf
+
+λ
+exp(−λ|x − µ|)
+2
+
+(
+F (x; µ, λ) =
+
+1
+2 exp (−λ(µ − x))
+1 − 12 exp (−λ(x − µ))
+
+21
+
+x<µ
+x≥µ
+
+Note that xi and xj be the respective means of Xi and Xj , with xi > xj . Because the Laplace distribution
+is piecewise defined, we must consider 3 cases and show that in all 3 cases, (C.2) holds. Note that
+Ra
+f (x; xi , λ)F (x; xj , λ) dx
+(C.3)
+Pr[Xi > Xj | Xi < a, Xj < a] = −∞
+F (a; xi , λ)F (a; xj , λ)
+Case 1: a ≤ xj .
+Then, the numerator of (C.3) is
+Z a
+Z
+λ
+1
+λ a
+exp(−λ(xi + xj − 2x)) dx
+exp (−λ(xi − x)) · exp(−λ(xj − x)) dx =
+2
+4 −∞
+−∞ 2
+Z
+λ exp(−λ(xi + xj )) a
+exp(2λx) dx
+=
+4
+−∞
+λ exp(−λ(xi + xj )) 1
+=
+exp(2λa)
+4
+2λ
+exp(−λ(xi + xj − 2a))
+=
+8
+The denominator is
+1
+1
+1
+exp(−λ(xi − a)) · exp(−λ(xj − a)) = exp(−λ(xi + xj − 2a)).
+2
+2
+4
+Thus,
+Pr[Xi > Xj | Xi < a, Xj < a] =
+
+1
+,
+2
+
+so its derivative is trivially nonnegative.
+Case 2: xj < a ≤ xi .
+Then, the numerator of (C.3) is
+
+
+Z xj
+Z a
+λ
+1
+λ
+1
+exp (−λ(xi − x)) · exp(−λ(xj − x)) dx +
+exp (−λ(xi − x)) 1 − exp(−λ(x − xj )) dx
+2
+2
+−∞ 2
+xj 2
+Z a
+Z a
+exp(−λ(xi − xj )) λ
+λ
++
+exp(−λ(xi − x)) dx −
+exp(−λ(xi − xj )) dx
+=
+8
+2 xj
+4 xj
+exp(−λ(xi − xj )) λ 1
+λ
++
+(exp(−λ(xi − a)) − exp(−λ(xi − xj ))) − (a − xj ) exp(−λ(xi − xj ))
+8
+2λ
+4
+
+1
+3 λ
+= exp(−λ(xi − a)) −
++ (a − xj ) exp(−λ(xi − xj ))
+2
+8
+4
+
+=
+
+The denominator is
+
+
+1
+1
+1
+1
+1 − exp(−λ(a − xj )) · exp(λ(xj − a)) = exp(−λ(xi − a)) − exp(−λ(xi − xj ))
+2
+2
+2
+4
+We can factor out 41 exp(−λ(xi − xj )) from both, so
+2 exp(λ(a − xj )) − 23 + λ(a − xj )
+Pr[Xi > Xj | Xi < a, Xj < a] =
+2 exp(λ(a − xj )) − 1
+=
+
+
+
+
+2 exp(λ(a − xj )) − 1 − 21 + λ(a − xj )
+2 exp(λ(a − xj )) − 1
+
+=1−
+
+1
+2 + λ(a − xj )
+
+2 exp(λ(a − xj )) − 1
+
+22
+
+Thus,
+d
+Pr[Xi > Xj | Xi < a, Xj < a] > 0
+da
+1
+d
+2 + λ(a − xj )
+⇐⇒
+<0
+da 2 exp(λ(a − xj )) − 1
+
+
+1
+⇐⇒(2 exp(λ(a − xj )) − 1)λ <
++ λ(a − xj ) 2λ exp(λ(a − xj ))
+2
+
+
+1
+⇐⇒2 − exp(−λ(a − xj )) < 2
++ λ(a − xj )
+2
+⇐⇒1 − exp(−λ(a − xj )) < 2λ(a − xj )
+⇐⇒ exp(−λ(a − xj )) > 1 − 2λ(a − xj )
+This is true because λ(a − xj ) > 0, and for z > 0,
+exp(−z) > 1 − z > 1 − 2z.
+Case 3: a > xi .
+Then, the numerator of (C.3) is
+
+
+Z xj
+Z xi
+λ
+1
+λ
+1
+exp (−λ(xi − x)) · exp(−λ(xj − x)) dx +
+exp (−λ(xi − x)) 1 − exp(−λ(x − xj )) dx
+2
+2
+−∞ 2
+xj 2
+
+
+Z a
+1
+λ
+exp(−λ(x − xi )) 1 − exp(−λ(x − xj )) dx
++
+2
+2
+xi
+
+
+Z
+1
+3 λ
+1
+λ a
+= −
++ (xi − xj ) exp(−λ(xi − xj )) + (1 − exp(−λ(a − xi ))) −
+exp(−λ(2x − xi − xj )) dx
+2
+8
+4
+2
+4 xi
+
+
+3 λ
+1
+=1−
++ (xi − xj ) exp(−λ(xi − xj )) − exp(−λ(a − xi ))
+8
+4
+2
+1
++ exp(λ(xi + xj ))(exp(−2λa) − exp(−2λxi ))
+8 
+
+1
+1
+1 λ
++ (xi − xj ) exp(−λ(xi − xj )) − exp(−λ(a − xi )) + exp(−λ(2a − xi − xj ))
+=1−
+2
+4
+2
+8
+The denominator is
+
+
+
+1
+1
+1 − exp(−λ(t − xi ))
+1 − exp(−λ(t − xj ))
+2
+2
+1
+1
+1
+= 1 − exp(−λ(a − xi )) − exp(−λ(a − xj )) + exp(−λ(2a − xi − xj ))
+2
+2
+4
+Thus,
+Pr[Xi > Xj | Xi < a, Xj < a]
+
+1 − 21 + λ4 (xi − xj ) exp(−λ(xi − xj )) − 12 exp(−λ(a − xi )) + 81 exp(−λ(2a − xi − xj ))
+=
+1 − 12 exp(−λ(a − xi )) − 21 exp(−λ(a − xj )) + 14 exp(−λ(2a − xi − xj ))
+8 − (4 + 2λ(xi − xj )) exp(−λ(xi − xj )) − 4 exp(−λ(a − xi )) + exp(−λ(2a − xi − xj ))
+∝
+4 − 2 exp(−λ(a − xi )) − 2 exp(−λ(a − xj )) + exp(−λ(2a − xi − xj ))
+
+23
+
+We’re interested in
+d
+Pr[Xi > Xj | Xi < a, Xj < a] > 0
+da
+⇐⇒ (4 − 2 exp(−λ(a − xi )) − 2 exp(−λ(a − xj )) + exp(−λ(2a − xi − xj )
+· (4λ exp(−λ(a − xi )) − 2λ exp(−λ(2a − xi − xj )))
+> (8 − 4 exp(−λ(a − xi )) + exp(−λ(2a − xi − xj )) − (4 + 2λ(xi − xj )) exp(−λ(xi − xj )))
+· (2λ exp(−λ(a − xi )) + 2λ exp(−λ(a − xj )) − 2λ exp(−λ(2a − xi − xj )))
+⇐⇒16 exp(−λ(a − xi )) − 8 exp(−λ(2a − xi − xj )) − 8 exp(−2λ(a − xi )) + 4 exp(−λ(3a − 2xi − xj ))
+− 8 exp(−λ(2a − xi − xj )) + 4 exp(−λ(3a − xi − 2xj )) + 4 exp(−λ(3a − 2xi − xj ))
+− 2 exp(−2λ(2a − xi − xj ))
+> 16 exp(−λ(a − xi )) + 16 exp(−λ(a − xj )) − 16 exp(−λ(2a − xi − xj ))
+− 8 exp(−2λ(a − xi )) − 8 exp(−λ(2a − xi − xj )) + 8 exp(−λ(3a − 2xi − xj ))
++ 2 exp(−λ(3a − 2xi − xj )) + 2 exp(−λ(3a − xi − 2xj )) − 2 exp(−2λ(2a − xi − xj ))
+− 2(4 + 2λ(xi − xj )) exp(−λ(a − xj )) − 2(4 + 2λ(xi − xj )) exp(−λ(a + xi − 2xj ))
++ 2(4 + 2λ(xi − xj )) exp(−2λ(a − xj ))
+⇐⇒ exp(−λ(3a − xi − 2xj ))
+> 8 exp(−λ(a − xj )) − 4 exp(−λ(2a − xi − xj )) + exp(−λ(3a − 2xi − xj ))
+− (4 + 2λ(xi − xj )) exp(−λ(a − xj )) − (4 + 2λ(xi − xj )) exp(−λ(a + xi − 2xj ))
++ (4 + 2λ(xi − xj )) exp(−2λ(a − xj ))
+⇐⇒ exp(−λ(2a − xi − xj ))
+> 8 − 4 exp(−λ(a − xi )) + exp(−λ(2a − 2xi ))
+− (4 + 2λ(xi − xj )) − (4 + 2λ(xi − xj )) exp(−λ(xi − xj )) + (4 + 2λ(xi − xj )) exp(−λ(a − xj ))
+⇐⇒ exp(−λ(2a − xi − xj )) − 8 + 4 exp(−λ(a − xi )) − exp(−2λ(a − xi ))
++ (4 + 2λ(xi − xj ))(1 + exp(−λ(xi − xj ))) − (4 + 2λ(xi − xj )) exp(−λ(a − xj ))
+>0
+
+(C.4)
+
+Note that for any z ≥ 0, we have
+(4 + 2z)(1 + e−z ) − 8 ≥ 0 ⇐⇒ (2 + z)(1 + e−z ) ≥ 4
+⇐⇒ z + 2e−z + ze−z ≥ 2
+For z = 0, this holds with equality, and the left hand side is increasing since
+d
+z + 2e−z + ze−z ≥ 0 ⇐⇒ 1 − 2e−z + e−z − ze−z ≥ 0
+dx
+⇐⇒ 1 ≥ e−z + ze−z
+1
+⇐⇒
+≥ e−z
+1+z
+⇐⇒ 1 + z ≤ ez
+Therefore, choosing z = λ(xi − xj ) and plugging back to (C.4), we have
+exp(−λ(2a − xi − xj )) − 8 + 4 exp(−λ(a − xi )) − exp(−2λ(a − xi ))
++ (4 + 2λ(xi − xj ))(1 + exp(−λ(xi − xj ))) − (4 + 2λ(xi − xj )) exp(−λ(a − xj )) > 0
+⇐= exp(−λ(2a − xi − xj )) + 4 exp(−λ(a − xi )) − exp(−2λ(a − xi )) − (4 + 2λ(xi − xj )) exp(−λ(a − xj )) > 0
+⇐⇒ exp(−λ(a − xj )) + 4 − exp(−λ(a − xi )) − (4 + 2λ(xi − xj )) exp(−λ(xi − xj )) > 0
+⇐⇒4(1 − exp(−λ(xi − xj ))) + exp(−λ(a − xi ))(exp(−λ(xi − xj )) − 1) − 2λ(xi − xj ) exp(−λ(xi − xj )) > 0
+⇐⇒(4 − exp(−λ(a − xi )))(1 − exp(−λ(xi − xj ))) − 2λ(xi − xj ) exp(−λ(xi − xj )) > 0
+⇐=3(1 − exp(−λ(xi − xj ))) − 2λ(xi − xj ) exp(−λ(xi − xj )) > 0
+24
+
+(exp(−λ(a − xi )) < 1)
+
+Again letting z = λ(xi − xj ), this is true if and only if
+3(1 − e−z ) > 2ze−z ⇐⇒ 3(ez − 1) > 2z
+⇐⇒ 3ez > 3 + 2z
+which is true because ez > 1 + z for z > 0. This completes the proof for Case 3.
+As a result, we have that
+d
+Pr[Xi > Xj | Xi < a, Xj < a] ≥ 0
+da
+for all a, with strict inequality for some a, which proves the theorem.
+Theorem 8. For any a ∈ R and Xi = xi + σεi where εi ∼ N (0, 1),
+d
+Pr[Xi > Xj | Xi < a, Xj < a] > 0.
+da
+√
+0
+Proof. Assume σ = 1/ 2. This
+√ is without loss of generality because for any instance with arbitrary σ , there
+is an instance with σ = 1/ 2 that yields the same distribution over rankings (simply by scaling all item
+values by σ/σ 0 ). First, we have
+Ra
+Pr[Xi = x] Pr[Xj < x] dx
+Pr[Xi > Xj | Xi < a, Xj < a] = −∞
+P r[Xi < a] Pr[Xj < a]
+Ra
+√
+exp(−(x − xi )2 )/ π · (1 + erf(x − xj ))/2 dx
+−∞
+=
+(1 + erf(a − xi ))/2 · (1 + erf(a − xj ))/2
+Ra
+exp(−(x − xi )2 )(1 + erf(x − xj )) dx
+2
+= √ −∞
+(1 + erf(a − xi )) · (1 + erf(a − xj ))
+π
+The derivative with respect to a is positive if and only if
+(1 + erf(a − xi ))(1 + erf(a − xj )) exp(−(a − xi )2 )(1 + erf(a − xj ))
+Z a
+>
+exp(−(x − xi )2 )(1 + erf(x − xj )) dx
+−∞
+
+
+2
+· √ (1 + erf(a − xi )) exp(−(a − xj )2 ) + (1 + erf(a − xj )) exp(−(a − xi )2 )
+π
+
+(C.5)
+
+Let t = a − xi and δ = xi − xj . Then, using the fact that
+Z a
+
+Z a−xi
+
+2
+
+exp(−(x − xi ) )(1 + erf(x − xj )) dx =
+−∞
+
+2
+
+Z a−xi
+
+exp(−x ) dx +
+−∞
+
+√
+=
+
+π
+(1 + erf(a − xi )) +
+2
+
+exp(−x2 ) erf(x + δ) dx
+
+−∞
+Z a−xi
+
+exp(−x2 ) erf(x + δ) dx,
+
+−∞
+
+(C.5) becomes
+√
+√
+Z t
+π
+(1 + erf(t))(1 + erf(t + δ))2 exp(−t2 )
+π
+·
+>
+(1
++
+erf(t))
++
+exp(−x2 ) erf(x + δ) dx
+2 (1 + erf(t)) exp(−(t + δ)2 ) + (1 + erf(t + δ)) exp(−t2 )
+2
+−∞
+Z t
+(1 + erf(t))(1 + erf(t + δ))2 exp(−t2 )
+2
+√
+⇐⇒
+−
+(1
++
+erf(t))
+−
+exp(−x2 ) erf(x + δ) dx > 0
+(1 + erf(t)) exp(−(t + δ)2 ) + (1 + erf(t + δ)) exp(−t2 )
+π −∞
+(C.6)
+To show that this is true, we will use the fact that f (t) > 0 whenever the following conditions are met:
+1. f (t) is continuous and differentiable everywhere
+25
+
+2. limt→−∞ f (t) = 0
+d
+3. dt
+f (t) > 0
+
+We’ll show that these conditions hold for the LHS of (C.6).
+(1 + erf(t))(1 + erf(t + δ))2 exp(−t2 )
+2
+− (1 + erf(t)) − √
+t→−∞ (1 + erf(t)) exp(−(t + δ)2 ) + (1 + erf(t + δ)) exp(−t2 )
+π
+
+Z t
+
+lim
+
+(1 + erf(t))(1 + erf(t + δ))2 exp(−t2 )
+t→−∞ (1 + erf(t)) exp(−(t + δ)2 ) + (1 + erf(t + δ)) exp(−t2 )
+
+= lim
+
+exp(−x2 ) erf(x + δ) dx
+
+−∞
+
+(C.7)
+
+Observe that both the numerator and denominator of (C.7) are positive, so this limit must be at least 0.
+We can upper bound it by
+(1 + erf(t))(1 + erf(t + δ))2 exp(−t2 )
+(1 + erf(t))(1 + erf(t + δ))2 exp(−t2 )
+≤
+lim
+t→−∞
+t→−∞ (1 + erf(t)) exp(−(t + δ)2 ) + (1 + erf(t + δ)) exp(−t2 )
+(1 + erf(t + δ)) exp(−t2 )
+= lim (1 + erf(t))(1 + erf(t + δ))
+lim
+
+t→−∞
+
+=0
+Thus, the limit is 0. Now, we must show that the derivative is positive. The derivative is
+
+
+Z t
+2
+(1 + erf(t))(1 + erf(t + δ))2 exp(−t2 )
+d
+2
+− (1 + erf(t)) − √
+exp(−x ) erf(x + δ) dx
+dt (1 + erf(t)) exp(−(t + δ)2 ) + (1 + erf(t + δ)) exp(−t2 )
+π −∞
+
+
+d
+(1 + erf(t))(1 + erf(t + δ))2 exp(−t2 )
+2
+2
+=
+− √ exp(−t2 ) − √ exp(−t2 ) erf(t + δ)
+dt (1 + erf(t)) exp(−(t + δ)2 ) + (1 + erf(t + δ)) exp(−t2 )
+π
+π
+(C.8)
+Taking this derivative and factoring out
+√
+
+2(1 + erf(t))(1 + erf(t + δ)) exp(4t2 )
+2
+
+π (erf (t) + 1) et2 + (erf (δ + t) + 1) e(δ+t)
+
+2 ,
+
+we get that (C.8) is positive if and only if
+√
+δ π exp((t + δ)2 )(1 + erf(t))(1 + erf(t + δ)) − exp(2δt + t2 )(1 + erf(t + δ)) + (1 + erf(t)) > 0
+√
+1 + erf(t)
+⇐⇒δ π exp((t + δ)2 )(1 + erf(t)) +
+− exp(2δt + t2 ) > 0
+1 + erf(t + δ)
+√
+1 + erf(t)
+⇐⇒δ π exp(t2 )(1 + erf(t)) + exp(−2δt − t2 )
+−1>0
+1 + erf(t + δ)
+
+
+√
+exp(−2δt − δ 2 )
+⇐⇒(1 + erf(t)) δ π exp(t2 ) +
+−1>0
+1 + erf(t + δ)
+
+
+1 + erf(t) √
+exp(−(t + δ)2 )
+⇐⇒
+δ
+π
++
+−1>0
+(C.9)
+exp(−t2 )
+1 + erf(t + δ)
+Define
+g(t) ,
+
+1 + erf(t)
+.
+exp(−t2 )
+
+Then, (C.9) is
+
+√
+g(t) δ π +
+
+
+1
+−1>0
+g(t + δ)
+√
+1
+1
+⇐⇒
+−
+<δ π
+g(t) g(t + δ)
+26
+
+By the Mean Value Theorem,
+1
+1
+d 1
+−
+= −δ
+g(t) g(t + δ)
+dt g(t) t=t∗
+for some t ≤ t∗ ≤ t + δ. Thus, it suffices to show that
+√
+d 1
+>− π
+dt g(t)
+
+(C.10)
+
+for all t. To do this, consider Mills Ratio [17]
+Z ∞
+
+2
+
+R(t) , exp(t /2)
+
+exp(−x2 /2) dx.
+
+t
+
+Note that this is quite similar in functional form to g(t), and with some manipulation, we can relate the two:
+Z ∞
+2
+R(t) = exp(t /2)
+exp(−x2 /2) dx
+t
+Z ∞
+√
+R( 2t) = exp(t2 ) √ exp(−x2 /2) dx
+2t
+Z ∞
+√
+2
+= 2 exp(t )
+exp(−x2 ) dx
+t
+Z −t
+√
+2
+= 2 exp(t )
+exp(−x2 ) dx
+(exp(−x2 ) is symmetric)
+−∞
+
+√
+
+R(− 2t) =
+
+√
+
+2 exp(t2 )
+
+Z t
+
+exp(−x2 ) dx
+
+−∞
+
+√
+
+√
+
+π
+2 exp(t ) ·
+(1 + erf(t))
+2
+r 
+
+π 1 + erf(t)
+=
+2 exp(−t2 )
+r
+√
+π
+R(− 2t) =
+g(t)
+2
+=
+
+2
+
+d 1
+Sampford [21, Eq. (3)] proved that dt
+R(t) < 1 for any t. Thus,
+
+d 1
+d
+1
+q
+=
+=
+dt g(t)
+dt 2 R(−√2t)
+π
+
+r
+
+π d
+1
+√
+>
+2 dt R(− 2t)
+
+r
+
+√
+√
+π
+· 1 · − 2 = − π,
+2
+
+which proves (C.10) and completes the proof.
+
+D
+
+Verifying that the Mallows Model Satisfies Definition 1
+
+Theorem 9. The family of distributions Fθ produced by the Mallows Model with Kendall tau distance with
+θ = φ − 1 satisfies the conditions of Definition 1.
+Proof. We must show that Fθ satisfies the differentiability, asymptotic optimality, and monotonicity conditions of Definition 1.
+Differentiability: Let Π be the set of all permutations on n candidates. The probability of a realizing
+a particular permutation π under the Mallows model is
+∗
+
+φ−d(π,π )
+−d(π 0 ,π ∗ )
+π 0 ∈Π φ
+
+Pr[π] = P
+θ
+
+27
+
+Both the numerator and denominator are differentiable with respect to θ = φ − 1, so Prθ [π] is differentiable
+with respect to θ.
+Asymptotic optimality: For the correct ranking π ∗ ,
+1
+,
+Z
+
+Pr[π ∗ ] =
+θ
+
+where the normalizing constant Z is
+Z=
+
+X
+
+∗
+
+φ−d(π,π )
+
+π∈Π
+
+In the limit,
+lim Z = lim Z
+φ→∞
+X
+∗
+= lim
+φ−d(π,π )
+
+θ→∞
+
+φ→∞
+
+π∈Π
+
+φ→∞
+
+φ−d(π,π )
+
+π6=π ∗ ∈Π
+∗
+
+X
+
+=1+
+
+∗
+
+X
+
+= lim 1 +
+
+lim φ−d(π,π )
+
+π6=π ∗ ∈Π
+
+φ→∞
+
+=1
+because for any π 6= π ∗ , d(π, π ∗ ) ≥ 1. Therefore,
+1
+=1
+θ→∞ Z
+
+lim Pr[π ∗ ] = lim
+
+θ→∞ θ
+
+(−S)
+
+Monotonicity: We must show that for any S ⊂ x, if π1
+denotes the value of the top-ranked candidate
+according to π excluding candidates in S,
+h
+i
+h
+i
+(−S)
+(−S)
+EFθ0 π1
+≥ EFθ π1
+.
+(−S)
+
+= xj .
+
+(−S)
+
+= xj }
+
+For any i ∈
+/ S, let j be the smallest index such that j > i and j ∈
+/ S. Consider any π such that π1
+(−S)
+Then, swapping i and j yields a permutation π̂ such that π̂1
+= xi . Moreover,
+Pr[π̂] = Pr[π] · φinv(π)−inv(π̂) .
+Since i < j, inv(π) − inv(π̂) ≥ 1. Finally, note that swapping i and j is a bijection between {π : π1
+(−S)
+and {π : π1
+= xi }. Thus,
+(−S)
+
+= xi ]
+=
+(−S)
+Pr[π1
+= xj ]
+(−S)
+π:π
+=x
+Pr[π1
+
+1
+
+Note that the terms
+
+Pr[π]
+
+X
+
+j
+
+(−S)
+Pr[π1
+= xj ]
+
+· φinv(π)−inv(π̂)
+
+Pr[π]
+sum to 1, so this is sum is some polynomial in φ with nonnegative weights
+(−S)
+Pr[π1
+=xj ]
+
+and integer powers of φ. As a result, it must have a positive derivative with respect to φ, i.e., for i < j,
+(−S)
+
+= xi ]
+d Pr[π1
+>0
+dφ Pr[π (−S) = xj ]
+1
+
+0
+
+Let φ > φ. Then,
+(−S)
+
+Prφ [π1
+
+= xi ]
+
+(−S)
+Prφ [π1
+= xj ]
+
+(−S)
+
+<
+
+28
+
+Prφ0 [π1
+
+= xi ]
+(−S)
+Prφ0 [π1
+= xj ]
+
+Rearranging,
+(−S)
+
+Prφ [π1
+
+= xi ]
+
+(−S)
+Prφ0 [π1
+= xi ]
+
+(−S)
+
+Prφ [π1
+
+= xj ]
+(−S)
+Prφ0 [π1
+= xj ]
+
+<
+
+(D.1)
+
+For θ0 − φ0 − 1 and θ = φ − 1,
+h
+i X h
+i
+(−S)
+−(S)
+EFθ π1
+=
+Pr π1
+= xi xi
+φ
+
+i∈S
+/
+
+h
+
+(−S)
+
+EFθ0 π1
+
+i
+
+=
+
+X
+i∈S
+/
+
+h
+i
+−(S)
+Pr0 π1
+= xi xi
+φ
+
+By Lemma 4,
+h
+i
+h
+i
+(−S)
+(−S)
+EFθ0 π1
+> EFθ π1
+,
+which completes the proof.
+Note ithat we apply Lemma
+4 indexing
+backwards from n to 1, ignoring elements
+h
+h
+i
+−(S)
+−(S)
+in S, with pi = Prφ π1
+= xi and qi = Prφ0 π1
+= xi . (D.1) provides the condition that pi /qi is
+decreasing (as i decreases, since we are indexing backwards).
+
+E
+
+Proof of Theorem 3
+
+E.1
+
+Verifying Definition 2
+
+We must show that when π, τ ∼ Fθ ,
+E [π1 − π2 | π1 6= τ1 ] > 0.
+
+(E.1)
+
+We begin by expanding:
+E [π1 − π2 | π1 6= τ1 ] =
+
+n
+n X
+X
+
+(xi − xj ) Pr[π1 = xi ∩ π2 = xj | π1 6= τ1 ]
+
+i=1 j=1
+
+=
+
+n−1
+XX
+
+(xi − xj ) (Pr[π1 = xi ∩ π2 = xj | π1 6= τ1 ] − Pr[π1 = xj ∩ π2 = xi | π1 6= τ1 ])
+
+i=1 j>i
+
+Since xi > xj for i < j, it suffices to show that for all i < j,
+Pr[π1 = xi ∩ π2 = xj | π1 6= τ1 ] ≥ Pr[π1 = xj ∩ π2 = xi | π1 6= τ1 ],
+
+(E.2)
+
+and that this holds strictly for some i < j. We simplify (E.2) as follows:
+Pr[π1 = xi ∩ π2 = xj | π1 6= τ1 ] > Pr[π1 = xj ∩ π2 = xi | π1 6= τ1 ]
+Pr[π1 = xi ∩ π2 = xj ∩ π1 6= τ1 ]
+Pr[π1 = xj ∩ π2 = xi ∩ π1 6= τ1 ]
+>
+Pr[π1 6= τ1 ]
+Pr[π1 6= τ1 ]
+⇐⇒ Pr[π1 = xi ∩ π2 = xj ∩ π1 6= τ1 ] > Pr[π1 = xj ∩ π2 = xi ∩ π1 6= τ1 ]
+⇐⇒
+
+⇐⇒ Pr[π1 = xi ∩ π2 = xj ∩ τ1 6= xi ] > Pr[π1 = xj ∩ π2 = xi ∩ τ1 6= xj ]
+⇐⇒ Pr[π1 = xi ∩ π2 = xj ] Pr[τ1 6= xi ] > Pr[π1 = xj ∩ π2 = xi ] Pr[τ1 6= xj ]
+
+(E.3)
+
+We can simplify (E.3) using Lemmas 5 and 6. Let |i − j| denote the difference in rank between xi and xj .
+Pr[π1 = xi ∩ π2 = xj ] Pr[τ1 6= xi ] − Pr[π1 = xj ∩ π2 = xi ] Pr[τ1 6= xj ]
+= Pr[π1 = xi ∩ π2 = xj ](1 − Pr[τ1 = xi ]) − φ−1 Pr[π1 = xi ∩ π2 = xj ](1 − Pr[τ1 = xj ])
+= Pr[π1 = xi ∩ π2 = xj ](1 − Pr[τ1 = xi ]) − φ−1 Pr[π1 = xi ∩ π2 = xj ](1 − φ−|i−j| Pr[τ1 = xi ])
+= Pr[π1 = xi ∩ π2 = xj ](1 − Pr[τ1 = xi ] − φ−1 − φ−|i−j|−1 Pr[τ1 = xi ]))
+29
+
+This is positive if and only if
+1 − Pr[τ1 = xi ] − φ−1 − φ−|i−j|−1 Pr[τ1 = xi ] > 0
+
+
+⇐⇒ Pr[τ1 = xi ] 1 − φ−|i−j|−1 < 1 − φ−1
+1 − φ−1
+1 − φ−|i−j|−1
+−1
+1−φ
+1 − φ−1
+⇐⇒ i−1
+<
+−n
+φ (1 − φ )
+1 − φ−|i−j|−1
+⇐⇒ Pr[τ1 = xi ] <
+
+⇐⇒ φi−1 (1 − φ−n ) > 1 − φ−|i−j|−1
+This is weakly true for any i < j because φi−1 ≥ 1 and |i − j| + 1 ≤ n, and it is strictly true for any i, j
+other than 1 and n. Thus, E [π1 − π2 | π1 6= τ1 ] > 0.
+
+E.2
+
+Verifying Definition 3
+
+Recall that Definition 3 is equivalent to UAH (θA , θH ) < UHH (θA , θH ) for θA > θH . Let τ be the algorithmic
+ranking, and let π be a ranking from a human evaluator. Recall that UH (θA , θH ) = E [π1 ]. Throughout this
+proof, we will drop the (θA , θH ) notation and simply write UH , UAH , and UHH .
+UAH =
+
+n
+X
+(Pr[π1 = xi ∩ τ1 6= xi ] + Pr[π2 = xi ∩ π1 = τ1 ])xi
+i=1
+
+=
+=
+
+n
+X
+i=1
+n
+X
+
+Pr[π1 = xi ∩ τ1 6= xi ]xi +
+
+n
+X
+
+Pr[π2 = xi ∩ π1 = τ1 ]xi
+
+i=1
+
+(P r[π1 = xi ] − Pr[π1 = xi ∩ τ1 = xi ]) xi +
+
+i=1
+
+= UH −
+= UH +
+
+n X
+X
+
+Pr[π1 = xj ∩ τ1 = xj ∩ π2 = xi ]xi
+
+i=1 j6=i
+n
+X
+i=1
+n
+X
+
+Pr[π1 = xi ∩ τ1 = xi ]xi +
+
+n
+X
+
+Pr[π1 = xi ∩ τ1 = xi ]E [π2 | π1 = xi ∩ τ1 = xi ]
+
+i=1
+
+Pr[π1 = xi ] Pr[τ1 = xi ] (E [π2 | π1 = xi ] − xi )
+
+i=1
+
+Similarly, because two human evaluators are independent,
+UHH = UH +
+
+n
+X
+
+Pr[π1 = xi ]2 (E [π2 | π1 = xi ] − xi ) .
+
+i=1
+
+Let V−i = E [π2 | π1 = xi ]. Note that conditioned on π1 = xi , the remaining elements of π1 follow a Mallows
+model distribution over n − 1 candidates. Because the Mallows model is value-independent, increasing any
+item value increases the expected value of the top-ranked item (and in fact, the item ranked at any position).
+Thus, V−i increases as i increases (since xi , the value of the unavailable candidate, decreases). Moreover, xi
+is strictly decreasing in i, so V−i − xi is strictly increasing in i. With this, we have
+UAH − UH =
+UHH − UH =
+
+n
+X
+i=1
+n
+X
+
+Pr[π1 = xi ] Pr[τ1 = xi ] (V−i − xi )
+Pr[π1 = xi ]2 (V−i − xi )
+
+i=1
+
+Pn
+
+Pn
+Let CA = Pr[π1 = τ1 ] = i=1 Pr[π1 = xi ] Pr[τ1 = xi ], and similarly let CH = i=1 Pr[π1 = xi ]2 . CA > CH
+by Lemma 4 with yi0 = Pr[π1 = xn−i+1 ], p0i = Pr[π1 = xn−i+1 ] and qi0 = Pr[τ1 = xn−i+1 ].
+
+30
+
+Let pi = Pr[π10 = i] Pr[π1 = i]/CA , qi = Pr[π10 = i]2 /CH , and yi = V−i − xi . Then, we have
+n
+X
+UAH − UH
+=
+pi yi
+CA
+i=1
+n
+X
+UHH − UH
+=
+qi yi
+CH
+i=1
+
+With φA = θA + 1 and φH = θH + 1,
+CH
+pi
+=
+·
+qi
+CA
+
+1−φ−1
+A
+i−1
+φA (1−φ−n
+A )
+1−φ−1
+H
+−n
+φi−1
+H (1−φH )
+
+Pn
+
+which is decreasing in i since φH < φA . By Lemma 4,
+0 by Lemma 7, so
+n
+X
+
+pi yi <
+
+n
+X
+
+i=1
+
+∝
+
+φi−1
+H
+,
+φi−1
+A
+
+i=1 pi yi <
+
+Pn
+
+i=1 qi yi . Finally, note that UHH −UH <
+
+qi yi
+
+i=1
+
+UHH − UH
+UAH − UH
+<
+CA
+CH
+CH (UAH − UH )
+< UHH − UH
+CA
+UAH − UH < UHH − UH
+
+(CA > CH , and UHH − UH < 0)
+
+UAH < UHH
+
+F
+
+Supplementary Lemmas for the Mallows Model
+
+Lemma 4. Let {yi }ni=1 , {pi }ni=1 , and {qi }ni=1 be sequences such that
+• yi is strictly increasing.
+Pn
+Pn
+•
+i=1 pi =
+i=1 qi = 1.
+• pqii is decreasing.
+Pn
+Pn
+Then, i=1 pi yi < i=1 qi yi .
+Proof. First, note that there exists j such that pi > qi for i < j and pi ≤ qi for i ≥ j. To see this, let j be
+the smallest index such that pj ≤ qj . Such a j must exist because pi and qi both sum to 1, so it cannot be
+the case that pi > qi for all i. This implies pi /qi ≤ 1, and since pi /qi is decreasing, pi ≤ qi for i ≥ j.
+Next, note that
+0=
+
+n
+X
+
+(pi − qi )
+
+i=1
+
+=
+
+j−1
+X
+
+(pi − qi ) +
+
+i=1
+
+n
+X
+(pi − qi ),
+i=j
+
+meaning
+j−1
+X
+
+(pi − qi ) =
+
+i=1
+
+n
+X
+i=j
+
+31
+
+(qi − pi ).
+
+Using this choice of j, we can write
+n
+X
+i=1
+
+p i yi −
+
+n
+X
+
+q i yi =
+
+i=1
+
+n
+X
+
+(pi − qi )yi
+
+i=1
+
+=
+
+j−1
+X
+
+(pi − qi )yi −
+
+i=1
+
+≤
+
+j−1
+X
+
+n
+X
+
+(pi − qi )yj−1 −
+
+i=1
+
+=
+
+j−1
+X
+
+j−1
+X
+
+(pi − qi )yj−1 −
+
+j−1
+X
+
+(qi − pi )yj
+
+n
+X
+
+(qi − pi )yj
+
+i=j
+
+(pi − qi )yj−1 −
+
+i=1
+
+=
+
+n
+X
+i=j
+
+i=1
+
+=
+
+(qi − pi )yi
+
+i=j
+
+j−1
+X
+
+(pi − qi )yj
+
+i=1
+
+(pi − qi )(yj−1 − yj )
+
+i=1
+
+<0
+
+Lemma 5. For xi > xj ,
+Pr[π1 = xi ∩ π2 = xj ] = φ Pr[π1 = xj ∩ π2 = xi ].
+
+(F.1)
+
+Proof. Let π−ij be a permutation of all of the candidates except xi and xj . Then, we have
+X
+Pr[π1 = xi ∩ π2 = xj ] =
+Pr[π1 = xi ∩ π2 = xj | π−ij ] Pr[π−ij ]
+π−ij
+
+=
+
+X
+
+φ Pr[π1 = xj ∩ π2 = xi | π−ij ] Pr[π−ij ]
+
+π−ij
+
+= φ Pr[π1 = xj ∩ π2 = xi ]
+Intuitively, given that xi and xj are in the top 2 positions, xi followed by xj is φ times more likely than xj
+followed by xi regardless of the remainder of the permutation, and therefore, xi followed by xj is φ times
+more likely overall.
+Lemma 6. For 1 ≤ i ≤ n,
+Pr[π1 = xi ] =
+
+1 − φ−1
+.
+φi−1 (1 − φ−n )
+
+(F.2)
+
+Proof. Let π−i be a permutation over all items except i. Then,
+Pr[π1 = xi ] =
+
+X
+
+Pr[π1 = xi | π−i ] Pr[π−i ]
+
+π−i
+
+=
+
+X
+
+φ−(i−1) Pr[π−i ]
+
+π−i
+
+= φ−(i−1)
+
+X
+
+Pr[π−i ]
+
+π−i
+
+Note that
+PnPr[π−i ] doesn’t depend on which n − 1 items are being ranked, so this term appears for any i.
+Moreover, i=1 Pr[π1 = xi ] = 1. Therefore, we have
+32
+
+Pr[π1 = xi ] ∝ φ−(i−1) .
+Normalizing, we get
+φ−(i−1)
+Pr[π1 = xi ] = Pn
+−(j−1)
+j=1 φ
+=
+=
+
+φ−(i−1)
+1−φ−n
+1−φ−1
+
+1 − φ−1
+φi−1 (1 − φ−n )
+
+Intuitively, any permutation over n−1 items is equally likely regardless of what those items are, and inserting
+any item at the front of this permutation yields a likelihood proportional to the number of additional
+inversions this causes, which is equal to the item’s position on the list.1
+Lemma 7. For the Mallows Model, UH (θA , θH ) > UHH (θA , θH ).
+Proof. Intuitively, this is because selecting first is better than selecting second. To prove this, let π and τ
+be ranking generated by independent human evaluators under the Mallows Model, i.e., π, τ ∼ FθH .
+UH (θA , θH ) − UHH (θA , θH ) = E [π1 ] − E [τ1 · 1π1 6=τ1 + τ2 · 1π1 =τ1 ]
+= E [(π1 − τ2 ) · 1π1 =τ1 ]
+
+= E [(π1 − π2 ) · 1π1 =τ1 ]
+For any i < j, conditioned on π1 = τ1 , they are more likely to be correctly ordered than not:
+X
+E [(π1 − π2 ) · 1π1 =τ1 ] =
+(Pr[π1 = xi ∩ τ1 = xi ∩ π2 = xj ] − Pr[π1 = xj ∩ τ1 = xj ∩ π2 = xi ]) (xi − xj )
+i<j
+
+=
+
+X
+
+(Pr[π1 = xi ∩ π2 = xj ] Pr[τ1 = xi ] − Pr[π1 = xj ∩ π2 = xi ] Pr[τ1 = xj ]) (xi − xj )
+
+i<j
+
+>
+
+X
+
+(Pr[π1 = xi ∩ π2 = xj ] Pr[τ1 = xj ] − Pr[π1 = xj ∩ π2 = xi ] Pr[τ1 = xj ]) (xi − xj )
+
+i<j
+
+=
+
+X
+
+(Pr[π1 = xi ∩ π2 = xj ] − Pr[π1 = xj ∩ π2 = xi ]) (xi − xj )
+
+i<j
+
+≥
+
+X
+
+(φH Pr[π1 = xj ∩ π2 = xi ] − Pr[π1 = xj ∩ π2 = xi ]) (xi − xj )
+
+i<j
+
+>0
+
+F.1
+
+Proof of Theorem 4
+
+To prove this theorem, we make use of the following lemma.
+Lemma 8. Under the Mallows model, the probability that any two items i < j are correctly ranked increases
+monotonically with the accuracy parameter φ.
+1 Alternatively, we could prove this by showing that for any permutation with i in front, the permutation in which i and i − 1
+are swapped is φ times more likely, and thus, i − 1 is φ times more likely to be in front than i.
+
+33
+
+Proof. Let inv(π) be the number of inversions in a permutation π. Under the Mallows model, the probability
+of observing π is proportional to φ− inv(π) . Let Sij (resp. Sji ) be the set of permutations where i is ranked
+before j (resp. j is ranked before i). Then, the probability i is ranked before j is
+P
+− inv(π)
+π∈Sij φ
+P
+.
+Pr[i  j] = P
+− inv(π) +
+− inv(π)
+π∈Sij φ
+π∈Sji φ
+d
+d Pr[ij]
+We will show that dφ
+Pr[i  j] > 0. Note that this is equivalent to showing dφ
+Pr[ji] > 0. Note that
+P
+− inv(π)
+Pr[i  j]
+π∈Sij φ
+.
+=P
+− inv(π)
+Pr[j  i]
+π∈Sji φ
+
+Let πi:j be the subsequence of π containing elements i through j. Then, we have
+P
+− inv(π)
+Pr[i  j]
+π∈Sij φ
+=P
+− inv(π)
+Pr[j  i]
+π∈Sji φ
+P
+P
+0
+− inv(πi:j )
+φinv(πi:j )−inv(π )
+0 =π
+πi:j :π∈Sij φ
+π 0 :πi:j
+i:j
+P
+=P
+0
+− inv(πi:j )
+φinv(πi:j )−inv(π )
+0 =π
+πi:j :π∈Sji φ
+π 0 :πi:j
+i:j
+P
+− inv(πi:j )
+πi:j :π∈Sij φ
+=P
+− inv(πi:j )
+πi:j :π∈Sji φ
+P
+0
+Intuitively, the term
+φinv(πi:j )−inv(π ) does not depend on πi:j because for any πi:j , if we fix
+0 =π
+π 0 :πi:j
+i:j
+the order and positions of the remaining elements, the number of inversions involving at least one element
+outside of i : j (i.e., inv(π 0 )−inv(πi:j )) is a constant. For fixed πi:j , there is a bijection between permutations
+0
+π 0 : πi:j
+= πi:j and a fixed order and position of the remaining elements (excluding i : j), meaning this sum
+does not depend on πi:j . Thus, for the remainder of this proof, we can assume without loss of generality
+that i = 1 and j = n. The quantity of interest becomes
+P
+− inv(π1:n )
+Pr[1  n]
+π :π∈S1n φ
+= P 1:n
+− inv(π1:n )
+Pr[n  1]
+πi:j :π∈Sn1 φ
+P
+− inv(π)
+π∈S1n φ
+=P
+− inv(π)
+π∈Sn1 φ
+Next, we observe that we can similarly ignore inversions between two elements that are neither 1 nor n.
+To see this, let inv1,n (π) be the number of inversions involving at least one of 1 and n. Then, if we fix the
+order and positions of 1 and n, all possible permutations of the remaining elements 2 through n − 1 produce
+the same number of inversions inv1,n (π). More formally, let π(1) and π(n) be the respective positions of
+elements 1 and n. Then, this we have
+X
+X
+X
+φ− inv(π) =
+φ− inv(π)
+π∈S1n
+
+k<` π:π(1) =k,π(n) =`
+
+=
+
+X
+
+=
+
+X
+
+X
+
+φ− inv1,n (φ) · φinv1,n (φ)−inv(π)
+
+k<` π:π(1) =k,π(n) =`
+
+φ−(k−1)−(n−`)
+
+k<`
+
+X
+
+φinv1,n (φ)−inv(π)
+
+π:π(1) =k,π(n) =`
+
+inv1,n (φ)−inv(π)
+As noted above,
+does not depend on k or `, since every permutation of
+π:π(1) =k,π(n) =` φ
+the remaining elements yields the same number of inversions among them regardless of k and `. A similar
+argument yields
+X
+X
+X
+φ− inv(π) =
+φ−(k−1)−(n−`)+1
+φinv1,n (φ)−inv(π)
+
+P
+
+π∈Sn1
+
+k>`
+
+π:π(1) =k,π(n) =`
+
+34
+
+Putting these together, we have
+P
+P
+−(k−1)−(n−`)
+inv1,n (φ)−inv(π)
+Pr[1  n]
+k<` φ
+π:π(1) =k,π(n) =` φ
+P
+=P
+inv1,n (φ)−inv(π)
+−(k−1)−(n−`)+1
+Pr[n  1]
+π:π(1) =k,π(n) =` φ
+k>` φ
+P
+φ−(k−1)−(n−`)
+= P k<` −(k−1)−(n−`)+1
+k>` φ
+P
+φ−(k−1)−(n−`)
+φn−1
+= P k<` −(k−1)−(n−`)+1 · n−1
+φ
+k>` φ
+P
+φ`−k
+= P k<` `−k+1
+k>` φ
+Note that each term in the numerator is strictly increasing in φ, while each term in the denominator is
+d
+d Pr[1n]
+weakly decreasing in φ. As a result, dφ
+Pr[n1] > 0, meaning for any i < j, dφ Pr[i  j] > 0.
+With this, we proceed inductively, showing that when φH ≥ φA , each firm rationally chooses to use H.
+For the first firm, by Lemma 8, H is more likely than A to correctly order any pair of candidates, meaning it
+produces higher expected utility. Similarly, for any subsequent firm, conditioned on the remaining candidates,
+H is still more likely to correctly order any pair of remaining candidates, meaning it leads to higher expected
+utility. A similar argument shows that all firms strictly prefer H when φH > φA .
+
+35
+
+

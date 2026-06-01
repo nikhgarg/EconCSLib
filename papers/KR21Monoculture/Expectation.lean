@@ -1,0 +1,116 @@
+import KR21Monoculture.Basic
+import EconCSLib.Foundations.Probability.FiniteExpectation
+
+open EconCSLib
+
+namespace KR21Monoculture
+
+/-- Expected value of the candidate hired by the firm that chooses first. -/
+noncomputable def expectedFirstMoverUtility {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
+  pmfExp μ (fun π => value (firstChoice π))
+
+/-- Expected value of the candidate hired by the second mover when both firms use
+the same realized ranking. -/
+noncomputable def expectedSecondMoverShared {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
+  pmfExp μ (fun π => value (secondChoice π))
+
+/-- The real-valued probability that a draw from `μ` puts candidate `c` second. -/
+noncomputable def secondChoiceProb {n : ℕ}
+    (μ : PMF (Ranking n)) (c : Candidate n) : ℝ :=
+  pmfProb μ (fun π => c = secondChoice π)
+
+/-- Shared second-mover utility regrouped by the candidate in second position. -/
+theorem expectedSecondMoverShared_eq_sum_secondChoiceProb {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    expectedSecondMoverShared μ value =
+      ∑ c : Candidate n, secondChoiceProb μ c * value c := by
+  classical
+  unfold expectedSecondMoverShared secondChoiceProb pmfProb pmfExp
+  calc
+    ∑ π : Ranking n, (μ π).toReal * value (secondChoice π)
+        = ∑ π : Ranking n, ∑ c : Candidate n,
+            if c = secondChoice π then (μ π).toReal * value c else 0 := by
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          have hsum :
+              (∑ c : Candidate n,
+                if c = secondChoice π then (μ π).toReal * value c else 0) =
+                (μ π).toReal * value (secondChoice π) := by
+            simpa using
+              (Finset.sum_ite_eq' Finset.univ (secondChoice π)
+                (fun c : Candidate n => (μ π).toReal * value c))
+          rw [hsum]
+    _ = ∑ c : Candidate n, ∑ π : Ranking n,
+            if c = secondChoice π then (μ π).toReal * value c else 0 := by
+          exact Finset.sum_comm
+    _ = ∑ c : Candidate n, ∑ π : Ranking n,
+            ((μ π).toReal *
+              (if c = secondChoice π then (1 : ℝ) else 0)) * value c := by
+          refine Finset.sum_congr rfl ?_
+          intro c _
+          refine Finset.sum_congr rfl ?_
+          intro π _
+          by_cases h : c = secondChoice π
+          · simp [h]
+          · simp
+    _ = ∑ c : Candidate n,
+          (∑ π : Ranking n,
+            (μ π).toReal *
+              (if c = secondChoice π then (1 : ℝ) else 0)) * value c := by
+          refine Finset.sum_congr rfl ?_
+          intro c _
+          rw [Finset.sum_mul]
+
+/-- Pointwise utility to the second mover when the first mover uses `σ`
+and the second mover uses `π`. -/
+def secondMoverUtility {n : ℕ} (value : Candidate n → ℝ)
+    (π σ : Ranking n) : ℝ :=
+  value (bestRemainingAfter π (firstChoice σ))
+
+/-- Expected utility to the second mover when the second mover draws `π` from `μ₂`
+and the first mover draws `σ` from `μ₁`. -/
+noncomputable def expectedSecondMoverIndependent {n : ℕ}
+    (μ₂ μ₁ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
+  pmfPairExp μ₂ μ₁ (fun π σ => secondMoverUtility value π σ)
+
+@[simp] theorem secondMoverUtility_self {n : ℕ} (value : Candidate n → ℝ)
+    (π : Ranking n) :
+    secondMoverUtility value π π = value (secondChoice π) := by
+  simp [secondMoverUtility, bestRemainingAfter]
+
+@[simp] theorem secondMoverUtility_eq_if {n : ℕ} (value : Candidate n → ℝ)
+    (π σ : Ranking n) :
+    secondMoverUtility value π σ =
+      if firstChoice π = firstChoice σ then value (secondChoice π)
+      else value (firstChoice π) := by
+  by_cases h : firstChoice π = firstChoice σ
+  · have h' : π 0 = σ 0 := by
+      simpa [firstChoice] using h
+    simp [secondMoverUtility, bestRemainingAfter, firstChoice, secondChoice, h']
+  · have h' : π 0 ≠ σ 0 := by
+      simpa [firstChoice] using h
+    simp [secondMoverUtility, bestRemainingAfter, firstChoice, h']
+
+/-- Social welfare in the ordered version of the game where the `σ`-firm chooses
+first and the `π`-firm chooses second. -/
+def welfareOrdered {n : ℕ} (value : Candidate n → ℝ) (π σ : Ranking n) : ℝ :=
+  value (firstChoice σ) + secondMoverUtility value π σ
+
+/-- Social welfare when the first mover uses `μ₁` and the second mover uses `μ₂`. -/
+noncomputable def expectedWelfareOrdered {n : ℕ}
+    (μ₂ μ₁ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
+  pmfPairExp μ₂ μ₁ (fun π σ => welfareOrdered value π σ)
+
+@[simp] theorem welfareOrdered_eq {n : ℕ} (value : Candidate n → ℝ)
+    (π σ : Ranking n) :
+    welfareOrdered value π σ =
+      value (firstChoice σ) + value (bestRemainingAfter π (firstChoice σ)) := rfl
+
+@[simp] theorem welfareOrdered_self {n : ℕ} (value : Candidate n → ℝ)
+    (π : Ranking n) :
+    welfareOrdered value π π = value (firstChoice π) + value (secondChoice π) := by
+  simp [welfareOrdered, secondMoverUtility, bestRemainingAfter]
+
+end KR21Monoculture

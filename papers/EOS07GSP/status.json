@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "id": "EOS07GSP",
+  "title": "Internet Advertising and the Generalized Second-Price Auction",
+  "authors": "Benjamin Edelman, Michael Ostrovsky, and Michael Schwarz",
+  "source_version": "NBER Working Paper 11765 / AER 2007 publication citation",
+  "build_target": "lake build EOS07GSP",
+  "status": "partially formalized",
+  "main_caveat": "GSP non-truthfulness, running example, Theorem 7, and finite Theorem 8 source-extensive endpoints are exposed; the remaining source-completion boundary is explicit in the README.",
+  "review_entrypoint": "papers/EOS07GSP/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 15,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/EOS07GSP/PaperInterface.lean",
+    "line_count": 75,
+    "declaration_rows": 15,
+    "review_rows": 15,
+    "oversized": false,
+    "maintainability_issue": null
+  },
+  "artifacts": {
+    "readme": "papers/EOS07GSP/README.md",
+    "paper_interface": "papers/EOS07GSP/PaperInterface.lean",
+    "final_validation_report": "papers/EOS07GSP/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/EOS07GSP/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/EOS07GSP/DependencyDAG.pdf"
+  },
+  "review_surface": {
+    "source_file": "papers/EOS07GSP/PaperInterface.lean",
+    "include_names": [
+      "definition4_locally_envy_free",
+      "stable_assignment",
+      "remark1_gsp_payments_weakly_dominate_vcg",
+      "remark2_vcg_truthful",
+      "remark3_gsp_not_truthful",
+      "running_example_truthful_gsp_nash",
+      "running_example_truthful_gsp_revenue_comparison",
+      "lemma5_locally_envy_free_stable",
+      "lemma6_stable_assignment_slot_envy_free",
+      "theorem7_bstar_payment_identity",
+      "theorem7_no_positive_transfer_conclusion",
+      "theorem8_dropout_price_bstar",
+      "theorem8_source_extensive_pbe_iff_named_strategy_review",
+      "theorem8_source_extensive_outcome_eq_vcg",
+      "theorem8_exact_record_full_vcg_conclusion"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "definition4_locally_envy_free",
+          "stable_assignment",
+          "remark1_gsp_payments_weakly_dominate_vcg",
+          "remark2_vcg_truthful",
+          "remark3_gsp_not_truthful",
+          "running_example_truthful_gsp_nash",
+          "running_example_truthful_gsp_revenue_comparison",
+          "lemma5_locally_envy_free_stable",
+          "lemma6_stable_assignment_slot_envy_free",
+          "theorem7_bstar_payment_identity",
+          "theorem7_no_positive_transfer_conclusion",
+          "theorem8_dropout_price_bstar",
+          "theorem8_source_extensive_pbe_iff_named_strategy_review",
+          "theorem8_source_extensive_outcome_eq_vcg",
+          "theorem8_exact_record_full_vcg_conclusion"
+        ]
+      }
+    ]
+  }
+}
