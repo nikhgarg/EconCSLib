@@ -40700,6 +40700,48 @@ theorem paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_iff_l
         hlocal.2.2⟩
 
 /--
+Every no-overshoot terminal-history behavior certificate supplies the
+source-extensive rationality boundary for the named finite `B*` strategy: the
+certificate gives generated history and terminality, while the named strategy
+supplies source-shaped sequential rationality.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_source_extensive_rationality
+    (cert :
+      PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+      cert.localModel cert.initialState cert.finalState
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.localModel.value cert.localModel.clickThroughRate
+        cert.localModel.remaining) := by
+  exact
+    ⟨paper_theorem8_bstar_ranked_threshold_named_strategy_source_sequential_rationality
+        cert.localModel cert.initialState,
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_strategy_history_to_strategy_history
+        cert.localModel cert.history,
+      cert.terminal⟩
+
+/--
+Obligation ledger for no-overshoot terminal-history certificates at the
+source-extensive boundary: the same certificate gives source-extensive
+rationality and exact finite `B*` dropout records.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_source_extensive_exact_drop_obligations
+    (cert :
+      PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        cert.localModel cert.initialState cert.finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.localModel.value cert.localModel.clickThroughRate
+          cert.localModel.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        cert.localModel cert.initialState cert.finalState := by
+  exact
+    ⟨paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_source_extensive_rationality
+        cert,
+      (paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_history_obligations
+        cert).2⟩
+
+/--
 Source-extensive rationality alone is still compatible with the overshoot
 witness: the named finite `B*` strategy satisfies the source-extensive
 rationality target from the overshoot initial state to the terminal dropout

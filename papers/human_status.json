@@ -211,7 +211,7 @@
       "paper_info": "Internet Advertising and the Generalized Second-Price Auction by Benjamin Edelman, Michael Ostrovsky, and Michael Schwarz; NBER Working Paper 11765 / AER 2007 publication citation.",
       "status": "Partially formalized",
       "human_review": "0/17",
-      "lean_loc": 25580,
+      "lean_loc": 25582,
       "main_note": "Non-truthfulness, examples, and finite theorem endpoints are exposed with an explicit completion boundary.",
       "paper_folder": "papers/EOS07GSP",
       "review_entrypoint": "papers/EOS07GSP/FINAL_VALIDATION_REPORT.md"
