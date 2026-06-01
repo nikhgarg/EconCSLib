@@ -198,7 +198,7 @@ auxiliary reusable-library/audit material.
   DependencyDAG.tex` passed from the paper folder. MiKTeX emitted read-only log
   warnings for its home cache, but produced the PDF successfully.
 - Repository audit: `python3 scripts/audit_repository.py` passed with 0 errors
-  and 33 warnings. The warnings are public-checkout packaging or unrelated
+  and 32 warnings. The warnings are public-checkout packaging or unrelated
   paper review-slice/cache items, including the expected missing ignored source
   PDF for GHW01.
 - `git diff --check`: passed.
