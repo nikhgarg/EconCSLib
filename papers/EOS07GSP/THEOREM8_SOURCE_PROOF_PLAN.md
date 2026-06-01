@@ -367,6 +367,11 @@ is the concrete generalized-English extensive-form argument:
    upgrades an ordinary generated named-strategy history to the no-overshoot
    history object from precisely those realized-new-dropout no-overshoot
    premises.
+   If the target endpoint expects the packaged terminal certificate directly,
+   use
+   `theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout`
+   with generated history, terminality, initial activity, and the same
+   step-local invariant.
    Bare `StrategyHistory` cannot imply exact records; the overshoot witness
    above is a formal counterexample. If the real transition relation is encoded
    through clock-disciplined advances, the target theorem is

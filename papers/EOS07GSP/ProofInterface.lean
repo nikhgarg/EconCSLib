@@ -3372,6 +3372,47 @@ def theorem8_no_overshoot_terminal_certificate_of_strategy_history
   initially_active := initially_active
 
 /--
+Build the no-overshoot terminal-history certificate directly from an ordinary
+generated named-strategy history, provided the source proof supplies the
+realized-new-dropout no-overshoot invariant. This is the bridge to use when the
+real extensive-form proof naturally produces `StrategyHistory` plus a
+step-local timing invariant rather than the strengthened no-overshoot history
+object.
+-/
+def theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hno_overshoot :
+      ∀ {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {rank : ℕ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining) state next →
+        state.IsActive rank →
+        ¬ next.IsActive rank →
+        state.clockPrice ≤
+          theorem8BStarThresholdBid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate :=
+  theorem8_no_overshoot_terminal_certificate_of_strategy_history
+    model
+    (theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot
+      model hhist hno_overshoot)
+    terminal initially_active
+
+/--
 Raw no-overshoot history to source-extensive completed-rank conclusion using
 direct final inactivity on the completed ranks.
 -/
