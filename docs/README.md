@@ -12,6 +12,8 @@ or what a completed formalization proves without reading proof internals.
   dashboard workflow.
 - [PAPER_STATUS.md](PAPER_STATUS.md): public paper citation, build target,
   status, caveat, and review entrypoint.
+- [NEW_CONTRIBUTOR_WORKFLOW.md](NEW_CONTRIBUTOR_WORKFLOW.md): first-time
+  contributor workflow starting from a public fork or fresh clone.
 - [PUBLIC_REPOSITORY_WORKFLOW.md](PUBLIC_REPOSITORY_WORKFLOW.md): public/private
   repository split, completed-paper imports, and private partial-paper policy.
 - [PUBLIC_RELEASE_CHECKLIST.md](PUBLIC_RELEASE_CHECKLIST.md): checks before a

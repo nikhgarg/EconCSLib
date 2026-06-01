@@ -4,6 +4,12 @@ Draft policy: this contribution process is provisional while EconCSLib is being
 prepared for public release. If you want to contribute, please contact Nikhil
 Garg at ngarg@cornell.edu before starting substantial work.
 
+If you are starting from the public repository and do not already have a
+private EconCSLib workspace, begin with
+[`docs/NEW_CONTRIBUTOR_WORKFLOW.md`](docs/NEW_CONTRIBUTOR_WORKFLOW.md). It
+describes the fork/branch workflow, how to start a new paper, and when a
+private workspace is useful.
+
 EconCSLib has two connected goals:
 
 - maintain a reusable Lean library for economics and computation; and
