@@ -357,6 +357,11 @@ is the concrete generalized-English extensive-form argument:
 2. For the fully general paper statement, prove the source-side no-overshoot
    timing fact for the real transition relation, then apply
    `theorem8_strategy_history_to_exact_drop_history_of_no_overshoot_drop_steps`.
+   At the single-transition level,
+   `theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot`
+   is the intended local bridge: once source semantics prove a realized
+   named-strategy dropout did not overshoot, the recorded dropout price is
+   exactly the finite `B*` threshold.
    Bare `StrategyHistory` cannot imply exact records; the overshoot witness
    above is a formal counterexample. If the real transition relation is encoded
    through clock-disciplined advances, the target theorem is

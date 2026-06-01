@@ -11,16 +11,16 @@
   "review_entrypoint": "papers/EOS07GSP/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 15,
+    "total_rows": 16,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
   },
   "paper_interface": {
     "path": "papers/EOS07GSP/PaperInterface.lean",
-    "line_count": 75,
-    "declaration_rows": 15,
-    "review_rows": 15,
+    "line_count": 79,
+    "declaration_rows": 16,
+    "review_rows": 16,
     "oversized": false,
     "maintainability_issue": null
   },
@@ -46,6 +46,7 @@
       "theorem7_bstar_payment_identity",
       "theorem7_no_positive_transfer_conclusion",
       "theorem8_dropout_price_bstar",
+      "theorem8_no_overshoot_dropout_step_exact_record",
       "theorem8_source_extensive_pbe_iff_named_strategy_review",
       "theorem8_source_extensive_outcome_eq_vcg",
       "theorem8_exact_record_full_vcg_conclusion"
@@ -67,6 +68,7 @@
           "theorem7_bstar_payment_identity",
           "theorem7_no_positive_transfer_conclusion",
           "theorem8_dropout_price_bstar",
+          "theorem8_no_overshoot_dropout_step_exact_record",
           "theorem8_source_extensive_pbe_iff_named_strategy_review",
           "theorem8_source_extensive_outcome_eq_vcg",
           "theorem8_exact_record_full_vcg_conclusion"

@@ -3234,6 +3234,45 @@ theorem theorem8_strategy_history_to_exact_drop_history_of_no_overshoot_drop_ste
       model hhist hno_overshoot
 
 /--
+At a realized named-strategy dropout step, the exact-record obligation is local:
+strategy consistency gives that the clock reached the finite `B*` threshold,
+and the no-overshoot premise gives the reverse inequality. Therefore the new
+dropout record is exactly the finite `B*` threshold price.
+-/
+theorem theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state next)
+    (hactive : state.IsActive rank) (hinactive : ¬ next.IsActive rank)
+    (hno_overshoot :
+      state.clockPrice ≤
+        theorem8BStarThresholdBid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) :
+    next.lastDropout rank =
+      some
+        (theorem8BStarThresholdBid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  have hrecord_and_threshold :=
+    paper_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_eq_and_threshold_le
+      model hstep hactive hinactive
+  have hclock :
+      state.clockPrice =
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1) := by
+    exact
+      le_antisymm
+        (by simpa [theorem8BStarThresholdBid] using hno_overshoot)
+        hrecord_and_threshold.2
+  simpa [theorem8BStarThresholdBid, hclock] using hrecord_and_threshold.1
+
+/--
 No-overshoot source histories forget to ordinary named-strategy histories. This
 is the generated-history component of the tightest concrete timing certificate:
 the no-overshoot evidence is stored only at realized dropout steps.

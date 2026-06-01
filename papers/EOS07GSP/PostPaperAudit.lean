@@ -3004,6 +3004,39 @@ theorem audit_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_e
     paper_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_eq_and_threshold_le
       model hstep hactive hinactive
 
+/-- Audit for Theorem 8 exact finite-`B*` source timing: a realized
+named-strategy dropout step with no overshoot records exactly the finite `B*`
+threshold bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {rank : ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state next)
+    (hactive : state.IsActive rank) (hinactive : ¬ next.IsActive rank)
+    (hno_overshoot :
+      state.clockPrice ≤
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) :
+    next.lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  have hrecord_and_threshold :=
+    paper_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_eq_and_threshold_le
+      model hstep hactive hinactive
+  have hclock :
+      state.clockPrice =
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1) :=
+    le_antisymm hno_overshoot hrecord_and_threshold.2
+  simpa [hclock] using hrecord_and_threshold.1
+
 /-- Audit for Theorem 8 exact finite-`B*` strategy-consistent steps: a rank
 cannot newly drop before its finite `B*` threshold bid. -/
 theorem audit_theorem8_bstar_ranked_threshold_strategy_step_no_new_dropout_before_threshold

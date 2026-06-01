@@ -59,6 +59,10 @@ abbrev theorem7_no_positive_transfer_conclusion :=
 abbrev theorem8_dropout_price_bstar :=
   @EOS07GSP.audit_theorem8_ranked_dropout_price_eq_bstar_bid_of_vcg_tail
 
+/-- Theorem 8: no-overshoot dropout steps record exactly the finite `B*` bid. -/
+abbrev theorem8_no_overshoot_dropout_step_exact_record :=
+  @EOS07GSP.audit_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot
+
 /-- Theorem 8: source-extensive PBE iff named strategy. -/
 abbrev theorem8_source_extensive_pbe_iff_named_strategy_review :=
   @EOS07GSP.PaperInterface.theorem8_source_extensive_pbe_iff_named_strategy

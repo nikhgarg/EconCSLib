@@ -1,6 +1,6 @@
 # EOS07GSP Startup Handoff
 
-Date: 2026-05-16
+Date: 2026-06-01
 
 This is the first file to read after the pause. It is intentionally shorter
 than the older handoff and points to exact files/declarations for the next
@@ -8,17 +8,15 @@ proof pass.
 
 ## Current Validation Boundary
 
-The EOS-owned files were clean against `origin/main` before this documentation
-handoff. The last Lean validation before pausing was:
+The latest Lean validation after the no-overshoot dropout-step wrapper was:
 
 ```bash
 lake build EOS07GSP
 lake build EOS07GSP.PostPaperAudit
 ```
 
-Both commands passed after the latest Theorem 8 source-boundary work. This file
-and the linked documentation are documentation-only updates; rerun the two
-commands above before any further Lean commit.
+Both commands passed after the latest Theorem 8 source-boundary work. Rerun the
+two commands above before any further Lean commit.
 
 ## Shared Worktree Rules
 
@@ -59,6 +57,7 @@ finite `B*` threshold and therefore record the wrong terminal price.
 Use these as the strongest public entry points before adding new code:
 
 - `theorem8_no_overshoot_strategy_history_to_exact_drop_history`
+- `theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot`
 - `theorem8_no_overshoot_terminal_certificate_of_strategy_history`
 - `theorem8_clock_disciplined_strategy_history_to_exact_drop_history`
 - `theorem8_no_overshoot_strategy_history_belief_source_extensive_trace_all_terminal_vcg_conclusion`
@@ -83,8 +82,8 @@ Do this next, in this order:
    no-overshoot named-strategy history, from the real generalized-English
    source semantics.
 2. Prove the invariant for one transition first. The useful statement is not
-   another final conclusion; it should say that the transition relation cannot
-   advance past any active rank's finite `B*` threshold before the rank drops,
+   another final conclusion; it should supply the no-overshoot premise consumed
+   by `theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot`,
    or else identify the exact additional source assumption needed.
 3. Lift the one-transition invariant to histories.
 4. Feed the resulting history into the existing cold-start clock-disciplined or
