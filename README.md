@@ -67,6 +67,11 @@ markdown table is [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md).
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | 0/17 | OK: 296 lines | Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1. |
 | [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 174 lines | Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external. |
 | [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/33 | OK: 171 lines | Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure. |
+| [KR21 Monoculture](papers/KR21Monoculture) | Partially formalized | 0/6 | OK: 82 lines | Continuous RUM endpoints are exposed; arbitrary-size Mallows dominance and remaining paper-scope bridges remain open. |
+| [GLM20 Dropping Standardized Testing](papers/GLM20DroppingStandardizedTesting) | Partially formalized | 0/284 | OK: 2213 lines | Main early results and Section 5 bridge surfaces are exposed; concrete Bayesian-game identifications remain open. |
+| [EOS07 GSP](papers/EOS07GSP) | Partially formalized | 0/15 | OK: 75 lines | Non-truthfulness, examples, and finite theorem endpoints are exposed with an explicit completion boundary. |
+| [IM05 Marriage Honesty Stability](papers/IM05MarriageHonestyStability) | Partially formalized | 0/6 | OK: 106 lines | Matching preliminaries and theorem wrappers are exposed; algorithmic and experimental constructions remain open. |
+| [PRPKG24 Accuracy Diversity](papers/PRPKG24AccuracyDiversity) | Partially formalized | 0/36 | OK: 160 lines | Finite optimization and distribution checkpoints are exposed; general order-statistic certificates remain open. |
 <!-- END GENERATED PAPER STATUS TABLE -->
 
 For more detail, use:
