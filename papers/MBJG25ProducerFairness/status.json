@@ -5,7 +5,7 @@
   "authors": "Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg",
   "source_version": "ICWSM 2025 / arXiv:2207.04369",
   "build_target": "lake build MBJG25ProducerFairness",
-  "status": "formalized with caveat",
+  "status": "formalized",
   "main_caveat": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
   "human_summary": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
   "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",

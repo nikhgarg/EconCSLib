@@ -64,7 +64,7 @@ markdown table is [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md).
 | [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 92 lines |  |
 | [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | 0/32 | OK: 406 lines |  |
 | [GCG24 User Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 235 lines |  |
-| [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | 0/17 | OK: 296 lines | Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1. |
+| [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized | 0/17 | OK: 296 lines | Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1. |
 | [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 174 lines | Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external. |
 | [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/33 | OK: 171 lines | Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure. |
 <!-- END GENERATED PAPER STATUS TABLE -->

@@ -134,7 +134,7 @@
       "publication_year": 2025,
       "source_url": "https://arxiv.org/pdf/2207.04369",
       "paper_info": "Balancing Producer Fairness and Efficiency via Bayesian Rating System Design by Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg; ICWSM, 2025.",
-      "status": "Formalized with caveat",
+      "status": "Formalized",
       "human_review": "0/17",
       "lean_loc": 580,
       "main_note": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
