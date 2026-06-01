@@ -12,7 +12,78 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 PAPERS = ROOT / "papers"
 AGGREGATE_STATUS = PAPERS / "status.json"
+HUMAN_STATUS = PAPERS / "human_status.json"
+DOCS_PAPER_STATUS = ROOT / "docs" / "PAPER_STATUS.md"
 TEMPLATE = PAPERS / "TEMPLATE"
+
+STATUS_LABELS = {
+    "formalized": "Formalized",
+    "formalized with caveat": "Formalized with caveat",
+    "partially formalized": "Partially formalized",
+    "not started": "Not started",
+}
+
+STATUS_GROUPS = {
+    "formalized": 0,
+    "formalized with caveat": 0,
+    "partially formalized": 1,
+}
+
+PUBLICATION_OVERRIDES = {
+    "DSWG24DiscretizationBias": ("ACM FAccT / PNAS Nexus, 2024", 2024),
+    "GCG24UserItemFairness": ("NeurIPS, 2024", 2024),
+    "GHW01DigitalGoods": ("SODA, 2001", 2001),
+    "GN21DriverSurgePricing": ("Management Science, 2021", 2021),
+    "GS62CollegeAdmissions": ("American Mathematical Monthly, 1962", 1962),
+    "LG21TestOptionalPolicies": ("EAAMO, 2021", 2021),
+    "LMMS04FairDivision": ("ACM EC, 2004", 2004),
+    "LOS02CombinatorialAuctions": ("Journal of the ACM, 2002", 2002),
+    "MBJG25ProducerFairness": ("ICWSM, 2025", 2025),
+    "MSVV07AdWords": ("Journal of the ACM, 2007", 2007),
+    "Roth82StableMatching": ("Mathematics of Operations Research, 1982", 1982),
+}
+
+SOURCE_URL_OVERRIDES = {
+    "DSWG24DiscretizationBias": "https://arxiv.org/pdf/2405.16762",
+    "GCG24UserItemFairness": "https://openreview.net/pdf?id=ZOZjMs3JTs",
+    "GHW01DigitalGoods": "https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf",
+    "GN21DriverSurgePricing": "https://arxiv.org/pdf/1905.07544",
+    "GS62CollegeAdmissions": "http://www.jstor.org/stable/2312726",
+    "LG21TestOptionalPolicies": "https://arxiv.org/pdf/2107.08922",
+    "LMMS04FairDivision": "https://www.cs.cmu.edu/~arielpro/15896s15/docs/paper12a.pdf",
+    "LOS02CombinatorialAuctions": "https://jmvidal.cse.sc.edu/library/lehmann02a.pdf",
+    "MBJG25ProducerFairness": "https://arxiv.org/pdf/2207.04369",
+    "MSVV07AdWords": "https://people.eecs.berkeley.edu/~vazirani/pubs/adwords.pdf",
+    "Roth82StableMatching": "https://pubsonline.informs.org/doi/epdf/10.1287/moor.7.4.617",
+}
+
+HUMAN_NOTE_OVERRIDES = {
+    "GS62CollegeAdmissions": (
+        "This only uses a few lines of code as its infrastructure has largely "
+        "been elevated to the shared matching library."
+    ),
+    "GHW01DigitalGoods": (
+        "Theorem 8.2 follows the journal version; the broader preliminary "
+        "wording is refuted in the source audit. The paper-local LOC is small "
+        "because most auction infrastructure and proof work lives in the "
+        "reusable auctions library."
+    ),
+    "MBJG25ProducerFairness": (
+        "Formalization required an additional assumption that Bernoulli success "
+        "probability was strictly bounded away from 0 and 1."
+    ),
+    "LMMS04FairDivision": (
+        "Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search "
+        "support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP "
+        "complexity infrastructure."
+    ),
+    "LOS02CombinatorialAuctions": (
+        "Greedy approximation/truthfulness, Theorem 6.1 reductions, and an "
+        "abstract complexity-class note are closed; native machine-level "
+        "NP-hardness, polynomial-time, and randomized-class semantics remain "
+        "external."
+    ),
+}
 
 
 def paper_dirs() -> list[Path]:
@@ -35,8 +106,12 @@ def load_paper_status(folder: Path) -> dict[str, Any]:
     return payload
 
 
-def aggregate_payload() -> dict[str, Any]:
-    papers = [load_paper_status(folder) for folder in paper_dirs()]
+def paper_records() -> list[tuple[Path, dict[str, Any]]]:
+    return [(folder, load_paper_status(folder)) for folder in paper_dirs()]
+
+
+def aggregate_payload(records: list[tuple[Path, dict[str, Any]]]) -> dict[str, Any]:
+    papers = [payload for _folder, payload in records]
     return {
         "schema": 1,
         "description": (
@@ -57,21 +132,185 @@ def aggregate_payload() -> dict[str, Any]:
     }
 
 
+def status_label(status: str) -> str:
+    return STATUS_LABELS.get(status, status.capitalize())
+
+
+def publication_for(payload: dict[str, Any]) -> tuple[str, int]:
+    publication = PUBLICATION_OVERRIDES.get(payload["id"])
+    if publication is not None:
+        return publication
+    return str(payload.get("source_version", "")), 9999
+
+
+def source_url_for(payload: dict[str, Any]) -> str:
+    return SOURCE_URL_OVERRIDES.get(payload["id"], str(payload.get("source_url", "")))
+
+
+def human_review_label(payload: dict[str, Any]) -> str:
+    review = payload.get("human_review", {})
+    return f"{int(review.get('reviewed_rows', 0))}/{int(review.get('total_rows', 0))}"
+
+
+def lean_loc(folder: Path) -> int:
+    total = 0
+    for path in folder.rglob("*.lean"):
+        with path.open(encoding="utf-8") as handle:
+            total += sum(1 for _line in handle)
+    return total
+
+
+def human_note(payload: dict[str, Any]) -> str:
+    note = HUMAN_NOTE_OVERRIDES.get(payload["id"])
+    if note is not None:
+        return note
+    if payload.get("status") == "formalized":
+        return ""
+    return str(payload.get("main_caveat", ""))
+
+
+def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for folder, payload in records:
+        publication, year = publication_for(payload)
+        row = {
+            "id": payload["id"],
+            "title": payload["title"],
+            "authors": payload["authors"],
+            "publication": publication,
+            "publication_year": year,
+            "source_url": source_url_for(payload),
+            "paper_info": f"{payload['title']} by {payload['authors']}; {publication}.",
+            "status": status_label(str(payload["status"])),
+            "human_review": human_review_label(payload),
+            "lean_loc": lean_loc(folder),
+            "main_note": human_note(payload),
+            "paper_folder": str(folder.relative_to(ROOT)),
+            "review_entrypoint": payload["review_entrypoint"],
+        }
+        rows.append(row)
+
+    rows.sort(
+        key=lambda row: (
+            STATUS_GROUPS.get(str(row["status"]).lower(), 2),
+            int(row["publication_year"]),
+            str(row["title"]).lower(),
+        )
+    )
+    return rows
+
+
+def human_payload(records: list[tuple[Path, dict[str, Any]]]) -> dict[str, Any]:
+    return {
+        "schema": 1,
+        "description": (
+            "Compact human-facing status generated from paper-local status.json files. "
+            "Use papers/status.json for detailed machine/audit metadata."
+        ),
+        "generated_by": "python3 scripts/sync_paper_status.py",
+        "sort_policy": (
+            "Formalized papers first, including formalized-with-caveat rows, ordered by "
+            "publication year; partially formalized public papers follow in publication-year order."
+        ),
+        "note_policy": (
+            "main_note is intentionally sparse. Fully formalized papers have a blank note unless "
+            "a source-version or proof-route note is important for a public reader."
+        ),
+        "review_count_policy": (
+            "human_review counts saved human dashboard rows as reviewed/total. Agent audits are "
+            "not counted as human review."
+        ),
+        "papers": human_status_rows(records),
+    }
+
+
+def md_escape(text: str) -> str:
+    return " ".join(text.split()).replace("|", r"\|")
+
+
+def repo_relative_link(path: str) -> str:
+    return f"../{path}"
+
+
+def render_paper_status_md(payload: dict[str, Any]) -> str:
+    lines = [
+        "# Public Paper Status",
+        "",
+        "This file is generated by `python3 scripts/sync_paper_status.py` from",
+        "paper-local `papers/<PaperName>/status.json` files plus the public-summary",
+        "metadata in that script. Edit those sources rather than this table.",
+        "",
+        "The table is intentionally human-facing. `Note` is blank for",
+        "formalized papers unless a source-version, proof-route, or remaining-boundary",
+        "note is useful to a public reader. For detailed machine-readable metadata,",
+        "see [`papers/status.json`](../papers/status.json); for the compact public",
+        "JSON, see [`papers/human_status.json`](../papers/human_status.json).",
+        "",
+        "Human-review counts are dashboard rows saved by a human reviewer; agent",
+        "source audits are not counted as human review.",
+        "",
+        "| Paper info | Status | Human review | Lean LOC | Note |",
+        "|---|---|---:|---:|---|",
+    ]
+    for row in payload["papers"]:
+        paper_href = row["source_url"] or repo_relative_link(row["paper_folder"])
+        paper_link = f"[{md_escape(row['title'])}]({paper_href})"
+        paper_info = (
+            f"{paper_link} by {md_escape(row['authors'])}; "
+            f"{md_escape(row['publication'])}."
+        )
+        status_link = f"[{md_escape(row['status'])}]({repo_relative_link(row['review_entrypoint'])})"
+        lines.append(
+            "| "
+            + " | ".join(
+                [
+                    paper_info,
+                    status_link,
+                    md_escape(row["human_review"]),
+                    f"{int(row['lean_loc']):,}",
+                    md_escape(row["main_note"]),
+                ]
+            )
+            + " |"
+        )
+    lines.extend(
+        [
+            "",
+            "For status vocabulary, see [`docs/STATUS.md`](STATUS.md).",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--check", action="store_true", help="fail if papers/status.json is out of sync")
+    parser.add_argument("--check", action="store_true", help="fail if generated status files are out of sync")
     args = parser.parse_args()
 
-    payload = aggregate_payload()
-    rendered = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
+    records = paper_records()
+    aggregate = aggregate_payload(records)
+    human = human_payload(records)
+    outputs = {
+        AGGREGATE_STATUS: json.dumps(aggregate, indent=2, ensure_ascii=False) + "\n",
+        HUMAN_STATUS: json.dumps(human, indent=2, ensure_ascii=False) + "\n",
+        DOCS_PAPER_STATUS: render_paper_status_md(human),
+    }
     if args.check:
-        current = AGGREGATE_STATUS.read_text(encoding="utf-8") if AGGREGATE_STATUS.exists() else ""
-        if current != rendered:
-            print("papers/status.json is out of sync; run `python3 scripts/sync_paper_status.py`")
+        stale = []
+        for path, rendered in outputs.items():
+            current = path.read_text(encoding="utf-8") if path.exists() else ""
+            if current != rendered:
+                stale.append(path.relative_to(ROOT))
+        if stale:
+            print("generated status files are out of sync; run `python3 scripts/sync_paper_status.py`")
+            for path in stale:
+                print(f"- {path}")
             return 1
         return 0
-    AGGREGATE_STATUS.write_text(rendered, encoding="utf-8")
-    print(f"wrote {AGGREGATE_STATUS.relative_to(ROOT)} from paper-local status files")
+    for path, rendered in outputs.items():
+        path.write_text(rendered, encoding="utf-8")
+        print(f"wrote {path.relative_to(ROOT)} from paper-local status files")
     return 0
 
 

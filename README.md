@@ -48,31 +48,20 @@ proves.
 
 ## Current Status
 
-Paper status changes frequently. This table is a human-readable snapshot.
-Each paper folder has a paper-local `status.json`; the aggregate
-[`papers/status.json`](papers/status.json) is generated from those files.
-
-| Paper | Status | Review | Interface | Human summary |
-|---|---|---:|---|---|
-| [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | 0/32 | OK: 406 lines | Main discretization-bias theorems are closed; proof-route deviations are recorded. |
-| [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/19 | OK: 290 lines | Journal Theorem 8.2 and source-convention Theorem 9.3 are closed. |
-| [GCG24 User-Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 235 lines | Recommendation fairness propositions and theorem statements are closed. |
-| [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 468 lines | Named matching results are closed on Roth's strict marriage domain. |
-| [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized | 0/7 | OK: 109 lines | Stable-marriage and college-admissions results are closed; OCR is only a source-audit note. |
-| [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | 0/17 | OK: 296 lines | Bayesian rating-system results are formalized with a documented boundary correction. |
-| [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines | Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed. |
-| [LG21 Test-Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 92 lines | Named definitions and Section 3--4 results are closed under paper-facing source models. |
-| [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 184 lines | CTMC lemmas and Theorems 1--4 are exposed. |
-| [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/33 | OK: 171 lines | Sections 2 and 4 are formalized; final PTAS/FPTAS runtime remains external. |
-| [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 174 lines | Auction and truthfulness endpoints are formalized; machine-level complexity remains external. |
+Paper status changes frequently. Each paper folder has a paper-local
+`status.json`; the generated human-facing snapshot is
+[`papers/human_status.json`](papers/human_status.json), and the generated
+markdown table is [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md).
 
 For more detail, use:
 
 - `papers/<PaperName>/status.json` for the paper-local source of truth.
+- [`papers/human_status.json`](papers/human_status.json) for the compact
+  public-facing status summary.
 - [`papers/status.json`](papers/status.json) for the generated aggregate
   status, review counts, and interface metadata.
-- [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md) for paper citation, build
-  target, status, caveat, and review entrypoint.
+- [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md) for the generated public paper
+  status table.
 - Individual `papers/<PaperName>/README.md` files for paper-specific caveats.
 
 Partial public formalizations are included when the remaining assumption seam is

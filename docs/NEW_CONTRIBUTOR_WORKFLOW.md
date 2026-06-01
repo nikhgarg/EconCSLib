@@ -161,6 +161,8 @@ Before opening a pull request:
 - Update `README.md`, `DependencyDAG.tex`, `DependencyDAG.pdf`,
   `PaperInterface.lean`, `status.json`, and `FINAL_VALIDATION_REPORT.md` when
   changing paper-facing status.
+- Run `python3 scripts/sync_paper_status.py` after editing a paper-local
+  `status.json`, and include the generated status files in the pull request.
 - Explain any caveat, source-model assumption, certificate, or proof-route
   deviation in human-facing files.
 - Include the exact commands you ran in the pull request description.

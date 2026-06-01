@@ -780,7 +780,7 @@
       "source_version": "ICWSM 2025 / arXiv:2207.04369",
       "build_target": "lake build MBJG25ProducerFairness",
       "status": "formalized with caveat",
-      "main_caveat": "Bayesian rating-system results are formalized with a documented boundary correction.",
+      "main_caveat": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
       "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,

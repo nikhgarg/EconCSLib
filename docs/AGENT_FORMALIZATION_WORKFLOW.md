@@ -61,7 +61,9 @@ Completed papers should also have:
 - `README.md`: source version, status table, and exact caveats.
 - `status.json`: paper-local source of truth for paper status, dashboard review
   rows/slices, interface metadata, and artifact paths. After editing it, run
-  `python3 scripts/sync_paper_status.py` to regenerate `papers/status.json`.
+  `python3 scripts/sync_paper_status.py` to regenerate the detailed aggregate
+  `papers/status.json`, the compact human-facing `papers/human_status.json`,
+  and `docs/PAPER_STATUS.md`. Do not hand-edit those generated status files.
 - `FORMALIZATION_PLAN.md`: lightweight outside-Lean proof scratchpad.
 - `DependencyDAG.tex`: proof map with every named result and definition-like
   paper object represented; status and caveat text should agree with
@@ -104,6 +106,7 @@ For reusable library work, prefer targeted builds first:
 
 ```bash
 lake build EconCSLib.Foundations
+python3 scripts/sync_paper_status.py --check
 python3 scripts/audit_repository.py
 git diff --check
 ```

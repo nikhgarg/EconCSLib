@@ -38,8 +38,10 @@ public-safe reusable library changes.
    resolve all errors.
 3. Run `lake build EconCSLib` in the public repository from a clean checkout or
    clean worktree.
-4. Confirm `README.md`, `docs/PAPER_STATUS.md`, and `site/index.html` list the
-   same public papers and use only the status vocabulary in `docs/STATUS.md`.
+4. Run `python3 scripts/sync_paper_status.py --check`, then confirm
+   `papers/human_status.json`, `docs/PAPER_STATUS.md`, `README.md`, and
+   `site/index.html` list the same public papers and use only the status
+   vocabulary in `docs/STATUS.md`.
 5. Decide whether the reviewed workshop paper PDF should be linked externally
    or added as a final public artifact.
 6. Decide and add the repository `LICENSE` before soliciting broad external

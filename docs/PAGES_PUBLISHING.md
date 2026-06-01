@@ -20,8 +20,9 @@ repository are ready.
    reviewed public artifact.
 2. Review `site/index.html` for accurate paper status and contact text.
 3. Run `python3 scripts/sync_paper_status.py --check`, then confirm
-   `papers/status.json`, `docs/PAPER_STATUS.md`, and the site status table
-   describe the same papers, statuses, review counts, and interface notes.
+   `papers/human_status.json`, `docs/PAPER_STATUS.md`, and the site status
+   table describe the same papers, statuses, review counts, Lean LOC, and
+   sparse notes. Use `papers/status.json` for detailed audit metadata.
 4. Run `python3 scripts/audit_repository.py` and confirm there are 0 errors.
 5. Preview the static site locally, for example:
 
@@ -41,10 +42,13 @@ Treat the site as a summary layer. The source of truth remains:
 
 - paper-local `papers/<PaperName>/status.json` files for status and review
   metadata;
-- generated `papers/status.json` for aggregate status;
-- `README.md` and `docs/PAPER_STATUS.md` for human summaries;
+- generated `papers/human_status.json` for compact public status;
+- generated `papers/status.json` for detailed aggregate status;
+- `README.md`, `docs/PAPER_STATUS.md`, and `site/index.html` for human
+  summaries;
 - paper-local `FINAL_VALIDATION_REPORT.md` files for detailed caveats; and
 - `CONTRIBUTING.md` for the contribution policy.
 
-When a paper status changes, update the paper-local `status.json`, regenerate
-the aggregate, then update the human summary layers.
+When a paper status changes, update the paper-local `status.json`, run
+`python3 scripts/sync_paper_status.py`, then update the site and README summary
+layers only if their prose or table snapshot needs to change.

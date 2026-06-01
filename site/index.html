@@ -6,111 +6,54 @@
     <title>EconCSLib</title>
     <meta
       name="description"
-      content="EconCSLib is a Lean 4 library and formalization workflow for Economics and Computation research."
+      content="EconCSLib is a Lean 4 library and workflow for formalizing Economics and Computation research papers with language-model assistance."
     >
     <link rel="stylesheet" href="styles/site.css">
   </head>
   <body>
     <header class="site-header">
       <nav class="nav" aria-label="Primary">
-        <a class="brand" href="#">EconCSLib</a>
-        <div class="nav-links">
-          <a href="#paper">Paper</a>
-          <a href="#status">Status</a>
-          <a href="#architecture">Architecture</a>
-          <a href="#contribute">Contribute</a>
-        </div>
+        <a class="brand" href="#">
+          <span class="brand-name">EconCSLib:</span>
+          <span class="brand-subtitle">an AI-generated Lean 4 library for Economics and Computation</span>
+        </a>
       </nav>
 
       <section class="hero">
-        <p class="eyebrow">Lean 4 for Economics and Computation</p>
-        <h1>Machine-checked formalizations of EC research papers.</h1>
+        <h1>A Lean library and workflow for formalizing EC research papers.</h1>
         <p class="lede">
-          EconCSLib combines reusable Lean infrastructure with paper-specific
-          validation artifacts: theorem interfaces, source-aligned status
-          ledgers, dependency graphs, and human-readable audit reports.
+          EconCSLib is an experimental human-AI-Lean workflow to formalize
+          EconCS papers: an LLM writes Lean code, Lean checks formal statements
+          and proofs, and humans review the translation boundary from paper
+          claims to formal statements.
         </p>
         <div class="actions">
-          <a class="button primary" href="https://github.com/nikhgarg/EconCSLib">View the repository</a>
+          <a class="button primary" href="https://github.com/nikhgarg/EconCSLib">Repository</a>
+          <a class="button" href="#paper">Paper</a>
         </div>
+        <p class="project-summary" id="paper">
+          The project combines reusable EC Lean infrastructure with
+          paper-specific formalization. The reusable library covers
+          probability, optimization, matching, auctions, online algorithms,
+          recommender systems, and fair division. The paper layer keeps one
+          folder per source paper, preserving notation, theorem numbering,
+          formal statements, proof code, and validation artifacts. The project
+          also develops an LLM <code>skill.md</code> and formalization workflow
+          to support AI-assisted formalization.
+        </p>
       </section>
     </header>
 
     <main>
-      <section class="band intro" aria-labelledby="what">
-        <div class="section-heading">
-          <p class="eyebrow">Project</p>
-          <h2 id="what">What the repository is for</h2>
-        </div>
-        <div class="two-column">
-          <p>
-            The reusable library under <code>EconCSLib/</code> collects
-            foundations for probability, optimization, matching, auctions,
-            online algorithms, recommender systems, and fair division.
-          </p>
-          <p>
-            The paper folders under <code>papers/</code> preserve a source
-            paper's notation, theorem numbering, proof modules, validation
-            report, review dashboard configuration, and compact
-            <code>PaperInterface.lean</code> file.
-          </p>
-        </div>
-      </section>
-
-      <section class="band paper-draft" id="paper" aria-labelledby="paper-title">
-        <div class="section-heading">
-          <p class="eyebrow">Workshop paper</p>
-          <h2 id="paper-title">Paper and repository snapshot</h2>
-          <p>
-            The workshop paper describes the repository architecture, current
-            formalization status, and the AI-assisted workflow used to build the
-            paper formalizations. A public PDF link will be added after final
-            review.
-          </p>
-        </div>
-        <div class="paper-actions">
-          <a class="button primary" href="https://github.com/nikhgarg/EconCSLib">Browse source</a>
-        </div>
-      </section>
-
       <section class="band" id="status" aria-labelledby="status-title">
         <div class="section-heading">
-          <p class="eyebrow">Current formalization status</p>
-          <h2 id="status-title">Published paper artifacts</h2>
+          <p class="eyebrow">Current status</p>
+          <h2 id="status-title">Public paper artifacts</h2>
           <p>
-            This site is a short human-facing snapshot. The source of truth is
-            each paper-local <code>status.json</code>, the generated aggregate
-            <code>papers/status.json</code>, and the paper-local validation
-            reports.
+            The public repository currently contains formalized papers and
+            selected public partial formalizations whose remaining assumptions
+            are explicit.
           </p>
-        </div>
-
-        <div class="status-grid">
-          <article>
-            <h3>Formalized</h3>
-            <p>
-              Public paper artifacts cover matching, digital-goods auctions,
-              combinatorial auctions, online advertising, recommender-system
-              fairness, test-optional admissions, driver surge pricing,
-              Bayesian rating design, and discretization-induced bias.
-            </p>
-          </article>
-          <article>
-            <h3>Public partial</h3>
-            <p>
-              LMMS04 and LOS02 are public because their remaining gaps are
-              explicit: fixed-dimension IP runtime for LMMS04, and
-              machine-level NP-hardness/randomized-class semantics for LOS02.
-            </p>
-          </article>
-          <article>
-            <h3>Contribution path</h3>
-            <p>
-              New paper formalizations can be developed privately, then
-              proposed through a pull request once the theorem interface,
-              validation report, and caveats are ready for public review.
-            </p>
-          </article>
         </div>
 
         <div class="table-wrap" role="region" aria-label="Paper status table" tabindex="0">
@@ -119,170 +62,146 @@
               <tr>
                 <th>Paper</th>
                 <th>Status</th>
-                <th>Review</th>
-                <th>Interface</th>
-                <th>Main note</th>
+                <th>Lean LOC</th>
+                <th>Note</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>DSWG24 Discretization Bias</td>
-                <td>Formalized</td>
-                <td>0/32</td>
-                <td>OK: 406 lines</td>
-                <td>Proof-route deviations documented.</td>
+                <td>
+                  <a class="paper-source" href="http://www.jstor.org/stable/2312726"><cite>College Admissions and the Stability of Marriage</cite></a> by
+                  D. Gale and L. S. Shapley; American Mathematical Monthly,
+                  1962.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>381</td>
+                <td>This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.</td>
               </tr>
               <tr>
-                <td>GHW01 Digital Goods</td>
-                <td>Formalized</td>
-                <td>0/19</td>
-                <td>OK: 290 lines</td>
-                <td>Journal Theorem 8.2 and source-convention Theorem 9.3 are closed.</td>
+                <td>
+                  <a class="paper-source" href="https://pubsonline.informs.org/doi/epdf/10.1287/moor.7.4.617"><cite>The Economics of Matching: Stability and Incentives</cite></a> by
+                  Alvin E. Roth; Mathematics of Operations Research, 1982.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>8,877</td>
+                <td></td>
               </tr>
               <tr>
-                <td>GCG24 User-Item Fairness</td>
-                <td>Formalized</td>
-                <td>0/18</td>
-                <td>OK: 235 lines</td>
-                <td>Recommendation fairness statements closed.</td>
+                <td>
+                  <a class="paper-source" href="https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf"><cite>Competitive Auctions and Digital Goods</cite></a> by
+                  Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright;
+                  SODA, 2001.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>598</td>
+                <td>Theorem 8.2 follows the journal version; the broader preliminary wording is refuted in the source audit. The paper-local LOC is small because most auction infrastructure and proof work lives in the reusable auctions library.</td>
               </tr>
               <tr>
-                <td>Roth82 Stable Matching</td>
-                <td>Formalized</td>
-                <td>0/27</td>
-                <td>OK: 468 lines</td>
-                <td>Named results closed without extra certificates.</td>
+                <td>
+                  <a class="paper-source" href="https://people.eecs.berkeley.edu/~vazirani/pubs/adwords.pdf"><cite>AdWords and Generalized Online Matching</cite></a> by
+                  Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V.
+                  Vazirani; Journal of the ACM, 2007.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>13,221</td>
+                <td></td>
               </tr>
               <tr>
-                <td>GS62 College Admissions</td>
-                <td>Formalized</td>
-                <td>0/7</td>
-                <td>OK: 109 lines</td>
-                <td>No extra certificates; OCR note only.</td>
+                <td>
+                  <a class="paper-source" href="https://arxiv.org/pdf/1905.07544"><cite>Driver Surge Pricing</cite></a> by
+                  Nikhil Garg and Hamid Nazerzadeh; Management Science, 2021.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>143,056</td>
+                <td></td>
               </tr>
               <tr>
-                <td>MBJG25 Producer Fairness</td>
-                <td>Formalized with caveat</td>
-                <td>0/17</td>
-                <td>OK: 296 lines</td>
-                <td>Boundary correction recorded.</td>
+                <td>
+                  <a class="paper-source" href="https://arxiv.org/pdf/2107.08922"><cite>Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps</cite></a> by
+                  Zhi Liu and Nikhil Garg; EAAMO, 2021.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>127,936</td>
+                <td></td>
               </tr>
               <tr>
-                <td>MSVV07 AdWords</td>
-                <td>Formalized</td>
-                <td>0/39</td>
-                <td>OK: 613 lines</td>
-                <td>Core AdWords and extensions closed.</td>
+                <td>
+                  <a class="paper-source" href="https://arxiv.org/pdf/2405.16762"><cite>Addressing Discretization-Induced Bias in Demographic Prediction</cite></a> by
+                  Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg;
+                  ACM FAccT / PNAS Nexus, 2024.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>26,033</td>
+                <td></td>
               </tr>
               <tr>
-                <td>LG21 Test-Optional Policies</td>
-                <td>Formalized</td>
-                <td>0/16</td>
-                <td>OK: 92 lines</td>
-                <td>Section 3--4 source models closed.</td>
+                <td>
+                  <a class="paper-source" href="https://openreview.net/pdf?id=ZOZjMs3JTs"><cite>User-item fairness tradeoffs in recommendations</cite></a> by
+                  Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg;
+                  NeurIPS, 2024.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>45,906</td>
+                <td></td>
               </tr>
               <tr>
-                <td>GN21 Driver Surge Pricing</td>
-                <td>Formalized</td>
-                <td>0/24</td>
-                <td>OK: 184 lines</td>
-                <td>CTMC lemmas and Theorems 1--4 exposed.</td>
+                <td>
+                  <a class="paper-source" href="https://arxiv.org/pdf/2207.04369"><cite>Balancing Producer Fairness and Efficiency via Bayesian Rating System Design</cite></a> by
+                  Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil
+                  Garg; ICWSM, 2025.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md">Formalized with caveat</a></td>
+                <td>580</td>
+                <td>Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.</td>
               </tr>
               <tr>
-                <td>LMMS04 Fair Division</td>
-                <td>Partially formalized</td>
-                <td>0/33</td>
-                <td>OK: 171 lines</td>
-                <td>Open boundary is fixed-dimension IP runtime infrastructure.</td>
+                <td>
+                  <a class="paper-source" href="https://jmvidal.cse.sc.edu/library/lehmann02a.pdf"><cite>Truth Revelation in Approximately Efficient Combinatorial Auctions</cite></a> by
+                  Daniel Lehmann, Liadan Ita O'Callaghan, and Yoav Shoham;
+                  Journal of the ACM, 2002.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
+                <td>7,288</td>
+                <td>Greedy approximation/truthfulness, Theorem 6.1 reductions, and an abstract complexity-class note are closed; native machine-level NP-hardness, polynomial-time, and randomized-class semantics remain external.</td>
               </tr>
               <tr>
-                <td>LOS02 Combinatorial Auctions</td>
-                <td>Partially formalized</td>
-                <td>0/30</td>
-                <td>OK: 174 lines</td>
-                <td>Open boundary is machine-level complexity infrastructure.</td>
+                <td>
+                  <a class="paper-source" href="https://www.cs.cmu.edu/~arielpro/15896s15/docs/paper12a.pdf"><cite>On Approximately Fair Allocations of Indivisible Goods</cite></a> by
+                  Richard J. Lipton, Evangelos Markakis, Elchanan Mossel, and
+                  Amin Saberi; ACM EC, 2004.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
+                <td>80,220</td>
+                <td>Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.</td>
               </tr>
             </tbody>
           </table>
-        </div>
-
-        <p class="more-link">
-          Detailed status:
-          <a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/status.json">
-            papers/status.json
-          </a>
-          and
-          <a href="https://github.com/nikhgarg/EconCSLib/blob/main/docs/PAPER_STATUS.md">
-            docs/PAPER_STATUS.md
-          </a>
-        </p>
-      </section>
-
-      <section class="band" id="architecture" aria-labelledby="architecture-title">
-        <div class="section-heading">
-          <p class="eyebrow">Architecture</p>
-          <h2 id="architecture-title">Library code plus reviewable paper trails</h2>
-        </div>
-        <div class="architecture">
-          <div>
-            <h3>Reusable library</h3>
-            <p>
-              General definitions and lemmas live in the shared EC library when
-              they are likely to support more than one paper.
-            </p>
-          </div>
-          <div>
-            <h3>Paper folders</h3>
-            <p>
-              Paper-specific files keep source-faithful formal statements,
-              proof code, theorem ledgers, dependency graphs, and validation
-              notes together.
-            </p>
-          </div>
-          <div>
-            <h3>Agent workflow</h3>
-            <p>
-              The public formalizer skill bundle records the repeatable process
-              for ingesting a paper, translating claims, proving them in Lean,
-              and surfacing human-review seams.
-            </p>
-          </div>
-        </div>
-        <div class="review-boundary">
-          <h3>Review boundary</h3>
-          <p>
-            Lean checks formal statements and proofs. Human review still
-            matters at the translation boundary: the paper claim, the
-            <code>PaperInterface.lean</code> statement, and the validation
-            report should agree before a paper is treated as formalized.
-          </p>
         </div>
       </section>
 
       <section class="band contact" id="contribute" aria-labelledby="contribute-title">
         <div class="section-heading">
           <p class="eyebrow">Contribute</p>
-          <h2 id="contribute-title">Interested in adding a formalized paper?</h2>
+          <h2 id="contribute-title">Interested in contributing or formalizing your own paper?</h2>
+          <p>
+            Contributions are welcome while the contribution policy is still a
+            draft. To protect unfinished work, new paper formalizations should
+            start in a private workflow and be proposed through a public-safe
+            pull request when ready. For questions or contributions, contact
+            <a href="mailto:ngarg@cornell.edu">ngarg@cornell.edu</a>.
+          </p>
         </div>
-        <p>
-          The contribution policy is still a draft. If you want to contribute a
-          paper formalization or discuss the repository roadmap, contact
-          <a href="mailto:ngarg@cornell.edu">ngarg@cornell.edu</a>.
-        </p>
-        <p>
-          Contribution notes:
+        <p class="more-link">
+          Read
           <a href="https://github.com/nikhgarg/EconCSLib/blob/main/CONTRIBUTING.md">
             CONTRIBUTING.md
-          </a>
+          </a>.
         </p>
       </section>
     </main>
 
     <footer class="footer">
-      <p>
-        EconCSLib is maintained by Nikhil Garg. This draft site is not deployed
-        until GitHub Pages is explicitly enabled.
-      </p>
+      <p>EconCSLib is maintained by <a href="https://gargnikhil.com">Nikhil Garg</a>.</p>
     </footer>
   </body>
 </html>

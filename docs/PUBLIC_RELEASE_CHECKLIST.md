@@ -5,8 +5,8 @@ external contributions.
 
 ## Repository State
 
-- [ ] The intended public branch is clear. Today, public release docs live on
-      `main`; the draft Pages site lives on `pages-scaffold`.
+- [ ] The intended public branch is clear. Public release docs, the Pages site
+      source, and the Pages workflow live on `main`.
 - [ ] The private incubator remains private and is not converted into the
       public repository.
 - [ ] `lake build EconCSLib` passes from a fresh clone.
@@ -14,9 +14,13 @@ external contributions.
       incubator.
 - [ ] `docs/PAPER_STATUS.md` matches the paper folders included in the public
       repository.
-- [ ] Each public `papers/<PaperName>/status.json` is current, and the generated
-      `papers/status.json`, `docs/PAPER_STATUS.md`, `README.md`, and the site
-      status table describe the same public paper set and review counts.
+- [ ] Each public `papers/<PaperName>/status.json` is current, and
+      `python3 scripts/sync_paper_status.py --check` confirms that the generated
+      `papers/status.json`, `papers/human_status.json`, and
+      `docs/PAPER_STATUS.md` are in sync.
+- [ ] `README.md` and the site status table summarize the same public paper set,
+      statuses, review counts, Lean LOC, and sparse notes as
+      `papers/human_status.json`.
 - [ ] Status labels use `Formalized`, `Formalized with caveat`, or
       `Partially formalized`; do not publish `Verified in Lean` as a separate
       status category.
@@ -53,13 +57,15 @@ Each public paper folder should have:
 - [ ] Filter the private history to the completed paper folder and any reusable
       library changes that are public-safe.
 - [ ] Merge the filtered history into the public repository.
-- [ ] Update `README.md`, `docs/PAPER_STATUS.md`, and the relevant roadmap or
+- [ ] Update paper-local `status.json`, run `python3 scripts/sync_paper_status.py`,
+      and then update `README.md`, the site summary, and the relevant roadmap or
       release notes.
 
 ## GitHub Pages Readiness
 
 - [ ] Decide whether the reviewed workshop paper PDF should be linked
       externally or added as a final public artifact.
-- [ ] Confirm the site status table matches `docs/PAPER_STATUS.md`.
+- [ ] Confirm the site status table matches `papers/human_status.json` and
+      `docs/PAPER_STATUS.md`.
 - [x] The Pages workflow is tracked as `.github/workflows/pages.yml`.
 - [ ] Confirm the Pages workflow completes and the Pages URL serves the site.

@@ -33,7 +33,8 @@ For public release, create a filtered repository that keeps only:
 - completed paper folders;
 - completed paper root modules under `papers/<Paper>.lean`; and
 - explicitly approved public partial paper folders whose remaining assumptions
-  are documented in their README, validation report, and `docs/PAPER_STATUS.md`.
+  are documented in their README, validation report, `papers/human_status.json`,
+  and `docs/PAPER_STATUS.md`.
 
 Partially formalized papers remain private until their authors choose to publish
 them. A partial paper can be public when the remaining gap is not hidden

@@ -10,10 +10,12 @@ or what a completed formalization proves without reading proof internals.
 - [../README.md](../README.md): short project overview and review path.
 - [REVIEW_DASHBOARD.md](REVIEW_DASHBOARD.md): theorem-statement review
   dashboard workflow.
-- [PAPER_STATUS.md](PAPER_STATUS.md): public paper citation, build target,
-  status, caveat, and review entrypoint.
+- [PAPER_STATUS.md](PAPER_STATUS.md): generated public paper citation, status
+  labels linked to validation reports, human-review, Lean LOC, and note table.
 - `../papers/<PaperName>/status.json`: paper-local machine-readable source of
   truth for status, review rows, and artifact paths.
+- [../papers/human_status.json](../papers/human_status.json): generated compact
+  human-facing status JSON for public summaries.
 - [../papers/status.json](../papers/status.json): generated aggregate paper
   status.
 - [NEW_CONTRIBUTOR_WORKFLOW.md](NEW_CONTRIBUTOR_WORKFLOW.md): first-time

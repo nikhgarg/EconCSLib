@@ -101,6 +101,14 @@ paper theorem should stay green with its actual statement; the conditional
 application should get its own row or node. Do not let a harder follow-on
 endpoint make the source theorem look unformalized.
 
+In EconCSLib, paper-local `status.json` files are the source of truth for
+status, human-review row counts, review-surface slices, and artifact paths.
+After changing status metadata, run `python3 scripts/sync_paper_status.py`.
+That command regenerates the detailed `papers/status.json`, the compact
+human-facing `papers/human_status.json`, and `docs/PAPER_STATUS.md`. Do not
+hand-edit those generated status files. The README and Pages status summaries
+should mirror `papers/human_status.json`.
+
 When a proof is blocked, think outside Lean as needed, patch the mathematical
 argument yourself, and then implement the patched proof in Lean. Do not stop at
 identifying the gap unless the target theorem is false or the needed assumption
@@ -1311,9 +1319,11 @@ pass:
 - If `PaperInterface.lean` starts to grow, split broad proof/API aliases into
   `ProofInterface.lean` or implementation modules. Curate the review rows and
   optional slices in paper-local `status.json` under `review_surface`, then run
-  `python3 scripts/sync_paper_status.py` and refresh the ignored dashboard
-  cache. Do not confuse "0/N reviewed" with stale or failed Lean validation; it
-  only means no human review entries have been saved.
+  `python3 scripts/sync_paper_status.py` to refresh `papers/status.json`,
+  `papers/human_status.json`, and `docs/PAPER_STATUS.md`; after that, refresh
+  the ignored dashboard cache. Do not confuse "0/N reviewed" with stale or
+  failed Lean validation; it only means no human review entries have been
+  saved.
   Final human review should normally expose a compact source-facing surface,
   not every proof endpoint. Do not report an unfiltered declaration count such
   as hundreds of rows as the human dashboard surface in a final validation
