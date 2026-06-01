@@ -101,13 +101,21 @@ paper theorem should stay green with its actual statement; the conditional
 application should get its own row or node. Do not let a harder follow-on
 endpoint make the source theorem look unformalized.
 
-In EconCSLib, paper-local `status.json` files are the source of truth for
-status, human-review row counts, review-surface slices, and artifact paths.
-After changing status metadata, run `python3 scripts/sync_paper_status.py`.
+In EconCSLib, paper-local `papers/<Paper>/status.json` files are the source of
+truth for paper status, compact `human_summary` notes, human-review row counts,
+`PaperInterface.lean` metadata, review-surface slices, and artifact paths.
+After changing any of that metadata, run `python3 scripts/sync_paper_status.py`.
 That command regenerates the detailed `papers/status.json`, the compact
-human-facing `papers/human_status.json`, and `docs/PAPER_STATUS.md`. Do not
-hand-edit those generated status files. The README and Pages status summaries
-should mirror `papers/human_status.json`.
+human-facing `papers/human_status.json`, `docs/PAPER_STATUS.md`, and the
+generated paper-status block in the top-level `README.md`. Do not hand-edit
+those generated status outputs. If README/docs/site/table text is wrong, fix the
+paper-local `status.json` and rerun the sync script.
+Use `human_summary` for the short public-facing note in generated tables.
+Formalized papers should usually have an empty summary; add text only for a
+reader-relevant source-version, proof-route, or caveat note. Human-review counts
+mean saved dashboard rows by a human reviewer: `reviewed_rows / total_rows`.
+Agent source audits, validation reports, and compile checks do not increment
+human review.
 
 When a proof is blocked, think outside Lean as needed, patch the mathematical
 argument yourself, and then implement the patched proof in Lean. Do not stop at
@@ -400,6 +408,14 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   module, paper-local `status.json`, and required reusable library changes.
   Push public-ready branches to the public repository for review rather than
   opening a broad PR from the private superset branch.
+- The canonical private incubator is public-based: its history should remain an
+  easy descendant of public `main` plus private paper commits. Rebase the private
+  main branch onto public `main` only when a substantial public change matters
+  to private work, especially library/API, generated-status, workflow, or CI
+  changes, or before preparing a public PR. Do not rebase private after every
+  small public-only documentation commit. After an intentional private rebase,
+  push with `git push --force-with-lease origin main`; never use a blind force
+  push.
 - When a paper exists in both private and public, choose one primary worktree
   for the current task and keep all builds, dashboard refreshes, reports, DAGs,
   and commits in that same repo. Use the public repo as primary for public
@@ -428,6 +444,13 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 - Public partials are acceptable when their remaining seams are valuable and
   explicit. Do not hide partiality by publishing an all-green DAG, an empty
   caveat column, or a final report that only says the code compiles.
+- Before inviting broad public contributions, keep the public repo's legal and
+  contribution surface explicit: code is released under the chosen repository
+  license, currently Apache-2.0, while cached source PDFs/text extractions may
+  be omitted or treated separately for source-publication licensing reasons.
+  Maintain issue templates for new paper formalizations, statement mismatches,
+  external certificate boundaries, library-upstreaming candidates, and dashboard
+  review requests.
 
 ### 1.2.1 Paper Link Intake Protocol
 
@@ -478,8 +501,24 @@ the Lean statements against the paper.
   4. A `PaperInterface.lean` file holding the compact human-facing definitions
      and named theorem statements.
   5. A local `.gitignore` file.
-- **Local Gitignores:** Every paper folder *must* contain its own `.gitignore` that explicitly ignores `*.pdf`, `*.aux`, `*.log`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`. The overall repo `.gitignore` may contain generic LaTeX auxiliary patterns such as `*.aux`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`, but should not contain paper-specific PDF exclusions or paths.
-- **Reproducible PDF/text/source cache:** A copy of the source PDF must be downloaded once and kept in the local paper folder so humans and agents can read exactly what is being reproduced. Immediately run `pdftotext Source.pdf Source.txt` in the same folder and use that cached text file for named-statement searches. For arXiv papers, also cache and unpack the TeX source archive once; use it as the authoritative source for formulas when PDF extraction is ambiguous or garbled. Because of the local `.gitignore`, the PDF will not be committed to Git, preventing repository bloat; the `.txt` cache should remain beside the PDF unless the paper has a copyright or licensing reason not to track extracted text. Work from these local files; do not repeatedly search the web or re-run extraction unless the source PDF or source archive changes.
+- **Local Gitignores:** Every paper folder *must* contain its own `.gitignore`
+  that ignores local source PDFs and LaTeX auxiliaries such as `*.aux`, `*.log`,
+  `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`, but it must not hide the rendered
+  dependency DAG. If the folder uses a broad `*.pdf` ignore for source PDFs, add
+  an explicit `!DependencyDAG.pdf` exception. The overall repo `.gitignore` may
+  contain generic LaTeX auxiliary patterns, but should not contain paper-specific
+  source-PDF exclusions or paths.
+- **Reproducible PDF/text/source cache:** A copy of the source PDF must be
+  downloaded once and kept in the local paper folder so humans and agents can
+  read exactly what is being reproduced. Immediately run
+  `pdftotext Source.pdf Source.txt` in the same folder and use that cached text
+  file for named-statement searches. For arXiv papers, also cache and unpack the
+  TeX source archive once; use it as the authoritative source for formulas when
+  PDF extraction is ambiguous or garbled. Source PDFs are local cache artifacts
+  and should not be committed; the `.txt` cache should remain beside the PDF
+  unless the paper has a copyright or licensing reason not to track extracted
+  text. Work from these local files; do not repeatedly search the web or re-run
+  extraction unless the source PDF or source archive changes.
 - Public filtered checkouts may omit ignored source PDFs even when the tracked
   text cache is present. During final validation, do not claim a local PDF
   exists unless it is actually in the checkout; state that the public/source
@@ -629,7 +668,7 @@ the Lean statements against the paper.
   `not formalized`.
 - **Paper Directory and Namespace Convention:** All new paper folders, modules, and internal namespaces MUST be named using the format `[AuthorInitials][2DigitYear][Descriptor]` in PascalCase (e.g., `MSVV07AdWords`, `LMMS04FairDivision`, `KR21Monoculture`). This guarantees collision-proof Lean namespaces while immediately communicating the citation. All paper implementations sit within the `papers/` directory.
 - **One citation per paper folder:** Do not use aggregate folders for award lists, reading lists, or multi-paper campaigns. Split them into one `[AuthorInitials][2DigitYear][Descriptor]` folder per source paper, each with its own source PDF/text cache, README, DAG, and `MainTheorems.lean`. If an aggregate module already exists, keep it only as a compatibility import or handoff note and move paper-facing status into the citation-specific folders.
-- **Initial Proof Roadmap (Dependency DAG):** At the *very beginning* of formalizing a new paper, before writing any deep proof code, you must create a comprehensive proof roadmap. Read through the paper carefully to identify *every* named result (Definitions, Lemmas, Propositions, Theorems, Corollaries) and map out exactly how they relate to each other. Encode this roadmap as a dependency DAG in a TikZ source file (with a rendered image) in the paper folder. This ensures no named result is overlooked, helps you understand the overall proof architecture, and gives humans a clear audit of the theorem flow.
+- **Initial Proof Roadmap (Dependency DAG):** At the *very beginning* of formalizing a new paper, before writing any deep proof code, you must create a comprehensive proof roadmap. Read through the paper carefully to identify *every* named result (Definitions, Lemmas, Propositions, Theorems, Corollaries) and map out exactly how they relate to each other. Encode this roadmap as `DependencyDAG.tex` and render `DependencyDAG.pdf` in the paper folder; both files are review artifacts and the rendered PDF should be committed. This ensures no named result is overlooked, helps you understand the overall proof architecture, and gives humans a clear audit of the theorem flow.
   - **Project pattern in this repo:** for Monoculture, keep the active artifact at
     `papers/KR21Monoculture/DependencyDAG.tex` and a rendered image alongside it.
   - All paper DAGs MUST `\input` the shared preamble located at `docs/tikz/dag_preamble.tex`.
@@ -919,6 +958,11 @@ search.
   current repo/paper status note and the paper folder README. Protect unrelated
   dirty files, and let the documented current seam define the first theorem to
   inspect.
+- If shell startup prints `Failed to create stream fd: Operation not permitted`
+  before otherwise successful command output, treat it as an Ubuntu
+  `im-config`/`systemd-cat` login-shell warning, not a repo failure. In Codex
+  tool calls, use non-login shells (`login:false`) for routine commands to
+  avoid the noise; do not spend proof-debugging time on it.
 - Use a five-minute resume path before opening large Lean files: read the
   paper handoff/README current-target section, `rg` the exact public wrapper
   and remaining assumption names, inspect only those theorem neighborhoods, and
@@ -1381,9 +1425,12 @@ pass:
   witness interfaces, no standalone proof-facing formula aliases in the audit
   ledger, no stale `Lean witness` report language, and no completed-paper status
   rows that hide caveats in prose.
-- Update the front repository `README.md` paper-status table and
-  `docs/ECONCSLEAN_CURRENT_STATUS.md` at the same time, using the exact caveats
-  from the final report. Do not let the front README keep stale "partial" or
+- Update the paper-local `status.json` at the same time as the paper README,
+  DAG, and final report, using the exact caveats from the final report. Then
+  run `python3 scripts/sync_paper_status.py` so the generated top-level
+  `README.md` status block, `docs/PAPER_STATUS.md`, `papers/status.json`, and
+  `papers/human_status.json` all move together. Do not manually edit generated
+  table rows, and do not let a generated summary keep stale "partial" or
   "active" wording after a paper-local validation report says a paper is
   formalized.
 - Use one status vocabulary per artifact. At paper and repository level,
