@@ -46141,10 +46141,46 @@ theorem paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
     simpa [paper_theorem8_bstar_ranked_threshold_outcome] using
       (paper_theorem8_bstar_ranked_threshold_outcome_payment_nonneg_of_ordered
         (value := model.value) (clickThroughRate := model.clickThroughRate)
-        (remaining := model.remaining + 1) (i := rank)
+          (remaining := model.remaining + 1) (i := rank)
         hvalue_nonneg hclick_mono hclick_pos)
   dsimp [paper_theorem8_bstar_ranked_threshold_cold_start_state]
   linarith
+
+/--
+Cold-start clock-disciplined histories discharge the compact source-extensive
+and exact-record obligations without a separate initial no-overshoot premise.
+The cold-start timing premise follows from nonnegative values and monotone,
+positive click-through rates.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_history_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_source_extensive_exact_drop_obligations
+      model hhist
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos)
+      terminal
 
 /--
 Finite-active cold-start generalized-English state. Ranks in `activeRanks`
