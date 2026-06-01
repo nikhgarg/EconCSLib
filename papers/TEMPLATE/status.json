@@ -7,6 +7,7 @@
   "build_target": "lake build TEMPLATE",
   "status": "not started",
   "main_caveat": "Replace with the public caveat or state that no caveat is known.",
+  "human_summary": "Replace with a concise public-facing note; leave empty for formalized papers unless a source-version or proof-route note matters.",
   "review_entrypoint": "papers/TEMPLATE/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

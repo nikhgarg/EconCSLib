@@ -7,6 +7,7 @@
   "build_target": "lake build MBJG25ProducerFairness",
   "status": "formalized with caveat",
   "main_caveat": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
+  "human_summary": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
   "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

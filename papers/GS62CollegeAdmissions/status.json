@@ -7,6 +7,7 @@
   "build_target": "lake build GS62CollegeAdmissions",
   "status": "formalized",
   "main_caveat": "Lean endpoints are closed without extra certificates or conditional proof gaps; the cached PDF scan has poor OCR, recorded as a source-audit note rather than a formalization caveat.",
+  "human_summary": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.",
   "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

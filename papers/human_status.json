@@ -47,7 +47,7 @@
       "status": "Formalized",
       "human_review": "0/19",
       "lean_loc": 598,
-      "main_note": "Theorem 8.2 follows the journal version; the broader preliminary wording is refuted in the source audit. The paper-local LOC is small because most auction infrastructure and proof work lives in the reusable auctions library.",
+      "main_note": "Theorem 8.2 follows the journal version; the broader preliminary wording is documented as refuted.",
       "paper_folder": "papers/GHW01DigitalGoods",
       "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md"
     },
@@ -152,7 +152,7 @@
       "status": "Partially formalized",
       "human_review": "0/30",
       "lean_loc": 7288,
-      "main_note": "Greedy approximation/truthfulness, Theorem 6.1 reductions, and an abstract complexity-class note are closed; native machine-level NP-hardness, polynomial-time, and randomized-class semantics remain external.",
+      "main_note": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external.",
       "paper_folder": "papers/LOS02CombinatorialAuctions",
       "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md"
     },

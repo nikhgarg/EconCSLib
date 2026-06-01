@@ -7,6 +7,7 @@
   "build_target": "lake build LMMS04FairDivision",
   "status": "partially formalized",
   "main_caveat": "Public partial: Sections 2 and 4 are formalized and much of the Section 3 rounding/search surface is formalized. The final PTAS/FPTAS runtime claim is conditional on reusable fixed-dimension integer-program complexity infrastructure, represented by ExternalSolverConsequence.",
+  "human_summary": "Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.",
   "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

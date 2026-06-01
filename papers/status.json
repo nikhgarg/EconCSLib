@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "description": "Aggregate index generated from papers/<PaperName>/status.json. Paper-local status files are the source of truth for status, review rows, and PaperInterface metadata.",
+  "description": "Aggregate index generated from papers/<PaperName>/status.json. Paper-local status files are the source of truth for status, human summaries, review rows, and PaperInterface metadata.",
   "review_count_policy": "reviewed_rows counts saved human dashboard rows tracked in the public repository. total_rows counts the current dashboard review surface from each paper-local status.json. Agent source audits are not counted as human review.",
   "paper_interface_maintenance_policy": "PaperInterface.lean should stay compact and source-facing. Broad proof aliases belong in ProofInterface.lean or implementation modules.",
   "papers": [
@@ -205,6 +205,7 @@
       "build_target": "lake build GHW01DigitalGoods",
       "status": "formalized",
       "main_caveat": "Theorem 8.2 is formalized against the journal version's monotone truthful randomized-auction statement; Lean refutes the broader technical-report wording with a two-bidder 101 > 100 source-audit counterexample. Theorem 9.3 is closed against the paper's focused set-of-bids deterministic auction convention.",
+      "human_summary": "Theorem 8.2 follows the journal version; the broader preliminary wording is documented as refuted.",
       "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -386,6 +387,7 @@
       "build_target": "lake build GS62CollegeAdmissions",
       "status": "formalized",
       "main_caveat": "Lean endpoints are closed without extra certificates or conditional proof gaps; the cached PDF scan has poor OCR, recorded as a source-audit note rather than a formalization caveat.",
+      "human_summary": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.",
       "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -527,6 +529,7 @@
       "build_target": "lake build LMMS04FairDivision",
       "status": "partially formalized",
       "main_caveat": "Public partial: Sections 2 and 4 are formalized and much of the Section 3 rounding/search surface is formalized. The final PTAS/FPTAS runtime claim is conditional on reusable fixed-dimension integer-program complexity infrastructure, represented by ExternalSolverConsequence.",
+      "human_summary": "Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.",
       "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -660,6 +663,7 @@
       "build_target": "lake build LOS02CombinatorialAuctions",
       "status": "partially formalized",
       "main_caveat": "Public partial: all auction, greedy approximation, critical-price, and single-minded-truthfulness endpoints are formalized in the current model. The final Theorem 6.1 machine-level NP-hardness/NP = ZPP consequences remain conditional on reusable complexity-class and hardness infrastructure.",
+      "human_summary": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external.",
       "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -781,6 +785,7 @@
       "build_target": "lake build MBJG25ProducerFairness",
       "status": "formalized with caveat",
       "main_caveat": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
+      "human_summary": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
       "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
