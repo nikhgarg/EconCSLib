@@ -1,8 +1,8 @@
 # EconCSLib GitHub Pages Site Draft
 
 This directory contains the GitHub Pages source for the public `EconCSLib`
-repository. The deployment workflow is tracked; repository Pages settings still
-need to be configured before the site is live.
+repository. The deployment workflow publishes this directory from `main` and
+enables Pages through GitHub Actions on the first successful deployment.
 
 ## Preview Locally
 
@@ -20,7 +20,7 @@ To publish:
 
 1. Review the site text.
 2. Commit and push the site files.
-3. In the GitHub repository settings, set Pages to deploy from GitHub Actions.
+3. Confirm the Pages workflow succeeds.
 4. Set the repository homepage URL after the first deployment succeeds.
 
 For the full publishing checklist, see

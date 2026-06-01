@@ -12,9 +12,9 @@ repositories aligned while preparing GitHub Pages.
   but broad announcement and GitHub Pages publication are still pending.
 - The public `main` branch contains the public Lean library, public paper
   folders, contribution docs, status docs, and release checklist.
-- The public `main` branch contains the static site source and Pages workflow;
-  repository Pages settings still need to be configured.
-- GitHub Pages is intentionally not configured yet.
+- The public `main` branch contains the static site source and Pages workflow.
+  The workflow enables GitHub Pages through `actions/configure-pages` on the
+  first successful deployment.
 
 ## Public/Private Rule
 
@@ -51,7 +51,7 @@ public-safe reusable library changes.
 
 1. Review `site/index.html` locally.
 2. Push `main`.
-3. In GitHub settings, configure Pages to deploy from GitHub Actions.
+3. Confirm the Pages workflow deploys from GitHub Actions.
 4. Confirm the Pages URL serves the site.
 5. Add the Pages URL to the repository homepage field.
 

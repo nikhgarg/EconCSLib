@@ -62,7 +62,4 @@ Each public paper folder should have:
       externally or added as a final public artifact.
 - [ ] Confirm the site status table matches `docs/PAPER_STATUS.md`.
 - [x] The Pages workflow is tracked as `.github/workflows/pages.yml`.
-- [ ] Confirm `gh api repos/nikhgarg/EconCSLib/pages` returns not configured, or
-      confirm any existing Pages configuration is intentional.
-- [ ] After final review, enable Pages from GitHub Actions in repository
-      settings and confirm the first deployment.
+- [ ] Confirm the Pages workflow completes and the Pages URL serves the site.

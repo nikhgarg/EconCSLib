@@ -6,13 +6,13 @@ repository are ready.
 ## Current State
 
 - The public GitHub repository `nikhgarg/EconCSLib` exists and is public.
-- GitHub Pages is not configured for the repository as of 2026-05-31.
-- The draft site lives on the local `pages-scaffold` branch under `site/`.
-- The workflow file is tracked as `.github/workflows/pages.yml`.
-- GitHub Pages still needs to be configured in repository settings.
+- The workflow file is tracked as `.github/workflows/pages.yml` and deploys
+  from `site/` on pushes to `main` that touch the site or workflow.
+- The workflow uses `actions/configure-pages` with `enablement: true`, so the
+  first successful deployment should configure Pages for GitHub Actions.
 - No paper PDF is checked into this public repository yet.
-- The default branch remains `main`; merge or fast-forward the scaffold only
-  after the paper draft and public status table are ready to announce.
+- The default branch is `main`; broad announcement should wait until the first
+  successful Pages deployment and final status review.
 
 ## Before Publishing
 
@@ -31,7 +31,7 @@ repository are ready.
 
    Then check the home page.
 6. Push the branch or merge it into `main`.
-7. In GitHub repository settings, set Pages to deploy from GitHub Actions.
+7. Confirm the Pages workflow deploys successfully.
 8. Set the repository homepage URL to the Pages URL once the first deploy
     succeeds.
 
