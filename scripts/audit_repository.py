@@ -1087,7 +1087,7 @@ def check_human_facing_readme() -> list[Finding]:
             Finding(
                 "ERROR",
                 readme,
-                "top-level README should use the concise `Paper | Status | Human summary` table, not the full paper ledger",
+                "top-level README should use the concise `Paper | Status | Review | Interface | Human summary` table, not the full paper ledger",
             )
         )
     findings.extend(check_root_human_status_table(readme))
