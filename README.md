@@ -56,13 +56,13 @@ markdown table is [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md).
 | Paper | Status | Review | Interface | Human summary |
 |---|---:|---:|---:|---|
 | [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized | 0/7 | OK: 109 lines | Stable marriage infrastructure is mostly shared library code; this folder keeps the paper-facing theorem surface. |
-| [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 468 lines | Stability and incentives results are exposed with a compact paper-facing interface. |
+| [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 468 lines |  |
 | [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/19 | OK: 290 lines | Theorem 8.2 follows the journal version; the broader preliminary wording is documented as refuted. |
-| [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines | Online matching and AdWords approximation endpoints are exposed for human review. |
-| [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 184 lines | Driver surge pricing definitions and named theorem endpoints are exposed. |
-| [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 92 lines | Strategic test-optional policy results are exposed through a compact interface. |
-| [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | 0/32 | OK: 406 lines | Bias, fidelity, and classifier-loss theorem endpoints are exposed. |
-| [GCG24 User Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 235 lines | User-item fairness tradeoff statements are exposed for review. |
+| [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines |  |
+| [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 184 lines |  |
+| [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 92 lines |  |
+| [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | 0/32 | OK: 406 lines |  |
+| [GCG24 User Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 235 lines |  |
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | 0/17 | OK: 296 lines | Formalization uses an added Bernoulli success-probability assumption bounded away from 0 and 1. |
 | [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 174 lines | Greedy approximation, truthfulness, reductions, and an abstract complexity note are closed; machine-level complexity remains external. |
 | [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/33 | OK: 171 lines | Sections 2 and 4 are closed; PTAS and FPTAS runtime bounds need fixed-dimension IP complexity infrastructure. |

@@ -950,7 +950,7 @@ def check_root_human_status_table(readme: Path) -> list[Finding]:
             findings.append(Finding("ERROR", readme, f"human review cell should be `reviewed/total` for `{paper}`"))
         if not interface:
             findings.append(Finding("ERROR", readme, f"missing interface health for `{paper}`"))
-        if not summary:
+        if not summary and status != "Formalized":
             findings.append(Finding("ERROR", readme, f"missing human summary for `{paper}`"))
         elif len(summary) > README_MAX_STATUS_SUMMARY_CHARS:
             findings.append(Finding("WARN", readme, f"human summary is too long for `{paper}`"))
