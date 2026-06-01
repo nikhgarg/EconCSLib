@@ -58,6 +58,8 @@ Completed papers should also have:
 ## What The Agent Should Keep Current
 
 - `README.md`: source version, status table, and exact caveats.
+- `papers/status.json`: machine-readable paper status, dashboard review counts,
+  and interface-maintenance metadata.
 - `FORMALIZATION_PLAN.md`: lightweight outside-Lean proof scratchpad.
 - `DependencyDAG.tex`: proof map with every named result and definition-like
   paper object represented.
@@ -155,6 +157,9 @@ python3 scripts/bootstrap_review_launchers.py --write
 
 ## Current Maintenance Note
 
-As of 2026-06-01, the public branch passes `lake build EconCSLib`. If a private
+As of 2026-06-01, the public branch passes `lake build EconCSLib`. The auction
+theorem aggregate remains a heavy import, so unrelated foundation/probability
+work can still use narrower targets during active development, but there is no
+current auction theorem-name drift blocking the repository build. If a private
 paper thread temporarily breaks an aggregate build, keep that status out of the
 public branch or document the exact blocker before review.

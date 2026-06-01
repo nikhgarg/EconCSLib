@@ -763,3 +763,42 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   theorems that recover generated history, terminality, and exact/no-overshoot
   records from an accepted PBE witness; this keeps the human-facing PBE surface
   honest about which source evidence was checked.
+
+## Anonymous Digital-Goods Source Models
+
+- In identity-aware `DigitalGoodsAuction` developments, do not try to derive
+  anonymous set-of-bids behavior from DSIC/IR/NPT/binary allocation alone:
+  personalized posted prices satisfy those primitives. If the paper works over
+  sets or sorted lists of bids, introduce a source-shaped factorization model
+  and prove it implies the proof-facing bridge certificate.
+- For ranked revenue upper bounds, weak DSIC plus bid-independent set-of-bids
+  pricing may be too weak: a two-bidder threshold rule can charge the high
+  bidder `100` and the low bidder `1` on bids `{1, 100}`, earning `101` while
+  the fixed-price benchmark is `100`. Require the adjacent sorted-bid
+  report-substitution condition used by the paper proof, or record the source
+  theorem as needing correction.
+- For deterministic lower bounds, make the human-facing theorem consume the
+  original deterministic auction family when possible. Use Lemma 9.2 to select
+  representative erased-list critical prices internally from deterministic
+  truthfulness/IR/NPT/binary allocation, and keep primitive erased-bid-list
+  price rules as bid-independent specializations rather than replacing the
+  arbitrary auction theorem.
+- Prefer source fields that name the paper semantics, such as adjacent
+  sorted-bid report substitution or erased-bid-list offer factorization, over
+  final proof certificates like ranked payment recurrences or erased-bid
+  representative equality. Keep the raw certificate theorem available as an
+  internal adapter, but make `PaperInterface.lean` consume the source-shaped
+  model.
+- After replacing an old certificate-based theorem with a source-shaped final
+  theorem, scrub broad paper-module export lists too. It is easy for
+  `PaperInterface.lean` to be clean while `GHW01DigitalGoods.MainTheorems`
+  still re-exports older coupled-outcome, sorted-bid, or erased-list adapters
+  that read like public paper assumptions.
+- When a randomized-auction source proof uses raw CDF monotonicity plus an
+  inverse-CDF/common-quantile thought experiment, first try to prove the needed
+  revenue recursion directly from the raw CDF order. For digital-goods ranked
+  offers, a finite PMF layer-cake/surplus argument can turn adjacent CDF
+  monotonicity into both monotone acceptance probabilities and the adjacent
+  gain recursion, avoiding a public coupled-outcome certificate. Keep any
+  common-seed coupled model as an auxiliary audit form unless the final
+  paper-facing theorem genuinely needs it as a source assumption.

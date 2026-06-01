@@ -1,0 +1,283 @@
+{
+  "schema": 1,
+  "description": "Machine-readable status source for public EconCSLib paper formalizations. Markdown tables, the site status table, and release notes should be synchronized from this file.",
+  "review_count_policy": "reviewed_rows counts saved human dashboard rows tracked in the public repository. total_rows counts the current dashboard review surface, after review_slices.json filtering when present. Agent source audits are not counted as human review.",
+  "paper_interface_maintenance_policy": "PaperInterface.lean should stay compact and source-facing. Oversized interfaces or large filtered dashboards are tracked as maintainability debt.",
+  "papers": [
+    {
+      "id": "DSWG24DiscretizationBias",
+      "title": "Addressing Discretization-Induced Bias in Demographic Prediction",
+      "authors": "Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg",
+      "source_version": "ACM FAccT 2024 / PNAS Nexus version",
+      "build_target": "lake build DSWG24DiscretizationBias",
+      "status": "formalized",
+      "main_caveat": "Main theorem route differs from the paper proof in places; the validation report records the proof-route deviation.",
+      "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 32,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "PaperInterface declaration count; no tracked public dashboard log"
+      },
+      "paper_interface": {
+        "path": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
+        "line_count": 406,
+        "declaration_rows": 32,
+        "review_rows": 32,
+        "oversized": false,
+        "maintainability_issue": null
+      }
+    },
+    {
+      "id": "GHW01DigitalGoods",
+      "title": "Competitive Auctions and Digital Goods",
+      "authors": "Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright",
+      "source_version": "SODA 2001 / InterTrust numbering crosswalk; journal version controls refinements",
+      "build_target": "lake build GHW01DigitalGoods",
+      "status": "formalized",
+      "main_caveat": "Theorem 8.2 is formalized against the journal version's monotone truthful randomized-auction statement; Lean refutes the broader technical-report wording with a two-bidder 101 > 100 source-audit counterexample. Theorem 9.3 is closed against the paper's focused set-of-bids deterministic auction convention.",
+      "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 19,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "FINAL_VALIDATION_REPORT.md dashboard status; no tracked public human review log"
+      },
+      "paper_interface": {
+        "path": "papers/GHW01DigitalGoods/PaperInterface.lean",
+        "line_count": 290,
+        "declaration_rows": 20,
+        "review_rows": 19,
+        "oversized": false,
+        "maintainability_issue": null
+      }
+    },
+    {
+      "id": "GCG24UserItemFairness",
+      "title": "User-item fairness tradeoffs in recommendations",
+      "authors": "Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg",
+      "source_version": "NeurIPS 2024 / arXiv:2412.04466",
+      "build_target": "lake build GCG24UserItemFairness",
+      "status": "formalized",
+      "main_caveat": "Recommendation fairness propositions and theorem statements are closed under the formal source model.",
+      "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 18,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "PaperInterface declaration count; no tracked public dashboard log"
+      },
+      "paper_interface": {
+        "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
+        "line_count": 235,
+        "declaration_rows": 18,
+        "review_rows": 18,
+        "oversized": false,
+        "maintainability_issue": null
+      }
+    },
+    {
+      "id": "Roth82StableMatching",
+      "title": "The Economics of Matching: Stability and Incentives",
+      "authors": "Alvin E. Roth",
+      "source_version": "Mathematics of Operations Research, 1982",
+      "build_target": "lake build Roth82StableMatching",
+      "status": "formalized",
+      "main_caveat": "The cached paper's named Theorems 1--7, Lemmas 1--2, and Corollary 5.1 are closed on Roth's stated strict marriage domain without extra model-certificate assumptions.",
+      "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 27,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "FINAL_VALIDATION_REPORT.md says ignored local dashboard logs contain stale older entries; no tracked public human review log is counted"
+      },
+      "paper_interface": {
+        "path": "papers/Roth82StableMatching/PaperInterface.lean",
+        "line_count": 468,
+        "declaration_rows": 27,
+        "review_rows": 27,
+        "oversized": false,
+        "maintainability_issue": null
+      }
+    },
+    {
+      "id": "GS62CollegeAdmissions",
+      "title": "College Admissions and the Stability of Marriage",
+      "authors": "D. Gale and L. S. Shapley",
+      "source_version": "American Mathematical Monthly, 1962",
+      "build_target": "lake build GS62CollegeAdmissions",
+      "status": "formalized",
+      "main_caveat": "Lean endpoints are closed without extra certificates or conditional proof gaps; the cached PDF scan has poor OCR, recorded as a source-audit note rather than a formalization caveat.",
+      "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 7,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "PaperInterface declaration count; no tracked public dashboard log"
+      },
+      "paper_interface": {
+        "path": "papers/GS62CollegeAdmissions/PaperInterface.lean",
+        "line_count": 109,
+        "declaration_rows": 7,
+        "review_rows": 7,
+        "oversized": false,
+        "maintainability_issue": null
+      }
+    },
+    {
+      "id": "MBJG25ProducerFairness",
+      "title": "Balancing Producer Fairness and Efficiency via Bayesian Rating System Design",
+      "authors": "Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg",
+      "source_version": "ICWSM 2025 / arXiv:2207.04369",
+      "build_target": "lake build MBJG25ProducerFairness",
+      "status": "formalized with caveat",
+      "main_caveat": "Bayesian rating-system results are formalized with a documented boundary correction.",
+      "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 17,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "PaperInterface declaration count; no tracked public dashboard log"
+      },
+      "paper_interface": {
+        "path": "papers/MBJG25ProducerFairness/PaperInterface.lean",
+        "line_count": 296,
+        "declaration_rows": 17,
+        "review_rows": 17,
+        "oversized": false,
+        "maintainability_issue": null
+      }
+    },
+    {
+      "id": "MSVV07AdWords",
+      "title": "AdWords and Generalized Online Matching",
+      "authors": "Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V. Vazirani",
+      "source_version": "Journal of the ACM, 2007",
+      "build_target": "lake build MSVV07AdWords",
+      "status": "formalized",
+      "main_caveat": "Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed, including a source-shaped page-level guarantee.",
+      "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 39,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "FINAL_VALIDATION_REPORT.md dashboard status"
+      },
+      "paper_interface": {
+        "path": "papers/MSVV07AdWords/PaperInterface.lean",
+        "line_count": 613,
+        "declaration_rows": 39,
+        "review_rows": 39,
+        "oversized": false,
+        "maintainability_issue": null
+      }
+    },
+    {
+      "id": "LG21TestOptionalPolicies",
+      "title": "Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps",
+      "authors": "Zhi Liu and Nikhil Garg",
+      "source_version": "EAAMO 2021 / arXiv:2107.08922",
+      "build_target": "lake build LG21TestOptionalPolicies",
+      "status": "formalized",
+      "main_caveat": "All named definitions and Section 3--4 results are closed under paper-facing source models; dashboard review remains external.",
+      "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 16,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "FINAL_VALIDATION_REPORT.md dashboard status"
+      },
+      "paper_interface": {
+        "path": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
+        "line_count": 92,
+        "declaration_rows": 16,
+        "review_rows": 16,
+        "oversized": false,
+        "maintainability_issue": null
+      }
+    },
+    {
+      "id": "GN21DriverSurgePricing",
+      "title": "Driver Surge Pricing",
+      "authors": "Nikhil Garg and Hamid Nazerzadeh",
+      "source_version": "Management Science / arXiv v4, 2021",
+      "build_target": "lake build GN21DriverSurgePricing",
+      "status": "formalized",
+      "main_caveat": "Named CTMC lemmas and Theorems 1--4 are exposed; zero-mass boundary behavior is audited separately.",
+      "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 24,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "FINAL_VALIDATION_REPORT.md dashboard status"
+      },
+      "paper_interface": {
+        "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
+        "line_count": 184,
+        "declaration_rows": 24,
+        "review_rows": 24,
+        "oversized": false,
+        "maintainability_issue": null
+      }
+    },
+    {
+      "id": "LMMS04FairDivision",
+      "title": "On Approximately Fair Allocations of Indivisible Goods",
+      "authors": "Richard J. Lipton, Evangelos Markakis, Elchanan Mossel, and Amin Saberi",
+      "source_version": "ACM EC 2004",
+      "build_target": "lake build LMMS04FairDivision",
+      "status": "partially formalized",
+      "main_caveat": "Public partial: Sections 2 and 4 are formalized and much of the Section 3 rounding/search surface is formalized. The final PTAS/FPTAS runtime claim is conditional on reusable fixed-dimension integer-program complexity infrastructure, represented by ExternalSolverConsequence.",
+      "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 33,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "FINAL_VALIDATION_REPORT.md and review_slices.json filtered dashboard surface"
+      },
+      "paper_interface": {
+        "path": "papers/LMMS04FairDivision/PaperInterface.lean",
+        "line_count": 7728,
+        "declaration_rows": 791,
+        "review_rows": 33,
+        "oversized": true,
+        "maintainability_issue": "PaperInterface.lean is oversized and relies on review_slices.json to filter 791 declarations down to 33 source-facing rows; shrink toward paper-facing definitions and named results."
+      }
+    },
+    {
+      "id": "LOS02CombinatorialAuctions",
+      "title": "Truth Revelation in Approximately Efficient Combinatorial Auctions",
+      "authors": "Daniel Lehmann, Liadan Ita O'Callaghan, and Yoav Shoham",
+      "source_version": "Journal of the ACM 49(5), 2002",
+      "build_target": "lake build LOS02CombinatorialAuctions",
+      "status": "partially formalized",
+      "main_caveat": "Public partial: all auction, greedy approximation, critical-price, and single-minded-truthfulness endpoints are formalized in the current model. The final Theorem 6.1 machine-level NP-hardness/NP = ZPP consequences remain conditional on reusable complexity-class and hardness infrastructure.",
+      "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 30,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "FINAL_VALIDATION_REPORT.md and review_slices.json filtered dashboard surface"
+      },
+      "paper_interface": {
+        "path": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
+        "line_count": 3361,
+        "declaration_rows": 224,
+        "review_rows": 30,
+        "oversized": true,
+        "maintainability_issue": "PaperInterface.lean is oversized and relies on review_slices.json to filter 224 declarations down to 30 source-facing rows; shrink toward paper-facing definitions and named results."
+      }
+    }
+  ]
+}

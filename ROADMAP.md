@@ -17,10 +17,8 @@ mathematics under `EconCSLib/` from source-faithful paper formalizations under
 - Publish additional paper formalizations only once their paper-facing ledger
   and validation report are ready for public review.
 - Publish a partial paper only when the remaining assumption is explicit and
-  useful to expose publicly. GHW01, LMMS04, and LOS02 are the current examples:
-  GHW01's open seam is to derive paper-model certificates for digital-goods
-  auction endpoints, while LMMS04 and LOS02 expose reusable complexity-library
-  seams.
+  useful to expose publicly. LMMS04 and LOS02 are the current examples; both
+  expose reusable complexity-library seams.
 
 ## Phase 2: Reusable EC Library Growth
 
@@ -40,9 +38,6 @@ Current high-value areas:
 - complexity and runtime interfaces for externally supplied algorithmic
   certificates, starting with the LMMS04 fixed-dimension IP solver boundary and
   the LOS02 machine-level NP-hardness/`NP = ZPP` boundary.
-- certificate-discharge passes for public partials, starting with GHW01's
-  Theorem 8.2 anonymous sorted-bid certificate and Theorem 9.3 anonymous
-  erased-bid critical-price certificate.
 
 ## Phase 3: Paper Contribution Pipeline
 

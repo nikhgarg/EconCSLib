@@ -5,41 +5,39 @@
 \begin{tikzpicture}[node distance=1.15cm and 1.55cm,
   every node/.style={font=\sffamily\small}]
 
-  \dagPaperMetadata{Competitive Auctions and Digital Goods}{Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright}{SODA 2001 / STAR-TR-99-01}{2000}{https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf}
+  \dagPaperMetadata{Competitive Auctions}{Andrew V. Goldberg, Jason D. Hartline, Anna R. Karlin, Michael Saks, and Andrew Wright}{Journal version; InterTrust/SODA numbering crosswalk}{2006 journal / 2000 report}{https://users.eecs.northwestern.edu/~hartline/papers/auctions-journal.pdf}
 \dagPaperLegendRightOfMetadata{
 \node[dag_result, dag_template_legend] (legRes)
-  {\textbf{Closed}\\paper-facing};
-\node[dag_partial, right=0.35cm of legRes, dag_template_legend] (legCond)
-  {\textbf{Partial}\\certificate gap};
-\node[dag_model, right=0.35cm of legCond, dag_template_legend] (legDef)
+  {\textbf{Theorem}\\corollary};
+\node[dag_lemma, right=0.35cm of legRes, dag_template_legend] (legLem)
+  {\textbf{Lemma}\\support};
+\node[dag_model, right=0.35cm of legLem, dag_template_legend] (legDef)
   {\textbf{Definition}\\model layer};
-\node[dag_unformalized, right=0.35cm of legDef, dag_template_legend] (legOpen)
-  {\textbf{Open}\\not formalized};
 }
-\daglegend{(legRes)(legCond)(legDef)(legOpen)}{Legend}
+\daglegend{(legRes)(legLem)(legDef)}{Legend}
 
 \begin{dagPaperBody}
 
 \node[dag_model, text width=3.8cm] (Core)
-  {\textbf{Definitions (Sections 2--3)}\\digital goods, revenue, DSIC, IR, NPT};
+  {\textbf{Definitions (Sections 2--3)}\\digital-goods auctions, revenue, DSIC, IR, and NPT};
 \node[dag_result, below=of Core, text width=3.8cm] (Thresholds)
   {\textbf{Threshold Mechanisms (Section 5)}\\posted prices and own-bid-independent thresholds are truthful};
 \node[dag_result, below=of Thresholds, text width=3.8cm] (Benchmark)
   {\textbf{$F^{(2)}$ Benchmark Support}\\finite bidder-value candidate benchmark};
 
 \node[dag_model, right=of Core, text width=3.8cm] (Opt)
-  {\textbf{opt(B), $F$, $T$ (Section 4)}\\optimal fixed-price and multi-price benchmarks};
+  {\textbf{Benchmarks (Section 4)}\\optimal fixed-price benchmark $F$ and total bid value $T$};
 \node[dag_result, below=of Opt, text width=3.8cm] (Thm41)
   {\textbf{Theorem 4.1 (Section 4)}\\normalized $[1,h]$ model gives $T \le 2(\log_2 h+2)F$};
-\node[dag_partial, below=of Thm41, text width=3.8cm] (Cor42)
-  {\textbf{Corollary 4.2 (Section 4)}\\certificate gap: truncation model gives $T \le 4mF$};
+\node[dag_result, below=of Thm41, text width=3.8cm] (Cor42)
+  {\textbf{Corollary 4.2 (Section 4)}\\$h/n$ cutoff truncation and Theorem 4.1 give $T \le 4mF$};
 
 \node[dag_model, right=of Opt, text width=3.8cm] (Sampling)
   {\textbf{Random Sampling (Section 5.2)}\\sample-independent threshold auction};
-\node[dag_result, below=of Sampling, text width=3.8cm] (Lemma61)
+\node[dag_lemma, below=of Sampling, text width=3.8cm] (Lemma61)
   {\textbf{Lemma 6.1 (Section 6)}\\independent fair-coin lower-tail model gives $e^{-|S|/36}$ bound};
-\node[dag_partial, below=of Lemma61, text width=3.8cm] (Thm62)
-  {\textbf{Theorem 6.2 (Section 6)}\\certificate gap: fair-coin sorted model gives $1-e^{-\alpha/36}-40e^{-\alpha/72}$ guarantee};
+\node[dag_result, below=of Lemma61, text width=3.8cm] (Thm62)
+  {\textbf{Theorem 6.2 (Section 6)}\\ranked finite-candidate wrapper gives $1-e^{-\alpha/36}-40e^{-\alpha/72}$ guarantee};
 
 \node[dag_model, right=of Sampling, text width=3.8cm] (Weighted)
   {\textbf{Weighted Pairing (Section 7)}\\bid-independent randomized multi-price auction};
@@ -50,45 +48,44 @@
 
 \node[dag_model, right=of Weighted, text width=3.8cm] (RandomTruthful)
   {\textbf{$p_i,c_i,g_i$ (Section 8)}\\win probabilities, expected costs, expected gains};
-\node[dag_result, below=of RandomTruthful, text width=3.8cm] (Lemma81)
+\node[dag_lemma, below=of RandomTruthful, text width=3.8cm] (Lemma81)
   {\textbf{Lemma 8.1 (Section 8)}\\truthfulness implies monotone win probabilities};
-\node[dag_partial, below=of Lemma81, text width=3.8cm] (Thm82)
-  {\textbf{Theorem 8.2 (Section 8)}\\anonymous sorted-bid certificate proves $E[R] \le F$};
+\node[dag_result, below=of Lemma81, text width=3.8cm] (Thm82)
+  {\textbf{Theorem 8.2 (Section 8)}\\journal monotone truthful randomized auctions satisfy $E[R] \le F$; the weak preliminary reading has a counterexample};
 
 \node[dag_model, below=of Benchmark, text width=3.8cm] (DetModel)
   {\textbf{Deterministic Models (Section 9)}\\optimal threshold and deterministic bid-independent auctions};
 \node[dag_result, below=of DetModel, text width=3.8cm] (Thm91)
   {\textbf{Theorem 9.1 (Section 9.2)}\\anonymous bid-independent list bridge, actual $F$ benchmark witness, and ratio form closed};
-\node[dag_result, below=of Thm91, text width=3.8cm] (Lemma92)
-  {\textbf{Lemma 9.2 (Section 9.3)}\\truthful deterministic IR/NPT binary auctions induce critical-price offer slices};
-\node[dag_partial, right=of Lemma92, text width=3.8cm] (Thm93)
-  {\textbf{Theorem 9.3 (Section 9.3)}\\anonymous erased-bid certificate gives $R/F \le 1/h$ witness};
+\node[dag_lemma, below=of Thm91, text width=3.8cm] (Lemma92)
+  {\textbf{Lemma 9.2 (Section 9.3)}\\truthful deterministic IR/NPT binary auctions admit critical-price offer slices};
+\node[dag_result, right=of Lemma92, text width=3.8cm] (Thm93)
+  {\textbf{Theorem 9.3 (Section 9.3)}\\anonymous set-of-bids deterministic truthful auctions have an $R/F \le 1/h$ witness};
 
-\draw[dag_arrow] (Core) -- (Thresholds);
-\draw[dag_arrow] (Thresholds) -- (Benchmark);
-\draw[dag_arrow] (Core) -- (Opt);
-\draw[dag_arrow] (Opt) -- (Thm41);
-\draw[dag_arrow] (Thm41) -- (Cor42);
+\draw[dag_arrow] (Core.south) -- (Thresholds.north);
+\draw[dag_arrow] (Thresholds.south) -- (Benchmark.north);
+\draw[dag_arrow] (Core.east) -- (Opt.west);
+\draw[dag_arrow] (Opt.south) -- (Thm41.north);
+\draw[dag_arrow] (Thm41.south) -- (Cor42.north);
 
 \draw[dag_arrow] (Thresholds.north east) to[out=35,in=210,looseness=0.85] (Sampling.south west);
-\draw[dag_dashed_arrow] (Sampling) -- (Lemma61);
-\draw[dag_dashed_arrow] (Lemma61) -- (Thm62);
+\draw[dag_dashed_arrow] (Sampling.south) -- (Lemma61.north);
+\draw[dag_dashed_arrow] (Lemma61.south) -- (Thm62.north);
 \draw[dag_arrow] (Benchmark.south east) to[out=-15,in=205,looseness=0.9] (Thm62.south west);
 
 \draw[dag_arrow] (Thresholds.north east) to[out=25,in=210,looseness=0.75] (Weighted.south west);
-\draw[dag_arrow] (Weighted) -- (Thm71);
-\draw[dag_arrow] (Thm71) -- (Thm72);
-\draw[dag_dashed_arrow] (Thm82) |- (Thm72);
+\draw[dag_arrow] (Weighted.south) -- (Thm71.north);
+\draw[dag_arrow] (Thm71.south) -- (Thm72.north);
 
-\draw[dag_dashed_arrow] (RandomTruthful) -- (Lemma81);
-\draw[dag_dashed_arrow] (Lemma81) -- (Thm82);
+\draw[dag_dashed_arrow] (RandomTruthful.south) -- (Lemma81.north);
+\draw[dag_dashed_arrow] (Lemma81.south) -- (Thm82.north);
 \draw[dag_dashed_arrow] (Benchmark.south east) to[out=-20,in=210,looseness=0.65] (Thm82.south west);
 
-\draw[dag_arrow] (Thresholds) -- (DetModel);
-\draw[dag_dashed_arrow] (DetModel) -- (Thm91);
+\draw[dag_arrow] (Benchmark.south) -- (DetModel.north);
+\draw[dag_dashed_arrow] (DetModel.south) -- (Thm91.north);
 \draw[dag_dashed_arrow] (DetModel.east) to[out=-35,in=35,looseness=1.15] (Lemma92.east);
-\draw[dag_dashed_arrow] (Thm91) -| (Thm93);
-\draw[dag_dashed_arrow] (Lemma92) -- (Thm93);
+\draw[dag_dashed_arrow] (Thm91.east) -| (Thm93.north);
+\draw[dag_dashed_arrow] (Lemma92.east) -- (Thm93.west);
 \end{dagPaperBody}
 \end{tikzpicture}
 \end{document}

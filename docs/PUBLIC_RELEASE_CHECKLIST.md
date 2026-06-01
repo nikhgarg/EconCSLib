@@ -14,6 +14,8 @@ external contributions.
       incubator.
 - [ ] `docs/PAPER_STATUS.md` matches the paper folders included in the public
       repository.
+- [ ] `papers/status.json`, `docs/PAPER_STATUS.md`, `README.md`, and the site
+      status table describe the same public paper set and review counts.
 - [ ] Status labels use `Formalized`, `Formalized with caveat`, or
       `Partially formalized`; do not publish `Verified in Lean` as a separate
       status category.
@@ -23,7 +25,7 @@ external contributions.
 - [ ] `CONTRIBUTING.md` states the current contribution policy and contact
       email.
 - [ ] `CITATION.cff` has the current repository title, author, and release date.
-- [ ] A repository license has been chosen and added as `LICENSE` before
+- [x] A repository license has been chosen and added as `LICENSE` before
       soliciting broad external code contributions.
 - [ ] The GitHub repository description is set. The homepage field is left
       blank until GitHub Pages is actually enabled and deployed.
@@ -37,6 +39,8 @@ Each public paper folder should have:
 - [ ] `FINAL_VALIDATION_REPORT.md` or an equivalent validation summary;
 - [ ] `DependencyDAG.tex`, with rendered PDFs kept local unless intentionally
       published;
+- [ ] a current entry in `papers/status.json`, including human-review row
+      counts and any PaperInterface maintenance issue;
 - [ ] a passing `lake build <PaperTarget>` command; and
 - [ ] no tracked source PDFs, review-dashboard caches, or generated build
       artifacts.

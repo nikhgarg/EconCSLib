@@ -174,6 +174,16 @@ nondegeneracy/support assumption, separating a displayed formula from a
 derivation-corrected formula, or weakening an auxiliary abstraction while
 preserving the paper-facing theorem.
 
+When source model assumptions are ambiguous, search beyond the local PDF before
+deciding whether a Lean field is a paper convention or an extra certificate.
+Look for public TeX/source archives, author-hosted PDFs, conference and journal
+versions, and source repositories. Record when no public TeX/source is found.
+Later versions may clarify conventions such as anonymity, tie-breaking, or
+masked-vector models, but do not silently switch the paper target to a later
+version. If the later version becomes the source of truth, update the paper
+identity, theorem inventory, numbering, DAG, README, status rows, and final
+report together.
+
 Keep theorem-specific proof tactics out of this always-loaded file. Use the
 reference routing table at the end: CTMC/reward-rate details live in
 `references/proof-foundations-probability.md`; dynamic-game/PBE certificate
@@ -206,6 +216,12 @@ papers in the same EC area and ask which proof moves should become general
 library tools. Do not force a detached library project before proving the paper,
 but if a lemma, interface, or theorem is likely to be useful to another EC paper,
 build it in `EconCSLib` while formalizing the current result.
+When a proof needs the "top `k`" elements of an arbitrary finite profile, prefer
+building a ranking/top-prefix interface on the original domain over reindexing
+the whole mechanism. Reindexing is often harder because selected argmaxes,
+sampled subprofiles, or chosen witnesses may not be definitionally equivariant;
+a source-shaped top-prefix family usually preserves the paper argument with
+less transport machinery.
 
 When starting a paper, do an outside-Lean proof-planning pass over the entire
 proof and formalization route before deep Lean implementation. Identify the
@@ -369,8 +385,8 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   approval. If the requested paper exists in the public repo, use the public
   repo as the primary worktree for public contributions. For example,
   `GHW01DigitalGoods` (sometimes referred to informally as `GW01`) is a public
-  partial: edit `papers/GHW01DigitalGoods/`, its root module, reusable public
-  library files, and public status/docs in `EconCSLib-public`.
+  formalized lane: edit `papers/GHW01DigitalGoods/`, its root module, reusable
+  public library files, and public status/docs in `EconCSLib-public`.
 - When a paper exists in both private and public, choose one primary worktree
   for the current task and keep all builds, dashboard refreshes, reports, DAGs,
   and commits in that same repo. Use the public repo as primary for public
@@ -451,6 +467,12 @@ the Lean statements against the paper.
   5. A local `.gitignore` file.
 - **Local Gitignores:** Every paper folder *must* contain its own `.gitignore` that explicitly ignores `*.pdf`, `*.aux`, `*.log`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`. The overall repo `.gitignore` may contain generic LaTeX auxiliary patterns such as `*.aux`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`, but should not contain paper-specific PDF exclusions or paths.
 - **Reproducible PDF/text/source cache:** A copy of the source PDF must be downloaded once and kept in the local paper folder so humans and agents can read exactly what is being reproduced. Immediately run `pdftotext Source.pdf Source.txt` in the same folder and use that cached text file for named-statement searches. For arXiv papers, also cache and unpack the TeX source archive once; use it as the authoritative source for formulas when PDF extraction is ambiguous or garbled. Because of the local `.gitignore`, the PDF will not be committed to Git, preventing repository bloat; the `.txt` cache should remain beside the PDF unless the paper has a copyright or licensing reason not to track extracted text. Work from these local files; do not repeatedly search the web or re-run extraction unless the source PDF or source archive changes.
+- Public filtered checkouts may omit ignored source PDFs even when the tracked
+  text cache is present. During final validation, do not claim a local PDF
+  exists unless it is actually in the checkout; state that the public/source
+  URL plus tracked text cache were used, and treat the repository audit's
+  missing-PDF warning as a public-release packaging note rather than a theorem
+  gap.
 - **README Requirements:** The `README.md` must clearly identify the exact
   source version of the paper (e.g., arXiv version `vX`, conference year) and provide URLs.
 - **DAG Node Wording:** `DependencyDAG.tex` is a proof roadmap for humans, not
@@ -1310,6 +1332,13 @@ pass:
 - Confirm the paper root module imports the post-paper audit ledger and that the
   audit ledger has one source-numbered theorem alias or wrapper for each final
   named endpoint.
+- During final export curation, audit every broad paper module re-export as
+  well as `PaperInterface.lean`. A completed paper can still look conditional
+  to downstream users if `MainTheorems.lean` re-exports old proof-adapter
+  models, coupled-outcome variants, or source-bridge staging theorems as part
+  of the paper surface. Keep those declarations in the reusable library or
+  audit ledger when useful, but expose the source-shaped final theorem in the
+  paper module and status artifacts.
 - Do a full DAG finalization pass before handoff:
   - Cross-check the DAG against the source paper and `PaperInterface.lean`.
     Add missing paper-facing definition/lemma/proposition/theorem/corollary or

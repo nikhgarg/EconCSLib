@@ -18,7 +18,8 @@ Cached source text inventory checked by this audit:
 - Theorem 7.1, line 563: weighted pairing gets `Omega(T / log h)` when `4h <= T`.
 - Theorem 7.2, line 626: weighted pairing gets `Omega(F / log h)` when `F >= 2h`.
 - Lemma 8.1, line 747: truthfulness implies monotone win probabilities.
-- Theorem 8.2, line 833: any truthful auction has expected revenue at most `F`.
+- Theorem 8.2, line 833: the broad technical-report statement is audited
+  against the later journal monotone-auction statement.
 - Theorem 9.1, line 979: bid-independent lower-bound witness.
 - Lemma 9.2, line 1105: truthful deterministic auctions are bid-independent.
 - Theorem 9.3, line 1100: deterministic truthful lower-bound witness.
@@ -46,12 +47,23 @@ theorem audit_theorem4_1_high_value
     paper_theorem4_1_finite_candidate_benchmark_from_logb_high_value
       values hh_ge_one hvalue_ge_one hvalue_le_h
 
-/-- Audit endpoint for GHW Corollary 4.2: truncation plus Theorem 4.1. -/
-theorem audit_corollary4_2_truncation
-    (model : PaperCorollary42TruncationModel) :
-    model.totalValue ≤
-      (4 * model.binCount) * model.fixedPriceBenchmark := by
-  exact paper_corollary4_2_fixed_price_lower_bound_of_truncation_model model
+/--
+Audit endpoint for GHW Corollary 4.2: cutoff truncation at `h / n`,
+normalization, and Theorem 4.1 imply the factor-four fixed-price lower bound.
+-/
+theorem audit_corollary4_2_fixed_price_lower_bound
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) {h binCount : ℝ}
+    (hvalues_nonneg : ∀ i : Agent, 0 ≤ values i)
+    (hh_pos : 0 < h)
+    (hmax : ∃ i : Agent, values i = h)
+    (hvalue_le_h : ∀ i : Agent, values i ≤ h)
+    (hbinCount : Real.logb 2 (Fintype.card Agent : ℝ) + 2 ≤ binCount) :
+    totalBidValue values ≤
+      (4 * binCount) * finiteCandidateFixedPriceBenchmark values 1 := by
+  exact
+    paper_corollary4_2_fixed_price_lower_bound_of_card_truncation
+      values hvalues_nonneg hh_pos hmax hvalue_le_h hbinCount
 
 /-- Audit endpoint for GHW Lemma 6.1: independent fair-coin lower-tail form. -/
 theorem audit_lemma6_1_fair_coin
@@ -63,23 +75,30 @@ theorem audit_lemma6_1_fair_coin
   exact paper_aux_theorem6_2_fair_coin_lower_tail_relaxed s keep
 
 /--
-Audit endpoint for GHW Theorem 6.2. The model packages sorted bids,
-independent fair-coin sampling, the feasible sample-size side condition, and
-the paper large-market condition `alpha * h <= F_p`.
+Audit endpoint for GHW Theorem 6.2. The ranked finite-candidate benchmark
+constructor packages the independent fair-coin sampling model internally from
+the paper large-market condition `alpha * h <= F`.
 -/
 theorem audit_theorem6_2_random_sampling
     {n : ℕ} [NeZero n]
-    (model : PaperTheorem62FairCoinSortedModel n) :
-    1 - Real.exp (-(model.alpha : ℝ) / 36) -
-        40 * Real.exp (-(model.alpha : ℝ) / 72) ≤
+    (values : Fin n → ℝ) (keep : Bool) {alpha : ℕ} {highValue : ℝ}
+    (hhigh_pos : 0 < highValue)
+    (hvalue_bound : ∀ i, values i ≤ highValue)
+    (halpha_highValue :
+      (alpha : ℝ) * highValue ≤
+        finiteCandidateFixedPriceBenchmark values 1) :
+    1 - Real.exp (-(alpha : ℝ) / 36) -
+        40 * Real.exp (-(alpha : ℝ) / 72) ≤
       (EconCSLib.FairCoin.productMeasure (Fin n)).real
         {side |
-          singlePriceRevenue model.values model.price ≤
+          finiteCandidateFixedPriceBenchmark values 1 ≤
             6 *
               (thresholdPriceAuction
                 (crossSampleCandidateOfferThreshold
-                  side model.minWinners)).revenue model.values} := by
-  exact paper_theorem6_2_fair_coin_revenue_bound_of_sorted_model model
+                  side 1)).revenue values} := by
+  exact
+    paper_theorem6_2_fair_coin_revenue_bound_of_finite_candidate_benchmark_all_alpha
+      values keep hhigh_pos hvalue_bound halpha_highValue
 
 /-- Audit endpoint for GHW Theorem 7.1 under the paper condition `4h <= T`. -/
 theorem audit_theorem7_1_weighted_pairing
@@ -128,21 +147,33 @@ theorem audit_lemma8_1_truthful_monotone
   exact paper_lemma8_1_allocation_mono_own_bid_of_truthful M hM bids i hlt
 
 /--
-Audit endpoint for GHW Theorem 8.2. The model packages the paper's anonymous
-sorted-bid convention, adjacent-rank symmetry, endpoint identities, and
-truthfulness/IR payment comparisons.
+Audit endpoint for GHW Theorem 8.2, using the later journal version's monotone
+truthful randomized-auction statement. The source model records the journal
+CDF monotonicity condition on raw marginal offer laws; the adjacent surplus
+recursion is derived internally from those CDF inequalities.
 -/
 theorem audit_theorem8_2_truthful_revenue_upper_bound
-    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent]
+    [DecidableEq Agent] [Fintype Price] [DecidableEq Price]
     [LinearOrder Agent]
-    (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) {n : ℕ}
-    (hcard : (Finset.univ : Finset Agent).card = n)
     (model :
-      PaperTheorem82AnonymousSortedBidTruthfulModel M values hcard) :
-    M.revenue values ≤ finiteCandidateFixedPriceBenchmark values 1 := by
+      PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :
+    paper_theorem8_2_raw_cdf_expected_revenue
+        model.values model.price model.offerLaw ≤
+      finiteCandidateFixedPriceBenchmark model.values 1 := by
   exact
-    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_anonymous_sorted_bid_truthful_model
-      M values hcard model
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_offer_source_model
+      model
+
+/--
+Audit boundary for GHW Theorem 8.2: the weak primitive reading is false. A
+truthful IR/NPT binary threshold auction can earn strictly more than `F`.
+-/
+theorem audit_theorem8_2_weak_truthful_counterexample :
+    finiteCandidateFixedPriceBenchmark paper_theorem8_2_counterexample_values 1 <
+      paper_theorem8_2_counterexample_auction.revenue
+        paper_theorem8_2_counterexample_values := by
+  exact paper_theorem8_2_counterexample_revenue_gt_benchmark
 
 /--
 Audit endpoint for GHW Theorem 9.1 in the paper anonymous erased-bid-list
@@ -184,13 +215,15 @@ theorem audit_lemma9_2_threshold_domination
       M htruth hIR hNPT hbinary bids i
 
 /--
-Audit endpoint for GHW Theorem 9.3. The model packages anonymous truthful
-deterministic binary auctions with IR, NPT, binary allocation, and the paper's
-erased-bid critical-price convention.
+Audit endpoint for GHW Theorem 9.3. From deterministic truthfulness, IR/NPT,
+binary allocation, and the paper's set-of-bids focused-outcome convention,
+the erased-list relabeling bridge and Lemma 9.2 list-price representation are
+constructed internally.
 -/
 theorem audit_theorem9_3_deterministic_truthful_lower_bound
     {highValue alpha : ℕ}
-    (model : PaperTheorem93AnonymousTruthfulDeterministicModel highValue)
+    (model :
+      PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue)
     (hhigh_ge_two : 2 ≤ highValue) (halpha_pos : 0 < alpha) :
     ∃ highCount lowCount : ℕ,
       (model.auctionFamily highCount lowCount).revenue
@@ -200,7 +233,7 @@ theorem audit_theorem9_3_deterministic_truthful_lower_bound
       (highValue : ℝ) * (alpha : ℝ) ≤
         twoValueFixedPriceBenchmark highValue highCount lowCount := by
   exact
-    paper_theorem9_3_deterministic_truthful_ratio_witness_of_anonymous_truthful_deterministic_model
+    paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_set_of_bids_source_model
       model hhigh_ge_two halpha_pos
 
 end GHW01DigitalGoods

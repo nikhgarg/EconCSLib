@@ -79,7 +79,8 @@
           <h2 id="status-title">Published paper artifacts</h2>
           <p>
             This site is a short human-facing snapshot. The source of truth is
-            the repository status ledger and the paper-local validation reports.
+            <code>papers/status.json</code>, the repository status ledger, and
+            the paper-local validation reports.
           </p>
         </div>
 
@@ -87,8 +88,8 @@
           <article>
             <h3>Formalized</h3>
             <p>
-              Public paper artifacts cover matching, combinatorial auctions,
-              online advertising, recommender-system
+              Public paper artifacts cover matching, digital-goods auctions,
+              combinatorial auctions, online advertising, recommender-system
               fairness, test-optional admissions, driver surge pricing,
               Bayesian rating design, and discretization-induced bias.
             </p>
@@ -96,10 +97,9 @@
           <article>
             <h3>Public partial</h3>
             <p>
-              GHW01, LMMS04, and LOS02 are public because their remaining gaps
-              are explicit: model-certificate discharge for GHW01,
-              fixed-dimension IP runtime for LMMS04, and machine-level
-              NP-hardness/randomized-class semantics for LOS02.
+              LMMS04 and LOS02 are public because their remaining gaps are
+              explicit: fixed-dimension IP runtime for LMMS04, and
+              machine-level NP-hardness/randomized-class semantics for LOS02.
             </p>
           </article>
           <article>
@@ -118,6 +118,8 @@
               <tr>
                 <th>Paper</th>
                 <th>Status</th>
+                <th>Review</th>
+                <th>Interface</th>
                 <th>Main note</th>
               </tr>
             </thead>
@@ -125,57 +127,79 @@
               <tr>
                 <td>DSWG24 Discretization Bias</td>
                 <td>Formalized</td>
+                <td>0/32</td>
+                <td>OK: 406 lines</td>
                 <td>Proof-route deviations documented.</td>
               </tr>
               <tr>
                 <td>GHW01 Digital Goods</td>
-                <td>Partially formalized</td>
-                <td>Open seam is model-certificate discharge.</td>
+                <td>Formalized</td>
+                <td>0/19</td>
+                <td>OK: 290 lines</td>
+                <td>Journal Theorem 8.2 and source-convention Theorem 9.3 are closed.</td>
               </tr>
               <tr>
                 <td>GCG24 User-Item Fairness</td>
                 <td>Formalized</td>
+                <td>0/18</td>
+                <td>OK: 235 lines</td>
                 <td>Recommendation fairness statements closed.</td>
               </tr>
               <tr>
                 <td>Roth82 Stable Matching</td>
                 <td>Formalized</td>
+                <td>0/27</td>
+                <td>OK: 468 lines</td>
                 <td>Named results closed without extra certificates.</td>
               </tr>
               <tr>
                 <td>GS62 College Admissions</td>
                 <td>Formalized</td>
+                <td>0/7</td>
+                <td>OK: 109 lines</td>
                 <td>No extra certificates; OCR note only.</td>
               </tr>
               <tr>
                 <td>MBJG25 Producer Fairness</td>
                 <td>Formalized with caveat</td>
+                <td>0/17</td>
+                <td>OK: 296 lines</td>
                 <td>Boundary correction recorded.</td>
               </tr>
               <tr>
                 <td>MSVV07 AdWords</td>
                 <td>Formalized</td>
+                <td>0/39</td>
+                <td>OK: 613 lines</td>
                 <td>Core AdWords and extensions closed.</td>
               </tr>
               <tr>
                 <td>LG21 Test-Optional Policies</td>
                 <td>Formalized</td>
+                <td>0/16</td>
+                <td>OK: 92 lines</td>
                 <td>Section 3--4 source models closed.</td>
               </tr>
               <tr>
                 <td>GN21 Driver Surge Pricing</td>
                 <td>Formalized</td>
+                <td>0/24</td>
+                <td>OK: 184 lines</td>
                 <td>CTMC lemmas and Theorems 1--4 exposed.</td>
               </tr>
               <tr>
                 <td>LMMS04 Fair Division</td>
                 <td>Partially formalized</td>
-                <td>Open seam is fixed-dimension IP runtime infrastructure.</td>
+                <td>0/33</td>
+                <td>Debt: 7,728 lines</td>
+                <td>Open boundary is fixed-dimension IP runtime infrastructure.</td>
               </tr>
               <tr>
                 <td>LOS02 Combinatorial Auctions</td>
                 <td>Partially formalized</td>
-                <td>Open seam is machine-level complexity infrastructure.</td>
+                <td>0/30</td>
+                <td>Debt: 3,361 lines</td>
+                <td>Open boundary is machine-level complexity infrastructure.</td>
               </tr>
             </tbody>
           </table>
@@ -183,6 +207,10 @@
 
         <p class="more-link">
           Detailed status:
+          <a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/status.json">
+            papers/status.json
+          </a>
+          and
           <a href="https://github.com/nikhgarg/EconCSLib/blob/main/docs/PAPER_STATUS.md">
             docs/PAPER_STATUS.md
           </a>

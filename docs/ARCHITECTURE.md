@@ -79,7 +79,9 @@ searches, or endpoint/current-bound optimality proofs should start with
   `EconCSLib.MechanismDesign.Auctions.MainTheorems` import from
   `EconCSLib.Basic` and keep paper-facing auction theorem aggregators imported
   directly by paper modules. This is a maintainability and build-latency
-  cleanup, not a current public-build blocker.
+  cleanup, not a current public-build blocker. The auction theorem aggregate
+  remains a heavy import, so future paper-facing auction modules should import
+  narrower wrappers where practical.
 - Build status: as of 2026-06-01, the public branch validates with
   `lake build EconCSLib`. Earlier auction-local theorem-name drift has been
   resolved on the public branch; future public commits should keep this

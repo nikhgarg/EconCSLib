@@ -85,12 +85,23 @@ theorem theorem4_1_high_value
     paper_theorem4_1_finite_candidate_benchmark_from_logb_high_value
       values hh_ge_one hvalue_ge_one hvalue_le_h
 
-/-- Corollary 4.2: truncation gives a fixed-price lower bound in terms of `n`. -/
-theorem corollary4_2_truncation
-    (model : PaperCorollary42TruncationModel) :
-    model.totalValue ≤
-      (4 * model.binCount) * model.fixedPriceBenchmark := by
-  exact paper_corollary4_2_fixed_price_lower_bound_of_truncation_model model
+/--
+Corollary 4.2: truncating bids below `h / n` and applying Theorem 4.1 gives
+the logarithmic fixed-price lower bound.
+-/
+theorem corollary4_2_fixed_price_lower_bound
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) {h binCount : ℝ}
+    (hvalues_nonneg : ∀ i : Agent, 0 ≤ values i)
+    (hh_pos : 0 < h)
+    (hmax : ∃ i : Agent, values i = h)
+    (hvalue_le_h : ∀ i : Agent, values i ≤ h)
+    (hbinCount : Real.logb 2 (Fintype.card Agent : ℝ) + 2 ≤ binCount) :
+    totalValue values ≤
+      (4 * binCount) * fixedPriceBenchmark values 1 := by
+  simpa [totalValue, fixedPriceBenchmark] using
+    paper_corollary4_2_fixed_price_lower_bound_of_card_truncation
+      values hvalues_nonneg hh_pos hmax hvalue_le_h hbinCount
 
 /-- Lemma 6.1: fair-coin random sampling lower-tail estimate. -/
 theorem lemma6_1_fair_coin
@@ -101,21 +112,42 @@ theorem lemma6_1_fair_coin
       Real.exp (-(s.card : ℝ) / 36) := by
   exact paper_aux_theorem6_2_fair_coin_lower_tail_relaxed s keep
 
-/-- Theorem 6.2: random-sampling auction revenue guarantee. -/
+/--
+Theorem 6.2: random-sampling auction revenue guarantee for finite candidate
+benchmark inputs satisfying `alpha * h <= F`.
+-/
 theorem theorem6_2_random_sampling
     {n : ℕ} [NeZero n]
-    (model : PaperTheorem62FairCoinSortedModel n) :
-    1 - Real.exp (-(model.alpha : ℝ) / 36) -
-        40 * Real.exp (-(model.alpha : ℝ) / 72) ≤
+    (values : Fin n → ℝ) (keep : Bool) {alpha : ℕ} {highValue : ℝ}
+    (hhigh_pos : 0 < highValue)
+    (hvalue_bound : ∀ i, values i ≤ highValue)
+    (halpha_highValue :
+      (alpha : ℝ) * highValue ≤ fixedPriceBenchmark values 1) :
+    1 - Real.exp (-(alpha : ℝ) / 36) -
+        40 * Real.exp (-(alpha : ℝ) / 72) ≤
       (EconCSLib.FairCoin.productMeasure (Fin n)).real
         {side |
-          singlePriceRevenue model.values model.price ≤
+          fixedPriceBenchmark values 1 ≤
             6 *
               (thresholdPriceAuction
                 (crossSampleCandidateOfferThreshold
-                  side model.minWinners)).revenue model.values} := by
-  simpa [singlePriceRevenue] using
-    paper_theorem6_2_fair_coin_revenue_bound_of_sorted_model model
+                  side 1)).revenue values} := by
+  change
+    1 - Real.exp (-(alpha : ℝ) / 36) -
+        40 * Real.exp (-(alpha : ℝ) / 72) ≤
+      (EconCSLib.FairCoin.productMeasure (Fin n)).real
+        {side |
+          finiteCandidateFixedPriceBenchmark values 1 ≤
+            6 *
+              (thresholdPriceAuction
+                (crossSampleCandidateOfferThreshold
+                  side 1)).revenue values}
+  change
+    (alpha : ℝ) * highValue ≤
+      finiteCandidateFixedPriceBenchmark values 1 at halpha_highValue
+  exact
+    paper_theorem6_2_fair_coin_revenue_bound_of_finite_candidate_benchmark_all_alpha
+      values keep hhigh_pos hvalue_bound halpha_highValue
 
 /-- Theorem 7.1: weighted pairing gets a logarithmic guarantee when `4h <= T`. -/
 theorem theorem7_1_weighted_pairing
@@ -160,19 +192,42 @@ theorem lemma8_1_truthful_monotone
   simpa [truthful, paper_digital_goods_truthful] using
     paper_lemma8_1_allocation_mono_own_bid_of_truthful M hM bids i hlt
 
-/-- Theorem 8.2: every truthful auction's revenue is bounded by `F`. -/
+/--
+Theorem 8.2, journal version: every monotone truthful randomized offer
+auction's expected revenue is bounded by `F`. The source model records the
+journal CDF monotonicity condition on raw marginal offer laws; Lean discharges
+the finite adjacent-surplus recursion directly from those CDF inequalities.
+-/
 theorem theorem8_2_truthful_revenue_upper_bound
-    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent]
+    [DecidableEq Agent] [Fintype Price] [DecidableEq Price]
     [LinearOrder Agent]
-    (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) {n : ℕ}
-    (hcard : (Finset.univ : Finset Agent).card = n)
     (model :
-      PaperTheorem82AnonymousSortedBidTruthfulModel M values hcard) :
-    M.revenue values ≤ fixedPriceBenchmark values 1 := by
-  change M.revenue values ≤ finiteCandidateFixedPriceBenchmark values 1
+      PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :
+    paper_theorem8_2_raw_cdf_expected_revenue
+        model.values model.price model.offerLaw ≤
+      fixedPriceBenchmark model.values 1 := by
+  change
+    paper_theorem8_2_raw_cdf_expected_revenue
+        model.values model.price model.offerLaw ≤
+      finiteCandidateFixedPriceBenchmark model.values 1
   exact
-    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_anonymous_sorted_bid_truthful_model
-      M values hcard model
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_offer_source_model
+      model
+
+/--
+Source-audit boundary for Theorem 8.2: weak truthfulness plus ordinary
+threshold pricing alone does not imply the paper's revenue upper bound.
+-/
+theorem theorem8_2_weak_truthful_counterexample :
+    fixedPriceBenchmark paper_theorem8_2_counterexample_values 1 <
+      paper_theorem8_2_counterexample_auction.revenue
+        paper_theorem8_2_counterexample_values := by
+  change
+    finiteCandidateFixedPriceBenchmark paper_theorem8_2_counterexample_values 1 <
+      paper_theorem8_2_counterexample_auction.revenue
+        paper_theorem8_2_counterexample_values
+  exact paper_theorem8_2_counterexample_revenue_gt_benchmark
 
 /-- Theorem 9.1: bid-independent auctions have a lower-bound witness. -/
 theorem theorem9_1_bid_independent_lower_bound
@@ -207,10 +262,16 @@ theorem lemma9_2_threshold_domination
     paper_lemma9_2_deterministic_truthful_auction_exists_nonnegative_threshold_dominates
       M htruth hIR hNPT hbinary bids i
 
-/-- Theorem 9.3: deterministic truthful auctions have a lower-bound witness. -/
+/--
+Theorem 9.3: deterministic truthful auctions have a lower-bound witness.
+The source model supplies the paper's set-of-bids focused-outcome convention;
+erased-list relabeling and then Lemma 9.2's anonymous list-price
+representation are constructed internally for the original auction family.
+-/
 theorem theorem9_3_deterministic_truthful_lower_bound
     {highValue alpha : ℕ}
-    (model : PaperTheorem93AnonymousTruthfulDeterministicModel highValue)
+    (model :
+      PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue)
     (hhigh_ge_two : 2 ≤ highValue) (halpha_pos : 0 < alpha) :
     ∃ highCount lowCount : ℕ,
       (model.auctionFamily highCount lowCount).revenue
@@ -220,7 +281,7 @@ theorem theorem9_3_deterministic_truthful_lower_bound
       (highValue : ℝ) * (alpha : ℝ) ≤
         twoValueFixedPriceBenchmark highValue highCount lowCount := by
   exact
-    paper_theorem9_3_deterministic_truthful_ratio_witness_of_anonymous_truthful_deterministic_model
+    paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_set_of_bids_source_model
       model hhigh_ge_two halpha_pos
 
 end

@@ -98,6 +98,12 @@ Before opening a pull request:
   statements and ledgers; and
 - avoid mixing unrelated paper work into a library PR.
 
+Unless explicitly marked otherwise, contributions intentionally submitted for
+inclusion in EconCSLib are accepted under the Apache License, Version 2.0. This
+repository license covers the Lean code, scripts, documentation, and site
+source; it does not grant redistribution rights for third-party source-paper
+PDFs or extracted text caches.
+
 For reusable library changes, a typical validation command is:
 
 ```bash

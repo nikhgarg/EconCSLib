@@ -8,6 +8,12 @@ The contribution policy is still provisional. Before starting substantial paper
 formalization work, contact Nikhil Garg at ngarg@cornell.edu so the intended
 scope, source-paper version, and public/private status are clear.
 
+Unless explicitly marked otherwise, contributions to the repository's Lean code,
+scripts, documentation, and site source are accepted under the Apache License,
+Version 2.0. Source-paper PDFs and extracted text caches remain separate
+third-party reference artifacts and are not covered by the repository code
+license.
+
 ## 1. Use Public Main As A Read-Only Base
 
 Do not work directly on the public repository. Treat

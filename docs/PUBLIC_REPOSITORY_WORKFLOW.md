@@ -66,6 +66,7 @@ explicitly approved for public review.
 Current public-ready candidates:
 
 - `DSWG24DiscretizationBias`
+- `GHW01DigitalGoods`
 - `GCG24UserItemFairness`
 - `GN21DriverSurgePricing`
 - `GS62CollegeAdmissions`
@@ -76,9 +77,6 @@ Current public-ready candidates:
 
 Current public partial candidates:
 
-- `GHW01DigitalGoods`, because its reusable auction primitives and many named
-  endpoints are public-useful, while the remaining gap is explicit
-  model-certificate discharge for Theorems 8.2 and 9.3.
 - `LMMS04FairDivision`, because its open Theorem 3.3 PTAS/FPTAS runtime claim
   is isolated behind a fixed-dimension IP solver/complexity seam.
 - `LOS02CombinatorialAuctions`, because its auction, greedy approximation,

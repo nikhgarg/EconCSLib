@@ -1,6 +1,6 @@
 # GHW01 Formalization Plan
 
-Last updated: 2026-05-31
+Last updated: 2026-06-01
 
 ## Current State
 
@@ -9,9 +9,18 @@ Last updated: 2026-05-31
 - `MainTheorems.lean` contains proof-facing auction details and reusable
   support.
 - `PostPaperAudit.lean` records additional validation checks.
-- Current status is public partial, not fully formalized. The important
-  remaining work is to derive the paper-model certificates currently assumed by
-  Theorem 8.2 and Theorem 9.3.
+- Current status is formalized. Theorem 9.3 is closed against the paper's
+  focused set-of-bids deterministic auction convention. Theorem 8.2 is closed
+  against the later journal version's monotone truthful randomized-offer
+  statement using raw CDF marginal offer laws; Lean derives the adjacent
+  probability monotonicity and surplus recursion directly from those CDF
+  inequalities. Lean also records a two-bidder `101 > 100` threshold
+  counterexample to the broader weak technical-report wording. Theorem 6.2 and
+  Corollary 4.2 are closed.
+- Source-version note: a 2026-06-01 web search did not find public TeX/source.
+  The later journal version is the controlling source where it refines the
+  preliminary text. This folder keeps the InterTrust/SODA theorem-number labels
+  as a crosswalk for the existing README, theorem list, DAG, and audit aliases.
 
 ## Review Plan
 
@@ -24,13 +33,10 @@ Last updated: 2026-05-31
 
 ## Next Work
 
-- Treat GHW01 as the next paper to try to finish completely.
-- Derive `PaperTheorem82AnonymousSortedBidTruthfulModel` from primitive
-  source-facing assumptions, or revise the theorem statement so any anonymity
-  and adjacent-rank symmetry assumptions are explicit paper assumptions.
-- Derive `PaperTheorem93AnonymousTruthfulDeterministicModel` from deterministic
-  truthfulness plus Lemma 9.2, or revise the theorem statement so the
-  anonymous erased-bid critical-price/list-price convention is explicit.
-- Audit whether `PaperTheorem62FairCoinSortedModel` and
-  `PaperCorollary42TruncationModel` can be constructed from the paper's stated
-  fixed-price benchmark and truncation assumptions.
+- Optional source-curation pass: retitle the paper folder and theorem inventory
+  around the journal version if maintainers want journal numbering everywhere.
+  This is not a theorem-closure task; the current InterTrust/SODA labels are an
+  explicit crosswalk to the journal-controlled statements.
+- Optional reusable-library pass: factor the finite PMF layer-cake surplus
+  lemmas behind Theorem 8.2 into a reusable stochastic-ordering API if another
+  paper needs the same raw-CDF-to-surplus-recursion argument.

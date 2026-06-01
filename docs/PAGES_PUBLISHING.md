@@ -20,7 +20,9 @@ repository are ready.
 1. Decide whether the paper PDF should be linked externally or added as a final
    reviewed public artifact.
 2. Review `site/index.html` for accurate paper status and contact text.
-3. Confirm `docs/PAPER_STATUS.md` matches the site status table.
+3. Confirm `papers/status.json`, `docs/PAPER_STATUS.md`, and the site status
+   table describe the same papers, statuses, review counts, and interface
+   maintenance notes.
 4. Run `python3 scripts/audit_repository.py` and confirm there are 0 errors.
 5. Preview the static site locally, for example:
 

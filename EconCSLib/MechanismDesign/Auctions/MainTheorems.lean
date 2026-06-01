@@ -7,6 +7,8 @@ import EconCSLib.MechanismDesign.Auctions.Position
 import EconCSLib.MechanismDesign.Auctions.Combinatorial
 import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Mathlib.Data.Fintype.Sets
+import Mathlib.MeasureTheory.Integral.Layercake
+import Mathlib.Probability.ProbabilityMassFunction.Integrals
 
 open MeasureTheory
 open ProbabilityTheory
@@ -1190,8 +1192,8 @@ theorem paper_aux_theorem6_2_selected_offer_large_sample_count_of_alpha_h
   exact_mod_cast halpha_real
 
 /--
-GHW Theorem 6.2, paper-constant fair-coin sampling guarantee conditional on
-the selected-price large-sample bridge.
+GHW Theorem 6.2, paper-constant fair-coin sampling guarantee from the
+selected-price large-sample bridge.
 
 Paper statement: assuming `alpha * h <= F`, the random sampling optimal
 threshold auction revenue `R` satisfies
@@ -1402,6 +1404,118 @@ theorem paper_theorem6_2_fair_coin_revenue_bound_top_prefix_alpha_h_fin_sorted
       hmin hp hh_pos hminWinners_alpha hvalue_bound halpha_h
 
 /--
+Ranked top-prefix family for an arbitrary finite bid vector. It avoids a
+source-level sorted-index convention by taking the top `m` bidders to be the
+upper ranked block under `FiniteRanking`.
+-/
+noncomputable def rankedTopPrefixFamily {n : ℕ} (values : Fin n → ℝ) :
+    TopPrefixFamily values where
+  top m :=
+    FiniteRanking.upperRankFinset
+      (s := (Finset.univ : Finset (Fin n))) (value := values)
+      (by simp : (Finset.univ : Finset (Fin n)).card = n) (n - m)
+  card_top := by
+    intro m hm
+    have hm' : m ≤ n := by
+      simpa [Fintype.card_fin] using hm
+    rw [FiniteRanking.upperRankFinset_card]
+    rw [min_eq_right (Nat.sub_le n m)]
+    exact Nat.sub_sub_self hm'
+  threshold_subset := by
+    intro p m hsale hm i hi
+    let topSet : Finset (Fin n) :=
+      FiniteRanking.upperRankFinset
+        (s := (Finset.univ : Finset (Fin n))) (value := values)
+        (by simp : (Finset.univ : Finset (Fin n)).card = n) (n - m)
+    let lowerSet : Finset (Fin n) :=
+      FiniteRanking.lowerRankFinset
+        (s := (Finset.univ : Finset (Fin n))) (value := values)
+        (by simp : (Finset.univ : Finset (Fin n)).card = n) (n - m)
+    change i ∈ topSet
+    have hm' : m ≤ n := by
+      simpa [Fintype.card_fin] using hm
+    have htop_card : topSet.card = m := by
+      dsimp [topSet]
+      rw [FiniteRanking.upperRankFinset_card]
+      rw [min_eq_right (Nat.sub_le n m)]
+      exact Nat.sub_sub_self hm'
+    by_contra hnot_top
+    have hi_win : p ≤ values i := (Finset.mem_filter.mp hi).2
+    have hi_lower : i ∈ lowerSet := by
+      by_contra hnot_lower
+      have hi_top : i ∈ topSet := by
+        dsimp [topSet]
+        rw [FiniteRanking.upperRankFinset_eq_sdiff_lowerRankFinset]
+        exact Finset.mem_sdiff.mpr
+          ⟨by simp, by simpa [lowerSet] using hnot_lower⟩
+      exact hnot_top hi_top
+    let winners : Finset (Fin n) :=
+      (Finset.univ : Finset (Fin n)).filter fun j => p ≤ values j
+    have htop_subset : topSet ⊆ winners := by
+      intro j hjtop
+      have hjupper :
+          j ∈
+            FiniteRanking.upperRankFinset
+              (s := (Finset.univ : Finset (Fin n))) (value := values)
+              (by simp : (Finset.univ : Finset (Fin n)).card = n) (n - m) := by
+        simpa [topSet] using hjtop
+      have hilower :
+          i ∈
+            FiniteRanking.lowerRankFinset
+              (s := (Finset.univ : Finset (Fin n))) (value := values)
+              (by simp : (Finset.univ : Finset (Fin n)).card = n) (n - m) := by
+        simpa [lowerSet] using hi_lower
+      have hv : values i ≤ values j :=
+        FiniteRanking.lowerRank_value_le_upperRank_value
+          (s := (Finset.univ : Finset (Fin n))) (value := values)
+          (by simp : (Finset.univ : Finset (Fin n)).card = n)
+          (n - m) j hjupper i hilower
+      exact Finset.mem_filter.mpr ⟨by simp, le_trans hi_win hv⟩
+    have hi_winner : i ∈ winners :=
+      Finset.mem_filter.mpr ⟨by simp, hi_win⟩
+    have hinsert_subset : insert i topSet ⊆ winners := by
+      intro j hj
+      rcases Finset.mem_insert.mp hj with rfl | hjtop
+      · exact hi_winner
+      · exact htop_subset hjtop
+    have hcard_insert : (insert i topSet).card = m + 1 := by
+      rw [Finset.card_insert_of_notMem hnot_top, htop_card]
+    have hcard_le : m + 1 ≤ saleCount values p := by
+      have h := Finset.card_le_card hinsert_subset
+      rw [hcard_insert] at h
+      simpa [winners, saleCount] using h
+    omega
+
+/--
+GHW Theorem 6.2, closed ranked-bid version. The top-prefix object is derived
+internally from an arbitrary `Fin n` bid vector by ranking bidders, so no
+sorted-index convention is required.
+-/
+theorem paper_theorem6_2_fair_coin_revenue_bound_top_prefix_alpha_h_fin_ranked
+    {n : ℕ} [NeZero n] (values : Fin n → ℝ) (keep : Bool)
+    {minWinners a : ℕ} {p h : ℝ}
+    (hmin : 1 ≤ minWinners)
+    (hp : 0 ≤ p)
+    (hh_pos : 0 < h)
+    (hminWinners_alpha : 3 * minWinners ≤ a)
+    (hvalue_bound : ∀ i, values i ≤ h)
+    (halpha_h : (a : ℝ) * h ≤ singlePriceRevenue values p) :
+    1 - Real.exp (-(a : ℝ) / 36) -
+        40 * Real.exp (-(a : ℝ) / 72) ≤
+      (FairCoin.productMeasure (Fin n)).real
+        {side |
+          singlePriceRevenue values p ≤
+            6 *
+              (thresholdPriceAuction
+                (crossSampleCandidateOfferThreshold side minWinners)).revenue values} := by
+  exact
+    paper_theorem6_2_fair_coin_revenue_bound_top_prefix_alpha_h
+      (values := values) (keep := keep) (minWinners := minWinners)
+      (a := a) (p := p) (h := h)
+      (rankedTopPrefixFamily values)
+      hmin hp hh_pos hminWinners_alpha hvalue_bound halpha_h
+
+/--
 Paper-facing sorted fair-coin model for GHW Theorem 6.2. This packages the
 independent-half-sampling formalization of the paper's random sampling auction
 with sorted bids and the `alpha * h <= F` large-market condition.
@@ -1421,6 +1535,38 @@ structure PaperTheorem62FairCoinSortedModel (n : ℕ) [NeZero n] where
   value_bound : ∀ i, values i ≤ highValue
   alpha_highValue_le_revenue :
     (alpha : ℝ) * highValue ≤ singlePriceRevenue values price
+
+/--
+Construct the sorted fair-coin Theorem 6.2 model from the finite candidate
+fixed-price benchmark at one winner.
+-/
+noncomputable def
+    paper_theorem6_2_fair_coin_sorted_model_of_finite_candidate_benchmark
+    {n : ℕ} [NeZero n] (values : Fin n → ℝ) (keep : Bool)
+    {alpha : ℕ} {highValue : ℝ}
+    (hsorted : ∀ i j : Fin n, i.val ≤ j.val → values j ≤ values i)
+    (hhigh_pos : 0 < highValue)
+    (hvalue_bound : ∀ i, values i ≤ highValue)
+    (halpha_ge_three : 3 ≤ alpha)
+    (halpha_highValue :
+      (alpha : ℝ) * highValue ≤
+        finiteCandidateFixedPriceBenchmark values 1) :
+    PaperTheorem62FairCoinSortedModel n where
+  values := values
+  keep := keep
+  minWinners := 1
+  alpha := alpha
+  price := finiteCandidateOfferPrice values 1
+  highValue := highValue
+  sorted := hsorted
+  minWinners_pos := by simp
+  price_nonneg := finiteCandidateOfferPrice_nonneg values 1
+  highValue_pos := hhigh_pos
+  minWinners_alpha := by simpa using halpha_ge_three
+  value_bound := hvalue_bound
+  alpha_highValue_le_revenue := by
+    simpa [singlePriceRevenue_finiteCandidateOfferPrice_eq_benchmark] using
+      halpha_highValue
 
 /--
 GHW Theorem 6.2 sorted fair-coin paper-model form. Under the sorted independent
@@ -1445,6 +1591,123 @@ theorem paper_theorem6_2_fair_coin_revenue_bound_of_sorted_model
       model.values model.keep model.sorted model.minWinners_pos
       model.price_nonneg model.highValue_pos model.minWinners_alpha
       model.value_bound model.alpha_highValue_le_revenue
+
+/--
+GHW Theorem 6.2 sorted finite-candidate benchmark form. The sorted model is
+constructed internally from the paper large-market condition
+`alpha * h <= F`.
+-/
+theorem paper_theorem6_2_fair_coin_revenue_bound_of_finite_candidate_benchmark
+    {n : ℕ} [NeZero n] (values : Fin n → ℝ) (keep : Bool)
+    {alpha : ℕ} {highValue : ℝ}
+    (hsorted : ∀ i j : Fin n, i.val ≤ j.val → values j ≤ values i)
+    (hhigh_pos : 0 < highValue)
+    (hvalue_bound : ∀ i, values i ≤ highValue)
+    (halpha_ge_three : 3 ≤ alpha)
+    (halpha_highValue :
+      (alpha : ℝ) * highValue ≤
+        finiteCandidateFixedPriceBenchmark values 1) :
+    1 - Real.exp (-(alpha : ℝ) / 36) -
+        40 * Real.exp (-(alpha : ℝ) / 72) ≤
+      (FairCoin.productMeasure (Fin n)).real
+        {side |
+          finiteCandidateFixedPriceBenchmark values 1 ≤
+            6 *
+              (thresholdPriceAuction
+                (crossSampleCandidateOfferThreshold side 1)).revenue values} := by
+  simpa [paper_theorem6_2_fair_coin_sorted_model_of_finite_candidate_benchmark,
+    singlePriceRevenue_finiteCandidateOfferPrice_eq_benchmark] using
+    paper_theorem6_2_fair_coin_revenue_bound_of_sorted_model
+      (paper_theorem6_2_fair_coin_sorted_model_of_finite_candidate_benchmark
+        values keep hsorted hhigh_pos hvalue_bound halpha_ge_three
+        halpha_highValue)
+
+/--
+GHW Theorem 6.2 ranked finite-candidate benchmark form. The top-prefix family
+is ranked internally, avoiding an external sorted-bid assumption.
+-/
+theorem paper_theorem6_2_fair_coin_revenue_bound_of_finite_candidate_benchmark_ranked
+    {n : ℕ} [NeZero n] (values : Fin n → ℝ) (keep : Bool)
+    {alpha : ℕ} {highValue : ℝ}
+    (hhigh_pos : 0 < highValue)
+    (hvalue_bound : ∀ i, values i ≤ highValue)
+    (halpha_ge_three : 3 ≤ alpha)
+    (halpha_highValue :
+      (alpha : ℝ) * highValue ≤
+        finiteCandidateFixedPriceBenchmark values 1) :
+    1 - Real.exp (-(alpha : ℝ) / 36) -
+        40 * Real.exp (-(alpha : ℝ) / 72) ≤
+      (FairCoin.productMeasure (Fin n)).real
+        {side |
+          finiteCandidateFixedPriceBenchmark values 1 ≤
+            6 *
+              (thresholdPriceAuction
+                (crossSampleCandidateOfferThreshold side 1)).revenue values} := by
+  simpa [singlePriceRevenue_finiteCandidateOfferPrice_eq_benchmark] using
+    paper_theorem6_2_fair_coin_revenue_bound_top_prefix_alpha_h_fin_ranked
+      (values := values) (keep := keep) (minWinners := 1)
+      (a := alpha) (p := finiteCandidateOfferPrice values 1)
+      (h := highValue) (by simp)
+      (finiteCandidateOfferPrice_nonneg values 1) hhigh_pos
+      (by simpa using halpha_ge_three) hvalue_bound
+      (by
+        simpa [singlePriceRevenue_finiteCandidateOfferPrice_eq_benchmark] using
+          halpha_highValue)
+
+/-- For `alpha < 3`, the displayed Theorem 6.2 probability lower bound is nonpositive. -/
+theorem paper_theorem6_2_probability_bound_nonpos_of_alpha_lt_three
+    {alpha : ℕ} (halpha_lt_three : alpha < 3) :
+    1 - Real.exp (-(alpha : ℝ) / 36) -
+        40 * Real.exp (-(alpha : ℝ) / 72) ≤ 0 := by
+  have halpha_le_two : alpha ≤ 2 := Nat.le_of_lt_succ halpha_lt_three
+  have harg : (-(1 : ℝ) / 36) ≤ -(alpha : ℝ) / 72 := by
+    have halpha_real : (alpha : ℝ) ≤ 2 := by exact_mod_cast halpha_le_two
+    nlinarith
+  have hexp_mono :
+      Real.exp (-(1 : ℝ) / 36) ≤
+        Real.exp (-(alpha : ℝ) / 72) :=
+    Real.exp_le_exp.mpr harg
+  have hbase : (35 : ℝ) / 36 ≤ Real.exp (-(1 : ℝ) / 36) := by
+    have h := Real.add_one_le_exp (-(1 : ℝ) / 36)
+    norm_num at h ⊢
+    linarith
+  have hlarge :
+      1 ≤ 40 * Real.exp (-(alpha : ℝ) / 72) := by
+    nlinarith
+  have hpos : 0 < Real.exp (-(alpha : ℝ) / 36) := Real.exp_pos _
+  nlinarith
+
+/--
+GHW Theorem 6.2 ranked finite-candidate benchmark form without a separate
+large-`alpha` side condition. Small `alpha` is discharged by the nonpositive
+probability lower bound above, and the top-prefix family is ranked internally.
+-/
+theorem paper_theorem6_2_fair_coin_revenue_bound_of_finite_candidate_benchmark_all_alpha
+    {n : ℕ} [NeZero n] (values : Fin n → ℝ) (keep : Bool)
+    {alpha : ℕ} {highValue : ℝ}
+    (hhigh_pos : 0 < highValue)
+    (hvalue_bound : ∀ i, values i ≤ highValue)
+    (halpha_highValue :
+      (alpha : ℝ) * highValue ≤
+        finiteCandidateFixedPriceBenchmark values 1) :
+    1 - Real.exp (-(alpha : ℝ) / 36) -
+        40 * Real.exp (-(alpha : ℝ) / 72) ≤
+      (FairCoin.productMeasure (Fin n)).real
+        {side |
+          finiteCandidateFixedPriceBenchmark values 1 ≤
+            6 *
+              (thresholdPriceAuction
+                (crossSampleCandidateOfferThreshold side 1)).revenue values} := by
+  by_cases halpha_ge_three : 3 ≤ alpha
+  · exact
+      paper_theorem6_2_fair_coin_revenue_bound_of_finite_candidate_benchmark_ranked
+        values keep hhigh_pos hvalue_bound halpha_ge_three
+        halpha_highValue
+  · have halpha_lt_three : alpha < 3 := Nat.lt_of_not_ge halpha_ge_three
+    exact le_trans
+      (paper_theorem6_2_probability_bound_nonpos_of_alpha_lt_three
+        halpha_lt_three)
+      (by positivity)
 
 /--
 GHW Theorem 6.2 fair-coin sampling wrapper. For a fixed feasible price `p`,
@@ -3642,6 +3905,362 @@ theorem paper_theorem4_1_finite_candidate_benchmark_of_high_value_model
     paper_theorem4_1_finite_candidate_benchmark_from_logb_high_value
       model.values model.highValue_ge_one model.values_ge_one
       model.values_le_highValue
+
+/--
+GHW Corollary 4.2 from a normalized truncated high-value instance. The
+truncation loss and benchmark comparison are stated directly; Theorem 4.1
+supplies the truncated-instance bound internally.
+-/
+theorem paper_corollary4_2_fixed_price_lower_bound_of_truncated_high_value_model
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (truncated : PaperTheorem41HighValueModel Agent)
+    {totalValue fixedPriceBenchmark binCount : ℝ}
+    (htruncate : totalValue ≤ 2 * totalBidValue truncated.values)
+    (hbenchmark_le :
+      finiteCandidateFixedPriceBenchmark truncated.values 1 ≤
+        fixedPriceBenchmark)
+    (hbinCount : Real.logb 2 truncated.highValue + 2 ≤ binCount) :
+    totalValue ≤ (4 * binCount) * fixedPriceBenchmark := by
+  let logTerm : ℝ := Real.logb 2 truncated.highValue + 2
+  have hlog_nonneg : 0 ≤ logTerm := by
+    have hlog : 0 ≤ Real.logb 2 truncated.highValue :=
+      Real.logb_nonneg (b := 2) (by norm_num : (1 : ℝ) < 2)
+        truncated.highValue_ge_one
+    dsimp [logTerm]
+    nlinarith
+  have hbin_nonneg : 0 ≤ binCount := le_trans hlog_nonneg hbinCount
+  have hbench_nonneg :
+      0 ≤ finiteCandidateFixedPriceBenchmark truncated.values 1 :=
+    finiteCandidateFixedPriceBenchmark_nonneg truncated.values 1
+  have htruncated_bound :=
+    paper_theorem4_1_finite_candidate_benchmark_of_high_value_model
+      truncated
+  have hmul :
+      (2 * logTerm) *
+          finiteCandidateFixedPriceBenchmark truncated.values 1 ≤
+        (2 * binCount) * fixedPriceBenchmark := by
+    have hleft : 2 * logTerm ≤ 2 * binCount := by
+      nlinarith
+    exact
+      mul_le_mul hleft hbenchmark_le hbench_nonneg
+        (mul_nonneg (by norm_num) hbin_nonneg)
+  have hbound :
+      totalBidValue truncated.values ≤
+        (2 * binCount) * fixedPriceBenchmark := by
+    exact le_trans (by simpa [logTerm] using htruncated_bound) hmul
+  exact
+    paper_corollary4_2_fixed_price_lower_bound_from_truncation
+      htruncate hbound
+
+/--
+Corollary 4.2 truncation loss for the normalized cutoff `h / n`. Dropping bids
+below that cutoff loses at most the retained mass because the dropped bids have
+total value at most `h`, while a bidder attaining `h` is retained.
+-/
+theorem paper_corollary4_2_card_cutoff_truncation_loss
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) {h cutoff : ℝ}
+    (hvalues_nonneg : ∀ i : Agent, 0 ≤ values i)
+    (hcutoff_pos : 0 < cutoff)
+    (hcard_cutoff : (Fintype.card Agent : ℝ) * cutoff = h)
+    (hcutoff_le_h : cutoff ≤ h)
+    (hmax : ∃ i : Agent, values i = h) :
+    totalBidValue values ≤
+      2 * (∑ i ∈ ((Finset.univ : Finset Agent).filter fun i => cutoff ≤ values i),
+        values i) := by
+  classical
+  let retained : Finset Agent :=
+    (Finset.univ : Finset Agent).filter fun i => cutoff ≤ values i
+  let dropped : Finset Agent :=
+    (Finset.univ : Finset Agent).filter fun i => ¬ cutoff ≤ values i
+  have hsplit :
+      (∑ i ∈ retained, values i) + (∑ i ∈ dropped, values i) =
+        totalBidValue values := by
+    simpa [retained, dropped, totalBidValue] using
+      (Finset.sum_filter_add_sum_filter_not
+        (s := (Finset.univ : Finset Agent))
+        (p := fun i : Agent => cutoff ≤ values i)
+        (f := values))
+  have hdropped_each :
+      ∀ i, i ∈ dropped → values i ≤ cutoff := by
+    intro i hi
+    have hnot : ¬ cutoff ≤ values i := by
+      simpa [dropped] using (Finset.mem_filter.mp hi).2
+    exact le_of_lt (lt_of_not_ge hnot)
+  have hdropped_sum_le_count :
+      (∑ i ∈ dropped, values i) ≤ (dropped.card : ℝ) * cutoff := by
+    calc
+      (∑ i ∈ dropped, values i)
+          ≤ ∑ _i ∈ dropped, cutoff :=
+            Finset.sum_le_sum hdropped_each
+      _ = (dropped.card : ℝ) * cutoff := by
+            simp
+  have hdropped_card_le :
+      (dropped.card : ℝ) ≤ (Fintype.card Agent : ℝ) := by
+    exact_mod_cast
+      (Finset.card_filter_le
+        (s := (Finset.univ : Finset Agent))
+        (p := fun i : Agent => ¬ cutoff ≤ values i))
+  have hdropped_sum_le_h :
+      (∑ i ∈ dropped, values i) ≤ h := by
+    have hcount :
+        (dropped.card : ℝ) * cutoff ≤
+          (Fintype.card Agent : ℝ) * cutoff :=
+      mul_le_mul_of_nonneg_right hdropped_card_le (le_of_lt hcutoff_pos)
+    nlinarith
+  have hretained_nonneg :
+      ∀ i, i ∈ retained → 0 ≤ values i := by
+    intro i _hi
+    exact hvalues_nonneg i
+  have hretained_sum_ge_h :
+      h ≤ ∑ i ∈ retained, values i := by
+    rcases hmax with ⟨i, rfl⟩
+    have hi : i ∈ retained := by
+      simp [retained, hcutoff_le_h]
+    exact Finset.single_le_sum hretained_nonneg hi
+  nlinarith
+
+/--
+The retained subtype normalized by `cutoff` has total value equal to the
+retained original value divided by `cutoff`.
+-/
+theorem paper_corollary4_2_card_cutoff_scaled_total
+    {Agent : Type*} [Fintype Agent]
+    (values : Agent → ℝ) {cutoff : ℝ}
+    (hcutoff_pos : 0 < cutoff) :
+    cutoff *
+        totalBidValue
+          (fun i : {i : Agent // cutoff ≤ values i} => values i.1 / cutoff) =
+      ∑ i ∈ ((Finset.univ : Finset Agent).filter fun i => cutoff ≤ values i),
+        values i := by
+  classical
+  have hsubtype :
+      (∑ i ∈ ((Finset.univ : Finset Agent).filter fun i => cutoff ≤ values i),
+          values i) =
+        ∑ i : {i : Agent // cutoff ≤ values i}, values i.1 := by
+    exact
+      Finset.sum_subtype
+        (s := (Finset.univ : Finset Agent).filter fun i => cutoff ≤ values i)
+        (h := by intro i; simp)
+        (f := values)
+  rw [totalBidValue, hsubtype]
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intro i _hi
+  field_simp [ne_of_gt hcutoff_pos]
+
+/--
+The finite candidate benchmark of the normalized retained profile scales back
+to a feasible candidate-price revenue in the original profile.
+-/
+theorem paper_corollary4_2_card_cutoff_scaled_benchmark_le
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent]
+    (values : Agent → ℝ) {cutoff : ℝ}
+    (hvalues_nonneg : ∀ i : Agent, 0 ≤ values i)
+    (hcutoff_pos : 0 < cutoff)
+    [Nonempty {i : Agent // cutoff ≤ values i}] :
+    cutoff *
+        finiteCandidateFixedPriceBenchmark
+          (fun i : {i : Agent // cutoff ≤ values i} => values i.1 / cutoff) 1 ≤
+      finiteCandidateFixedPriceBenchmark values 1 := by
+  classical
+  let Retained := {i : Agent // cutoff ≤ values i}
+  let normalized : Retained → ℝ := fun i => values i.1 / cutoff
+  let chosen : Retained := finiteCandidateBenchmarkBidder normalized 1
+  have hbench :
+      finiteCandidateFixedPriceBenchmark normalized 1 =
+        candidateFixedPriceRevenue normalized 1 chosen := by
+    simpa [chosen] using
+      finiteCandidateFixedPriceBenchmark_eq_selected_candidateRevenue
+        normalized 1
+  by_cases hsel :
+      0 ≤ normalized chosen ∧ 1 ≤ saleCount normalized (normalized chosen)
+  · have hbench_selected :
+        finiteCandidateFixedPriceBenchmark normalized 1 =
+          singlePriceRevenue normalized (normalized chosen) := by
+      rw [hbench]
+      simp [candidateFixedPriceRevenue, hsel]
+    have hprice_eq :
+        cutoff * normalized chosen = values chosen.1 := by
+      dsimp [normalized]
+      field_simp [ne_of_gt hcutoff_pos]
+    have hnorm_winner_count_le :
+        saleCount normalized (normalized chosen) ≤
+          saleCount values (values chosen.1) := by
+      let normWinners : Finset Retained :=
+        (Finset.univ : Finset Retained).filter
+          fun i => normalized chosen ≤ normalized i
+      let originalWinners : Finset Agent :=
+        (Finset.univ : Finset Agent).filter
+          fun i => values chosen.1 ≤ values i
+      have hmap_subset :
+          normWinners.map (Function.Embedding.subtype fun i : Agent =>
+              cutoff ≤ values i) ⊆ originalWinners := by
+        intro i hi
+        rcases Finset.mem_map.mp hi with ⟨j, hj, rfl⟩
+        have hjwin : normalized chosen ≤ normalized j := by
+          simpa [normWinners] using (Finset.mem_filter.mp hj).2
+        have hle : values chosen.1 ≤ values j.1 := by
+          have hmul :=
+            mul_le_mul_of_nonneg_left hjwin (le_of_lt hcutoff_pos)
+          rw [hprice_eq] at hmul
+          have hjprice :
+              cutoff * normalized j = values j.1 := by
+            dsimp [normalized]
+            field_simp [ne_of_gt hcutoff_pos]
+          simpa [hjprice] using hmul
+        simp [originalWinners, hle]
+      have hcard_map :
+          (normWinners.map (Function.Embedding.subtype fun i : Agent =>
+              cutoff ≤ values i)).card = normWinners.card :=
+        Finset.card_map _
+      have hcard_le :
+          normWinners.card ≤ originalWinners.card := by
+        calc
+          normWinners.card =
+              (normWinners.map (Function.Embedding.subtype fun i : Agent =>
+                cutoff ≤ values i)).card := hcard_map.symm
+          _ ≤ originalWinners.card := Finset.card_le_card hmap_subset
+      simpa [saleCount, normWinners, originalWinners] using hcard_le
+    have hscaled_revenue_le_original :
+        cutoff * singlePriceRevenue normalized (normalized chosen) ≤
+          singlePriceRevenue values (values chosen.1) := by
+      rw [singlePriceRevenue_eq_saleCount_mul normalized (normalized chosen),
+        singlePriceRevenue_eq_saleCount_mul values (values chosen.1)]
+      have hcount_cast :
+          (saleCount normalized (normalized chosen) : ℝ) ≤
+            (saleCount values (values chosen.1) : ℝ) := by
+        exact_mod_cast hnorm_winner_count_le
+      have hprice_nonneg : 0 ≤ values chosen.1 := hvalues_nonneg chosen.1
+      nlinarith [hprice_eq]
+    have horiginal_feasible :
+        1 ≤ saleCount values (values chosen.1) :=
+      le_trans hsel.2 hnorm_winner_count_le
+    have horiginal_candidate :
+        singlePriceRevenue values (values chosen.1) ≤
+          finiteCandidateFixedPriceBenchmark values 1 :=
+      singlePriceRevenue_le_finiteCandidateFixedPriceBenchmark_of_feasible
+        values (minWinners := 1) (by norm_num) (hvalues_nonneg chosen.1)
+        horiginal_feasible
+    calc
+      cutoff * finiteCandidateFixedPriceBenchmark normalized 1
+          = cutoff * singlePriceRevenue normalized (normalized chosen) := by
+            rw [hbench_selected]
+      _ ≤ singlePriceRevenue values (values chosen.1) :=
+            hscaled_revenue_le_original
+      _ ≤ finiteCandidateFixedPriceBenchmark values 1 := horiginal_candidate
+  · have hbench_zero :
+        finiteCandidateFixedPriceBenchmark normalized 1 = 0 := by
+      simpa [candidateFixedPriceRevenue, hsel] using hbench
+    change cutoff * finiteCandidateFixedPriceBenchmark normalized 1 ≤
+      finiteCandidateFixedPriceBenchmark values 1
+    rw [hbench_zero]
+    simpa using finiteCandidateFixedPriceBenchmark_nonneg values 1
+
+/--
+GHW Corollary 4.2 with the paper truncation constructed internally. If `h`
+is the highest bid value, retaining bids at least `h / n` and normalizing by
+that cutoff gives a `[1,n]` high-value instance, so Theorem 4.1 yields the
+factor-four logarithmic fixed-price lower bound.
+-/
+theorem paper_corollary4_2_fixed_price_lower_bound_of_card_truncation
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values : Agent → ℝ) {h binCount : ℝ}
+    (hvalues_nonneg : ∀ i : Agent, 0 ≤ values i)
+    (hh_pos : 0 < h)
+    (hmax : ∃ i : Agent, values i = h)
+    (hvalue_le_h : ∀ i : Agent, values i ≤ h)
+    (hbinCount : Real.logb 2 (Fintype.card Agent : ℝ) + 2 ≤ binCount) :
+    totalBidValue values ≤
+      (4 * binCount) * finiteCandidateFixedPriceBenchmark values 1 := by
+  classical
+  let cardR : ℝ := Fintype.card Agent
+  let cutoff : ℝ := h / cardR
+  have hcard_pos_nat : 0 < Fintype.card Agent := Fintype.card_pos
+  have hcard_pos : 0 < cardR := by
+    dsimp [cardR]
+    exact_mod_cast hcard_pos_nat
+  have hcard_ge_one : 1 ≤ cardR := by
+    dsimp [cardR]
+    exact_mod_cast hcard_pos_nat
+  have hcutoff_pos : 0 < cutoff := by
+    dsimp [cutoff, cardR]
+    positivity
+  have hcard_cutoff : cardR * cutoff = h := by
+    dsimp [cutoff, cardR]
+    field_simp [ne_of_gt hcard_pos]
+  have hcutoff_le_h : cutoff ≤ h := by
+    dsimp [cutoff]
+    rw [div_le_iff₀ hcard_pos]
+    have hmul : h * 1 ≤ h * cardR :=
+      mul_le_mul_of_nonneg_left hcard_ge_one (le_of_lt hh_pos)
+    nlinarith
+  let Retained := {i : Agent // cutoff ≤ values i}
+  let normalized : Retained → ℝ := fun i => values i.1 / cutoff
+  haveI : Nonempty Retained := by
+    rcases hmax with ⟨i, hi⟩
+    exact ⟨⟨i, by simpa [hi] using hcutoff_le_h⟩⟩
+  have hnorm_ge_one : ∀ i : Retained, 1 ≤ normalized i := by
+    intro i
+    dsimp [normalized]
+    rw [le_div_iff₀ hcutoff_pos]
+    simpa using i.2
+  have hnorm_le_card : ∀ i : Retained, normalized i ≤ cardR := by
+    intro i
+    dsimp [normalized]
+    rw [div_le_iff₀ hcutoff_pos]
+    calc
+      values i.1 ≤ h := hvalue_le_h i.1
+      _ = cardR * cutoff := hcard_cutoff.symm
+  have hcard_ge_one_model : 1 ≤ cardR := hcard_ge_one
+  let truncatedModel : PaperTheorem41HighValueModel Retained :=
+    { values := normalized
+      highValue := cardR
+      highValue_ge_one := hcard_ge_one_model
+      values_ge_one := hnorm_ge_one
+      values_le_highValue := hnorm_le_card }
+  have hretained_total :
+      cutoff * totalBidValue normalized =
+        ∑ i ∈ ((Finset.univ : Finset Agent).filter fun i => cutoff ≤ values i),
+          values i :=
+    paper_corollary4_2_card_cutoff_scaled_total values hcutoff_pos
+  have htruncate_unscaled :
+      totalBidValue values ≤
+        2 * (∑ i ∈ ((Finset.univ : Finset Agent).filter fun i =>
+          cutoff ≤ values i), values i) :=
+    paper_corollary4_2_card_cutoff_truncation_loss
+      values hvalues_nonneg hcutoff_pos hcard_cutoff hcutoff_le_h hmax
+  have htruncate_scaled :
+      totalBidValue values / cutoff ≤ 2 * totalBidValue normalized := by
+    rw [div_le_iff₀ hcutoff_pos]
+    nlinarith
+  have hbenchmark_scaled :
+      cutoff * finiteCandidateFixedPriceBenchmark normalized 1 ≤
+        finiteCandidateFixedPriceBenchmark values 1 :=
+    paper_corollary4_2_card_cutoff_scaled_benchmark_le
+      values hvalues_nonneg hcutoff_pos
+  have hbenchmark_scaled_div :
+      finiteCandidateFixedPriceBenchmark normalized 1 ≤
+        finiteCandidateFixedPriceBenchmark values 1 / cutoff := by
+    rw [le_div_iff₀ hcutoff_pos]
+    simpa [mul_comm, mul_left_comm, mul_assoc] using hbenchmark_scaled
+  have hscaled_bound :
+      totalBidValue values / cutoff ≤
+        (4 * binCount) *
+          (finiteCandidateFixedPriceBenchmark values 1 / cutoff) := by
+    exact
+      paper_corollary4_2_fixed_price_lower_bound_of_truncated_high_value_model
+        truncatedModel htruncate_scaled hbenchmark_scaled_div
+        (by simpa [truncatedModel, cardR] using hbinCount)
+  calc
+    totalBidValue values
+        = (totalBidValue values / cutoff) * cutoff := by
+          field_simp [ne_of_gt hcutoff_pos]
+    _ ≤ ((4 * binCount) *
+          (finiteCandidateFixedPriceBenchmark values 1 / cutoff)) * cutoff :=
+          mul_le_mul_of_nonneg_right hscaled_bound (le_of_lt hcutoff_pos)
+    _ = (4 * binCount) * finiteCandidateFixedPriceBenchmark values 1 := by
+          field_simp [ne_of_gt hcutoff_pos]
 
 /--
 GHW Theorem 7.1 with the paper's dyadic bins constructed internally from a
@@ -8155,6 +8774,17 @@ noncomputable def paper_ranked_bid_value
         (Finset.univ : Finset Agent) values hcard ⟨k, hk⟩
     else 0
 
+/-- The paper-ranked bid value at an in-range index is the ranked agent's value. -/
+theorem paper_ranked_bid_value_eq_value_ranked_agent
+    {Agent : Type*} [Fintype Agent] [DecidableEq Agent] [LinearOrder Agent]
+    (values : Agent → ℝ) {n : ℕ}
+    (hcard : (Finset.univ : Finset Agent).card = n) (i : Fin n) :
+    paper_ranked_bid_value values hcard i.val =
+      values (paper_ranked_agent values hcard i) := by
+  simpa [paper_ranked_bid_value, paper_ranked_agent, i.isLt] using
+    FiniteRanking.rankValueByValue_eq_value
+      (Finset.univ : Finset Agent) values hcard i
+
 /--
 In a ranked bid profile, the fixed-price revenue term
 `V_j = b_j * (n-j)` used in GHW Theorem 8.2 is bounded by the actual
@@ -8532,12 +9162,78 @@ theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranke
       (finiteCandidateFixedPriceBenchmark_nonneg values 1)
 
 /--
+GHW Theorem 8.2 ranked payment form with monotone win probabilities supplied
+directly. This is the algebraic core after Lemma 8.1: expected payments and
+adjacent gain recursion imply the benchmark bound once the ranked win
+probabilities are monotone.
+-/
+theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranked_truthful_payments_mono
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [LinearOrder Agent]
+    (values : Agent → ℝ) {n : ℕ}
+    (hcard : (Finset.univ : Finset Agent).card = n)
+    (winProbability expectedPayment : ℕ → ℝ)
+    {expectedRevenue : ℝ}
+    (hp0 : winProbability 0 = 0)
+    (hprice_nonneg :
+      ∀ j, j < n → 0 ≤ paper_ranked_bid_value values hcard j)
+    (hrevenue :
+      expectedRevenue ≤
+        ∑ i ∈ Finset.range n, expectedPayment i)
+    (hgain0 :
+      0 ≤ winProbability 1 * paper_ranked_bid_value values hcard 0 -
+        expectedPayment 0)
+    (htruth_high :
+      ∀ i, i + 1 < n →
+        winProbability (i + 1) *
+            paper_ranked_bid_value values hcard (i + 1) -
+          expectedPayment i ≤
+        winProbability (i + 2) *
+            paper_ranked_bid_value values hcard (i + 1) -
+          expectedPayment (i + 1))
+    (hmono :
+      ∀ j, j < n → winProbability j ≤ winProbability (j + 1))
+    (hendpoint : winProbability n - winProbability 0 ≤ 1) :
+    expectedRevenue ≤ finiteCandidateFixedPriceBenchmark values 1 := by
+  let bidValue : ℕ → ℝ := paper_ranked_bid_value values hcard
+  let gain : ℕ → ℝ := fun i => winProbability (i + 1) * bidValue i -
+    expectedPayment i
+  have hfixed :
+      ∀ j, j < n →
+        FiniteSum.rankedFixedPriceRevenue n bidValue j ≤
+          finiteCandidateFixedPriceBenchmark values 1 := by
+    intro j hj
+    exact
+      paper_ranked_fixed_price_revenue_le_finite_candidate_benchmark
+        values hcard ⟨j, hj⟩ (hprice_nonneg j hj)
+  have hrevenueAtRank :
+      ∀ i, i < n →
+        expectedPayment i = winProbability (i + 1) * bidValue i - gain i := by
+    intro i _hi
+    dsimp [gain]
+    ring
+  have hgain0' : 0 ≤ gain 0 := by
+    simpa [gain, bidValue] using hgain0
+  have hgain_step :
+      ∀ i, i + 1 < n →
+        gain i + winProbability (i + 1) *
+            (bidValue (i + 1) - bidValue i) ≤ gain (i + 1) := by
+    intro i hi
+    have ht := htruth_high i hi
+    dsimp [gain, bidValue]
+    linarith
+  exact
+    FiniteSum.revenue_le_bound_of_adjacent_gain_recursion_bounded
+      n winProbability bidValue expectedPayment gain hp0 hrevenue
+      hrevenueAtRank hgain0' hgain_step hmono hendpoint hfixed
+      (finiteCandidateFixedPriceBenchmark_nonneg values 1)
+
+/--
 GHW Theorem 8.2 ranked pairwise-truthfulness form using expected payments
 directly. This matches the direct-revelation utility comparisons
 `b * p - payment` and avoids introducing a separate conditional expected cost
-variable. The remaining assumptions are the paper's ranked revenue
-decomposition, adjacent ranked truthfulness comparisons, endpoint probability
-bound, and strict adjacent rank values after tie breaking.
+variable. Strict adjacent rank values are used only to derive monotone ranked
+win probabilities from the two adjacent utility comparisons.
 -/
 theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranked_pairwise_truthful_payments
     {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
@@ -8579,8 +9275,6 @@ theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranke
     (hendpoint : winProbability n - winProbability 0 ≤ 1) :
     expectedRevenue ≤ finiteCandidateFixedPriceBenchmark values 1 := by
   let bidValue : ℕ → ℝ := paper_ranked_bid_value values hcard
-  let gain : ℕ → ℝ := fun i => winProbability (i + 1) * bidValue i -
-    expectedPayment i
   have hmono :
       ∀ j, j < n → winProbability j ≤ winProbability (j + 1) := by
     intro j hj
@@ -8595,35 +9289,11 @@ theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranke
             (hprice_strict i hi)
             (by simpa [bidValue] using htruth_low i hi)
             (by simpa [bidValue] using htruth_high i hi)
-  have hfixed :
-      ∀ j, j < n →
-        FiniteSum.rankedFixedPriceRevenue n bidValue j ≤
-          finiteCandidateFixedPriceBenchmark values 1 := by
-    intro j hj
-    exact
-      paper_ranked_fixed_price_revenue_le_finite_candidate_benchmark
-        values hcard ⟨j, hj⟩ (hprice_nonneg j hj)
-  have hrevenueAtRank :
-      ∀ i, i < n →
-        expectedPayment i = winProbability (i + 1) * bidValue i - gain i := by
-    intro i _hi
-    dsimp [gain]
-    ring
-  have hgain0' : 0 ≤ gain 0 := by
-    simpa [gain, bidValue] using hgain0
-  have hgain_step :
-      ∀ i, i + 1 < n →
-        gain i + winProbability (i + 1) *
-            (bidValue (i + 1) - bidValue i) ≤ gain (i + 1) := by
-    intro i hi
-    have ht := htruth_high i hi
-    dsimp [gain, bidValue]
-    linarith
   exact
-    FiniteSum.revenue_le_bound_of_adjacent_gain_recursion_bounded
-      n winProbability bidValue expectedPayment gain hp0 hrevenue
-      hrevenueAtRank hgain0' hgain_step hmono hendpoint hfixed
-      (finiteCandidateFixedPriceBenchmark_nonneg values 1)
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranked_truthful_payments_mono
+      (values := values) (hcard := hcard)
+      (winProbability := winProbability) (expectedPayment := expectedPayment)
+      hp0 hprice_nonneg hrevenue hgain0 htruth_high hmono hendpoint
 
 /--
 Adjacent-rank anonymity/symmetry certificate for GHW Theorem 8.2.
@@ -8682,10 +9352,22 @@ structure RankedAdjacentReportSymmetry
           (paper_ranked_agent values hcard ⟨i + 1, hi⟩)
 
 /--
+Source-facing name for the adjacent sorted-bid report symmetry needed in GHW
+Theorem 8.2. This is exactly the symmetry used by the proof: adjacent ranked
+bidders are compared after one bidder reports the other's ranked value.
+-/
+abbrev PaperTheorem82AdjacentSortedBidReportSymmetry
+    {Agent : Type*} [Fintype Agent] [DecidableEq Agent] [LinearOrder Agent]
+    (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) {n : ℕ}
+    (hcard : (Finset.univ : Finset Agent).card = n) :=
+  RankedAdjacentReportSymmetry M values hcard
+
+/--
 GHW Theorem 8.2 auction-level ranked form. For an actual expected-outcome
 digital-goods auction, DSIC supplies the adjacent utility comparisons used by
 the ranked-payment theorem, once adjacent-rank symmetry identifies one-bidder
-misreports with the neighboring ranked position.
+misreports with the neighboring ranked position. Strict adjacent rank values
+are not required: ties give equal allocation by the same symmetry convention.
 -/
 theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranked_truthful_auction
     {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
@@ -8708,10 +9390,6 @@ theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranke
     (hendpoint : winProbability n - winProbability 0 ≤ 1)
     (hprice_nonneg :
       ∀ j, j < n → 0 ≤ paper_ranked_bid_value values hcard j)
-    (hprice_strict :
-      ∀ i, i + 1 < n →
-        paper_ranked_bid_value values hcard i <
-          paper_ranked_bid_value values hcard (i + 1))
     (hsymmetry : RankedAdjacentReportSymmetry M values hcard) :
     M.revenue values ≤ finiteCandidateFixedPriceBenchmark values 1 := by
   classical
@@ -8779,6 +9457,19 @@ theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranke
     have hir := hIR values (rankAgent first)
     simpa [DigitalGoodsAuction.utility, hwin_first, hpay_first, hbid_first,
       mul_comm] using hir
+  have hbid_mono :
+      ∀ i, i + 1 < n → bidValue i ≤ bidValue (i + 1) := by
+    intro i hi
+    have hi0 : i < n := Nat.lt_trans (Nat.lt_succ_self i) hi
+    let low : Fin n := ⟨i, Nat.lt_trans (Nat.lt_succ_self i) hi⟩
+    let high : Fin n := ⟨i + 1, hi⟩
+    have hmono_rank :=
+      FiniteRanking.rankValueByValue_mono
+        (Finset.univ : Finset Agent) values hcard low high
+        (by simp [low, high])
+    dsimp [bidValue, paper_ranked_bid_value]
+    rw [dif_pos hi0, dif_pos hi]
+    exact hmono_rank
   have htruth_high :
       ∀ i, i + 1 < n →
         winProbability (i + 1) * bidValue (i + 1) -
@@ -8928,12 +9619,69 @@ theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranke
       _ = winProbability (i + 1) * bidValue i - expectedPayment i := by
           rw [hwin_low, hpay_low, hbid_low]
           ring
+  have hmono :
+      ∀ j, j < n → winProbability j ≤ winProbability (j + 1) := by
+    intro j hj
+    cases j with
+    | zero =>
+        simpa [hp0] using hfirst_probability_nonneg
+    | succ i =>
+        have hi : i + 1 < n := by
+          simpa [Nat.succ_eq_add_one] using hj
+        have hbid_le := hbid_mono i hi
+        rcases lt_or_eq_of_le hbid_le with hbid_lt | hbid_eq
+        · exact
+            paper_lemma8_1_truthful_win_probability_monotone_payments
+              hbid_lt
+              (by simpa [bidValue] using htruth_low i hi)
+              (by simpa [bidValue] using htruth_high i hi)
+        · let low : Fin n := ⟨i, Nat.lt_trans (Nat.lt_succ_self i) hi⟩
+          let high : Fin n := ⟨i + 1, hi⟩
+          have hwin_low :
+              winProbability (i + 1) =
+                M.allocation values (rankAgent low) := by
+            simpa [rankAgent, low] using hwin i low.isLt
+          have hwin_high :
+              winProbability (i + 2) =
+                M.allocation values (rankAgent high) := by
+            simpa [rankAgent, high, Nat.add_assoc] using hwin (i + 1) hi
+          have hbid_high :
+              values (rankAgent high) = bidValue (i + 1) := by
+            have hvalue :=
+              FiniteRanking.rankValueByValue_eq_value
+                (Finset.univ : Finset Agent) values hcard high
+            have hrank :
+                bidValue (i + 1) =
+                  FiniteRanking.rankValueByValue
+                    (Finset.univ : Finset Agent) values hcard high := by
+              dsimp [bidValue, paper_ranked_bid_value, high]
+              rw [dif_pos hi]
+            simpa [rankAgent, paper_ranked_agent] using hvalue.symm.trans hrank.symm
+          have hbid_i_high : bidValue i = values (rankAgent high) := by
+            rw [hbid_eq, ← hbid_high]
+          have hupdate_high :
+              Function.update values (rankAgent high) (bidValue i) = values := by
+            funext a
+            by_cases ha : a = rankAgent high
+            · subst a
+              simp [Function.update, hbid_i_high]
+            · simp [Function.update, ha]
+          have hsym_high_alloc :
+              M.allocation values (rankAgent high) =
+                M.allocation values (rankAgent low) := by
+            have hsym := hsymmetry.high_allocation i hi
+            simpa [rankAgent, bidValue, low, high, hupdate_high] using hsym
+          exact le_of_eq <| by
+            calc
+              winProbability (i + 1)
+                  = M.allocation values (rankAgent low) := hwin_low
+              _ = M.allocation values (rankAgent high) := hsym_high_alloc.symm
+              _ = winProbability (i + 2) := hwin_high.symm
   exact
-    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranked_pairwise_truthful_payments
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranked_truthful_payments_mono
       (values := values) (hcard := hcard)
       (winProbability := winProbability) (expectedPayment := expectedPayment)
-      hp0 hfirst_probability_nonneg hprice_nonneg hprice_strict
-      hrevenue hgain0 htruth_high htruth_low hendpoint
+      hp0 hprice_nonneg hrevenue hgain0 htruth_high hmono hendpoint
 
 /--
 Paper-facing certificate for GHW Theorem 8.2. It packages the ranked sequence
@@ -8962,10 +9710,6 @@ structure PaperTheorem82RankedTruthfulAuctionCertificate
   endpoint : winProbability n - winProbability 0 ≤ 1
   price_nonneg :
     ∀ j, j < n → 0 ≤ paper_ranked_bid_value values hcard j
-  price_strict :
-    ∀ i, i + 1 < n →
-      paper_ranked_bid_value values hcard i <
-        paper_ranked_bid_value values hcard (i + 1)
   symmetry : RankedAdjacentReportSymmetry M values hcard
 
 /--
@@ -8986,7 +9730,7 @@ theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranke
       certificate.truthful certificate.individuallyRational
       certificate.allocation_nonneg certificate.p0 certificate.win_identity
       certificate.payment_identity certificate.endpoint certificate.price_nonneg
-      certificate.price_strict certificate.symmetry
+      certificate.symmetry
 
 /--
 Paper model for GHW Theorem 8.2. This is an intentionally named alias for the
@@ -8999,6 +9743,383 @@ abbrev PaperTheorem82AnonymousSortedBidTruthfulModel
     (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) {n : ℕ}
     (hcard : (Finset.univ : Finset Agent).card = n) :=
   PaperTheorem82RankedTruthfulAuctionCertificate M values hcard
+
+/--
+Source-shaped anonymity convention for the GHW Theorem 8.2 sorted-bid proof.
+At the fixed valuation profile, if bidder `target` reports bidder `source`'s
+value, then `target` receives the same allocation and payment that `source`
+receives at the truthful profile.
+-/
+structure PaperTheorem82ReportValueAnonymity
+    {Agent : Type*} [DecidableEq Agent]
+    (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) : Prop where
+  allocation_eq :
+    ∀ source target : Agent,
+      M.allocation (Function.update values target (values source)) target =
+        M.allocation values source
+  payment_eq :
+    ∀ source target : Agent,
+      M.payment (Function.update values target (values source)) target =
+        M.payment values source
+
+/--
+Two-bidder obstruction for the literal weak-DSIC reading of GHW Theorem 8.2.
+The high bidder pays `100` and the low bidder pays `1` on values `{1, 100}`.
+The auction is a truthful own-bid-independent threshold auction, but it fails
+the report-value anonymity bridge used by the formal source endpoint.
+-/
+def paper_theorem8_2_counterexample_values : Fin 2 → ℝ :=
+  fun i => if i = 0 then 1 else 100
+
+noncomputable def paper_theorem8_2_counterexample_threshold
+    (bids : Fin 2 → ℝ) (i : Fin 2) : ℝ :=
+  if i = 0 then
+    if bids 1 = 1 then 100 else 1
+  else
+    if bids 0 = 1 then 100 else 1
+
+noncomputable def paper_theorem8_2_counterexample_auction :
+    DigitalGoodsAuction (Fin 2) :=
+  thresholdPriceAuction paper_theorem8_2_counterexample_threshold
+
+theorem paper_theorem8_2_counterexample_threshold_ownBidIndependent :
+    OwnBidIndependent paper_theorem8_2_counterexample_threshold := by
+  intro bids i report
+  fin_cases i <;>
+    simp [paper_theorem8_2_counterexample_threshold, Function.update]
+
+theorem paper_theorem8_2_counterexample_truthful :
+    paper_digital_goods_truthful paper_theorem8_2_counterexample_auction := by
+  rw [paper_digital_goods_truthful_eq]
+  exact
+    thresholdPriceAuction_truthful
+      paper_theorem8_2_counterexample_threshold
+      paper_theorem8_2_counterexample_threshold_ownBidIndependent
+
+theorem paper_theorem8_2_counterexample_revenue :
+    paper_theorem8_2_counterexample_auction.revenue
+      paper_theorem8_2_counterexample_values = 101 := by
+  norm_num [paper_theorem8_2_counterexample_auction,
+    DigitalGoodsAuction.revenue, thresholdPriceAuction,
+    paper_theorem8_2_counterexample_threshold,
+    paper_theorem8_2_counterexample_values]
+
+theorem paper_theorem8_2_counterexample_not_report_value_anonymous :
+    ¬ PaperTheorem82ReportValueAnonymity
+      paper_theorem8_2_counterexample_auction
+      paper_theorem8_2_counterexample_values := by
+  intro h
+  have hx := h.allocation_eq (0 : Fin 2) (1 : Fin 2)
+  norm_num [paper_theorem8_2_counterexample_auction, thresholdPriceAuction,
+    paper_theorem8_2_counterexample_threshold,
+    paper_theorem8_2_counterexample_values, Function.update] at hx
+
+theorem paper_theorem8_2_counterexample_benchmark :
+    finiteCandidateFixedPriceBenchmark
+      paper_theorem8_2_counterexample_values 1 = 100 := by
+  unfold finiteCandidateFixedPriceBenchmark
+  have huniv : (Finset.univ : Finset (Fin 2)) = {0, 1} := by decide
+  apply le_antisymm
+  · rw [Finset.sup'_le_iff]
+    intro i _hi
+    fin_cases i
+    · simp [candidateFixedPriceRevenue, singlePriceRevenue, saleCount,
+        paper_theorem8_2_counterexample_values, huniv]
+      split
+      · have hcard :
+            (({0, 1} : Finset (Fin 2)).filter
+              (fun i => (1 : ℝ) ≤ if i = 0 then 1 else 100)).card ≤
+                ({0, 1} : Finset (Fin 2)).card :=
+          Finset.card_le_card
+            (s := ({0, 1} : Finset (Fin 2)).filter
+              (fun i => (1 : ℝ) ≤ if i = 0 then 1 else 100))
+            (t := ({0, 1} : Finset (Fin 2)))
+            (by intro x hx; exact (Finset.mem_filter.mp hx).1)
+        norm_num at hcard ⊢
+        linarith
+      · norm_num
+    · simp [candidateFixedPriceRevenue, singlePriceRevenue, saleCount,
+        paper_theorem8_2_counterexample_values, huniv]
+      split <;> norm_num
+  · have hle :=
+      Finset.le_sup'
+        (s := (Finset.univ : Finset (Fin 2)))
+        (f := candidateFixedPriceRevenue
+          paper_theorem8_2_counterexample_values 1)
+        (b := (1 : Fin 2))
+        (by simp)
+    have hvalue :
+        candidateFixedPriceRevenue
+            paper_theorem8_2_counterexample_values 1 (1 : Fin 2) =
+          100 := by
+      simp [candidateFixedPriceRevenue, singlePriceRevenue, saleCount,
+        paper_theorem8_2_counterexample_values, huniv]
+    simpa [hvalue] using hle
+
+theorem paper_theorem8_2_counterexample_ir :
+    paper_theorem8_2_counterexample_auction.IndividuallyRational := by
+  exact
+    thresholdPriceAuction_individuallyRational
+      paper_theorem8_2_counterexample_threshold
+
+theorem paper_theorem8_2_counterexample_noPositiveTransfers :
+    paper_theorem8_2_counterexample_auction.NoPositiveTransfers := by
+  exact
+    thresholdPriceAuction_noPositiveTransfers
+      paper_theorem8_2_counterexample_threshold (by
+        intro bids i
+        fin_cases i <;>
+          by_cases h : bids 0 = 1 <;>
+          by_cases h' : bids 1 = 1 <;>
+          norm_num [paper_theorem8_2_counterexample_threshold, h, h'])
+
+theorem paper_theorem8_2_counterexample_binary :
+    paper_theorem8_2_counterexample_auction.BinaryAllocation := by
+  intro bids i
+  unfold paper_theorem8_2_counterexample_auction thresholdPriceAuction
+  by_cases h : paper_theorem8_2_counterexample_threshold bids i ≤ bids i
+  · right
+    simp [h]
+  · left
+    simp [h]
+
+theorem paper_theorem8_2_counterexample_revenue_gt_benchmark :
+    finiteCandidateFixedPriceBenchmark
+        paper_theorem8_2_counterexample_values 1 <
+      paper_theorem8_2_counterexample_auction.revenue
+        paper_theorem8_2_counterexample_values := by
+  rw [paper_theorem8_2_counterexample_benchmark,
+    paper_theorem8_2_counterexample_revenue]
+  norm_num
+
+/--
+Source-facing anonymous truthful-auction model for GHW Theorem 8.2. It
+packages the expected-allocation range conventions, nonnegative values, and
+adjacent sorted-bid report symmetry used by the paper's ranked proof.
+-/
+structure PaperTheorem82AnonymousTruthfulSourceModel
+    (Agent : Type*) [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [LinearOrder Agent] (n : ℕ) where
+  auction : DigitalGoodsAuction Agent
+  values : Agent → ℝ
+  card_eq : (Finset.univ : Finset Agent).card = n
+  truthful : paper_digital_goods_truthful auction
+  individuallyRational : auction.IndividuallyRational
+  allocation_nonneg : ∀ bids i, 0 ≤ auction.allocation bids i
+  allocation_le_one : ∀ bids i, auction.allocation bids i ≤ 1
+  value_nonneg : ∀ i : Agent, 0 ≤ values i
+  adjacent_symmetry :
+    PaperTheorem82AdjacentSortedBidReportSymmetry auction values card_eq
+
+/--
+Paper-shaped source model for GHW Theorem 8.2 using the paper's sorted-bid
+report-substitution convention. The report-value anonymity field says that, at
+the fixed bid profile, a bidder reporting another bid value receives that bid's
+allocation/payment. This is stronger than ordinary relabeling anonymity, but it
+is the convention needed by the paper's adjacent sorted-bid utility comparison.
+-/
+structure PaperTheorem82AnonymousTruthfulReportValueSourceModel
+    (Agent : Type*) [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [LinearOrder Agent] (n : ℕ) where
+  auction : DigitalGoodsAuction Agent
+  values : Agent → ℝ
+  card_eq : (Finset.univ : Finset Agent).card = n
+  truthful : paper_digital_goods_truthful auction
+  individuallyRational : auction.IndividuallyRational
+  allocation_nonneg : ∀ bids i, 0 ≤ auction.allocation bids i
+  allocation_le_one : ∀ bids i, auction.allocation bids i ≤ 1
+  value_nonneg : ∀ i : Agent, 0 ≤ values i
+  report_value_anonymity :
+    PaperTheorem82ReportValueAnonymity auction values
+
+/--
+Construct the ranked Theorem 8.2 model from primitive truthful-auction
+assumptions and the paper's adjacent sorted-bid report-symmetry convention.
+-/
+noncomputable def
+    paper_theorem8_2_anonymous_sorted_bid_truthful_model_of_adjacent_report_symmetry
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [LinearOrder Agent]
+    (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) {n : ℕ}
+    (hcard : (Finset.univ : Finset Agent).card = n)
+    (htruth : paper_digital_goods_truthful M)
+    (hIR : M.IndividuallyRational)
+    (halloc_nonneg : ∀ bids i, 0 ≤ M.allocation bids i)
+    (halloc_le_one : ∀ bids i, M.allocation bids i ≤ 1)
+    (hvalue_nonneg : ∀ i : Agent, 0 ≤ values i)
+    (hsymmetry :
+      PaperTheorem82AdjacentSortedBidReportSymmetry M values hcard) :
+    PaperTheorem82AnonymousSortedBidTruthfulModel M values hcard := by
+  classical
+  let winProbability : ℕ → ℝ :=
+    fun k =>
+      if k = 0 then 0
+      else
+        if hk : k - 1 < n then
+          M.allocation values (paper_ranked_agent values hcard ⟨k - 1, hk⟩)
+        else 0
+  let expectedPayment : ℕ → ℝ :=
+    fun k =>
+      if hk : k < n then
+        M.payment values (paper_ranked_agent values hcard ⟨k, hk⟩)
+      else 0
+  refine
+    { winProbability := winProbability
+      expectedPayment := expectedPayment
+      truthful := htruth
+      individuallyRational := hIR
+      allocation_nonneg := halloc_nonneg
+      p0 := ?_
+      win_identity := ?_
+      payment_identity := ?_
+      endpoint := ?_
+      price_nonneg := ?_
+      symmetry := hsymmetry }
+  · simp [winProbability]
+  · intro j hj
+    simp [winProbability, hj]
+  · intro j hj
+    simp [expectedPayment, hj]
+  · have hn_pos : 0 < n := by
+      have hcard_pos : 0 < (Finset.univ : Finset Agent).card := by
+        rw [Finset.card_univ]
+        exact Fintype.card_pos
+      simpa [hcard] using hcard_pos
+    cases n with
+    | zero =>
+        exact (Nat.not_lt_zero 0 hn_pos).elim
+    | succ k =>
+        have hp0 : winProbability 0 = 0 := by
+          simp [winProbability]
+        have hlast :
+            winProbability (Nat.succ k) =
+              M.allocation values
+                (paper_ranked_agent values hcard ⟨k, Nat.lt_succ_self k⟩) := by
+          simp [winProbability]
+        have hle :
+            M.allocation values
+                (paper_ranked_agent values hcard ⟨k, Nat.lt_succ_self k⟩) ≤
+              1 :=
+          halloc_le_one values
+            (paper_ranked_agent values hcard ⟨k, Nat.lt_succ_self k⟩)
+        nlinarith
+  · intro j hj
+    rw [paper_ranked_bid_value_eq_value_ranked_agent values hcard ⟨j, hj⟩]
+    exact hvalue_nonneg _
+
+/--
+The stronger report-value anonymity convention implies the adjacent sorted-bid
+report symmetry used by the Theorem 8.2 proof.
+-/
+theorem paper_theorem8_2_adjacent_report_symmetry_of_report_value_anonymity
+    {Agent : Type*} [Fintype Agent] [DecidableEq Agent] [LinearOrder Agent]
+    (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) {n : ℕ}
+    (hcard : (Finset.univ : Finset Agent).card = n)
+    (hanonymous : PaperTheorem82ReportValueAnonymity M values) :
+    PaperTheorem82AdjacentSortedBidReportSymmetry M values hcard := by
+  classical
+  refine
+    { high_allocation := ?_
+      high_payment := ?_
+      low_allocation := ?_
+      low_payment := ?_ }
+  · intro i hi
+    let low : Fin n := ⟨i, Nat.lt_trans (Nat.lt_succ_self i) hi⟩
+    let high : Fin n := ⟨i + 1, hi⟩
+    have hbid_low :
+        paper_ranked_bid_value values hcard i =
+          values (paper_ranked_agent values hcard low) := by
+      simpa [low] using
+        paper_ranked_bid_value_eq_value_ranked_agent values hcard low
+    have hsym :=
+      hanonymous.allocation_eq
+        (paper_ranked_agent values hcard low)
+        (paper_ranked_agent values hcard high)
+    simpa [low, high, hbid_low] using hsym
+  · intro i hi
+    let low : Fin n := ⟨i, Nat.lt_trans (Nat.lt_succ_self i) hi⟩
+    let high : Fin n := ⟨i + 1, hi⟩
+    have hbid_low :
+        paper_ranked_bid_value values hcard i =
+          values (paper_ranked_agent values hcard low) := by
+      simpa [low] using
+        paper_ranked_bid_value_eq_value_ranked_agent values hcard low
+    have hsym :=
+      hanonymous.payment_eq
+        (paper_ranked_agent values hcard low)
+        (paper_ranked_agent values hcard high)
+    simpa [low, high, hbid_low] using hsym
+  · intro i hi
+    let low : Fin n := ⟨i, Nat.lt_trans (Nat.lt_succ_self i) hi⟩
+    let high : Fin n := ⟨i + 1, hi⟩
+    have hbid_high :
+        paper_ranked_bid_value values hcard (i + 1) =
+          values (paper_ranked_agent values hcard high) := by
+      simpa [high] using
+        paper_ranked_bid_value_eq_value_ranked_agent values hcard high
+    have hsym :=
+      hanonymous.allocation_eq
+        (paper_ranked_agent values hcard high)
+        (paper_ranked_agent values hcard low)
+    simpa [low, high, hbid_high] using hsym
+  · intro i hi
+    let low : Fin n := ⟨i, Nat.lt_trans (Nat.lt_succ_self i) hi⟩
+    let high : Fin n := ⟨i + 1, hi⟩
+    have hbid_high :
+        paper_ranked_bid_value values hcard (i + 1) =
+          values (paper_ranked_agent values hcard high) := by
+      simpa [high] using
+        paper_ranked_bid_value_eq_value_ranked_agent values hcard high
+    have hsym :=
+      hanonymous.payment_eq
+        (paper_ranked_agent values hcard high)
+        (paper_ranked_agent values hcard low)
+    simpa [low, high, hbid_high] using hsym
+
+/--
+Construct the adjacent-symmetry source model from the paper-shaped
+report-value source model.
+-/
+noncomputable def
+    paper_theorem8_2_anonymous_truthful_source_model_of_report_value_source_model
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [LinearOrder Agent] {n : ℕ}
+    (model : PaperTheorem82AnonymousTruthfulReportValueSourceModel Agent n) :
+    PaperTheorem82AnonymousTruthfulSourceModel Agent n where
+  auction := model.auction
+  values := model.values
+  card_eq := model.card_eq
+  truthful := model.truthful
+  individuallyRational := model.individuallyRational
+  allocation_nonneg := model.allocation_nonneg
+  allocation_le_one := model.allocation_le_one
+  value_nonneg := model.value_nonneg
+  adjacent_symmetry :=
+    paper_theorem8_2_adjacent_report_symmetry_of_report_value_anonymity
+      model.auction model.values model.card_eq model.report_value_anonymity
+
+/--
+Construct the ranked Theorem 8.2 model from the stronger report-value
+anonymity convention. This is a convenience adapter; the source-facing theorem
+uses adjacent report symmetry directly.
+-/
+noncomputable def
+    paper_theorem8_2_anonymous_sorted_bid_truthful_model_of_report_value_anonymity
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [LinearOrder Agent]
+    (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) {n : ℕ}
+    (hcard : (Finset.univ : Finset Agent).card = n)
+    (htruth : paper_digital_goods_truthful M)
+    (hIR : M.IndividuallyRational)
+    (halloc_nonneg : ∀ bids i, 0 ≤ M.allocation bids i)
+    (halloc_le_one : ∀ bids i, M.allocation bids i ≤ 1)
+    (hvalue_nonneg : ∀ i : Agent, 0 ≤ values i)
+    (hanonymous : PaperTheorem82ReportValueAnonymity M values) :
+    PaperTheorem82AnonymousSortedBidTruthfulModel M values hcard :=
+  paper_theorem8_2_anonymous_sorted_bid_truthful_model_of_adjacent_report_symmetry
+    M values hcard htruth hIR halloc_nonneg halloc_le_one hvalue_nonneg
+    (paper_theorem8_2_adjacent_report_symmetry_of_report_value_anonymity
+      M values hcard hanonymous)
 
 /--
 GHW Theorem 8.2 final paper-model form. For an anonymous sorted-bid truthful
@@ -9017,6 +10138,1078 @@ theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_anony
   exact
     paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_ranked_truthful_auction_certificate
       M values hcard model
+
+/--
+GHW Theorem 8.2 from primitive truthful-auction assumptions and the paper's
+adjacent sorted-bid report-symmetry convention. The ranked certificate is
+constructed internally.
+-/
+theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_adjacent_report_symmetry
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [LinearOrder Agent]
+    (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) {n : ℕ}
+    (hcard : (Finset.univ : Finset Agent).card = n)
+    (htruth : paper_digital_goods_truthful M)
+    (hIR : M.IndividuallyRational)
+    (halloc_nonneg : ∀ bids i, 0 ≤ M.allocation bids i)
+    (halloc_le_one : ∀ bids i, M.allocation bids i ≤ 1)
+    (hvalue_nonneg : ∀ i : Agent, 0 ≤ values i)
+    (hsymmetry :
+      PaperTheorem82AdjacentSortedBidReportSymmetry M values hcard) :
+    M.revenue values ≤ finiteCandidateFixedPriceBenchmark values 1 := by
+  exact
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_anonymous_sorted_bid_truthful_model
+      M values hcard
+      (paper_theorem8_2_anonymous_sorted_bid_truthful_model_of_adjacent_report_symmetry
+        M values hcard htruth hIR halloc_nonneg halloc_le_one
+        hvalue_nonneg hsymmetry)
+
+/--
+GHW Theorem 8.2 source-model form. The source model carries truthfulness,
+IR, allocation range, nonnegative values, and the adjacent sorted-bid report
+symmetry used to instantiate the ranked proof.
+-/
+theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_source_model
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [LinearOrder Agent] {n : ℕ}
+    (model : PaperTheorem82AnonymousTruthfulSourceModel Agent n) :
+    model.auction.revenue model.values ≤
+      finiteCandidateFixedPriceBenchmark model.values 1 := by
+  exact
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_adjacent_report_symmetry
+      model.auction model.values model.card_eq model.truthful
+      model.individuallyRational model.allocation_nonneg
+      model.allocation_le_one model.value_nonneg model.adjacent_symmetry
+
+/--
+GHW Theorem 8.2 source-model form using the paper-shaped report-value
+anonymity convention. The adjacent sorted-bid bridge is derived internally.
+-/
+theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_report_value_source_model
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [LinearOrder Agent] {n : ℕ}
+    (model : PaperTheorem82AnonymousTruthfulReportValueSourceModel Agent n) :
+    model.auction.revenue model.values ≤
+      finiteCandidateFixedPriceBenchmark model.values 1 := by
+  exact
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_source_model
+      (paper_theorem8_2_anonymous_truthful_source_model_of_report_value_source_model
+        model)
+
+/--
+GHW Theorem 8.2 from the stronger report-value anonymity convention. This
+adapter is retained for callers that have the stronger source-shaped witness.
+-/
+theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_report_value_anonymity
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [LinearOrder Agent]
+    (M : DigitalGoodsAuction Agent) (values : Agent → ℝ) {n : ℕ}
+    (hcard : (Finset.univ : Finset Agent).card = n)
+    (htruth : paper_digital_goods_truthful M)
+    (hIR : M.IndividuallyRational)
+    (halloc_nonneg : ∀ bids i, 0 ≤ M.allocation bids i)
+    (halloc_le_one : ∀ bids i, M.allocation bids i ≤ 1)
+    (hvalue_nonneg : ∀ i : Agent, 0 ≤ values i)
+    (hanonymous : PaperTheorem82ReportValueAnonymity M values) :
+    M.revenue values ≤ finiteCandidateFixedPriceBenchmark values 1 := by
+  exact
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_adjacent_report_symmetry
+      M values hcard htruth hIR halloc_nonneg halloc_le_one hvalue_nonneg
+      (paper_theorem8_2_adjacent_report_symmetry_of_report_value_anonymity
+        M values hcard hanonymous)
+
+/--
+Revenue of one coupled offer-price outcome in the journal-version monotone
+auction proof of GHW Theorem 8.2. Bidder `i` accepts iff its sampled offer
+price is at most its bid value.
+-/
+noncomputable def paper_theorem8_2_journal_monotone_offer_revenue
+    {Agent : Type*} [Fintype Agent]
+    (values offerPrice : Agent → ℝ) : ℝ :=
+  ∑ i : Agent, if offerPrice i ≤ values i then offerPrice i else 0
+
+/--
+Journal-version GHW Theorem 8.2, one coupled offer-price outcome. If higher
+value bidders receive weakly lower offers in the same coupled outcome, then the
+winner set is an upper set and the outcome revenue is bounded by the fixed-price
+benchmark.
+-/
+theorem paper_theorem8_2_journal_monotone_offer_revenue_le_finite_candidate_benchmark
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values offerPrice : Agent → ℝ)
+    (hoffer_nonneg : ∀ i, 0 ≤ offerPrice i)
+    (hoffer_monotone :
+      ∀ i j, values i ≤ values j → offerPrice j ≤ offerPrice i) :
+    paper_theorem8_2_journal_monotone_offer_revenue values offerPrice ≤
+      finiteCandidateFixedPriceBenchmark values 1 := by
+  classical
+  let winners : Finset Agent :=
+    (Finset.univ : Finset Agent).filter fun i => offerPrice i ≤ values i
+  by_cases hwinners : winners.Nonempty
+  · let winnerValues : Finset ℝ := winners.image values
+    have hwinnerValues : winnerValues.Nonempty := hwinners.image values
+    let q : ℝ := winnerValues.min' hwinnerValues
+    have hq_mem : q ∈ winnerValues :=
+      Finset.min'_mem winnerValues hwinnerValues
+    obtain ⟨minWinner, hminWinner_mem, hminWinner_value⟩ :=
+      Finset.mem_image.mp hq_mem
+    have hminWinner_accept : offerPrice minWinner ≤ values minWinner :=
+      (Finset.mem_filter.mp hminWinner_mem).2
+    have hq_nonneg : 0 ≤ q := by
+      rw [← hminWinner_value]
+      exact le_trans (hoffer_nonneg minWinner) hminWinner_accept
+    have hq_le_winner_value :
+        ∀ i, i ∈ winners → q ≤ values i := by
+      intro i hi
+      have hmem : values i ∈ winnerValues :=
+        Finset.mem_image.mpr ⟨i, hi, rfl⟩
+      exact Finset.min'_le winnerValues (values i) hmem
+    have hoffer_le_q :
+        ∀ i, i ∈ winners → offerPrice i ≤ q := by
+      intro i hi
+      have hvalue_le : values minWinner ≤ values i := by
+        simpa [hminWinner_value] using hq_le_winner_value i hi
+      have hoffer_le_min := hoffer_monotone minWinner i hvalue_le
+      have hmin_offer_le_q : offerPrice minWinner ≤ q := by
+        simpa [hminWinner_value] using hminWinner_accept
+      exact le_trans hoffer_le_min hmin_offer_le_q
+    let qWinners : Finset Agent :=
+      (Finset.univ : Finset Agent).filter fun i => q ≤ values i
+    have hwinners_subset_qWinners : winners ⊆ qWinners := by
+      intro i hi
+      exact Finset.mem_filter.mpr ⟨by simp, hq_le_winner_value i hi⟩
+    have hrevenue_eq :
+        paper_theorem8_2_journal_monotone_offer_revenue values offerPrice =
+          ∑ i ∈ winners, offerPrice i := by
+      simpa [paper_theorem8_2_journal_monotone_offer_revenue, winners] using
+        (Finset.sum_filter
+          (s := (Finset.univ : Finset Agent))
+          (p := fun i => offerPrice i ≤ values i)
+          (f := fun i => offerPrice i)).symm
+    have hsum_offer_le_q :
+        (∑ i ∈ winners, offerPrice i) ≤ ∑ i ∈ winners, q :=
+      Finset.sum_le_sum fun i hi => hoffer_le_q i hi
+    have hsum_q_le_qWinners :
+        (∑ i ∈ winners, q) ≤ ∑ i ∈ qWinners, q := by
+      exact Finset.sum_le_sum_of_subset_of_nonneg hwinners_subset_qWinners
+        (by intro _i _hq_mem _hnot_mem; exact hq_nonneg)
+    have hqWinners_sum_eq_single :
+        (∑ i ∈ qWinners, q) = singlePriceRevenue values q := by
+      simpa [singlePriceRevenue, qWinners] using
+        (Finset.sum_filter
+          (s := (Finset.univ : Finset Agent))
+          (p := fun i => q ≤ values i)
+          (f := fun _i => q))
+    have hminWinner_qWinner : minWinner ∈ qWinners := by
+      exact Finset.mem_filter.mpr
+        ⟨by simp, by rw [← hminWinner_value]⟩
+    have hq_feasible : 1 ≤ saleCount values q := by
+      have hcard_pos : 0 < saleCount values q := by
+        unfold saleCount
+        exact Finset.card_pos.mpr
+          ⟨minWinner, by simpa [qWinners] using hminWinner_qWinner⟩
+      simpa using hcard_pos
+    have hsingle_le_benchmark :
+        singlePriceRevenue values q ≤
+          finiteCandidateFixedPriceBenchmark values 1 := by
+      rw [← hminWinner_value]
+      exact singlePriceRevenue_candidate_le_finiteCandidateFixedPriceBenchmark
+        values 1 minWinner (by simpa [hminWinner_value] using hq_nonneg)
+        (by simpa [hminWinner_value] using hq_feasible)
+    calc
+      paper_theorem8_2_journal_monotone_offer_revenue values offerPrice
+          = ∑ i ∈ winners, offerPrice i := hrevenue_eq
+      _ ≤ ∑ i ∈ winners, q := hsum_offer_le_q
+      _ ≤ ∑ i ∈ qWinners, q := hsum_q_le_qWinners
+      _ = singlePriceRevenue values q := hqWinners_sum_eq_single
+      _ ≤ finiteCandidateFixedPriceBenchmark values 1 := hsingle_le_benchmark
+  · have hnot_winner : ∀ i, ¬ offerPrice i ≤ values i := by
+      intro i hi
+      apply hwinners
+      exact ⟨i, by simp [winners, hi]⟩
+    have hrevenue_zero :
+        paper_theorem8_2_journal_monotone_offer_revenue values offerPrice = 0 := by
+      simp [paper_theorem8_2_journal_monotone_offer_revenue, hnot_winner]
+    rw [hrevenue_zero]
+    exact finiteCandidateFixedPriceBenchmark_nonneg values 1
+
+/--
+Journal-version GHW Theorem 8.2, one coupled offer-price outcome, in the
+weaker form actually used by the proof. It is enough that whenever bidder `i`
+accepts, all higher-value bidders receive offers no larger than `i`'s offer.
+The offer process need not be globally pointwise monotone above rejected
+lower-value offers.
+-/
+theorem paper_theorem8_2_journal_accept_monotone_offer_revenue_le_finite_candidate_benchmark
+    {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    (values offerPrice : Agent → ℝ)
+    (hoffer_nonneg : ∀ i, 0 ≤ offerPrice i)
+    (hoffer_accept_monotone :
+      ∀ i j, values i ≤ values j → offerPrice i ≤ values i →
+        offerPrice j ≤ offerPrice i) :
+    paper_theorem8_2_journal_monotone_offer_revenue values offerPrice ≤
+      finiteCandidateFixedPriceBenchmark values 1 := by
+  classical
+  let winners : Finset Agent :=
+    (Finset.univ : Finset Agent).filter fun i => offerPrice i ≤ values i
+  by_cases hwinners : winners.Nonempty
+  · let winnerValues : Finset ℝ := winners.image values
+    have hwinnerValues : winnerValues.Nonempty := hwinners.image values
+    let q : ℝ := winnerValues.min' hwinnerValues
+    have hq_mem : q ∈ winnerValues :=
+      Finset.min'_mem winnerValues hwinnerValues
+    obtain ⟨minWinner, hminWinner_mem, hminWinner_value⟩ :=
+      Finset.mem_image.mp hq_mem
+    have hminWinner_accept : offerPrice minWinner ≤ values minWinner :=
+      (Finset.mem_filter.mp hminWinner_mem).2
+    have hq_nonneg : 0 ≤ q := by
+      rw [← hminWinner_value]
+      exact le_trans (hoffer_nonneg minWinner) hminWinner_accept
+    have hq_le_winner_value :
+        ∀ i, i ∈ winners → q ≤ values i := by
+      intro i hi
+      have hmem : values i ∈ winnerValues :=
+        Finset.mem_image.mpr ⟨i, hi, rfl⟩
+      exact Finset.min'_le winnerValues (values i) hmem
+    have hoffer_le_q :
+        ∀ i, i ∈ winners → offerPrice i ≤ q := by
+      intro i hi
+      have hvalue_le : values minWinner ≤ values i := by
+        simpa [hminWinner_value] using hq_le_winner_value i hi
+      have hoffer_le_min :=
+        hoffer_accept_monotone minWinner i hvalue_le hminWinner_accept
+      have hmin_offer_le_q : offerPrice minWinner ≤ q := by
+        simpa [hminWinner_value] using hminWinner_accept
+      exact le_trans hoffer_le_min hmin_offer_le_q
+    let qWinners : Finset Agent :=
+      (Finset.univ : Finset Agent).filter fun i => q ≤ values i
+    have hwinners_subset_qWinners : winners ⊆ qWinners := by
+      intro i hi
+      exact Finset.mem_filter.mpr ⟨by simp, hq_le_winner_value i hi⟩
+    have hrevenue_eq :
+        paper_theorem8_2_journal_monotone_offer_revenue values offerPrice =
+          ∑ i ∈ winners, offerPrice i := by
+      simpa [paper_theorem8_2_journal_monotone_offer_revenue, winners] using
+        (Finset.sum_filter
+          (s := (Finset.univ : Finset Agent))
+          (p := fun i => offerPrice i ≤ values i)
+          (f := fun i => offerPrice i)).symm
+    have hsum_offer_le_q :
+        (∑ i ∈ winners, offerPrice i) ≤ ∑ i ∈ winners, q :=
+      Finset.sum_le_sum fun i hi => hoffer_le_q i hi
+    have hsum_q_le_qWinners :
+        (∑ i ∈ winners, q) ≤ ∑ i ∈ qWinners, q := by
+      exact Finset.sum_le_sum_of_subset_of_nonneg hwinners_subset_qWinners
+        (by intro _i _hq_mem _hnot_mem; exact hq_nonneg)
+    have hqWinners_sum_eq_single :
+        (∑ i ∈ qWinners, q) = singlePriceRevenue values q := by
+      simpa [singlePriceRevenue, qWinners] using
+        (Finset.sum_filter
+          (s := (Finset.univ : Finset Agent))
+          (p := fun i => q ≤ values i)
+          (f := fun _i => q))
+    have hminWinner_qWinner : minWinner ∈ qWinners := by
+      exact Finset.mem_filter.mpr
+        ⟨by simp, by rw [← hminWinner_value]⟩
+    have hq_feasible : 1 ≤ saleCount values q := by
+      have hcard_pos : 0 < saleCount values q := by
+        unfold saleCount
+        exact Finset.card_pos.mpr
+          ⟨minWinner, by simpa [qWinners] using hminWinner_qWinner⟩
+      simpa using hcard_pos
+    have hsingle_le_benchmark :
+        singlePriceRevenue values q ≤
+          finiteCandidateFixedPriceBenchmark values 1 := by
+      rw [← hminWinner_value]
+      exact singlePriceRevenue_candidate_le_finiteCandidateFixedPriceBenchmark
+        values 1 minWinner (by simpa [hminWinner_value] using hq_nonneg)
+        (by simpa [hminWinner_value] using hq_feasible)
+    calc
+      paper_theorem8_2_journal_monotone_offer_revenue values offerPrice
+          = ∑ i ∈ winners, offerPrice i := hrevenue_eq
+      _ ≤ ∑ i ∈ winners, q := hsum_offer_le_q
+      _ ≤ ∑ i ∈ qWinners, q := hsum_q_le_qWinners
+      _ = singlePriceRevenue values q := hqWinners_sum_eq_single
+      _ ≤ finiteCandidateFixedPriceBenchmark values 1 := hsingle_le_benchmark
+  · have hnot_winner : ∀ i, ¬ offerPrice i ≤ values i := by
+      intro i hi
+      apply hwinners
+      exact ⟨i, by simp [winners, hi]⟩
+    have hrevenue_zero :
+        paper_theorem8_2_journal_monotone_offer_revenue values offerPrice = 0 := by
+      simp [paper_theorem8_2_journal_monotone_offer_revenue, hnot_winner]
+    rw [hrevenue_zero]
+    exact finiteCandidateFixedPriceBenchmark_nonneg values 1
+
+/--
+Journal-version source model for GHW Theorem 8.2. The journal proof couples the
+bid-independent randomized offers by a shared quantile. This finite source
+model records that coupled experiment directly: outcome weights are
+nonnegative with total mass at most one, offers are nonnegative, and higher
+value bidders receive weakly lower offers in every coupled outcome.
+-/
+structure PaperTheorem82JournalMonotoneSourceModel
+    (Agent Outcome : Type*) [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [Fintype Outcome] where
+  values : Agent → ℝ
+  weight : Outcome → ℝ
+  offerPrice : Outcome → Agent → ℝ
+  weight_nonneg : ∀ outcome, 0 ≤ weight outcome
+  weight_sum_le_one : (∑ outcome : Outcome, weight outcome) ≤ 1
+  offer_nonneg : ∀ outcome i, 0 ≤ offerPrice outcome i
+  offer_monotone :
+    ∀ outcome i j, values i ≤ values j →
+      offerPrice outcome j ≤ offerPrice outcome i
+
+/-- Expected revenue of the coupled monotone offer experiment in journal 8.2. -/
+noncomputable def paper_theorem8_2_journal_monotone_expected_revenue
+    {Agent Outcome : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [Fintype Outcome]
+    (model : PaperTheorem82JournalMonotoneSourceModel Agent Outcome) : ℝ :=
+  ∑ outcome : Outcome,
+    model.weight outcome *
+      paper_theorem8_2_journal_monotone_offer_revenue
+        model.values (model.offerPrice outcome)
+
+/--
+Journal-version GHW Theorem 8.2. The coupled monotone source model is bounded
+by the finite one-winner fixed-price benchmark.
+-/
+theorem paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_journal_monotone_source_model
+    {Agent Outcome : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [Fintype Outcome]
+    (model : PaperTheorem82JournalMonotoneSourceModel Agent Outcome) :
+    paper_theorem8_2_journal_monotone_expected_revenue model ≤
+      finiteCandidateFixedPriceBenchmark model.values 1 := by
+  classical
+  let B : ℝ := finiteCandidateFixedPriceBenchmark model.values 1
+  have hB_nonneg : 0 ≤ B := by
+    exact finiteCandidateFixedPriceBenchmark_nonneg model.values 1
+  have hpoint :
+      ∀ outcome : Outcome,
+        paper_theorem8_2_journal_monotone_offer_revenue
+            model.values (model.offerPrice outcome) ≤ B := by
+    intro outcome
+    exact
+      paper_theorem8_2_journal_monotone_offer_revenue_le_finite_candidate_benchmark
+        model.values (model.offerPrice outcome)
+        (model.offer_nonneg outcome)
+        (model.offer_monotone outcome)
+  calc
+    paper_theorem8_2_journal_monotone_expected_revenue model
+        = ∑ outcome : Outcome,
+            model.weight outcome *
+              paper_theorem8_2_journal_monotone_offer_revenue
+                model.values (model.offerPrice outcome) := rfl
+    _ ≤ ∑ outcome : Outcome, model.weight outcome * B := by
+          exact Finset.sum_le_sum fun outcome _ =>
+            mul_le_mul_of_nonneg_left (hpoint outcome)
+              (model.weight_nonneg outcome)
+    _ = (∑ outcome : Outcome, model.weight outcome) * B := by
+          rw [Finset.sum_mul]
+    _ ≤ 1 * B := by
+          exact mul_le_mul_of_nonneg_right model.weight_sum_le_one hB_nonneg
+    _ = B := by ring
+
+/--
+Expected revenue of the journal-version coupled monotone offer experiment,
+using the repository's finite PMF expectation API.
+-/
+noncomputable def paper_theorem8_2_journal_monotone_pmf_expected_revenue
+    {Agent Outcome : Type*} [Fintype Agent] [Fintype Outcome] [DecidableEq Outcome]
+    (law : PMF Outcome) (values : Agent → ℝ)
+    (offerPrice : Outcome → Agent → ℝ) : ℝ :=
+  pmfExp law fun outcome =>
+    paper_theorem8_2_journal_monotone_offer_revenue values (offerPrice outcome)
+
+/--
+Journal-version source model for GHW Theorem 8.2 using a finite randomized
+coupled offer experiment. This matches the journal proof after the inverse-CDF
+thought experiment: condition on one random seed, higher value bidders receive
+weakly lower offers.
+-/
+structure PaperTheorem82JournalMonotoneRandomizedOfferSourceModel
+    (Agent Outcome : Type*) [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [Fintype Outcome] [DecidableEq Outcome] where
+  values : Agent → ℝ
+  law : PMF Outcome
+  offerPrice : Outcome → Agent → ℝ
+  offer_nonneg : ∀ outcome i, 0 ≤ offerPrice outcome i
+  offer_monotone :
+    ∀ outcome i j, values i ≤ values j →
+      offerPrice outcome j ≤ offerPrice outcome i
+
+/--
+Journal-version GHW Theorem 8.2 for a finite randomized monotone offer source
+model. Pointwise coupled monotonicity gives the fixed-price benchmark bound
+seed by seed, and finite expectation preserves the bound.
+-/
+theorem
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_journal_monotone_randomized_offer_source_model
+    {Agent Outcome : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [Fintype Outcome] [DecidableEq Outcome]
+    (model :
+      PaperTheorem82JournalMonotoneRandomizedOfferSourceModel Agent Outcome) :
+    paper_theorem8_2_journal_monotone_pmf_expected_revenue
+        model.law model.values model.offerPrice ≤
+      finiteCandidateFixedPriceBenchmark model.values 1 := by
+  classical
+  exact
+    pmfExp_le_of_forall_le model.law
+      (fun outcome =>
+        paper_theorem8_2_journal_monotone_offer_revenue
+          model.values (model.offerPrice outcome))
+      (finiteCandidateFixedPriceBenchmark model.values 1)
+      (fun outcome =>
+        paper_theorem8_2_journal_monotone_offer_revenue_le_finite_candidate_benchmark
+          model.values (model.offerPrice outcome)
+        (model.offer_nonneg outcome)
+          (model.offer_monotone outcome))
+
+/--
+Journal-version source model for GHW Theorem 8.2 using the weaker
+accepted-bid monotonicity sufficient for the proof. In each random seed, if a
+bidder accepts its offer, then every higher-value bidder receives an offer no
+larger than that accepted offer.
+-/
+structure PaperTheorem82JournalAcceptedMonotoneRandomizedOfferSourceModel
+    (Agent Outcome : Type*) [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [Fintype Outcome] [DecidableEq Outcome] where
+  values : Agent → ℝ
+  law : PMF Outcome
+  offerPrice : Outcome → Agent → ℝ
+  offer_nonneg : ∀ outcome i, 0 ≤ offerPrice outcome i
+  offer_accept_monotone :
+    ∀ outcome i j, values i ≤ values j →
+      offerPrice outcome i ≤ values i →
+        offerPrice outcome j ≤ offerPrice outcome i
+
+/--
+Journal-version GHW Theorem 8.2 for a finite randomized accepted-monotone
+offer source model.
+-/
+theorem
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_journal_accept_monotone_randomized_offer_source_model
+    {Agent Outcome : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [Fintype Outcome] [DecidableEq Outcome]
+    (model :
+      PaperTheorem82JournalAcceptedMonotoneRandomizedOfferSourceModel
+        Agent Outcome) :
+    paper_theorem8_2_journal_monotone_pmf_expected_revenue
+        model.law model.values model.offerPrice ≤
+      finiteCandidateFixedPriceBenchmark model.values 1 := by
+  classical
+  exact
+    pmfExp_le_of_forall_le model.law
+      (fun outcome =>
+        paper_theorem8_2_journal_monotone_offer_revenue
+          model.values (model.offerPrice outcome))
+      (finiteCandidateFixedPriceBenchmark model.values 1)
+      (fun outcome =>
+        paper_theorem8_2_journal_accept_monotone_offer_revenue_le_finite_candidate_benchmark
+          model.values (model.offerPrice outcome)
+          (model.offer_nonneg outcome)
+          (model.offer_accept_monotone outcome))
+
+/--
+Expected revenue of the journal-version raw marginal offer laws. For each
+bidder `i`, `offerLaw i` is the finite law of that bidder's offer price.
+-/
+noncomputable def paper_theorem8_2_raw_cdf_expected_revenue
+    {Agent Price : Type*} [Fintype Agent] [Fintype Price] [DecidableEq Price]
+    (values : Agent → ℝ) (price : Price → ℝ)
+    (offerLaw : Agent → PMF Price) : ℝ :=
+  ∑ i : Agent,
+    pmfExp (offerLaw i) fun p =>
+      if price p ≤ values i then price p else 0
+
+theorem paper_theorem8_2_pmf_toMeasure_real_event
+    {α : Type*} [Fintype α] [DecidableEq α]
+    [MeasurableSpace α] [MeasurableSingletonClass α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] :
+    μ.toMeasure.real {a | p a} = pmfProb μ p := by
+  unfold pmfProb pmfExp
+  rw [measureReal_def]
+  have hmeasure :
+      μ.toMeasure {a | p a} = ∑ a : α, if p a then μ a else 0 := by
+    rw [PMF.toMeasure_apply_fintype]
+    refine Finset.sum_congr rfl ?_
+    intro a _
+    by_cases hpa : p a <;> simp [Set.indicator, hpa]
+  rw [hmeasure]
+  have h_ne_top :
+      ∀ a ∈ (Finset.univ : Finset α),
+        (if p a then μ a else 0) ≠ ⊤ := by
+    intro a _
+    by_cases hpa : p a <;> simp [hpa, μ.apply_ne_top a]
+  rw [ENNReal.toReal_sum (s := (Finset.univ : Finset α))
+    (f := fun a => if p a then μ a else 0) h_ne_top]
+  refine Finset.sum_congr rfl ?_
+  intro a _
+  by_cases hpa : p a <;> simp [hpa]
+
+noncomputable def paper_theorem8_2_offer_surplus
+    {Price : Type*} (price : Price → ℝ) (cut cap : ℝ) : Price → ℝ :=
+  fun p => if price p ≤ cut then cap - price p else 0
+
+theorem paper_theorem8_2_pmf_offer_surplus_le_of_cdf_monotone
+    {Price : Type*} [Fintype Price] [DecidableEq Price]
+    (μ ν : PMF Price) (price : Price → ℝ) {cut cap : ℝ}
+    (hcut_cap : cut ≤ cap)
+    (hcdf :
+      ∀ t, t ≤ cut →
+        pmfProb μ (fun p => price p ≤ t) ≤
+          pmfProb ν (fun p => price p ≤ t)) :
+    pmfExp μ (paper_theorem8_2_offer_surplus price cut cap) ≤
+      pmfExp ν (paper_theorem8_2_offer_surplus price cut cap) := by
+  letI : MeasurableSpace Price := ⊤
+  let sfun : Price → ℝ := paper_theorem8_2_offer_surplus price cut cap
+  have hμ_int : Integrable sfun μ.toMeasure := by simp [sfun]
+  have hν_int : Integrable sfun ν.toMeasure := by simp [sfun]
+  have hμ_nonneg : 0 ≤ᵐ[μ.toMeasure] sfun := by
+    exact .of_forall (fun p => by
+      dsimp [sfun, paper_theorem8_2_offer_surplus]
+      split
+      · linarith
+      · linarith)
+  have hν_nonneg : 0 ≤ᵐ[ν.toMeasure] sfun := by
+    exact .of_forall (fun p => by
+      dsimp [sfun, paper_theorem8_2_offer_surplus]
+      split
+      · linarith
+      · linarith)
+  have hμ_exp :
+      pmfExp μ sfun =
+        (∫⁻ p, ENNReal.ofReal (sfun p) ∂μ.toMeasure).toReal := by
+    have hμ_eq : pmfExp μ sfun = ∫ p, sfun p ∂μ.toMeasure := by
+      rw [PMF.integral_eq_sum]
+      simp [pmfExp]
+    rw [hμ_eq]
+    rw [integral_eq_lintegral_of_nonneg_ae
+      hμ_nonneg hμ_int.aestronglyMeasurable]
+  have hν_exp :
+      pmfExp ν sfun =
+        (∫⁻ p, ENNReal.ofReal (sfun p) ∂ν.toMeasure).toReal := by
+    have hν_eq : pmfExp ν sfun = ∫ p, sfun p ∂ν.toMeasure := by
+      rw [PMF.integral_eq_sum]
+      simp [pmfExp]
+    rw [hν_eq]
+    rw [integral_eq_lintegral_of_nonneg_ae
+      hν_nonneg hν_int.aestronglyMeasurable]
+  rw [hμ_exp, hν_exp]
+  apply ENNReal.toReal_mono
+  · exact ne_of_lt (Integrable.lintegral_lt_top hν_int)
+  · rw [lintegral_eq_lintegral_meas_le
+      μ.toMeasure hμ_nonneg hμ_int.aemeasurable]
+    rw [lintegral_eq_lintegral_meas_le
+      ν.toMeasure hν_nonneg hν_int.aemeasurable]
+    apply lintegral_mono_ae
+    rw [ae_restrict_iff' measurableSet_Ioi]
+    exact .of_forall (fun t ht => by
+      have htpos : 0 < t := ht
+      have hevent :
+          {p : Price | t ≤ sfun p} =
+            {p : Price | price p ≤ min cut (cap - t)} := by
+        ext p
+        dsimp [sfun, paper_theorem8_2_offer_surplus]
+        constructor
+        · intro h
+          by_cases hp : price p ≤ cut
+          · simp [hp] at h
+            exact le_min hp (by linarith)
+          · simp [hp] at h
+            linarith [htpos, h]
+        · intro h
+          have hp_cut : price p ≤ cut := le_trans h (min_le_left _ _)
+          have hp_cap : price p ≤ cap - t := le_trans h (min_le_right _ _)
+          simp [hp_cut]
+          linarith
+      rw [hevent]
+      have hreal :
+          μ.toMeasure.real {p : Price | price p ≤ min cut (cap - t)} ≤
+            ν.toMeasure.real {p : Price | price p ≤ min cut (cap - t)} := by
+        rw [paper_theorem8_2_pmf_toMeasure_real_event
+              μ (fun p => price p ≤ min cut (cap - t)),
+            paper_theorem8_2_pmf_toMeasure_real_event
+              ν (fun p => price p ≤ min cut (cap - t))]
+        exact hcdf (min cut (cap - t)) (min_le_left _ _)
+      exact
+        (ENNReal.toReal_le_toReal
+          (measure_ne_top _ _) (measure_ne_top _ _)).1 hreal)
+
+theorem paper_theorem8_2_expected_offer_payment_eq_probability_mul_value_sub_surplus
+    {Price : Type*} [Fintype Price] [DecidableEq Price]
+    (μ : PMF Price) (price : Price → ℝ) (b : ℝ) :
+    pmfExp μ (fun p => if price p ≤ b then price p else 0) =
+      pmfProb μ (fun p => price p ≤ b) * b -
+        pmfExp μ (paper_theorem8_2_offer_surplus price b b) := by
+  unfold pmfProb
+  rw [← pmfExp_mul_const μ
+    (fun p => if price p ≤ b then (1 : ℝ) else 0) b,
+    ← pmfExp_sub]
+  exact pmfExp_congr μ (fun p => by
+    by_cases hp : price p ≤ b <;>
+      simp [paper_theorem8_2_offer_surplus, hp])
+
+theorem paper_theorem8_2_offer_surplus_gap_le
+    {Price : Type*} [Fintype Price] [DecidableEq Price]
+    (μ : PMF Price) (price : Price → ℝ) {low high : ℝ}
+    (hle : low ≤ high) :
+    pmfExp μ (paper_theorem8_2_offer_surplus price low low) +
+      pmfProb μ (fun p => price p ≤ low) * (high - low) ≤
+        pmfExp μ (paper_theorem8_2_offer_surplus price low high) := by
+  have hpoint : ∀ p : Price,
+      paper_theorem8_2_offer_surplus price low low p +
+          (if price p ≤ low then (1 : ℝ) else 0) * (high - low) ≤
+        paper_theorem8_2_offer_surplus price low high p := by
+    intro p
+    dsimp [paper_theorem8_2_offer_surplus]
+    by_cases hp_low : price p ≤ low
+    · simp [hp_low]
+    · simp [hp_low]
+  unfold pmfProb
+  rw [← pmfExp_mul_const μ
+      (fun p => if price p ≤ low then (1 : ℝ) else 0) (high - low),
+    ← pmfExp_add]
+  exact pmfExp_le_pmfExp_of_forall_le μ _ _ hpoint
+
+theorem paper_theorem8_2_offer_surplus_cut_le
+    {Price : Type*} [Fintype Price] [DecidableEq Price]
+    (μ : PMF Price) (price : Price → ℝ) {low high : ℝ}
+    (hle : low ≤ high) :
+    pmfExp μ (paper_theorem8_2_offer_surplus price low high) ≤
+      pmfExp μ (paper_theorem8_2_offer_surplus price high high) := by
+  have hpoint : ∀ p : Price,
+      paper_theorem8_2_offer_surplus price low high p ≤
+        paper_theorem8_2_offer_surplus price high high p := by
+    intro p
+    dsimp [paper_theorem8_2_offer_surplus]
+    by_cases hp_low : price p ≤ low
+    · have hp_high : price p ≤ high := le_trans hp_low hle
+      simp [hp_low, hp_high]
+    · by_cases hp_high : price p ≤ high
+      · simp [hp_low, hp_high]
+      · simp [hp_low, hp_high]
+  exact pmfExp_le_pmfExp_of_forall_le μ _ _ hpoint
+
+/--
+Journal-version source model for GHW Theorem 8.2 with raw marginal offer CDF
+monotonicity. This is the source-facing finite form of the journal correction:
+higher values have weakly larger offer-acceptance CDFs below each lower value.
+-/
+structure PaperTheorem82JournalRawCDFMonotoneOfferSourceModel
+    (Agent Price : Type*) [Fintype Agent] [Nonempty Agent]
+    [DecidableEq Agent] [Fintype Price] [DecidableEq Price] where
+  values : Agent → ℝ
+  price : Price → ℝ
+  offerLaw : Agent → PMF Price
+  value_nonneg : ∀ i, 0 ≤ values i
+  price_nonneg : ∀ p, 0 ≤ price p
+  cdf_monotone :
+    ∀ i j, values i ≤ values j → ∀ t, t ≤ values i →
+      pmfProb (offerLaw i) (fun p => price p ≤ t) ≤
+        pmfProb (offerLaw j) (fun p => price p ≤ t)
+
+/--
+Journal-version GHW Theorem 8.2 from raw CDF monotone marginal offer laws.
+
+The proof works directly with the finite marginal laws. The CDF monotonicity
+assumption gives adjacent ranked acceptance-probability monotonicity and,
+through a finite layer-cake argument, the adjacent surplus recursion used by
+the paper's Theorem 8.2 algebra.
+-/
+theorem
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_offer_source_model
+    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent]
+    [DecidableEq Agent] [LinearOrder Agent] [Fintype Price] [DecidableEq Price]
+    (model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :
+    paper_theorem8_2_raw_cdf_expected_revenue
+        model.values model.price model.offerLaw ≤
+      finiteCandidateFixedPriceBenchmark model.values 1 := by
+  classical
+  let n : ℕ := Fintype.card Agent
+  have hcard : (Finset.univ : Finset Agent).card = n := by
+    simp [n]
+  let rankAgent : Fin n → Agent := paper_ranked_agent model.values hcard
+  let bidValue : ℕ → ℝ := paper_ranked_bid_value model.values hcard
+  let winProbability : ℕ → ℝ :=
+    fun k =>
+      match k with
+      | 0 => 0
+      | Nat.succ i =>
+          if hi : i < n then
+            pmfProb (model.offerLaw (rankAgent ⟨i, hi⟩))
+              (fun p => model.price p ≤ bidValue i)
+          else 0
+  let expectedPayment : ℕ → ℝ :=
+    fun k =>
+      if hk : k < n then
+        pmfExp (model.offerLaw (rankAgent ⟨k, hk⟩)) fun p =>
+          if model.price p ≤ bidValue k then model.price p else 0
+      else 0
+  let gain : ℕ → ℝ :=
+    fun k =>
+      if hk : k < n then
+        pmfExp (model.offerLaw (rankAgent ⟨k, hk⟩))
+          (paper_theorem8_2_offer_surplus model.price (bidValue k) (bidValue k))
+      else 0
+  have hn_pos : 0 < n := by
+    have hcard_pos : 0 < (Finset.univ : Finset Agent).card := by
+      rw [Finset.card_univ]
+      exact Fintype.card_pos
+    simpa [hcard] using hcard_pos
+  have hwin_succ :
+      ∀ k, (hk : k < n) →
+        winProbability (k + 1) =
+          pmfProb (model.offerLaw (rankAgent ⟨k, hk⟩))
+            (fun p => model.price p ≤ bidValue k) := by
+    intro k hk
+    simp [winProbability, hk]
+  have hpayment_in :
+      ∀ k, (hk : k < n) →
+        expectedPayment k =
+          pmfExp (model.offerLaw (rankAgent ⟨k, hk⟩)) fun p =>
+            if model.price p ≤ bidValue k then model.price p else 0 := by
+    intro k hk
+    simp [expectedPayment, hk]
+  have hgain_in :
+      ∀ k, (hk : k < n) →
+        gain k =
+          pmfExp (model.offerLaw (rankAgent ⟨k, hk⟩))
+            (paper_theorem8_2_offer_surplus model.price
+              (bidValue k) (bidValue k)) := by
+    intro k hk
+    simp [gain, hk]
+  have hbid_eq :
+      ∀ k, (hk : k < n) →
+        bidValue k = model.values (rankAgent ⟨k, hk⟩) := by
+    intro k hk
+    simpa [bidValue, rankAgent] using
+      paper_ranked_bid_value_eq_value_ranked_agent
+        model.values hcard ⟨k, hk⟩
+  have hbid_mono :
+      ∀ i, i + 1 < n → bidValue i ≤ bidValue (i + 1) := by
+    intro i hi
+    have hi0 : i < n := Nat.lt_trans (Nat.lt_succ_self i) hi
+    let low : Fin n := ⟨i, hi0⟩
+    let high : Fin n := ⟨i + 1, hi⟩
+    have hmono_rank :=
+      FiniteRanking.rankValueByValue_mono
+        (Finset.univ : Finset Agent) model.values hcard low high
+        (by simp [low, high])
+    dsimp [bidValue, paper_ranked_bid_value]
+    rw [dif_pos hi0, dif_pos hi]
+    exact hmono_rank
+  have hcdf_rank :
+      ∀ (i : ℕ) (hi : i + 1 < n) (t : ℝ), t ≤ bidValue i →
+        pmfProb
+            (model.offerLaw
+              (rankAgent ⟨i, Nat.lt_trans (Nat.lt_succ_self i) hi⟩))
+            (fun p => model.price p ≤ t) ≤
+          pmfProb (model.offerLaw (rankAgent ⟨i + 1, hi⟩))
+            (fun p => model.price p ≤ t) := by
+    intro i hi t ht
+    let low : Fin n := ⟨i, Nat.lt_trans (Nat.lt_succ_self i) hi⟩
+    let high : Fin n := ⟨i + 1, hi⟩
+    have hvalue_le :
+        model.values (rankAgent low) ≤ model.values (rankAgent high) := by
+      rw [← hbid_eq i low.isLt, ← hbid_eq (i + 1) hi]
+      exact hbid_mono i hi
+    have ht_value : t ≤ model.values (rankAgent low) := by
+      rwa [← hbid_eq i low.isLt]
+    simpa [low, high] using
+      model.cdf_monotone (rankAgent low) (rankAgent high)
+        hvalue_le t ht_value
+  have hp0 : winProbability 0 = 0 := by
+    simp [winProbability]
+  have hrevenue :
+      paper_theorem8_2_raw_cdf_expected_revenue
+          model.values model.price model.offerLaw ≤
+        ∑ i ∈ Finset.range n, expectedPayment i := by
+    have hrank_sum :
+        (∑ i : Fin n,
+          pmfExp (model.offerLaw (rankAgent i)) fun p =>
+            if model.price p ≤ model.values (rankAgent i) then
+              model.price p
+            else 0) =
+          ∑ a ∈ (Finset.univ : Finset Agent),
+            pmfExp (model.offerLaw a) fun p =>
+              if model.price p ≤ model.values a then model.price p else 0 := by
+      simpa [rankAgent, paper_ranked_agent] using
+        FiniteRanking.sum_rankAgentByValue_eq_sum
+          (Finset.univ : Finset Agent) model.values hcard
+          (fun a =>
+            pmfExp (model.offerLaw a) fun p =>
+              if model.price p ≤ model.values a then model.price p else 0)
+    have hsum_range :
+        (∑ i : Fin n,
+          pmfExp (model.offerLaw (rankAgent i)) fun p =>
+            if model.price p ≤ model.values (rankAgent i) then
+              model.price p
+            else 0) =
+          ∑ i ∈ Finset.range n, expectedPayment i := by
+      calc
+        (∑ i : Fin n,
+          pmfExp (model.offerLaw (rankAgent i)) fun p =>
+            if model.price p ≤ model.values (rankAgent i) then
+              model.price p
+            else 0)
+            = ∑ i : Fin n, expectedPayment i.val := by
+              refine Finset.sum_congr rfl ?_
+              intro i _hi
+              calc
+                pmfExp (model.offerLaw (rankAgent i)) (fun p =>
+                    if model.price p ≤ model.values (rankAgent i) then
+                      model.price p
+                    else 0)
+                    =
+                  pmfExp (model.offerLaw (rankAgent i)) (fun p =>
+                    if model.price p ≤ bidValue i.val then model.price p
+                    else 0) := by
+                    rw [hbid_eq i.val i.isLt]
+                _ = expectedPayment i.val := by
+                    exact (hpayment_in i.val i.isLt).symm
+        _ = ∑ i ∈ Finset.range n, expectedPayment i := by
+              exact Fin.sum_univ_eq_sum_range expectedPayment n
+    have hrevenue_eq :
+        paper_theorem8_2_raw_cdf_expected_revenue
+            model.values model.price model.offerLaw =
+          ∑ i ∈ Finset.range n, expectedPayment i := by
+      calc
+        paper_theorem8_2_raw_cdf_expected_revenue
+            model.values model.price model.offerLaw =
+          ∑ a : Agent,
+            pmfExp (model.offerLaw a) fun p =>
+              if model.price p ≤ model.values a then model.price p else 0 := rfl
+        _ =
+          ∑ a ∈ (Finset.univ : Finset Agent),
+            pmfExp (model.offerLaw a) fun p =>
+              if model.price p ≤ model.values a then model.price p else 0 := by
+              simp
+        _ =
+          ∑ i : Fin n,
+            pmfExp (model.offerLaw (rankAgent i)) fun p =>
+              if model.price p ≤ model.values (rankAgent i) then
+                model.price p
+              else 0 := hrank_sum.symm
+        _ = ∑ i ∈ Finset.range n, expectedPayment i := hsum_range
+    exact le_of_eq hrevenue_eq
+  have hrevenueAtRank :
+      ∀ i, i < n →
+        expectedPayment i = winProbability (i + 1) * bidValue i - gain i := by
+    intro i hi
+    rw [hpayment_in i hi, hwin_succ i hi, hgain_in i hi]
+    exact
+      paper_theorem8_2_expected_offer_payment_eq_probability_mul_value_sub_surplus
+        (model.offerLaw (rankAgent ⟨i, hi⟩)) model.price (bidValue i)
+  have hgain0 : 0 ≤ gain 0 := by
+    rw [hgain_in 0 hn_pos]
+    refine pmfExp_nonneg_of_forall_nonneg _ _ ?_
+    intro p
+    dsimp [paper_theorem8_2_offer_surplus]
+    by_cases hp : model.price p ≤ bidValue 0
+    · simp [hp]
+    · simp [hp]
+  have hgain_step :
+      ∀ i, i + 1 < n →
+        gain i + winProbability (i + 1) *
+            (bidValue (i + 1) - bidValue i) ≤ gain (i + 1) := by
+    intro i hi
+    let low : Fin n := ⟨i, Nat.lt_trans (Nat.lt_succ_self i) hi⟩
+    let high : Fin n := ⟨i + 1, hi⟩
+    have hbid_le : bidValue i ≤ bidValue (i + 1) := hbid_mono i hi
+    have hgap_low :=
+      paper_theorem8_2_offer_surplus_gap_le
+        (model.offerLaw (rankAgent low)) model.price hbid_le
+    have hsurplus_order :
+        pmfExp (model.offerLaw (rankAgent low))
+            (paper_theorem8_2_offer_surplus model.price
+              (bidValue i) (bidValue (i + 1))) ≤
+          pmfExp (model.offerLaw (rankAgent high))
+            (paper_theorem8_2_offer_surplus model.price
+              (bidValue i) (bidValue (i + 1))) := by
+      exact
+        paper_theorem8_2_pmf_offer_surplus_le_of_cdf_monotone
+          (model.offerLaw (rankAgent low))
+          (model.offerLaw (rankAgent high)) model.price hbid_le
+          (hcdf_rank i hi)
+    have hcut_high :=
+      paper_theorem8_2_offer_surplus_cut_le
+        (model.offerLaw (rankAgent high)) model.price hbid_le
+    rw [hgain_in i low.isLt, hwin_succ i low.isLt,
+      hgain_in (i + 1) hi]
+    exact le_trans hgap_low (le_trans hsurplus_order hcut_high)
+  have hmono :
+      ∀ j, j < n → winProbability j ≤ winProbability (j + 1) := by
+    intro j hj
+    cases j with
+    | zero =>
+        rw [hp0, hwin_succ 0 hn_pos]
+        exact pmfProb_nonneg _ _
+    | succ i =>
+        have hi : i + 1 < n := by
+          simpa [Nat.succ_eq_add_one] using hj
+        let low : Fin n := ⟨i, Nat.lt_trans (Nat.lt_succ_self i) hi⟩
+        let high : Fin n := ⟨i + 1, hi⟩
+        have hbid_le : bidValue i ≤ bidValue (i + 1) := hbid_mono i hi
+        have hcdf_at := hcdf_rank i hi (bidValue i) le_rfl
+        have hthreshold :
+            pmfProb (model.offerLaw (rankAgent high))
+                (fun p => model.price p ≤ bidValue i) ≤
+              pmfProb (model.offerLaw (rankAgent high))
+                (fun p => model.price p ≤ bidValue (i + 1)) := by
+          exact pmfProb_le_of_imp
+            (model.offerLaw (rankAgent high))
+            (fun p => model.price p ≤ bidValue i)
+            (fun p => model.price p ≤ bidValue (i + 1))
+            (fun _ hp => le_trans hp hbid_le)
+        rw [hwin_succ i low.isLt, hwin_succ (i + 1) hi]
+        exact le_trans hcdf_at hthreshold
+  have hendpoint : winProbability n - winProbability 0 ≤ 1 := by
+    cases hn : n with
+    | zero =>
+        rw [hn] at hn_pos
+        exact (Nat.not_lt_zero 0 hn_pos).elim
+    | succ k =>
+        have hklt : k < n := by
+          rw [hn]
+          exact Nat.lt_succ_self k
+        have hlast :
+            winProbability (k + 1) =
+              pmfProb
+                (model.offerLaw
+                  (rankAgent ⟨k, hklt⟩))
+                (fun p => model.price p ≤ bidValue k) := by
+          exact hwin_succ k hklt
+        rw [hp0, hlast]
+        linarith [pmfProb_le_one
+          (model.offerLaw (rankAgent ⟨k, hklt⟩))
+          (fun p => model.price p ≤ bidValue k)]
+  have hvalue :
+      ∀ j, j < n →
+        FiniteSum.rankedFixedPriceRevenue n bidValue j ≤
+          finiteCandidateFixedPriceBenchmark model.values 1 := by
+    intro j hj
+    exact
+      paper_ranked_fixed_price_revenue_le_finite_candidate_benchmark
+        model.values hcard ⟨j, hj⟩ (by
+          change 0 ≤ bidValue j
+          rw [hbid_eq j hj]
+          exact model.value_nonneg _)
+  exact
+    FiniteSum.revenue_le_bound_of_adjacent_gain_recursion_bounded
+      n winProbability bidValue expectedPayment gain hp0 hrevenue
+      hrevenueAtRank hgain0 hgain_step hmono hendpoint hvalue
+      (finiteCandidateFixedPriceBenchmark_nonneg model.values 1)
+
+/--
+Journal-version source model for GHW Theorem 8.2 with raw CDF monotonicity and
+the finite common-quantile coupling used by the journal proof. The `cdf_monotone`
+field records Definition 8.1 on the finite marginal offer laws; the coupling
+fields record the proof's shared-random-seed experiment that realizes those
+marginals with pointwise monotone offers.
+-/
+structure PaperTheorem82JournalRawCDFMonotoneCoupledOfferSourceModel
+    (Agent Price Outcome : Type*) [Fintype Agent] [Nonempty Agent]
+    [DecidableEq Agent] [Fintype Price] [DecidableEq Price]
+    [Fintype Outcome] [DecidableEq Outcome] where
+  values : Agent → ℝ
+  price : Price → ℝ
+  offerLaw : Agent → PMF Price
+  price_nonneg : ∀ p, 0 ≤ price p
+  cdf_monotone :
+    ∀ i j, values i ≤ values j → ∀ t, t ≤ values i →
+      pmfProb (offerLaw i) (fun p => price p ≤ t) ≤
+        pmfProb (offerLaw j) (fun p => price p ≤ t)
+  law : PMF Outcome
+  offer : Outcome → Agent → Price
+  marginal : ∀ i, law.map (fun outcome => offer outcome i) = offerLaw i
+  coupled_monotone :
+    ∀ outcome i j, values i ≤ values j →
+      price (offer outcome j) ≤ price (offer outcome i)
+
+/--
+The raw marginal offer-law revenue agrees with the revenue of the coupled
+common-seed experiment when each coupled coordinate has the stated marginal.
+-/
+theorem paper_theorem8_2_raw_cdf_expected_revenue_eq_coupled_expected_revenue
+    {Agent Price Outcome : Type*} [Fintype Agent] [Nonempty Agent]
+    [DecidableEq Agent] [Fintype Price] [DecidableEq Price]
+    [Fintype Outcome] [DecidableEq Outcome]
+    (model :
+      PaperTheorem82JournalRawCDFMonotoneCoupledOfferSourceModel
+        Agent Price Outcome) :
+    paper_theorem8_2_raw_cdf_expected_revenue
+        model.values model.price model.offerLaw =
+      paper_theorem8_2_journal_monotone_pmf_expected_revenue
+        model.law model.values
+        (fun outcome i => model.price (model.offer outcome i)) := by
+  classical
+  unfold paper_theorem8_2_raw_cdf_expected_revenue
+    paper_theorem8_2_journal_monotone_pmf_expected_revenue
+    paper_theorem8_2_journal_monotone_offer_revenue
+  calc
+    (∑ i : Agent,
+        pmfExp (model.offerLaw i) fun p =>
+          if model.price p ≤ model.values i then model.price p else 0)
+        =
+      ∑ i : Agent,
+        pmfExp (model.law.map (fun outcome => model.offer outcome i)) fun p =>
+          if model.price p ≤ model.values i then model.price p else 0 := by
+        refine Finset.sum_congr rfl ?_
+        intro i _
+        rw [← model.marginal i]
+    _ =
+      ∑ i : Agent,
+        pmfExp model.law fun outcome =>
+          if model.price (model.offer outcome i) ≤ model.values i then
+            model.price (model.offer outcome i)
+          else 0 := by
+        refine Finset.sum_congr rfl ?_
+        intro i _
+        rw [pmfExp_map]
+    _ =
+      pmfExp model.law fun outcome =>
+        ∑ i : Agent,
+          if model.price (model.offer outcome i) ≤ model.values i then
+            model.price (model.offer outcome i)
+          else 0 := by
+        exact
+          (pmfExp_univ_sum model.law
+            (fun i outcome =>
+              if model.price (model.offer outcome i) ≤ model.values i then
+                model.price (model.offer outcome i)
+              else 0)).symm
+
+/--
+Journal-version GHW Theorem 8.2 from raw CDF marginals plus the finite
+common-seed monotone coupling used in the journal proof.
+-/
+theorem
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_coupled_offer_source_model
+    {Agent Price Outcome : Type*} [Fintype Agent] [Nonempty Agent]
+    [DecidableEq Agent] [Fintype Price] [DecidableEq Price]
+    [Fintype Outcome] [DecidableEq Outcome]
+    (model :
+      PaperTheorem82JournalRawCDFMonotoneCoupledOfferSourceModel
+        Agent Price Outcome) :
+    paper_theorem8_2_raw_cdf_expected_revenue
+        model.values model.price model.offerLaw ≤
+      finiteCandidateFixedPriceBenchmark model.values 1 := by
+  classical
+  let coupledModel :
+      PaperTheorem82JournalMonotoneRandomizedOfferSourceModel Agent Outcome :=
+    { values := model.values
+      law := model.law
+      offerPrice := fun outcome i => model.price (model.offer outcome i)
+      offer_nonneg := fun outcome i => model.price_nonneg (model.offer outcome i)
+      offer_monotone := fun outcome i j hvalue =>
+        model.coupled_monotone outcome i j hvalue }
+  rw [paper_theorem8_2_raw_cdf_expected_revenue_eq_coupled_expected_revenue
+    model]
+  exact
+    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_journal_monotone_randomized_offer_source_model
+      coupledModel
 
 /--
 GHW Theorem 9.1 discrete crossing step. Along a fixed total-count line
@@ -10271,6 +12464,942 @@ theorem paper_theorem9_3_deterministic_truthful_ratio_witness_of_anonymous_truth
       hhigh_ge_two halpha_pos
 
 /--
+Erasing an in-bounds element from a constant list leaves one fewer copy of the
+same constant. This paper-local helper keeps the binary erased-bid convention
+definitionally close to `List.replicate`.
+-/
+theorem paper_theorem9_3_eraseIdx_replicate_of_lt {α : Type*} (a : α) :
+    ∀ {n i : ℕ}, i < n →
+      (List.replicate n a).eraseIdx i = List.replicate (n - 1) a
+  | 0, _i, hi => by omega
+  | n + 1, 0, _hi => by simp
+  | n + 1, i + 1, hi => by
+      have hi' : i < n := Nat.succ_lt_succ_iff.mp hi
+      rw [List.replicate_succ]
+      simp [paper_theorem9_3_eraseIdx_replicate_of_lt a hi']
+      cases n with
+      | zero => omega
+      | succ n => simp [List.replicate_succ]
+
+/--
+If a tuple is updated at one coordinate and that same coordinate is erased
+from the resulting `List.ofFn`, the erased list is unchanged.
+-/
+theorem paper_theorem9_3_eraseIdx_ofFn_update_self {α : Type*} :
+    ∀ {n : ℕ} (f : Fin n → α) (i : Fin n) (a : α),
+      (List.ofFn (Function.update f i a)).eraseIdx (i : ℕ) =
+        (List.ofFn f).eraseIdx (i : ℕ)
+  | 0, _f, i, _a => by exact Fin.elim0 i
+  | n + 1, f, i, a => by
+      cases i using Fin.cases with
+      | zero =>
+          simp [Function.update]
+      | succ i =>
+          simp [List.ofFn_succ, Function.update]
+          constructor
+          · intro h
+            cases h
+          · have hfun :
+                (fun i_1 : Fin n => if i_1 = i then a else f i_1.succ) =
+                  Function.update (fun j : Fin n => f j.succ) i a := by
+              funext j
+              rw [Function.update_apply]
+            rw [hfun]
+            exact
+              paper_theorem9_3_eraseIdx_ofFn_update_self
+                (fun j : Fin n => f j.succ) i a
+
+/--
+The anonymous erased bid list seen by a bidder in a two-value profile. High and
+low bidders are stored in separate finite blocks, and the target bidder's own
+coordinate is erased from the appropriate block.
+-/
+def paper_theorem9_3_erased_report_list {highCount lowCount : ℕ}
+    (bids : TwoValueAgent highCount lowCount → ℝ)
+    (i : TwoValueAgent highCount lowCount) : List ℝ :=
+  match i with
+  | Sum.inl i =>
+      (List.ofFn fun j : Fin highCount => bids (Sum.inl j)).eraseIdx (i : ℕ) ++
+        (List.ofFn fun j : Fin lowCount => bids (Sum.inr j))
+  | Sum.inr i =>
+      (List.ofFn fun j : Fin highCount => bids (Sum.inl j)) ++
+        (List.ofFn fun j : Fin lowCount => bids (Sum.inr j)).eraseIdx (i : ℕ)
+
+/--
+Changing a bidder's own report does not change the erased list used to compute
+that bidder's offer.
+-/
+theorem paper_theorem9_3_erased_report_list_update_self
+    {highCount lowCount : ℕ}
+    (bids : TwoValueAgent highCount lowCount → ℝ)
+    (i : TwoValueAgent highCount lowCount) (report : ℝ) :
+    paper_theorem9_3_erased_report_list (Function.update bids i report) i =
+      paper_theorem9_3_erased_report_list bids i := by
+  cases i with
+  | inl i =>
+      simp [paper_theorem9_3_erased_report_list, Function.update]
+      have hfun :
+          (fun j : Fin highCount => if j = i then report else bids (Sum.inl j)) =
+            Function.update (fun j : Fin highCount => bids (Sum.inl j)) i report := by
+        funext j
+        rw [Function.update_apply]
+      rw [hfun]
+      exact
+        paper_theorem9_3_eraseIdx_ofFn_update_self
+          (fun j : Fin highCount => bids (Sum.inl j)) i report
+  | inr i =>
+      simp [paper_theorem9_3_erased_report_list, Function.update]
+      have hfun :
+          (fun j : Fin lowCount => if j = i then report else bids (Sum.inr j)) =
+            Function.update (fun j : Fin lowCount => bids (Sum.inr j)) i report := by
+        funext j
+        rw [Function.update_apply]
+      rw [hfun]
+      exact
+        paper_theorem9_3_eraseIdx_ofFn_update_self
+          (fun j : Fin lowCount => bids (Sum.inr j)) i report
+
+/-- High-bidder erased lists in canonical two-value profiles. -/
+theorem paper_theorem9_3_erased_report_list_twoValueBidProfile_high
+    {highValue highCount lowCount : ℕ} (i : Fin highCount) :
+    paper_theorem9_3_erased_report_list
+        (twoValueBidProfile highValue highCount lowCount) (Sum.inl i) =
+      twoValueErasedBidList highValue (highCount - 1) lowCount := by
+  simp [paper_theorem9_3_erased_report_list, twoValueBidProfile,
+    twoValueErasedBidList,
+    paper_theorem9_3_eraseIdx_replicate_of_lt (highValue : ℝ) i.isLt]
+
+/-- Low-bidder erased lists in canonical two-value profiles. -/
+theorem paper_theorem9_3_erased_report_list_twoValueBidProfile_low
+    {highValue highCount lowCount : ℕ} (i : Fin lowCount) :
+    paper_theorem9_3_erased_report_list
+        (twoValueBidProfile highValue highCount lowCount) (Sum.inr i) =
+      twoValueErasedBidList highValue highCount (lowCount - 1) := by
+  simp [paper_theorem9_3_erased_report_list, twoValueBidProfile,
+    twoValueErasedBidList,
+    paper_theorem9_3_eraseIdx_replicate_of_lt (1 : ℝ) i.isLt]
+
+/-- Deterministic posted-threshold offer at a fixed price. -/
+noncomputable def paper_theorem9_3_threshold_offer (price : ℝ) :
+    ℝ → Option ℝ :=
+  fun report => if price ≤ report then some price else none
+
+theorem paper_theorem9_3_threshold_offer_truthful (price : ℝ) :
+    DeterministicOfferTruthful (paper_theorem9_3_threshold_offer price) := by
+  intro value report
+  unfold deterministicOfferUtility paper_theorem9_3_threshold_offer
+  by_cases hvalue : price ≤ value
+  · by_cases hreport : price ≤ report
+    · simp [hvalue, hreport]
+    · simp [hvalue, hreport, sub_nonneg.mpr hvalue]
+  · by_cases hreport : price ≤ report
+    · simp [hvalue, hreport]
+      exact le_of_not_ge hvalue
+    · simp [hvalue, hreport]
+
+theorem paper_theorem9_3_threshold_offer_feasible (price : ℝ) :
+    DeterministicOfferFeasible (paper_theorem9_3_threshold_offer price) := by
+  intro report offeredPrice hoff
+  unfold paper_theorem9_3_threshold_offer at hoff
+  by_cases h : price ≤ report
+  · simp [h] at hoff
+    subst offeredPrice
+    exact h
+  · simp [h] at hoff
+
+theorem paper_theorem9_3_threshold_offer_noPositiveTransfers
+    {price : ℝ} (hprice : 0 ≤ price) :
+    ∀ report offeredPrice,
+      paper_theorem9_3_threshold_offer price report = some offeredPrice →
+        0 ≤ offeredPrice := by
+  intro report offeredPrice hoff
+  unfold paper_theorem9_3_threshold_offer at hoff
+  by_cases h : price ≤ report
+  · simp [h] at hoff
+    subst offeredPrice
+    exact hprice
+  · simp [h] at hoff
+
+/--
+Convert the paper's anonymous erased-bid-list price rule into the deterministic
+offer rule used by the local auction model.
+-/
+noncomputable def paper_theorem9_3_bid_list_price_offer
+    (priceRule : List ℝ → ℝ) : List ℝ → ℝ → Option ℝ :=
+  fun erasedBids => paper_theorem9_3_threshold_offer (priceRule erasedBids)
+
+/--
+Primitive erased-bid-list offer auction for GHW Theorem 9.3. The offer rule
+sees the anonymous erased bid list and the bidder's report, returning either a
+posted price (`some price`) or rejection (`none`).
+-/
+noncomputable def paper_theorem9_3_bid_list_offer_auction
+    (offerRule : List ℝ → ℝ → Option ℝ)
+    (highCount lowCount : ℕ) :
+    DigitalGoodsAuction (TwoValueAgent highCount lowCount) where
+  allocation bids i :=
+    match offerRule (paper_theorem9_3_erased_report_list bids i) (bids i) with
+    | some _ => 1
+    | none => 0
+  payment bids i :=
+    match offerRule (paper_theorem9_3_erased_report_list bids i) (bids i) with
+    | some price => price
+    | none => 0
+
+/-- The paper's anonymous list-price rule as a concrete bid-list offer auction. -/
+noncomputable def paper_theorem9_3_bid_list_price_auction
+    (priceRule : List ℝ → ℝ)
+    (highCount lowCount : ℕ) :
+    DigitalGoodsAuction (TwoValueAgent highCount lowCount) :=
+  paper_theorem9_3_bid_list_offer_auction
+    (paper_theorem9_3_bid_list_price_offer priceRule)
+    highCount lowCount
+
+theorem paper_theorem9_3_bid_list_offer_auction_binary
+    (offerRule : List ℝ → ℝ → Option ℝ)
+    (highCount lowCount : ℕ) :
+    (paper_theorem9_3_bid_list_offer_auction
+      offerRule highCount lowCount).BinaryAllocation := by
+  intro bids i
+  unfold paper_theorem9_3_bid_list_offer_auction
+  cases h : offerRule (paper_theorem9_3_erased_report_list bids i) (bids i) with
+  | none => simp [h]
+  | some price => simp [h]
+
+theorem paper_theorem9_3_bid_list_offer_auction_truthful
+    (offerRule : List ℝ → ℝ → Option ℝ)
+    {highCount lowCount : ℕ}
+    (htruth :
+      ∀ erasedBids, DeterministicOfferTruthful (offerRule erasedBids)) :
+    paper_digital_goods_truthful
+      (paper_theorem9_3_bid_list_offer_auction
+        offerRule highCount lowCount) := by
+  intro values i report
+  let erased := paper_theorem9_3_erased_report_list values i
+  have hslice := htruth erased (values i) report
+  cases hreport : offerRule erased report with
+  | none =>
+      cases htruthful : offerRule erased (values i) with
+      | none =>
+          simp [DigitalGoodsAuction.utility,
+            paper_theorem9_3_bid_list_offer_auction,
+            deterministicOfferUtility, erased,
+            paper_theorem9_3_erased_report_list_update_self values i report,
+            Function.update_self, hreport, htruthful] at hslice ⊢
+      | some truthPrice =>
+          simp [DigitalGoodsAuction.utility,
+            paper_theorem9_3_bid_list_offer_auction,
+            deterministicOfferUtility, erased,
+            paper_theorem9_3_erased_report_list_update_self values i report,
+            Function.update_self, hreport, htruthful] at hslice ⊢
+          linarith
+  | some reportPrice =>
+      cases htruthful : offerRule erased (values i) with
+      | none =>
+          simp [DigitalGoodsAuction.utility,
+            paper_theorem9_3_bid_list_offer_auction,
+            deterministicOfferUtility, erased,
+            paper_theorem9_3_erased_report_list_update_self values i report,
+            Function.update_self, hreport, htruthful] at hslice ⊢
+          linarith
+      | some truthPrice =>
+          simp [DigitalGoodsAuction.utility,
+            paper_theorem9_3_bid_list_offer_auction,
+            deterministicOfferUtility, erased,
+            paper_theorem9_3_erased_report_list_update_self values i report,
+            Function.update_self, hreport, htruthful] at hslice ⊢
+          linarith
+
+theorem paper_theorem9_3_bid_list_offer_auction_individuallyRational
+    (offerRule : List ℝ → ℝ → Option ℝ)
+    {highCount lowCount : ℕ}
+    (hfeasible :
+      ∀ erasedBids, DeterministicOfferFeasible (offerRule erasedBids)) :
+    (paper_theorem9_3_bid_list_offer_auction
+      offerRule highCount lowCount).IndividuallyRational := by
+  intro values i
+  unfold DigitalGoodsAuction.utility paper_theorem9_3_bid_list_offer_auction
+  cases hoff :
+      offerRule (paper_theorem9_3_erased_report_list values i) (values i) with
+  | none => simp [hoff]
+  | some price =>
+      have hprice :=
+        hfeasible (paper_theorem9_3_erased_report_list values i)
+          (values i) price hoff
+      simp [hoff]
+      linarith
+
+theorem paper_theorem9_3_bid_list_offer_auction_noPositiveTransfers
+    (offerRule : List ℝ → ℝ → Option ℝ)
+    {highCount lowCount : ℕ}
+    (hnpt : ∀ erasedBids report price,
+      offerRule erasedBids report = some price → 0 ≤ price) :
+    (paper_theorem9_3_bid_list_offer_auction
+      offerRule highCount lowCount).NoPositiveTransfers := by
+  intro bids i
+  unfold paper_theorem9_3_bid_list_offer_auction
+  cases hoff :
+      offerRule (paper_theorem9_3_erased_report_list bids i) (bids i) with
+  | none => simp [hoff]
+  | some price =>
+      simpa [hoff] using
+        hnpt (paper_theorem9_3_erased_report_list bids i) (bids i) price hoff
+
+/--
+The primitive offer auction has the erased-list factorization required by the
+existing Theorem 9.3 source bridge for high bidders.
+-/
+theorem paper_theorem9_3_bid_list_offer_auction_offer_factor_high
+    (offerRule : List ℝ → ℝ → Option ℝ)
+    {highValue highCount lowCount : ℕ} (i : Fin highCount) :
+    deterministicAuctionOffer
+        (paper_theorem9_3_bid_list_offer_auction offerRule highCount lowCount)
+        (twoValueBidProfile highValue highCount lowCount) (Sum.inl i) =
+      offerRule
+        (twoValueErasedBidList highValue (highCount - 1) lowCount) := by
+  funext report
+  simp [deterministicAuctionOffer, paper_theorem9_3_bid_list_offer_auction,
+    paper_theorem9_3_erased_report_list_update_self
+      (twoValueBidProfile highValue highCount lowCount) (Sum.inl i) report,
+    paper_theorem9_3_erased_report_list_twoValueBidProfile_high i,
+    Function.update_self]
+  cases h :
+      offerRule
+        (twoValueErasedBidList highValue (highCount - 1) lowCount) report with
+  | none => simp
+  | some price => simp
+
+/--
+The primitive offer auction has the erased-list factorization required by the
+existing Theorem 9.3 source bridge for low bidders.
+-/
+theorem paper_theorem9_3_bid_list_offer_auction_offer_factor_low
+    (offerRule : List ℝ → ℝ → Option ℝ)
+    {highValue highCount lowCount : ℕ} (i : Fin lowCount) :
+    deterministicAuctionOffer
+        (paper_theorem9_3_bid_list_offer_auction offerRule highCount lowCount)
+        (twoValueBidProfile highValue highCount lowCount) (Sum.inr i) =
+      offerRule
+        (twoValueErasedBidList highValue highCount (lowCount - 1)) := by
+  funext report
+  simp [deterministicAuctionOffer, paper_theorem9_3_bid_list_offer_auction,
+    paper_theorem9_3_erased_report_list_update_self
+      (twoValueBidProfile highValue highCount lowCount) (Sum.inr i) report,
+    paper_theorem9_3_erased_report_list_twoValueBidProfile_low i,
+    Function.update_self]
+  cases h :
+      offerRule
+        (twoValueErasedBidList highValue highCount (lowCount - 1)) report with
+  | none => simp
+  | some price => simp
+
+/--
+Primitive anonymity convention for the GHW Theorem 9.3 binary reduction.
+For binary inputs, two bidder slices with the same erased bid list induce the
+same deterministic offer function. The representative slice is always chosen
+as the first high bidder in the binary profile with one additional high bid.
+-/
+structure PaperTheorem93ErasedBidOfferAnonymity
+    {highValue : ℕ}
+    (auctionFamily :
+      ∀ highCount lowCount,
+        DigitalGoodsAuction (TwoValueAgent highCount lowCount)) where
+  high_offer_eq :
+    ∀ highCount lowCount, ∀ i : Fin highCount,
+      deterministicAuctionOffer
+          (auctionFamily highCount lowCount)
+          (twoValueBidProfile highValue highCount lowCount)
+          (Sum.inl i) =
+        deterministicAuctionOffer
+          (auctionFamily ((highCount - 1) + 1) lowCount)
+          (twoValueBidProfile highValue ((highCount - 1) + 1) lowCount)
+          (Sum.inl ⟨0, Nat.succ_pos (highCount - 1)⟩)
+  low_offer_eq :
+    ∀ highCount lowCount, ∀ i : Fin lowCount,
+      deterministicAuctionOffer
+          (auctionFamily highCount lowCount)
+          (twoValueBidProfile highValue highCount lowCount)
+          (Sum.inr i) =
+        deterministicAuctionOffer
+          (auctionFamily (highCount + 1) (lowCount - 1))
+          (twoValueBidProfile highValue (highCount + 1) (lowCount - 1))
+          (Sum.inl ⟨0, Nat.succ_pos highCount⟩)
+
+/--
+Global erased-bid offer relabeling convention for the paper's anonymous
+set-of-bids model. If two bidder slices see the same erased bid list, then the
+deterministic offer as a function of the bidder's own report is the same.
+-/
+structure PaperTheorem93ErasedBidOfferRelabelingAnonymity
+    (auctionFamily :
+      ∀ highCount lowCount,
+        DigitalGoodsAuction (TwoValueAgent highCount lowCount)) where
+  offer_eq_of_erased :
+    ∀ {highCount lowCount highCount' lowCount' : ℕ}
+      (bids : TwoValueAgent highCount lowCount → ℝ)
+      (bids' : TwoValueAgent highCount' lowCount' → ℝ)
+      (i : TwoValueAgent highCount lowCount)
+      (j : TwoValueAgent highCount' lowCount'),
+      paper_theorem9_3_erased_report_list bids i =
+        paper_theorem9_3_erased_report_list bids' j →
+      deterministicAuctionOffer
+          (auctionFamily highCount lowCount) bids i =
+        deterministicAuctionOffer
+          (auctionFamily highCount' lowCount') bids' j
+
+/--
+Concrete erased-bid-list offer auctions satisfy the global relabeling
+convention: after a bidder's own report is erased, only the anonymous erased
+list can affect that bidder's deterministic offer.
+-/
+theorem paper_theorem9_3_bid_list_offer_auction_relabeling_anonymity
+    (offerRule : List ℝ → ℝ → Option ℝ) :
+    PaperTheorem93ErasedBidOfferRelabelingAnonymity
+      (fun highCount lowCount =>
+        paper_theorem9_3_bid_list_offer_auction
+          offerRule highCount lowCount) := by
+  refine { offer_eq_of_erased := ?_ }
+  intro highCount lowCount highCount' lowCount'
+    bids bids' i j herased
+  funext report
+  simp [deterministicAuctionOffer, paper_theorem9_3_bid_list_offer_auction,
+    paper_theorem9_3_erased_report_list_update_self bids i report,
+    paper_theorem9_3_erased_report_list_update_self bids' j report,
+    herased]
+
+/--
+The global erased-list relabeling convention implies the specialized
+representative high/low equalities used by the current Theorem 9.3 bridge.
+-/
+theorem paper_theorem9_3_erased_bid_offer_anonymity_of_relabeling_anonymity
+    {highValue : ℕ}
+    {auctionFamily :
+      ∀ highCount lowCount,
+        DigitalGoodsAuction (TwoValueAgent highCount lowCount)}
+    (hanonymous :
+      PaperTheorem93ErasedBidOfferRelabelingAnonymity auctionFamily) :
+    PaperTheorem93ErasedBidOfferAnonymity
+      (highValue := highValue) auctionFamily := by
+  refine
+    { high_offer_eq := ?_
+      low_offer_eq := ?_ }
+  · intro highCount lowCount i
+    exact
+      hanonymous.offer_eq_of_erased
+        (twoValueBidProfile highValue highCount lowCount)
+        (twoValueBidProfile highValue ((highCount - 1) + 1) lowCount)
+        (Sum.inl i)
+        (Sum.inl ⟨0, Nat.succ_pos (highCount - 1)⟩)
+        (by
+          rw [paper_theorem9_3_erased_report_list_twoValueBidProfile_high i,
+            paper_theorem9_3_erased_report_list_twoValueBidProfile_high
+              ⟨0, Nat.succ_pos (highCount - 1)⟩]
+          simp)
+  · intro highCount lowCount i
+    exact
+      hanonymous.offer_eq_of_erased
+        (twoValueBidProfile highValue highCount lowCount)
+        (twoValueBidProfile highValue (highCount + 1) (lowCount - 1))
+        (Sum.inr i)
+        (Sum.inl ⟨0, Nat.succ_pos highCount⟩)
+        (by
+          rw [paper_theorem9_3_erased_report_list_twoValueBidProfile_low i,
+            paper_theorem9_3_erased_report_list_twoValueBidProfile_high
+              ⟨0, Nat.succ_pos highCount⟩]
+          simp)
+
+/--
+Source-facing deterministic anonymous model for GHW Theorem 9.3. The final
+field is the paper's erased-bid offer anonymity convention; Lemma 9.2 then
+constructs the anonymous list-price certificate internally.
+-/
+structure PaperTheorem93AnonymousTruthfulDeterministicSourceModel
+    (highValue : ℕ) where
+  auctionFamily :
+    ∀ highCount lowCount,
+      DigitalGoodsAuction (TwoValueAgent highCount lowCount)
+  truthful :
+    ∀ highCount lowCount,
+      paper_digital_goods_truthful (auctionFamily highCount lowCount)
+  binary :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).BinaryAllocation
+  individuallyRational :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).IndividuallyRational
+  noPositiveTransfers :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).NoPositiveTransfers
+  source_anonymity :
+    PaperTheorem93ErasedBidOfferAnonymity
+      (highValue := highValue) auctionFamily
+
+/--
+Source-facing deterministic anonymous model using the paper's global
+set-of-bids relabeling convention: bidder slices with the same erased bid list
+induce the same deterministic offer.
+-/
+structure PaperTheorem93AnonymousTruthfulRelabelingSourceModel
+    (highValue : ℕ) where
+  auctionFamily :
+    ∀ highCount lowCount,
+      DigitalGoodsAuction (TwoValueAgent highCount lowCount)
+  truthful :
+    ∀ highCount lowCount,
+      paper_digital_goods_truthful (auctionFamily highCount lowCount)
+  binary :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).BinaryAllocation
+  individuallyRational :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).IndividuallyRational
+  noPositiveTransfers :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).NoPositiveTransfers
+  source_relabeling :
+    PaperTheorem93ErasedBidOfferRelabelingAnonymity auctionFamily
+
+/--
+Primitive set-of-bids source model for GHW Theorem 9.3. The paper writes a
+deterministic auction as mapping a set of bids to outcomes and, in Lemma 9.2,
+studies the focused slice `A_i(B_i^x)`. The `focusedOutcome` field is that
+anonymous erased-bid slice: `none` means rejection, and `some price` means
+satisfied at that price.
+-/
+structure PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel
+    (_highValue : ℕ) where
+  auctionFamily :
+    ∀ highCount lowCount,
+      DigitalGoodsAuction (TwoValueAgent highCount lowCount)
+  truthful :
+    ∀ highCount lowCount,
+      paper_digital_goods_truthful (auctionFamily highCount lowCount)
+  binary :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).BinaryAllocation
+  individuallyRational :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).IndividuallyRational
+  noPositiveTransfers :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).NoPositiveTransfers
+  focusedOutcome : List ℝ → ℝ → Option ℝ
+  focusedOutcome_represents :
+    ∀ {highCount lowCount : ℕ}
+      (bids : TwoValueAgent highCount lowCount → ℝ)
+      (i : TwoValueAgent highCount lowCount),
+      deterministicAuctionOffer
+          (auctionFamily highCount lowCount) bids i =
+        focusedOutcome (paper_theorem9_3_erased_report_list bids i)
+
+/--
+The paper's primitive focused set-of-bids semantics implies global erased-list
+relabeling: two bidder slices with the same erased bid list use the same
+focused outcome function.
+-/
+theorem
+    paper_theorem9_3_erased_bid_offer_relabeling_anonymity_of_primitive_set_of_bids_source_model
+    {highValue : ℕ}
+    (model :
+      PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) :
+    PaperTheorem93ErasedBidOfferRelabelingAnonymity model.auctionFamily := by
+  refine { offer_eq_of_erased := ?_ }
+  intro highCount lowCount highCount' lowCount' bids bids' i j herased
+  rw [model.focusedOutcome_represents bids i,
+    model.focusedOutcome_represents bids' j, herased]
+
+/--
+The primitive focused set-of-bids source model supplies the relabeling source
+model consumed by the Theorem 9.3 proof.
+-/
+noncomputable def
+    paper_theorem9_3_anonymous_truthful_relabeling_source_model_of_primitive_set_of_bids_source_model
+    {highValue : ℕ}
+    (model :
+      PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) :
+    PaperTheorem93AnonymousTruthfulRelabelingSourceModel highValue where
+  auctionFamily := model.auctionFamily
+  truthful := model.truthful
+  binary := model.binary
+  individuallyRational := model.individuallyRational
+  noPositiveTransfers := model.noPositiveTransfers
+  source_relabeling :=
+    paper_theorem9_3_erased_bid_offer_relabeling_anonymity_of_primitive_set_of_bids_source_model
+      model
+
+/--
+The global erased-list relabeling source model implies the specialized source
+model consumed by the existing Theorem 9.3 proof.
+-/
+noncomputable def
+    paper_theorem9_3_anonymous_truthful_deterministic_source_model_of_relabeling_source_model
+    {highValue : ℕ}
+    (model :
+      PaperTheorem93AnonymousTruthfulRelabelingSourceModel highValue) :
+    PaperTheorem93AnonymousTruthfulDeterministicSourceModel highValue where
+  auctionFamily := model.auctionFamily
+  truthful := model.truthful
+  binary := model.binary
+  individuallyRational := model.individuallyRational
+  noPositiveTransfers := model.noPositiveTransfers
+  source_anonymity :=
+    paper_theorem9_3_erased_bid_offer_anonymity_of_relabeling_anonymity
+      model.source_relabeling
+
+/--
+Primitive erased-bid-list offer source model for GHW Theorem 9.3. Instead of
+assuming an already packaged auction family plus erased-list factorization, the
+model starts from the paper-style anonymous offer rule itself.
+-/
+structure PaperTheorem93PrimitiveAnonymousBidListOfferSourceModel
+    (_highValue : ℕ) where
+  offerRule : List ℝ → ℝ → Option ℝ
+  offer_truthful :
+    ∀ erasedBids, DeterministicOfferTruthful (offerRule erasedBids)
+  offer_feasible :
+    ∀ erasedBids, DeterministicOfferFeasible (offerRule erasedBids)
+  offer_noPositiveTransfers :
+    ∀ erasedBids report price,
+      offerRule erasedBids report = some price → 0 ≤ price
+
+/--
+Primitive anonymous list-price source model for GHW Theorem 9.3. This is
+closer to the paper's bid-independent convention than an arbitrary offer
+function: each bidder is offered a nonnegative price computed from the erased
+list of other bids.
+-/
+structure PaperTheorem93PrimitiveAnonymousBidListPriceSourceModel
+    (_highValue : ℕ) where
+  priceRule : List ℝ → ℝ
+  price_nonnegative : ∀ erasedBids, 0 ≤ priceRule erasedBids
+
+/--
+Every nonnegative anonymous erased-list price rule induces the primitive offer
+source model: report at or above the price wins and pays that price, otherwise
+the bidder is rejected.
+-/
+noncomputable def
+    paper_theorem9_3_primitive_bid_list_offer_source_model_of_price_source_model
+    {highValue : ℕ}
+    (model : PaperTheorem93PrimitiveAnonymousBidListPriceSourceModel highValue) :
+    PaperTheorem93PrimitiveAnonymousBidListOfferSourceModel highValue where
+  offerRule := paper_theorem9_3_bid_list_price_offer model.priceRule
+  offer_truthful := by
+    intro erasedBids
+    exact paper_theorem9_3_threshold_offer_truthful (model.priceRule erasedBids)
+  offer_feasible := by
+    intro erasedBids
+    exact paper_theorem9_3_threshold_offer_feasible (model.priceRule erasedBids)
+  offer_noPositiveTransfers := by
+    intro erasedBids report offeredPrice hoff
+    exact
+      paper_theorem9_3_threshold_offer_noPositiveTransfers
+        (model.price_nonnegative erasedBids) report offeredPrice hoff
+
+/--
+Paper-shaped anonymous deterministic source model for GHW Theorem 9.3. The
+auction family is still represented in Lean by identity-aware finite bidder
+types, but the deterministic offer to a bidder factors through the paper's
+anonymous erased bid list. This is the set-of-bids convention used to transfer
+Lemma 9.2's bidder-specific critical prices to a single erased-list price rule.
+-/
+structure PaperTheorem93AnonymousBidListOfferSourceModel
+    (highValue : ℕ) where
+  auctionFamily :
+    ∀ highCount lowCount,
+      DigitalGoodsAuction (TwoValueAgent highCount lowCount)
+  truthful :
+    ∀ highCount lowCount,
+      paper_digital_goods_truthful (auctionFamily highCount lowCount)
+  binary :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).BinaryAllocation
+  individuallyRational :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).IndividuallyRational
+  noPositiveTransfers :
+    ∀ highCount lowCount,
+      (auctionFamily highCount lowCount).NoPositiveTransfers
+  offerRule : List ℝ → ℝ → Option ℝ
+  high_offer_factor :
+    ∀ highCount lowCount, ∀ i : Fin highCount,
+      deterministicAuctionOffer
+          (auctionFamily highCount lowCount)
+          (twoValueBidProfile highValue highCount lowCount)
+          (Sum.inl i) =
+        offerRule
+          (twoValueErasedBidList highValue (highCount - 1) lowCount)
+  low_offer_factor :
+    ∀ highCount lowCount, ∀ i : Fin lowCount,
+      deterministicAuctionOffer
+          (auctionFamily highCount lowCount)
+          (twoValueBidProfile highValue highCount lowCount)
+          (Sum.inr i) =
+        offerRule
+          (twoValueErasedBidList highValue highCount (lowCount - 1))
+
+/--
+Construct the paper-shaped erased-bid-list source model from the primitive
+anonymous offer rule. The auction family, binary allocation, IR/NPT, and the
+erased-list offer factorization are all derived by unfolding the offer auction.
+-/
+noncomputable def
+    paper_theorem9_3_bid_list_offer_source_model_of_primitive_bid_list_offer_source_model
+    {highValue : ℕ}
+    (model : PaperTheorem93PrimitiveAnonymousBidListOfferSourceModel highValue) :
+    PaperTheorem93AnonymousBidListOfferSourceModel highValue where
+  auctionFamily :=
+    paper_theorem9_3_bid_list_offer_auction model.offerRule
+  truthful := by
+    intro highCount lowCount
+    exact
+      paper_theorem9_3_bid_list_offer_auction_truthful
+        model.offerRule model.offer_truthful
+  binary := by
+    intro highCount lowCount
+    exact
+      paper_theorem9_3_bid_list_offer_auction_binary
+        model.offerRule highCount lowCount
+  individuallyRational := by
+    intro highCount lowCount
+    exact
+      paper_theorem9_3_bid_list_offer_auction_individuallyRational
+        model.offerRule model.offer_feasible
+  noPositiveTransfers := by
+    intro highCount lowCount
+    exact
+      paper_theorem9_3_bid_list_offer_auction_noPositiveTransfers
+        model.offerRule model.offer_noPositiveTransfers
+  offerRule := model.offerRule
+  high_offer_factor := by
+    intro highCount lowCount i
+    exact
+      paper_theorem9_3_bid_list_offer_auction_offer_factor_high
+        model.offerRule i
+  low_offer_factor := by
+    intro highCount lowCount i
+    exact
+      paper_theorem9_3_bid_list_offer_auction_offer_factor_low
+        model.offerRule i
+
+/--
+The paper-shaped erased-bid-list offer model implies the anonymous offer
+equality field used by the current Theorem 9.3 bridge.
+-/
+theorem paper_theorem9_3_erased_bid_offer_anonymity_of_bid_list_offer_source_model
+    {highValue : ℕ}
+    (model : PaperTheorem93AnonymousBidListOfferSourceModel highValue) :
+    PaperTheorem93ErasedBidOfferAnonymity
+      (highValue := highValue) model.auctionFamily := by
+  refine
+    { high_offer_eq := ?_
+      low_offer_eq := ?_ }
+  · intro highCount lowCount i
+    rw [model.high_offer_factor highCount lowCount i,
+      model.high_offer_factor ((highCount - 1) + 1) lowCount
+        ⟨0, Nat.succ_pos (highCount - 1)⟩]
+    simp
+  · intro highCount lowCount i
+    rw [model.low_offer_factor highCount lowCount i,
+      model.high_offer_factor (highCount + 1) (lowCount - 1)
+        ⟨0, Nat.succ_pos highCount⟩]
+    simp
+
+/--
+Construct the current deterministic anonymous source model from the paper's
+erased-bid-list offer-factorization source model.
+-/
+noncomputable def
+    paper_theorem9_3_anonymous_truthful_deterministic_source_model_of_bid_list_offer_source_model
+    {highValue : ℕ}
+    (model : PaperTheorem93AnonymousBidListOfferSourceModel highValue) :
+    PaperTheorem93AnonymousTruthfulDeterministicSourceModel highValue where
+  auctionFamily := model.auctionFamily
+  truthful := model.truthful
+  binary := model.binary
+  individuallyRational := model.individuallyRational
+  noPositiveTransfers := model.noPositiveTransfers
+  source_anonymity :=
+    paper_theorem9_3_erased_bid_offer_anonymity_of_bid_list_offer_source_model
+      model
+
+/-- Representative first high bidder for the Section 9.3 erased-list bridge. -/
+def paper_theorem9_3_representative_high_bidder
+    (erasedHigh erasedLow : ℕ) :
+    TwoValueAgent (erasedHigh + 1) erasedLow :=
+  Sum.inl ⟨0, Nat.succ_pos erasedHigh⟩
+
+/--
+Canonical list-price rule obtained from Lemma 9.2. On a binary erased list,
+choose the nonnegative critical price of the first high-bid representative
+slice with that erased list.
+-/
+noncomputable def paper_theorem9_3_representative_erased_count_price
+    (highValue : ℕ)
+    (auctionFamily :
+      ∀ highCount lowCount,
+        DigitalGoodsAuction (TwoValueAgent highCount lowCount))
+    (htruth :
+      ∀ highCount lowCount,
+        paper_digital_goods_truthful (auctionFamily highCount lowCount))
+    (hbinary :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).BinaryAllocation)
+    (hIR :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).IndividuallyRational)
+    (hNPT :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).NoPositiveTransfers)
+    (erasedHigh erasedLow : ℕ) : ℝ :=
+  Classical.choose
+    (paper_lemma9_2_deterministic_truthful_auction_exists_nonnegative_threshold_dominates
+      (auctionFamily (erasedHigh + 1) erasedLow)
+      (htruth (erasedHigh + 1) erasedLow)
+      (hIR (erasedHigh + 1) erasedLow)
+      (hNPT (erasedHigh + 1) erasedLow)
+      (hbinary (erasedHigh + 1) erasedLow)
+      (twoValueBidProfile highValue (erasedHigh + 1) erasedLow)
+      (paper_theorem9_3_representative_high_bidder erasedHigh erasedLow))
+
+noncomputable def paper_theorem9_3_representative_erased_bid_price
+    (highValue : ℕ)
+    (auctionFamily :
+      ∀ highCount lowCount,
+        DigitalGoodsAuction (TwoValueAgent highCount lowCount))
+    (htruth :
+      ∀ highCount lowCount,
+        paper_digital_goods_truthful (auctionFamily highCount lowCount))
+    (hbinary :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).BinaryAllocation)
+    (hIR :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).IndividuallyRational)
+    (hNPT :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).NoPositiveTransfers) :
+    List ℝ → ℝ :=
+  fun bids =>
+    let highCount := twoValueHighCountInList highValue bids
+    let lowCount := twoValueLowCountInList highValue bids
+    paper_theorem9_3_representative_erased_count_price
+      highValue auctionFamily htruth hbinary hIR hNPT highCount lowCount
+
+/--
+The count-indexed representative price is the nonnegative threshold selected
+by Lemma 9.2 for the representative high-bidder slice.
+-/
+theorem paper_theorem9_3_representative_erased_count_price_spec
+    {highValue : ℕ}
+    (auctionFamily :
+      ∀ highCount lowCount,
+        DigitalGoodsAuction (TwoValueAgent highCount lowCount))
+    (htruth :
+      ∀ highCount lowCount,
+        paper_digital_goods_truthful (auctionFamily highCount lowCount))
+    (hbinary :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).BinaryAllocation)
+    (hIR :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).IndividuallyRational)
+    (hNPT :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).NoPositiveTransfers)
+    (erasedHigh erasedLow : ℕ) :
+    0 ≤
+        paper_theorem9_3_representative_erased_count_price
+          highValue auctionFamily htruth hbinary hIR hNPT erasedHigh erasedLow ∧
+      DeterministicOfferThresholdDominates
+        (deterministicAuctionOffer
+          (auctionFamily (erasedHigh + 1) erasedLow)
+          (twoValueBidProfile highValue (erasedHigh + 1) erasedLow)
+          (paper_theorem9_3_representative_high_bidder erasedHigh erasedLow))
+        (paper_theorem9_3_representative_erased_count_price
+          highValue auctionFamily htruth hbinary hIR hNPT erasedHigh erasedLow) := by
+  unfold paper_theorem9_3_representative_erased_count_price
+  exact
+    (Classical.choose_spec
+      (paper_lemma9_2_deterministic_truthful_auction_exists_nonnegative_threshold_dominates
+        (auctionFamily (erasedHigh + 1) erasedLow)
+        (htruth (erasedHigh + 1) erasedLow)
+        (hIR (erasedHigh + 1) erasedLow)
+        (hNPT (erasedHigh + 1) erasedLow)
+        (hbinary (erasedHigh + 1) erasedLow)
+        (twoValueBidProfile highValue (erasedHigh + 1) erasedLow)
+        (paper_theorem9_3_representative_high_bidder erasedHigh erasedLow)))
+
+/--
+The representative erased-bid price selected above is exactly a nonnegative
+threshold dominating the representative deterministic offer slice.
+-/
+theorem paper_theorem9_3_representative_erased_bid_price_spec
+    {highValue : ℕ}
+    (auctionFamily :
+      ∀ highCount lowCount,
+        DigitalGoodsAuction (TwoValueAgent highCount lowCount))
+    (htruth :
+      ∀ highCount lowCount,
+        paper_digital_goods_truthful (auctionFamily highCount lowCount))
+    (hbinary :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).BinaryAllocation)
+    (hIR :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).IndividuallyRational)
+    (hNPT :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).NoPositiveTransfers)
+    {erasedHigh erasedLow : ℕ}
+    (hhigh_ne_one : (highValue : ℝ) ≠ 1) :
+    0 ≤
+        paper_theorem9_3_representative_erased_bid_price
+          highValue auctionFamily htruth hbinary hIR hNPT
+          (twoValueErasedBidList highValue erasedHigh erasedLow) ∧
+      DeterministicOfferThresholdDominates
+        (deterministicAuctionOffer
+          (auctionFamily (erasedHigh + 1) erasedLow)
+          (twoValueBidProfile highValue (erasedHigh + 1) erasedLow)
+          (paper_theorem9_3_representative_high_bidder erasedHigh erasedLow))
+        (paper_theorem9_3_representative_erased_bid_price
+          highValue auctionFamily htruth hbinary hIR hNPT
+          (twoValueErasedBidList highValue erasedHigh erasedLow)) := by
+  have hspec :=
+    paper_theorem9_3_representative_erased_count_price_spec
+      (highValue := highValue) auctionFamily htruth hbinary hIR hNPT
+      erasedHigh erasedLow
+  simpa [paper_theorem9_3_representative_erased_bid_price,
+    twoValueErasedBidList_highCount hhigh_ne_one,
+    twoValueErasedBidList_lowCount hhigh_ne_one] using hspec
+
+/--
+The price rule selected by Lemma 9.2 from a deterministic anonymous source
+model is a primitive nonnegative erased-bid-list price rule. This exposes the
+constructed paper price semantics without replacing the theorem about the
+original auction family's revenue.
+-/
+noncomputable def
+    paper_theorem9_3_primitive_bid_list_price_source_model_of_source_model
+    {highValue : ℕ}
+    (sourceModel :
+      PaperTheorem93AnonymousTruthfulDeterministicSourceModel highValue) :
+    PaperTheorem93PrimitiveAnonymousBidListPriceSourceModel highValue where
+  priceRule :=
+    paper_theorem9_3_representative_erased_bid_price
+      highValue sourceModel.auctionFamily sourceModel.truthful
+      sourceModel.binary sourceModel.individuallyRational
+      sourceModel.noPositiveTransfers
+  price_nonnegative := by
+    intro erasedBids
+    exact
+      (paper_theorem9_3_representative_erased_count_price_spec
+        sourceModel.auctionFamily sourceModel.truthful sourceModel.binary
+        sourceModel.individuallyRational sourceModel.noPositiveTransfers
+        (twoValueHighCountInList highValue erasedBids)
+        (twoValueLowCountInList highValue erasedBids)).1
+
+/--
 Paper model for the final GHW Theorem 9.3 deterministic lower bound on binary
 inputs. The fields make the paper's anonymous deterministic convention explicit:
 after erasing a bidder's own bid, a single anonymous list-price rule supplies a
@@ -10317,6 +13446,82 @@ structure PaperTheorem93AnonymousTruthfulDeterministicModel
             (twoValueErasedBidList highValue highCount (lowCount - 1)))
 
 /--
+Construct the Theorem 9.3 anonymous deterministic model from primitive
+truthfulness/IR/NPT/binary assumptions plus erased-bid offer anonymity. Lemma
+9.2 supplies the representative critical prices; anonymity transfers those
+critical-price slices to every bidder with the same erased bid list.
+-/
+noncomputable def
+    paper_theorem9_3_anonymous_truthful_deterministic_model_of_erased_bid_offer_anonymity
+    {highValue : ℕ}
+    (auctionFamily :
+      ∀ highCount lowCount,
+        DigitalGoodsAuction (TwoValueAgent highCount lowCount))
+    (htruth :
+      ∀ highCount lowCount,
+        paper_digital_goods_truthful (auctionFamily highCount lowCount))
+    (hbinary :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).BinaryAllocation)
+    (hIR :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).IndividuallyRational)
+    (hNPT :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).NoPositiveTransfers)
+    (hhigh_ne_one : (highValue : ℝ) ≠ 1)
+    (hanonymous :
+      PaperTheorem93ErasedBidOfferAnonymity
+        (highValue := highValue) auctionFamily) :
+    PaperTheorem93AnonymousTruthfulDeterministicModel highValue where
+  auctionFamily := auctionFamily
+  priceRule :=
+    paper_theorem9_3_representative_erased_bid_price
+      highValue auctionFamily htruth hbinary hIR hNPT
+  truthful := htruth
+  binary := hbinary
+  individuallyRational := hIR
+  noPositiveTransfers := hNPT
+  high_slice := by
+    intro highCount lowCount i
+    have hspec :=
+      paper_theorem9_3_representative_erased_bid_price_spec
+        auctionFamily htruth hbinary hIR hNPT
+        (erasedHigh := highCount - 1) (erasedLow := lowCount)
+        hhigh_ne_one
+    constructor
+    · exact hspec.1
+    · rw [hanonymous.high_offer_eq highCount lowCount i]
+      exact hspec.2
+  low_slice := by
+    intro highCount lowCount i
+    have hspec :=
+      paper_theorem9_3_representative_erased_bid_price_spec
+        auctionFamily htruth hbinary hIR hNPT
+        (erasedHigh := highCount) (erasedLow := lowCount - 1)
+        hhigh_ne_one
+    constructor
+    · exact hspec.1
+    · rw [hanonymous.low_offer_eq highCount lowCount i]
+      exact hspec.2
+
+/--
+Construct the internal anonymous list-price model from the source-facing
+Theorem 9.3 deterministic anonymous model.
+-/
+noncomputable def
+    paper_theorem9_3_anonymous_truthful_deterministic_model_of_source_model
+    {highValue : ℕ}
+    (sourceModel :
+      PaperTheorem93AnonymousTruthfulDeterministicSourceModel highValue)
+    (hhigh_ne_one : (highValue : ℝ) ≠ 1) :
+    PaperTheorem93AnonymousTruthfulDeterministicModel highValue :=
+  paper_theorem9_3_anonymous_truthful_deterministic_model_of_erased_bid_offer_anonymity
+    sourceModel.auctionFamily sourceModel.truthful sourceModel.binary
+    sourceModel.individuallyRational sourceModel.noPositiveTransfers
+    hhigh_ne_one sourceModel.source_anonymity
+
+/--
 The anonymous truthful deterministic paper model supplies the slice certificate
 used by the Section 9.3 lower-bound theorem.
 -/
@@ -10361,6 +13566,197 @@ theorem paper_theorem9_3_deterministic_truthful_ratio_witness_of_anonymous_truth
       model.individuallyRational model.noPositiveTransfers
       (paper_theorem9_3_binary_anonymous_slice_upper_bound_of_truthful_deterministic_model
         model)
+      hhigh_ge_two halpha_pos
+
+/--
+GHW Theorem 9.3 from primitive deterministic truthful-auction assumptions and
+erased-bid offer anonymity. The anonymous list-price certificate is constructed
+internally from Lemma 9.2 rather than assumed as a model field.
+-/
+theorem paper_theorem9_3_deterministic_truthful_ratio_witness_of_erased_bid_offer_anonymity
+    {highValue alpha : ℕ}
+    (auctionFamily :
+      ∀ highCount lowCount,
+        DigitalGoodsAuction (TwoValueAgent highCount lowCount))
+    (htruth :
+      ∀ highCount lowCount,
+        paper_digital_goods_truthful (auctionFamily highCount lowCount))
+    (hbinary :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).BinaryAllocation)
+    (hIR :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).IndividuallyRational)
+    (hNPT :
+      ∀ highCount lowCount,
+        (auctionFamily highCount lowCount).NoPositiveTransfers)
+    (hanonymous :
+      PaperTheorem93ErasedBidOfferAnonymity
+        (highValue := highValue) auctionFamily)
+    (hhigh_ge_two : 2 ≤ highValue) (halpha_pos : 0 < alpha) :
+    ∃ highCount lowCount : ℕ,
+      (auctionFamily highCount lowCount).revenue
+          (twoValueBidProfile highValue highCount lowCount) /
+          twoValueFixedPriceBenchmark highValue highCount lowCount ≤
+        1 / (highValue : ℝ) ∧
+      (highValue : ℝ) * (alpha : ℝ) ≤
+        twoValueFixedPriceBenchmark highValue highCount lowCount := by
+  have hhigh_ne_one : (highValue : ℝ) ≠ 1 := by
+    have hgt : (1 : ℝ) < (highValue : ℝ) := by
+      exact_mod_cast (Nat.lt_of_succ_le hhigh_ge_two)
+    exact ne_of_gt hgt
+  exact
+    paper_theorem9_3_deterministic_truthful_ratio_witness_of_anonymous_truthful_deterministic_model
+      (paper_theorem9_3_anonymous_truthful_deterministic_model_of_erased_bid_offer_anonymity
+        auctionFamily htruth hbinary hIR hNPT hhigh_ne_one hanonymous)
+      hhigh_ge_two halpha_pos
+
+/--
+GHW Theorem 9.3 source-model form. The source model carries deterministic
+truthfulness, IR/NPT, binary allocation, and erased-bid offer anonymity; Lemma
+9.2 constructs the list-price certificate internally.
+-/
+theorem paper_theorem9_3_deterministic_truthful_ratio_witness_of_source_model
+    {highValue alpha : ℕ}
+    (sourceModel :
+      PaperTheorem93AnonymousTruthfulDeterministicSourceModel highValue)
+    (hhigh_ge_two : 2 ≤ highValue) (halpha_pos : 0 < alpha) :
+    ∃ highCount lowCount : ℕ,
+      (sourceModel.auctionFamily highCount lowCount).revenue
+          (twoValueBidProfile highValue highCount lowCount) /
+          twoValueFixedPriceBenchmark highValue highCount lowCount ≤
+        1 / (highValue : ℝ) ∧
+      (highValue : ℝ) * (alpha : ℝ) ≤
+        twoValueFixedPriceBenchmark highValue highCount lowCount := by
+  have hhigh_ne_one : (highValue : ℝ) ≠ 1 := by
+    have hhigh_gt_one_nat : 1 < highValue :=
+      lt_of_lt_of_le (by decide : 1 < 2) hhigh_ge_two
+    have hhigh_gt_one : (1 : ℝ) < highValue := by
+      exact_mod_cast hhigh_gt_one_nat
+    exact ne_of_gt hhigh_gt_one
+  exact
+    paper_theorem9_3_deterministic_truthful_ratio_witness_of_anonymous_truthful_deterministic_model
+      (paper_theorem9_3_anonymous_truthful_deterministic_model_of_source_model
+        sourceModel hhigh_ne_one)
+      hhigh_ge_two halpha_pos
+
+/--
+GHW Theorem 9.3 source-model form using the paper's global erased-list
+relabeling convention. The specialized erased-bid offer anonymity bridge is
+derived internally before Lemma 9.2 constructs the representative prices.
+-/
+theorem paper_theorem9_3_deterministic_truthful_ratio_witness_of_relabeling_source_model
+    {highValue alpha : ℕ}
+    (sourceModel :
+      PaperTheorem93AnonymousTruthfulRelabelingSourceModel highValue)
+    (hhigh_ge_two : 2 ≤ highValue) (halpha_pos : 0 < alpha) :
+    ∃ highCount lowCount : ℕ,
+      (sourceModel.auctionFamily highCount lowCount).revenue
+          (twoValueBidProfile highValue highCount lowCount) /
+          twoValueFixedPriceBenchmark highValue highCount lowCount ≤
+        1 / (highValue : ℝ) ∧
+      (highValue : ℝ) * (alpha : ℝ) ≤
+        twoValueFixedPriceBenchmark highValue highCount lowCount := by
+  exact
+    paper_theorem9_3_deterministic_truthful_ratio_witness_of_source_model
+      (paper_theorem9_3_anonymous_truthful_deterministic_source_model_of_relabeling_source_model
+        sourceModel)
+      hhigh_ge_two halpha_pos
+
+/--
+GHW Theorem 9.3 source-model form using the paper's primitive set-of-bids
+focused-outcome convention. The global erased-list relabeling bridge is
+derived internally from the focused outcome representation before Lemma 9.2
+constructs representative prices.
+-/
+theorem paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_set_of_bids_source_model
+    {highValue alpha : ℕ}
+    (sourceModel :
+      PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue)
+    (hhigh_ge_two : 2 ≤ highValue) (halpha_pos : 0 < alpha) :
+    ∃ highCount lowCount : ℕ,
+      (sourceModel.auctionFamily highCount lowCount).revenue
+          (twoValueBidProfile highValue highCount lowCount) /
+          twoValueFixedPriceBenchmark highValue highCount lowCount ≤
+        1 / (highValue : ℝ) ∧
+      (highValue : ℝ) * (alpha : ℝ) ≤
+        twoValueFixedPriceBenchmark highValue highCount lowCount := by
+  exact
+    paper_theorem9_3_deterministic_truthful_ratio_witness_of_relabeling_source_model
+      (paper_theorem9_3_anonymous_truthful_relabeling_source_model_of_primitive_set_of_bids_source_model
+        sourceModel)
+      hhigh_ge_two halpha_pos
+
+/--
+GHW Theorem 9.3 source-model form using the paper's erased-bid-list
+offer-factorization convention. The erased-bid offer anonymity bridge is
+derived internally before Lemma 9.2 constructs the representative prices.
+-/
+theorem paper_theorem9_3_deterministic_truthful_ratio_witness_of_bid_list_offer_source_model
+    {highValue alpha : ℕ}
+    (sourceModel :
+      PaperTheorem93AnonymousBidListOfferSourceModel highValue)
+    (hhigh_ge_two : 2 ≤ highValue) (halpha_pos : 0 < alpha) :
+    ∃ highCount lowCount : ℕ,
+      (sourceModel.auctionFamily highCount lowCount).revenue
+          (twoValueBidProfile highValue highCount lowCount) /
+          twoValueFixedPriceBenchmark highValue highCount lowCount ≤
+        1 / (highValue : ℝ) ∧
+      (highValue : ℝ) * (alpha : ℝ) ≤
+        twoValueFixedPriceBenchmark highValue highCount lowCount := by
+  exact
+    paper_theorem9_3_deterministic_truthful_ratio_witness_of_source_model
+      (paper_theorem9_3_anonymous_truthful_deterministic_source_model_of_bid_list_offer_source_model
+        sourceModel)
+      hhigh_ge_two halpha_pos
+
+/--
+GHW Theorem 9.3 source-model form from the primitive anonymous erased-bid-list
+offer rule. This is the strongest current source-level bridge: the auction
+family and erased-list factorization certificate are constructed internally.
+-/
+theorem paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_bid_list_offer_source_model
+    {highValue alpha : ℕ}
+    (sourceModel :
+      PaperTheorem93PrimitiveAnonymousBidListOfferSourceModel highValue)
+    (hhigh_ge_two : 2 ≤ highValue) (halpha_pos : 0 < alpha) :
+    ∃ highCount lowCount : ℕ,
+      ((paper_theorem9_3_bid_list_offer_auction
+          sourceModel.offerRule highCount lowCount).revenue
+          (twoValueBidProfile highValue highCount lowCount)) /
+          twoValueFixedPriceBenchmark highValue highCount lowCount ≤
+        1 / (highValue : ℝ) ∧
+      (highValue : ℝ) * (alpha : ℝ) ≤
+        twoValueFixedPriceBenchmark highValue highCount lowCount := by
+  exact
+    paper_theorem9_3_deterministic_truthful_ratio_witness_of_bid_list_offer_source_model
+      (paper_theorem9_3_bid_list_offer_source_model_of_primitive_bid_list_offer_source_model
+        sourceModel)
+      hhigh_ge_two halpha_pos
+
+/--
+GHW Theorem 9.3 source-model form from the paper's primitive anonymous
+erased-bid-list price rule. The threshold offer semantics, truthfulness,
+IR/NPT, binary allocation, and erased-list offer factorization are all
+constructed internally from the nonnegative list-price rule.
+-/
+theorem paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_bid_list_price_source_model
+    {highValue alpha : ℕ}
+    (sourceModel :
+      PaperTheorem93PrimitiveAnonymousBidListPriceSourceModel highValue)
+    (hhigh_ge_two : 2 ≤ highValue) (halpha_pos : 0 < alpha) :
+    ∃ highCount lowCount : ℕ,
+      ((paper_theorem9_3_bid_list_price_auction
+          sourceModel.priceRule highCount lowCount).revenue
+          (twoValueBidProfile highValue highCount lowCount)) /
+          twoValueFixedPriceBenchmark highValue highCount lowCount ≤
+        1 / (highValue : ℝ) ∧
+      (highValue : ℝ) * (alpha : ℝ) ≤
+        twoValueFixedPriceBenchmark highValue highCount lowCount := by
+  exact
+    paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_bid_list_offer_source_model
+      (paper_theorem9_3_primitive_bid_list_offer_source_model_of_price_source_model
+        sourceModel)
       hhigh_ge_two halpha_pos
 
 /--

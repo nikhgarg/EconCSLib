@@ -60,11 +60,13 @@ public-safe reusable library changes.
 
 ## Public Partial Import Policy
 
-GHW01, LMMS04, and LOS02 are public as partial formalizations because their
-remaining gaps are explicit and useful to expose. GHW01 needs its Theorem 8.2
-anonymous sorted-bid certificate and Theorem 9.3 anonymous erased-bid
-critical-price certificate discharged or promoted to source assumptions. LMMS04
-needs fixed-dimension integer-program runtime infrastructure; LOS02 needs
+LMMS04 and LOS02 are public as partial formalizations because their remaining
+gaps are explicit and useful to expose. GHW01 has moved out of the partial
+bucket: it is formalized using the journal version as the controlling source
+where it refines the preliminary InterTrust/SODA text; Theorem 8.2 is the
+journal monotone-auction statement, and Lean records the broader
+technical-report wording as a refuted weak reading. LMMS04 needs
+fixed-dimension integer-program runtime infrastructure; LOS02 needs
 machine-level polynomial-time reductions, randomized complexity classes, and
 cited Karp/Hastad-style hardness facts.
 
