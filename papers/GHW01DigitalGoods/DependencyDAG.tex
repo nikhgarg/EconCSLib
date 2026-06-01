@@ -69,23 +69,23 @@
 \draw[dag_arrow] (Thm41.south) -- (Cor42.north);
 
 \draw[dag_arrow] (Thresholds.north east) to[out=35,in=210,looseness=0.85] (Sampling.south west);
-\draw[dag_dashed_arrow] (Sampling.south) -- (Lemma61.north);
-\draw[dag_dashed_arrow] (Lemma61.south) -- (Thm62.north);
+\draw[dag_arrow] (Sampling.south) -- (Lemma61.north);
+\draw[dag_arrow] (Lemma61.south) -- (Thm62.north);
 \draw[dag_arrow] (Benchmark.south east) to[out=-15,in=205,looseness=0.9] (Thm62.south west);
 
 \draw[dag_arrow] (Thresholds.north east) to[out=25,in=210,looseness=0.75] (Weighted.south west);
 \draw[dag_arrow] (Weighted.south) -- (Thm71.north);
 \draw[dag_arrow] (Thm71.south) -- (Thm72.north);
 
-\draw[dag_dashed_arrow] (RandomTruthful.south) -- (Lemma81.north);
-\draw[dag_dashed_arrow] (Lemma81.south) -- (Thm82.north);
-\draw[dag_dashed_arrow] (Benchmark.south east) to[out=-20,in=210,looseness=0.65] (Thm82.south west);
+\draw[dag_arrow] (RandomTruthful.south) -- (Lemma81.north);
+\draw[dag_arrow] (Lemma81.south) -- (Thm82.north);
+\draw[dag_arrow] (Benchmark.south east) to[out=-20,in=210,looseness=0.65] (Thm82.south west);
 
 \draw[dag_arrow] (Benchmark.south) -- (DetModel.north);
-\draw[dag_dashed_arrow] (DetModel.south) -- (Thm91.north);
-\draw[dag_dashed_arrow] (DetModel.east) to[out=-35,in=35,looseness=1.15] (Lemma92.east);
-\draw[dag_dashed_arrow] (Thm91.east) -| (Thm93.north);
-\draw[dag_dashed_arrow] (Lemma92.east) -- (Thm93.west);
+\draw[dag_arrow] (DetModel.south) -- (Thm91.north);
+\draw[dag_arrow] (DetModel.east) to[out=-35,in=35,looseness=1.15] (Lemma92.east);
+\draw[dag_arrow] (Thm91.east) -| (Thm93.north);
+\draw[dag_arrow] (Lemma92.east) -- (Thm93.west);
 \end{dagPaperBody}
 \end{tikzpicture}
 \end{document}

@@ -163,14 +163,18 @@ PNG conversion of `DependencyDAG.pdf`; no node overlap, legend overlap,
 label-overlap, or arrow-through-text issue remained after rerouting the final
 arrows.
 
-Dashed edges in the DAG are paper-route/context links, not unresolved Lean
-dependencies. There are no open or conditional DAG nodes.
+The DAG uses closed dependency arrows only; it does not use the shared dashed
+edge style, which can denote unresolved or conditional dependencies in other
+paper diagrams. There are no open or conditional DAG nodes.
 
 ## 11. Conditional Results and Remaining Gaps
 
-None. All public paper endpoints discharge their bridge/adaptation work
-internally. Older coupled-offer and proof-adapter declarations remain only as
-auxiliary reusable-library/audit material.
+None under the source/version choice recorded above. Theorem 8.2 is the journal
+raw-CDF monotone-offer theorem, not the false broad weak-DSIC reading. Theorem
+9.3 is the deterministic truthful theorem under the paper's set-of-bids
+focused-outcome convention. All bridge/adaptation work from those source-shaped
+models is discharged internally. Older coupled-offer and proof-adapter
+declarations remain only as auxiliary reusable-library/audit material.
 
 ## 12. Suspected Paper Errors or Inconsistencies
 
@@ -198,7 +202,7 @@ auxiliary reusable-library/audit material.
   DependencyDAG.tex` passed from the paper folder. MiKTeX emitted read-only log
   warnings for its home cache, but produced the PDF successfully.
 - Repository audit: `python3 scripts/audit_repository.py` passed with 0 errors
-  and 32 warnings. The warnings are public-checkout packaging or unrelated
+  and 21 warnings. The warnings are public-checkout packaging or unrelated
   paper review-slice/cache items, including the expected missing ignored source
   PDF for GHW01.
 - `git diff --check`: passed.

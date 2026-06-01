@@ -655,6 +655,9 @@ the Lean statements against the paper.
     is allowed only when it is clearly non-required for the formal proof or
     explicitly documented as a bypassed paper route; otherwise the target node
     should not be green.
+    For a paper marked fully `formalized`, prefer using only solid arrows in the
+    final human-facing DAG unless the diagram has a local legend/note that makes
+    a non-conditional dashed meaning impossible to misread.
   - **Paper-route vs formal-route discipline:** If formalization discovers that
     a paper lemma is misstated, too strong, or unnecessary for a later theorem,
     do not silently collapse the distinction. Record the source issue in the
