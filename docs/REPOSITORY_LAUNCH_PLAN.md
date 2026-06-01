@@ -12,8 +12,8 @@ repositories aligned while preparing GitHub Pages.
   but broad announcement and GitHub Pages publication are still pending.
 - The public `main` branch contains the public Lean library, public paper
   folders, contribution docs, status docs, and release checklist.
-- The `pages-scaffold` branch contains the draft static site, disabled Pages
-  workflow, and workshop-paper PDF asset.
+- The public `main` branch contains the static site source and Pages workflow;
+  repository Pages settings still need to be configured.
 - GitHub Pages is intentionally not configured yet.
 
 ## Public/Private Rule
@@ -50,13 +50,10 @@ public-safe reusable library changes.
 ## Pages Activation Sequence
 
 1. Review `site/index.html` locally.
-2. Rename `.github/workflows/pages.yml.disabled` to
-   `.github/workflows/pages.yml`.
-3. Merge `pages-scaffold` into `main`.
-4. Push `main`.
-5. In GitHub settings, configure Pages to deploy from GitHub Actions.
-6. Confirm the Pages URL serves the site and draft PDF.
-7. Add the Pages URL to the repository homepage field.
+2. Push `main`.
+3. In GitHub settings, configure Pages to deploy from GitHub Actions.
+4. Confirm the Pages URL serves the site.
+5. Add the Pages URL to the repository homepage field.
 
 ## Public Partial Import Policy
 

@@ -31,6 +31,7 @@ REQUIRED_PAPER_FILES = {
 }
 REQUIRED_GITIGNORE_PATTERNS = {
     "*.pdf",
+    "!DependencyDAG.pdf",
     "*.aux",
     "*.log",
     "*.fls",
@@ -40,7 +41,6 @@ REQUIRED_GITIGNORE_PATTERNS = {
 REVIEW_LAUNCHER_NAME = "review-dashboard.sh"
 REVIEW_LAUNCHER_TARGET = "scripts/launch_review_dashboard.sh"
 REVIEW_TRACE_CACHE = ".review_traces/paper_interface_cache.json"
-REVIEW_SLICES_NAME = "review_slices.json"
 REVIEW_ROW_WARN_THRESHOLD = 80
 PAPER_STATUS_FILE = PAPERS / "status.json"
 PAPER_INTERFACE_OVERSIZED_LINE_THRESHOLD = 3000
@@ -99,6 +99,10 @@ REVIEW_DECL_RE = re.compile(
     r"(?:theorem|lemma|def|abbrev)\s+([A-Za-z_][A-Za-z0-9_']*)\b",
     re.M,
 )
+REVIEW_EXPORT_OPEN_RE = re.compile(
+    r"^\s*export\s+[A-Za-z_][A-Za-z0-9_']*(?:\.[A-Za-z_][A-Za-z0-9_']*)*\s+\((.*)$"
+)
+REVIEW_EXPORT_NAME_RE = re.compile(r"\b[A-Za-z_][A-Za-z0-9_']*\b")
 LEDGER_PLACEHOLDER_RE = re.compile(
     r"\[Paper Title\]|\bnamespace TEMPLATE\b|\bpaperDefinition1\b|\bpaper_theorem_1\b|Replace before claiming progress",
 )
@@ -307,26 +311,71 @@ def _safe_slice_id(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]+", "-", value.strip()).strip("-") or "all"
 
 
-def review_slice_counts(interface_text: str, slice_file: Path) -> tuple[list[str], dict[str, int]]:
-    """Count human-review declaration rows by optional review-slice metadata."""
+def review_rows_from_interface_text(interface_text: str) -> list[tuple[int, str]]:
+    """Return declaration/export rows exposed by a human review interface."""
 
+    lines = interface_text.splitlines()
     decls: list[tuple[int, str]] = []
-    for line_number, line in enumerate(interface_text.splitlines(), start=1):
+    line_number = 1
+    block_depth = 0
+    while line_number <= len(lines):
+        line = lines[line_number - 1]
+        stripped = line.strip()
+        if block_depth > 0:
+            block_depth += line.count("/-")
+            block_depth -= line.count("-/")
+            block_depth = max(block_depth, 0)
+            line_number += 1
+            continue
+        if stripped.startswith("/-"):
+            block_depth += line.count("/-")
+            block_depth -= line.count("-/")
+            block_depth = max(block_depth, 0)
+            line_number += 1
+            continue
+        if stripped.startswith("--"):
+            line_number += 1
+            continue
         match = REVIEW_DECL_RE.match(line)
         if match:
             decls.append((line_number, match.group(1)))
-    if not slice_file.exists():
+            line_number += 1
+            continue
+        export_match = REVIEW_EXPORT_OPEN_RE.match(line)
+        if export_match:
+            chunks = [export_match.group(1)]
+            end_line_number = line_number
+            while ")" not in chunks[-1] and end_line_number < len(lines):
+                end_line_number += 1
+                chunks.append(lines[end_line_number - 1])
+            names_text = "\n".join(chunks).split(")", 1)[0]
+            for name in REVIEW_EXPORT_NAME_RE.findall(names_text):
+                decls.append((line_number, name))
+            line_number = end_line_number + 1
+            continue
+        line_number += 1
+    return decls
+
+
+def review_surface_slice_counts(interface_text: str, status_file: Path) -> tuple[list[str], dict[str, int]]:
+    """Count human-review declaration rows by paper-local status review slices."""
+
+    decls = review_rows_from_interface_text(interface_text)
+    if not status_file.exists():
         return [], {"all": len(decls)}
 
     try:
-        payload = json.loads(slice_file.read_text(encoding="utf-8"))
+        payload = json.loads(status_file.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
-        return ["review_slices.json is not valid JSON"], {"all": len(decls)}
+        return ["status.json is not valid JSON"], {"all": len(decls)}
     if not isinstance(payload, dict):
-        return ["review_slices.json should contain a JSON object"], {"all": len(decls)}
-    raw_slices = payload.get("slices")
+        return ["status.json should contain a JSON object"], {"all": len(decls)}
+    review_surface = payload.get("review_surface")
+    if not isinstance(review_surface, dict):
+        return ["status.json should define a `review_surface` object"], {"all": len(decls)}
+    raw_slices = review_surface.get("slices")
     if not isinstance(raw_slices, list) or not raw_slices:
-        return ["review_slices.json should define a nonempty `slices` list"], {"all": len(decls)}
+        return ["status.json review_surface should define a nonempty `slices` list"], {"all": len(decls)}
 
     problems: list[str] = []
     slices: list[dict[str, object]] = []
@@ -435,29 +484,29 @@ def check_review_launcher_readiness(include_active: bool) -> list[Finding]:
             )
 
         interface_text = interface.read_text(encoding="utf-8")
-        item_count = len(REVIEW_DECL_RE.findall(interface_text))
+        item_count = len(review_rows_from_interface_text(interface_text))
         if item_count == 0:
             findings.append(Finding("ERROR", interface, "review dashboard finds no review rows"))
         elif item_count > REVIEW_ROW_WARN_THRESHOLD:
-            slice_file = folder / REVIEW_SLICES_NAME
-            problems, counts = review_slice_counts(interface_text, slice_file)
+            status_file = folder / "status.json"
+            problems, counts = review_surface_slice_counts(interface_text, status_file)
             for problem in sorted(set(problems)):
-                findings.append(Finding("ERROR", slice_file, problem))
+                findings.append(Finding("ERROR", status_file, problem))
             max_slice = max(counts.values()) if counts else item_count
-            if not slice_file.exists():
+            if not status_file.exists():
                 findings.append(
                     Finding(
                         "WARN",
                         interface,
-                        f"review dashboard exposes {item_count} rows; add `{REVIEW_SLICES_NAME}` slices of at most "
-                        f"{REVIEW_ROW_WARN_THRESHOLD} rows",
+                        f"review dashboard exposes {item_count} rows; add `status.json` "
+                        f"`review_surface.slices` of at most {REVIEW_ROW_WARN_THRESHOLD} rows",
                     )
                 )
             elif max_slice > REVIEW_ROW_WARN_THRESHOLD:
                 findings.append(
                     Finding(
                         "WARN",
-                        slice_file,
+                        status_file,
                         f"largest review slice has {max_slice} rows; keep slices at or below "
                         f"{REVIEW_ROW_WARN_THRESHOLD} rows",
                     )
@@ -466,7 +515,7 @@ def check_review_launcher_readiness(include_active: bool) -> list[Finding]:
                 findings.append(
                     Finding(
                         "INFO",
-                        slice_file,
+                        status_file,
                         f"review dashboard exposes {item_count} rows across {len(counts)} review slices",
                     )
                 )
@@ -715,6 +764,24 @@ def check_machine_paper_status() -> list[Finding]:
             findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"duplicate paper status entry `{paper_id}`"))
         entries[paper_id] = entry
 
+        paper_status_file = PAPERS / paper_id / "status.json"
+        if not paper_status_file.exists():
+            findings.append(Finding("ERROR", paper_status_file, "missing paper-local status source"))
+        else:
+            try:
+                paper_status_payload = json.loads(paper_status_file.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as exc:
+                findings.append(Finding("ERROR", paper_status_file, f"invalid JSON: {exc.msg}"))
+                paper_status_payload = None
+            if isinstance(paper_status_payload, dict) and paper_status_payload != entry:
+                findings.append(
+                    Finding(
+                        "ERROR",
+                        PAPER_STATUS_FILE,
+                        f"`{paper_id}` aggregate entry is out of sync with `{paper_status_file.relative_to(ROOT)}`",
+                    )
+                )
+
         for field in ("title", "source_version", "build_target", "status", "review_entrypoint"):
             if not isinstance(entry.get(field), str) or not entry[field].strip():
                 findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` has missing `{field}`"))
@@ -744,6 +811,17 @@ def check_machine_paper_status() -> list[Finding]:
             findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` has missing `paper_interface` object"))
             continue
 
+        review_surface = entry.get("review_surface")
+        if not isinstance(review_surface, dict):
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` has missing `review_surface` object"))
+            review_surface = {}
+        include_names = review_surface.get("include_names")
+        if not isinstance(include_names, list) or not all(isinstance(name, str) and name for name in include_names):
+            findings.append(
+                Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}.review_surface.include_names` should be a nonempty string list")
+            )
+            include_names = []
+
         path_value = interface.get("path")
         if not isinstance(path_value, str) or not path_value:
             findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}.paper_interface.path` is missing"))
@@ -755,6 +833,7 @@ def check_machine_paper_status() -> list[Finding]:
             continue
 
         actual_line_count = len(interface_path.read_text(encoding="utf-8").splitlines())
+        actual_review_names = [name for _line, name in review_rows_from_interface_text(interface_path.read_text(encoding="utf-8"))]
         recorded_line_count = interface.get("line_count")
         if recorded_line_count != actual_line_count:
             findings.append(
@@ -770,6 +849,20 @@ def check_machine_paper_status() -> list[Finding]:
         if isinstance(total_rows, int) and review_rows != total_rows:
             findings.append(
                 Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` review_rows should match human_review.total_rows")
+            )
+        if isinstance(total_rows, int) and include_names and len(include_names) != total_rows:
+            findings.append(
+                Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` include_names length should match human_review.total_rows")
+            )
+        missing_review_names = set(include_names) - set(actual_review_names)
+        if missing_review_names:
+            findings.append(
+                Finding(
+                    "ERROR",
+                    PAPER_STATUS_FILE,
+                    f"`{paper_id}` status names are not exported by PaperInterface.lean: "
+                    + ", ".join(sorted(missing_review_names)),
+                )
             )
 
         oversized = interface.get("oversized")

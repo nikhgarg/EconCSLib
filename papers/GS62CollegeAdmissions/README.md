@@ -1,5 +1,7 @@
 # College Admissions and the Stability of Marriage
 
+Machine-readable status source: [`status.json`](status.json).
+
 ## Source Version
 
 - Paper: *College Admissions and the Stability of Marriage*

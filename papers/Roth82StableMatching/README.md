@@ -1,5 +1,7 @@
 # The Economics of Matching: Stability and Incentives
 
+Machine-readable status source: [`status.json`](status.json).
+
 ## Source Version
 
 - Paper: *The Economics of Matching: Stability and Incentives*

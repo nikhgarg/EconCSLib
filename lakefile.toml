@@ -1,7 +1,20 @@
 name = "EconCSLib"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["EconCSLib"]
+defaultTargets = [
+  "EconCSLib",
+  "GCG24UserItemFairness",
+  "DSWG24DiscretizationBias",
+  "MBJG25ProducerFairness",
+  "LG21TestOptionalPolicies",
+  "GN21DriverSurgePricing",
+  "Roth82StableMatching",
+  "GS62CollegeAdmissions",
+  "GHW01DigitalGoods",
+  "MSVV07AdWords",
+  "LMMS04FairDivision",
+  "LOS02CombinatorialAuctions",
+]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`

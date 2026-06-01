@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "id": "LG21TestOptionalPolicies",
+  "title": "Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps",
+  "authors": "Zhi Liu and Nikhil Garg",
+  "source_version": "EAAMO 2021 / arXiv:2107.08922",
+  "build_target": "lake build LG21TestOptionalPolicies",
+  "status": "formalized",
+  "main_caveat": "All named definitions and Section 3--4 results are closed under paper-facing source models; dashboard review remains external.",
+  "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 16,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
+    "line_count": 92,
+    "declaration_rows": 16,
+    "review_rows": 16,
+    "oversized": false,
+    "maintainability_issue": null,
+    "proof_interface_path": "papers/LG21TestOptionalPolicies/ProofInterface.lean",
+    "proof_interface_line_count": 25103
+  },
+  "artifacts": {
+    "readme": "papers/LG21TestOptionalPolicies/README.md",
+    "paper_interface": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
+    "final_validation_report": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/LG21TestOptionalPolicies/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/LG21TestOptionalPolicies/DependencyDAG.pdf",
+    "proof_interface": "papers/LG21TestOptionalPolicies/ProofInterface.lean"
+  },
+  "review_surface": {
+    "source_file": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
+    "include_names": [
+      "definition1_source_equilibrium",
+      "definition2_latent_skill_fair",
+      "definition3_observable_fair",
+      "definition4_demographic_fair",
+      "definition5_test_blank",
+      "theorem3_1_optional_reporting",
+      "theorem3_1_report_required",
+      "theorem3_2_optional_reporting_fairness_impossibility",
+      "theorem3_2_optional_reporting_no_test_relevance",
+      "theorem3_2_report_required_fairness_impossibility",
+      "theorem3_2_report_required_no_test_relevance",
+      "lemma4_1_observed_access_strategy_proofness",
+      "proposition4_2_base_indexed_posterior_surface",
+      "proposition4_3_base_mixed_extra_signal_surface",
+      "definition6_resampling_policy",
+      "theorem4_4_resampling_policy"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "definition1_source_equilibrium",
+          "definition2_latent_skill_fair",
+          "definition3_observable_fair",
+          "definition4_demographic_fair",
+          "definition5_test_blank",
+          "theorem3_1_optional_reporting",
+          "theorem3_1_report_required",
+          "theorem3_2_optional_reporting_fairness_impossibility",
+          "theorem3_2_optional_reporting_no_test_relevance",
+          "theorem3_2_report_required_fairness_impossibility",
+          "theorem3_2_report_required_no_test_relevance",
+          "lemma4_1_observed_access_strategy_proofness",
+          "proposition4_2_base_indexed_posterior_surface",
+          "proposition4_3_base_mixed_extra_signal_surface",
+          "definition6_resampling_policy",
+          "theorem4_4_resampling_policy"
+        ]
+      }
+    ]
+  }
+}

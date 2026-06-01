@@ -1,5 +1,7 @@
 # Balancing Producer Fairness and Efficiency via Bayesian Rating System Design
 
+Machine-readable status source: [`status.json`](status.json).
+
 ## Source Version
 
 - Paper: *Balancing Producer Fairness and Efficiency via Bayesian Rating System Design*

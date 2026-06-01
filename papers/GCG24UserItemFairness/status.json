@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "id": "GCG24UserItemFairness",
+  "title": "User-item fairness tradeoffs in recommendations",
+  "authors": "Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg",
+  "source_version": "NeurIPS 2024 / arXiv:2412.04466",
+  "build_target": "lake build GCG24UserItemFairness",
+  "status": "formalized",
+  "main_caveat": "Recommendation fairness propositions and theorem statements are closed under the formal source model.",
+  "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 18,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
+    "line_count": 235,
+    "declaration_rows": 18,
+    "review_rows": 18,
+    "oversized": false,
+    "maintainability_issue": null
+  },
+  "artifacts": {
+    "readme": "papers/GCG24UserItemFairness/README.md",
+    "paper_interface": "papers/GCG24UserItemFairness/PaperInterface.lean",
+    "final_validation_report": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/GCG24UserItemFairness/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf"
+  },
+  "review_surface": {
+    "source_file": "papers/GCG24UserItemFairness/PaperInterface.lean",
+    "include_names": [
+      "recommendationUtility",
+      "rawUserUtility",
+      "normalizedUserUtility",
+      "userFairness",
+      "rawItemUtility",
+      "itemNormalizer",
+      "normalizedItemUtility",
+      "itemFairness",
+      "solvesProblemOne",
+      "priceOfFairnessAt",
+      "priceOfFairness",
+      "priceOfMisestimation",
+      "proposition1_symmetric_lp_reduction",
+      "proposition2_symmetric_optimum_exists",
+      "theorem3_price_of_fairness_decreases",
+      "theorem3_price_of_fairness_strictly_decreases",
+      "theorem4_misestimation_tradeoff_typeZero",
+      "theorem4_misestimation_tradeoff_typeOne"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "recommendationUtility",
+          "rawUserUtility",
+          "normalizedUserUtility",
+          "userFairness",
+          "rawItemUtility",
+          "itemNormalizer",
+          "normalizedItemUtility",
+          "itemFairness",
+          "solvesProblemOne",
+          "priceOfFairnessAt",
+          "priceOfFairness",
+          "priceOfMisestimation",
+          "proposition1_symmetric_lp_reduction",
+          "proposition2_symmetric_optimum_exists",
+          "theorem3_price_of_fairness_decreases",
+          "theorem3_price_of_fairness_strictly_decreases",
+          "theorem4_misestimation_tradeoff_typeZero",
+          "theorem4_misestimation_tradeoff_typeOne"
+        ]
+      }
+    ]
+  }
+}

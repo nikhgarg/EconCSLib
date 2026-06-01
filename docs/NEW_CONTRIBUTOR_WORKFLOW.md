@@ -156,10 +156,11 @@ Before opening a pull request:
 - Run the relevant `lake build` target.
 - Push only a public-safe review branch or fork after the work is ready for
   review.
-- Keep source PDFs, rendered PDFs, dashboard caches, and local artifacts out of
-  Git unless the repository already tracks that artifact type intentionally.
-- Update `README.md`, `DependencyDAG.tex`, `PaperInterface.lean`, and
-  `FINAL_VALIDATION_REPORT.md` when changing paper-facing status.
+- Keep source PDFs, dashboard caches, and local artifacts out of Git unless the
+  repository already tracks that artifact type intentionally.
+- Update `README.md`, `DependencyDAG.tex`, `DependencyDAG.pdf`,
+  `PaperInterface.lean`, `status.json`, and `FINAL_VALIDATION_REPORT.md` when
+  changing paper-facing status.
 - Explain any caveat, source-model assumption, certificate, or proof-route
   deviation in human-facing files.
 - Include the exact commands you ran in the pull request description.

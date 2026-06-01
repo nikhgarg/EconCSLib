@@ -4,12 +4,13 @@
 The script performs the deterministic intake step for a new source paper:
 create the citation-specific folder, cache the source PDF when possible,
 extract a text cache with `pdftotext` when available, and write the required
-README/DAG/MainTheorems/PaperInterface/formalization-plan/.gitignore files.
+README/DAG/MainTheorems/PaperInterface/status/formalization-plan/.gitignore files.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import shutil
 import subprocess
@@ -146,9 +147,10 @@ the text.
 
 - Implementation theorem file: `{folder}/MainTheorems.lean`
 - Human-facing theorem file: `{folder}/PaperInterface.lean`
+- Machine-readable status source: `{folder}/status.json`
 - Outside-Lean proof plan: `{folder}/FORMALIZATION_PLAN.md`
 - Dependency DAG: `{folder}/DependencyDAG.tex`
-- Rendered DAG: `{folder}/DependencyDAG.pdf` when generated locally
+- Rendered DAG: `{folder}/DependencyDAG.pdf`
 
 `PaperInterface.lean` should be readable on its own: expose source formulas and
 direct theorem statements there, with short proofs that call into
@@ -161,7 +163,9 @@ Use the controlled status vocabulary from `../../docs/STATUS.md`:
 remaining certificates, or proof-route notes in the final column rather than in
 the status cell.
 Keep theorem/table content synchronized with `DependencyDAG.tex` node styles and
-`MainTheorems.lean` declarations before marking a row `formalized`.
+`MainTheorems.lean` declarations before marking a row `formalized`. Keep
+`status.json` as the source of truth for review rows, artifact paths, and the
+paper's top-level public status.
 
 ## Theorem Status
 
@@ -178,8 +182,63 @@ Keep theorem/table content synchronized with `DependencyDAG.tex` node styles and
 - [ ] Populate `DependencyDAG.tex` with the same named-result inventory.
 - [ ] Replace placeholders in `MainTheorems.lean` and `PaperInterface.lean`
       before updating any status row.
+- [ ] Update `status.json`, then run `python3 scripts/sync_paper_status.py`.
 - [ ] Rebuild `DependencyDAG.pdf` and verify visually after each significant edit.
 """
+
+
+def status_text(args: argparse.Namespace, folder: str) -> str:
+    title = args.title or "[Paper Title]"
+    authors = args.authors or "[Authors]"
+    version = args.version or "[Conference/Journal/arXiv version]"
+    return json.dumps(
+        {
+            "schema": 1,
+            "id": folder,
+            "title": title,
+            "authors": authors,
+            "source_version": version,
+            "build_target": f"lake build {folder}",
+            "status": "not started",
+            "main_caveat": "Replace with the public caveat or state that no caveat is known.",
+            "review_entrypoint": f"papers/{folder}/FINAL_VALIDATION_REPORT.md",
+            "human_review": {
+                "reviewed_rows": 0,
+                "total_rows": 0,
+                "stale_rows": 0,
+                "mismatch_rows": 0,
+                "source": "paper-local status.json review_surface; human entries come from dashboard logs",
+            },
+            "paper_interface": {
+                "path": f"papers/{folder}/PaperInterface.lean",
+                "line_count": 0,
+                "declaration_rows": 0,
+                "review_rows": 0,
+                "oversized": False,
+                "maintainability_issue": None,
+            },
+            "artifacts": {
+                "readme": f"papers/{folder}/README.md",
+                "paper_interface": f"papers/{folder}/PaperInterface.lean",
+                "final_validation_report": f"papers/{folder}/FINAL_VALIDATION_REPORT.md",
+                "dependency_dag_tex": f"papers/{folder}/DependencyDAG.tex",
+                "dependency_dag_pdf": f"papers/{folder}/DependencyDAG.pdf",
+            },
+            "review_surface": {
+                "source_file": f"papers/{folder}/PaperInterface.lean",
+                "include_names": [],
+                "slices": [
+                    {
+                        "id": "all",
+                        "title": "All source-facing review rows",
+                        "names": [],
+                    }
+                ],
+            },
+        },
+        indent=2,
+        ensure_ascii=False,
+    ) + "\n"
 
 
 def dag_text() -> str:
@@ -370,6 +429,7 @@ end {namespace}
 
 def gitignore_text() -> str:
     return """*.pdf
+!DependencyDAG.pdf
 *.aux
 *.log
 *.fls
@@ -496,6 +556,7 @@ def main() -> int:
 
     write_file(paper_dir / ".gitignore", gitignore_text(), args.force)
     write_file(paper_dir / "README.md", readme_text(args, folder), args.force)
+    write_file(paper_dir / "status.json", status_text(args, folder), args.force)
     launch_script = paper_dir / "review-dashboard.sh"
     write_file(
         launch_script,

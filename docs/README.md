@@ -12,8 +12,10 @@ or what a completed formalization proves without reading proof internals.
   dashboard workflow.
 - [PAPER_STATUS.md](PAPER_STATUS.md): public paper citation, build target,
   status, caveat, and review entrypoint.
-- [../papers/status.json](../papers/status.json): machine-readable paper
-  status, dashboard-review counts, and PaperInterface maintenance metadata.
+- `../papers/<PaperName>/status.json`: paper-local machine-readable source of
+  truth for status, review rows, and artifact paths.
+- [../papers/status.json](../papers/status.json): generated aggregate paper
+  status.
 - [NEW_CONTRIBUTOR_WORKFLOW.md](NEW_CONTRIBUTOR_WORKFLOW.md): first-time
   contributor workflow using public `main` as a base, private development, and
   a public-safe pull request when ready.

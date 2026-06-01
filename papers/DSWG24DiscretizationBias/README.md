@@ -1,5 +1,7 @@
 # Addressing Discretization-Induced Bias in Demographic Prediction
 
+Machine-readable status source: [`status.json`](status.json).
+
 ## Source Version
 
 - Paper: *Addressing Discretization-Induced Bias in Demographic Prediction*

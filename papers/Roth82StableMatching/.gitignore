@@ -1,4 +1,5 @@
 *.pdf
+!DependencyDAG.pdf
 *.aux
 *.log
 *.fls

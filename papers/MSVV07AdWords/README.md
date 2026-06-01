@@ -1,5 +1,7 @@
 # AdWords and Generalized Online Matching
 
+Machine-readable status source: [`status.json`](status.json).
+
 ## Source Version
 
 - Paper: *AdWords and Generalized Online Matching*

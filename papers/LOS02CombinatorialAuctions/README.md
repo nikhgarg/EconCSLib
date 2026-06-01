@@ -1,5 +1,7 @@
 # Truth Revelation in Approximately Efficient Combinatorial Auctions
 
+Machine-readable status source: [`status.json`](status.json).
+
 ## Source Version
 
 - Paper: *Truth Revelation in Approximately Efficient Combinatorial Auctions*

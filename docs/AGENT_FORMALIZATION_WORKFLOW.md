@@ -43,6 +43,7 @@ Each paper folder should contain:
 - `FORMALIZATION_PLAN.md`
 - `MainTheorems.lean`
 - `PaperInterface.lean`
+- `status.json`
 - locally cached source PDF, ignored by Git
 - locally cached `pdftotext` extraction, when licensing permits
 
@@ -58,11 +59,13 @@ Completed papers should also have:
 ## What The Agent Should Keep Current
 
 - `README.md`: source version, status table, and exact caveats.
-- `papers/status.json`: machine-readable paper status, dashboard review counts,
-  and interface-maintenance metadata.
+- `status.json`: paper-local source of truth for paper status, dashboard review
+  rows/slices, interface metadata, and artifact paths. After editing it, run
+  `python3 scripts/sync_paper_status.py` to regenerate `papers/status.json`.
 - `FORMALIZATION_PLAN.md`: lightweight outside-Lean proof scratchpad.
 - `DependencyDAG.tex`: proof map with every named result and definition-like
-  paper object represented.
+  paper object represented; status and caveat text should agree with
+  `status.json`.
 - `MainTheorems.lean`: implementation-level source-faithful wrappers.
 - `PaperInterface.lean`: the single canonical human-review Lean surface, with
   only readable paper definitions and named theorem statements.

@@ -3,17 +3,18 @@
 ## 1. Human Verdict
 
 - Lean formalization status: partially formalized.
-- Human dashboard review status: 33 source-facing rows exposed across 4 review
-  slices; no human dashboard review has been recorded yet.
+- Human dashboard review status: 33 source-facing rows from
+  `status.json`/`PaperInterface.lean`; no human dashboard review has been
+  recorded yet.
 - Paper correctness verdict: no fatal error found. Formalization exposed several
   implicit modeling choices and one source-prose typo in the Lemma 2.4
   partition argument.
 - Qualitative proof verdict: Sections 2 and 4 follow the paper-level proof
   structure. Section 3 is intentionally stopped at a reusable complexity
   boundary.
-- Lean footprint: 80,051 paper-local Lean lines across 22 files;
-  `PaperInterface.lean` has 7,728 lines. The dashboard filters this broad
-  interface to 33 source-facing review rows.
+- Lean footprint: 80,157 paper-local Lean lines across 23 files;
+  `PaperInterface.lean` has 171 lines. The previous broad compatibility
+  surface is now `ProofInterface.lean`.
 
 The previous long implementation ledger has been moved to
 `POST_FORMALIZATION_AUDIT.md`.
@@ -84,9 +85,9 @@ optimization infrastructure, then expose the final Theorem 3.3 runtime theorem.
 
 Recent checks built the LMMS paper module, `PaperInterface.lean`, the Section 3
 support modules, the relevant fair-division/probability support, the dependency
-DAG, and the review dashboard. The dashboard is filtered by `review_slices.json`
-to the 33 source-facing rows above; it currently reports no mismatched or stale
-rows, but no human review entries have been saved.
+DAG, and the review dashboard. The dashboard reads the 33 source-facing rows
+from `status.json`; it currently reports no mismatched or stale rows, but no
+human review entries have been saved.
 
 ## 9. Final Verdict
 

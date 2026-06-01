@@ -58,8 +58,10 @@ A completed paper contribution should include:
 - `README.md`
 - `FORMALIZATION_PLAN.md`
 - `DependencyDAG.tex`
+- `DependencyDAG.pdf`
 - `MainTheorems.lean`
 - `PaperInterface.lean`
+- `status.json`
 - any needed implementation modules
 - a validation summary or `FINAL_VALIDATION_REPORT.md`
 - a passing Lean build target for the paper
@@ -68,6 +70,8 @@ A completed paper contribution should include:
 definitions and named theorem statements in paper order. Put broad proof
 plumbing, helper endpoints, and implementation detail in `MainTheorems.lean`,
 `ProofInterface.lean`, or lower paper-local modules.
+Keep the paper-local `status.json` as the source of truth for review rows,
+artifact paths, and public status, then regenerate `papers/status.json`.
 
 ## Private Workflows For Unfinished Papers
 

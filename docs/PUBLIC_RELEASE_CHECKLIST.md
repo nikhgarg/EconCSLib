@@ -14,7 +14,8 @@ external contributions.
       incubator.
 - [ ] `docs/PAPER_STATUS.md` matches the paper folders included in the public
       repository.
-- [ ] `papers/status.json`, `docs/PAPER_STATUS.md`, `README.md`, and the site
+- [ ] Each public `papers/<PaperName>/status.json` is current, and the generated
+      `papers/status.json`, `docs/PAPER_STATUS.md`, `README.md`, and the site
       status table describe the same public paper set and review counts.
 - [ ] Status labels use `Formalized`, `Formalized with caveat`, or
       `Partially formalized`; do not publish `Verified in Lean` as a separate
@@ -37,13 +38,13 @@ Each public paper folder should have:
 - [ ] a paper-local `README.md`;
 - [ ] `PaperInterface.lean` as the compact human-facing theorem surface;
 - [ ] `FINAL_VALIDATION_REPORT.md` or an equivalent validation summary;
-- [ ] `DependencyDAG.tex`, with rendered PDFs kept local unless intentionally
-      published;
-- [ ] a current entry in `papers/status.json`, including human-review row
-      counts and any PaperInterface maintenance issue;
+- [ ] `DependencyDAG.tex` and a rendered `DependencyDAG.pdf`;
+- [ ] a current `status.json`, including human-review row counts,
+      `review_surface` rows/slices, artifact paths, and any PaperInterface
+      maintenance issue;
 - [ ] a passing `lake build <PaperTarget>` command; and
 - [ ] no tracked source PDFs, review-dashboard caches, or generated build
-      artifacts.
+      artifacts other than intentional `DependencyDAG.pdf` files.
 
 ## Importing A Completed Private Paper
 
@@ -60,10 +61,8 @@ Each public paper folder should have:
 - [ ] Decide whether the reviewed workshop paper PDF should be linked
       externally or added as a final public artifact.
 - [ ] Confirm the site status table matches `docs/PAPER_STATUS.md`.
-- [ ] Keep `.github/workflows/pages.yml.disabled` disabled until the repository
-      is ready to publish Pages.
+- [x] The Pages workflow is tracked as `.github/workflows/pages.yml`.
 - [ ] Confirm `gh api repos/nikhgarg/EconCSLib/pages` returns not configured, or
       confirm any existing Pages configuration is intentional.
-- [ ] Only after final review, rename the workflow to
-      `.github/workflows/pages.yml`, merge the scaffold into `main`, and enable
-      Pages from GitHub Actions.
+- [ ] After final review, enable Pages from GitHub Actions in repository
+      settings and confirm the first deployment.

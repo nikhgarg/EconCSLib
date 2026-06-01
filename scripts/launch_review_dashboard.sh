@@ -225,7 +225,7 @@ Usage: launch_review_dashboard.sh [--paper PAPER] [--slice SLICE] [--host HOST] 
 
 Start the review dashboard for one paper and open it in a browser tab when possible.
 If --paper is omitted, the script infers the paper from the current directory.
-Use --slice to review one slice from review_slices.json.
+Use --slice to review one slice from the paper-local status.json review_surface.
 Set --check to run launch-time validation only and exit with status 1 when any
 theorem needs an initial review or a refresh.
 EOF

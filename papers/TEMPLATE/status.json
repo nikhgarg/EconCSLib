@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "id": "TEMPLATE",
+  "title": "Paper title",
+  "authors": "Paper authors",
+  "source_version": "Venue/version/source URL",
+  "build_target": "lake build TEMPLATE",
+  "status": "not started",
+  "main_caveat": "Replace with the public caveat or state that no caveat is known.",
+  "review_entrypoint": "papers/TEMPLATE/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 0,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/TEMPLATE/PaperInterface.lean",
+    "line_count": 0,
+    "declaration_rows": 0,
+    "review_rows": 0,
+    "oversized": false,
+    "maintainability_issue": null
+  },
+  "artifacts": {
+    "readme": "papers/TEMPLATE/README.md",
+    "paper_interface": "papers/TEMPLATE/PaperInterface.lean",
+    "final_validation_report": "papers/TEMPLATE/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/TEMPLATE/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/TEMPLATE/DependencyDAG.pdf"
+  },
+  "review_surface": {
+    "source_file": "papers/TEMPLATE/PaperInterface.lean",
+    "include_names": [],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": []
+      }
+    ]
+  }
+}

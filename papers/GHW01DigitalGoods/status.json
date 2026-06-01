@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "id": "GHW01DigitalGoods",
+  "title": "Competitive Auctions and Digital Goods",
+  "authors": "Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright",
+  "source_version": "SODA 2001 / InterTrust numbering crosswalk; journal version controls refinements",
+  "build_target": "lake build GHW01DigitalGoods",
+  "status": "formalized",
+  "main_caveat": "Theorem 8.2 is formalized against the journal version's monotone truthful randomized-auction statement; Lean refutes the broader technical-report wording with a two-bidder 101 > 100 source-audit counterexample. Theorem 9.3 is closed against the paper's focused set-of-bids deterministic auction convention.",
+  "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 19,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/GHW01DigitalGoods/PaperInterface.lean",
+    "line_count": 290,
+    "declaration_rows": 19,
+    "review_rows": 19,
+    "oversized": false,
+    "maintainability_issue": null
+  },
+  "artifacts": {
+    "readme": "papers/GHW01DigitalGoods/README.md",
+    "paper_interface": "papers/GHW01DigitalGoods/PaperInterface.lean",
+    "final_validation_report": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/GHW01DigitalGoods/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/GHW01DigitalGoods/DependencyDAG.pdf"
+  },
+  "review_surface": {
+    "source_file": "papers/GHW01DigitalGoods/PaperInterface.lean",
+    "include_names": [
+      "revenue",
+      "truthful",
+      "singlePriceRevenue",
+      "fixedPriceBenchmark",
+      "twoWinnerBenchmark",
+      "totalValue",
+      "weightedPairingRevenue",
+      "theorem4_1_high_value",
+      "corollary4_2_fixed_price_lower_bound",
+      "lemma6_1_fair_coin",
+      "theorem6_2_random_sampling",
+      "theorem7_1_weighted_pairing",
+      "theorem7_2_weighted_pairing_benchmark",
+      "lemma8_1_truthful_monotone",
+      "theorem8_2_truthful_revenue_upper_bound",
+      "theorem8_2_weak_truthful_counterexample",
+      "theorem9_1_bid_independent_lower_bound",
+      "lemma9_2_threshold_domination",
+      "theorem9_3_deterministic_truthful_lower_bound"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "revenue",
+          "truthful",
+          "singlePriceRevenue",
+          "fixedPriceBenchmark",
+          "twoWinnerBenchmark",
+          "totalValue",
+          "weightedPairingRevenue",
+          "theorem4_1_high_value",
+          "corollary4_2_fixed_price_lower_bound",
+          "lemma6_1_fair_coin",
+          "theorem6_2_random_sampling",
+          "theorem7_1_weighted_pairing",
+          "theorem7_2_weighted_pairing_benchmark",
+          "lemma8_1_truthful_monotone",
+          "theorem8_2_truthful_revenue_upper_bound",
+          "theorem8_2_weak_truthful_counterexample",
+          "theorem9_1_bid_independent_lower_bound",
+          "lemma9_2_threshold_domination",
+          "theorem9_3_deterministic_truthful_lower_bound"
+        ]
+      }
+    ]
+  }
+}

@@ -1,5 +1,7 @@
 # Competitive Auctions and Digital Goods
 
+Machine-readable status source: [`status.json`](status.json).
+
 ## Source Version
 
 - Primary formalized source: the later journal version *Competitive Auctions*

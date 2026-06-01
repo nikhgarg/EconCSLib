@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "id": "MSVV07AdWords",
+  "title": "AdWords and Generalized Online Matching",
+  "authors": "Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V. Vazirani",
+  "source_version": "Journal of the ACM, 2007",
+  "build_target": "lake build MSVV07AdWords",
+  "status": "formalized",
+  "main_caveat": "Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed, including a source-shaped page-level guarantee.",
+  "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 39,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/MSVV07AdWords/PaperInterface.lean",
+    "line_count": 613,
+    "declaration_rows": 39,
+    "review_rows": 39,
+    "oversized": false,
+    "maintainability_issue": null,
+    "proof_interface_path": "papers/MSVV07AdWords/ProofInterface.lean",
+    "proof_interface_line_count": 1887
+  },
+  "artifacts": {
+    "readme": "papers/MSVV07AdWords/README.md",
+    "paper_interface": "papers/MSVV07AdWords/PaperInterface.lean",
+    "final_validation_report": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/MSVV07AdWords/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/MSVV07AdWords/DependencyDAG.pdf",
+    "proof_interface": "papers/MSVV07AdWords/ProofInterface.lean"
+  },
+  "review_surface": {
+    "source_file": "papers/MSVV07AdWords/PaperInterface.lean",
+    "include_names": [
+      "PaperInstance",
+      "PaperAssignment",
+      "paperSlotsPerPageDistinct",
+      "paperSpend",
+      "paperRevenue",
+      "paperFeasible",
+      "paperSmallBids",
+      "paperFractionalRevenue",
+      "PaperFractionalFeasible",
+      "paperTradeoff",
+      "paperMsvvRatio",
+      "paperBalanceScore",
+      "paperCanAssign",
+      "paperIsBalanceChoice",
+      "PaperSmallBidsLimitFamily",
+      "theorem8_finite_explicit_error",
+      "theorem8_balance_msvv_competitive_of_small_bids_limit_family",
+      "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error",
+      "section6_next_highest_bid_all",
+      "section6_next_highest_bid_alive",
+      "section6_effective_bids_theorem8_finite_explicit_error",
+      "section6_next_highest_bid_all_theorem8_finite_explicit_error",
+      "section6_next_highest_bid_alive_theorem8_finite_explicit_error",
+      "section6_click_through_rates_theorem8_finite_explicit_error",
+      "section6_availability_theorem8_finite_explicit_error",
+      "section6_multiple_slots_theorem8_finite_explicit_error",
+      "section6_page_top_balance_theorem8_finite_explicit_error",
+      "section6_multiple_slots_distinct_choice_run_assignment_per_page_distinct",
+      "section8_weighted_bids_theorem8_finite_explicit_error",
+      "section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids",
+      "theorem9HardDistribution",
+      "theorem9IntegralPrefixAlgorithm",
+      "theorem9RandomizedOnlineAlgorithm",
+      "theorem9FeasiblePrefixRuleFamily",
+      "theorem9CappedNormalizedRevenue",
+      "theorem9_capped_normalized_revenue_eq_prefix_spend",
+      "theorem9_no_randomized_feasible_prefix_rule_family_beats_msvv_ratio",
+      "theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio",
+      "theorem9_no_randomized_online_algorithm_beats_msvv_ratio"
+    ],
+    "slices": [
+      {
+        "id": "paper-facing-endpoints",
+        "title": "Paper-Facing Endpoints",
+        "line_start": 1
+      }
+    ]
+  }
+}

@@ -3,15 +3,17 @@
 ## 1. Human Verdict
 
 - Lean formalization status: partially formalized.
-- Human dashboard review status: 30 rows exposed across 3 review slices; no
-  human dashboard review has been recorded yet.
+- Human dashboard review status: 30 source-facing rows from
+  `status.json`/`PaperInterface.lean`; no human dashboard review has been
+  recorded yet.
 - Paper correctness verdict: no auction-theoretic error found.
 - Qualitative proof verdict: the auction, greedy, critical-price, and
   single-minded truthfulness arguments are formalized in the paper-facing
   model. The final native complexity claims are intentionally stopped at a
   reusable computational-complexity boundary.
-- Lean footprint: 7,115 paper-local Lean lines across 2 files;
-  `PaperInterface.lean` has 3,361 lines.
+- Lean footprint: 7,243 paper-local Lean lines across 3 files;
+  `PaperInterface.lean` has 174 lines. The previous broad compatibility
+  surface is now `ProofInterface.lean`.
 
 The previous detailed implementation and command ledger has been moved to
 `POST_FORMALIZATION_AUDIT.md`.

@@ -1,5 +1,7 @@
 # User-Item Fairness Tradeoffs in Recommendations
 
+Machine-readable status source: [`status.json`](status.json).
+
 ## Source Version
 
 - Paper: *User-item fairness tradeoffs in recommendations*

@@ -1,5 +1,7 @@
 # Driver Surge Pricing
 
+Machine-readable status source: [`status.json`](status.json).
+
 ## Source Version
 
 - Paper: *Driver Surge Pricing*

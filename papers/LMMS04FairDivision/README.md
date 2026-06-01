@@ -1,5 +1,7 @@
 # On Approximately Fair Allocations of Indivisible Goods
 
+Machine-readable status source: [`status.json`](status.json).
+
 ## Public Status
 
 This folder is intentionally public as a partial formalization. The completed

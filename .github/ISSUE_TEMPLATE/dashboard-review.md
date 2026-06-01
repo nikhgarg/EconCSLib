@@ -24,7 +24,7 @@ assignees: ""
 
 - Rows needing follow-up:
 - Source locations checked:
-- `papers/status.json` update needed: yes / no
+- Paper-local `status.json` update needed: yes / no
 
 Dashboard review rows should be saved through the paper-local dashboard trace.
 Agent source audits should not be counted as human review.

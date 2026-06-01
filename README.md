@@ -48,9 +48,9 @@ proves.
 
 ## Current Status
 
-Paper status changes frequently. This table is a human-readable snapshot; each
-paper folder contains the detailed theorem ledger and caveats. The
-machine-readable source is [`papers/status.json`](papers/status.json).
+Paper status changes frequently. This table is a human-readable snapshot.
+Each paper folder has a paper-local `status.json`; the aggregate
+[`papers/status.json`](papers/status.json) is generated from those files.
 
 | Paper | Status | Review | Interface | Human summary |
 |---|---|---:|---|---|
@@ -63,13 +63,14 @@ machine-readable source is [`papers/status.json`](papers/status.json).
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines | Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed. |
 | [LG21 Test-Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 92 lines | Named definitions and Section 3--4 results are closed under paper-facing source models. |
 | [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 184 lines | CTMC lemmas and Theorems 1--4 are exposed. |
-| [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/33 | Debt: 7,728 lines | Sections 2 and 4 are formalized; final PTAS/FPTAS runtime remains external. |
-| [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | Debt: 3,361 lines | Auction and truthfulness endpoints are formalized; machine-level complexity remains external. |
+| [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/33 | OK: 171 lines | Sections 2 and 4 are formalized; final PTAS/FPTAS runtime remains external. |
+| [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 174 lines | Auction and truthfulness endpoints are formalized; machine-level complexity remains external. |
 
 For more detail, use:
 
-- [`papers/status.json`](papers/status.json) for machine-readable status,
-  review counts, and interface-maintenance metadata.
+- `papers/<PaperName>/status.json` for the paper-local source of truth.
+- [`papers/status.json`](papers/status.json) for the generated aggregate
+  status, review counts, and interface metadata.
 - [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md) for paper citation, build
   target, status, caveat, and review entrypoint.
 - Individual `papers/<PaperName>/README.md` files for paper-specific caveats.

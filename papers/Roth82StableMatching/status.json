@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "id": "Roth82StableMatching",
+  "title": "The Economics of Matching: Stability and Incentives",
+  "authors": "Alvin E. Roth",
+  "source_version": "Mathematics of Operations Research, 1982",
+  "build_target": "lake build Roth82StableMatching",
+  "status": "formalized",
+  "main_caveat": "The cached paper's named Theorems 1--7, Lemmas 1--2, and Corollary 5.1 are closed on Roth's stated strict marriage domain without extra model-certificate assumptions.",
+  "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 27,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/Roth82StableMatching/PaperInterface.lean",
+    "line_count": 468,
+    "declaration_rows": 27,
+    "review_rows": 27,
+    "oversized": false,
+    "maintainability_issue": null
+  },
+  "artifacts": {
+    "readme": "papers/Roth82StableMatching/README.md",
+    "paper_interface": "papers/Roth82StableMatching/PaperInterface.lean",
+    "final_validation_report": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/Roth82StableMatching/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/Roth82StableMatching/DependencyDAG.pdf"
+  },
+  "review_surface": {
+    "source_file": "papers/Roth82StableMatching/PaperInterface.lean",
+    "include_names": [
+      "preferenceProfile",
+      "completeMarriageOutcome",
+      "stable",
+      "strictMarriageDomain",
+      "stableOutcomes",
+      "menOptimal",
+      "womenOptimal",
+      "possibleForMan",
+      "stableMatchingProcedure",
+      "truthfulForAllAgents",
+      "menDeferredAcceptance",
+      "womenDeferredAcceptance",
+      "paretoOptimal",
+      "efficientMatchingProcedure",
+      "serialDictatorshipMechanism",
+      "manReportStrictlyRanksPartnerFirst",
+      "reportMisrepresentsKthChoice",
+      "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain",
+      "theorem2_optimal_stable_outcomes_on_strict_marriage_domain",
+      "theorem3_no_stable_truthful_procedure_on_strict_profiles",
+      "theorem4_serial_dictatorship_constructed",
+      "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq",
+      "corollary5_1_no_need_to_misrepresent_first_choice",
+      "lemma1_strict_simple_misrepresentation_same_partner",
+      "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain",
+      "theorem6_weak_pareto_for_men_on_strict_marriage_domain",
+      "theorem7_arbitrary_k_on_strict_profiles"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "preferenceProfile",
+          "completeMarriageOutcome",
+          "stable",
+          "strictMarriageDomain",
+          "stableOutcomes",
+          "menOptimal",
+          "womenOptimal",
+          "possibleForMan",
+          "stableMatchingProcedure",
+          "truthfulForAllAgents",
+          "menDeferredAcceptance",
+          "womenDeferredAcceptance",
+          "paretoOptimal",
+          "efficientMatchingProcedure",
+          "serialDictatorshipMechanism",
+          "manReportStrictlyRanksPartnerFirst",
+          "reportMisrepresentsKthChoice",
+          "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain",
+          "theorem2_optimal_stable_outcomes_on_strict_marriage_domain",
+          "theorem3_no_stable_truthful_procedure_on_strict_profiles",
+          "theorem4_serial_dictatorship_constructed",
+          "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq",
+          "corollary5_1_no_need_to_misrepresent_first_choice",
+          "lemma1_strict_simple_misrepresentation_same_partner",
+          "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain",
+          "theorem6_weak_pareto_for_men_on_strict_marriage_domain",
+          "theorem7_arbitrary_k_on_strict_profiles"
+        ]
+      }
+    ]
+  }
+}

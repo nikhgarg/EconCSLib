@@ -36,10 +36,10 @@ ROOT = Path(__file__).resolve().parents[1]
 PAPERS_DIR = ROOT / "papers"
 DEFAULT_PAPER_LOG_FILE = "paper_theorem_validations.jsonl"
 DEFAULT_PAPER_INTERFACE_CACHE_FILE = "paper_interface_cache.json"
-DEFAULT_REVIEW_SLICES_FILE = "review_slices.json"
+DEFAULT_PAPER_STATUS_FILE = "status.json"
 DEFAULT_LLM_LEAN_TO_TEX_FILE = "lean_to_tex_llm.json"
 PAPER_INTERFACE_CACHE_SCHEMA = 7
-REVIEW_SLICES_SCHEMA = 1
+REVIEW_SURFACE_SCHEMA = 1
 REVIEW_SOURCE_FILENAME = "PaperInterface.lean"
 REVIEW_DECL_KINDS = {"theorem", "lemma", "def", "abbrev"}
 
@@ -49,6 +49,10 @@ DECL_RE = re.compile(
     r"(?:(?:noncomputable|private|protected)\s+)*"
     r"(?P<kind>theorem|lemma|def|abbrev)\s+(?P<name>[A-Za-z_][A-Za-z0-9_']*)\b"
 )
+EXPORT_OPEN_RE = re.compile(
+    r"^\s*export\s+(?P<source>[A-Za-z_][A-Za-z0-9_']*(?:\.[A-Za-z_][A-Za-z0-9_']*)*)\s+\((?P<rest>.*)$"
+)
+EXPORT_NAME_RE = re.compile(r"\b[A-Za-z_][A-Za-z0-9_']*\b")
 COMMENT_START_RE = re.compile(r"^\s*/-[!]?")
 NAMESPACE_OPEN_RE = re.compile(
     r"^\s*namespace\s+([A-Za-z_][A-Za-z0-9_']*(?:\.[A-Za-z_][A-Za-z0-9_']*)*)\s*$"
@@ -1134,21 +1138,50 @@ def _safe_slice_id(value: str) -> str:
     return cleaned or "all"
 
 
-def load_review_slice_payload(folder: Path) -> dict[str, Any]:
-    """Load optional paper-local review slice metadata."""
+def collect_export_names(lines: list[str], start: int) -> tuple[list[str], int] | None:
+    """Collect names from a Lean `export Foo (...)` block."""
 
-    path = folder / DEFAULT_REVIEW_SLICES_FILE
-    if not path.exists() or not path.is_file():
-        return {}
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return {}
-    if not isinstance(payload, dict):
-        return {}
-    if payload.get("schema") not in {None, REVIEW_SLICES_SCHEMA}:
-        return {}
-    return payload
+    match = EXPORT_OPEN_RE.match(lines[start])
+    if not match:
+        return None
+    chunks = [match.group("rest")]
+    i = start
+    while i < len(lines):
+        if ")" in chunks[-1]:
+            break
+        i += 1
+        if i >= len(lines):
+            return None
+        chunks.append(lines[i])
+    text = "\n".join(chunks)
+    before_close = text.split(")", 1)[0]
+    names = EXPORT_NAME_RE.findall(before_close)
+    return names, i + 1
+
+
+def load_review_slice_payload(folder: Path) -> dict[str, Any]:
+    """Load paper-local review-surface metadata from status.json."""
+
+    status_path = folder / DEFAULT_PAPER_STATUS_FILE
+    if status_path.exists() and status_path.is_file():
+        try:
+            status_payload = json.loads(status_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            status_payload = {}
+        if isinstance(status_payload, dict):
+            review_surface = status_payload.get("review_surface")
+            if isinstance(review_surface, dict):
+                payload: dict[str, Any] = {"schema": REVIEW_SURFACE_SCHEMA}
+                include_names = review_surface.get("include_names")
+                slices = review_surface.get("slices")
+                if isinstance(include_names, list):
+                    payload["include_names"] = include_names
+                if isinstance(slices, list):
+                    payload["slices"] = slices
+                if "include_names" in payload or "slices" in payload:
+                    return payload
+
+    return {}
 
 
 def review_slice_rules(folder: Path) -> list[dict[str, Any]]:
@@ -1394,6 +1427,16 @@ def parse_interface_items(
             i += 1
             continue
 
+        exported = collect_export_names(lines, i)
+        if exported is not None:
+            names, next_i = exported
+            for name in names:
+                full_name = ".".join(namespace_stack + [name]) if namespace_stack else name
+                parsed.append(("theorem", name, full_name, f"exported declaration `{full_name}`", pending_comment, i + 1))
+            pending_comment = None
+            i = next_i
+            continue
+
         m = DECL_RE.match(line)
         if m:
             name = m.group("name")
@@ -1513,14 +1556,14 @@ def _cache_source_hashes(folder: Path) -> dict[str, str]:
     text_path = find_paper_text(folder)
     pdf_path = find_paper_pdf(folder)
     llm_tex_path = llm_lean_to_tex_drafts_file(folder)
-    slice_path = folder / DEFAULT_REVIEW_SLICES_FILE
+    status_path = folder / DEFAULT_PAPER_STATUS_FILE
 
     interface_source = interface_path.read_text(encoding="utf-8") if interface_path.exists() else ""
     report_source = report_path.read_text(encoding="utf-8") if report_path.exists() else ""
     tex_source = tex_path.read_text(encoding="utf-8") if tex_path and tex_path.exists() else ""
     text_source = text_path.read_text(encoding="utf-8") if text_path and text_path.exists() else ""
     llm_tex_source = llm_tex_path.read_text(encoding="utf-8") if llm_tex_path.exists() else ""
-    slice_source = slice_path.read_text(encoding="utf-8") if slice_path.exists() else ""
+    status_source = status_path.read_text(encoding="utf-8") if status_path.exists() else ""
 
     return {
         "review_source_file": interface_path.name,
@@ -1530,7 +1573,7 @@ def _cache_source_hashes(folder: Path) -> dict[str, str]:
         "text_sha256": statement_digest(text_source),
         "pdf_sha256": _file_sha256(pdf_path),
         "llm_tex_sha256": statement_digest(llm_tex_source),
-        "review_slices_sha256": statement_digest(slice_source),
+        "status_json_sha256": statement_digest(status_source),
     }
 
 
@@ -1566,7 +1609,7 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
         return None
     if payload.get("hashes", {}).get("llm_tex_sha256") != hashes["llm_tex_sha256"]:
         return None
-    if payload.get("hashes", {}).get("review_slices_sha256") != hashes["review_slices_sha256"]:
+    if payload.get("hashes", {}).get("status_json_sha256") != hashes["status_json_sha256"]:
         return None
 
     rows = payload.get("rows")

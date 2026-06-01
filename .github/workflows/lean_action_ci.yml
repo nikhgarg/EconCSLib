@@ -15,3 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
+      - name: Check paper status aggregate
+        run: python3 scripts/sync_paper_status.py --check
+      - name: Audit repository
+        run: python3 scripts/audit_repository.py

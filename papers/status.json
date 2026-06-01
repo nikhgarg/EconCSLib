@@ -1,10 +1,11 @@
 {
   "schema": 1,
-  "description": "Machine-readable status source for public EconCSLib paper formalizations. Markdown tables, the site status table, and release notes should be synchronized from this file.",
-  "review_count_policy": "reviewed_rows counts saved human dashboard rows tracked in the public repository. total_rows counts the current dashboard review surface, after review_slices.json filtering when present. Agent source audits are not counted as human review.",
-  "paper_interface_maintenance_policy": "PaperInterface.lean should stay compact and source-facing. Oversized interfaces or large filtered dashboards are tracked as maintainability debt.",
+  "description": "Aggregate index generated from papers/<PaperName>/status.json. Paper-local status files are the source of truth for status, review rows, and PaperInterface metadata.",
+  "review_count_policy": "reviewed_rows counts saved human dashboard rows tracked in the public repository. total_rows counts the current dashboard review surface from each paper-local status.json. Agent source audits are not counted as human review.",
+  "paper_interface_maintenance_policy": "PaperInterface.lean should stay compact and source-facing. Broad proof aliases belong in ProofInterface.lean or implementation modules.",
   "papers": [
     {
+      "schema": 1,
       "id": "DSWG24DiscretizationBias",
       "title": "Addressing Discretization-Induced Bias in Demographic Prediction",
       "authors": "Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg",
@@ -18,7 +19,7 @@
         "total_rows": 32,
         "stale_rows": 0,
         "mismatch_rows": 0,
-        "source": "PaperInterface declaration count; no tracked public dashboard log"
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
         "path": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
@@ -27,34 +28,94 @@
         "review_rows": 32,
         "oversized": false,
         "maintainability_issue": null
-      }
-    },
-    {
-      "id": "GHW01DigitalGoods",
-      "title": "Competitive Auctions and Digital Goods",
-      "authors": "Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright",
-      "source_version": "SODA 2001 / InterTrust numbering crosswalk; journal version controls refinements",
-      "build_target": "lake build GHW01DigitalGoods",
-      "status": "formalized",
-      "main_caveat": "Theorem 8.2 is formalized against the journal version's monotone truthful randomized-auction statement; Lean refutes the broader technical-report wording with a two-bidder 101 > 100 source-audit counterexample. Theorem 9.3 is closed against the paper's focused set-of-bids deterministic auction convention.",
-      "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
-      "human_review": {
-        "reviewed_rows": 0,
-        "total_rows": 19,
-        "stale_rows": 0,
-        "mismatch_rows": 0,
-        "source": "FINAL_VALIDATION_REPORT.md dashboard status; no tracked public human review log"
       },
-      "paper_interface": {
-        "path": "papers/GHW01DigitalGoods/PaperInterface.lean",
-        "line_count": 290,
-        "declaration_rows": 20,
-        "review_rows": 19,
-        "oversized": false,
-        "maintainability_issue": null
+      "artifacts": {
+        "readme": "papers/DSWG24DiscretizationBias/README.md",
+        "paper_interface": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
+        "final_validation_report": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/DSWG24DiscretizationBias/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/DSWG24DiscretizationBias/DependencyDAG.pdf"
+      },
+      "review_surface": {
+        "source_file": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
+        "include_names": [
+          "prior",
+          "marginalLabelShare",
+          "aggregatePosterior",
+          "bias",
+          "fidelity",
+          "classifierMAE",
+          "continuousMarginalLabelShare",
+          "continuousAggregatePosterior",
+          "continuousBias",
+          "continuousAggregateBias",
+          "continuousClassifierMAE",
+          "continuousJointPriorBias",
+          "continuousJointClassifierMAE",
+          "posteriorSimplex",
+          "isArgmaxRule",
+          "calibrated",
+          "objective",
+          "expectedObjective",
+          "sourceSa",
+          "sourceSb",
+          "sourceSc",
+          "sourceSd",
+          "sourceSe",
+          "theorem1i_no_information_bias",
+          "theorem1ii_perfect_classifier_zero_bias",
+          "theorem1iii_argmax_bias_le_mae",
+          "theorem1iii_tight_binary_example",
+          "theorem2i_joint_rule_exists",
+          "theorem2ii_argmax_accuracy_maximizing",
+          "theorem2iii_non_argmax_not_pareto",
+          "theorem2iii_weighted_objective_maximizer_iff_agrees_argmax",
+          "theorem2iii_strict_disagreement_not_weighted_objective_maximizer"
+        ],
+        "slices": [
+          {
+            "id": "all",
+            "title": "All source-facing review rows",
+            "names": [
+              "prior",
+              "marginalLabelShare",
+              "aggregatePosterior",
+              "bias",
+              "fidelity",
+              "classifierMAE",
+              "continuousMarginalLabelShare",
+              "continuousAggregatePosterior",
+              "continuousBias",
+              "continuousAggregateBias",
+              "continuousClassifierMAE",
+              "continuousJointPriorBias",
+              "continuousJointClassifierMAE",
+              "posteriorSimplex",
+              "isArgmaxRule",
+              "calibrated",
+              "objective",
+              "expectedObjective",
+              "sourceSa",
+              "sourceSb",
+              "sourceSc",
+              "sourceSd",
+              "sourceSe",
+              "theorem1i_no_information_bias",
+              "theorem1ii_perfect_classifier_zero_bias",
+              "theorem1iii_argmax_bias_le_mae",
+              "theorem1iii_tight_binary_example",
+              "theorem2i_joint_rule_exists",
+              "theorem2ii_argmax_accuracy_maximizing",
+              "theorem2iii_non_argmax_not_pareto",
+              "theorem2iii_weighted_objective_maximizer_iff_agrees_argmax",
+              "theorem2iii_strict_disagreement_not_weighted_objective_maximizer"
+            ]
+          }
+        ]
       }
     },
     {
+      "schema": 1,
       "id": "GCG24UserItemFairness",
       "title": "User-item fairness tradeoffs in recommendations",
       "authors": "Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg",
@@ -68,7 +129,7 @@
         "total_rows": 18,
         "stale_rows": 0,
         "mismatch_rows": 0,
-        "source": "PaperInterface declaration count; no tracked public dashboard log"
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
         "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
@@ -77,134 +138,150 @@
         "review_rows": 18,
         "oversized": false,
         "maintainability_issue": null
+      },
+      "artifacts": {
+        "readme": "papers/GCG24UserItemFairness/README.md",
+        "paper_interface": "papers/GCG24UserItemFairness/PaperInterface.lean",
+        "final_validation_report": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GCG24UserItemFairness/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf"
+      },
+      "review_surface": {
+        "source_file": "papers/GCG24UserItemFairness/PaperInterface.lean",
+        "include_names": [
+          "recommendationUtility",
+          "rawUserUtility",
+          "normalizedUserUtility",
+          "userFairness",
+          "rawItemUtility",
+          "itemNormalizer",
+          "normalizedItemUtility",
+          "itemFairness",
+          "solvesProblemOne",
+          "priceOfFairnessAt",
+          "priceOfFairness",
+          "priceOfMisestimation",
+          "proposition1_symmetric_lp_reduction",
+          "proposition2_symmetric_optimum_exists",
+          "theorem3_price_of_fairness_decreases",
+          "theorem3_price_of_fairness_strictly_decreases",
+          "theorem4_misestimation_tradeoff_typeZero",
+          "theorem4_misestimation_tradeoff_typeOne"
+        ],
+        "slices": [
+          {
+            "id": "all",
+            "title": "All source-facing review rows",
+            "names": [
+              "recommendationUtility",
+              "rawUserUtility",
+              "normalizedUserUtility",
+              "userFairness",
+              "rawItemUtility",
+              "itemNormalizer",
+              "normalizedItemUtility",
+              "itemFairness",
+              "solvesProblemOne",
+              "priceOfFairnessAt",
+              "priceOfFairness",
+              "priceOfMisestimation",
+              "proposition1_symmetric_lp_reduction",
+              "proposition2_symmetric_optimum_exists",
+              "theorem3_price_of_fairness_decreases",
+              "theorem3_price_of_fairness_strictly_decreases",
+              "theorem4_misestimation_tradeoff_typeZero",
+              "theorem4_misestimation_tradeoff_typeOne"
+            ]
+          }
+        ]
       }
     },
     {
-      "id": "Roth82StableMatching",
-      "title": "The Economics of Matching: Stability and Incentives",
-      "authors": "Alvin E. Roth",
-      "source_version": "Mathematics of Operations Research, 1982",
-      "build_target": "lake build Roth82StableMatching",
+      "schema": 1,
+      "id": "GHW01DigitalGoods",
+      "title": "Competitive Auctions and Digital Goods",
+      "authors": "Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright",
+      "source_version": "SODA 2001 / InterTrust numbering crosswalk; journal version controls refinements",
+      "build_target": "lake build GHW01DigitalGoods",
       "status": "formalized",
-      "main_caveat": "The cached paper's named Theorems 1--7, Lemmas 1--2, and Corollary 5.1 are closed on Roth's stated strict marriage domain without extra model-certificate assumptions.",
-      "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
+      "main_caveat": "Theorem 8.2 is formalized against the journal version's monotone truthful randomized-auction statement; Lean refutes the broader technical-report wording with a two-bidder 101 > 100 source-audit counterexample. Theorem 9.3 is closed against the paper's focused set-of-bids deterministic auction convention.",
+      "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 27,
+        "total_rows": 19,
         "stale_rows": 0,
         "mismatch_rows": 0,
-        "source": "FINAL_VALIDATION_REPORT.md says ignored local dashboard logs contain stale older entries; no tracked public human review log is counted"
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
-        "path": "papers/Roth82StableMatching/PaperInterface.lean",
-        "line_count": 468,
-        "declaration_rows": 27,
-        "review_rows": 27,
+        "path": "papers/GHW01DigitalGoods/PaperInterface.lean",
+        "line_count": 290,
+        "declaration_rows": 19,
+        "review_rows": 19,
         "oversized": false,
         "maintainability_issue": null
+      },
+      "artifacts": {
+        "readme": "papers/GHW01DigitalGoods/README.md",
+        "paper_interface": "papers/GHW01DigitalGoods/PaperInterface.lean",
+        "final_validation_report": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GHW01DigitalGoods/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GHW01DigitalGoods/DependencyDAG.pdf"
+      },
+      "review_surface": {
+        "source_file": "papers/GHW01DigitalGoods/PaperInterface.lean",
+        "include_names": [
+          "revenue",
+          "truthful",
+          "singlePriceRevenue",
+          "fixedPriceBenchmark",
+          "twoWinnerBenchmark",
+          "totalValue",
+          "weightedPairingRevenue",
+          "theorem4_1_high_value",
+          "corollary4_2_fixed_price_lower_bound",
+          "lemma6_1_fair_coin",
+          "theorem6_2_random_sampling",
+          "theorem7_1_weighted_pairing",
+          "theorem7_2_weighted_pairing_benchmark",
+          "lemma8_1_truthful_monotone",
+          "theorem8_2_truthful_revenue_upper_bound",
+          "theorem8_2_weak_truthful_counterexample",
+          "theorem9_1_bid_independent_lower_bound",
+          "lemma9_2_threshold_domination",
+          "theorem9_3_deterministic_truthful_lower_bound"
+        ],
+        "slices": [
+          {
+            "id": "all",
+            "title": "All source-facing review rows",
+            "names": [
+              "revenue",
+              "truthful",
+              "singlePriceRevenue",
+              "fixedPriceBenchmark",
+              "twoWinnerBenchmark",
+              "totalValue",
+              "weightedPairingRevenue",
+              "theorem4_1_high_value",
+              "corollary4_2_fixed_price_lower_bound",
+              "lemma6_1_fair_coin",
+              "theorem6_2_random_sampling",
+              "theorem7_1_weighted_pairing",
+              "theorem7_2_weighted_pairing_benchmark",
+              "lemma8_1_truthful_monotone",
+              "theorem8_2_truthful_revenue_upper_bound",
+              "theorem8_2_weak_truthful_counterexample",
+              "theorem9_1_bid_independent_lower_bound",
+              "lemma9_2_threshold_domination",
+              "theorem9_3_deterministic_truthful_lower_bound"
+            ]
+          }
+        ]
       }
     },
     {
-      "id": "GS62CollegeAdmissions",
-      "title": "College Admissions and the Stability of Marriage",
-      "authors": "D. Gale and L. S. Shapley",
-      "source_version": "American Mathematical Monthly, 1962",
-      "build_target": "lake build GS62CollegeAdmissions",
-      "status": "formalized",
-      "main_caveat": "Lean endpoints are closed without extra certificates or conditional proof gaps; the cached PDF scan has poor OCR, recorded as a source-audit note rather than a formalization caveat.",
-      "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
-      "human_review": {
-        "reviewed_rows": 0,
-        "total_rows": 7,
-        "stale_rows": 0,
-        "mismatch_rows": 0,
-        "source": "PaperInterface declaration count; no tracked public dashboard log"
-      },
-      "paper_interface": {
-        "path": "papers/GS62CollegeAdmissions/PaperInterface.lean",
-        "line_count": 109,
-        "declaration_rows": 7,
-        "review_rows": 7,
-        "oversized": false,
-        "maintainability_issue": null
-      }
-    },
-    {
-      "id": "MBJG25ProducerFairness",
-      "title": "Balancing Producer Fairness and Efficiency via Bayesian Rating System Design",
-      "authors": "Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg",
-      "source_version": "ICWSM 2025 / arXiv:2207.04369",
-      "build_target": "lake build MBJG25ProducerFairness",
-      "status": "formalized with caveat",
-      "main_caveat": "Bayesian rating-system results are formalized with a documented boundary correction.",
-      "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
-      "human_review": {
-        "reviewed_rows": 0,
-        "total_rows": 17,
-        "stale_rows": 0,
-        "mismatch_rows": 0,
-        "source": "PaperInterface declaration count; no tracked public dashboard log"
-      },
-      "paper_interface": {
-        "path": "papers/MBJG25ProducerFairness/PaperInterface.lean",
-        "line_count": 296,
-        "declaration_rows": 17,
-        "review_rows": 17,
-        "oversized": false,
-        "maintainability_issue": null
-      }
-    },
-    {
-      "id": "MSVV07AdWords",
-      "title": "AdWords and Generalized Online Matching",
-      "authors": "Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V. Vazirani",
-      "source_version": "Journal of the ACM, 2007",
-      "build_target": "lake build MSVV07AdWords",
-      "status": "formalized",
-      "main_caveat": "Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed, including a source-shaped page-level guarantee.",
-      "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
-      "human_review": {
-        "reviewed_rows": 0,
-        "total_rows": 39,
-        "stale_rows": 0,
-        "mismatch_rows": 0,
-        "source": "FINAL_VALIDATION_REPORT.md dashboard status"
-      },
-      "paper_interface": {
-        "path": "papers/MSVV07AdWords/PaperInterface.lean",
-        "line_count": 613,
-        "declaration_rows": 39,
-        "review_rows": 39,
-        "oversized": false,
-        "maintainability_issue": null
-      }
-    },
-    {
-      "id": "LG21TestOptionalPolicies",
-      "title": "Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps",
-      "authors": "Zhi Liu and Nikhil Garg",
-      "source_version": "EAAMO 2021 / arXiv:2107.08922",
-      "build_target": "lake build LG21TestOptionalPolicies",
-      "status": "formalized",
-      "main_caveat": "All named definitions and Section 3--4 results are closed under paper-facing source models; dashboard review remains external.",
-      "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
-      "human_review": {
-        "reviewed_rows": 0,
-        "total_rows": 16,
-        "stale_rows": 0,
-        "mismatch_rows": 0,
-        "source": "FINAL_VALIDATION_REPORT.md dashboard status"
-      },
-      "paper_interface": {
-        "path": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
-        "line_count": 92,
-        "declaration_rows": 16,
-        "review_rows": 16,
-        "oversized": false,
-        "maintainability_issue": null
-      }
-    },
-    {
+      "schema": 1,
       "id": "GN21DriverSurgePricing",
       "title": "Driver Surge Pricing",
       "authors": "Nikhil Garg and Hamid Nazerzadeh",
@@ -218,7 +295,7 @@
         "total_rows": 24,
         "stale_rows": 0,
         "mismatch_rows": 0,
-        "source": "FINAL_VALIDATION_REPORT.md dashboard status"
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
         "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
@@ -226,10 +303,223 @@
         "declaration_rows": 24,
         "review_rows": 24,
         "oversized": false,
-        "maintainability_issue": null
+        "maintainability_issue": null,
+        "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",
+        "proof_interface_line_count": 5690
+      },
+      "artifacts": {
+        "readme": "papers/GN21DriverSurgePricing/README.md",
+        "paper_interface": "papers/GN21DriverSurgePricing/PaperInterface.lean",
+        "final_validation_report": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GN21DriverSurgePricing/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GN21DriverSurgePricing/DependencyDAG.pdf",
+        "proof_interface": "papers/GN21DriverSurgePricing/ProofInterface.lean"
+      },
+      "review_surface": {
+        "source_file": "papers/GN21DriverSurgePricing/PaperInterface.lean",
+        "include_names": [
+          "review_definition_single_state_ic",
+          "review_definition_dynamic_ic",
+          "review_definition_threshold_policy",
+          "review_definition_dynamic_defined_reward",
+          "review_section2_single_state_renewal_reward_iid_bridge",
+          "review_proposition3_1_affine_single_state_ic",
+          "review_theorem1_single_state_threshold_best_response",
+          "review_lemma4_single_state_threshold_uniqueness",
+          "review_lemma1_measured_dynamic_reward_decomposition",
+          "review_lemma2_switch_probability_formula",
+          "review_lemma3_measured_time_fraction_formula",
+          "review_remark1_switch_probability_per_time_strictAntiOn",
+          "review_remark3_switch_probability_per_time_tendsto_at_zero",
+          "review_remark4_switch_time_minus_switch_probability_nonneg",
+          "review_lemma5_fixed_response_policy_form",
+          "review_lemma6_upper_endpoint_derivative_formula",
+          "review_lemma7_affine_positive_additive_response_quasi_convex",
+          "review_lemma8_affine_negative_additive_response_quasi_concave",
+          "review_lemma9_surge_derivative_positive_of_acceptAll_bounds",
+          "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds",
+          "review_theorem2_multiplicative_policy_shape_ae",
+          "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states",
+          "review_theorem4_structural_policy_representatives",
+          "review_theorem3_feasible_sequential_current_bounds_source_data_statement"
+        ],
+        "slices": [
+          {
+            "id": "all",
+            "title": "All source-facing review rows",
+            "names": [
+              "review_definition_single_state_ic",
+              "review_definition_dynamic_ic",
+              "review_definition_threshold_policy",
+              "review_definition_dynamic_defined_reward",
+              "review_section2_single_state_renewal_reward_iid_bridge",
+              "review_proposition3_1_affine_single_state_ic",
+              "review_theorem1_single_state_threshold_best_response",
+              "review_lemma4_single_state_threshold_uniqueness",
+              "review_lemma1_measured_dynamic_reward_decomposition",
+              "review_lemma2_switch_probability_formula",
+              "review_lemma3_measured_time_fraction_formula",
+              "review_remark1_switch_probability_per_time_strictAntiOn",
+              "review_remark3_switch_probability_per_time_tendsto_at_zero",
+              "review_remark4_switch_time_minus_switch_probability_nonneg",
+              "review_lemma5_fixed_response_policy_form",
+              "review_lemma6_upper_endpoint_derivative_formula",
+              "review_lemma7_affine_positive_additive_response_quasi_convex",
+              "review_lemma8_affine_negative_additive_response_quasi_concave",
+              "review_lemma9_surge_derivative_positive_of_acceptAll_bounds",
+              "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds",
+              "review_theorem2_multiplicative_policy_shape_ae",
+              "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states",
+              "review_theorem4_structural_policy_representatives",
+              "review_theorem3_feasible_sequential_current_bounds_source_data_statement"
+            ]
+          }
+        ]
       }
     },
     {
+      "schema": 1,
+      "id": "GS62CollegeAdmissions",
+      "title": "College Admissions and the Stability of Marriage",
+      "authors": "D. Gale and L. S. Shapley",
+      "source_version": "American Mathematical Monthly, 1962",
+      "build_target": "lake build GS62CollegeAdmissions",
+      "status": "formalized",
+      "main_caveat": "Lean endpoints are closed without extra certificates or conditional proof gaps; the cached PDF scan has poor OCR, recorded as a source-audit note rather than a formalization caveat.",
+      "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 7,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+      },
+      "paper_interface": {
+        "path": "papers/GS62CollegeAdmissions/PaperInterface.lean",
+        "line_count": 109,
+        "declaration_rows": 7,
+        "review_rows": 7,
+        "oversized": false,
+        "maintainability_issue": null
+      },
+      "artifacts": {
+        "readme": "papers/GS62CollegeAdmissions/README.md",
+        "paper_interface": "papers/GS62CollegeAdmissions/PaperInterface.lean",
+        "final_validation_report": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/GS62CollegeAdmissions/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GS62CollegeAdmissions/DependencyDAG.pdf"
+      },
+      "review_surface": {
+        "source_file": "papers/GS62CollegeAdmissions/PaperInterface.lean",
+        "include_names": [
+          "strictMarriageDomain",
+          "stableMarriage",
+          "completeMarriage",
+          "applicantOptimalStableMarriage",
+          "theorem1_stable_marriage_exists",
+          "college_admissions_stable_assignment_exists",
+          "theorem2_applicant_optimality"
+        ],
+        "slices": [
+          {
+            "id": "all",
+            "title": "All source-facing review rows",
+            "names": [
+              "strictMarriageDomain",
+              "stableMarriage",
+              "completeMarriage",
+              "applicantOptimalStableMarriage",
+              "theorem1_stable_marriage_exists",
+              "college_admissions_stable_assignment_exists",
+              "theorem2_applicant_optimality"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "schema": 1,
+      "id": "LG21TestOptionalPolicies",
+      "title": "Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps",
+      "authors": "Zhi Liu and Nikhil Garg",
+      "source_version": "EAAMO 2021 / arXiv:2107.08922",
+      "build_target": "lake build LG21TestOptionalPolicies",
+      "status": "formalized",
+      "main_caveat": "All named definitions and Section 3--4 results are closed under paper-facing source models; dashboard review remains external.",
+      "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 16,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+      },
+      "paper_interface": {
+        "path": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
+        "line_count": 92,
+        "declaration_rows": 16,
+        "review_rows": 16,
+        "oversized": false,
+        "maintainability_issue": null,
+        "proof_interface_path": "papers/LG21TestOptionalPolicies/ProofInterface.lean",
+        "proof_interface_line_count": 25103
+      },
+      "artifacts": {
+        "readme": "papers/LG21TestOptionalPolicies/README.md",
+        "paper_interface": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
+        "final_validation_report": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LG21TestOptionalPolicies/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LG21TestOptionalPolicies/DependencyDAG.pdf",
+        "proof_interface": "papers/LG21TestOptionalPolicies/ProofInterface.lean"
+      },
+      "review_surface": {
+        "source_file": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
+        "include_names": [
+          "definition1_source_equilibrium",
+          "definition2_latent_skill_fair",
+          "definition3_observable_fair",
+          "definition4_demographic_fair",
+          "definition5_test_blank",
+          "theorem3_1_optional_reporting",
+          "theorem3_1_report_required",
+          "theorem3_2_optional_reporting_fairness_impossibility",
+          "theorem3_2_optional_reporting_no_test_relevance",
+          "theorem3_2_report_required_fairness_impossibility",
+          "theorem3_2_report_required_no_test_relevance",
+          "lemma4_1_observed_access_strategy_proofness",
+          "proposition4_2_base_indexed_posterior_surface",
+          "proposition4_3_base_mixed_extra_signal_surface",
+          "definition6_resampling_policy",
+          "theorem4_4_resampling_policy"
+        ],
+        "slices": [
+          {
+            "id": "all",
+            "title": "All source-facing review rows",
+            "names": [
+              "definition1_source_equilibrium",
+              "definition2_latent_skill_fair",
+              "definition3_observable_fair",
+              "definition4_demographic_fair",
+              "definition5_test_blank",
+              "theorem3_1_optional_reporting",
+              "theorem3_1_report_required",
+              "theorem3_2_optional_reporting_fairness_impossibility",
+              "theorem3_2_optional_reporting_no_test_relevance",
+              "theorem3_2_report_required_fairness_impossibility",
+              "theorem3_2_report_required_no_test_relevance",
+              "lemma4_1_observed_access_strategy_proofness",
+              "proposition4_2_base_indexed_posterior_surface",
+              "proposition4_3_base_mixed_extra_signal_surface",
+              "definition6_resampling_policy",
+              "theorem4_4_resampling_policy"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "schema": 1,
       "id": "LMMS04FairDivision",
       "title": "On Approximately Fair Allocations of Indivisible Goods",
       "authors": "Richard J. Lipton, Evangelos Markakis, Elchanan Mossel, and Amin Saberi",
@@ -243,18 +533,126 @@
         "total_rows": 33,
         "stale_rows": 0,
         "mismatch_rows": 0,
-        "source": "FINAL_VALIDATION_REPORT.md and review_slices.json filtered dashboard surface"
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
         "path": "papers/LMMS04FairDivision/PaperInterface.lean",
-        "line_count": 7728,
-        "declaration_rows": 791,
+        "line_count": 171,
+        "declaration_rows": 33,
         "review_rows": 33,
-        "oversized": true,
-        "maintainability_issue": "PaperInterface.lean is oversized and relies on review_slices.json to filter 791 declarations down to 33 source-facing rows; shrink toward paper-facing definitions and named results."
+        "oversized": false,
+        "maintainability_issue": null,
+        "proof_interface_path": "papers/LMMS04FairDivision/ProofInterface.lean",
+        "proof_interface_line_count": 7726
+      },
+      "artifacts": {
+        "readme": "papers/LMMS04FairDivision/README.md",
+        "paper_interface": "papers/LMMS04FairDivision/PaperInterface.lean",
+        "final_validation_report": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LMMS04FairDivision/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LMMS04FairDivision/DependencyDAG.pdf",
+        "proof_interface": "papers/LMMS04FairDivision/ProofInterface.lean"
+      },
+      "review_surface": {
+        "source_file": "papers/LMMS04FairDivision/PaperInterface.lean",
+        "include_names": [
+          "envy",
+          "envyFree",
+          "envyBoundedBy",
+          "maxMarginal",
+          "isAllocationOf",
+          "lemma2_2_acyclic_reduction",
+          "theorem2_1_bounded_envy_allocation_exists",
+          "theorem2_1_alpha_bounded_allocation_exists",
+          "theorem2_1_algorithm_correct_list_toFinset",
+          "theorem2_3_real_interval_supported_atom_bound",
+          "theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries",
+          "theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries",
+          "theorem3_2_graham_certificate_to_envy_ratio_bound",
+          "theorem3_2_graham_factor_eq_seven_fifths",
+          "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee",
+          "theorem3_3_claim34_fixed_rounding_ratio_endpoint",
+          "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint",
+          "theorem3_3_claim34_min_max_search_certificate_ratio_endpoint",
+          "claim3_4_bounded_optimal_certificate",
+          "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods",
+          "claim3_4_bounded_optimal_of_identical_utilities_model",
+          "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads",
+          "lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads",
+          "directMechanism",
+          "randomizedDirectMechanism",
+          "truthful",
+          "randomizedTruthful",
+          "theorem4_1_source_goods",
+          "theorem4_1_true_report",
+          "theorem4_1_source_not_truthful_envy_free_whenever_exists",
+          "theorem4_1_source_minimum_envy_not_truthful",
+          "theorem4_2_uniform_random_mechanism_truthful",
+          "theorem4_2_uniform_random_max_envy_probability_bound"
+        ],
+        "slices": [
+          {
+            "id": "definitions-and-section-2",
+            "title": "Definitions and Section 2",
+            "names": [
+              "envy",
+              "envyFree",
+              "envyBoundedBy",
+              "maxMarginal",
+              "isAllocationOf",
+              "lemma2_2_acyclic_reduction",
+              "theorem2_1_bounded_envy_allocation_exists",
+              "theorem2_1_alpha_bounded_allocation_exists",
+              "theorem2_1_algorithm_correct_list_toFinset",
+              "theorem2_3_real_interval_supported_atom_bound"
+            ]
+          },
+          {
+            "id": "section-3-lower-bound-and-scheduling",
+            "title": "Section 3 Lower Bound and Scheduling",
+            "names": [
+              "theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries",
+              "theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries",
+              "theorem3_2_graham_certificate_to_envy_ratio_bound",
+              "theorem3_2_graham_factor_eq_seven_fifths"
+            ]
+          },
+          {
+            "id": "section-3-ptas-boundary",
+            "title": "Section 3 PTAS Boundary",
+            "names": [
+              "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee",
+              "theorem3_3_claim34_fixed_rounding_ratio_endpoint",
+              "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint",
+              "theorem3_3_claim34_min_max_search_certificate_ratio_endpoint",
+              "claim3_4_bounded_optimal_certificate",
+              "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods",
+              "claim3_4_bounded_optimal_of_identical_utilities_model",
+              "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads",
+              "lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads"
+            ]
+          },
+          {
+            "id": "section-4-truthfulness",
+            "title": "Section 4 Truthfulness",
+            "names": [
+              "directMechanism",
+              "randomizedDirectMechanism",
+              "truthful",
+              "randomizedTruthful",
+              "theorem4_1_source_goods",
+              "theorem4_1_true_report",
+              "theorem4_1_source_not_truthful_envy_free_whenever_exists",
+              "theorem4_1_source_minimum_envy_not_truthful",
+              "theorem4_2_uniform_random_mechanism_truthful",
+              "theorem4_2_uniform_random_max_envy_probability_bound"
+            ]
+          }
+        ]
       }
     },
     {
+      "schema": 1,
       "id": "LOS02CombinatorialAuctions",
       "title": "Truth Revelation in Approximately Efficient Combinatorial Auctions",
       "authors": "Daniel Lehmann, Liadan Ita O'Callaghan, and Yoav Shoham",
@@ -268,15 +666,380 @@
         "total_rows": 30,
         "stale_rows": 0,
         "mismatch_rows": 0,
-        "source": "FINAL_VALIDATION_REPORT.md and review_slices.json filtered dashboard surface"
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
         "path": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
-        "line_count": 3361,
-        "declaration_rows": 224,
+        "line_count": 174,
+        "declaration_rows": 30,
         "review_rows": 30,
-        "oversized": true,
-        "maintainability_issue": "PaperInterface.lean is oversized and relies on review_slices.json to filter 224 declarations down to 30 source-facing rows; shrink toward paper-facing definitions and named results."
+        "oversized": false,
+        "maintainability_issue": null,
+        "proof_interface_path": "papers/LOS02CombinatorialAuctions/ProofInterface.lean",
+        "proof_interface_line_count": 3360
+      },
+      "artifacts": {
+        "readme": "papers/LOS02CombinatorialAuctions/README.md",
+        "paper_interface": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
+        "final_validation_report": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LOS02CombinatorialAuctions/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LOS02CombinatorialAuctions/DependencyDAG.pdf",
+        "proof_interface": "papers/LOS02CombinatorialAuctions/ProofInterface.lean"
+      },
+      "review_surface": {
+        "source_file": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
+        "include_names": [
+          "utility",
+          "truthfulOn",
+          "generalizedVickreyAuction",
+          "singleMindedAcceptedMechanism",
+          "singleMindedTruthfulOn",
+          "nonnegativeNonemptySingleMindedProfile",
+          "weightedSetPackingValue",
+          "setPackingSingleMindedBids",
+          "averageAmountPerGood",
+          "averageOrderOf",
+          "greedyAcceptedFromOrder",
+          "averageGreedyAcceptedSet",
+          "averageGreedyPayment",
+          "theorem4_1_generalized_vickrey_truthful",
+          "proposition4_2_generalized_vickrey_truthful_utility_nonneg",
+          "theorem6_1_set_packing_feasibility_encoding_correct",
+          "theorem6_1_set_packing_value_encoding_correct",
+          "theorem6_1_weighted_set_packing_reduction",
+          "theorem6_1_clique_decision_single_minded_welfare_reduction",
+          "theorem6_1_external_optimal_solver_np_eq_zpp",
+          "theorem6_1_external_approximation_solver_np_eq_zpp",
+          "complexity_note_np_eq_zpp_implies_randomized_collapse",
+          "theorem7_2_sqrt_norm_approx_of_sorted_order",
+          "lemma9_1_exists_nonnegative_critical_value_of_monotonicity",
+          "lemma9_2_denied_bidder_utility_eq_zero",
+          "lemma9_3_truthful_utility_nonnegative_of_nonnegative_infinity_certificate",
+          "lemma9_4_no_profitable_value_only_lie_of_nonnegative_infinity_axioms",
+          "lemma9_5_finite_threshold_mono_of_nonnegative_infinity_certificate",
+          "theorem9_6_single_minded_truthful_of_nonnegative_infinity_axioms",
+          "theorem10_2_averageGreedy_truthful"
+        ],
+        "slices": [
+          {
+            "id": "source-definitions",
+            "title": "Source Definitions",
+            "names": [
+              "utility",
+              "truthfulOn",
+              "generalizedVickreyAuction",
+              "singleMindedAcceptedMechanism",
+              "singleMindedTruthfulOn",
+              "nonnegativeNonemptySingleMindedProfile",
+              "weightedSetPackingValue",
+              "setPackingSingleMindedBids",
+              "averageAmountPerGood",
+              "averageOrderOf",
+              "greedyAcceptedFromOrder",
+              "averageGreedyAcceptedSet",
+              "averageGreedyPayment"
+            ]
+          },
+          {
+            "id": "sections-4-6",
+            "title": "Sections 4-6",
+            "names": [
+              "theorem4_1_generalized_vickrey_truthful",
+              "proposition4_2_generalized_vickrey_truthful_utility_nonneg",
+              "theorem6_1_set_packing_feasibility_encoding_correct",
+              "theorem6_1_set_packing_value_encoding_correct",
+              "theorem6_1_weighted_set_packing_reduction",
+              "theorem6_1_clique_decision_single_minded_welfare_reduction",
+              "theorem6_1_external_optimal_solver_np_eq_zpp",
+              "theorem6_1_external_approximation_solver_np_eq_zpp",
+              "complexity_note_np_eq_zpp_implies_randomized_collapse"
+            ]
+          },
+          {
+            "id": "sections-7-10",
+            "title": "Sections 7-10",
+            "names": [
+              "theorem7_2_sqrt_norm_approx_of_sorted_order",
+              "lemma9_1_exists_nonnegative_critical_value_of_monotonicity",
+              "lemma9_2_denied_bidder_utility_eq_zero",
+              "lemma9_3_truthful_utility_nonnegative_of_nonnegative_infinity_certificate",
+              "lemma9_4_no_profitable_value_only_lie_of_nonnegative_infinity_axioms",
+              "lemma9_5_finite_threshold_mono_of_nonnegative_infinity_certificate",
+              "theorem9_6_single_minded_truthful_of_nonnegative_infinity_axioms",
+              "theorem10_2_averageGreedy_truthful"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "schema": 1,
+      "id": "MBJG25ProducerFairness",
+      "title": "Balancing Producer Fairness and Efficiency via Bayesian Rating System Design",
+      "authors": "Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg",
+      "source_version": "ICWSM 2025 / arXiv:2207.04369",
+      "build_target": "lake build MBJG25ProducerFairness",
+      "status": "formalized with caveat",
+      "main_caveat": "Bayesian rating-system results are formalized with a documented boundary correction.",
+      "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 17,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+      },
+      "paper_interface": {
+        "path": "papers/MBJG25ProducerFairness/PaperInterface.lean",
+        "line_count": 296,
+        "declaration_rows": 17,
+        "review_rows": 17,
+        "oversized": false,
+        "maintainability_issue": null,
+        "proof_interface_path": "papers/MBJG25ProducerFairness/ProofInterface.lean",
+        "proof_interface_line_count": 37
+      },
+      "artifacts": {
+        "readme": "papers/MBJG25ProducerFairness/README.md",
+        "paper_interface": "papers/MBJG25ProducerFairness/PaperInterface.lean",
+        "final_validation_report": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/MBJG25ProducerFairness/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/MBJG25ProducerFairness/DependencyDAG.pdf",
+        "proof_interface": "papers/MBJG25ProducerFairness/ProofInterface.lean"
+      },
+      "review_surface": {
+        "source_file": "papers/MBJG25ProducerFairness/PaperInterface.lean",
+        "include_names": [
+          "paper_posterior_mean",
+          "paper_bias",
+          "paper_variance",
+          "paper_squared_bias",
+          "paper_facing_theorem3_1_variance_weak_decrease",
+          "paper_facing_theorem3_1_variance_strict_decrease_interior",
+          "paper_facing_theorem3_1_squared_bias_nondecreasing",
+          "paper_facing_theorem3_2_squared_bias_convex_in_quality",
+          "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean",
+          "paper_facing_theorem3_2_variance_concave_in_quality",
+          "paper_facing_theorem3_2_variance_global_max_at_half",
+          "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero",
+          "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one",
+          "paper_facing_individual_producer_unfairness",
+          "paper_facing_thompson_sampling_mechanism",
+          "paper_facing_expected_regret",
+          "paper_facing_responsive_mse_decomposition"
+        ],
+        "slices": [
+          {
+            "id": "all",
+            "title": "All source-facing review rows",
+            "names": [
+              "paper_posterior_mean",
+              "paper_bias",
+              "paper_variance",
+              "paper_squared_bias",
+              "paper_facing_theorem3_1_variance_weak_decrease",
+              "paper_facing_theorem3_1_variance_strict_decrease_interior",
+              "paper_facing_theorem3_1_squared_bias_nondecreasing",
+              "paper_facing_theorem3_2_squared_bias_convex_in_quality",
+              "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean",
+              "paper_facing_theorem3_2_variance_concave_in_quality",
+              "paper_facing_theorem3_2_variance_global_max_at_half",
+              "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero",
+              "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one",
+              "paper_facing_individual_producer_unfairness",
+              "paper_facing_thompson_sampling_mechanism",
+              "paper_facing_expected_regret",
+              "paper_facing_responsive_mse_decomposition"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "schema": 1,
+      "id": "MSVV07AdWords",
+      "title": "AdWords and Generalized Online Matching",
+      "authors": "Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V. Vazirani",
+      "source_version": "Journal of the ACM, 2007",
+      "build_target": "lake build MSVV07AdWords",
+      "status": "formalized",
+      "main_caveat": "Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed, including a source-shaped page-level guarantee.",
+      "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 39,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+      },
+      "paper_interface": {
+        "path": "papers/MSVV07AdWords/PaperInterface.lean",
+        "line_count": 613,
+        "declaration_rows": 39,
+        "review_rows": 39,
+        "oversized": false,
+        "maintainability_issue": null,
+        "proof_interface_path": "papers/MSVV07AdWords/ProofInterface.lean",
+        "proof_interface_line_count": 1887
+      },
+      "artifacts": {
+        "readme": "papers/MSVV07AdWords/README.md",
+        "paper_interface": "papers/MSVV07AdWords/PaperInterface.lean",
+        "final_validation_report": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/MSVV07AdWords/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/MSVV07AdWords/DependencyDAG.pdf",
+        "proof_interface": "papers/MSVV07AdWords/ProofInterface.lean"
+      },
+      "review_surface": {
+        "source_file": "papers/MSVV07AdWords/PaperInterface.lean",
+        "include_names": [
+          "PaperInstance",
+          "PaperAssignment",
+          "paperSlotsPerPageDistinct",
+          "paperSpend",
+          "paperRevenue",
+          "paperFeasible",
+          "paperSmallBids",
+          "paperFractionalRevenue",
+          "PaperFractionalFeasible",
+          "paperTradeoff",
+          "paperMsvvRatio",
+          "paperBalanceScore",
+          "paperCanAssign",
+          "paperIsBalanceChoice",
+          "PaperSmallBidsLimitFamily",
+          "theorem8_finite_explicit_error",
+          "theorem8_balance_msvv_competitive_of_small_bids_limit_family",
+          "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error",
+          "section6_next_highest_bid_all",
+          "section6_next_highest_bid_alive",
+          "section6_effective_bids_theorem8_finite_explicit_error",
+          "section6_next_highest_bid_all_theorem8_finite_explicit_error",
+          "section6_next_highest_bid_alive_theorem8_finite_explicit_error",
+          "section6_click_through_rates_theorem8_finite_explicit_error",
+          "section6_availability_theorem8_finite_explicit_error",
+          "section6_multiple_slots_theorem8_finite_explicit_error",
+          "section6_page_top_balance_theorem8_finite_explicit_error",
+          "section6_multiple_slots_distinct_choice_run_assignment_per_page_distinct",
+          "section8_weighted_bids_theorem8_finite_explicit_error",
+          "section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids",
+          "theorem9HardDistribution",
+          "theorem9IntegralPrefixAlgorithm",
+          "theorem9RandomizedOnlineAlgorithm",
+          "theorem9FeasiblePrefixRuleFamily",
+          "theorem9CappedNormalizedRevenue",
+          "theorem9_capped_normalized_revenue_eq_prefix_spend",
+          "theorem9_no_randomized_feasible_prefix_rule_family_beats_msvv_ratio",
+          "theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio",
+          "theorem9_no_randomized_online_algorithm_beats_msvv_ratio"
+        ],
+        "slices": [
+          {
+            "id": "paper-facing-endpoints",
+            "title": "Paper-Facing Endpoints",
+            "line_start": 1
+          }
+        ]
+      }
+    },
+    {
+      "schema": 1,
+      "id": "Roth82StableMatching",
+      "title": "The Economics of Matching: Stability and Incentives",
+      "authors": "Alvin E. Roth",
+      "source_version": "Mathematics of Operations Research, 1982",
+      "build_target": "lake build Roth82StableMatching",
+      "status": "formalized",
+      "main_caveat": "The cached paper's named Theorems 1--7, Lemmas 1--2, and Corollary 5.1 are closed on Roth's stated strict marriage domain without extra model-certificate assumptions.",
+      "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 27,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+      },
+      "paper_interface": {
+        "path": "papers/Roth82StableMatching/PaperInterface.lean",
+        "line_count": 468,
+        "declaration_rows": 27,
+        "review_rows": 27,
+        "oversized": false,
+        "maintainability_issue": null
+      },
+      "artifacts": {
+        "readme": "papers/Roth82StableMatching/README.md",
+        "paper_interface": "papers/Roth82StableMatching/PaperInterface.lean",
+        "final_validation_report": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/Roth82StableMatching/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/Roth82StableMatching/DependencyDAG.pdf"
+      },
+      "review_surface": {
+        "source_file": "papers/Roth82StableMatching/PaperInterface.lean",
+        "include_names": [
+          "preferenceProfile",
+          "completeMarriageOutcome",
+          "stable",
+          "strictMarriageDomain",
+          "stableOutcomes",
+          "menOptimal",
+          "womenOptimal",
+          "possibleForMan",
+          "stableMatchingProcedure",
+          "truthfulForAllAgents",
+          "menDeferredAcceptance",
+          "womenDeferredAcceptance",
+          "paretoOptimal",
+          "efficientMatchingProcedure",
+          "serialDictatorshipMechanism",
+          "manReportStrictlyRanksPartnerFirst",
+          "reportMisrepresentsKthChoice",
+          "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain",
+          "theorem2_optimal_stable_outcomes_on_strict_marriage_domain",
+          "theorem3_no_stable_truthful_procedure_on_strict_profiles",
+          "theorem4_serial_dictatorship_constructed",
+          "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq",
+          "corollary5_1_no_need_to_misrepresent_first_choice",
+          "lemma1_strict_simple_misrepresentation_same_partner",
+          "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain",
+          "theorem6_weak_pareto_for_men_on_strict_marriage_domain",
+          "theorem7_arbitrary_k_on_strict_profiles"
+        ],
+        "slices": [
+          {
+            "id": "all",
+            "title": "All source-facing review rows",
+            "names": [
+              "preferenceProfile",
+              "completeMarriageOutcome",
+              "stable",
+              "strictMarriageDomain",
+              "stableOutcomes",
+              "menOptimal",
+              "womenOptimal",
+              "possibleForMan",
+              "stableMatchingProcedure",
+              "truthfulForAllAgents",
+              "menDeferredAcceptance",
+              "womenDeferredAcceptance",
+              "paretoOptimal",
+              "efficientMatchingProcedure",
+              "serialDictatorshipMechanism",
+              "manReportStrictlyRanksPartnerFirst",
+              "reportMisrepresentsKthChoice",
+              "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain",
+              "theorem2_optimal_stable_outcomes_on_strict_marriage_domain",
+              "theorem3_no_stable_truthful_procedure_on_strict_profiles",
+              "theorem4_serial_dictatorship_constructed",
+              "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq",
+              "corollary5_1_no_need_to_misrepresent_first_choice",
+              "lemma1_strict_simple_misrepresentation_same_partner",
+              "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain",
+              "theorem6_weak_pareto_for_men_on_strict_marriage_domain",
+              "theorem7_arbitrary_k_on_strict_profiles"
+            ]
+          }
+        ]
       }
     }
   ]

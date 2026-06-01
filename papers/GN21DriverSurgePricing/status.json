@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "id": "GN21DriverSurgePricing",
+  "title": "Driver Surge Pricing",
+  "authors": "Nikhil Garg and Hamid Nazerzadeh",
+  "source_version": "Management Science / arXiv v4, 2021",
+  "build_target": "lake build GN21DriverSurgePricing",
+  "status": "formalized",
+  "main_caveat": "Named CTMC lemmas and Theorems 1--4 are exposed; zero-mass boundary behavior is audited separately.",
+  "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 24,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
+    "line_count": 184,
+    "declaration_rows": 24,
+    "review_rows": 24,
+    "oversized": false,
+    "maintainability_issue": null,
+    "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",
+    "proof_interface_line_count": 5690
+  },
+  "artifacts": {
+    "readme": "papers/GN21DriverSurgePricing/README.md",
+    "paper_interface": "papers/GN21DriverSurgePricing/PaperInterface.lean",
+    "final_validation_report": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/GN21DriverSurgePricing/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/GN21DriverSurgePricing/DependencyDAG.pdf",
+    "proof_interface": "papers/GN21DriverSurgePricing/ProofInterface.lean"
+  },
+  "review_surface": {
+    "source_file": "papers/GN21DriverSurgePricing/PaperInterface.lean",
+    "include_names": [
+      "review_definition_single_state_ic",
+      "review_definition_dynamic_ic",
+      "review_definition_threshold_policy",
+      "review_definition_dynamic_defined_reward",
+      "review_section2_single_state_renewal_reward_iid_bridge",
+      "review_proposition3_1_affine_single_state_ic",
+      "review_theorem1_single_state_threshold_best_response",
+      "review_lemma4_single_state_threshold_uniqueness",
+      "review_lemma1_measured_dynamic_reward_decomposition",
+      "review_lemma2_switch_probability_formula",
+      "review_lemma3_measured_time_fraction_formula",
+      "review_remark1_switch_probability_per_time_strictAntiOn",
+      "review_remark3_switch_probability_per_time_tendsto_at_zero",
+      "review_remark4_switch_time_minus_switch_probability_nonneg",
+      "review_lemma5_fixed_response_policy_form",
+      "review_lemma6_upper_endpoint_derivative_formula",
+      "review_lemma7_affine_positive_additive_response_quasi_convex",
+      "review_lemma8_affine_negative_additive_response_quasi_concave",
+      "review_lemma9_surge_derivative_positive_of_acceptAll_bounds",
+      "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds",
+      "review_theorem2_multiplicative_policy_shape_ae",
+      "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states",
+      "review_theorem4_structural_policy_representatives",
+      "review_theorem3_feasible_sequential_current_bounds_source_data_statement"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "review_definition_single_state_ic",
+          "review_definition_dynamic_ic",
+          "review_definition_threshold_policy",
+          "review_definition_dynamic_defined_reward",
+          "review_section2_single_state_renewal_reward_iid_bridge",
+          "review_proposition3_1_affine_single_state_ic",
+          "review_theorem1_single_state_threshold_best_response",
+          "review_lemma4_single_state_threshold_uniqueness",
+          "review_lemma1_measured_dynamic_reward_decomposition",
+          "review_lemma2_switch_probability_formula",
+          "review_lemma3_measured_time_fraction_formula",
+          "review_remark1_switch_probability_per_time_strictAntiOn",
+          "review_remark3_switch_probability_per_time_tendsto_at_zero",
+          "review_remark4_switch_time_minus_switch_probability_nonneg",
+          "review_lemma5_fixed_response_policy_form",
+          "review_lemma6_upper_endpoint_derivative_formula",
+          "review_lemma7_affine_positive_additive_response_quasi_convex",
+          "review_lemma8_affine_negative_additive_response_quasi_concave",
+          "review_lemma9_surge_derivative_positive_of_acceptAll_bounds",
+          "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds",
+          "review_theorem2_multiplicative_policy_shape_ae",
+          "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states",
+          "review_theorem4_structural_policy_representatives",
+          "review_theorem3_feasible_sequential_current_bounds_source_data_statement"
+        ]
+      }
+    ]
+  }
+}

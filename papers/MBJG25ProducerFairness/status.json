@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "id": "MBJG25ProducerFairness",
+  "title": "Balancing Producer Fairness and Efficiency via Bayesian Rating System Design",
+  "authors": "Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg",
+  "source_version": "ICWSM 2025 / arXiv:2207.04369",
+  "build_target": "lake build MBJG25ProducerFairness",
+  "status": "formalized with caveat",
+  "main_caveat": "Bayesian rating-system results are formalized with a documented boundary correction.",
+  "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 17,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/MBJG25ProducerFairness/PaperInterface.lean",
+    "line_count": 296,
+    "declaration_rows": 17,
+    "review_rows": 17,
+    "oversized": false,
+    "maintainability_issue": null,
+    "proof_interface_path": "papers/MBJG25ProducerFairness/ProofInterface.lean",
+    "proof_interface_line_count": 37
+  },
+  "artifacts": {
+    "readme": "papers/MBJG25ProducerFairness/README.md",
+    "paper_interface": "papers/MBJG25ProducerFairness/PaperInterface.lean",
+    "final_validation_report": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/MBJG25ProducerFairness/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/MBJG25ProducerFairness/DependencyDAG.pdf",
+    "proof_interface": "papers/MBJG25ProducerFairness/ProofInterface.lean"
+  },
+  "review_surface": {
+    "source_file": "papers/MBJG25ProducerFairness/PaperInterface.lean",
+    "include_names": [
+      "paper_posterior_mean",
+      "paper_bias",
+      "paper_variance",
+      "paper_squared_bias",
+      "paper_facing_theorem3_1_variance_weak_decrease",
+      "paper_facing_theorem3_1_variance_strict_decrease_interior",
+      "paper_facing_theorem3_1_squared_bias_nondecreasing",
+      "paper_facing_theorem3_2_squared_bias_convex_in_quality",
+      "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean",
+      "paper_facing_theorem3_2_variance_concave_in_quality",
+      "paper_facing_theorem3_2_variance_global_max_at_half",
+      "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero",
+      "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one",
+      "paper_facing_individual_producer_unfairness",
+      "paper_facing_thompson_sampling_mechanism",
+      "paper_facing_expected_regret",
+      "paper_facing_responsive_mse_decomposition"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "paper_posterior_mean",
+          "paper_bias",
+          "paper_variance",
+          "paper_squared_bias",
+          "paper_facing_theorem3_1_variance_weak_decrease",
+          "paper_facing_theorem3_1_variance_strict_decrease_interior",
+          "paper_facing_theorem3_1_squared_bias_nondecreasing",
+          "paper_facing_theorem3_2_squared_bias_convex_in_quality",
+          "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean",
+          "paper_facing_theorem3_2_variance_concave_in_quality",
+          "paper_facing_theorem3_2_variance_global_max_at_half",
+          "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero",
+          "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one",
+          "paper_facing_individual_producer_unfairness",
+          "paper_facing_thompson_sampling_mechanism",
+          "paper_facing_expected_regret",
+          "paper_facing_responsive_mse_decomposition"
+        ]
+      }
+    ]
+  }
+}

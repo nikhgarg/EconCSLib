@@ -8,9 +8,8 @@ repository are ready.
 - The public GitHub repository `nikhgarg/EconCSLib` exists and is public.
 - GitHub Pages is not configured for the repository as of 2026-05-31.
 - The draft site lives on the local `pages-scaffold` branch under `site/`.
-- The workflow file is intentionally disabled as
-  `.github/workflows/pages.yml.disabled`.
-- GitHub Pages is not enabled by this scaffold.
+- The workflow file is tracked as `.github/workflows/pages.yml`.
+- GitHub Pages still needs to be configured in repository settings.
 - No paper PDF is checked into this public repository yet.
 - The default branch remains `main`; merge or fast-forward the scaffold only
   after the paper draft and public status table are ready to announce.
@@ -20,9 +19,9 @@ repository are ready.
 1. Decide whether the paper PDF should be linked externally or added as a final
    reviewed public artifact.
 2. Review `site/index.html` for accurate paper status and contact text.
-3. Confirm `papers/status.json`, `docs/PAPER_STATUS.md`, and the site status
-   table describe the same papers, statuses, review counts, and interface
-   maintenance notes.
+3. Run `python3 scripts/sync_paper_status.py --check`, then confirm
+   `papers/status.json`, `docs/PAPER_STATUS.md`, and the site status table
+   describe the same papers, statuses, review counts, and interface notes.
 4. Run `python3 scripts/audit_repository.py` and confirm there are 0 errors.
 5. Preview the static site locally, for example:
 
@@ -31,20 +30,21 @@ repository are ready.
    ```
 
    Then check the home page.
-6. Rename `.github/workflows/pages.yml.disabled` to
-   `.github/workflows/pages.yml`.
-7. Push the branch or merge it into `main`.
-8. In GitHub repository settings, set Pages to deploy from GitHub Actions.
-9. Set the repository homepage URL to the Pages URL once the first deploy
+6. Push the branch or merge it into `main`.
+7. In GitHub repository settings, set Pages to deploy from GitHub Actions.
+8. Set the repository homepage URL to the Pages URL once the first deploy
     succeeds.
 
 ## Updating After Publication
 
 Treat the site as a summary layer. The source of truth remains:
 
-- `README.md` for the public repository overview;
-- `docs/PAPER_STATUS.md` for paper-level status;
+- paper-local `papers/<PaperName>/status.json` files for status and review
+  metadata;
+- generated `papers/status.json` for aggregate status;
+- `README.md` and `docs/PAPER_STATUS.md` for human summaries;
 - paper-local `FINAL_VALIDATION_REPORT.md` files for detailed caveats; and
 - `CONTRIBUTING.md` for the contribution policy.
 
-When a paper status changes, update those files first, then update the site.
+When a paper status changes, update the paper-local `status.json`, regenerate
+the aggregate, then update the human summary layers.

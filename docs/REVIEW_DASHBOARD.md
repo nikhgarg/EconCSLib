@@ -38,6 +38,8 @@ startup status.
 
 The dashboard includes search, status filters, slice filters, source-file
 buttons, line numbers, and MathJax rendering for formula-like paper statements.
+It reads the paper-local `status.json` `review_surface` section as the
+machine-readable source of truth for curated review rows and slices.
 
 ## Lean-To-TeX Drafts
 
@@ -47,12 +49,12 @@ context-free drafts generated from `PaperInterface.lean` alone, without reading
 the source paper. The legacy `.review_traces/lean_to_tex_llm.json` location is
 still read when no tracked paper-root draft exists.
 
-## Oversized Interfaces
+## Interface Size
 
-The dashboard can still filter by `review_slices.json` for legacy oversized
-interfaces, but slices are a temporary migration aid, not the desired state.
-Before asking a human to review a paper, prefer shrinking `PaperInterface.lean`
-to the paper-facing definitions and named results.
+Before asking a human to review a paper, shrink `PaperInterface.lean` to the
+paper-facing definitions and named results. Put broad proof aliases in
+`ProofInterface.lean` or another implementation-facing module, then expose the
+curated source-facing review rows in paper-local `status.json`.
 
 ```bash
 wc -l papers/<Paper>/PaperInterface.lean

@@ -23,7 +23,7 @@ assignees: ""
 
 - README row status:
 - DAG node style:
-- `papers/status.json` caveat text:
+- Paper-local `status.json` caveat text:
 
 ## Next step
 

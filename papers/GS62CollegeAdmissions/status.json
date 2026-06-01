@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "id": "GS62CollegeAdmissions",
+  "title": "College Admissions and the Stability of Marriage",
+  "authors": "D. Gale and L. S. Shapley",
+  "source_version": "American Mathematical Monthly, 1962",
+  "build_target": "lake build GS62CollegeAdmissions",
+  "status": "formalized",
+  "main_caveat": "Lean endpoints are closed without extra certificates or conditional proof gaps; the cached PDF scan has poor OCR, recorded as a source-audit note rather than a formalization caveat.",
+  "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 7,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/GS62CollegeAdmissions/PaperInterface.lean",
+    "line_count": 109,
+    "declaration_rows": 7,
+    "review_rows": 7,
+    "oversized": false,
+    "maintainability_issue": null
+  },
+  "artifacts": {
+    "readme": "papers/GS62CollegeAdmissions/README.md",
+    "paper_interface": "papers/GS62CollegeAdmissions/PaperInterface.lean",
+    "final_validation_report": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/GS62CollegeAdmissions/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/GS62CollegeAdmissions/DependencyDAG.pdf"
+  },
+  "review_surface": {
+    "source_file": "papers/GS62CollegeAdmissions/PaperInterface.lean",
+    "include_names": [
+      "strictMarriageDomain",
+      "stableMarriage",
+      "completeMarriage",
+      "applicantOptimalStableMarriage",
+      "theorem1_stable_marriage_exists",
+      "college_admissions_stable_assignment_exists",
+      "theorem2_applicant_optimality"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "strictMarriageDomain",
+          "stableMarriage",
+          "completeMarriage",
+          "applicantOptimalStableMarriage",
+          "theorem1_stable_marriage_exists",
+          "college_admissions_stable_assignment_exists",
+          "theorem2_applicant_optimality"
+        ]
+      }
+    ]
+  }
+}

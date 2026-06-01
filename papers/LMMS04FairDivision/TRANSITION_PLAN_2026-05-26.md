@@ -95,8 +95,8 @@ consequence. They are the intended entry point for the final runtime proof.
 4. State the final paper-facing PTAS/FPTAS complexity theorem only after the
    runtime theorem is real, then update `README.md`, `DependencyDAG.tex`, and
    `docs/ECONCSLEAN_CURRENT_STATUS.md`.
-5. Run the human review workflow by slices. `review_slices.json` partitions the
-   791 `PaperInterface.lean` rows into 16 slices with max size 70.
+5. Run the human review workflow from `status.json`. The compact
+   `PaperInterface.lean` now exposes the source-facing review rows directly.
 
 ## Validation Snapshot
 
@@ -116,4 +116,4 @@ Expected nonzero checks:
   `0` mismatch.
 - `python3 scripts/audit_repository.py --include-active`: repo-wide failures
   remain. LMMS04-specific output is the missing cached source PDF plus an info
-  line that `review_slices.json` exposes 791 rows across 16 slices.
+  line that `status.json` exposes the source-facing review rows.

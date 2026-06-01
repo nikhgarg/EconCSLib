@@ -25,9 +25,11 @@ assignees: ""
 - [ ] `README.md`
 - [ ] `FORMALIZATION_PLAN.md`
 - [ ] `DependencyDAG.tex`
+- [ ] `DependencyDAG.pdf`
 - [ ] `MainTheorems.lean`
 - [ ] `PaperInterface.lean`
-- [ ] `papers/status.json` entry
+- [ ] `papers/<PaperName>/status.json`
+- [ ] regenerated `papers/status.json`
 
 Do not attach or commit source PDFs/text caches unless redistribution rights
 have been checked separately.

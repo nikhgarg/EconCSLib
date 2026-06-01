@@ -524,10 +524,11 @@ the Lean statements against the paper.
   named result list, trim it before refreshing the dashboard or calling the
   paper ready for review.
   A dashboard with hundreds of rows is almost always a sign that implementation
-  endpoints leaked into the human interface. Use `review_slices.json`
-  `include_names` or equivalent curation to expose the source-facing
-  definitions/results only; slices make review navigable, but they do not make
-  an oversized interface appropriate for humans.
+  endpoints leaked into the human interface. Curate the source-facing
+  definitions/results in the paper-local `status.json` `review_surface`, and
+  move broad proof aliases to `ProofInterface.lean`; slices make review
+  navigable, but they do not make an oversized interface appropriate for
+  humans.
   Final reports should cite the post-filter human-review row count. If the
   count is still in the hundreds, stop and curate the dashboard surface before
   publishing the report.
@@ -1304,18 +1305,16 @@ pass:
   `rg -c '^(noncomputable\\s+|private\\s+|protected\\s+)*(theorem|lemma|def|abbrev) ' papers/<Paper>/PaperInterface.lean`.
   If the declaration count is in the hundreds, split implementation endpoints
   out before asking a human to review it.
-- If a large `PaperInterface.lean` is intentionally broad, add a tracked
-  `review_slices.json` with line-, name-, or prefix-based slices of at most 80
-  review rows each. Validate the slice file with `scripts/audit_repository.py`
-  or `scripts.audit_repository.review_slice_counts`, then refresh the ignored
-  dashboard cache. Do not confuse "0/N reviewed" with stale or failed Lean
-  validation; it only means no human review entries have been saved.
-  If the full slice set still exposes hundreds of rows, add an `include_names`
-  whitelist or trim `PaperInterface.lean`; final human review should normally
-  expose a compact source-facing surface, not every proof endpoint.
-  Do not report an unfiltered declaration count such as hundreds of rows as the
-  human dashboard surface in a final validation report; fix the filter first
-  and report the curated count.
+- If `PaperInterface.lean` starts to grow, split broad proof/API aliases into
+  `ProofInterface.lean` or implementation modules. Curate the review rows and
+  optional slices in paper-local `status.json` under `review_surface`, then run
+  `python3 scripts/sync_paper_status.py` and refresh the ignored dashboard
+  cache. Do not confuse "0/N reviewed" with stale or failed Lean validation; it
+  only means no human review entries have been saved.
+  Final human review should normally expose a compact source-facing surface,
+  not every proof endpoint. Do not report an unfiltered declaration count such
+  as hundreds of rows as the human dashboard surface in a final validation
+  report; fix the interface first and report the curated count.
 - Treat `PostPaperAudit.lean` as the exhaustive importable ledger, not the
   readable paper interface. Its header should say that explicitly and point to
   `PaperInterface.lean` for the DAG-shaped human-facing surface. It should

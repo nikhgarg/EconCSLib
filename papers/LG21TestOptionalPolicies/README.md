@@ -1,5 +1,7 @@
 # Test-optional Admissions and Informational Gaps
 
+Machine-readable status source: [`status.json`](status.json).
+
 ## Source Version
 
 - Paper: *Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps*
