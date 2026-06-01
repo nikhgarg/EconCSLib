@@ -42,6 +42,8 @@ REVIEW_LAUNCHER_TARGET = "scripts/launch_review_dashboard.sh"
 REVIEW_TRACE_CACHE = ".review_traces/paper_interface_cache.json"
 REVIEW_SLICES_NAME = "review_slices.json"
 REVIEW_ROW_WARN_THRESHOLD = 80
+PAPER_STATUS_FILE = PAPERS / "status.json"
+PAPER_INTERFACE_OVERSIZED_LINE_THRESHOLD = 3000
 ROOT_STATUS_VALUES = {
     "Formalized",
     "Formalized with caveat",
@@ -124,7 +126,8 @@ README_STATUS_DETAIL_RE = re.compile(
     r"DependencyDAG\.tex|MainTheorems\.lean",
     re.I,
 )
-README_STATUS_HEADER = ["Paper", "Status", "Human summary"]
+README_STATUS_HEADER = ["Paper", "Status", "Review", "Interface", "Human summary"]
+README_REVIEW_COUNT_RE = re.compile(r"^\d+/\d+$")
 README_MAX_STATUS_ROWS = 20
 README_MAX_STATUS_SUMMARY_CHARS = 180
 README_MAX_LINES = 140
@@ -678,6 +681,123 @@ def root_status_interface_required_papers(readme: Path) -> set[str]:
     return required
 
 
+def check_machine_paper_status() -> list[Finding]:
+    findings: list[Finding] = []
+    if not PAPER_STATUS_FILE.exists():
+        findings.append(Finding("ERROR", PAPER_STATUS_FILE, "missing machine-readable paper status file"))
+        return findings
+
+    try:
+        data = json.loads(PAPER_STATUS_FILE.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"invalid JSON: {exc.msg}"))
+        return findings
+
+    if data.get("schema") != 1:
+        findings.append(Finding("ERROR", PAPER_STATUS_FILE, "expected `schema: 1`"))
+
+    papers = data.get("papers")
+    if not isinstance(papers, list):
+        findings.append(Finding("ERROR", PAPER_STATUS_FILE, "`papers` should be a list"))
+        return findings
+
+    known = {folder.name for folder in paper_dirs()}
+    entries: dict[str, dict] = {}
+    for idx, entry in enumerate(papers, start=1):
+        if not isinstance(entry, dict):
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"paper entry {idx} should be an object"))
+            continue
+        paper_id = entry.get("id")
+        if not isinstance(paper_id, str) or not paper_id:
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"paper entry {idx} has missing `id`"))
+            continue
+        if paper_id in entries:
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"duplicate paper status entry `{paper_id}`"))
+        entries[paper_id] = entry
+
+        for field in ("title", "source_version", "build_target", "status", "review_entrypoint"):
+            if not isinstance(entry.get(field), str) or not entry[field].strip():
+                findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` has missing `{field}`"))
+
+        status = entry.get("status")
+        if isinstance(status, str) and status not in PAPER_STATUS_VALUES:
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` has unexpected status `{status}`"))
+
+        review = entry.get("human_review")
+        if not isinstance(review, dict):
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` has missing `human_review` object"))
+        else:
+            reviewed = review.get("reviewed_rows")
+            total = review.get("total_rows")
+            for field in ("reviewed_rows", "total_rows", "stale_rows", "mismatch_rows"):
+                if not isinstance(review.get(field), int) or review[field] < 0:
+                    findings.append(
+                        Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}.human_review.{field}` should be a nonnegative integer")
+                    )
+            if isinstance(reviewed, int) and isinstance(total, int) and reviewed > total:
+                findings.append(
+                    Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` has reviewed_rows greater than total_rows")
+                )
+
+        interface = entry.get("paper_interface")
+        if not isinstance(interface, dict):
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` has missing `paper_interface` object"))
+            continue
+
+        path_value = interface.get("path")
+        if not isinstance(path_value, str) or not path_value:
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}.paper_interface.path` is missing"))
+            continue
+
+        interface_path = ROOT / path_value
+        if not interface_path.exists():
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` interface path does not exist: `{path_value}`"))
+            continue
+
+        actual_line_count = len(interface_path.read_text(encoding="utf-8").splitlines())
+        recorded_line_count = interface.get("line_count")
+        if recorded_line_count != actual_line_count:
+            findings.append(
+                Finding(
+                    "ERROR",
+                    PAPER_STATUS_FILE,
+                    f"`{paper_id}` line_count is {recorded_line_count}, expected {actual_line_count}",
+                )
+            )
+
+        total_rows = review.get("total_rows") if isinstance(review, dict) else None
+        review_rows = interface.get("review_rows")
+        if isinstance(total_rows, int) and review_rows != total_rows:
+            findings.append(
+                Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` review_rows should match human_review.total_rows")
+            )
+
+        oversized = interface.get("oversized")
+        if not isinstance(oversized, bool):
+            findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}.paper_interface.oversized` should be boolean"))
+        elif actual_line_count > PAPER_INTERFACE_OVERSIZED_LINE_THRESHOLD and not oversized:
+            findings.append(
+                Finding(
+                    "ERROR",
+                    PAPER_STATUS_FILE,
+                    f"`{paper_id}` PaperInterface.lean has {actual_line_count} lines but is not marked oversized",
+                )
+            )
+        elif oversized and not interface.get("maintainability_issue"):
+            findings.append(
+                Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` oversized interface should include maintainability_issue")
+            )
+
+    missing = known - set(entries)
+    extra = set(entries) - known
+    if missing:
+        findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"missing paper status entries: {', '.join(sorted(missing))}"))
+    if extra:
+        findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"unknown paper status entries: {', '.join(sorted(extra))}"))
+
+    return findings
+
+
 def check_root_human_status_table(readme: Path) -> list[Finding]:
     findings: list[Finding] = []
     matching_tables = [(header, rows) for header, rows in iter_markdown_tables(readme) if header == README_STATUS_HEADER]
@@ -687,7 +807,7 @@ def check_root_human_status_table(readme: Path) -> list[Finding]:
             Finding(
                 "ERROR",
                 readme,
-                "top-level README should include a concise human status table: `Paper | Status | Human summary`",
+                "top-level README should include a concise human status table: `Paper | Status | Review | Interface | Human summary`",
             )
         )
         return findings
@@ -698,6 +818,8 @@ def check_root_human_status_table(readme: Path) -> list[Finding]:
     header, rows = matching_tables[0]
     paper_idx = header.index("Paper")
     status_idx = header.index("Status")
+    review_idx = header.index("Review")
+    interface_idx = header.index("Interface")
     summary_idx = header.index("Human summary")
     seen: set[str] = set()
 
@@ -711,12 +833,14 @@ def check_root_human_status_table(readme: Path) -> list[Finding]:
         )
 
     for row_number, row in enumerate(rows, start=1):
-        if len(row) <= max(paper_idx, status_idx, summary_idx):
+        if len(row) <= max(paper_idx, status_idx, review_idx, interface_idx, summary_idx):
             findings.append(Finding("ERROR", readme, f"malformed human status row {row_number}"))
             continue
 
         paper = row[paper_idx].strip()
         status = row[status_idx].strip()
+        review = row[review_idx].strip()
+        interface = row[interface_idx].strip()
         summary = row[summary_idx].strip()
 
         folder = paper_folder_from_link(paper)
@@ -729,6 +853,10 @@ def check_root_human_status_table(readme: Path) -> list[Finding]:
 
         if status not in ROOT_STATUS_VALUES:
             findings.append(Finding("ERROR", readme, f"unexpected human README status `{status}` for `{paper}`"))
+        if not README_REVIEW_COUNT_RE.fullmatch(review):
+            findings.append(Finding("ERROR", readme, f"human review cell should be `reviewed/total` for `{paper}`"))
+        if not interface:
+            findings.append(Finding("ERROR", readme, f"missing interface health for `{paper}`"))
         if not summary:
             findings.append(Finding("ERROR", readme, f"missing human summary for `{paper}`"))
         elif len(summary) > README_MAX_STATUS_SUMMARY_CHARS:
@@ -1040,6 +1168,7 @@ def run(include_active: bool, strict_style: bool) -> list[Finding]:
     findings.extend(check_dag_status_styles())
     findings.extend(check_paper_facing_ledgers(include_active))
     findings.extend(check_post_paper_audit_interfaces(include_active))
+    findings.extend(check_machine_paper_status())
     findings.extend(check_status_label_vocabulary())
     findings.extend(check_readme_status_tables(include_active))
     findings.extend(check_tracked_artifacts(include_active))
