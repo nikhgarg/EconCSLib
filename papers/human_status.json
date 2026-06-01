@@ -195,9 +195,9 @@
       "source_url": "",
       "paper_info": "Dropping Standardized Testing for Admissions Trades Off Information and Access by Nikhil Garg, Hannah Li, and Faidra Monachou; arXiv:2010.04396 / Management Science accepted version, 2026.",
       "status": "Partially formalized",
-      "human_review": "0/284",
-      "lean_loc": 116214,
-      "main_note": "Lemma 1, Proposition 1, Lemma 2, Theorems 1-2, and large Section 5 bridge surfaces are exposed; concrete Bayesian-game row identifications and later strategic model wiring remain open.",
+      "human_review": "0/50",
+      "lean_loc": 114406,
+      "main_note": "Lemma 1, Proposition 1, Lemma 2, Theorems 1-2, and selected Section 5 bridge endpoints are exposed; concrete Bayesian-game row identifications and later strategic model wiring remain open.",
       "paper_folder": "papers/GLM20DroppingStandardizedTesting",
       "review_entrypoint": "papers/GLM20DroppingStandardizedTesting/FINAL_VALIDATION_REPORT.md"
     },
