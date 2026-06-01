@@ -40,8 +40,8 @@ public-safe reusable library changes.
    clean worktree.
 4. Confirm `README.md`, `docs/PAPER_STATUS.md`, and `site/index.html` list the
    same public papers and use only the status vocabulary in `docs/STATUS.md`.
-5. Rebuild the workshop paper and refresh
-   `site/assets/econcslib-workshop-draft.pdf`.
+5. Decide whether the reviewed workshop paper PDF should be linked externally
+   or added as a final public artifact.
 6. Decide and add the repository `LICENSE` before soliciting broad external
    code contributions.
 7. Set the GitHub repository description. Set the homepage only after Pages is
@@ -49,7 +49,7 @@ public-safe reusable library changes.
 
 ## Pages Activation Sequence
 
-1. Review `site/index.html` and the linked PDF locally.
+1. Review `site/index.html` locally.
 2. Rename `.github/workflows/pages.yml.disabled` to
    `.github/workflows/pages.yml`.
 3. Merge `pages-scaffold` into `main`.

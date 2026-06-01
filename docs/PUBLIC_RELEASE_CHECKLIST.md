@@ -53,8 +53,8 @@ Each public paper folder should have:
 
 ## GitHub Pages Readiness
 
-- [ ] Rebuild the workshop paper PDF and refresh
-      `site/assets/econcslib-workshop-draft.pdf`.
+- [ ] Decide whether the reviewed workshop paper PDF should be linked
+      externally or added as a final public artifact.
 - [ ] Confirm the site status table matches `docs/PAPER_STATUS.md`.
 - [ ] Keep `.github/workflows/pages.yml.disabled` disabled until the repository
       is ready to publish Pages.

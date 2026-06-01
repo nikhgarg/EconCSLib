@@ -11,31 +11,29 @@ repository are ready.
 - The workflow file is intentionally disabled as
   `.github/workflows/pages.yml.disabled`.
 - GitHub Pages is not enabled by this scaffold.
-- The current draft paper PDF is checked in at
-  `site/assets/econcslib-workshop-draft.pdf`.
+- No paper PDF is checked into this public repository yet.
 - The default branch remains `main`; merge or fast-forward the scaffold only
   after the paper draft and public status table are ready to announce.
 
 ## Before Publishing
 
-1. Rebuild the workshop paper PDF in `../2026_EconCSLibpaper`.
-2. Copy the latest PDF into `site/assets/econcslib-workshop-draft.pdf`.
-3. Review `site/index.html` for accurate paper status and contact text.
-4. Confirm `docs/PAPER_STATUS.md` matches the site status table.
-5. Run `python3 scripts/audit_repository.py` and confirm there are 0 errors.
-6. Preview the static site locally, for example:
+1. Decide whether the paper PDF should be linked externally or added as a final
+   reviewed public artifact.
+2. Review `site/index.html` for accurate paper status and contact text.
+3. Confirm `docs/PAPER_STATUS.md` matches the site status table.
+4. Run `python3 scripts/audit_repository.py` and confirm there are 0 errors.
+5. Preview the static site locally, for example:
 
    ```bash
    python3 -m http.server 8765 --directory site
    ```
 
-   Then check the home page and
-   `site/assets/econcslib-workshop-draft.pdf`.
-7. Rename `.github/workflows/pages.yml.disabled` to
+   Then check the home page.
+6. Rename `.github/workflows/pages.yml.disabled` to
    `.github/workflows/pages.yml`.
-8. Push the branch or merge it into `main`.
-9. In GitHub repository settings, set Pages to deploy from GitHub Actions.
-10. Set the repository homepage URL to the Pages URL once the first deploy
+7. Push the branch or merge it into `main`.
+8. In GitHub repository settings, set Pages to deploy from GitHub Actions.
+9. Set the repository homepage URL to the Pages URL once the first deploy
     succeeds.
 
 ## Updating After Publication
