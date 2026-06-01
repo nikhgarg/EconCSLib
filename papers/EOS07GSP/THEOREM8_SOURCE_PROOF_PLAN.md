@@ -362,6 +362,11 @@ is the concrete generalized-English extensive-form argument:
    is the intended local bridge: once source semantics prove a realized
    named-strategy dropout did not overshoot, the recorded dropout price is
    exactly the finite `B*` threshold.
+   At the history level,
+   `theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot`
+   upgrades an ordinary generated named-strategy history to the no-overshoot
+   history object from precisely those realized-new-dropout no-overshoot
+   premises.
    Bare `StrategyHistory` cannot imply exact records; the overshoot witness
    above is a formal counterexample. If the real transition relation is encoded
    through clock-disciplined advances, the target theorem is

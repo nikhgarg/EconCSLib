@@ -3037,6 +3037,35 @@ theorem audit_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_e
     le_antisymm hno_overshoot hrecord_and_threshold.2
   simpa [hclock] using hrecord_and_threshold.1
 
+/-- Audit for Theorem 8 source histories: ordinary named-strategy histories
+upgrade to no-overshoot histories once every realized new-dropout step is known
+not to overshoot that rank's finite `B*` threshold. -/
+theorem audit_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hno_overshoot :
+      ∀ {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {rank : ℕ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining) state next →
+        state.IsActive rank →
+        ¬ next.IsActive rank →
+        state.clockPrice ≤
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot
+      model hhist hno_overshoot
+
 /-- Audit for Theorem 8 exact finite-`B*` strategy-consistent steps: a rank
 cannot newly drop before its finite `B*` threshold bid. -/
 theorem audit_theorem8_bstar_ranked_threshold_strategy_step_no_new_dropout_before_threshold

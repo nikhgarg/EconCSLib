@@ -24046,6 +24046,58 @@ inductive PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
           state finalState
 
 /--
+An ordinary named-strategy history can be upgraded to a no-overshoot history
+when the source proof supplies no-overshoot exactly at realized new-dropout
+steps. This is the local source-invariant bridge: advances remain ordinary
+clock advances, and each dropout step stores the no-overshoot fact for the rank
+that actually became inactive.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hno_overshoot :
+      ∀ {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {rank : ℕ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining) state next →
+        state.IsActive rank →
+        ¬ next.IsActive rank →
+        state.clockPrice ≤
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  induction hhist with
+  | refl state =>
+      exact PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory.refl state
+  | @cons state mid finalState hstep htail ih =>
+      cases hstep with
+      | advance newPrice hclock =>
+          exact
+            PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory.advance
+              newPrice hclock ih
+      | dropout rank hactive hstrategy =>
+          exact
+            PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory.dropout
+              rank hactive hstrategy
+              (hno_overshoot
+                (PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep.dropout
+                  state rank hactive hstrategy)
+                hactive
+                (by
+                  simpa using
+                    PaperTheorem8GeneralizedEnglishAuctionState.recordDropout_not_active
+                      state rank))
+              ih
+
+/--
 Every no-overshoot named-strategy history is an ordinary strategy-consistent
 history.
 -/

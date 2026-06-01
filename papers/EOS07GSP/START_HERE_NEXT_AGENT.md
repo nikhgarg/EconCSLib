@@ -58,6 +58,7 @@ Use these as the strongest public entry points before adding new code:
 
 - `theorem8_no_overshoot_strategy_history_to_exact_drop_history`
 - `theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot`
+- `theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot`
 - `theorem8_no_overshoot_terminal_certificate_of_strategy_history`
 - `theorem8_clock_disciplined_strategy_history_to_exact_drop_history`
 - `theorem8_clock_disciplined_strategy_history_final_record_eq_threshold`
@@ -85,7 +86,9 @@ Do this next, in this order:
    source semantics.
 2. Prove the invariant for one transition first. The useful statement is not
    another final conclusion; it should supply the no-overshoot premise consumed
-   by `theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot`,
+   by `theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot`
+   and its one-step record form
+   `theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot`,
    or else identify the exact additional source assumption needed.
 3. Lift the one-transition invariant to histories.
 4. Feed the resulting history into the existing cold-start clock-disciplined or

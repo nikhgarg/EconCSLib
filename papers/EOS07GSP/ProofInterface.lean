@@ -3273,6 +3273,43 @@ theorem theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot
   simpa [theorem8BStarThresholdBid, hclock] using hrecord_and_threshold.1
 
 /--
+History-level source-invariant bridge: an ordinary named-strategy history
+becomes a no-overshoot source history when every realized new-dropout step is
+known not to overshoot that rank's finite `B*` threshold. This is the intended
+interface between the real source transition proof and the existing
+no-overshoot terminal-record endpoints.
+-/
+theorem theorem8_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hno_overshoot :
+      ∀ {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {rank : ℕ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining) state next →
+        state.IsActive rank →
+        ¬ next.IsActive rank →
+        state.clockPrice ≤
+          theorem8BStarThresholdBid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot
+      model hhist
+      (by
+        intro state next rank hstep hactive hinactive
+        simpa [theorem8BStarThresholdBid] using
+          hno_overshoot hstep hactive hinactive)
+
+/--
 No-overshoot source histories forget to ordinary named-strategy histories. This
 is the generated-history component of the tightest concrete timing certificate:
 the no-overshoot evidence is stored only at realized dropout steps.
