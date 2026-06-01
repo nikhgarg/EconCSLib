@@ -24334,6 +24334,181 @@ inductive PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
               model state finalState
 
 /--
+Single-step source-transition form of clock discipline for the named finite
+`B*` strategy. An advance step may only move the clock to a price that does not
+pass any currently active rank's finite `B*` threshold; a dropout step is the
+ordinary named-strategy dropout transition.
+-/
+inductive PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    PaperTheorem8GeneralizedEnglishAuctionState ℕ →
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ → Prop
+  | advance (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+      (newPrice : ℝ) :
+      state.clockPrice ≤ newPrice →
+        (∀ rank,
+          state.IsActive rank →
+            newPrice ≤
+              paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)) →
+          PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+            model state
+            (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+              state newPrice)
+  | dropout (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+      (rank : ℕ) :
+      state.IsActive rank →
+        paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining state rank →
+          PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+            model state
+            (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+              state rank)
+
+/--
+Every clock-disciplined source step is an ordinary strategy-consistent step for
+the named finite `B*` strategy.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_to_strategy_step
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next) :
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining)
+      state next := by
+  cases hstep with
+  | advance newPrice hclock _hsafe =>
+      exact
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep.advance
+          state newPrice hclock
+  | dropout rank hactive hstrategy =>
+      exact
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep.dropout
+          state rank hactive hstrategy
+
+/--
+A clock-disciplined source step preserves the active-rank no-overshoot
+invariant. Advance steps use the discipline bound at the new clock; dropout
+steps keep the clock fixed and only remove one active rank.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_preserves_state_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∀ rank,
+      next.IsActive rank →
+        next.clockPrice ≤
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) := by
+  intro rank hactive_next
+  cases hstep with
+  | advance newPrice _hclock hsafe =>
+      exact
+        hsafe rank
+          (by
+            simpa [PaperTheorem8GeneralizedEnglishAuctionState.advanceClock]
+              using hactive_next)
+  | dropout dropped _hactive _hstrategy =>
+      have hactive_state : state.IsActive rank := by
+        by_cases hsame : rank = dropped
+        · subst rank
+          exfalso
+          simpa [PaperTheorem8GeneralizedEnglishAuctionState.IsActive,
+            PaperTheorem8GeneralizedEnglishAuctionState.recordDropout]
+            using hactive_next
+        · simpa [PaperTheorem8GeneralizedEnglishAuctionState.IsActive,
+            PaperTheorem8GeneralizedEnglishAuctionState.recordDropout, hsame]
+            using hactive_next
+      simpa [PaperTheorem8GeneralizedEnglishAuctionState.recordDropout] using
+        hstate_no_overshoot rank hactive_state
+
+/--
+For a clock-disciplined source step, any rank that newly drops does so before
+the clock has overshot its finite `B*` threshold, provided the pre-step state
+already satisfies the active-rank no-overshoot invariant.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_realized_new_dropout_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    {rank : ℕ}
+    (hactive : state.IsActive rank)
+    (hinactive : ¬ next.IsActive rank) :
+    state.clockPrice ≤
+      paper_theorem8_bstar_threshold_bid
+        model.value model.clickThroughRate (model.remaining + 1)
+        (rank + 1) := by
+  cases hstep with
+  | advance newPrice _hclock _hsafe =>
+      exfalso
+      exact
+        hinactive
+          (by
+            simpa [PaperTheorem8GeneralizedEnglishAuctionState.advanceClock]
+              using hactive)
+  | dropout dropped _hactive_dropped _hstrategy =>
+      by_cases hsame : rank = dropped
+      · exact hstate_no_overshoot rank hactive
+      · exfalso
+        exact
+          hinactive
+            (by
+              simpa [PaperTheorem8GeneralizedEnglishAuctionState.IsActive,
+                PaperTheorem8GeneralizedEnglishAuctionState.recordDropout,
+                hsame] using hactive)
+
+/--
+A clock-disciplined source step can be viewed as a one-step
+clock-disciplined history.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_to_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state next := by
+  cases hstep with
+  | advance newPrice hclock hsafe =>
+      exact
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory.advance
+          newPrice hclock hsafe
+          (PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory.refl
+            (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+              state newPrice))
+  | dropout rank hactive hstrategy =>
+      exact
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory.dropout
+          rank hactive hstrategy
+          (PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory.refl
+            (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+              state rank))
+
+/--
 Every clock-disciplined named-strategy history is an ordinary
 strategy-consistent history. Unlike the exact-record bridge, this forgetful map
 does not need an initial no-overshoot premise.

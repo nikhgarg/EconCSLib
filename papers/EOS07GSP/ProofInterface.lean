@@ -3284,6 +3284,106 @@ theorem theorem8_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot
   simpa [theorem8BStarThresholdBid, hclock] using hrecord_and_threshold.1
 
 /--
+Clock-disciplined source steps are ordinary strategy-consistent steps for the
+named finite `B*` strategy after forgetting the clock-discipline annotation.
+-/
+theorem theorem8_clock_disciplined_strategy_step_to_strategy_step
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next) :
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining)
+      state next := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_to_strategy_step
+      model hstep
+
+/--
+One-step clock discipline preserves the active-rank no-overshoot invariant.
+This is the source-step form of the timing invariant used by the exact-record
+bridge.
+-/
+theorem theorem8_clock_disciplined_strategy_step_preserves_state_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∀ rank,
+      next.IsActive rank →
+        next.clockPrice ≤
+          theorem8BStarThresholdBid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_preserves_state_no_overshoot
+      model hstep
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/--
+At any realized new dropout of a clock-disciplined source step, the pre-dropout
+clock has not overshot the dropping rank's finite `B*` threshold, assuming the
+pre-step state satisfies the active-rank no-overshoot invariant.
+-/
+theorem theorem8_clock_disciplined_strategy_step_realized_new_dropout_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    {rank : ℕ}
+    (hactive : state.IsActive rank)
+    (hinactive : ¬ next.IsActive rank) :
+    state.clockPrice ≤
+      theorem8BStarThresholdBid
+        model.value model.clickThroughRate (model.remaining + 1)
+        (rank + 1) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_realized_new_dropout_no_overshoot
+      model hstep
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      hactive hinactive
+
+/--
+A clock-disciplined source step is the corresponding one-step
+clock-disciplined history.
+-/
+theorem theorem8_clock_disciplined_strategy_step_to_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state next := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_to_history
+      model hstep
+
+/--
 History-level source-invariant bridge: an ordinary named-strategy history
 becomes a no-overshoot source history when every realized new-dropout step is
 known not to overshoot that rank's finite `B*` threshold. This is the intended
@@ -3844,7 +3944,6 @@ theorem theorem8_cold_start_clock_disciplined_strategy_history_final_record_eq_t
     (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
     (hclick_mono : ∀ i,
       model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
-    (hclick_pos : ∀ i, 0 < model.clickThroughRate i)
     {rank : ℕ}
     (hfinal_inactive : ¬ finalState.IsActive rank) :
     finalState.lastDropout rank =
@@ -3859,7 +3958,7 @@ theorem theorem8_cold_start_clock_disciplined_strategy_history_final_record_eq_t
         intro rank hactive
         simpa [theorem8BStarThresholdBid] using
           paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-            model hvalue_nonneg hclick_mono hclick_pos rank hactive)
+            model hvalue_nonneg hclick_mono model.click_pos rank hactive)
       (by rfl) hfinal_inactive
 
 /--
@@ -5408,11 +5507,10 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_source_extensive_
     (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
     (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
     (hclick_mono : ∀ i,
-      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
-    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
     let hstate_no_overshoot :=
       paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos
+        model hvalue_nonneg hclick_mono model.click_pos
     let terminalCert :=
       theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_history
         model hhist hstate_no_overshoot terminal (fun rank => by rfl)
@@ -5442,10 +5540,10 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_source_extensive_
     theorem8_clock_disciplined_terminal_history_source_extensive_trace_completed_threshold_conclusion
       model hhist
       (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos)
+        model hvalue_nonneg hclick_mono model.click_pos)
       terminal (fun rank => by rfl) completedRanks
       hcompleted_threshold_le hvalue_nonneg hvalue_mono hclick_mono
-      hclick_pos
+      model.click_pos
 
 /--
 Cold-start source-extensive clock-disciplined trace endpoint with direct
@@ -5470,11 +5568,10 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_source_extensive_
     (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
     (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
     (hclick_mono : ∀ i,
-      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
-    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
     let hstate_no_overshoot :=
       paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos
+        model hvalue_nonneg hclick_mono model.click_pos
     let terminalCert :=
       theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_history
         model hhist hstate_no_overshoot terminal (fun rank => by rfl)
@@ -5504,9 +5601,9 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_source_extensive_
     theorem8_clock_disciplined_terminal_history_source_extensive_trace_completed_rank_conclusion
       model hhist
       (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos)
+        model hvalue_nonneg hclick_mono model.click_pos)
       terminal (fun rank => by rfl) completedRanks inactive_on_completed
-      hvalue_nonneg hvalue_mono hclick_mono hclick_pos
+      hvalue_nonneg hvalue_mono hclick_mono model.click_pos
 
 /--
 Belief-explicit clock-disciplined source-extensive completed-rank endpoint.
@@ -5680,11 +5777,10 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_belief_source_ext
     (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
     (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
     (hclick_mono : ∀ i,
-      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
-    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
     let hstate_no_overshoot :=
       paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos
+        model hvalue_nonneg hclick_mono model.click_pos
     let terminalCert :=
       theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_history
         model hhist hstate_no_overshoot terminal (fun rank => by rfl)
@@ -5714,10 +5810,10 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_belief_source_ext
     theorem8_clock_disciplined_terminal_history_belief_source_extensive_trace_completed_threshold_conclusion
       model hhist
       (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos)
+        model hvalue_nonneg hclick_mono model.click_pos)
       terminal (fun rank => by rfl) completedRanks
       hcompleted_threshold_le hvalue_nonneg hvalue_mono hclick_mono
-      hclick_pos
+      model.click_pos
 
 /--
 Clock-disciplined all-terminal source-extensive endpoint.  A terminal
@@ -6095,11 +6191,10 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_source_extensive_
     (hno_active : ∀ rank, ¬ finalState.IsActive rank)
     (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
     (hclick_mono : ∀ i,
-      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
-    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
     let hstate_no_overshoot :=
       paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos
+        model hvalue_nonneg hclick_mono model.click_pos
     let terminalCert :=
       theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_history
         model hhist hstate_no_overshoot terminal (fun rank => by rfl)
@@ -6119,7 +6214,7 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_source_extensive_
     theorem8_clock_disciplined_terminal_history_source_extensive_all_terminal_vcg_conclusion
       model hhist
       (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos)
+        model hvalue_nonneg hclick_mono model.click_pos)
       terminal (fun rank => by rfl) hno_active
 
 /--
@@ -6142,11 +6237,10 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_belief_source_ext
     (hno_active : ∀ rank, ¬ finalState.IsActive rank)
     (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
     (hclick_mono : ∀ i,
-      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
-    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
     let hstate_no_overshoot :=
       paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos
+        model hvalue_nonneg hclick_mono model.click_pos
     let terminalCert :=
       theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_history
         model hhist hstate_no_overshoot terminal (fun rank => by rfl)
@@ -6179,7 +6273,7 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_belief_source_ext
     theorem8_clock_disciplined_terminal_history_belief_source_extensive_trace_all_terminal_vcg_conclusion
       model hhist
       (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos)
+        model hvalue_nonneg hclick_mono model.click_pos)
       terminal (fun rank => by rfl) hno_active
 
 /--
@@ -6202,11 +6296,10 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_source_extensive_
     (hno_active : ∀ rank, ¬ finalState.IsActive rank)
     (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
     (hclick_mono : ∀ i,
-      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
-    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
     let hstate_no_overshoot :=
       paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos
+        model hvalue_nonneg hclick_mono model.click_pos
     let terminalCert :=
       theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_history
         model hhist hstate_no_overshoot terminal (fun rank => by rfl)
@@ -6239,7 +6332,7 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_source_extensive_
     theorem8_clock_disciplined_terminal_history_source_extensive_trace_all_terminal_vcg_conclusion
       model hhist
       (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos)
+        model hvalue_nonneg hclick_mono model.click_pos)
       terminal (fun rank => by rfl) hno_active
 
 /--
@@ -6833,11 +6926,10 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_belief_source_ext
     (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
     (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
     (hclick_mono : ∀ i,
-      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
-    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
     let hstate_no_overshoot :=
       paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos
+        model hvalue_nonneg hclick_mono model.click_pos
     let terminalCert :=
       theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_history
         model hhist hstate_no_overshoot terminal (fun rank => by rfl)
@@ -6867,9 +6959,9 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_belief_source_ext
     theorem8_clock_disciplined_terminal_history_belief_source_extensive_trace_completed_rank_conclusion
       model hhist
       (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        model hvalue_nonneg hclick_mono hclick_pos)
+        model hvalue_nonneg hclick_mono model.click_pos)
       terminal (fun rank => by rfl) completedRanks inactive_on_completed
-      hvalue_nonneg hvalue_mono hclick_mono hclick_pos
+      hvalue_nonneg hvalue_mono hclick_mono model.click_pos
 
 /--
 Belief-explicit source-extensive finite-schedule endpoint.  This is the same
