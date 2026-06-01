@@ -55,7 +55,7 @@ future library churn by routing through a small adapter theorem:
 
 ## Strongest Current Boundary
 
-Use the public aliases in `PaperInterface.lean`:
+Use the proof-facing aliases in `ProofInterface.lean`:
 
 - `theorem3_3_external_solver_selected_pair_full_summary_source_output_package`
 - `theorem3_3_external_solver_selected_pair_full_summary_source_output_payload`
@@ -96,7 +96,7 @@ consequence. They are the intended entry point for the final runtime proof.
    runtime theorem is real, then update `README.md`, `DependencyDAG.tex`, and
    `docs/ECONCSLEAN_CURRENT_STATUS.md`.
 5. Run the human review workflow from `status.json`. The compact
-   `PaperInterface.lean` now exposes the source-facing review rows directly.
+   `PaperInterface.lean` now exposes the 33 source-facing review rows directly.
 
 ## Validation Snapshot
 
@@ -112,7 +112,7 @@ python3 /home/nkgarg/.codex/skills/.system/skill-creator/scripts/quick_validate.
 
 Expected nonzero checks:
 
-- `./review-dashboard.sh --check`: reports `0/791` reviewed, `0` stale,
+- `./review-dashboard.sh --check`: reports `0/33` reviewed, `0` stale,
   `0` mismatch.
 - `python3 scripts/audit_repository.py --include-active`: repo-wide failures
   remain. LMMS04-specific output is the missing cached source PDF plus an info

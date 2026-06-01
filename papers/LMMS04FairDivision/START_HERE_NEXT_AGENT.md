@@ -28,7 +28,7 @@ lake build LMMS04FairDivision
 ```
 
 The review dashboard cache has been refreshed. `./review-dashboard.sh --check`
-currently reports `0/791` reviewed, `0` stale, and `0` mismatch; the nonzero
+currently reports `0/33` reviewed, `0` stale, and `0` mismatch; the nonzero
 exit is only because no human review entries have been saved.
 
 ## Active Seam

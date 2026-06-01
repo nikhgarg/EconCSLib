@@ -471,19 +471,19 @@ latexmk -pdf -interaction=nonstopmode -halt-on-error DependencyDAG.tex
 python3 scripts/audit_repository.py
 ```
 
-The dashboard check reports `0/791` reviewed, `791` needing attention, `0`
+The dashboard check reports `0/33` reviewed, `33` needing attention, `0`
 stale, and `0` mismatched. The nonzero exit is expected until a human reviewer
 records those checks.
 
 `python3 scripts/audit_repository.py` still reports one LMMS04
 repository-audit finding that is metadata-only: the cached source PDF is
-absent. The interface now has review slices so the 791 dashboard rows are
-partitioned into sub-80-row review batches, and the ignored review-dashboard
-cache has been regenerated.
+absent. The compact interface now has 33 source-facing review rows selected by
+`status.json` `review_surface`; broad proof-facing aliases are in
+`ProofInterface.lean`.
 
-Lean footprint at the latest 2026-05-26 update: 79,982 paper-local Lean lines
-across 22 files; `PaperInterface.lean` is 7,713 lines. The original historical
-counts in this report are no longer current.
+Lean footprint at the latest public interface split: 80,220 paper-local Lean
+lines across 23 files. `PaperInterface.lean` is 171 lines; the broad
+compatibility surface is `ProofInterface.lean`.
 
 ## DAG Audit
 

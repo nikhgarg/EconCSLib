@@ -102,7 +102,7 @@ external Karp/Hastad-style complexity facts.
 
 `lake build LOS02CombinatorialAuctions`,
 `lake build EconCSLib.Algorithms.Complexity.Classes`, `lake build EconCSLib`,
-the DAG PDF build/clean, and the scoped `git diff --check` all passed. The
-repository audit still exits nonzero because of unrelated GLM20, EOS07GSP, and
-PRPKG24AccuracyDiversity warnings/errors; its LOS02 line is informational only:
-the review dashboard exposes 224 rows across 4 review slices.
+the DAG PDF build/clean, and the scoped `git diff --check` all passed at the
+time of this audit. The current public interface split exposes 30 LOS02
+dashboard rows through `PaperInterface.lean`; proof-facing compatibility rows
+live in `ProofInterface.lean`.

@@ -12,7 +12,7 @@
 - Qualitative proof verdict: Sections 2 and 4 follow the paper-level proof
   structure. Section 3 is intentionally stopped at a reusable complexity
   boundary.
-- Lean footprint: 80,157 paper-local Lean lines across 23 files;
+- Lean footprint: 80,220 paper-local Lean lines across 23 files;
   `PaperInterface.lean` has 171 lines. The previous broad compatibility
   surface is now `ProofInterface.lean`.
 

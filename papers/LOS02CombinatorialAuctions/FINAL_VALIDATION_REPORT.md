@@ -11,7 +11,7 @@
   single-minded truthfulness arguments are formalized in the paper-facing
   model. The final native complexity claims are intentionally stopped at a
   reusable computational-complexity boundary.
-- Lean footprint: 7,243 paper-local Lean lines across 3 files;
+- Lean footprint: 7,288 paper-local Lean lines across 3 files;
   `PaperInterface.lean` has 174 lines. The previous broad compatibility
   surface is now `ProofInterface.lean`.
 
