@@ -40641,6 +40641,113 @@ theorem paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_iff_l
         hlocal.2.2⟩
 
 /--
+Source-extensive rationality alone is still compatible with the overshoot
+witness: the named finite `B*` strategy satisfies the source-extensive
+rationality target from the overshoot initial state to the terminal dropout
+state, but that generated terminal history is not an exact finite `B*`
+dropout history. The missing ingredient is source-transition timing, not the
+cutoff strategy's local optimality, generated history, or terminality.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_allows_overshoot_not_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank : ℕ) :
+    let state :=
+      paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+        model rank
+    let finalState :=
+      PaperTheorem8GeneralizedEnglishAuctionState.recordDropout state rank
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState namedStrategy ∧
+      ¬ PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  dsimp
+  have hover :=
+    paper_theorem8_bstar_ranked_threshold_ordinary_strategy_history_allows_overshoot_not_exact_drop_history
+      model rank
+  have hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model
+        (paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+          model rank)
+        (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+          (paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+            model rank) rank)
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) := by
+    exact
+      (paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_iff_local_deviation_history_terminal
+        model
+        (paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+          model rank)
+        (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+          (paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+            model rank) rank)
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)).mpr
+        ⟨paper_theorem8_bstar_ranked_threshold_named_strategy_local_deviation_sequential_rationality
+            model,
+          hover.1,
+          hover.2.1⟩
+  exact
+    ⟨hsource_extensive, hover.2.2⟩
+
+/--
+Construct the no-overshoot terminal-history certificate directly from the
+source-extensive rationality boundary plus the named realized-dropout timing
+invariant. This is the compact source-proof bridge: source-extensive
+rationality supplies generated history and terminality, while the timing
+invariant upgrades the generated history to the annotated no-overshoot history
+used by terminal-record endpoints.
+-/
+def paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_source_extensive_rationality_and_realized_new_dropout_no_overshoot_statement
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hno_overshoot :
+      paper_theorem8_bstar_ranked_threshold_realized_new_dropout_no_overshoot_statement
+        model)
+    (initially_active : ∀ rank, state.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate where
+  localModel := model
+  initialState := state
+  finalState := finalState
+  history :=
+    paper_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot_statement
+      model hsource_extensive.2.1 hno_overshoot
+  terminal := hsource_extensive.2.2
+  initially_active := initially_active
+
+/--
+Source-extensive rationality plus the realized-dropout no-overshoot statement
+gives an exact finite `B*` dropout history. This is the proof-only bridge from
+the source-shaped rationality boundary to exact terminal records.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_to_exact_drop_history_of_realized_new_dropout_no_overshoot_statement
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hno_overshoot :
+      paper_theorem8_bstar_ranked_threshold_realized_new_dropout_no_overshoot_statement
+        model) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_no_overshoot_strategy_history_to_exact_drop_history
+      model
+      (paper_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot_statement
+        model hsource_extensive.2.1 hno_overshoot)
+
+/--
 Belief object for the source-extensive terminal-record checker. A belief names
 the strategy whose generated source history is being used, together with the
 terminality proof for the same strategy.
