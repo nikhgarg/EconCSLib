@@ -117,10 +117,10 @@ The full target:
 lake build EconCSLib
 ```
 
-is the desired final check, but it may be temporarily blocked by active paper
-threads. Do not repair unrelated active files just to make an unrelated cleanup
-pass green; record the blocker in `docs/ARCHITECTURE.md` and validate with
-narrower targets until that thread stabilizes.
+is the public-release gate and should pass on the public branch. During private
+paper development, narrower targets are acceptable for intermediate work, but do
+not present a branch as public-ready until the aggregate `EconCSLib` target is
+green.
 
 For statement-facing checks, prefer the paper-local launcher from the paper folder:
 
@@ -155,8 +155,6 @@ python3 scripts/bootstrap_review_launchers.py --write
 
 ## Current Maintenance Note
 
-The active auction formalization can currently block full `lake build
-EconCSLib` through auction-local theorem-name drift in
-`EconCSLib.MechanismDesign.Auctions.MainTheorems`. Do not touch that file unless
-you own the auction thread. Use `lake build EconCSLib.Foundations` for unrelated
-foundation/probability validation.
+As of 2026-06-01, the public branch passes `lake build EconCSLib`. If a private
+paper thread temporarily breaks an aggregate build, keep that status out of the
+public branch or document the exact blocker before review.

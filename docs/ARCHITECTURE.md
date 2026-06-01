@@ -75,22 +75,16 @@ searches, or endpoint/current-bound optimality proofs should start with
 
 ## Library Maintenance TODOs
 
-- Deferred until the active auction paper finishes: remove the broad
+- Longer-term import-boundary cleanup: remove the broad
   `EconCSLib.MechanismDesign.Auctions.MainTheorems` import from
   `EconCSLib.Basic` and keep paper-facing auction theorem aggregators imported
-  directly by paper modules. Current Lake builds can materialize only hash files
-  for that heavy aggregate during dependent paper builds, then fail later
-  imports looking for the `.olean`/`.ilean` artifacts. The preferred fix is an
-  import-boundary cleanup, not paper-theorem rewrites.
-- Active auction cleanup note: do not repair
-  `EconCSLib.MechanismDesign.Auctions.MainTheorems` opportunistically while the
-  auction formalization is being edited elsewhere. As of the probability-library
-  cleanup pass, full `lake build EconCSLib` can be blocked by auction-local
-  theorem-name drift, for example the missing
-  `paper_theorem8_bstar_ranked_threshold_strict_ordered_source_completion_certificate_of_ex_post`
-  reference near `MainTheorems.lean:28022`. Keep validating unrelated work with
-  narrower targets such as `lake build EconCSLib.Foundations` until the auction
-  thread stabilizes, then do the import-boundary cleanup above.
+  directly by paper modules. This is a maintainability and build-latency
+  cleanup, not a current public-build blocker.
+- Build status: as of 2026-06-01, the public branch validates with
+  `lake build EconCSLib`. Earlier auction-local theorem-name drift has been
+  resolved on the public branch; future public commits should keep this
+  aggregate target green, even if private paper-development branches use
+  narrower targets while a paper thread is actively changing.
 
 ## Paper Folders
 
