@@ -4306,6 +4306,65 @@ theorem audit_theorem8_bstar_ranked_threshold_exact_drop_history_final_record_eq
     paper_theorem8_bstar_ranked_threshold_exact_drop_history_final_record_eq_threshold
       model hhist hinitial_active hfinal_inactive
 
+/-- Audit for clock-disciplined finite-`B*` source histories: if a rank starts
+active and is inactive at the final state, its terminal record is exactly the
+finite `B*` threshold bid. -/
+theorem audit_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_final_record_eq_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    {rank : ℕ}
+    (hinitial_active : state.IsActive rank)
+    (hfinal_inactive : ¬ finalState.IsActive rank) :
+    finalState.lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  have hexact :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState :=
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_exact_drop_history
+      model hhist hstate_no_overshoot
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_history_final_record_eq_threshold
+      model hexact hinitial_active hfinal_inactive
+
+/-- Audit for cold-start clock-disciplined finite-`B*` source histories: the
+paper cold-start state discharges the initial no-overshoot premise for the
+per-rank terminal-record bridge. -/
+theorem audit_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_history_final_record_eq_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < model.clickThroughRate i)
+    {rank : ℕ}
+    (hfinal_inactive : ¬ finalState.IsActive rank) :
+    finalState.lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  exact
+    audit_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_final_record_eq_threshold
+      model hhist
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono hclick_pos)
+      (by rfl) hfinal_inactive
+
 /-- Audit for exact finite-`B*` drop histories: if all ranks start active and no
 rank remains active, every terminal record is exactly its finite-`B*`
 threshold bid. -/

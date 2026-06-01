@@ -370,6 +370,12 @@ is the concrete generalized-English extensive-form argument:
    proof must feed both the generated-history and exact-record obligations; for
    finite schedules, use
    `theorem8_clock_sorted_schedule_to_clock_disciplined_history` first.
+   When the proof only needs a per-rank terminal-record equality from a
+   clock-disciplined trace, use
+   `theorem8_clock_disciplined_strategy_history_final_record_eq_threshold`; for
+   histories beginning at the paper cold-start state, use
+   `theorem8_cold_start_clock_disciplined_strategy_history_final_record_eq_threshold`
+   to discharge the initial no-overshoot premise automatically.
    For source histories that start at the cold-start state, use
    `theorem8_cold_start_clock_disciplined_terminal_history_source_trace_full_conclusion`
    when the review target is unique PBE plus named-strategy/generated-history/
