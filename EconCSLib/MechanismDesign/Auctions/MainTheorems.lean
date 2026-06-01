@@ -24069,6 +24069,65 @@ def paper_theorem8_bstar_ranked_threshold_realized_new_dropout_no_overshoot_stat
         (rank + 1)
 
 /--
+The global realized-new-dropout no-overshoot statement is false for the
+ordinary `StrategyStep` relation: a rank may still be active after its finite
+`B*` threshold, drop under the named strategy, and record an overshot clock.
+Positive source-timing proofs must therefore use a strengthened source
+transition relation, such as clock discipline, or a history-local no-overshoot
+certificate.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_not_realized_new_dropout_no_overshoot_statement_for_ordinary_strategy_step
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank : ℕ) :
+    ¬ paper_theorem8_bstar_ranked_threshold_realized_new_dropout_no_overshoot_statement
+      model := by
+  intro hno_overshoot
+  let state :=
+    paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+      model rank
+  let next :=
+    PaperTheorem8GeneralizedEnglishAuctionState.recordDropout state rank
+  have hactive : state.IsActive rank := by
+    simp [state,
+      paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state,
+      PaperTheorem8GeneralizedEnglishAuctionState.IsActive]
+  have hstrategy :
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining state rank := by
+    exact
+      (paper_theorem8_bstar_ranked_threshold_strategy_drops_iff_threshold_bid
+        model.value model.clickThroughRate state rank model.remaining
+        (ne_of_gt (model.click_pos rank))
+        (ne_of_gt (model.click_pos (rank + 1)))).mpr
+        (by
+          simp [state,
+            paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state])
+  have hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) state next := by
+    exact
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep.dropout
+        state rank hactive hstrategy
+  have hinactive : ¬ next.IsActive rank := by
+    simpa [next] using
+      PaperTheorem8GeneralizedEnglishAuctionState.recordDropout_not_active
+        state rank
+  have hle :=
+    hno_overshoot hstep hactive hinactive
+  have hbad :
+      paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1) + 1 ≤
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1) := by
+    simpa [state,
+      paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state]
+      using hle
+  linarith
+
+/--
 An ordinary named-strategy history can be upgraded to a no-overshoot history
 when the source proof supplies no-overshoot exactly at realized new-dropout
 steps. This is the local source-invariant bridge: advances remain ordinary
