@@ -7,6 +7,7 @@
   "build_target": "lake build PRPKG24AccuracyDiversity",
   "status": "partially formalized",
   "main_caveat": "Finite optimization, Bernoulli, uniform, bounded, exponential, and Pareto checkpoint layers are exposed; general bounded/Pareto order-statistic certificates and Corollary 1 distribution construction remain open.",
+  "human_summary": "Finite optimization and distribution checkpoints are exposed; general order-statistic certificates remain open.",
   "review_entrypoint": "papers/PRPKG24AccuracyDiversity/README.md",
   "human_review": {
     "reviewed_rows": 0,

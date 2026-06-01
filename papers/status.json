@@ -123,6 +123,7 @@
       "build_target": "lake build EOS07GSP",
       "status": "partially formalized",
       "main_caveat": "GSP non-truthfulness, running example, Theorem 7, and finite Theorem 8 source-extensive endpoints are exposed; the remaining source-completion boundary is explicit in the README.",
+      "human_summary": "Non-truthfulness, examples, and finite theorem endpoints are exposed with an explicit completion boundary.",
       "review_entrypoint": "papers/EOS07GSP/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -366,6 +367,7 @@
       "build_target": "lake build GLM20DroppingStandardizedTesting",
       "status": "partially formalized",
       "main_caveat": "Lemma 1, Proposition 1, Lemma 2, Theorems 1-2, and selected Section 5 bridge endpoints are exposed; concrete Bayesian-game row identifications and later strategic model wiring remain open.",
+      "human_summary": "Main early results and selected Section 5 bridge endpoints are exposed; Bayesian-game row identifications remain open.",
       "review_entrypoint": "papers/GLM20DroppingStandardizedTesting/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -694,6 +696,7 @@
       "build_target": "lake build IM05MarriageHonestyStability",
       "status": "partially formalized",
       "main_caveat": "Matching preliminaries and several theorem wrappers are formalized, but Algorithm 4.1, repaired Lemma 4.4 tail variance, and Section 6 experiment construction remain stronger-model pickup targets.",
+      "human_summary": "Matching preliminaries and theorem wrappers are exposed; Algorithm 4.1 and experiment constructions remain open.",
       "review_entrypoint": "papers/IM05MarriageHonestyStability/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -752,6 +755,7 @@
       "build_target": "lake build KR21Monoculture",
       "status": "partially formalized",
       "main_caveat": "Concrete continuous RUM Theorem 6 and Appendix C Theorem 8 endpoints are exposed; arbitrary-size Mallows dominance and remaining RUM paper-scope bridges remain open.",
+      "human_summary": "Continuous RUM endpoints are exposed; arbitrary-size Mallows dominance and remaining paper-scope bridges remain open.",
       "review_entrypoint": "papers/KR21Monoculture/README.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -1318,6 +1322,7 @@
       "build_target": "lake build PRPKG24AccuracyDiversity",
       "status": "partially formalized",
       "main_caveat": "Finite optimization, Bernoulli, uniform, bounded, exponential, and Pareto checkpoint layers are exposed; general bounded/Pareto order-statistic certificates and Corollary 1 distribution construction remain open.",
+      "human_summary": "Finite optimization and distribution checkpoints are exposed; general order-statistic certificates remain open.",
       "review_entrypoint": "papers/PRPKG24AccuracyDiversity/README.md",
       "human_review": {
         "reviewed_rows": 0,

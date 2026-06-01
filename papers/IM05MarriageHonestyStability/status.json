@@ -7,6 +7,7 @@
   "build_target": "lake build IM05MarriageHonestyStability",
   "status": "partially formalized",
   "main_caveat": "Matching preliminaries and several theorem wrappers are formalized, but Algorithm 4.1, repaired Lemma 4.4 tail variance, and Section 6 experiment construction remain stronger-model pickup targets.",
+  "human_summary": "Matching preliminaries and theorem wrappers are exposed; Algorithm 4.1 and experiment constructions remain open.",
   "review_entrypoint": "papers/IM05MarriageHonestyStability/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

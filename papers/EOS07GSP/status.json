@@ -7,6 +7,7 @@
   "build_target": "lake build EOS07GSP",
   "status": "partially formalized",
   "main_caveat": "GSP non-truthfulness, running example, Theorem 7, and finite Theorem 8 source-extensive endpoints are exposed; the remaining source-completion boundary is explicit in the README.",
+  "human_summary": "Non-truthfulness, examples, and finite theorem endpoints are exposed with an explicit completion boundary.",
   "review_entrypoint": "papers/EOS07GSP/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

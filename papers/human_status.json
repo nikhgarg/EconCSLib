@@ -182,7 +182,7 @@
       "status": "Partially formalized",
       "human_review": "0/6",
       "lean_loc": 46146,
-      "main_note": "Concrete continuous RUM Theorem 6 and Appendix C Theorem 8 endpoints are exposed; arbitrary-size Mallows dominance and remaining RUM paper-scope bridges remain open.",
+      "main_note": "Continuous RUM endpoints are exposed; arbitrary-size Mallows dominance and remaining paper-scope bridges remain open.",
       "paper_folder": "papers/KR21Monoculture",
       "review_entrypoint": "papers/KR21Monoculture/README.md"
     },
@@ -197,7 +197,7 @@
       "status": "Partially formalized",
       "human_review": "0/50",
       "lean_loc": 114406,
-      "main_note": "Lemma 1, Proposition 1, Lemma 2, Theorems 1-2, and selected Section 5 bridge endpoints are exposed; concrete Bayesian-game row identifications and later strategic model wiring remain open.",
+      "main_note": "Main early results and selected Section 5 bridge endpoints are exposed; Bayesian-game row identifications remain open.",
       "paper_folder": "papers/GLM20DroppingStandardizedTesting",
       "review_entrypoint": "papers/GLM20DroppingStandardizedTesting/FINAL_VALIDATION_REPORT.md"
     },
@@ -212,7 +212,7 @@
       "status": "Partially formalized",
       "human_review": "0/15",
       "lean_loc": 25017,
-      "main_note": "GSP non-truthfulness, running example, Theorem 7, and finite Theorem 8 source-extensive endpoints are exposed; the remaining source-completion boundary is explicit in the README.",
+      "main_note": "Non-truthfulness, examples, and finite theorem endpoints are exposed with an explicit completion boundary.",
       "paper_folder": "papers/EOS07GSP",
       "review_entrypoint": "papers/EOS07GSP/FINAL_VALIDATION_REPORT.md"
     },
@@ -227,7 +227,7 @@
       "status": "Partially formalized",
       "human_review": "0/6",
       "lean_loc": 35304,
-      "main_note": "Matching preliminaries and several theorem wrappers are formalized, but Algorithm 4.1, repaired Lemma 4.4 tail variance, and Section 6 experiment construction remain stronger-model pickup targets.",
+      "main_note": "Matching preliminaries and theorem wrappers are exposed; Algorithm 4.1 and experiment constructions remain open.",
       "paper_folder": "papers/IM05MarriageHonestyStability",
       "review_entrypoint": "papers/IM05MarriageHonestyStability/FINAL_VALIDATION_REPORT.md"
     },
@@ -242,7 +242,7 @@
       "status": "Partially formalized",
       "human_review": "0/36",
       "lean_loc": 37029,
-      "main_note": "Finite optimization, Bernoulli, uniform, bounded, exponential, and Pareto checkpoint layers are exposed; general bounded/Pareto order-statistic certificates and Corollary 1 distribution construction remain open.",
+      "main_note": "Finite optimization and distribution checkpoints are exposed; general order-statistic certificates remain open.",
       "paper_folder": "papers/PRPKG24AccuracyDiversity",
       "review_entrypoint": "papers/PRPKG24AccuracyDiversity/README.md"
     }

@@ -7,6 +7,7 @@
   "build_target": "lake build GLM20DroppingStandardizedTesting",
   "status": "partially formalized",
   "main_caveat": "Lemma 1, Proposition 1, Lemma 2, Theorems 1-2, and selected Section 5 bridge endpoints are exposed; concrete Bayesian-game row identifications and later strategic model wiring remain open.",
+  "human_summary": "Main early results and selected Section 5 bridge endpoints are exposed; Bayesian-game row identifications remain open.",
   "review_entrypoint": "papers/GLM20DroppingStandardizedTesting/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

@@ -7,6 +7,7 @@
   "build_target": "lake build KR21Monoculture",
   "status": "partially formalized",
   "main_caveat": "Concrete continuous RUM Theorem 6 and Appendix C Theorem 8 endpoints are exposed; arbitrary-size Mallows dominance and remaining RUM paper-scope bridges remain open.",
+  "human_summary": "Continuous RUM endpoints are exposed; arbitrary-size Mallows dominance and remaining paper-scope bridges remain open.",
   "review_entrypoint": "papers/KR21Monoculture/README.md",
   "human_review": {
     "reviewed_rows": 0,
