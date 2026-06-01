@@ -41,4 +41,6 @@ the existence of stable marriages, and Theorem 2, applicant optimality of the
 deferred-acceptance assignment. The Lean pass closes the one-to-one marriage
 statements, the quota-one college-admissions reduction, and the general finite
 college-admissions existence statement by cloning each college into its quota of
-identical one-to-one seats.
+identical one-to-one seats. No theorem endpoint relies on an extra model
+certificate; the scanned PDF/OCR boundary is recorded as a source-audit note,
+not a formalization caveat.

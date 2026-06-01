@@ -5,6 +5,10 @@ external contributions.
 
 ## Repository State
 
+- [ ] The intended public branch is clear. Today, public release docs live on
+      `main`; the draft Pages site lives on `pages-scaffold`.
+- [ ] The private incubator remains private and is not converted into the
+      public repository.
 - [ ] `lake build EconCSLib` passes from a fresh clone.
 - [ ] The top-level `README.md` describes the public repository, not the private
       incubator.
@@ -21,6 +25,8 @@ external contributions.
 - [ ] `CITATION.cff` has the current repository title, author, and release date.
 - [ ] A repository license has been chosen and added as `LICENSE` before
       soliciting broad external code contributions.
+- [ ] The GitHub repository description is set. The homepage field is left
+      blank until GitHub Pages is actually enabled and deployed.
 
 ## Paper Folder Readiness
 
@@ -52,3 +58,8 @@ Each public paper folder should have:
 - [ ] Confirm the site status table matches `docs/PAPER_STATUS.md`.
 - [ ] Keep `.github/workflows/pages.yml.disabled` disabled until the repository
       is ready to publish Pages.
+- [ ] Confirm `gh api repos/nikhgarg/EconCSLib/pages` returns not configured, or
+      confirm any existing Pages configuration is intentional.
+- [ ] Only after final review, rename the workflow to
+      `.github/workflows/pages.yml`, merge the scaffold into `main`, and enable
+      Pages from GitHub Actions.

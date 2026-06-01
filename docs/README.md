@@ -16,6 +16,10 @@ or what a completed formalization proves without reading proof internals.
   repository split, completed-paper imports, and private partial-paper policy.
 - [PUBLIC_RELEASE_CHECKLIST.md](PUBLIC_RELEASE_CHECKLIST.md): checks before a
   public announcement or broad external contribution request.
+- [REPOSITORY_LAUNCH_PLAN.md](REPOSITORY_LAUNCH_PLAN.md): current launch plan
+  for the public/private split and Pages activation.
+- [PAGES_PUBLISHING.md](PAGES_PUBLISHING.md): static-site publishing steps for
+  GitHub Pages.
 - Paper-level `FINAL_VALIDATION_REPORT.md`, `PaperInterface.lean`, and
   `DependencyDAG.pdf` files under `papers/<PaperName>/`.
 

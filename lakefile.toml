@@ -69,3 +69,7 @@ srcDir = "papers"
 [[lean_lib]]
 name = "LMMS04FairDivision"
 srcDir = "papers"
+
+[[lean_lib]]
+name = "LOS02CombinatorialAuctions"
+srcDir = "papers"

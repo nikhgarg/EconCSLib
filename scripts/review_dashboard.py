@@ -1172,6 +1172,17 @@ def review_slice_rules(folder: Path) -> list[dict[str, Any]]:
     return out
 
 
+def review_filter_names(folder: Path) -> set[str] | None:
+    """Return an optional paper-local whitelist for human-review rows."""
+
+    payload = load_review_slice_payload(folder)
+    names = payload.get("include_names")
+    if not isinstance(names, list):
+        return None
+    out = {str(name).strip() for name in names if str(name).strip()}
+    return out if out else None
+
+
 def review_item_matches_slice_rule(item: ReviewItem, rule: dict[str, Any]) -> bool:
     """Check whether an item belongs to one review slice rule."""
 
@@ -1204,6 +1215,10 @@ def review_item_matches_slice_rule(item: ReviewItem, rule: dict[str, Any]) -> bo
 
 def apply_review_slices(folder: Path, items: list[ReviewItem]) -> list[ReviewItem]:
     """Attach paper-local review slice labels to parsed dashboard rows."""
+
+    include_names = review_filter_names(folder)
+    if include_names is not None:
+        items = [item for item in items if item.name in include_names]
 
     rules = review_slice_rules(folder)
     if not rules:

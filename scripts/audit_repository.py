@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Repository hygiene audit for EconCSLean.
+"""Repository hygiene audit for EconCSLib.
 
 The checks here are intentionally mechanical. They are meant to catch stale
 paper-folder structure, hidden Lean proof placeholders, noisy `#check` ledgers,

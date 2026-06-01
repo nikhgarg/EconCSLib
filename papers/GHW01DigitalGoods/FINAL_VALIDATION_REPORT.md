@@ -2,12 +2,15 @@
 
 ## Verdict
 
-Verified under the paper-facing Lean models in `GHW01DigitalGoods`.
+Partially formalized under the paper-facing Lean models in
+`GHW01DigitalGoods`.
 
 The paper's named main results are represented by direct statement endpoints in
 `PaperInterface.lean`, with source-numbered audit aliases in
 `PostPaperAudit.lean` and status/dependency summaries in `README.md` and
-`DependencyDAG.tex`.
+`DependencyDAG.tex`. The remaining formalization gap is that several endpoints
+are proved from explicit model-certificate inputs rather than derived from the
+paper's more primitive assumptions.
 
 ## Source checked
 
@@ -39,11 +42,13 @@ The paper's named main results are represented by direct statement endpoints in
 - Paper text: the cached text contains every named theorem/lemma/corollary
   claimed in the README source-audit notes.
 - README: each named result has a status row using the controlled vocabulary
-  from `docs/STATUS.md`; no named source result remains `conditional`,
-  `partially formalized`, `scaffold`, or `not started`.
+  from `docs/STATUS.md`. Corollary 4.2, Theorem 6.2, Theorem 8.2, and Theorem
+  9.3 are currently marked `conditional` because they take explicit
+  paper-model certificates that have not been constructed from more primitive
+  source assumptions.
 - DAG: every source theorem/lemma node is either `dag_result` for closed
-  paper-facing results or `dag_model` for model/definition layers. The remaining
-  dashed arrows are paper-route/context links, not unresolved assumptions.
+  paper-facing results, `dag_partial` for endpoints with remaining certificate
+  gaps, or `dag_model` for model/definition layers.
 - Paper-facing Lean: `PaperInterface.lean` is the human-facing statement
   surface. `PostPaperAudit.lean` restates one source-numbered audit theorem per
   final endpoint and proves each by a thin call to the exported paper-facing
@@ -61,6 +66,22 @@ The paper's named main results are represented by direct statement endpoints in
 - Theorem 9.3 packages anonymous truthful deterministic binary auctions with
   IR, no positive transfers, binary allocation, and the erased-bid critical
   price convention.
+
+## Remaining Work
+
+GHW01 should be the next public partial to try to finish completely. The main
+target is to replace certificate-conditional theorem endpoints with constructors
+from the paper's primitive assumptions:
+
+- Theorem 8.2: derive the anonymous sorted-bid/ranked-adjacent symmetry
+  certificate, or state the needed anonymity convention explicitly as a source
+  assumption.
+- Theorem 9.3: derive the anonymous erased-bid critical-price/list-price
+  certificate from the deterministic truthful-auction assumptions, using Lemma
+  9.2 as the bridge.
+- Theorem 6.2 and Corollary 4.2: audit whether the supplied paper-model
+  witnesses can be constructed from the paper's stated fixed-price benchmark
+  and truncation assumptions.
 
 ## Verification checks
 

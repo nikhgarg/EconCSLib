@@ -17,6 +17,9 @@ The private repository is the superset. The public repository is generated from
 an allowlist and should not be made by changing the visibility of the private
 repository.
 
+For the current launch state and Pages activation sequence, see
+[`docs/REPOSITORY_LAUNCH_PLAN.md`](REPOSITORY_LAUNCH_PLAN.md).
+
 ## Public Release Rule
 
 Do not make the full-history private repository public. Git history is
@@ -57,13 +60,13 @@ without exposing unrelated unfinished paper work.
 
 The initial public allowlist should be conservative. Papers marked partial,
 waiting for stronger-model pickup, or otherwise not ready for public
-work-in-progress review should stay private.
+work-in-progress review should stay private unless their remaining gap is
+explicitly approved for public review.
 
 Current public-ready candidates:
 
 - `DSWG24DiscretizationBias`
 - `GCG24UserItemFairness`
-- `GHW01DigitalGoods`
 - `GN21DriverSurgePricing`
 - `GS62CollegeAdmissions`
 - `LG21TestOptionalPolicies`
@@ -73,8 +76,15 @@ Current public-ready candidates:
 
 Current public partial candidates:
 
+- `GHW01DigitalGoods`, because its reusable auction primitives and many named
+  endpoints are public-useful, while the remaining gap is explicit
+  model-certificate discharge for Theorems 8.2 and 9.3.
 - `LMMS04FairDivision`, because its open Theorem 3.3 PTAS/FPTAS runtime claim
   is isolated behind a fixed-dimension IP solver/complexity seam.
+- `LOS02CombinatorialAuctions`, because its auction, greedy approximation,
+  critical-price, and truthfulness endpoints are closed; the remaining Theorem
+  6.1 consequences require reusable machine-level complexity and cited
+  hardness infrastructure.
 
 Other partial or in-progress paper work should remain in the private incubator
 until it is ready for public review.

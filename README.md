@@ -54,15 +54,16 @@ paper folder contains the detailed theorem ledger and caveats.
 | Paper | Status | Human summary |
 |---|---|---|
 | [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | Main discretization-bias theorems are closed; report documents a proof-route deviation from the paper. |
-| [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | Main digital-goods auction results are exposed in the human paper interface. |
+| [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Partially formalized | Public partial: major auction primitives and several named results are formalized, but Theorems 8.2 and 9.3 still rely on explicit model-certificate assumptions that should be derived or promoted to source assumptions. |
 | [GCG24 User-Item Fairness](papers/GCG24UserItemFairness) | Formalized | Recommendation fairness propositions and theorem statements are closed. |
-| [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | Stable-matching definitions and named results are exposed in a compact 27-row paper interface, including strict-profile Theorems 3 and 7. |
-| [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized with caveat | Stable-marriage and college-quota statements are formalized; source scan quality is documented. |
+| [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | The cached paper's named Theorems 1--7, Lemmas 1--2, and Corollary 5.1 are closed on Roth's stated strict marriage domain without extra model-certificate assumptions. |
+| [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized | Stable-marriage and finite college-admissions results are closed without extra certificates or conditional proof gaps; the cached PDF scan has poor OCR, recorded as a source-audit note rather than a formalization caveat. |
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | Bayesian rating-system results are formalized with a documented boundary correction. |
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed, including the source-shaped Section 6 top-`n_q` distinct-bidder page-level guarantee. |
 | [LG21 Test-Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | All named definitions and Section 3--4 results are closed under the paper-facing source models; human dashboard review remains external. |
 | [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | Named CTMC lemmas and Theorems 1-4 are exposed; zero-mass boundary behavior is audited separately. |
 | [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | Public partial: Sections 2 and 4 are formalized; the final PTAS/FPTAS runtime claim remains behind `ExternalSolverConsequence`. |
+| [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | Public partial: auction, greedy approximation, critical-price, and truthfulness endpoints are formalized; final machine-level complexity consequences remain external. |
 
 For more detail, use:
 
@@ -71,11 +72,12 @@ For more detail, use:
 - Individual `papers/<PaperName>/README.md` files for paper-specific caveats.
 
 Partial public formalizations are included when the remaining assumption seam is
-itself useful library work. LMMS04 is the current example: the paper-specific
-fair-division and rounding layers are public, while the final complexity claim
-is held behind an explicit fixed-dimension IP runtime boundary that should be
-discharged in reusable `EconCSLib`/CSLib-style infrastructure rather than hidden
-inside a paper folder.
+explicit and useful to expose. GHW01, LMMS04, and LOS02 are the current
+examples: GHW01 should next discharge model-certificate assumptions for its
+digital-goods auction endpoints; LMMS04's final complexity claim is held behind
+an explicit fixed-dimension IP runtime boundary; and LOS02's final
+NP-hardness/`NP = ZPP` consequences are held behind external machine-level
+complexity facts.
 
 ## Starting A New Paper With An Agent
 
@@ -132,4 +134,8 @@ see [docs/REVIEW_DASHBOARD.md](docs/REVIEW_DASHBOARD.md).
 - [docs/STATUS.md](docs/STATUS.md): controlled vocabulary for paper status.
 - [docs/PUBLIC_RELEASE_CHECKLIST.md](docs/PUBLIC_RELEASE_CHECKLIST.md): checks
   before public announcements or broad external contribution requests.
+- [docs/REPOSITORY_LAUNCH_PLAN.md](docs/REPOSITORY_LAUNCH_PLAN.md): maintainer
+  plan for the public/private split and GitHub Pages activation.
+- [docs/PAGES_PUBLISHING.md](docs/PAGES_PUBLISHING.md): static-site publishing
+  checklist for the draft GitHub Pages site.
 - [ROADMAP.md](ROADMAP.md): high-level project roadmap.

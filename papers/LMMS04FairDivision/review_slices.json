@@ -1,100 +1,97 @@
 {
   "schema": 1,
+  "include_names": [
+    "envy",
+    "envyFree",
+    "envyBoundedBy",
+    "maxMarginal",
+    "isAllocationOf",
+    "lemma2_2_acyclic_reduction",
+    "theorem2_1_bounded_envy_allocation_exists",
+    "theorem2_1_alpha_bounded_allocation_exists",
+    "theorem2_1_algorithm_correct_list_toFinset",
+    "theorem2_3_real_interval_supported_atom_bound",
+    "theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries",
+    "theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries",
+    "theorem3_2_graham_certificate_to_envy_ratio_bound",
+    "theorem3_2_graham_factor_eq_seven_fifths",
+    "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee",
+    "theorem3_3_claim34_fixed_rounding_ratio_endpoint",
+    "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint",
+    "theorem3_3_claim34_min_max_search_certificate_ratio_endpoint",
+    "claim3_4_bounded_optimal_certificate",
+    "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods",
+    "claim3_4_bounded_optimal_of_identical_utilities_model",
+    "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads",
+    "lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads",
+    "directMechanism",
+    "randomizedDirectMechanism",
+    "truthful",
+    "randomizedTruthful",
+    "theorem4_1_source_goods",
+    "theorem4_1_true_report",
+    "theorem4_1_source_not_truthful_envy_free_whenever_exists",
+    "theorem4_1_source_minimum_envy_not_truthful",
+    "theorem4_2_uniform_random_mechanism_truthful",
+    "theorem4_2_uniform_random_max_envy_probability_bound"
+  ],
   "slices": [
     {
-      "id": "definitions-section2-and-early-section3",
-      "title": "Definitions, Section 2, and Early Section 3",
-      "line_start": 1,
-      "line_end": 500
+      "id": "definitions-and-section-2",
+      "title": "Definitions and Section 2",
+      "names": [
+        "envy",
+        "envyFree",
+        "envyBoundedBy",
+        "maxMarginal",
+        "isAllocationOf",
+        "lemma2_2_acyclic_reduction",
+        "theorem2_1_bounded_envy_allocation_exists",
+        "theorem2_1_alpha_bounded_allocation_exists",
+        "theorem2_1_algorithm_correct_list_toFinset",
+        "theorem2_3_real_interval_supported_atom_bound"
+      ]
     },
     {
-      "id": "source-output-capped-search",
-      "title": "Source Output and Capped Search",
-      "line_start": 501,
-      "line_end": 1000
+      "id": "section-3-lower-bound-and-scheduling",
+      "title": "Section 3 Lower Bound and Scheduling",
+      "names": [
+        "theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries",
+        "theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries",
+        "theorem3_2_graham_certificate_to_envy_ratio_bound",
+        "theorem3_2_graham_factor_eq_seven_fifths"
+      ]
     },
     {
-      "id": "two-scale-source-min-max",
-      "title": "Two-Scale Source Min/Max",
-      "line_start": 1001,
-      "line_end": 1500
+      "id": "section-3-ptas-boundary",
+      "title": "Section 3 PTAS Boundary",
+      "names": [
+        "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee",
+        "theorem3_3_claim34_fixed_rounding_ratio_endpoint",
+        "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint",
+        "theorem3_3_claim34_min_max_search_certificate_ratio_endpoint",
+        "claim3_4_bounded_optimal_certificate",
+        "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods",
+        "claim3_4_bounded_optimal_of_identical_utilities_model",
+        "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads",
+        "lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads"
+      ]
     },
     {
-      "id": "claim34-windowed-types-and-ip-summary",
-      "title": "Claim 3.4 Windowed Types and IP Summary",
-      "line_start": 1501,
-      "line_end": 2000
-    },
-    {
-      "id": "value-pair-search-and-rounded-loads",
-      "title": "Value-Pair Search and Rounded Loads",
-      "line_start": 2001,
-      "line_end": 2500
-    },
-    {
-      "id": "high-low-load-transfer",
-      "title": "High/Low Load Transfer",
-      "line_start": 2501,
-      "line_end": 3000
-    },
-    {
-      "id": "typed-combined-allocations",
-      "title": "Typed Combined Allocations",
-      "line_start": 3001,
-      "line_end": 3500
-    },
-    {
-      "id": "bounded-realizations-and-size-bounds",
-      "title": "Bounded Realizations and Size Bounds",
-      "line_start": 3501,
-      "line_end": 4000
-    },
-    {
-      "id": "solver-obligations-and-external-packages",
-      "title": "Solver Obligations and External Packages",
-      "line_start": 4001,
-      "line_end": 4500
-    },
-    {
-      "id": "external-source-output-provider-routes",
-      "title": "External Source-Output Provider Routes",
-      "line_start": 4501,
-      "line_end": 5000
-    },
-    {
-      "id": "solver-summary-claim34-start",
-      "title": "Solver Summary and Claim 3.4 Start",
-      "line_start": 5001,
-      "line_end": 5500
-    },
-    {
-      "id": "claim34-weighted-supply",
-      "title": "Claim 3.4 Weighted Supply",
-      "line_start": 5501,
-      "line_end": 6000
-    },
-    {
-      "id": "claim34-capped-source-average",
-      "title": "Claim 3.4 Capped Source Average",
-      "line_start": 6001,
-      "line_end": 6500
-    },
-    {
-      "id": "claim34-auto-cap-and-low-partitions",
-      "title": "Claim 3.4 Auto-Cap and Low Partitions",
-      "line_start": 6501,
-      "line_end": 7000
-    },
-    {
-      "id": "claim34-allocation-source-wrappers",
-      "title": "Claim 3.4 Allocation Source Wrappers",
-      "line_start": 7001,
-      "line_end": 7500
-    },
-    {
-      "id": "claim34-final-section4",
-      "title": "Claim 3.4 Final and Section 4",
-      "line_start": 7501
+      "id": "section-4-truthfulness",
+      "title": "Section 4 Truthfulness",
+      "names": [
+        "directMechanism",
+        "randomizedDirectMechanism",
+        "truthful",
+        "randomizedTruthful",
+        "theorem4_1_source_goods",
+        "theorem4_1_true_report",
+        "theorem4_1_source_not_truthful_envy_free_whenever_exists",
+        "theorem4_1_source_minimum_envy_not_truthful",
+        "theorem4_2_uniform_random_mechanism_truthful",
+        "theorem4_2_uniform_random_max_envy_probability_bound"
+      ]
     }
   ]
 }

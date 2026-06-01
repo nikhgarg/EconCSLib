@@ -9,8 +9,8 @@
 \dagPaperLegendRightOfMetadata{
 \node[dag_result, dag_template_legend] (legRes)
   {\textbf{Closed}\\paper-facing};
-\node[dag_conditional, right=0.35cm of legRes, dag_template_legend] (legCond)
-  {\textbf{Conditional}\\explicit certificate};
+\node[dag_partial, right=0.35cm of legRes, dag_template_legend] (legCond)
+  {\textbf{Partial}\\certificate gap};
 \node[dag_model, right=0.35cm of legCond, dag_template_legend] (legDef)
   {\textbf{Definition}\\model layer};
 \node[dag_unformalized, right=0.35cm of legDef, dag_template_legend] (legOpen)
@@ -31,15 +31,15 @@
   {\textbf{opt(B), $F$, $T$ (Section 4)}\\optimal fixed-price and multi-price benchmarks};
 \node[dag_result, below=of Opt, text width=3.8cm] (Thm41)
   {\textbf{Theorem 4.1 (Section 4)}\\normalized $[1,h]$ model gives $T \le 2(\log_2 h+2)F$};
-\node[dag_result, below=of Thm41, text width=3.8cm] (Cor42)
-  {\textbf{Corollary 4.2 (Section 4)}\\truncation model gives $T \le 4mF$};
+\node[dag_partial, below=of Thm41, text width=3.8cm] (Cor42)
+  {\textbf{Corollary 4.2 (Section 4)}\\certificate gap: truncation model gives $T \le 4mF$};
 
 \node[dag_model, right=of Opt, text width=3.8cm] (Sampling)
   {\textbf{Random Sampling (Section 5.2)}\\sample-independent threshold auction};
 \node[dag_result, below=of Sampling, text width=3.8cm] (Lemma61)
   {\textbf{Lemma 6.1 (Section 6)}\\independent fair-coin lower-tail model gives $e^{-|S|/36}$ bound};
-\node[dag_result, below=of Lemma61, text width=3.8cm] (Thm62)
-  {\textbf{Theorem 6.2 (Section 6)}\\independent fair-coin sorted model gives $1-e^{-\alpha/36}-40e^{-\alpha/72}$ guarantee};
+\node[dag_partial, below=of Lemma61, text width=3.8cm] (Thm62)
+  {\textbf{Theorem 6.2 (Section 6)}\\certificate gap: fair-coin sorted model gives $1-e^{-\alpha/36}-40e^{-\alpha/72}$ guarantee};
 
 \node[dag_model, right=of Sampling, text width=3.8cm] (Weighted)
   {\textbf{Weighted Pairing (Section 7)}\\bid-independent randomized multi-price auction};
@@ -52,8 +52,8 @@
   {\textbf{$p_i,c_i,g_i$ (Section 8)}\\win probabilities, expected costs, expected gains};
 \node[dag_result, below=of RandomTruthful, text width=3.8cm] (Lemma81)
   {\textbf{Lemma 8.1 (Section 8)}\\truthfulness implies monotone win probabilities};
-\node[dag_result, below=of Lemma81, text width=3.8cm] (Thm82)
-  {\textbf{Theorem 8.2 (Section 8)}\\anonymous sorted-bid paper-model endpoint proves $E[R] \le F$};
+\node[dag_partial, below=of Lemma81, text width=3.8cm] (Thm82)
+  {\textbf{Theorem 8.2 (Section 8)}\\anonymous sorted-bid certificate proves $E[R] \le F$};
 
 \node[dag_model, below=of Benchmark, text width=3.8cm] (DetModel)
   {\textbf{Deterministic Models (Section 9)}\\optimal threshold and deterministic bid-independent auctions};
@@ -61,8 +61,8 @@
   {\textbf{Theorem 9.1 (Section 9.2)}\\anonymous bid-independent list bridge, actual $F$ benchmark witness, and ratio form closed};
 \node[dag_result, below=of Thm91, text width=3.8cm] (Lemma92)
   {\textbf{Lemma 9.2 (Section 9.3)}\\truthful deterministic IR/NPT binary auctions induce critical-price offer slices};
-\node[dag_result, right=of Lemma92, text width=3.8cm] (Thm93)
-  {\textbf{Theorem 9.3 (Section 9.3)}\\anonymous truthful deterministic paper model gives $R/F \le 1/h$ witness};
+\node[dag_partial, right=of Lemma92, text width=3.8cm] (Thm93)
+  {\textbf{Theorem 9.3 (Section 9.3)}\\anonymous erased-bid certificate gives $R/F \le 1/h$ witness};
 
 \draw[dag_arrow] (Core) -- (Thresholds);
 \draw[dag_arrow] (Thresholds) -- (Benchmark);

@@ -17,6 +17,12 @@ Formalize theorem seams, not PDFs. Start from the paper's precise definitions,
 the main result to be checked, and the smallest reusable lemmas needed to close
 that result.
 
+Use `formalized` as the repository status word for Lean-checked paper results.
+Lean verification is the mechanism, not a separate paper status. Do not answer
+status questions with "verified in Lean" when the intended claim is
+`formalized`; reserve "reviewed" for saved human dashboard review entries and
+"validation" for the audit/checking workflow.
+
 Unless told otherwise, you do not have a time limit; keep going until you reach
 the requested stopping condition or a clean theorem/compile boundary. Run the
 full post-paper checklist, review-dashboard/audit workflow, and polished
@@ -76,6 +82,19 @@ also proves that a broader arbitrary abstraction is false but the paper-facing
 source theorem is closed, mark the paper theorem `formalized` and record the
 broader abstraction as a scope note or out-of-scope failed generalization, not
 as a caveat on the paper result.
+Do not use `formalized with caveat` for source-quality notes, poor OCR, or an
+audit observation that does not change the closed paper-facing theorem. Put that
+note in the final report and leave the status `formalized`.
+If any named source endpoint still exposes an explicit certificate, witness,
+external theorem, or paper-model hypothesis that has not been derived from the
+paper's primitive assumptions, the whole paper is `partially formalized`, even
+if most theorem infrastructure compiles. It may still be public, but the README,
+DAG, root status table, and final report must all name the exact remaining
+certificate or external-library boundary.
+If a certificate/interface structure is constructed internally and the final
+paper-facing theorem no longer takes it as an input, that certificate is
+discharged. Do not imply additional certificates are needed; for fully
+formalized papers, status comments may be empty.
 If a named paper theorem is closed but a downstream corollary or application
 that uses it is still conditional, split the README/DAG entries. The named
 paper theorem should stay green with its actual statement; the conditional
@@ -327,6 +346,59 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   path2`, so the unrelated staged entries remain untouched. Normal first-time
   `git add path...` of files you just edited is fine; index surgery to repair
   mistakes is not.
+- Before editing a paper lane, identify which repository you are in and which
+  paper set it exposes. Typical local sibling names are `EconCSLib-private`
+  for the private full-history incubator and `EconCSLib-public` for the
+  filtered public release repository, though the public GitHub repository may
+  be named `EconCSLib`. Confirm with `pwd`, `git remote -v`, and
+  `find papers -maxdepth 1 -type d | sort`; do not infer privacy from the
+  repository title alone.
+- Treat any older `EconCSLean` checkout as a legacy private working copy unless
+  the user explicitly says otherwise. If it points at the same
+  `EconCSLib-private` remote, do not start new work there by default; inspect it
+  only to recover or migrate old dirty changes, then continue in the canonical
+  `EconCSLib-private` or `EconCSLib-public` sibling. If `EconCSLean` is dirty,
+  consider it a migration queue, not a backup and not an automatically synced
+  source of truth.
+- Route paper work by public status. If the requested paper exists only in the
+  private incubator, do the work in the private repo unless the user explicitly
+  asks to publish it. For example, `GLM20DroppingStandardizedTesting` is a
+  private/in-progress lane: continue it in `EconCSLib-private` or the current
+  private superset checkout, not in the public repo, and do not add GLM20 rows,
+  DAGs, reports, or source material to public-facing docs without explicit
+  approval. If the requested paper exists in the public repo, use the public
+  repo as the primary worktree for public contributions. For example,
+  `GHW01DigitalGoods` (sometimes referred to informally as `GW01`) is a public
+  partial: edit `papers/GHW01DigitalGoods/`, its root module, reusable public
+  library files, and public status/docs in `EconCSLib-public`.
+- When a paper exists in both private and public, choose one primary worktree
+  for the current task and keep all builds, dashboard refreshes, reports, DAGs,
+  and commits in that same repo. Use the public repo as primary for public
+  partials, external-contribution work, and pull-request preparation. Use the
+  private repo as primary for unpublished papers, private planning, or work
+  that may expose not-yet-approved paper content. Mirror between repos only as
+  an explicit, path-scoped sync step; never assume that editing one sibling
+  automatically updates the other.
+- For a brand-new paper, default to the private incubator unless the user says
+  the paper should be public from the start. Starting privately preserves
+  exploratory history, failed proof plans, source caches, and unfinished
+  assumptions without exposing them. If the paper is a classic/public benchmark
+  or an already-approved public contribution, it may start directly in the
+  public repo. In either case, create the standard paper folder and root module
+  in that primary repo, keep reusable paper-independent lemmas in `EconCSLib/`,
+  and only move the paper to the public repo after its status is either
+  `formalized`/`formalized with caveat` or an explicitly approved
+  `partially formalized` public seam.
+- When a filtered public repository sibling is being maintained, mirror
+  public-safe formalization artifacts and skill updates there in the same
+  checkpoint: README/status rows, concise final reports, DAG sources/rendered
+  DAGs when tracked, review-slice configuration, scripts needed by the public
+  review workflow, and the detailed public skill bundle. Keep private incubator
+  folders, unpublished paper attempts, and private planning surfaces out of
+  public diagrams and public-facing status text.
+- Public partials are acceptable when their remaining seams are valuable and
+  explicit. Do not hide partiality by publishing an all-green DAG, an empty
+  caveat column, or a final report that only says the code compiles.
 
 ### 1.2.1 Paper Link Intake Protocol
 
@@ -429,6 +501,14 @@ the Lean statements against the paper.
   If a proof pass makes `PaperInterface.lean` grow far beyond the source's
   named result list, trim it before refreshing the dashboard or calling the
   paper ready for review.
+  A dashboard with hundreds of rows is almost always a sign that implementation
+  endpoints leaked into the human interface. Use `review_slices.json`
+  `include_names` or equivalent curation to expose the source-facing
+  definitions/results only; slices make review navigable, but they do not make
+  an oversized interface appropriate for humans.
+  Final reports should cite the post-filter human-review row count. If the
+  count is still in the hundreds, stop and curate the dashboard surface before
+  publishing the report.
 - Paper-facing definitions in `PaperInterface.lean` must show their actual
   Lean definition bodies, not only their function types or an opaque imported
   library name. If a dashboard row for a definition renders as only
@@ -539,6 +619,12 @@ the Lean statements against the paper.
     paper lemma to obtain the paper-level statement, it is **not green**. Use
     `dag_conditional`, `dag_partial`, or `dag_caveat` as appropriate, and make
     the remaining assumption explicit in the node text and README row.
+  - The whole-paper verdict must be visually consistent with the DAG. If the
+    README, root table, or final report says the paper is partially
+    formalized, at least the corresponding theorem endpoints must appear as
+    partial/conditional/caveated nodes. An all-green DAG is inconsistent with a
+    partial paper verdict unless the partial item is not represented by any
+    paper-facing node, in which case the DAG inventory is incomplete.
   - **Edge semantics:** Solid `dag_arrow` edges are Lean-checked dependencies in the
     formalized proof path. Dashed `dag_dashed_arrow` edges are for paper-roadmap
     dependencies, unresolved/conditional inputs, caveat links, or dependency
@@ -681,11 +767,15 @@ the Lean statements against the paper.
   and DAG.
 - The paper `README.md` is the live status ledger and handoff document for
   partial progress. A `FINAL_VALIDATION_REPORT.md` is not a handoff note; it is
-  the final one-page human assessment created only when making a final claim
+  the concise human assessment created only when making a final claim
   about a paper, or when the user explicitly asks for post-validation of a
   completed proof phase. It must answer whether the paper is formalized, what
   additional assumptions were needed, whether mistakes were found, and whether
-  the Lean proof followed the paper strategy or used a different route. When
+  the Lean proof followed the paper strategy or used a different route. Keep it
+  short and paper-facing; move long operational ledgers, status-report
+  transcripts, source-line inventories, and verbose boundary details to
+  `POST_FORMALIZATION_AUDIT.md`, `SOURCE_AUDIT.md`, `PostPaperAudit.lean`, or
+  the README as appropriate. When
   creating or updating a final validation report, also update the front
   repository `README.md` paper-status table and
   `docs/ECONCSLEAN_CURRENT_STATUS.md` so the public entry points match the
@@ -738,13 +828,17 @@ the Lean statements against the paper.
     folder. It must state whether the paper is formalized, the exact source
     version, the named-result inventory, any deliberate model conventions or
     proof-route deviations, the commands run, and links to the README, DAG, and
-    audit ledger.
+    audit ledger. If the report needs detailed source line mappings, helper
+    theorem inventories, source-facing surface listings, or important-boundary
+    implementation notes to preserve context, move those details into
+    `POST_FORMALIZATION_AUDIT.md` or `SOURCE_AUDIT.md` and summarize only the
+    human-relevant conclusion in the final report.
   - Build check: after updating the audit, run the targeted paper build and
     render the DAG from the paper folder. Also run a placeholder grep over the
     claimed paper and library files, a stale-status grep over the README/DAG/
     final report, and `git diff --check`. Do not mark the audit complete until
     all required commands succeed.
-- **Post-verification library extraction pass:** Once a paper theorem closes,
+- **Post-formalization library extraction pass:** Once a paper theorem closes,
   scan the proof for reusable primitives that belong in `EconCSLib` rather than
   the paper namespace. Good candidates include model-neutral definitions,
   algorithm trace APIs, invariants, side-symmetry lemmas, finite-cardinality
@@ -1151,7 +1245,7 @@ pass:
   the destination is clear and the build can be checked; otherwise record the
   candidate and destination in the final report. Do not perform a risky broad
   move during final closeout.
-- Run a skill-update pass as a required post-verification step. If the paper
+- Run a skill-update pass as a required post-formalization step. If the paper
   taught a reusable workflow lesson, update this skill or its reference files
   before final handoff; if it did not, state that explicitly in the final
   report or handoff. Put durable process rules in this always-loaded file only
@@ -1194,6 +1288,12 @@ pass:
   or `scripts.audit_repository.review_slice_counts`, then refresh the ignored
   dashboard cache. Do not confuse "0/N reviewed" with stale or failed Lean
   validation; it only means no human review entries have been saved.
+  If the full slice set still exposes hundreds of rows, add an `include_names`
+  whitelist or trim `PaperInterface.lean`; final human review should normally
+  expose a compact source-facing surface, not every proof endpoint.
+  Do not report an unfiltered declaration count such as hundreds of rows as the
+  human dashboard surface in a final validation report; fix the filter first
+  and report the curated count.
 - Treat `PostPaperAudit.lean` as the exhaustive importable ledger, not the
   readable paper interface. Its header should say that explicitly and point to
   `PaperInterface.lean` for the DAG-shaped human-facing surface. It should
@@ -1280,7 +1380,7 @@ pass:
 - If no extra assumptions, deviations, or errors were needed/found, state that explicitly in the report rather than leaving sections implicit.
 - Keep the report human-facing. Do not include routine shell commands such as
   `rg -n ...` scans or full build command blocks unless the exact invocation is
-  essential to understanding a caveat. Summarize verification checks in prose
+  essential to understanding a caveat. Summarize validation/build checks in prose
   instead. If the report is getting long because it lists every helper theorem,
   stop and replace that section by a short paper-definition/theorem interface
   plus links or declaration names for the main witnesses.
@@ -1295,7 +1395,7 @@ Use this report template (create in the paper folder, for example
 # Final Validation Report: <Paper Short Name>
 
 ## 1. Human Verdict
-- Lean formalization status: <complete / conditionally complete / incomplete>
+- Lean formalization status: <formalized / formalized with caveat / partially formalized / not formalized>
 - Human dashboard review status: <reviewed count, stale count, mismatch count>
 - Paper correctness verdict: <nothing wrong found / ambiguity / suspected error>
 - Qualitative proof verdict: <followed paper proof / deviations needed>
@@ -1360,11 +1460,11 @@ exposed in `PaperInterface.lean`.
 - `<location in paper>`: <issue description + Lean/formalization evidence>
 - If none: `None`
 
-## 13. Verification Checks
+## 13. Validation Checks
 - <build/audit/DAG/no-placeholder outcomes in prose>
 
 ## 14. Final Verdict
-- Completion status: <complete / conditionally complete / incomplete>
+- Completion status: <formalized / formalized with caveat / partially formalized / not formalized>
 - Summary: <2-5 lines>
 ```
 

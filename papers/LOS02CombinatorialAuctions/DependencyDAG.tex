@@ -1,0 +1,85 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[node distance=1.0cm and 1.3cm,
+  every node/.style={font=\sffamily\small}]
+
+  \dagPaperMetadata{Truth Revelation in Approximately Efficient Combinatorial Auctions}{Daniel Lehmann, Liadan Ita O'Callaghan, and Yoav Shoham}{Journal of the ACM 49(5), 2002}{2002}{https://jmvidal.cse.sc.edu/library/lehmann02a.pdf}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) {\textbf{Closed}\\support};
+\node[dag_model, right=0.35cm of legRes, dag_template_legend] (legDef) {\textbf{Definition}\\model};
+\node[dag_partial, right=0.35cm of legDef, dag_template_legend] (legPart) {\textbf{Partial}\\formalized};
+\node[dag_conditional, right=0.35cm of legPart, dag_template_legend] (legCond) {\textbf{Conditional}\\certificate};
+\node[dag_unformalized, right=0.35cm of legCond, dag_template_legend] (legOpen) {\textbf{Open}\\not formalized};
+
+
+}
+\daglegend{(legRes)(legDef)(legPart)(legCond)(legOpen)}{Legend}
+
+\begin{dagPaperBody}
+
+\node[dag_model] (Def31)
+  {\textbf{Definition 3.1}\\direct combinatorial-auction mechanism};
+\node[dag_model, below=of Def31] (Def32)
+  {\textbf{Definition 3.2}\\truthfulness};
+\node[dag_result, below=of Def32] (Thm41)
+  {\textbf{Theorem 4.1}\\GVA is truthful};
+\node[dag_result, below=of Thm41] (Prop42)
+  {\textbf{Proposition 4.2}\\truthful GVA utility nonnegative};
+
+\node[dag_model, right=of Def31] (Def51)
+  {\textbf{Definition 5.1}\\single-minded bidder};
+\node[dag_result, below=of Def51] (Thm61Red)
+  {\textbf{Theorem 6.1}\\clique/graph/set-packing decision/allocation reductions};
+\node[dag_conditional, below=of Thm61Red] (Thm61Complexity)
+  {\textbf{Theorem 6.1}\\abstract NP/ZPP and class-note consequences};
+\node[dag_model, below=of Thm61Complexity] (Def71)
+  {\textbf{Definition 7.1}\\average amount per good and concrete order};
+\node[dag_model, below=of Def71] (GreedyAlloc)
+  {\textbf{Greedy Allocation}\\explicit-order fold and feasibility};
+\node[dag_result, below=of GreedyAlloc] (Thm72)
+  {\textbf{Theorem 7.2}\\sqrt-norm approximation with common-bid filtering};
+
+\node[dag_result, right=of Def51] (Lemma91)
+  {\textbf{Lemma 9.1}\\nonnegative critical threshold exists};
+\node[dag_result, below=of Lemma91] (Lemma92)
+  {\textbf{Lemma 9.2}\\denied bid gives zero utility};
+\node[dag_result, below=of Lemma92] (Lemma93)
+  {\textbf{Lemma 9.3}\\truthful bidder utility nonnegative};
+\node[dag_result, below=of Lemma93] (Lemma94)
+  {\textbf{Lemma 9.4}\\no profitable value-only lie};
+\node[dag_result, below=of Lemma94] (Lemma95)
+  {\textbf{Lemma 9.5}\\critical threshold monotonicity};
+\node[dag_result, below=of Lemma95] (Thm96)
+  {\textbf{Theorem 9.6}\\critical axioms imply truthfulness};
+
+\node[dag_model, right=of Lemma94] (Def101)
+  {\textbf{Definition 10.1}\\$n(j)$, suffix windows, accepted criticality};
+\node[dag_result, below=of Def101] (Thm102)
+  {\textbf{Theorem 10.2}\\average-order truthfulness on source domain};
+\node[dag_conditional, above=of Def101] (Threshold)
+  {\textbf{Critical-Price Support}\\target-bundle threshold truthfulness};
+
+\draw[dag_arrow] (Def31) -- (Def32);
+\draw[dag_arrow] (Def32) -- (Thm41);
+\draw[dag_arrow] (Thm41) -- (Prop42);
+\draw[dag_arrow] (Def31) -- (Def51);
+\draw[dag_arrow] (Def51) -- (Thm61Red);
+\draw[dag_dashed_arrow] (Thm61Red) -- (Thm61Complexity);
+\draw[dag_arrow] (Def51) -- (Def71);
+\draw[dag_arrow] (Def71) -- (GreedyAlloc);
+\draw[dag_arrow] (GreedyAlloc) -- (Thm72);
+\draw[dag_arrow] (Def32) -| (Lemma91);
+\draw[dag_arrow] (Lemma91) -- (Lemma92);
+\draw[dag_arrow] (Lemma92) -- (Lemma93);
+\draw[dag_arrow] (Lemma93) -- (Lemma94);
+\draw[dag_arrow] (Lemma94) -- (Lemma95);
+\draw[dag_arrow] (Lemma95) -- (Thm96);
+\draw[dag_dashed_arrow] (GreedyAlloc.east) to[out=0, in=180] (Def101.west);
+\draw[dag_dashed_arrow] (Thm96) -- (Thm102);
+\draw[dag_dashed_arrow] (Def101) -- (Thm102);
+\draw[dag_arrow] (Threshold) -- (Thm96);
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

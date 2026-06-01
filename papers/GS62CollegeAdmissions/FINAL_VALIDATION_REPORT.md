@@ -49,7 +49,10 @@
 ## 5. Conditional Results and Remaining Gaps
 
 - None for the Lean endpoints claimed above.
-- Source audit caveat: the cached PDF is a scan, and the local `pdftotext`
+- No claimed theorem endpoint relies on an extra model certificate; finite
+  strict-domain and quota assumptions are the explicit source-domain/modeling
+  conventions recorded above.
+- Source audit note: the cached PDF is a scan, and the local `pdftotext`
   extraction is only 8 bytes with no theorem-name hits. The named-result
   inventory was therefore cross-checked against the cached scan and public OCR
   snippets rather than local text-cache line numbers.

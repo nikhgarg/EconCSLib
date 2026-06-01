@@ -186,8 +186,13 @@ when you need material from a domain quickly.
 
 - Entrypoint: `EconCSLib.MechanismDesign.Auctions`
 - Modules:
-  - `DigitalGoods`, `Position`, `Combinatorial`
-  - `EconCSLib.MechanismDesign.Auctions.MainTheorems`
+  - `DigitalGoods`, `Combinatorial`
+    - `DigitalGoods`: prior-free digital-goods auction primitives and
+      paper-facing revenue/truthfulness support.
+    - `Combinatorial`: direct combinatorial auctions, generalized Vickrey
+      auctions, single-minded bid profiles, weighted set-packing encodings,
+      LOS02 greedy allocation/payment support, and abstract reduction/complexity
+      wrappers.
 
 ## Markets
 
