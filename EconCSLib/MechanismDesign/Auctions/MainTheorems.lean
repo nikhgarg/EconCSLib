@@ -46183,6 +46183,37 @@ theorem paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strat
       terminal
 
 /--
+Cold-start constructor for the no-overshoot terminal-history behavior
+certificate. It packages a clock-disciplined history from the paper cold-start
+state, discharging initial activity by reflexivity of the empty dropout record
+and initial no-overshoot from nonnegative ordered finite `B*` thresholds.
+-/
+def paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_cold_start_clock_disciplined_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_disciplined_strategy_history
+    model hhist
+    (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+      model hvalue_nonneg hclick_mono model.click_pos)
+    terminal
+    (by
+      intro rank
+      rfl)
+
+/--
 Finite-active cold-start generalized-English state. Ranks in `activeRanks`
 begin without a dropout record; all other ranks are already inactive with the
 same explicit placeholder record. This is a finite-source helper, not the
