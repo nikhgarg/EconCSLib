@@ -14,7 +14,10 @@ PAPERS = ROOT / "papers"
 AGGREGATE_STATUS = PAPERS / "status.json"
 HUMAN_STATUS = PAPERS / "human_status.json"
 DOCS_PAPER_STATUS = ROOT / "docs" / "PAPER_STATUS.md"
+README = ROOT / "README.md"
 TEMPLATE = PAPERS / "TEMPLATE"
+README_STATUS_BEGIN = "<!-- BEGIN GENERATED PAPER STATUS TABLE -->"
+README_STATUS_END = "<!-- END GENERATED PAPER STATUS TABLE -->"
 
 STATUS_LABELS = {
     "formalized": "Formalized",
@@ -83,6 +86,21 @@ HUMAN_NOTE_OVERRIDES = {
         "NP-hardness, polynomial-time, and randomized-class semantics remain "
         "external."
     ),
+}
+
+README_NOTE_OVERRIDES = {
+    "GHW01DigitalGoods": (
+        "Theorem 8.2 follows the journal version; the broader preliminary "
+        "wording is documented as refuted."
+    ),
+    "LOS02CombinatorialAuctions": (
+        "Greedy approximation, truthfulness, and Theorem 6.1 reductions are "
+        "closed; machine-level complexity remains external."
+    ),
+}
+
+README_TITLE_OVERRIDES = {
+    "MSVV07AdWords": "MSVV07 AdWords",
 }
 
 
@@ -232,6 +250,82 @@ def repo_relative_link(path: str) -> str:
     return f"../{path}"
 
 
+def readme_paper_label(paper_id: str) -> str:
+    override = README_TITLE_OVERRIDES.get(paper_id)
+    if override is not None:
+        return override
+    for index, char in enumerate(paper_id):
+        if char.isdigit():
+            prefix = paper_id[: index + 2]
+            descriptor = paper_id[index + 2 :]
+            if descriptor:
+                words = []
+                word = descriptor[0]
+                for current, following in zip(descriptor[1:], descriptor[2:] + " "):
+                    if current.isupper() and (not word[-1].isupper() or following.islower()):
+                        words.append(word)
+                        word = current
+                    else:
+                        word += current
+                words.append(word)
+                return f"{prefix} {' '.join(words)}"
+    return paper_id
+
+
+def readme_note(payload: dict[str, Any]) -> str:
+    return README_NOTE_OVERRIDES.get(str(payload["id"]), human_note(payload))
+
+
+def readme_interface_label(payload: dict[str, Any]) -> str:
+    interface = payload.get("paper_interface", {})
+    line_count = interface.get("line_count")
+    if not isinstance(line_count, int):
+        return "Unknown"
+    if interface.get("oversized"):
+        return f"Debt: {line_count} lines"
+    return f"OK: {line_count} lines"
+
+
+def render_readme_status_block(records: list[tuple[Path, dict[str, Any]]]) -> str:
+    by_id = {payload["id"]: payload for _folder, payload in records}
+    lines = [
+        README_STATUS_BEGIN,
+        "| Paper | Status | Review | Interface | Human summary |",
+        "|---|---:|---:|---:|---|",
+    ]
+    for row in human_status_rows(records):
+        payload = by_id[row["id"]]
+        paper_link = f"[{readme_paper_label(str(row['id']))}]({row['paper_folder']})"
+        lines.append(
+            "| "
+            + " | ".join(
+                [
+                    paper_link,
+                    md_escape(row["status"]),
+                    md_escape(row["human_review"]),
+                    readme_interface_label(payload),
+                    md_escape(readme_note(payload)),
+                ]
+            )
+            + " |"
+        )
+    lines.append(README_STATUS_END)
+    return "\n".join(lines)
+
+
+def render_readme(records: list[tuple[Path, dict[str, Any]]]) -> str:
+    current = README.read_text(encoding="utf-8")
+    start = current.find(README_STATUS_BEGIN)
+    end = current.find(README_STATUS_END)
+    if start < 0 or end < 0 or end < start:
+        raise ValueError(
+            f"{README.relative_to(ROOT)} should contain generated status markers "
+            f"{README_STATUS_BEGIN!r} and {README_STATUS_END!r}"
+        )
+    end += len(README_STATUS_END)
+    return current[:start] + render_readme_status_block(records) + current[end:]
+
+
 def render_paper_status_md(payload: dict[str, Any]) -> str:
     lines = [
         "# Public Paper Status",
@@ -295,6 +389,7 @@ def main() -> int:
         AGGREGATE_STATUS: json.dumps(aggregate, indent=2, ensure_ascii=False) + "\n",
         HUMAN_STATUS: json.dumps(human, indent=2, ensure_ascii=False) + "\n",
         DOCS_PAPER_STATUS: render_paper_status_md(human),
+        README: render_readme(records),
     }
     if args.check:
         stale = []

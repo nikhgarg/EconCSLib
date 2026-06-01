@@ -53,9 +53,10 @@ Paper status changes frequently. Each paper folder has a paper-local
 [`papers/human_status.json`](papers/human_status.json), and the generated
 markdown table is [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md).
 
+<!-- BEGIN GENERATED PAPER STATUS TABLE -->
 | Paper | Status | Review | Interface | Human summary |
 |---|---:|---:|---:|---|
-| [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized | 0/7 | OK: 109 lines | Stable marriage infrastructure is mostly shared library code; this folder keeps the paper-facing theorem surface. |
+| [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized | 0/7 | OK: 109 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library. |
 | [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 468 lines |  |
 | [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/19 | OK: 290 lines | Theorem 8.2 follows the journal version; the broader preliminary wording is documented as refuted. |
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines |  |
@@ -63,9 +64,10 @@ markdown table is [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md).
 | [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 92 lines |  |
 | [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | 0/32 | OK: 406 lines |  |
 | [GCG24 User Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 235 lines |  |
-| [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | 0/17 | OK: 296 lines | Formalization uses an added Bernoulli success-probability assumption bounded away from 0 and 1. |
-| [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 174 lines | Greedy approximation, truthfulness, reductions, and an abstract complexity note are closed; machine-level complexity remains external. |
-| [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/33 | OK: 171 lines | Sections 2 and 4 are closed; PTAS and FPTAS runtime bounds need fixed-dimension IP complexity infrastructure. |
+| [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | 0/17 | OK: 296 lines | Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1. |
+| [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 174 lines | Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external. |
+| [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/33 | OK: 171 lines | Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure. |
+<!-- END GENERATED PAPER STATUS TABLE -->
 
 For more detail, use:
 
