@@ -372,6 +372,10 @@ is the concrete generalized-English extensive-form argument:
    `theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout`
    with generated history, terminality, initial activity, and the same
    step-local invariant.
+   For the all-terminal VCG target, the one-stop wrapper is
+   `theorem8_strategy_history_realized_new_dropout_source_extensive_trace_all_terminal_vcg_conclusion`;
+   it returns unique PBE, named strategy, generated-history/terminal/exact
+   records, and VCG outcome/slot-payment/utility equality.
    Bare `StrategyHistory` cannot imply exact records; the overshoot witness
    above is a formal counterexample. If the real transition relation is encoded
    through clock-disciplined advances, the target theorem is

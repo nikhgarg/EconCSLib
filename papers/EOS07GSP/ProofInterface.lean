@@ -8198,6 +8198,75 @@ theorem theorem8_no_overshoot_strategy_history_source_extensive_trace_all_termin
       hno_active
 
 /--
+One-stop all-terminal source-extensive endpoint from an ordinary generated
+named-strategy history plus the realized-new-dropout no-overshoot invariant.
+This is the closest current interface to the remaining concrete source proof:
+it consumes the source-extensive generated history, terminality, initial
+activity, all-terminality, and the step-local timing invariant, then returns
+unique PBE, named-strategy identity, generated-history/terminal/exact-record
+trace, and VCG outcome/slot-payment/utility conclusions.
+-/
+theorem theorem8_strategy_history_realized_new_dropout_source_extensive_trace_all_terminal_vcg_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hno_overshoot :
+      ∀ {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {rank : ℕ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining) state next →
+        state.IsActive rank →
+        ¬ next.IsActive rank →
+        state.clockPrice ≤
+          theorem8BStarThresholdBid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout
+        model hhist hno_overshoot terminal initially_active
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy state finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model state finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  dsimp
+  exact
+    theorem8_source_extensive_trace_all_terminal_vcg_conclusion
+      (theorem8_no_overshoot_terminal_certificate_of_strategy_history_realized_new_dropout
+        model hhist hno_overshoot terminal initially_active)
+      hno_active
+
+/--
 One-stop source-extensive no-overshoot paper-checking endpoint.  The unique
 PBE witness is the named finite `B*` strategy, carries the concrete generated
 history and terminality proof, and satisfies the displayed completed-rank
