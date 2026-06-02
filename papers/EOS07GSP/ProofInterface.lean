@@ -688,6 +688,73 @@ theorem theorem8_source_iff_histories_no_overshoot_full_conclusion
       hinitial_active hno_active houtcome hvcg
 
 /--
+Build the no-overshoot terminal-dynamic certificate directly from an ordinary
+generated history plus advance safety. This is the advance-safe entry point for
+the no-overshoot terminal-dynamic source endpoints below.
+-/
+noncomputable def theorem8_no_overshoot_terminal_dynamic_certificate_of_strategy_history_advance_safe
+    {Belief : Type*}
+    (dynamic :
+      PaperTheorem8BStarRankedThresholdStrictOrderedDynamicGameConstructedOutcomeCertificate
+        Belief)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          dynamic.base.strictModel.value
+          dynamic.base.strictModel.clickThroughRate
+          dynamic.base.strictModel.remaining)
+        state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            dynamic.base.strictModel.value
+            dynamic.base.strictModel.clickThroughRate
+            dynamic.base.strictModel.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                theorem8BStarThresholdBid
+                  dynamic.base.strictModel.value
+                  dynamic.base.strictModel.clickThroughRate
+                  (dynamic.base.strictModel.remaining + 1) (rank + 1))
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              dynamic.base.strictModel.value
+              dynamic.base.strictModel.clickThroughRate
+              (dynamic.base.strictModel.remaining + 1) (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          dynamic.base.strictModel.value
+          dynamic.base.strictModel.clickThroughRate
+          dynamic.base.strictModel.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedNoOvershootTerminalDynamicCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_certificate_of_strategy_history_advance_safe
+    dynamic hhist
+    (by
+      intro stepState stepNext newPrice hstep hnext rank hactive
+      simpa [theorem8BStarThresholdBid] using
+        hadvance_safe hstep hnext rank hactive)
+    (by
+      intro rank hactive
+      simpa [theorem8BStarThresholdBid] using
+        hstate_no_overshoot rank hactive)
+    terminal initially_active
+
+/--
 No-overshoot terminal-dynamic source endpoint for the full Theorem 8
 conclusion.  Compared with the general source-history wrapper above, the
 annotated terminal history supplies the generated-history and no-overshoot

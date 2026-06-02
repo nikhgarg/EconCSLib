@@ -383,6 +383,80 @@ theorem paper_theorem8_bstar_ranked_threshold_strategy_history_to_clock_discipli
         model hhist hadvance_safe)
 
 /--
+Build the strict ordered no-overshoot terminal/dynamic certificate directly from
+an ordinary generated history plus advance safety. This lets source proofs feed
+the terminal-dynamic endpoints without manually constructing the intermediate
+clock-disciplined history.
+-/
+noncomputable def paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_certificate_of_strategy_history_advance_safe
+    {Belief : Type*}
+    (dynamic :
+      PaperTheorem8BStarRankedThresholdStrictOrderedDynamicGameConstructedOutcomeCertificate
+        Belief)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          dynamic.base.strictModel.value
+          dynamic.base.strictModel.clickThroughRate
+          dynamic.base.strictModel.remaining)
+        state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            dynamic.base.strictModel.value
+            dynamic.base.strictModel.clickThroughRate
+            dynamic.base.strictModel.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  dynamic.base.strictModel.value
+                  dynamic.base.strictModel.clickThroughRate
+                  (dynamic.base.strictModel.remaining + 1) (rank + 1))
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              dynamic.base.strictModel.value
+              dynamic.base.strictModel.clickThroughRate
+              (dynamic.base.strictModel.remaining + 1) (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          dynamic.base.strictModel.value
+          dynamic.base.strictModel.clickThroughRate
+          dynamic.base.strictModel.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedNoOvershootTerminalDynamicCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_certificate_of_clock_disciplined_strategy_history
+    dynamic
+    (by
+      simpa [paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict] using
+        paper_theorem8_bstar_ranked_threshold_strategy_history_to_clock_disciplined_strategy_history_of_advance_safe
+          (paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+            dynamic.base.strictModel)
+          hhist
+          (by
+            intro stepState stepNext newPrice hstep hnext rank hactive
+            simpa [paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict] using
+              hadvance_safe hstep hnext rank hactive))
+    (by
+      intro rank hactive
+      simpa [paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict] using
+        hstate_no_overshoot rank hactive)
+    terminal initially_active
+
+/--
 Generated named-strategy histories satisfy exact finite `B*` dropout records
 when every clock advance is active-rank safe and the initial state has not
 already overshot any active rank's finite `B*` threshold.
