@@ -346,6 +346,43 @@ theorem paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_advanc
         model hvalue_nonneg hclick_mono model.click_pos)
 
 /--
+An ordinary named-strategy history whose clock advances are active-rank safe can
+be reused as a clock-disciplined history. This is the history-form companion to
+the trace bridge and is the shape consumed by several terminal-dynamic endpoints.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strategy_history_to_clock_disciplined_strategy_history_of_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_clock_disciplined_strategy_history
+      model
+      (paper_theorem8_bstar_ranked_threshold_strategy_history_to_clock_disciplined_strategy_trace_of_advance_safe
+        model hhist hadvance_safe)
+
+/--
 Generated named-strategy histories satisfy exact finite `B*` dropout records
 when every clock advance is active-rank safe and the initial state has not
 already overshot any active rank's finite `B*` threshold.

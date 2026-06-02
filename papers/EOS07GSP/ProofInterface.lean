@@ -4106,6 +4106,44 @@ theorem theorem8_strategy_history_to_clock_disciplined_strategy_trace_of_advance
           hadvance_safe hstep hnext rank hactive)
 
 /--
+An advance-safe ordinary named-strategy history can be reused directly as a
+clock-disciplined history.
+-/
+theorem theorem8_strategy_history_to_clock_disciplined_strategy_history_of_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                theorem8BStarThresholdBid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state finalState := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_to_clock_disciplined_strategy_history_of_advance_safe
+      model hhist
+      (by
+        intro stepState stepNext newPrice hstep hnext rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hadvance_safe hstep hnext rank hactive)
+
+/--
 An advance-safe ordinary named-strategy history preserves the active-rank
 no-overshoot invariant through the final state.
 -/
