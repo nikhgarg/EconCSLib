@@ -24509,6 +24509,186 @@ theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_to
               state rank))
 
 /--
+Finite traces made of clock-disciplined source steps. This is the natural
+source-semantics proof object: each local transition carries clock discipline,
+and the trace induction packages those steps into the existing
+clock-disciplined history layer.
+-/
+inductive PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    PaperTheorem8GeneralizedEnglishAuctionState ℕ →
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ → Prop
+  | refl (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state state
+  | cons {state mid finalState :
+        PaperTheorem8GeneralizedEnglishAuctionState ℕ} :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state mid →
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+          model mid finalState →
+          PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+            model state finalState
+
+/--
+A finite trace of clock-disciplined source steps induces the existing
+clock-disciplined strategy-history object.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_clock_disciplined_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state finalState := by
+  induction htrace with
+  | refl state =>
+      exact
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory.refl
+          state
+  | cons hstep htail ih =>
+      cases hstep with
+      | advance newPrice hclock hsafe =>
+          exact
+            PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory.advance
+              newPrice hclock hsafe ih
+      | dropout rank hactive hstrategy =>
+          exact
+            PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory.dropout
+              rank hactive hstrategy ih
+
+/--
+A finite trace of clock-disciplined source steps preserves the active-rank
+no-overshoot invariant from its initial state to its final state.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_preserves_state_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∀ rank,
+      finalState.IsActive rank →
+        finalState.clockPrice ≤
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) := by
+  induction htrace with
+  | refl state =>
+      exact hstate_no_overshoot
+  | @cons state mid finalState hstep htail ih =>
+      exact
+        ih
+          (paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_preserves_state_no_overshoot
+            model hstep hstate_no_overshoot)
+
+/--
+Every finite trace of clock-disciplined source steps is an ordinary
+strategy-consistent history after forgetting clock discipline.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState) :
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining)
+      state finalState := by
+  induction htrace with
+  | refl state =>
+      exact PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory.refl state
+  | cons hstep htail ih =>
+      exact
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory.cons
+          (paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_to_strategy_step
+            model hstep)
+          ih
+
+/--
+Finite traces of clock-disciplined source steps induce no-overshoot histories
+under the same initial active-rank no-overshoot premise as the history-level
+bridge.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_no_overshoot_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  induction htrace with
+  | refl state =>
+      exact
+        PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory.refl state
+  | @cons state mid finalState hstep htail ih =>
+      cases hstep with
+      | advance newPrice hclock hsafe =>
+          exact
+            PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory.advance
+              newPrice hclock
+              (ih
+                (paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_preserves_state_no_overshoot
+                  model
+                  (PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep.advance
+                    state newPrice hclock hsafe)
+                  hstate_no_overshoot))
+      | dropout rank hactive hstrategy =>
+          exact
+            PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory.dropout
+              rank hactive hstrategy
+              (hstate_no_overshoot rank hactive)
+              (ih
+                (paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_preserves_state_no_overshoot
+                  model
+                  (PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep.dropout
+                    state rank hactive hstrategy)
+                  hstate_no_overshoot))
+
+/--
+Finite traces of clock-disciplined source steps give exact finite `B*` dropout
+histories once the initial state satisfies the active-rank no-overshoot
+premise.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_no_overshoot_strategy_history_to_exact_drop_history
+      model
+      (paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_no_overshoot_strategy_history
+        model htrace hstate_no_overshoot)
+
+/--
 Every clock-disciplined named-strategy history is an ordinary
 strategy-consistent history. Unlike the exact-record bridge, this forgetful map
 does not need an initial no-overshoot premise.
@@ -24766,6 +24946,41 @@ def paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior
   history :=
     paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_no_overshoot
       model hhist hstate_no_overshoot
+  terminal := terminal
+  initially_active := initially_active
+
+/--
+Build the preferred no-overshoot terminal-history certificate from a finite
+trace of clock-disciplined source steps. This is the trace-shaped source seam:
+source semantics can prove discipline one transition at a time and then reuse
+the existing terminal-record source-extensive endpoints.
+-/
+def paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_disciplined_strategy_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank) :
+    PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate where
+  localModel := model
+  initialState := state
+  finalState := finalState
+  history :=
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_no_overshoot_strategy_history
+      model htrace hstate_no_overshoot
   terminal := terminal
   initially_active := initially_active
 
