@@ -4213,6 +4213,40 @@ theorem theorem8_clock_sorted_schedule_to_clock_disciplined_history
       hunscheduled_active_threshold
 
 /--
+Clock-sorted finite schedules also supply the explicit step-by-step
+clock-disciplined trace: each scheduled rank advances to its finite `B*`
+threshold and then drops under the named strategy.
+-/
+theorem theorem8_clock_sorted_schedule_to_clock_disciplined_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hunscheduled_active_threshold :
+      ∀ scheduledRank,
+        scheduledRank ∈ ranks →
+          ∀ otherRank,
+            otherRank ∉ ranks →
+              state.IsActive otherRank →
+                paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                    model scheduledRank ≤
+                  theorem8BStarThresholdBid
+                    model.value model.clickThroughRate (model.remaining + 1)
+                    (otherRank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_trace
+      model state ranks hsorted hnodup hinitial_active
+      hunscheduled_active_threshold
+
+/--
 Clock-sorted finite schedules supply both the named-strategy reachability
 history and the exact finite `B*` dropout history for the deterministic
 schedule final state.

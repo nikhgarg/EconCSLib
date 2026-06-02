@@ -26081,6 +26081,178 @@ theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_n
               htail_unscheduled_active_threshold
 
 /--
+Clock-sorted no-duplicate finite schedules induce finite traces of
+clock-disciplined source steps. This is the step-by-step version of the
+schedule-to-history bridge: each scheduled rank contributes an advance to its
+finite `B*` threshold followed by the named-strategy dropout step.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hunscheduled_active_threshold :
+      ∀ scheduledRank,
+        scheduledRank ∈ ranks →
+          ∀ otherRank,
+            otherRank ∉ ranks →
+              state.IsActive otherRank →
+                paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                    model scheduledRank ≤
+                  paper_theorem8_bstar_threshold_bid
+                    model.value model.clickThroughRate (model.remaining + 1)
+                    (otherRank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks) := by
+  induction ranks generalizing state with
+  | nil =>
+      exact
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.refl
+          state
+  | cons head tail ih =>
+      simp only
+        [paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted]
+        at hsorted
+      rcases hsorted with ⟨hclock, htail_sorted⟩
+      have hhead_active : state.IsActive head := by
+        exact hinitial_active head (by simp)
+      have hnodup_tail : tail.Nodup := hnodup.tail
+      have hhead_not_mem_tail : head ∉ tail := hnodup.notMem
+      let dropPrice :=
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model head
+      let nextState :=
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state
+          model state head
+      have hadvance_safe :
+          ∀ otherRank,
+            state.IsActive otherRank →
+              dropPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate (model.remaining + 1)
+                  (otherRank + 1) := by
+        intro otherRank hactive_other
+        by_cases hmem : otherRank ∈ head :: tail
+        · rcases (List.mem_cons.mp hmem) with hsame | htail_mem
+          · subst otherRank
+            simp [dropPrice,
+              paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price]
+          · exact
+              paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_le_price_of_mem
+                model htail_sorted htail_mem
+        · exact
+            hunscheduled_active_threshold head (by simp) otherRank hmem
+              hactive_other
+      have hactive_advanced :
+          (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            state dropPrice).IsActive head := by
+        simpa [PaperTheorem8GeneralizedEnglishAuctionState.advanceClock,
+          dropPrice] using hhead_active
+      have hstrategy :
+          paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining
+            (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+              state dropPrice) head := by
+        have hthreshold_le_clock :
+            paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (head + 1) ≤
+              (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+                state dropPrice).clockPrice := by
+          simp [PaperTheorem8GeneralizedEnglishAuctionState.advanceClock,
+            dropPrice,
+            paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price]
+        exact
+          (paper_theorem8_bstar_ranked_threshold_strategy_drops_iff_threshold_bid
+            model.value model.clickThroughRate
+            (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+              state dropPrice)
+            head model.remaining
+            (ne_of_gt (model.click_pos head))
+            (ne_of_gt (model.click_pos (head + 1)))).mpr
+            hthreshold_le_clock
+      have htail_active :
+          ∀ rank, rank ∈ tail → nextState.IsActive rank := by
+        intro rank hrank
+        have hactive_initial : state.IsActive rank :=
+          hinitial_active rank (by simp [hrank])
+        have hne : rank ≠ head := by
+          intro hsame
+          exact hhead_not_mem_tail (by simpa [hsame] using hrank)
+        simpa [nextState,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state,
+          dropPrice,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price]
+          using
+            paper_theorem8_bstar_ranked_threshold_single_exact_drop_preserves_active_of_ne
+              model state hne hactive_initial
+      have htail_unscheduled_active_threshold :
+          ∀ scheduledRank,
+            scheduledRank ∈ tail →
+              ∀ otherRank,
+                otherRank ∉ tail →
+                  nextState.IsActive otherRank →
+                    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                        model scheduledRank ≤
+                      paper_theorem8_bstar_threshold_bid
+                        model.value model.clickThroughRate
+                        (model.remaining + 1) (otherRank + 1) := by
+        intro scheduledRank hscheduled otherRank hother_not_tail hactive_next
+        by_cases hsame : otherRank = head
+        · subst otherRank
+          exfalso
+          simpa [nextState,
+            paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state,
+            PaperTheorem8GeneralizedEnglishAuctionState.recordDropout,
+            PaperTheorem8GeneralizedEnglishAuctionState.IsActive]
+            using hactive_next
+        · have hother_not_cons : otherRank ∉ head :: tail := by
+            intro hmem
+            rcases (List.mem_cons.mp hmem) with hhead_eq | htail_mem
+            · exact hsame hhead_eq
+            · exact hother_not_tail htail_mem
+          have hactive_state : state.IsActive otherRank := by
+            simpa [nextState,
+              paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state,
+              PaperTheorem8GeneralizedEnglishAuctionState.recordDropout,
+              PaperTheorem8GeneralizedEnglishAuctionState.advanceClock,
+              PaperTheorem8GeneralizedEnglishAuctionState.IsActive, hsame]
+              using hactive_next
+          exact
+            hunscheduled_active_threshold scheduledRank (by simp [hscheduled])
+              otherRank hother_not_cons hactive_state
+      refine
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.cons
+          (PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep.advance
+            state dropPrice ?_ ?_)
+          ?_
+      · simpa [dropPrice,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price]
+          using hclock
+      · exact hadvance_safe
+      · refine
+          PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.cons
+            (PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep.dropout
+              (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+                state dropPrice)
+              head hactive_advanced hstrategy)
+            ?_
+        simpa [nextState,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state,
+          dropPrice,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price]
+          using
+            ih nextState htail_sorted hnodup_tail htail_active
+              htail_unscheduled_active_threshold
+
+/--
 Singleton finite schedules are clock-disciplined from the displayed initial
 clock check, the scheduled rank's activity, and the unscheduled-threshold
 comparison for active unscheduled ranks.
