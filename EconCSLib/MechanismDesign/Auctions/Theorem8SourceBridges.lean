@@ -122,6 +122,138 @@ def paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core
       cert)
 
 /--
+An ordinary named-strategy step that satisfies the active-rank advance-safety
+bound preserves the active-rank no-overshoot invariant.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strategy_step_preserves_state_no_overshoot_of_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state next)
+    (hadvance_safe :
+      ∀ newPrice,
+        next =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            state newPrice →
+          ∀ rank,
+            state.IsActive rank →
+              newPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1))
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∀ rank,
+      next.IsActive rank →
+        next.clockPrice ≤
+          paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_preserves_state_no_overshoot
+      model
+      (paper_theorem8_bstar_ranked_threshold_strategy_step_to_clock_disciplined_strategy_step_of_advance_safe
+        model hstep hadvance_safe)
+      hstate_no_overshoot
+
+/--
+At a realized new dropout of an advance-safe ordinary named-strategy step, the
+pre-dropout clock has not overshot the dropping rank's finite `B*` threshold.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strategy_step_realized_new_dropout_no_overshoot_of_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state next)
+    (hadvance_safe :
+      ∀ newPrice,
+        next =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            state newPrice →
+          ∀ rank,
+            state.IsActive rank →
+              newPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1))
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    {rank : ℕ}
+    (hactive : state.IsActive rank)
+    (hinactive : ¬ next.IsActive rank) :
+    state.clockPrice ≤
+      paper_theorem8_bstar_threshold_bid
+        model.value model.clickThroughRate (model.remaining + 1)
+        (rank + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_realized_new_dropout_no_overshoot
+      model
+      (paper_theorem8_bstar_ranked_threshold_strategy_step_to_clock_disciplined_strategy_step_of_advance_safe
+        model hstep hadvance_safe)
+      hstate_no_overshoot hactive hinactive
+
+/--
+At a realized new dropout of an advance-safe ordinary named-strategy step, the
+new dropout record is exactly the dropping rank's finite `B*` threshold.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_eq_threshold_of_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state next)
+    (hadvance_safe :
+      ∀ newPrice,
+        next =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            state newPrice →
+          ∀ rank,
+            state.IsActive rank →
+              newPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1))
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    {rank : ℕ}
+    (hactive : state.IsActive rank)
+    (hinactive : ¬ next.IsActive rank) :
+    next.lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_new_dropout_record_eq_threshold
+      model
+      (paper_theorem8_bstar_ranked_threshold_strategy_step_to_clock_disciplined_strategy_step_of_advance_safe
+        model hstep hadvance_safe)
+      hstate_no_overshoot hactive hinactive
+
+/--
 Generated named-strategy histories satisfy exact finite `B*` dropout records
 when every clock advance is active-rank safe and the initial state has not
 already overshot any active rank's finite `B*` threshold.
