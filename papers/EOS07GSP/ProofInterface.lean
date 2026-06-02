@@ -5807,6 +5807,260 @@ theorem theorem8_cold_start_strategy_history_advance_safe_terminal_records_eq_th
       hno_active
 
 /--
+Advance-safe ordinary generated histories close the terminal-record outcome
+bridge when every rank starts active and none remain active.
+-/
+theorem theorem8_strategy_history_advance_safe_terminal_record_outcome_eq_bstar
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                theorem8BStarThresholdBid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1))
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    paper_theorem8_terminal_dropout_record_outcome finalState =
+      paper_theorem8_bstar_ranked_threshold_outcome
+        model.value model.clickThroughRate (model.remaining + 1) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_advance_safe_terminal_record_outcome_eq_bstar
+      model hhist
+      (by
+        intro stepState stepNext newPrice hstep hnext rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hadvance_safe hstep hnext rank hactive)
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      hinitial_active hno_active
+
+/--
+Advance-safe ordinary generated histories give the full ordered terminal-record
+paper conclusion when every rank starts active and none remain active.
+-/
+theorem theorem8_strategy_history_advance_safe_terminal_record_ordered_paper_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                theorem8BStarThresholdBid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1))
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono :
+      ∀ i, model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+    (∀ rank,
+      (paper_theorem8_terminal_dropout_record_outcome finalState).slotOf rank =
+        some rank) ∧
+      (∀ rank,
+        (paper_theorem8_terminal_dropout_record_outcome finalState).paymentPerClick
+            rank =
+          theorem8BStarThresholdBid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1)) ∧
+        (∀ rank,
+          model.clickThroughRate rank *
+              (paper_theorem8_terminal_dropout_record_outcome finalState).paymentPerClick
+                rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate rank (model.remaining + 1)) ∧
+          (∀ rank,
+            0 ≤
+              (paper_theorem8_terminal_dropout_record_outcome finalState).paymentPerClick
+                rank ∧
+            (paper_theorem8_terminal_dropout_record_outcome finalState).paymentPerClick
+                rank ≤ model.value rank) ∧
+            (paper_theorem8_terminal_dropout_record_outcome
+              finalState).IndividuallyRational
+              ({ clickThroughRate := model.clickThroughRate } :
+                PositionEnvironment ℕ)
+              model.value ∧
+              paper_position_no_positive_transfers
+                (paper_theorem8_terminal_dropout_record_outcome
+                  finalState) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_advance_safe_terminal_record_ordered_paper_conclusion
+      model hhist
+      (by
+        intro stepState stepNext newPrice hstep hnext rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hadvance_safe hstep hnext rank hactive)
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      hinitial_active hno_active hvalue_nonneg hvalue_mono hclick_mono
+      hclick_pos
+
+/--
+Cold-start advance-safe generated histories close the terminal-record outcome
+bridge when no rank remains active.
+-/
+theorem theorem8_cold_start_strategy_history_advance_safe_terminal_record_outcome_eq_bstar
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                theorem8BStarThresholdBid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    paper_theorem8_terminal_dropout_record_outcome finalState =
+      paper_theorem8_bstar_ranked_threshold_outcome
+        model.value model.clickThroughRate (model.remaining + 1) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_advance_safe_terminal_record_outcome_eq_bstar
+      model hvalue_nonneg hclick_mono hhist
+      (by
+        intro stepState stepNext newPrice hstep hnext rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hadvance_safe hstep hnext rank hactive)
+      hno_active
+
+/--
+Cold-start advance-safe generated histories give the full ordered terminal-record
+paper conclusion when no rank remains active.
+-/
+theorem theorem8_cold_start_strategy_history_advance_safe_terminal_record_ordered_paper_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono :
+      ∀ i, model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                theorem8BStarThresholdBid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    (∀ rank,
+      (paper_theorem8_terminal_dropout_record_outcome finalState).slotOf rank =
+        some rank) ∧
+      (∀ rank,
+        (paper_theorem8_terminal_dropout_record_outcome finalState).paymentPerClick
+            rank =
+          theorem8BStarThresholdBid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1)) ∧
+        (∀ rank,
+          model.clickThroughRate rank *
+              (paper_theorem8_terminal_dropout_record_outcome finalState).paymentPerClick
+                rank =
+            paper_theorem7_ranked_vcg_tail_payment
+              model.value model.clickThroughRate rank (model.remaining + 1)) ∧
+          (∀ rank,
+            0 ≤
+              (paper_theorem8_terminal_dropout_record_outcome finalState).paymentPerClick
+                rank ∧
+            (paper_theorem8_terminal_dropout_record_outcome finalState).paymentPerClick
+                rank ≤ model.value rank) ∧
+            (paper_theorem8_terminal_dropout_record_outcome
+              finalState).IndividuallyRational
+              ({ clickThroughRate := model.clickThroughRate } :
+                PositionEnvironment ℕ)
+              model.value ∧
+              paper_position_no_positive_transfers
+                (paper_theorem8_terminal_dropout_record_outcome
+                  finalState) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_advance_safe_terminal_record_ordered_paper_conclusion
+      model hvalue_nonneg hvalue_mono hclick_mono hclick_pos hhist
+      (by
+        intro stepState stepNext newPrice hstep hnext rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hadvance_safe hstep hnext rank hactive)
+      hno_active
+
+/--
 Clock-disciplined source histories supply both the ordinary generated history
 and the exact finite `B*` dropout history under the initial no-overshoot
 premise.
