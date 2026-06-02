@@ -47623,6 +47623,68 @@ theorem paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strat
         model hvalue_nonneg hclick_mono model.click_pos)
 
 /--
+Clock-disciplined finite traces give the exact terminal record for any rank
+that starts active and is inactive at the audited final state. This is the
+trace-level counterpart of the history final-record bridge.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_final_record_eq_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    {rank : ℕ}
+    (hinitial_active : state.IsActive rank)
+    (hfinal_inactive : ¬ finalState.IsActive rank) :
+    finalState.lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  have hexact :
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state finalState :=
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_exact_drop_history
+      model htrace hstate_no_overshoot
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_history_final_record_eq_threshold
+      model hexact hinitial_active hfinal_inactive
+
+/--
+Cold-start clock-disciplined finite traces give the exact terminal record for
+any inactive final rank without a separate initial no-overshoot premise.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_trace_final_record_eq_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    {rank : ℕ}
+    (hfinal_inactive : ¬ finalState.IsActive rank) :
+    finalState.lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_final_record_eq_threshold
+      model htrace
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos)
+      (by rfl) hfinal_inactive
+
+/--
 Cold-start clock-disciplined histories discharge the compact source-extensive
 and exact-record obligations without a separate initial no-overshoot premise.
 The cold-start timing premise follows from nonnegative values and monotone,
