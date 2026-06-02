@@ -26636,6 +26636,104 @@ theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_pair_to_clock_
               hactive_other)
 
 /--
+Singleton finite schedules are clock-disciplined from final-clock terminality:
+the final clock for `[rank]` stays below every unscheduled active rank's finite
+`B*` threshold, so no separate active-unscheduled side condition is needed.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_singleton_to_clock_disciplined_strategy_history_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank : ℕ)
+    (hclock :
+      state.clockPrice ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank)
+    (hactive : state.IsActive rank)
+    (hterminal_unscheduled :
+      ∀ otherRank,
+        otherRank ≠ rank →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state [rank]).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (otherRank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state [rank]) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_history_of_final_clock_lt_unscheduled
+      model state [rank]
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_singleton
+        model hclock)
+      (by simp)
+      (by
+        intro scheduledRank hscheduled
+        have hscheduled_eq : scheduledRank = rank := by
+          simpa using hscheduled
+        subst scheduledRank
+        exact hactive)
+      (by
+        intro otherRank hnot_mem
+        exact hterminal_unscheduled otherRank (by simpa using hnot_mem))
+
+/--
+Two-rank finite schedules are clock-disciplined from final-clock terminality:
+the final clock for `[rank, nextRank]` stays below every unscheduled active
+rank's finite `B*` threshold, so no separate active-unscheduled side condition
+is needed.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_pair_to_clock_disciplined_strategy_history_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank nextRank : ℕ)
+    (hclock :
+      state.clockPrice ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank)
+    (hnext :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model nextRank)
+    (hne : rank ≠ nextRank)
+    (hactive_rank : state.IsActive rank)
+    (hactive_next : state.IsActive nextRank)
+    (hterminal_unscheduled :
+      ∀ otherRank,
+        otherRank ≠ rank →
+          otherRank ≠ nextRank →
+            (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+              model state [rank, nextRank]).clockPrice <
+              paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (otherRank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state [rank, nextRank]) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_history_of_final_clock_lt_unscheduled
+      model state [rank, nextRank]
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_pair
+        model hclock hnext)
+      (by simpa using hne)
+      (by
+        intro scheduledRank hscheduled
+        have hscheduled_cases : scheduledRank = rank ∨ scheduledRank = nextRank := by
+          simpa using hscheduled
+        rcases hscheduled_cases with hscheduled_eq | hscheduled_eq
+        · subst scheduledRank
+          exact hactive_rank
+        · subst scheduledRank
+          exact hactive_next)
+      (by
+        intro otherRank hnot_mem
+        have hnot : otherRank ≠ rank ∧ otherRank ≠ nextRank := by
+          simpa using hnot_mem
+        exact hterminal_unscheduled otherRank hnot.1 hnot.2)
+
+/--
 A clock-sorted no-duplicate exact-drop schedule is reachable by a history that
 is consistent with the named finite `B*` ranked-threshold strategy.
 -/

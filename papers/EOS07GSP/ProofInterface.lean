@@ -4864,6 +4864,80 @@ theorem theorem8_pair_schedule_to_clock_disciplined_history
       model state rank nextRank hclock hnext hne hactive_rank hactive_next
       hunscheduled_active_threshold
 
+/--
+Singleton schedule shortcut with the unscheduled-threshold side condition
+derived from final-clock terminality.
+-/
+theorem theorem8_singleton_schedule_to_clock_disciplined_history_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank : ℕ)
+    (hclock :
+      state.clockPrice ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank)
+    (hactive : state.IsActive rank)
+    (hterminal_unscheduled :
+      ∀ otherRank,
+        otherRank ≠ rank →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state [rank]).clockPrice <
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (otherRank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state [rank]) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_singleton_to_clock_disciplined_strategy_history_of_final_clock_lt_unscheduled
+      model state rank hclock hactive
+      (by
+        intro otherRank hne
+        simpa [theorem8BStarThresholdBid] using
+          hterminal_unscheduled otherRank hne)
+
+/--
+Two-rank schedule shortcut with the unscheduled-threshold side condition
+derived from final-clock terminality.
+-/
+theorem theorem8_pair_schedule_to_clock_disciplined_history_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (rank nextRank : ℕ)
+    (hclock :
+      state.clockPrice ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank)
+    (hnext :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model rank ≤
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+          model nextRank)
+    (hne : rank ≠ nextRank)
+    (hactive_rank : state.IsActive rank)
+    (hactive_next : state.IsActive nextRank)
+    (hterminal_unscheduled :
+      ∀ otherRank,
+        otherRank ≠ rank →
+          otherRank ≠ nextRank →
+            (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+              model state [rank, nextRank]).clockPrice <
+              theorem8BStarThresholdBid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (otherRank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state [rank, nextRank]) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_pair_to_clock_disciplined_strategy_history_of_final_clock_lt_unscheduled
+      model state rank nextRank hclock hnext hne hactive_rank hactive_next
+      (by
+        intro otherRank hne_rank hne_next
+        simpa [theorem8BStarThresholdBid] using
+          hterminal_unscheduled otherRank hne_rank hne_next)
+
 private def theorem8FreshUnscheduledRank : List ℕ → ℕ
   | [] => 0
   | rank :: tail => max (rank + 1) (theorem8FreshUnscheduledRank tail)
