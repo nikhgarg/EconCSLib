@@ -41302,6 +41302,44 @@ theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history
         model hhist hstate_no_overshoot⟩
 
 /--
+Clock-disciplined source traces discharge both source-extensive rationality and
+exact finite `B*` dropout records. This is the step-by-step source-semantics
+version of the history-level timing route.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  exact
+    ⟨⟨paper_theorem8_bstar_ranked_threshold_named_strategy_source_sequential_rationality
+          model state,
+        paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_strategy_history
+          model htrace,
+        terminal⟩,
+      paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_exact_drop_history
+        model htrace hstate_no_overshoot⟩
+
+/--
 Belief object for the source-extensive terminal-record checker. A belief names
 the strategy whose generated source history is being used, together with the
 terminality proof for the same strategy.
@@ -46615,6 +46653,42 @@ theorem paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strat
       terminal
 
 /--
+Cold-start clock-disciplined traces discharge the compact source-extensive and
+exact-record obligations without a separate initial no-overshoot premise. The
+source proof can provide a finite trace of disciplined steps from the paper's
+cold-start state.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_trace_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_source_extensive_exact_drop_obligations
+      model htrace
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos)
+      terminal
+
+/--
 Cold-start constructor for the no-overshoot terminal-history behavior
 certificate. It packages a clock-disciplined history from the paper cold-start
 state, discharging initial activity by reflexivity of the empty dropout record
@@ -46638,6 +46712,35 @@ def paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior
     PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate :=
   paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_disciplined_strategy_history
     model hhist
+    (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+      model hvalue_nonneg hclick_mono model.click_pos)
+    terminal
+    (by
+      intro rank
+      rfl)
+
+/--
+Cold-start constructor for the no-overshoot terminal-history behavior
+certificate from a finite trace of clock-disciplined source steps.
+-/
+def paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_cold_start_clock_disciplined_strategy_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_disciplined_strategy_trace
+    model htrace
     (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
       model hvalue_nonneg hclick_mono model.click_pos)
     terminal

@@ -3503,6 +3503,44 @@ theorem theorem8_clock_disciplined_strategy_trace_to_exact_drop_history
           hstate_no_overshoot rank hactive)
 
 /--
+Finite traces of clock-disciplined source steps discharge the two source
+obligations used downstream: source-extensive rationality and exact finite
+`B*` dropout records.
+-/
+theorem theorem8_clock_disciplined_strategy_trace_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_source_extensive_exact_drop_obligations
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      terminal
+
+/--
 History-level source-invariant bridge: an ordinary named-strategy history
 becomes a no-overshoot source history when every realized new-dropout step is
 known not to overshoot that rank's finite `B*` threshold. This is the intended
@@ -4107,6 +4145,38 @@ theorem theorem8_clock_disciplined_strategy_history_obligations
   simpa [theorem8BStarThresholdBid] using
     paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_obligations
       model hhist hstate_no_overshoot
+
+/--
+Cold-start clock-disciplined source traces discharge source-extensive
+rationality and exact finite `B*` dropout records. Initial activity and initial
+no-overshoot come from the paper's cold-start state.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_trace_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_trace_source_extensive_exact_drop_obligations
+      model hvalue_nonneg hclick_mono htrace terminal
 
 /--
 Finite schedule bridge to the clock-disciplined source transition.  A
@@ -5422,6 +5492,30 @@ def theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
       simpa [theorem8BStarThresholdBid] using
         hstate_no_overshoot rank hactive)
     terminal initially_active
+
+/--
+Cold-start no-overshoot terminal-history certificate from a finite trace of
+clock-disciplined source steps. The initial no-overshoot and initial-activity
+premises are discharged internally from the paper's cold-start state.
+-/
+def theorem8_no_overshoot_terminal_certificate_of_cold_start_clock_disciplined_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_cold_start_clock_disciplined_strategy_trace
+    model hvalue_nonneg hclick_mono htrace terminal
 
 /--
 Clock-disciplined terminal-history source-extensive endpoint.  This is the
