@@ -46933,6 +46933,69 @@ theorem paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strat
       terminal
 
 /--
+Cold-start finite schedules discharge the compact source-extensive and
+exact-record obligations through the explicit clock-disciplined trace. Initial
+activity and no-overshoot are supplied by the paper's cold-start state, so the
+only source-clock side condition is the unscheduled-rank threshold comparison
+along the schedule.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_cold_start_exact_drop_schedule_clock_sorted_nodup_trace_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+        ranks)
+    (hnodup : ranks.Nodup)
+    (hunscheduled_threshold :
+      ∀ scheduledRank,
+        scheduledRank ∈ ranks →
+          ∀ otherRank,
+            otherRank ∉ ranks →
+              paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                  model scheduledRank ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate (model.remaining + 1)
+                  (otherRank + 1))
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model paper_theorem8_bstar_ranked_threshold_cold_start_state
+            ranks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model paper_theorem8_bstar_ranked_threshold_cold_start_state ranks)
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model paper_theorem8_bstar_ranked_threshold_cold_start_state ranks) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_trace_source_extensive_exact_drop_obligations
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state ranks hsorted
+      hnodup
+      (by
+        intro rank _hrank
+        rfl)
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos)
+      (by
+        intro scheduledRank hscheduled otherRank hother_not_mem _hactive_other
+        exact
+          hunscheduled_threshold scheduledRank hscheduled otherRank
+            hother_not_mem)
+      hterminal_unscheduled
+
+/--
 Cold-start constructor for the no-overshoot terminal-history behavior
 certificate. It packages a clock-disciplined history from the paper cold-start
 state, discharging initial activity by reflexivity of the empty dropout record
