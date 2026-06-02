@@ -4498,6 +4498,48 @@ theorem theorem8_clock_disciplined_strategy_history_to_exact_drop_history
       model hhist hstate_no_overshoot
 
 /--
+Cold-start clock-disciplined source histories induce no-overshoot histories
+without a separate initial no-overshoot premise.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_history_to_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_history_to_no_overshoot
+      model hvalue_nonneg hclick_mono hhist
+
+/--
+Cold-start clock-disciplined source histories give exact finite `B*` dropout
+records without a separate initial no-overshoot premise.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_history_to_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_history_to_exact_drop_history
+      model hvalue_nonneg hclick_mono hhist
+
+/--
 Clock-disciplined source histories give the exact terminal record for any rank
 that starts active and is inactive at the audited final state. This is the
 per-rank terminal-record form of the clock-disciplined exact-history bridge.
@@ -6567,6 +6609,30 @@ def theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_history
       simpa [theorem8BStarThresholdBid] using
         hstate_no_overshoot rank hactive)
     terminal initially_active
+
+/--
+Cold-start no-overshoot terminal-history certificate from a
+clock-disciplined source history. The paper cold-start state discharges both
+initial activity and the initial no-overshoot premise.
+-/
+def theorem8_no_overshoot_terminal_certificate_of_cold_start_clock_disciplined_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_cold_start_clock_disciplined_strategy_history
+    model hvalue_nonneg hclick_mono hhist terminal
 
 /--
 Build the no-overshoot terminal-history certificate from a finite trace of

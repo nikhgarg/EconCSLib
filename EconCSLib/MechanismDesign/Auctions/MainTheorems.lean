@@ -47529,6 +47529,53 @@ theorem paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
   linarith
 
 /--
+Cold-start clock-disciplined histories induce no-overshoot histories without a
+separate initial no-overshoot premise. The cold-start state discharges that
+premise from nonnegative values and monotone click-through rates.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_history_to_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_no_overshoot
+      model hhist
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos)
+
+/--
+Cold-start clock-disciplined histories give exact finite `B*` dropout records
+without a separate initial no-overshoot premise.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_history_to_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_exact_drop_history
+      model hhist
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos)
+
+/--
 Cold-start clock-disciplined histories discharge the compact source-extensive
 and exact-record obligations without a separate initial no-overshoot premise.
 The cold-start timing premise follows from nonnegative values and monotone,
