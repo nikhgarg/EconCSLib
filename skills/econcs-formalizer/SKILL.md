@@ -120,6 +120,13 @@ reader-relevant source-version, proof-route, or caveat note. Human-review counts
 mean saved dashboard rows by a human reviewer: `reviewed_rows / total_rows`.
 Agent source audits, validation reports, and compile checks do not increment
 human review.
+If the user asks for DAG regeneration, commit, or push at the next milestone,
+treat the milestone as a green named theorem seam plus the relevant targeted
+builds and hygiene checks, not as every helper alias. At that milestone, refresh
+only the affected DAG/status artifacts, inspect the rendered DAG if it changed,
+stage an explicit path list, commit once, and push without adding a routine
+rebase unless the user asked for one or a true publication/library milestone
+requires it.
 
 When a proof is blocked, think outside Lean as needed, patch the mathematical
 argument yourself, and then implement the patched proof in Lean. Do not stop at
@@ -150,6 +157,13 @@ at stable theorem seams. Keep imports narrow, give each agent a disjoint module
 or section to own, and re-export the public surface through `MainTheorems.lean`,
 `ProofInterface.lean`, and `PostPaperAudit.lean` so the paper ledger remains
 easy to audit.
+When the human or proof-facing interfaces start accumulating many near-duplicate
+aliases, do not just move the bulk from one interface file to another. Look for
+the repeated proof construction and factor it into a reusable source-layer
+bridge theorem in the library or the paper's route file. Then keep
+`PaperInterface.lean` DAG-shaped, keep `ProofInterface.lean` as a compact
+paper-facing proof surface, and keep `PostPaperAudit.lean` as an endpoint
+ledger that cites the strongest bridge instead of rebuilding the same proof.
 
 Use subagents only when they shorten the current proof loop. Medium-effort
 subagents are appropriate for bounded read-only scouting: find declaration

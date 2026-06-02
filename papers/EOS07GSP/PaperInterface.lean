@@ -63,6 +63,10 @@ abbrev theorem8_dropout_price_bstar :=
 abbrev theorem8_no_overshoot_dropout_step_exact_record :=
   @EOS07GSP.audit_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_eq_threshold_of_no_overshoot
 
+/-- Theorem 8: exact dropout records are equivalent to realized no overshoot. -/
+abbrev theorem8_dropout_step_no_overshoot_iff_exact_record :=
+  @EOS07GSP.audit_theorem8_strategy_step_new_dropout_no_overshoot_iff_record_eq_threshold
+
 /-- Theorem 8: named source-timing bridge for realized dropout no-overshoot. -/
 abbrev theorem8_realized_dropout_no_overshoot_source_timing_bridge :=
   @EOS07GSP.audit_theorem8_bstar_ranked_threshold_strategy_history_to_no_overshoot_strategy_history_of_realized_new_dropout_no_overshoot_statement
@@ -74,6 +78,22 @@ abbrev theorem8_source_extensive_pbe_iff_named_strategy_review :=
 /-- Theorem 8: source-extensive PBE has the VCG outcome under no overshoot. -/
 abbrev theorem8_source_extensive_outcome_eq_vcg :=
   @theorem8_source_extensive_pbe_outcome_eq_vcg_of_no_overshoot
+
+/-- Theorem 8: local-advance-safe histories satisfy finite `B*` formulas. -/
+abbrev theorem8_local_advance_safe_completed_rank_source_extensive :=
+  @EOS07GSP.audit_theorem8_strategy_history_local_advance_safe_trace_completed_threshold_conclusion
+
+/-- Theorem 8: cold-start local-advance-safe histories satisfy finite `B*` formulas. -/
+abbrev theorem8_cold_start_local_advance_safe_completed_rank_source_extensive :=
+  @EOS07GSP.audit_theorem8_cold_start_strategy_history_local_advance_safe_trace_completed_threshold_conclusion
+
+/-- Theorem 8: local-deviation terminal records satisfy finite `B*` formulas. -/
+abbrev theorem8_local_deviation_terminal_record_completed_schedule :=
+  @EOS07GSP.audit_theorem8_terminal_record_local_deviation_cold_start_threshold_sorted_all_completed_conclusion
+
+/-- Theorem 8: local-deviation terminal-dynamic full PBE conclusion. -/
+abbrev theorem8_local_deviation_terminal_dynamic_full_conclusion :=
+  @EOS07GSP.audit_theorem8_local_deviation_cold_start_threshold_sorted_terminal_dynamic_full_conclusion
 
 /-- Theorem 8: exact-record source game full VCG conclusion. -/
 abbrev theorem8_exact_record_full_vcg_conclusion :=

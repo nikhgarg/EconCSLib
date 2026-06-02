@@ -665,6 +665,28 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   certificates to named-strategy PBE, PBE strategy equality, the cutoff/action
   rule, unique PBE, outcome equality, and compact paper conclusions, so audit
   files can cite one theorem from the minimized source obligation.
+- If several paper-facing or audit endpoints repeatedly rebuild the same PBE,
+  terminal-history, or source-completion object, stop adding aliases and move
+  the construction into a source-layer bridge theorem. The interface and audit
+  files should call that strongest bridge with `exact`/`simpa`; repeated
+  schedule, belief, or terminal-record construction belongs in the bridge file.
+- For proof-dependent certificate wrappers, watch inferred result types. If an
+  endpoint's type depends on local proof witnesses or a `Classical.choose`
+  reconstruction, Lean may reject an otherwise obvious wrapper because the
+  expected proposition is not definitionally the same. Prefer routing through a
+  stable theorem whose conclusion is stated with the final paper-facing objects,
+  or introduce such a theorem, instead of fighting positional arguments and
+  proof-dependent metavariables in the wrapper.
+- For belief-explicit state-game variants, prove the source-extensive theorem
+  once and derive the belief-explicit endpoint through the established PBE
+  equivalence and projection lemmas. Do not duplicate the schedule/PBE
+  construction just to add belief, history, or terminal-record fields that are
+  already carried by the source theorem.
+- For cold-start sorted-schedule endpoints, prefer a direct all-scheduled or
+  append-singleton source theorem whose conclusion includes the terminal-record
+  and completion facts needed by the paper. This is usually cleaner than
+  reconstructing source-completion certificates from schedule proofs inside
+  `ProofInterface.lean` or `PostPaperAudit.lean`.
 - For exact finite schedules, expose deterministic-final-state facts:
   scheduled ranks have terminal records equal to their threshold, and from an
   all-active initial state the active ranks are exactly the unscheduled ranks.
