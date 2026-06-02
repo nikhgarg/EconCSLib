@@ -819,6 +819,73 @@ theorem theorem8_no_overshoot_terminal_dynamic_source_iff_completed_threshold_co
                 hcompleted_threshold_le rank hrank))
 
 /--
+Completed-rank no-overshoot terminal-dynamic source endpoint with the completed
+set supplied directly as terminal-inactive ranks.
+-/
+theorem theorem8_no_overshoot_terminal_dynamic_source_iff_completed_rank_conclusion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedNoOvershootTerminalDynamicCertificate
+        Belief)
+    (concrete_belief_consistency :
+      cert.dynamic.base.game.isConsistentBelief
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.dynamic.base.strictModel.value
+          cert.dynamic.base.strictModel.clickThroughRate
+          cert.dynamic.base.strictModel.remaining)
+        cert.dynamic.base.belief)
+    (sequential_rationality_iff_source_sequential :
+      ∀ strategy belief,
+        cert.dynamic.base.game.isSequentiallyRational strategy belief ↔
+          paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+            cert.dynamic.base.strictModel.clickThroughRate
+            cert.dynamic.base.strictModel.value
+            cert.dynamic.base.strictModel.remaining
+            cert.terminal.initialState
+            strategy)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ cert.terminal.finalState.IsActive rank) :
+    let integrated :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_certificate_to_terminal_dynamic_certificate
+        cert
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.dynamic.base.game.PerfectBayesianEquilibrium strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          integrated strategy ∧
+          ∀ rank,
+            rank ∈ completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.terminal.finalState).paymentPerClick rank =
+                  theorem8BStarThresholdBid
+                    cert.terminal.localModel.value
+                    cert.terminal.localModel.clickThroughRate
+                    (cert.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.terminal.localModel.clickThroughRate rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.terminal.finalState).paymentPerClick rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.terminal.localModel.value
+                      cert.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.terminal.finalState).paymentPerClick rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.terminal.finalState).paymentPerClick rank ≤
+                        cert.terminal.localModel.value rank := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_source_sequential_rationality_finite_exact_history_exists_unique_pbe_with_terminal_record_conclusion
+      cert concrete_belief_consistency
+      sequential_rationality_iff_source_sequential completedRanks
+      inactive_on_completed
+
+/--
 Payoff-facing completed-rank form of the no-overshoot terminal-dynamic source
 endpoint.
 -/
@@ -876,6 +943,52 @@ theorem theorem8_no_overshoot_terminal_dynamic_source_iff_utility_eq_bstar_of_co
               simpa [theorem8BStarThresholdBid] using
                 hcompleted_threshold_le rank hrank))
       hrank
+
+/--
+Payoff-facing completed-rank form of the no-overshoot terminal-dynamic source
+endpoint from direct terminal inactivity on completed ranks.
+-/
+theorem theorem8_no_overshoot_terminal_dynamic_source_iff_utility_eq_bstar_of_completed_rank
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedNoOvershootTerminalDynamicCertificate
+        Belief)
+    (concrete_belief_consistency :
+      cert.dynamic.base.game.isConsistentBelief
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.dynamic.base.strictModel.value
+          cert.dynamic.base.strictModel.clickThroughRate
+          cert.dynamic.base.strictModel.remaining)
+        cert.dynamic.base.belief)
+    (sequential_rationality_iff_source_sequential :
+      ∀ strategy belief,
+        cert.dynamic.base.game.isSequentiallyRational strategy belief ↔
+          paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+            cert.dynamic.base.strictModel.clickThroughRate
+            cert.dynamic.base.strictModel.value
+            cert.dynamic.base.strictModel.remaining
+            cert.terminal.initialState
+            strategy)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ cert.terminal.finalState.IsActive rank)
+    {rank : ℕ} (hrank : rank ∈ completedRanks) :
+    (paper_theorem8_terminal_dropout_record_outcome
+        cert.terminal.finalState).utility
+        ({ clickThroughRate := cert.terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        cert.terminal.localModel.value rank =
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        cert.terminal.localModel.value cert.terminal.localModel.clickThroughRate
+        (cert.terminal.localModel.remaining + 1)).utility
+        ({ clickThroughRate := cert.terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        cert.terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_dynamic_source_sequential_rationality_finite_exact_history_terminal_record_utility_eq_bstar_of_mem
+      cert concrete_belief_consistency
+      sequential_rationality_iff_source_sequential completedRanks
+      inactive_on_completed hrank
 
 /--
 Clock-disciplined source-iff endpoint for the full Theorem 8 conclusion.  The
