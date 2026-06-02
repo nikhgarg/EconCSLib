@@ -3588,6 +3588,30 @@ theorem theorem8_ordinary_strategy_history_allows_overshoot_not_exact_drop_histo
       model rank
 
 /--
+Source-extensive rationality alone does not recover exact finite `B*` dropout
+records. The same overshoot witness satisfies the source-extensive rationality
+boundary for the named strategy, but is not an exact-drop history.
+-/
+theorem theorem8_source_extensive_rationality_allows_overshoot_not_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank : ℕ) :
+    let state :=
+      paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+        model rank
+    let finalState :=
+      PaperTheorem8GeneralizedEnglishAuctionState.recordDropout state rank
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState namedStrategy ∧
+      ¬ PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  simpa using
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_allows_overshoot_not_exact_drop_history
+      model rank
+
+/--
 Source-history bridge for arbitrary ordinary histories.  A history generated
 by the named finite `B*` strategy has exact finite `B*` dropout records as soon
 as each actual dropout step is known not to overshoot that rank's threshold.
