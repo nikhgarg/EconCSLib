@@ -3901,6 +3901,78 @@ theorem theorem8_clock_disciplined_strategy_trace_append_step
       model htrace hstep
 
 /--
+An ordinary named-strategy source step becomes clock-disciplined when its
+advance case is known not to pass any active rank's finite `B*` threshold.
+-/
+theorem theorem8_strategy_step_to_clock_disciplined_strategy_step_of_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state next)
+    (hadvance_safe :
+      ∀ newPrice,
+        next =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            state newPrice →
+          ∀ rank,
+            state.IsActive rank →
+              newPrice ≤
+                theorem8BStarThresholdBid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+      model state next := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_step_to_clock_disciplined_strategy_step_of_advance_safe
+      model hstep
+      (by
+        intro newPrice hnext rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hadvance_safe newPrice hnext rank hactive)
+
+/--
+An ordinary named-strategy source history becomes an explicit
+clock-disciplined trace when every realized clock-advance step satisfies the
+active-rank advance-safety bound.
+-/
+theorem theorem8_strategy_history_to_clock_disciplined_strategy_trace_of_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                theorem8BStarThresholdBid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state finalState := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_to_clock_disciplined_strategy_trace_of_advance_safe
+      model hhist
+      (by
+        intro stepState stepNext newPrice hstep hnext rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hadvance_safe hstep hnext rank hactive)
+
+/--
 Finite traces of clock-disciplined source steps preserve the active-rank
 no-overshoot invariant from the initial state to the terminal state.
 -/

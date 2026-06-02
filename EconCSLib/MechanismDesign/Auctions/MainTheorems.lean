@@ -24687,6 +24687,94 @@ theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_a
         model hstep)
 
 /--
+An ordinary named-strategy step becomes a clock-disciplined source step when
+every realized clock advance in that step is known not to pass any currently
+active rank's finite `B*` threshold. Dropout steps are already the same
+named-strategy transition in both relations.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strategy_step_to_clock_disciplined_strategy_step_of_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state next)
+    (hadvance_safe :
+      ∀ newPrice,
+        next =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            state newPrice →
+          ∀ rank,
+            state.IsActive rank →
+              newPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+      model state next := by
+  cases hstep with
+  | advance newPrice hclock =>
+      exact
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep.advance
+          state newPrice hclock (hadvance_safe newPrice rfl)
+  | dropout rank hactive hstrategy =>
+      exact
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep.dropout
+          state rank hactive hstrategy
+
+/--
+An ordinary named-strategy history becomes an explicit clock-disciplined trace
+when every clock-advance step in the generated history satisfies the active-rank
+advance-safety bound. This is the source-history generation bridge needed to
+replace an assumed clock-disciplined trace with a proof obligation about the
+real source transition rule.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strategy_history_to_clock_disciplined_strategy_trace_of_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state finalState := by
+  induction hhist with
+  | refl state =>
+      exact
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.refl
+          state
+  | @cons stepState stepNext finalState hstep htail ih =>
+      exact
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.cons
+          (paper_theorem8_bstar_ranked_threshold_strategy_step_to_clock_disciplined_strategy_step_of_advance_safe
+            model hstep
+            (by
+              intro newPrice hnext rank hactive
+              exact
+                hadvance_safe
+                  (stepState := stepState) (stepNext := stepNext)
+                  (newPrice := newPrice) hstep hnext rank hactive))
+          ih
+
+/--
 A finite trace of clock-disciplined source steps induces the existing
 clock-disciplined strategy-history object.
 -/
