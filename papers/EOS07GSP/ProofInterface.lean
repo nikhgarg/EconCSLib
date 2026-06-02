@@ -4213,6 +4213,40 @@ theorem theorem8_clock_sorted_schedule_to_clock_disciplined_history
       hunscheduled_active_threshold
 
 /--
+Finite schedule bridge to the clock-disciplined source transition with the
+unscheduled-threshold side condition derived from the final unscheduled-rank
+terminality bound.
+-/
+theorem theorem8_clock_sorted_schedule_to_clock_disciplined_history_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice <
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_history_of_final_clock_lt_unscheduled
+      model state ranks hsorted hnodup hinitial_active
+      (by
+        intro rank hnot_mem
+        simpa [theorem8BStarThresholdBid] using
+          hterminal_unscheduled rank hnot_mem)
+
+/--
 Clock-sorted finite schedules also supply the explicit step-by-step
 clock-disciplined trace: each scheduled rank advances to its finite `B*`
 threshold and then drops under the named strategy.
@@ -4245,6 +4279,40 @@ theorem theorem8_clock_sorted_schedule_to_clock_disciplined_trace
     paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_trace
       model state ranks hsorted hnodup hinitial_active
       hunscheduled_active_threshold
+
+/--
+Clock-sorted finite schedules supply the explicit step-by-step clock-disciplined
+trace using only the final unscheduled-rank terminality bound for the
+unscheduled-threshold side condition.
+-/
+theorem theorem8_clock_sorted_schedule_to_clock_disciplined_trace_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice <
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_trace_of_final_clock_lt_unscheduled
+      model state ranks hsorted hnodup hinitial_active
+      (by
+        intro rank hnot_mem
+        simpa [theorem8BStarThresholdBid] using
+          hterminal_unscheduled rank hnot_mem)
 
 /--
 Clock-sorted finite schedules, viewed as explicit clock-disciplined source

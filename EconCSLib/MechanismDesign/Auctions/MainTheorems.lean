@@ -26456,6 +26456,71 @@ theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_n
               htail_unscheduled_active_threshold
 
 /--
+Clock-sorted no-duplicate finite schedules induce clock-disciplined
+named-strategy histories from the usual final unscheduled-rank terminality
+bound. The final-clock check implies the unscheduled active-threshold side
+condition required by the lower-level source-transition bridge.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_history_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_history
+      model state ranks hsorted hnodup hinitial_active
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_active_threshold_of_final_clock_lt_unscheduled
+        model state ranks hsorted hterminal_unscheduled)
+
+/--
+Clock-sorted no-duplicate finite schedules induce explicit clock-disciplined
+source traces from the final unscheduled-rank terminality bound, avoiding a
+separate per-step unscheduled active-threshold premise.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_trace_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_trace
+      model state ranks hsorted hnodup hinitial_active
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_unscheduled_active_threshold_of_final_clock_lt_unscheduled
+        model state ranks hsorted hterminal_unscheduled)
+
+/--
 Singleton finite schedules are clock-disciplined from the displayed initial
 clock check, the scheduled rank's activity, and the unscheduled-threshold
 comparison for active unscheduled ranks.
