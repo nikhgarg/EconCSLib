@@ -7229,6 +7229,107 @@ theorem theorem8_clock_disciplined_schedule_source_extensive_trace_completed_con
       hvalue_nonneg hvalue_mono model.current_le model.click_pos
 
 /--
+Cold-start clock-disciplined trace-refined finite-schedule source-extensive
+endpoint. The paper cold-start state supplies initial activity and initial
+no-overshoot; the schedule supplies the explicit clock-disciplined source
+trace and the final-clock completed-rank threshold check.
+-/
+theorem theorem8_cold_start_clock_disciplined_schedule_source_extensive_trace_completed_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (completedRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hunscheduled_threshold :
+      ∀ scheduledRank,
+        scheduledRank ∈ scheduledRanks →
+          ∀ otherRank,
+            otherRank ∉ scheduledRanks →
+              paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                  model scheduledRank ≤
+                theorem8BStarThresholdBid
+                  model.value model.clickThroughRate (model.remaining + 1)
+                  (otherRank + 1))
+    (hunscheduled :
+      ∀ rank,
+        rank ∉ scheduledRanks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model paper_theorem8_bstar_ranked_threshold_cold_start_state
+            scheduledRanks).clockPrice <
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
+    let initialState := paper_theorem8_bstar_ranked_threshold_cold_start_state
+    let htrace :=
+      theorem8_clock_sorted_schedule_to_clock_disciplined_trace
+        model initialState scheduledRanks hsorted hnodup
+        (fun rank _hrank => by rfl)
+        (by
+          intro scheduledRank hscheduled otherRank hother_not_mem _hactive
+          exact
+            hunscheduled_threshold scheduledRank hscheduled otherRank
+              hother_not_mem)
+    let terminalProof :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_strategy_terminal_of_unscheduled_threshold_gt
+        model
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_of_clock_sorted_nodup
+          model initialState scheduledRanks hsorted hnodup
+          (fun rank _hrank => by rfl))
+        (by
+          intro rank hnot_mem
+          simpa [theorem8BStarThresholdBid] using
+            hunscheduled rank hnot_mem)
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace
+        (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+          model hvalue_nonneg hclick_mono model.click_pos)
+        terminalProof (fun rank => by rfl)
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [terminalRecordSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
+    theorem8_clock_disciplined_schedule_source_extensive_trace_completed_conclusion
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      completedRanks scheduledRanks hsorted hnodup
+      (fun rank => by rfl)
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos)
+      (by
+        intro scheduledRank hscheduled otherRank hother_not_mem _hactive
+        exact
+          hunscheduled_threshold scheduledRank hscheduled otherRank
+            hother_not_mem)
+      hunscheduled hsubset hvalue_nonneg hvalue_mono
+
+/--
 Belief-explicit no-overshoot terminal-history endpoint with the paper-facing
 terminal-clock premise. If each completed rank's finite `B*` threshold has
 been reached by the terminal clock, Lean derives completed-rank inactivity and
