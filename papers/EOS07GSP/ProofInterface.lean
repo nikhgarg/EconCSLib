@@ -3909,6 +3909,44 @@ theorem theorem8_clock_disciplined_strategy_trace_to_exact_drop_history
           hstate_no_overshoot rank hactive)
 
 /--
+Clock-disciplined source histories discharge the two source obligations used
+downstream: source-extensive rationality and exact finite `B*` dropout records.
+This is the history-level counterpart of the finite trace wrapper below.
+-/
+theorem theorem8_clock_disciplined_strategy_history_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_source_extensive_exact_drop_obligations
+      model hhist
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      terminal
+
+/--
 Finite traces of clock-disciplined source steps discharge the two source
 obligations used downstream: source-extensive rationality and exact finite
 `B*` dropout records.
@@ -4551,6 +4589,38 @@ theorem theorem8_clock_disciplined_strategy_history_obligations
   simpa [theorem8BStarThresholdBid] using
     paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_obligations
       model hhist hstate_no_overshoot
+
+/--
+Cold-start clock-disciplined source histories discharge source-extensive
+rationality and exact finite `B*` dropout records. Initial no-overshoot is
+derived from nonnegative values and monotone, positive click-through rates.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_history_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_history_source_extensive_exact_drop_obligations
+      model hvalue_nonneg hclick_mono hhist terminal
 
 /--
 Cold-start clock-disciplined source traces discharge source-extensive
