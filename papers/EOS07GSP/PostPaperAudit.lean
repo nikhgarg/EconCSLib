@@ -1,4 +1,5 @@
 import EOS07GSP.MainTheorems
+import EconCSLib.MechanismDesign.Auctions.Theorem8SourceBridges
 
 /-!
 # EOS07GSP post-paper audit

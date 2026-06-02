@@ -1,4 +1,5 @@
 import EOS07GSP.MainTheorems
+import EconCSLib.MechanismDesign.Auctions.Theorem8SourceBridges
 
 /-!
 # Proof Interface: Internet Advertising and the Generalized Second-Price Auction
