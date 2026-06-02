@@ -41512,6 +41512,78 @@ theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_s
         model htrace hstate_no_overshoot⟩
 
 /--
+Clock-sorted no-duplicate finite schedules discharge the compact
+source-extensive and exact-record obligations through the clock-disciplined
+source trace. This is the schedule-level source-facing form: the schedule
+supplies the finite trace, while the terminality premise is the usual
+unscheduled final-clock bound.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_trace_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hunscheduled_active_threshold :
+      ∀ scheduledRank,
+        scheduledRank ∈ ranks →
+          ∀ otherRank,
+            otherRank ∉ ranks →
+              state.IsActive otherRank →
+                paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                    model scheduledRank ≤
+                  paper_theorem8_bstar_threshold_bid
+                    model.value model.clickThroughRate (model.remaining + 1)
+                    (otherRank + 1))
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice <
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model state ranks)
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model state ranks) := by
+  have htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model state ranks) :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_clock_disciplined_strategy_trace
+      model state ranks hsorted hnodup hinitial_active
+      hunscheduled_active_threshold
+  have hsched :
+      PaperTheorem8BStarRankedThresholdExactDropSchedule model state ranks
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model state ranks) :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_of_clock_sorted_nodup
+      model state ranks hsorted hnodup hinitial_active
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_source_extensive_exact_drop_obligations
+      model htrace hstate_no_overshoot
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_strategy_terminal_of_unscheduled_threshold_gt
+        model hsched hterminal_unscheduled)
+
+/--
 Belief object for the source-extensive terminal-record checker. A belief names
 the strategy whose generated source history is being used, together with the
 terminality proof for the same strategy.

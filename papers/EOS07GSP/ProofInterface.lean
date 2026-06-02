@@ -4247,6 +4247,73 @@ theorem theorem8_clock_sorted_schedule_to_clock_disciplined_trace
       hunscheduled_active_threshold
 
 /--
+Clock-sorted finite schedules, viewed as explicit clock-disciplined source
+traces, discharge the two compact source obligations used downstream:
+source-extensive rationality and exact finite `B*` dropout records. The final
+terminality check is the usual unscheduled-rank final-clock bound.
+-/
+theorem theorem8_clock_sorted_schedule_trace_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hunscheduled_active_threshold :
+      ∀ scheduledRank,
+        scheduledRank ∈ ranks →
+          ∀ otherRank,
+            otherRank ∉ ranks →
+              state.IsActive otherRank →
+                paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                    model scheduledRank ≤
+                  theorem8BStarThresholdBid
+                    model.value model.clickThroughRate (model.remaining + 1)
+                    (otherRank + 1))
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice <
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model state ranks)
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory model state
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model state ranks) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_trace_source_extensive_exact_drop_obligations
+      model state ranks hsorted hnodup hinitial_active
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      (by
+        intro scheduledRank hscheduled otherRank hother_not_mem hactive_other
+        simpa [theorem8BStarThresholdBid] using
+          hunscheduled_active_threshold scheduledRank hscheduled otherRank
+            hother_not_mem hactive_other)
+      (by
+        intro rank hnot_mem
+        simpa [theorem8BStarThresholdBid] using
+          hterminal_unscheduled rank hnot_mem)
+
+/--
 Clock-sorted finite schedules supply both the named-strategy reachability
 history and the exact finite `B*` dropout history for the deterministic
 schedule final state.
