@@ -24647,6 +24647,46 @@ theorem PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.trans
           hstep (ih hsecond)
 
 /--
+A clock-disciplined source step is the corresponding one-step finite trace.
+This lets source proofs assemble explicit traces from local transition checks.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_to_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state next := by
+  exact
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.cons
+      hstep
+      (PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.refl
+        next)
+
+/--
+Append one checked clock-disciplined source step to an existing finite trace.
+This is the trace-level analogue of extending a source schedule by one
+transition block.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_append_step
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state mid finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state mid)
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model mid finalState) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state finalState := by
+  exact
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.trans
+      model htrace
+      (paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_to_trace
+        model hstep)
+
+/--
 A finite trace of clock-disciplined source steps induces the existing
 clock-disciplined strategy-history object.
 -/
