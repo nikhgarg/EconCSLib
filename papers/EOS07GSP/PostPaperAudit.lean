@@ -13886,6 +13886,14 @@ def audit_theorem8_strict_ordered_ex_post_local_deviation_core_source_completion
   paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_obligations
     cert
 
+def audit_theorem8_strict_ordered_ex_post_local_deviation_core_source_completion_obligations_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_obligations_of_strict_model
+    cert
+
 def audit_theorem8_strict_ordered_local_deviation_core_source_completion_certificate_of_ex_post_local_deviation
     {Belief : Type*}
     (cert :
@@ -14709,12 +14717,28 @@ def audit_theorem8_strict_ordered_ex_post_local_deviation_exact_history_source_c
   paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_obligations
     cert
 
+def audit_theorem8_strict_ordered_ex_post_local_deviation_exact_history_source_completion_obligations_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_obligations_of_strict_model
+    cert
+
 def audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_obligations
     {Belief : Type*}
     (cert :
       PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
         Belief) :=
   paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_obligations
+    cert
+
+def audit_theorem8_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_obligations_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief) :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_obligations_of_strict_model
     cert
 
 /-- Audit for Theorem 8's continuity restriction: the scalar dropout-price

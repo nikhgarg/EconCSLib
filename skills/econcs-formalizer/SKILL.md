@@ -104,12 +104,16 @@ endpoint make the source theorem look unformalized.
 In EconCSLib, paper-local `papers/<Paper>/status.json` files are the source of
 truth for paper status, compact `human_summary` notes, human-review row counts,
 `PaperInterface.lean` metadata, review-surface slices, and artifact paths.
-After changing any of that metadata, run `python3 scripts/sync_paper_status.py`.
-That command regenerates the detailed `papers/status.json`, the compact
-human-facing `papers/human_status.json`, `docs/PAPER_STATUS.md`, and the
-generated paper-status block in the top-level `README.md`. Do not hand-edit
-those generated status outputs. If README/docs/site/table text is wrong, fix the
-paper-local `status.json` and rerun the sync script.
+After changing any of that metadata, run `python3 scripts/sync_paper_status.py`
+at a status milestone. That command regenerates the detailed
+`papers/status.json`, the compact human-facing `papers/human_status.json`,
+`docs/PAPER_STATUS.md`, and the generated paper-status block in the top-level
+`README.md`. Do not hand-edit those generated status outputs. During routine
+proof iteration, do not run the status sync just because Lean LOC changed or a
+small proof seam was added; defer generated table/doc refreshes until a named
+paper result closes, a status note changes, a final report/handoff is prepared,
+or the user explicitly asks. If README/docs/site/table text is wrong, fix the
+paper-local `status.json` and rerun the sync script at that milestone.
 Use `human_summary` for the short public-facing note in generated tables.
 Formalized papers should usually have an empty summary; add text only for a
 reader-relevant source-version, proof-route, or caveat note. Human-review counts
@@ -419,10 +423,13 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   easy descendant of public `main` plus private paper commits. Rebase the private
   main branch onto public `main` only when a substantial public change matters
   to private work, especially library/API, generated-status, workflow, or CI
-  changes, or before preparing a public PR. Do not rebase private after every
-  small public-only documentation commit. After an intentional private rebase,
-  push with `git push --force-with-lease origin main`; never use a blind force
-  push.
+  changes, when a paper is finished, or before preparing a public PR. Routine
+  private proof commits and pushes do not require a rebase; it is fine to push
+  the current private branch as-is after a normal proof checkpoint. Batch rebases
+  at major proof/status milestones or when the user explicitly asks. Do not
+  rebase private after every small public-only documentation commit. After an
+  intentional private rebase, push with `git push --force-with-lease origin
+  main`; never use a blind force push.
 - When a paper exists in both private and public, choose one primary worktree
   for the current task and keep all builds, dashboard refreshes, reports, DAGs,
   and commits in that same repo. Use the public repo as primary for public
@@ -945,7 +952,11 @@ the Lean statements against the paper.
 - Commit at paper-scale checkpoints, not every small lemma. Prefer committing
   when a named theorem/proposition/lemma from the paper is proven or when
   moving on from a paper; otherwise keep related intermediate proof work
-  together in the working tree.
+  together in the working tree. A local commit does not automatically require a
+  rebase or generated-status refresh. A routine private push can happen without
+  rebasing; rebase only at major milestones such as a finished paper, before
+  publication/PR work, after meaningful public library/API changes, or on
+  explicit request.
 - Prioritize finishing the theorem over creating frequent checkpoints. Once the
   finite scaffold is stable, spend effort on the hard remaining bridge rather
   than packaging every helper lemma as a separate commit or documentation pass.

@@ -34084,6 +34084,45 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_devia
       cert.sequential_rationality_iff_local_deviation⟩
 
 /--
+Stronger obligation ledger for the ex-post local-deviation source certificate:
+the named finite `B*` strategy is sequentially rational for every belief because
+the strict model already proves its one-step best-response condition.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_obligations_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining
+    cert.integrated.dynamic.base.game.isConsistentBelief
+        namedStrategy cert.integrated.dynamic.base.belief ∧
+      (∀ belief : Belief,
+          cert.integrated.dynamic.base.game.isSequentiallyRational
+            namedStrategy belief) ∧
+        ∀ strategy belief,
+          cert.integrated.dynamic.base.game.isSequentiallyRational
+              strategy belief ↔
+            paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+              cert.integrated.dynamic.base.strictModel.clickThroughRate
+              cert.integrated.dynamic.base.strictModel.value
+              cert.integrated.dynamic.base.strictModel.remaining
+              strategy := by
+  dsimp
+  refine
+    ⟨cert.concrete_belief_consistency, ?_,
+      cert.sequential_rationality_iff_local_deviation⟩
+  intro belief
+  exact
+    cert.ex_post_one_step_best_response_implies_sequential_rationality
+      belief
+      (paper_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+        cert.integrated.dynamic.base.strictModel)
+
+/--
 Concrete PBE source-history bridge for the ex-post local-deviation source
 certificate. Given a PBE strategy, an ordinary strategy-consistent
 generalized-English terminal history for that strategy, and no-overshoot timing
@@ -38098,6 +38137,52 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_devia
       cert.source.sequential_rationality_iff_local_deviation,
       cert.exact_history,
       cert.no_active⟩
+
+/--
+Stronger all-rank exact-history source-completion obligation ledger: the named
+finite `B*` strategy's ex-post sequential rationality is discharged from the
+strict model, so the source-facing ledger no longer carries a separate one-step
+best-response premise.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_obligations_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief) :
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.remaining
+    cert.source.integrated.dynamic.base.game.isConsistentBelief
+        namedStrategy cert.source.integrated.dynamic.base.belief ∧
+      (∀ belief : Belief,
+          cert.source.integrated.dynamic.base.game.isSequentiallyRational
+            namedStrategy belief) ∧
+      (∀ strategy belief,
+        cert.source.integrated.dynamic.base.game.isSequentiallyRational
+            strategy belief ↔
+          paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+            cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+            cert.source.integrated.dynamic.base.strictModel.value
+            cert.source.integrated.dynamic.base.strictModel.remaining
+            strategy) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        cert.source.integrated.terminal.localModel
+        cert.source.integrated.terminal.initialState
+        cert.source.integrated.terminal.finalState ∧
+        ∀ rank, ¬ cert.source.integrated.terminal.finalState.IsActive rank := by
+  dsimp
+  refine
+    ⟨cert.source.concrete_belief_consistency, ?_,
+      cert.source.sequential_rationality_iff_local_deviation,
+      cert.exact_history, cert.no_active⟩
+  intro belief
+  exact
+    cert.source.ex_post_one_step_best_response_implies_sequential_rationality
+      belief
+      (paper_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+        cert.source.integrated.dynamic.base.strictModel)
 
 def paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_history_terminal_dynamic_certificate_of_ex_post_local_deviation_exact_history_source_completion
     {Belief : Type*}
@@ -48679,6 +48764,53 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_histor
       cert.source.sequential_rationality_iff_local_deviation,
       cert.exact_history,
       cert.inactive_on_completed⟩
+
+/--
+Stronger finite exact-history source-completion obligation ledger: the named
+finite `B*` strategy's ex-post sequential rationality is discharged from the
+strict model, and the finite terminal side supplies exact history plus
+inactive-on-completed evidence.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_obligations_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief) :
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.remaining
+    cert.source.integrated.dynamic.base.game.isConsistentBelief
+        namedStrategy cert.source.integrated.dynamic.base.belief ∧
+      (∀ belief : Belief,
+          cert.source.integrated.dynamic.base.game.isSequentiallyRational
+            namedStrategy belief) ∧
+      (∀ strategy belief,
+        cert.source.integrated.dynamic.base.game.isSequentiallyRational
+            strategy belief ↔
+          paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+            cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+            cert.source.integrated.dynamic.base.strictModel.value
+            cert.source.integrated.dynamic.base.strictModel.remaining
+            strategy) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        cert.source.integrated.terminal.localModel
+        cert.source.integrated.terminal.initialState
+        cert.source.integrated.terminal.finalState ∧
+        ∀ rank, rank ∈ cert.completedRanks →
+          ¬ cert.source.integrated.terminal.finalState.IsActive rank := by
+  dsimp
+  refine
+    ⟨cert.source.concrete_belief_consistency, ?_,
+      cert.source.sequential_rationality_iff_local_deviation,
+      cert.exact_history, cert.inactive_on_completed⟩
+  intro belief
+  exact
+    cert.source.ex_post_one_step_best_response_implies_sequential_rationality
+      belief
+      (paper_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+        cert.source.integrated.dynamic.base.strictModel)
 
 def paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_source_completion_certificate_of_ex_post_local_deviation
     {Belief : Type*}

@@ -1712,6 +1712,74 @@ theorem theorem8_ex_post_finite_source_named_strategy_local_deviation_of_strict_
       cert
 
 /--
+Core ex-post local-deviation source ledger with the named finite `B*`
+strategy's ex-post sequential rationality discharged from the strict model.
+-/
+theorem theorem8_ex_post_local_deviation_core_source_obligations_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining
+    cert.integrated.dynamic.base.game.isConsistentBelief
+        namedStrategy cert.integrated.dynamic.base.belief ∧
+      (∀ belief : Belief,
+          cert.integrated.dynamic.base.game.isSequentiallyRational
+            namedStrategy belief) ∧
+        ∀ strategy belief,
+          cert.integrated.dynamic.base.game.isSequentiallyRational
+              strategy belief ↔
+            paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+              cert.integrated.dynamic.base.strictModel.clickThroughRate
+              cert.integrated.dynamic.base.strictModel.value
+              cert.integrated.dynamic.base.strictModel.remaining
+              strategy := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_obligations_of_strict_model
+      cert
+
+/--
+Finite ex-post source-completion obligation ledger with the named finite `B*`
+strategy's ex-post sequential rationality discharged from the strict model.
+-/
+theorem theorem8_ex_post_finite_source_obligations_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief) :
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.remaining
+    cert.source.integrated.dynamic.base.game.isConsistentBelief
+        namedStrategy cert.source.integrated.dynamic.base.belief ∧
+      (∀ belief : Belief,
+          cert.source.integrated.dynamic.base.game.isSequentiallyRational
+            namedStrategy belief) ∧
+      (∀ strategy belief,
+        cert.source.integrated.dynamic.base.game.isSequentiallyRational
+            strategy belief ↔
+          paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+            cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+            cert.source.integrated.dynamic.base.strictModel.value
+            cert.source.integrated.dynamic.base.strictModel.remaining
+            strategy) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        cert.source.integrated.terminal.localModel
+        cert.source.integrated.terminal.initialState
+        cert.source.integrated.terminal.finalState ∧
+        ∀ rank, rank ∈ cert.completedRanks →
+          ¬ cert.source.integrated.terminal.finalState.IsActive rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_obligations_of_strict_model
+      cert
+
+/--
 Theorem 8 source-shaped finite-schedule endpoint.  From strict ordered paper
 assumptions and a sorted no-duplicate finite dropout schedule, the
 source-shaped dynamic game has a unique PBE with the full ordered
@@ -2871,6 +2939,43 @@ theorem theorem8_ex_post_local_deviation_exact_history_source_obligations
         ∀ rank, ¬ cert.source.integrated.terminal.finalState.IsActive rank := by
   exact
     paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_obligations
+      cert
+
+/--
+All-rank ex-post local-deviation exact-history source ledger with the named
+finite `B*` strategy's ex-post sequential rationality discharged from the
+strict model.
+-/
+theorem theorem8_ex_post_local_deviation_exact_history_source_obligations_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief) :
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.remaining
+    cert.source.integrated.dynamic.base.game.isConsistentBelief
+        namedStrategy cert.source.integrated.dynamic.base.belief ∧
+      (∀ belief : Belief,
+          cert.source.integrated.dynamic.base.game.isSequentiallyRational
+            namedStrategy belief) ∧
+      (∀ strategy belief,
+        cert.source.integrated.dynamic.base.game.isSequentiallyRational
+            strategy belief ↔
+          paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+            cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+            cert.source.integrated.dynamic.base.strictModel.value
+            cert.source.integrated.dynamic.base.strictModel.remaining
+            strategy) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        cert.source.integrated.terminal.localModel
+        cert.source.integrated.terminal.initialState
+        cert.source.integrated.terminal.finalState ∧
+        ∀ rank, ¬ cert.source.integrated.terminal.finalState.IsActive rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_obligations_of_strict_model
       cert
 
 /--
@@ -10195,6 +10300,68 @@ theorem theorem8_ex_post_no_overshoot_terminal_history_source_completion_complet
           hcompleted_threshold_le rank hrank)
 
 /--
+No-overshoot terminal-history ex-post source-completion endpoint with completed
+ranks supplied directly as inactive terminal ranks. This avoids restating a
+terminal-clock threshold inequality when the completed set is already certified
+from the history.
+-/
+theorem theorem8_ex_post_no_overshoot_terminal_history_source_completion_completed_rank_conclusion
+    (terminal :
+      PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+            model).base.strictModel =
+        terminal.localModel)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ terminal.finalState.IsActive rank) :
+    let cert :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_certificate_of_local_deviation
+        terminal model hmodel completedRanks inactive_on_completed
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      cert.source.integrated.dynamic.base.game.PerfectBayesianEquilibrium
+          strategy ∧
+        PaperTheorem8BStarRankedThresholdStrictOrderedTerminalDynamicPBEConclusion
+          cert.source.integrated strategy ∧
+          ∀ rank,
+            rank ∈ cert.completedRanks →
+              (paper_theorem8_terminal_dropout_record_outcome
+                cert.source.integrated.terminal.finalState).slotOf rank =
+                  some rank ∧
+                (paper_theorem8_terminal_dropout_record_outcome
+                  cert.source.integrated.terminal.finalState).paymentPerClick
+                    rank =
+                  theorem8BStarThresholdBid
+                    cert.source.integrated.terminal.localModel.value
+                    cert.source.integrated.terminal.localModel.clickThroughRate
+                    (cert.source.integrated.terminal.localModel.remaining + 1)
+                    (rank + 1) ∧
+                  cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank *
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank =
+                    paper_theorem7_ranked_vcg_tail_payment
+                      cert.source.integrated.terminal.localModel.value
+                      cert.source.integrated.terminal.localModel.clickThroughRate
+                      rank
+                      (cert.source.integrated.terminal.localModel.remaining + 1) ∧
+                    0 ≤
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ∧
+                      (paper_theorem8_terminal_dropout_record_outcome
+                        cert.source.integrated.terminal.finalState).paymentPerClick
+                        rank ≤
+                        cert.source.integrated.terminal.localModel.value rank := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_local_deviation
+      terminal model hmodel completedRanks inactive_on_completed
+
+/--
 Trace-full no-overshoot ex-post source-completion endpoint.  This is the
 local-deviation checker version to use when the human review should see the
 PBE uniqueness, named finite `B*` strategy, generated history, terminality,
@@ -10295,6 +10462,39 @@ theorem theorem8_ex_post_no_overshoot_terminal_history_source_completion_utility
         simpa [theorem8BStarThresholdBid] using
           hcompleted_threshold_le rank hrank)
       hrank
+
+/--
+Payoff-facing no-overshoot ex-post source-completion route with completed
+ranks supplied directly as inactive terminal ranks.
+-/
+theorem theorem8_ex_post_no_overshoot_terminal_history_source_completion_utility_eq_bstar_of_completed_rank
+    (terminal :
+      PaperTheorem8BStarRankedThresholdNoOvershootTerminalHistoryBehaviorCertificate)
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (hmodel :
+      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate
+            model).base.strictModel =
+        terminal.localModel)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ terminal.finalState.IsActive rank)
+    {rank : ℕ} (hrank : rank ∈ completedRanks) :
+    (paper_theorem8_terminal_dropout_record_outcome
+        terminal.finalState).utility
+        ({ clickThroughRate := terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        terminal.localModel.value rank =
+      (paper_theorem8_bstar_ranked_threshold_outcome
+        terminal.localModel.value terminal.localModel.clickThroughRate
+        (terminal.localModel.remaining + 1)).utility
+        ({ clickThroughRate := terminal.localModel.clickThroughRate } :
+          PositionEnvironment ℕ)
+        terminal.localModel.value rank := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_no_overshoot_terminal_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_local_deviation
+      terminal model hmodel completedRanks inactive_on_completed hrank
 
 /--
 Source-sequential no-overshoot terminal-history source-completion endpoint.
