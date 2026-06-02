@@ -32,8 +32,8 @@ external contributions.
 - [ ] `CITATION.cff` has the current repository title, author, and release date.
 - [x] A repository license has been chosen and added as `LICENSE` before
       soliciting broad external code contributions.
-- [ ] The GitHub repository description is set. The homepage field is left
-      blank until GitHub Pages is actually enabled and deployed.
+- [ ] The GitHub repository description is set. The homepage field points to
+      `https://gargnikhil.com/EconCSLib/` after GitHub Pages is deployed.
 
 ## Paper Folder Readiness
 
@@ -47,8 +47,9 @@ Each public paper folder should have:
       `review_surface` rows/slices, artifact paths, and any PaperInterface
       maintenance issue;
 - [ ] a passing `lake build <PaperTarget>` command; and
-- [ ] no tracked source PDFs, review-dashboard caches, or generated build
-      artifacts other than intentional `DependencyDAG.pdf` files.
+- [ ] no tracked source PDFs, extracted source-paper text caches,
+      review-dashboard caches, or generated build artifacts other than
+      intentional `DependencyDAG.pdf` files.
 
 ## Importing A Completed Private Paper
 

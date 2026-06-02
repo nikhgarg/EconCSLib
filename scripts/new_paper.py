@@ -140,8 +140,8 @@ def readme_text(args: argparse.Namespace, folder: str) -> str:
 - Public PDF: {pdf_url}
 
 The PDF is cached locally as `source.pdf` and ignored by Git. The extracted text
-cache is `source.txt` when `pdftotext` succeeds and licensing permits tracking
-the text.
+cache is `source.txt` when `pdftotext` succeeds, and is also ignored by Git in
+public workspaces unless redistribution rights have been checked separately.
 
 ## Paper-Facing Ledger
 
@@ -171,7 +171,7 @@ paper's top-level public status.
 
 | Paper item | Lean declaration | Status | File | Remaining assumptions / notes |
 |---|---|---|---|---|
-| Main theorem(s) | `none` | not started | `none` | Extract named results from `source.txt` |
+| Main theorem(s) | `none` | not started | `none` | Extract named results from the local source text cache |
 
 ## Intake Checklist
 
@@ -465,7 +465,7 @@ This is a lightweight handoff document for source-to-Lean mapping.
 - Namespace: `{namespace}`
 - Official URL: {official_url}
 - Source PDF: `source.pdf`
-- Source text cache: `source.txt`
+- Local source text cache, if generated: `source.txt` (ignored by Git in public workspaces)
 
 ## Formalization checklist
 

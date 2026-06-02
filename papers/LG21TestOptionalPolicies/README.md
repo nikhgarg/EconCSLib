@@ -13,8 +13,9 @@ Machine-readable status source: [`status.json`](status.json).
 - Accessed: 2026-05-01
 
 The source PDF is intentionally not committed to git. It is kept locally as
-`source.pdf` and ignored by the local `.gitignore`. The extracted source text
-cache is kept as `source.txt` for named-statement audits.
+`source.pdf` and ignored by the local `.gitignore`. A local extracted source
+text cache may be regenerated for named-statement audits, but is ignored in the
+public repository.
 
 ## Central Theorem File
 
@@ -40,7 +41,7 @@ cache is kept as `source.txt` for named-statement audits.
 - Folder contract: satisfied (`.gitignore`, `README.md`, `DependencyDAG.tex`,
   `MainTheorems.lean`, compact `PaperInterface.lean`, `ProofInterface.lean`,
   `PostPaperAudit.lean`, `FORMALIZATION_PLAN.md`,
-  `FINAL_VALIDATION_REPORT.md`, local PDF, and `source.txt` are present).
+  `FINAL_VALIDATION_REPORT.md`, and public-safe artifacts are present).
 - README status vocabulary: updated to use the controlled statuses from
   `docs/STATUS.md`.
 - DAG status vocabulary: updated to use shared `docs/tikz/dag_preamble.tex`

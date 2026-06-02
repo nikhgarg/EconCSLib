@@ -5,7 +5,7 @@
 - Paper: *Addressing Discretization-Induced Bias in Demographic Prediction*
 - Authors: Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg
 - Source checked: cached arXiv:2405.16762 / ACM FAccT 2024 PDF, created
-  2024-05-27, with local text cache `DSWG24DiscretizationBias.txt`
+  2024-05-27, with ignored local text cache used during audit
 - Lean folder: `papers/DSWG24DiscretizationBias`
 - Paper-facing Lean files:
   `papers/DSWG24DiscretizationBias/PaperInterface.lean`,

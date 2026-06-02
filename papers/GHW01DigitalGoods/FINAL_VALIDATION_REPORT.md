@@ -31,9 +31,8 @@
   https://users.eecs.northwestern.edu/~hartline/papers/auctions-journal.pdf
 - Historical PDF mirror:
   https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf
-- Local source cache: tracked text cache `GHW01DigitalGoods.txt`. The ignored
-  source PDF may be absent from public checkouts; it was not present for this
-  validation pass.
+- Local source cache: ignored local text/PDF caches may be regenerated for
+  source searches; they may be absent from public checkouts.
 - Web-source note: a 2026-06-01 search did not find public TeX/source. The
   journal version controls where it refines the preliminary report.
 - Human-facing Lean file: `PaperInterface.lean`.
@@ -190,7 +189,7 @@ declarations remain only as auxiliary reusable-library/audit material.
 
 - `lake build GHW01DigitalGoods`: passed.
 - `lake build EconCSLib`: passed.
-- Source named-result grep over `GHW01DigitalGoods.txt`: found Theorem 4.1,
+- Source named-result grep over the local text cache found Theorem 4.1,
   Corollary 4.2, Lemma 6.1, Theorem 6.2, Theorems 7.1--7.2, Lemma 8.1,
   Theorem 8.2, Theorem 9.1, Lemma 9.2, and Theorem 9.3.
 - Placeholder/stale-status scan over the claimed paper/library/status files:

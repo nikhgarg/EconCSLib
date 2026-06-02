@@ -1,11 +1,12 @@
 # LG21 Source-Surface Audit
 
 This is an agent source audit, not a human dashboard review. It records the
-paper-facing source items checked against `source.txt` and the compact Lean
+paper-facing source items checked against an ignored local source text cache and the compact Lean
 interface item that a human should inspect next. The dashboard state remains
 `0/16 reviewed` until a human saves reviews through the review tool.
 
-Source file checked: `papers/LG21TestOptionalPolicies/source.txt`.
+Source file checked locally: `papers/LG21TestOptionalPolicies/source.txt`
+(omitted from the public repository).
 
 ## Source-Order Inventory
 

@@ -405,7 +405,7 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   automatically updates the other.
 - For a brand-new paper, default to the private incubator unless the user says
   the paper should be public from the start. Starting privately preserves
-  exploratory history, failed proof plans, source caches, and unfinished
+  exploratory history, failed proof plans, local source caches, and unfinished
   assumptions without exposing them. If the paper is a classic/public benchmark
   or an already-approved public contribution, it may start directly in the
   public repo. In either case, create the standard paper folder and root module
@@ -420,6 +420,15 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   review workflow, and the detailed public skill bundle. Keep private incubator
   folders, unpublished paper attempts, and private planning surfaces out of
   public diagrams and public-facing status text.
+- Before moving work from a private incubator into the public repository, run a
+  release-hygiene pass. Public commits should not contain source-paper PDFs,
+  extracted source-paper `.txt` caches, unpacked publisher/arXiv source
+  archives, ignored dashboard caches, or private/in-progress paper rows unless
+  the project intentionally publishes that partial formalization. Planning,
+  proof-plan, handoff, audit, and citation-provenance `.txt` notes are fine to
+  track when they are written by the project and do not reproduce the source
+  paper text. Use `git ls-files 'papers/*/*.txt'` and `git check-ignore -v`
+  before public commits if the distinction is unclear.
 - Public partials are acceptable when their remaining seams are valuable and
   explicit. Do not hide partiality by publishing an all-green DAG, an empty
   caveat column, or a final report that only says the code compiles.
@@ -429,9 +438,14 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 When the user provides only a paper link and asks for autonomous
 formalization, execute the standard intake before deep proof work:
 
-- Download/cache the exact source PDF in a new or existing
-  `papers/[AuthorInitials][2DigitYear][Descriptor]/` folder, then create the
-  adjacent `.txt` extraction with `pdftotext`.
+- Download/cache the exact source PDF locally in a new or existing
+  `papers/[AuthorInitials][2DigitYear][Descriptor]/` folder, then create an
+  adjacent source-text extraction with `pdftotext` for search. Treat the PDF,
+  extracted source text, and unpacked TeX/source archive as local reference
+  caches: useful for proof work, but not public repository artifacts unless
+  redistribution rights have been checked. In public checkouts, source-text
+  caches should be ignored; do not commit them just because `pdftotext` made
+  proof search easier.
 - Download the published-version BibTeX into `citation.bib` during intake.
   Prefer the official published-source citation export, such as a publisher,
   conference, OpenReview, or journal site. Do not use arXiv BibTeX when a
@@ -446,10 +460,12 @@ formalization, execute the standard intake before deep proof work:
   the TeX source for theorem statements, displayed equations, notation, labels,
   and appendix references; use PDF extraction mainly for quick search and for
   confirming page context.
-- If the PDF/text cache already exists in the paper folder, use those local
-  files. If an arXiv source cache exists, use it too. Do not search the web
-  again, re-download the paper, or re-run extraction unless the cached source
-  version is missing, corrupted, or known to be the wrong version.
+- If the local PDF/text cache already exists in the paper folder, use those
+  local files. If an arXiv source cache exists, use it too. Do not search the
+  web again, re-download the paper, or re-run extraction unless the cached
+  source version is missing, corrupted, or known to be the wrong version. If a
+  public filtered checkout omits the cache, recreate it locally from the
+  recorded source URL and keep the generated cache out of Git.
 - When `pdftotext` output is garbled for formulas, stop trying to reconstruct
   the formula from layout text. Read the cached TeX source directly and cite
   the source line/macro in the paper-facing comment or plan note when it
@@ -482,14 +498,14 @@ the Lean statements against the paper.
   4. A `PaperInterface.lean` file holding the compact human-facing definitions
      and named theorem statements.
   5. A local `.gitignore` file.
-- **Local Gitignores:** Every paper folder *must* contain its own `.gitignore` that explicitly ignores `*.pdf`, `*.aux`, `*.log`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`. The overall repo `.gitignore` may contain generic LaTeX auxiliary patterns such as `*.aux`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`, but should not contain paper-specific PDF exclusions or paths.
-- **Reproducible PDF/text/source cache:** A copy of the source PDF must be downloaded once and kept in the local paper folder so humans and agents can read exactly what is being reproduced. Immediately run `pdftotext Source.pdf Source.txt` in the same folder and use that cached text file for named-statement searches. For arXiv papers, also cache and unpack the TeX source archive once; use it as the authoritative source for formulas when PDF extraction is ambiguous or garbled. Because of the local `.gitignore`, the PDF will not be committed to Git, preventing repository bloat; the `.txt` cache should remain beside the PDF unless the paper has a copyright or licensing reason not to track extracted text. Work from these local files; do not repeatedly search the web or re-run extraction unless the source PDF or source archive changes.
-- Public filtered checkouts may omit ignored source PDFs even when the tracked
-  text cache is present. During final validation, do not claim a local PDF
-  exists unless it is actually in the checkout; state that the public/source
-  URL plus tracked text cache were used, and treat the repository audit's
-  missing-PDF warning as a public-release packaging note rather than a theorem
-  gap.
+- **Local Gitignores:** Every paper folder *must* contain its own `.gitignore` that explicitly ignores `*.pdf`, `*.aux`, `*.log`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`. The overall repo `.gitignore` may contain generic LaTeX auxiliary patterns such as `*.aux`, `*.fls`, `*.fdb_latexmk`, and `*.synctex.gz`, plus source-cache patterns such as `papers/*/*.txt` with explicit exceptions for project-written planning/audit/handoff/citation notes. Do not add a blanket paper-local `*.txt` ignore if it would hide useful planning documents; ignore source-paper text caches by path or repository-level policy instead.
+- **Reproducible PDF/text/source cache:** A copy of the source PDF must be downloaded once and kept in the local paper folder so humans and agents can read exactly what is being reproduced. Immediately run `pdftotext Source.pdf Source.txt` or an equivalent paper-named extraction in the same folder and use that cached text file for named-statement searches. For arXiv papers, also cache and unpack the TeX source archive once; use it as the authoritative source for formulas when PDF extraction is ambiguous or garbled. These PDF, extracted-text, and source-archive caches are working artifacts, not public repository content by default. Keep them local/ignored in public checkouts unless redistribution rights have been checked. Project-written `.txt` planning notes, handoffs, audits, and `citation_source.txt` are different; those may be tracked when useful.
+- Public filtered checkouts may omit ignored source PDFs, extracted text caches,
+  and unpacked source archives. During final validation, do not claim a local
+  PDF/text cache exists unless it is actually in the checkout; state the public
+  source URL and any local ignored cache used for the audit, and treat the
+  repository audit's missing-source-cache warning as a public-release packaging
+  note rather than a theorem gap.
 - **README Requirements:** The `README.md` must clearly identify the exact
   source version of the paper (e.g., arXiv version `vX`, conference year) and provide URLs.
 - **DAG Node Wording:** `DependencyDAG.tex` is a proof roadmap for humans, not
@@ -632,7 +648,7 @@ the Lean statements against the paper.
   `partially formalized`, `conditional`, `scaffold`, `not started`, or
   `not formalized`.
 - **Paper Directory and Namespace Convention:** All new paper folders, modules, and internal namespaces MUST be named using the format `[AuthorInitials][2DigitYear][Descriptor]` in PascalCase (e.g., `MSVV07AdWords`, `LMMS04FairDivision`, `KR21Monoculture`). This guarantees collision-proof Lean namespaces while immediately communicating the citation. All paper implementations sit within the `papers/` directory.
-- **One citation per paper folder:** Do not use aggregate folders for award lists, reading lists, or multi-paper campaigns. Split them into one `[AuthorInitials][2DigitYear][Descriptor]` folder per source paper, each with its own source PDF/text cache, README, DAG, and `MainTheorems.lean`. If an aggregate module already exists, keep it only as a compatibility import or handoff note and move paper-facing status into the citation-specific folders.
+- **One citation per paper folder:** Do not use aggregate folders for award lists, reading lists, or multi-paper campaigns. Split them into one `[AuthorInitials][2DigitYear][Descriptor]` folder per source paper, each with its own local source PDF/text cache, README, DAG, and `MainTheorems.lean`. If an aggregate module already exists, keep it only as a compatibility import or handoff note and move paper-facing status into the citation-specific folders.
 - **Initial Proof Roadmap (Dependency DAG):** At the *very beginning* of formalizing a new paper, before writing any deep proof code, you must create a comprehensive proof roadmap. Read through the paper carefully to identify *every* named result (Definitions, Lemmas, Propositions, Theorems, Corollaries) and map out exactly how they relate to each other. Encode this roadmap as a dependency DAG in a TikZ source file (with a rendered image) in the paper folder. This ensures no named result is overlooked, helps you understand the overall proof architecture, and gives humans a clear audit of the theorem flow.
   - **Project pattern in this repo:** for Monoculture, keep the active artifact at
     `papers/KR21Monoculture/DependencyDAG.tex` and a rendered image alongside it.
@@ -832,13 +848,16 @@ the Lean statements against the paper.
   or update a paper-local final audit. Do this even if a README, DAG, report,
   or successful build already exists; those artifacts are not a substitute for
   the importable audit ledger. The audit must check all four artifacts:
-  the cached paper text/PDF, `README.md`, `DependencyDAG.tex`, and the
+  the source paper via local ignored cache or source URL, `README.md`,
+  `DependencyDAG.tex`, and the
   paper-facing Lean file(s).
   - Source check: search the cached text for every named paper `Definition`,
     `Lemma`, `Proposition`, `Theorem`, and `Corollary` using a concrete search
     such as `rg -n "THEOREM|Theorem|LEMMA|Lemma|COROLLARY|Corollary|PROPOSITION|Proposition|DEFINITION|Definition" <cached-text>`.
-    List the source line or section in the audit report, and say explicitly if
-    no numbered definitions/propositions were found.
+    If a public checkout omits the cache, recreate an ignored local extraction
+    from the recorded source URL before the audit rather than committing the
+    generated paper text. List the source line or section in the audit report,
+    and say explicitly if no numbered definitions/propositions were found.
   - README check: every named source item must have a row using the controlled
     status vocabulary from `docs/STATUS.md`, and every non-`formalized` row must
     name the exact remaining declaration, certificate, or reason for deferral.

@@ -29,6 +29,16 @@ __pycache__/
 .ruff_cache/
 .review_traces/
 
+# Local source-paper extraction caches. Keep extracted paper text out of the
+# public repository unless redistribution rights have been checked. Planning,
+# audit, handoff, and citation-note `.txt` files are allowed below.
+papers/*/*.txt
+!papers/*/citation_source.txt
+!papers/*/*PLAN*.txt
+!papers/*/HANDOFF*.txt
+!papers/*/*AUDIT*.txt
+!papers/*/PAPER_NOTES.txt
+
 # LaTeX auxiliary files
 *.aux
 *.fls

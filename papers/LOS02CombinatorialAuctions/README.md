@@ -11,9 +11,8 @@ Machine-readable status source: [`status.json`](status.json).
 - Public PDF mirror: https://jmvidal.cse.sc.edu/library/lehmann02a.pdf
 
 The PDF is cached locally as `LOS02CombinatorialAuctions.pdf` and ignored by the
-paper-folder `.gitignore`. The extracted text cache
-`LOS02CombinatorialAuctions.txt` is used for named-statement searches; refresh
-it only if the source PDF changes.
+paper-folder `.gitignore`. A local extracted text cache may be regenerated for
+named-statement searches, but is ignored in the public repository.
 
 ## Central Theorem File
 
@@ -48,7 +47,7 @@ Reusable combinatorial-auction primitives live in
 
 ## Source-Audit Notes
 
-The cached text contains Definitions 3.1--3.2, Theorem 4.1, Proposition 4.2,
+The source audit identified Definitions 3.1--3.2, Theorem 4.1, Proposition 4.2,
 Definition 5.1, Theorem 6.1, Definition 7.1, Theorem 7.2, Lemmas 9.1--9.5,
 Theorem 9.6, Definition 10.1, Theorem 10.2, and the short complexity-class
 note after Theorem 6.1. Current Lean coverage is the

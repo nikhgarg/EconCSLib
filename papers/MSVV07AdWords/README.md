@@ -14,8 +14,8 @@ Machine-readable status source: [`status.json`](status.json).
 - Accessed: 2026-04-24
 
 The PDF is cached locally as `MSVV07AdWords.pdf` and ignored by the
-paper-folder `.gitignore`. The extracted text cache `MSVV07AdWords.txt` is used
-for named-statement searches; refresh it only if the source PDF changes.
+paper-folder `.gitignore`. A local extracted text cache may be regenerated for
+named-statement searches, but is ignored in the public repository.
 
 ## Central Theorem Files
 
@@ -70,7 +70,7 @@ for named-statement searches; refresh it only if the source PDF changes.
 
 ## Source-Audit Notes
 
-The cached text contains the active-slab/query-type definitions, Lemmas 1--7,
+The source audit identified the active-slab/query-type definitions, Lemmas 1--7,
 Theorem 8, Section 6 extensions, Theorem 9, and Section 8 weighted-bid
 extension. The formalization closes the paper-facing theorem surfaces and
 separately exposes the source-route factor-revealing and tradeoff-revealing LP

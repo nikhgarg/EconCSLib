@@ -63,9 +63,8 @@
 
 ## 7. Cross-Artifact Checks
 
-- Paper text/PDF: `GS62CollegeAdmissions.pdf` is cached locally and ignored by
-  the paper-folder `.gitignore`; `GS62CollegeAdmissions.txt` records the failed
-  metadata-only extraction.
+- Paper text/PDF: local PDF/text caches are ignored by the paper-folder
+  `.gitignore`; the attempted text extraction produced only metadata.
 - README: every claimed named source endpoint has a controlled-vocabulary status
   row and explicit modeling notes.
 - DAG: every closed source-facing endpoint is green, and the general quota node
@@ -76,7 +75,7 @@
 
 ## 8. Verification Checks
 
-- The cached text extraction has no OCR content, so named-result checking used
+- The local text extraction had no OCR content, so named-result checking used
   the cached scan and public OCR snippets.
 - The paper root module imports `PaperInterface.lean`, `MainTheorems.lean`, and
   `PostPaperAudit.lean`.

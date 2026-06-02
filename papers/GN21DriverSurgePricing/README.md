@@ -10,8 +10,9 @@ Machine-readable status source: [`status.json`](status.json).
 - Official URL: https://pubsonline.informs.org/doi/10.1287/mnsc.2021.4058
 - Public PDF: https://arxiv.org/pdf/1905.07544
 
-The PDF is cached locally as `source.pdf` and ignored by Git. The extracted text
-cache is `source.txt`.
+The PDF is cached locally as `source.pdf` and ignored by Git. A local extracted
+text cache may be regenerated for named-statement searches, but is ignored in
+the public repository.
 
 Human review starts from `FINAL_VALIDATION_REPORT.md` and the tracked
 `SOURCE_AUDIT.md`, then the compact `PaperInterface.lean`, `DependencyDAG.pdf`,
@@ -22,7 +23,7 @@ in `InterfaceAliases.lean`.
 ## Guideline Audit
 
 - Folder follows the one-citation paper contract: local `.gitignore`, README,
-  source PDF/text cache, `MainTheorems.lean`, aggregate import, and DAG source.
+  `MainTheorems.lean`, aggregate import, DAG source, and public-safe artifacts.
 - `MainTheorems.lean` is source-facing for the continuous trip-length model:
   it uses sets of real trip lengths and abstract lifetime reward functionals.
 - Single-state reward quantities are now stated directly as measure/set-integral

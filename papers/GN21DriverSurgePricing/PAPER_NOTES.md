@@ -4,8 +4,8 @@ This is a lightweight handoff document for source-to-Lean mapping.
 
 - Namespace: `GN21DriverSurgePricing`
 - Official URL: https://pubsonline.informs.org/doi/10.1287/mnsc.2021.4058
-- Source PDF: `source.pdf`
-- Source text cache: `source.txt`
+- Source PDF: local ignored cache
+- Source text cache: local ignored cache
 
 ## Formalization checklist
 

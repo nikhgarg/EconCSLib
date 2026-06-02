@@ -23,10 +23,10 @@ complexity infrastructure that can also support future EC formalizations.
 - Accessed: 2026-04-23
 
 The PDF is cached locally as `LMMS04FairDivision.pdf` and ignored by the
-paper-folder `.gitignore`. The extracted text cache
-`LMMS04FairDivision.txt` is used for named-statement searches; refresh it only
-if the source PDF changes. Use the ACM DOI/PDF above as the source version; the
-public mirror is listed only for easier access.
+paper-folder `.gitignore`. A local extracted text cache may be regenerated for
+named-statement searches, but is ignored in the public repository. Use the ACM
+DOI/PDF above as the source version; the public mirror is listed only for easier
+access.
 
 ## Central Theorem File
 
@@ -88,7 +88,7 @@ return that package directly.
 
 ## Source-Audit Notes
 
-The cached text contains Theorem 2.1, Lemma 2.2, Theorem 2.3, Lemma 2.4,
+The source audit identified Theorem 2.1, Lemma 2.2, Theorem 2.3, Lemma 2.4,
 Theorems 3.1--3.3, Claim 3.4, Lemma 3.5, and Theorems 4.1--4.2. The current
 Lean work covers the finite indivisible-goods core of Theorem 2.1, the named
 Lemma 2.2 cycle-elimination wrapper, the real-supported atom-bounded measure

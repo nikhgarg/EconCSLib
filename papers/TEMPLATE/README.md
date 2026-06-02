@@ -8,7 +8,9 @@
 - Public PDF: [URL]
 
 The PDF is not committed to git (ignored via `.gitignore`), but a local copy should be kept in this directory for reference.
-The extracted source text cache should be kept beside it when licensing permits.
+The extracted source text cache should be kept beside it locally when useful,
+but should remain ignored by Git in public workspaces unless redistribution
+rights have been checked separately.
 
 ## Paper-Facing Ledger
 
@@ -42,7 +44,7 @@ artifact paths, and the paper's top-level public status, then run
 ## Intake Checklist
 
 - [ ] Fill in all metadata fields in this template.
-- [ ] Copy the paper theorem/lemma list from `source.txt` before drafting the DAG.
+- [ ] Copy the paper theorem/lemma list from the local source text cache before drafting the DAG.
 - [ ] Fill in `FORMALIZATION_PLAN.md` with the initial proof strategy and
       likely hard seams before deep Lean work.
 - [ ] Replace placeholders in `MainTheorems.lean` and `PaperInterface.lean`.

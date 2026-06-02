@@ -25,12 +25,13 @@
   rendered PDF output is ignored by the paper-folder `.gitignore`
 
 ## 1.1 Post-Paper Audit Checklist
-- Cached-text named-result inventory:
+- Local cached-text named-result inventory:
   Theorem 1 (line 227), Theorem 2 (line 258), Theorem 3 (line 356),
   Theorem 4 (line 438), Theorem 5 (line 468), Corollary 5.1 (line 477),
   Lemma 1 (line 537), Lemma 2 (line 564), Theorem 6 (line 678), and
-  Theorem 7 (line 713) in `Roth82StableMatching.txt`. No numbered source
-  propositions or definitions were found by the named-result search.
+  Theorem 7 (line 713). The local text cache is omitted from the public
+  repository; no numbered source propositions or definitions were found by the
+  named-result search.
 - README check: every named result has a controlled-status row in
   `papers/Roth82StableMatching/README.md`; all source endpoints are marked
   `formalized`.

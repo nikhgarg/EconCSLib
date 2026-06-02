@@ -10,9 +10,10 @@ repository are ready.
   from `site/` on pushes to `main` that touch the site or workflow.
 - The workflow uses `actions/configure-pages` with `enablement: true`, so the
   first successful deployment should configure Pages for GitHub Actions.
+- GitHub Pages is deployed at `https://gargnikhil.com/EconCSLib/`.
 - No paper PDF is checked into this public repository yet.
-- The default branch is `main`; broad announcement should wait until the first
-  successful Pages deployment and final status review.
+- The default branch is `main`; broad announcement should wait until final
+  paper/status review.
 
 ## Before Publishing
 
@@ -34,7 +35,7 @@ repository are ready.
 6. Push the branch or merge it into `main`.
 7. Confirm the Pages workflow deploys successfully.
 8. Set the repository homepage URL to the Pages URL once the first deploy
-    succeeds.
+   succeeds.
 
 ## Updating After Publication
 

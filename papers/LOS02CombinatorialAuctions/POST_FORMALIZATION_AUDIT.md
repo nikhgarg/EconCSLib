@@ -15,8 +15,8 @@ Date: 2026-05-24; public-release closeout refreshed 2026-05-31
   Journal of the ACM 49(5), 2002.
 - Local source files:
   - `LOS02CombinatorialAuctions.pdf` is cached locally and ignored.
-  - `LOS02CombinatorialAuctions.txt` is the extracted text cache used for
-    source-numbered statement searches.
+  - The extracted text cache used for source-numbered statement searches is
+    local-only and omitted from the public repository.
 
 The source-audit pass found the named surface tracked in the folder README:
 Definitions 3.1--3.2, Theorem 4.1, Proposition 4.2, Definition 5.1, Theorem

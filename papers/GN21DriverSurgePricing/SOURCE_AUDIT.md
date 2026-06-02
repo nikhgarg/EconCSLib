@@ -3,8 +3,8 @@
 This is the tracked source-vs-Lean audit for Garg--Nazerzadeh,
 *Driver Surge Pricing*.  It complements the local dashboard trace under
 `.review_traces/`, which is intentionally ignored by Git.  The audit was done
-against `source.txt`, `PaperInterface.lean`, `PostPaperAudit.lean`, and the
-compiled GN21 modules.
+against an ignored local source text cache, `PaperInterface.lean`,
+`PostPaperAudit.lean`, and the compiled GN21 modules.
 
 This is an agent source audit, not a human signoff. It should not be counted as
 dashboard human review.

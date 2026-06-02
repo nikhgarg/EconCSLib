@@ -15,7 +15,8 @@ This file was the external-to-Lean plan for finishing Theorem 3.  It is now a
 historical note to consult only before optional strengthening work, so the next
 agent does not rediscover the same Lemma 9/10 boundary issues.
 
-Do not edit source.txt for this purpose.  source.txt is the extracted paper.
+Do not edit the local source text cache for this purpose. It is the extracted
+paper text and is omitted from the public repository.
 
 
 Current best Lean frontier

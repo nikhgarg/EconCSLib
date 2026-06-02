@@ -24,9 +24,8 @@ Last updated: 2026-05-23
 
 ## Completed Route
 
-- The cached text inventory in `Roth82StableMatching.txt` has been reconciled
-  with the README, paper interface, post-paper audit ledger, and final
-  validation report.
+- The local cached text inventory has been reconciled with the README, paper
+  interface, post-paper audit ledger, and final validation report.
 - All named source results in the cached Roth 1982 text are marked
   `formalized` in `README.md`.
 - The strict finite marriage-domain assumptions used by Lean match Roth's

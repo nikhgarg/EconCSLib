@@ -136,8 +136,8 @@ lake build EconCSLib
 - [ ] `PaperInterface.lean` exposes the human-facing theorem statements.
 - [ ] Caveats and source-proof deviations are documented in the paper README or
       `FINAL_VALIDATION_REPORT.md`.
-- [ ] Source PDFs, rendered local PDFs, dashboard caches, and other ignored
-      local artifacts are not added to Git.
+- [ ] Source PDFs, extracted source-paper text caches, rendered local PDFs,
+      dashboard caches, and other ignored local artifacts are not added to Git.
 
 ## Review Standard
 

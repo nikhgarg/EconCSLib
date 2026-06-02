@@ -19,7 +19,8 @@ paper.
   and paper results use `dag_result`. The current PDF has had a spacing pass;
   it should not be expanded with theorem-route variants.
 - `SOURCE_AUDIT.md` is the standalone agent source-surface audit. It maps the
-  16 compact interface rows to `source.txt` line numbers and audit endpoints.
+  16 compact interface rows to local source-cache line numbers and audit
+  endpoints.
 - Human dashboard review remains external: `review-dashboard.sh --check`
   reports `0/16 reviewed`, with no stale or mismatch entries.
 - Library pass status: the a.e. positive-failure-mass contradiction and
@@ -63,7 +64,7 @@ in the repository.
 For this paper, only external human review and normal publication-style cleanup
 remain. If a future proof agent continues anyway, the highest-value tasks are:
 
-1. Inspect the 16 `PaperInterface.lean` rows against `source.txt`/`source.pdf`.
+1. Inspect the 16 `PaperInterface.lean` rows against local source caches.
 2. If a row is too opaque for human comparison, improve that single row without
    adding proof-route aliases.
 3. Keep README, `FINAL_VALIDATION_REPORT.md`, and `DependencyDAG.tex` aligned

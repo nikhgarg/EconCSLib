@@ -133,7 +133,8 @@ README_STATUS_DETAIL_RE = re.compile(
 README_STATUS_HEADER = ["Paper", "Status", "Review", "Interface", "Human summary"]
 README_REVIEW_COUNT_RE = re.compile(r"^\d+/\d+$")
 README_MAX_STATUS_ROWS = 20
-README_MAX_STATUS_SUMMARY_CHARS = 180
+README_MAX_STATUS_SUMMARY_CHARS = 240
+MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\([^)]+\)")
 README_MAX_LINES = 140
 
 
@@ -240,7 +241,7 @@ def has_source_pdf(folder: Path) -> bool:
 
 
 def has_text_cache(folder: Path) -> bool:
-    return any(path.suffix == ".txt" for path in folder.rglob("*.txt"))
+    return any(path.suffix == ".txt" and path.name != "citation_source.txt" for path in folder.rglob("*.txt"))
 
 
 def check_paper_contract(include_active: bool) -> list[Finding]:
@@ -290,7 +291,7 @@ def check_paper_contract(include_active: bool) -> list[Finding]:
                 else "no cached source PDF found"
             )
             findings.append(Finding(severity, folder, message))
-        if not has_text_cache(folder):
+        if not PUBLIC_RELEASE and not has_text_cache(folder):
             findings.append(Finding("ERROR", folder, "no cached `pdftotext` source text found"))
 
         gitignore = folder / ".gitignore"
@@ -702,6 +703,10 @@ def iter_markdown_tables(path: Path) -> list[tuple[list[str], list[list[str]]]]:
     return tables
 
 
+def markdown_display_text(text: str) -> str:
+    return MARKDOWN_LINK_RE.sub(r"\1", text)
+
+
 def paper_folder_from_link(cell: str) -> str | None:
     markdown_link = re.search(r"\]\((papers/[^)#]+)", cell)
     if markdown_link:
@@ -952,7 +957,7 @@ def check_root_human_status_table(readme: Path) -> list[Finding]:
             findings.append(Finding("ERROR", readme, f"missing interface health for `{paper}`"))
         if not summary and status != "Formalized":
             findings.append(Finding("ERROR", readme, f"missing human summary for `{paper}`"))
-        elif len(summary) > README_MAX_STATUS_SUMMARY_CHARS:
+        elif len(markdown_display_text(summary)) > README_MAX_STATUS_SUMMARY_CHARS:
             findings.append(Finding("WARN", readme, f"human summary is too long for `{paper}`"))
 
         for cell in row:

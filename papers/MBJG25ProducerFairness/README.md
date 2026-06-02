@@ -13,10 +13,10 @@ Machine-readable status source: [`status.json`](status.json).
 - Accessed: 2026-04-24
 
 The PDF is cached locally as `MBJG25ProducerFairness.pdf` and ignored by the
-paper-folder `.gitignore`. The extracted text cache
-`MBJG25ProducerFairness.txt` is used for named-statement searches; refresh it
-only if the source PDF changes. Use the arXiv URL above as the source version
-for theorem-number and definition comparisons.
+paper-folder `.gitignore`. A local extracted text cache may be regenerated for
+named-statement searches, but is ignored in the public repository. Use the
+arXiv URL above as the source version for theorem-number and definition
+comparisons.
 
 ## Central Theorem File
 
@@ -59,7 +59,7 @@ strict decrease for the interior case; the weak version is now formalized as
 
 ## Source-Audit Notes
 
-The cached text contains Theorem 3.1 and Theorem 3.2 as the only numbered
+The source audit identified Theorem 3.1 and Theorem 3.2 as the only numbered
 source theorems, repeated in the appendix proofs. The theorem table above
 covers both named source theorems. Section 4 and appendix entries are
 formalized as paper-facing definitions/results, but they are not source-numbered

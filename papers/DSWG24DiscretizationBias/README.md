@@ -13,10 +13,9 @@ Machine-readable status source: [`status.json`](status.json).
 - Accessed: 2026-04-24
 
 The PDF is cached locally as `DSWG24DiscretizationBias.pdf` and ignored by the
-paper-folder `.gitignore`. The extracted text cache
-`DSWG24DiscretizationBias.txt` is used for named-statement searches; refresh it
-only if the source PDF changes. Use this local PDF for theorem-number and
-definition comparisons before refreshing from arXiv.
+paper-folder `.gitignore`. A local extracted text cache may be regenerated for
+named-statement searches, but is ignored in the public repository. Use the
+linked source version for theorem-number and definition comparisons.
 
 ## Central Theorem And Audit Files
 
@@ -39,8 +38,8 @@ verification outcomes. Reusable decision-rule lemmas live in
 ## Guideline Audit
 
 - Folder contract: satisfied (`.gitignore`, `README.md`, `DependencyDAG.tex`,
-  `PaperInterface.lean`, `MainTheorems.lean`, `PostPaperAudit.lean`, local PDF,
-  and local extracted text are present).
+  `PaperInterface.lean`, `MainTheorems.lean`, `PostPaperAudit.lean`, and
+  public-safe artifacts are present).
 - README status vocabulary: uses the controlled statuses from
   `docs/STATUS.md`; this refresh adds explicit rows for the source objective
   and Bayes bridge, rather than recording only theorem endpoints.

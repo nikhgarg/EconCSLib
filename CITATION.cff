@@ -7,8 +7,8 @@ authors:
     given-names: Nikhil
     email: ngarg@cornell.edu
 repository-code: "https://github.com/nikhgarg/EconCSLib"
-url: "https://github.com/nikhgarg/EconCSLib"
-date-released: "2026-05-31"
+url: "https://gargnikhil.com/EconCSLib/"
+date-released: "2026-06-02"
 keywords:
   - Lean
   - formal verification

@@ -15,11 +15,10 @@ Machine-readable status source: [`status.json`](status.json).
 - Public PDF mirror: https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf
 - Journal PDF: https://users.eecs.northwestern.edu/~hartline/papers/auctions-journal.pdf
 
-The extracted text cache `GHW01DigitalGoods.txt` is tracked and used for
-named-statement searches. The source PDFs are public at the links above, but
-the ignored local PDF cache may be absent from a public checkout; refresh the
-text cache only if the source PDF changes. A 2026-06-01 web search did not find
-public TeX/source. The journal version is used as the corrected source for
+The source PDFs are public at the links above, but ignored local PDF and text
+caches may be absent from a public checkout; regenerate a local text cache only
+if needed for source searches. A 2026-06-01 web search did not find public
+TeX/source. The journal version is used as the corrected source for
 Theorem 8.2, and as the controlling source where it refines the preliminary
 text: it clarifies anonymity/set-of-bids and masked-vector language, and it
 supplies the corrected Section 8.2 monotone-auction statement. This folder keeps the InterTrust/SODA
@@ -89,7 +88,7 @@ two-bidder threshold auction can earn `101` against fixed-price benchmark
 
 ## Source-Audit Notes
 
-The cached text contains Theorem 4.1, Corollary 4.2, Lemma 6.1, Theorem 6.2,
+The source audit identified Theorem 4.1, Corollary 4.2, Lemma 6.1, Theorem 6.2,
 Theorems 7.1--7.2, Lemma 8.1, Theorem 8.2, Theorem 9.1, Lemma 9.2, and Theorem
 9.3. Current Lean coverage includes the reusable digital-goods mechanism layer,
 fixed-price benchmark support, deterministic RSOP-style truthfulness skeleton,

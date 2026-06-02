@@ -11,8 +11,8 @@ Machine-readable status source: [`status.json`](status.json).
 - Public PDF: https://pubsonline.informs.org/doi/epdf/10.1287/moor.7.4.617
 
 The PDF is cached locally as `Roth82StableMatching.pdf` and ignored by the
-paper-folder `.gitignore`. The extracted text cache `Roth82StableMatching.txt`
-is used for named-statement searches; refresh it only if the source PDF changes.
+paper-folder `.gitignore`. A local extracted text cache may be regenerated for
+named-statement searches, but is ignored in the public repository.
 
 ## Central Theorem Files
 
@@ -41,7 +41,7 @@ Detailed reusable matching and deferred-acceptance primitives live in
 
 ## Source-Audit Notes
 
-The cached text contains Theorems 1--7, Corollary 5.1, and Lemmas 1--2. Section
+The source audit identified Theorems 1--7, Corollary 5.1, and Lemmas 1--2. Section
 2 explicitly assumes complete/transitive strict preference relations and says
 only strict preferences will be considered, so the strict marriage-domain and
 strict-profile Lean endpoints are source-domain endpoints rather than caveats. The

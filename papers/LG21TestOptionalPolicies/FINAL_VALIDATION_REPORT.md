@@ -27,7 +27,8 @@ reviewed interface items, with no stale or mismatch entries.
   Informational Gaps*
 - Authors: Zhi Liu and Nikhil Garg
 - Version formalized: arXiv:2107.08922 / EAAMO 2021 version
-- Local source text: `source.txt`
+- Local source text cache: `source.txt` when regenerated locally; omitted from
+  the public repository.
 
 Sections 1 and 5 are introduction/discussion material and contain no named
 theorem or definition target. The formalized source surface covers the named
@@ -39,7 +40,7 @@ Human reviewers should start from:
 
 - `PaperInterface.lean`: compact 16-row statement surface.
 - `SOURCE_AUDIT.md`: source-order map from the paper text to each interface
-  row, including `source.txt` line numbers and audit endpoints.
+  row, including local source-cache line numbers and audit endpoints.
 - `PostPaperAudit.lean`: broader importable ledger for proof-route variants
   and diagnostics.
 

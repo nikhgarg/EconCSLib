@@ -126,8 +126,8 @@ Lean verification failures.
 
 Unless otherwise noted, the Lean source, scripts, documentation, and site source
 are licensed under the Apache License, Version 2.0. See [`LICENSE`](LICENSE).
-Source-paper PDFs and text caches remain governed by their own source licenses
-or publication terms.
+Source-paper PDFs and extracted text caches are not included in the public
+repository unless redistribution rights have been checked separately.
 
 ## More Documentation
 
