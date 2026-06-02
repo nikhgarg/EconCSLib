@@ -95,9 +95,11 @@ held behind external machine-level complexity facts.
 
 ## Starting A New Paper With An Agent
 
-To get started formalizing a paper, clone the repository and open an LLM agent
-tool; I use Codex with GPT 5.5 in xhigh thinking mode. Give the agent the paper
-link and ask it to formalize the paper using the repo skill.
+To get started in formalizing your own paper, clone the repository and open an
+LLM agent tool (I use Codex with GPT 5.5 in xhigh thinking mode). Give the
+agent the paper link, and ask it to formalize the paper using the skill and
+workflow in the repository. (And please let me know what your experience is
+like).
 
 Use [docs/AGENT_FORMALIZATION_WORKFLOW.md](docs/AGENT_FORMALIZATION_WORKFLOW.md).
 That file is intentionally agent-facing and includes the expected prompts,
