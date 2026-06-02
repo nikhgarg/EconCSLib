@@ -4540,6 +4540,48 @@ theorem theorem8_cold_start_clock_disciplined_strategy_history_to_exact_drop_his
       model hvalue_nonneg hclick_mono hhist
 
 /--
+Cold-start clock-disciplined finite traces induce no-overshoot histories
+without a separate initial no-overshoot premise.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_trace_to_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_trace_to_no_overshoot
+      model hvalue_nonneg hclick_mono htrace
+
+/--
+Cold-start clock-disciplined finite traces give exact finite `B*` dropout
+records without a separate initial no-overshoot premise.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_trace_to_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_trace_to_exact_drop_history
+      model hvalue_nonneg hclick_mono htrace
+
+/--
 Clock-disciplined source histories give the exact terminal record for any rank
 that starts active and is inactive at the audited final state. This is the
 per-rank terminal-record form of the clock-disciplined exact-history bridge.
