@@ -7860,6 +7860,69 @@ theorem theorem8_clock_disciplined_terminal_history_belief_source_extensive_trac
       terminal initially_active hno_active
 
 /--
+Trace-level clock-disciplined belief-explicit all-terminal endpoint.  The
+finite source trace is packaged directly into the non-vacuous belief checker,
+with generated history, terminality, exact dropout records, and the bundled VCG
+conclusion exposed in the unique PBE witness.
+-/
+theorem theorem8_clock_disciplined_strategy_trace_belief_source_extensive_trace_all_terminal_vcg_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot terminal initially_active
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [terminalRecordBeliefSourceExtensiveGame, theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_clock_disciplined_strategy_trace
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      terminal initially_active hno_active
+
+/--
 Trace-refined clock-disciplined all-terminal source-extensive endpoint.  The
 clock-disciplined terminal history yields the named finite `B*` PBE, generated
 history, terminality, exact finite `B*` dropout trace, and bundled all-terminal
@@ -7916,6 +7979,69 @@ theorem theorem8_clock_disciplined_terminal_history_source_extensive_trace_all_t
     theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_history] using
     paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_clock_disciplined_terminal_history
       model hhist
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      terminal initially_active hno_active
+
+/--
+Trace-level clock-disciplined all-terminal source-extensive endpoint.  The
+finite source trace is packaged directly into the source-extensive checker,
+with generated history, terminality, exact dropout records, and the bundled VCG
+conclusion exposed in the unique PBE witness.
+-/
+theorem theorem8_clock_disciplined_strategy_trace_source_extensive_trace_all_terminal_vcg_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot terminal initially_active
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [terminalRecordSourceExtensiveGame, theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_clock_disciplined_strategy_trace
+      model htrace
       (by
         intro rank hactive
         simpa [theorem8BStarThresholdBid] using
@@ -8086,6 +8212,130 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_source_extensive_
       model hhist
       (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
         model hvalue_nonneg hclick_mono model.click_pos)
+      terminal (fun rank => by rfl) hno_active
+
+/--
+Cold-start belief-explicit all-terminal endpoint from an explicit finite
+clock-disciplined source trace. Initial activity and initial no-overshoot are
+derived from the paper cold-start state.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_trace_belief_source_extensive_trace_all_terminal_vcg_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
+    let hstate_no_overshoot :=
+      paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot terminal (fun rank => by rfl)
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [terminalRecordBeliefSourceExtensiveGame, theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
+    theorem8_clock_disciplined_strategy_trace_belief_source_extensive_trace_all_terminal_vcg_conclusion
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+            model hvalue_nonneg hclick_mono model.click_pos rank hactive)
+      terminal (fun rank => by rfl) hno_active
+
+/--
+Cold-start source-extensive all-terminal endpoint from an explicit finite
+clock-disciplined source trace. This is the source-extensive counterpart of the
+belief-explicit trace checker above.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_trace_source_extensive_trace_all_terminal_vcg_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
+    let hstate_no_overshoot :=
+      paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot terminal (fun rank => by rfl)
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [terminalRecordSourceExtensiveGame, theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
+    theorem8_clock_disciplined_strategy_trace_source_extensive_trace_all_terminal_vcg_conclusion
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+            model hvalue_nonneg hclick_mono model.click_pos rank hactive)
       terminal (fun rank => by rfl) hno_active
 
 /--

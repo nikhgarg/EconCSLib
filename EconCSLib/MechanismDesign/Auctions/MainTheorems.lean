@@ -44211,6 +44211,71 @@ theorem paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_d
         exact hno_active rank)
 
 /--
+Trace-level clock-disciplined all-terminal source-extensive endpoint.  This
+packages the finite clock-disciplined source trace directly into the
+no-overshoot terminal certificate, then returns the named finite `B*` PBE
+together with generated history, terminality, exact finite `B*` dropout trace,
+and the bundled VCG conclusion.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_clock_disciplined_strategy_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_disciplined_strategy_trace
+        model htrace hstate_no_overshoot terminal initially_active
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game
+        terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  dsimp
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_no_overshoot
+      (paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_disciplined_strategy_trace
+        model htrace hstate_no_overshoot terminal initially_active)
+      (by
+        intro rank
+        exact hno_active rank)
+
+/--
 Sorted finite-schedule source-extensive terminal-record endpoint.  Lean builds
 the no-overshoot terminal history from the sorted no-duplicate rank schedule;
 the resulting PBE statement itself includes source sequential rationality, the
@@ -44672,6 +44737,69 @@ theorem paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_exte
     paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_no_overshoot
       (paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_disciplined_strategy_history
         model hhist hstate_no_overshoot terminal initially_active)
+      (by
+        intro rank
+        exact hno_active rank)
+
+/--
+Trace-level all-terminal belief-explicit endpoint from a finite
+clock-disciplined source trace. This is the trace-shaped source endpoint for
+the non-vacuous belief checker.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_clock_disciplined_strategy_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_disciplined_strategy_trace
+        model htrace hstate_no_overshoot terminal initially_active
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game
+        terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  dsimp
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_no_overshoot
+      (paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_clock_disciplined_strategy_trace
+        model htrace hstate_no_overshoot terminal initially_active)
       (by
         intro rank
         exact hno_active rank)
