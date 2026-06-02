@@ -3806,6 +3806,44 @@ theorem theorem8_clock_disciplined_strategy_trace_to_clock_disciplined_strategy_
       model htrace
 
 /--
+Clock-disciplined source histories compose. This is useful when source
+semantics prove separate clock-disciplined segments.
+-/
+theorem theorem8_clock_disciplined_strategy_history_trans
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hfirst :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model state midState)
+    (hsecond :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model midState finalState) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state finalState := by
+  exact
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory.trans
+      model hfirst hsecond
+
+/--
+Finite clock-disciplined source traces compose. This lets the source proof
+assemble a finite trace from independently checked transition blocks.
+-/
+theorem theorem8_clock_disciplined_strategy_trace_trans
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hfirst :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state midState)
+    (hsecond :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model midState finalState) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state finalState := by
+  exact
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.trans
+      model hfirst hsecond
+
+/--
 Finite traces of clock-disciplined source steps preserve the active-rank
 no-overshoot invariant from the initial state to the terminal state.
 -/
@@ -4077,6 +4115,25 @@ theorem theorem8_no_overshoot_strategy_history_to_exact_drop_history
   exact
     paper_theorem8_bstar_ranked_threshold_no_overshoot_strategy_history_to_exact_drop_history
       model hhist
+
+/--
+No-overshoot source histories compose. This lets a concrete source proof build
+the timing-certified path from separately verified source-history segments.
+-/
+theorem theorem8_no_overshoot_strategy_history_trans
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hfirst :
+      PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+        model state midState)
+    (hsecond :
+      PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+        model midState finalState) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  exact
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory.trans
+      model hfirst hsecond
 
 /--
 Build the no-overshoot terminal-history certificate expected by the

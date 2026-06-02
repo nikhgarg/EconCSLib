@@ -24045,6 +24045,31 @@ inductive PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
         PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory model
           state finalState
 
+/-- No-overshoot source histories compose. -/
+theorem PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory.trans
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState :
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hfirst :
+      PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+        model state midState)
+    (hsecond :
+      PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+        model midState finalState) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  induction hfirst with
+  | refl state =>
+      exact hsecond
+  | @advance state0 midState0 newPrice hclock htail ih =>
+      exact
+        PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory.advance
+          newPrice hclock (ih hsecond)
+  | @dropout state0 midState0 rank hactive hstrategy hno_overshoot htail ih =>
+      exact
+        PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory.dropout
+          rank hactive hstrategy hno_overshoot (ih hsecond)
+
 /--
 Source-semantic timing statement for the remaining Theorem 8 source proof.  At
 every realized new-dropout transition under the named finite `B*` strategy, the
@@ -24333,6 +24358,31 @@ inductive PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
             PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
               model state finalState
 
+/-- Clock-disciplined source histories compose. -/
+theorem PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory.trans
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState :
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hfirst :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model state midState)
+    (hsecond :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model midState finalState) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state finalState := by
+  induction hfirst with
+  | refl state =>
+      exact hsecond
+  | @advance state0 midState0 newPrice hclock hsafe htail ih =>
+      exact
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory.advance
+          newPrice hclock hsafe (ih hsecond)
+  | @dropout state0 midState0 rank hactive hstrategy htail ih =>
+      exact
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory.dropout
+          rank hactive hstrategy (ih hsecond)
+
 /--
 Single-step source-transition form of clock discipline for the named finite
 `B*` strategy. An advance step may only move the clock to a price that does not
@@ -24570,10 +24620,31 @@ inductive PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
         PaperTheorem8GeneralizedEnglishAuctionState ℕ} :
       PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
         model state mid →
-        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
-          model mid finalState →
+          PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+            model mid finalState →
           PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
             model state finalState
+
+/-- Finite traces of clock-disciplined source steps compose. -/
+theorem PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.trans
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState :
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hfirst :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state midState)
+    (hsecond :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model midState finalState) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state finalState := by
+  induction hfirst with
+  | refl state =>
+      exact hsecond
+  | @cons state midState finalState hstep htail ih =>
+      exact
+        PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace.cons
+          hstep (ih hsecond)
 
 /--
 A finite trace of clock-disciplined source steps induces the existing
