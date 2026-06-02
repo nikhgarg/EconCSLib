@@ -13,6 +13,197 @@ namespace EconCSLib
 namespace Auction
 
 /--
+Generated named-strategy histories satisfy exact finite `B*` dropout records
+when every clock advance is active-rank safe and the initial state has not
+already overshot any active rank's finite `B*` threshold.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strategy_history_advance_safe_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1))
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_exact_drop_history
+      model
+      (paper_theorem8_bstar_ranked_threshold_strategy_history_to_clock_disciplined_strategy_trace_of_advance_safe
+        model hhist hadvance_safe)
+      hstate_no_overshoot
+
+/--
+Cold-start generated-history exact-record bridge. The canonical cold-start
+state supplies the initial no-overshoot fact.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_advance_safe_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_history_advance_safe_exact_drop_history
+      model hhist hadvance_safe
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos)
+
+/--
+Generated named-strategy histories with advance safety discharge both source
+obligations used downstream: source-extensive rationality and exact finite
+`B*` records. Terminality supplies the generated source path's terminal
+component.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strategy_history_advance_safe_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1))
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  exact
+    ⟨⟨paper_theorem8_bstar_ranked_threshold_named_strategy_source_sequential_rationality
+          model state,
+        hhist,
+        terminal⟩,
+      paper_theorem8_bstar_ranked_threshold_strategy_history_advance_safe_exact_drop_history
+        model hhist hadvance_safe hstate_no_overshoot⟩
+
+/--
+Cold-start generated-history source/exact ledger. This is the cold-start
+version of the previous bridge with initial no-overshoot discharged internally.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_advance_safe_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state finalState)
+    (hadvance_safe :
+      ∀ {stepState stepNext : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+        {newPrice : ℝ},
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          stepState stepNext →
+        stepNext =
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            stepState newPrice →
+          ∀ rank,
+            stepState.IsActive rank →
+              newPrice ≤
+                paper_theorem8_bstar_threshold_bid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strategy_history_advance_safe_source_extensive_exact_drop_obligations
+      model hhist hadvance_safe
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos)
+      terminal
+
+/--
 Source-extensive rationality plus advance safety gives the trace-refined
 all-terminal source-extensive VCG conclusion once the initial no-overshoot,
 initial activity, and final no-active obligations are supplied. This is the
