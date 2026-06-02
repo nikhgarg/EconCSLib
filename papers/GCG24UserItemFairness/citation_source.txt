@@ -1,0 +1,4 @@
+source: OpenReview API BibTeX field
+url: https://api2.openreview.net/notes?id=ZOZjMs3JTs
+retrieved: 2026-06-01
+notes: Downloaded the exact _bibtex value from the official OpenReview note. Not hand-written or arXiv-derived metadata.

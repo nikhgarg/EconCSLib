@@ -1,0 +1,4 @@
+source: AAAI OJS BibTeX export
+url: https://ojs.aaai.org/index.php/ICWSM/citationstylelanguage/download/bibtex?submissionId=35865&publicationId=34138
+retrieved: 2026-06-01
+notes: Downloaded exact BibTeX from the official AAAI OJS citation export. Not hand-written or arXiv-derived metadata.

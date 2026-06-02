@@ -1,0 +1,4 @@
+source: DBLP BibTeX export
+url: https://dblp.org/rec/conf/soda/GoldbergHW01.bib?param=0
+retrieved: 2026-06-01
+notes: Google Scholar was unavailable due automated-query verification. OpenAlex found the exact record https://openalex.org/W1964005287 with DOI-like identifier https://doi.org/10.5555/365411.365768, but DOI BibTeX export returned 404 and OpenAlex does not directly export BibTeX. The BibTeX file is the exact DBLP export, not hand-written metadata.

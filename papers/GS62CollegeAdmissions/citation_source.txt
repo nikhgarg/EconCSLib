@@ -1,0 +1,4 @@
+source: DOI content negotiation via doi.org
+url: https://doi.org/10.1080/00029890.1962.11989827
+retrieved: 2026-06-01
+notes: Downloaded exact BibTeX returned by the DOI resolver for the published article. Not hand-written or arXiv-derived metadata.

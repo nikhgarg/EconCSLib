@@ -432,6 +432,15 @@ formalization, execute the standard intake before deep proof work:
 - Download/cache the exact source PDF in a new or existing
   `papers/[AuthorInitials][2DigitYear][Descriptor]/` folder, then create the
   adjacent `.txt` extraction with `pdftotext`.
+- Download the published-version BibTeX into `citation.bib` during intake.
+  Prefer the official published-source citation export, such as a publisher,
+  conference, OpenReview, or journal site. Do not use arXiv BibTeX when a
+  published version exists. If the official export is unavailable, use Google
+  Scholar. If Scholar is blocked or unavailable, use OpenAlex as a backup to
+  locate the exact published record, then use a real BibTeX export/translator
+  for that record; OpenAlex JSON alone is not a BibTeX source. Do not
+  hand-write or repair BibTeX metadata. Record provenance in
+  `citation_source.txt`.
 - If the paper link is arXiv, also download/cache the arXiv source archive
   (`e-print`) during intake and unpack it beside the PDF/text cache. Prefer
   the TeX source for theorem statements, displayed equations, notation, labels,
