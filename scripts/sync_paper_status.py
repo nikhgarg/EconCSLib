@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
 from pathlib import Path
 from typing import Any
@@ -15,9 +16,13 @@ AGGREGATE_STATUS = PAPERS / "status.json"
 HUMAN_STATUS = PAPERS / "human_status.json"
 DOCS_PAPER_STATUS = ROOT / "docs" / "PAPER_STATUS.md"
 README = ROOT / "README.md"
+SITE_INDEX = ROOT / "site" / "index.html"
 TEMPLATE = PAPERS / "TEMPLATE"
 README_STATUS_BEGIN = "<!-- BEGIN GENERATED PAPER STATUS TABLE -->"
 README_STATUS_END = "<!-- END GENERATED PAPER STATUS TABLE -->"
+SITE_STATUS_BEGIN = "<!-- BEGIN GENERATED PAPER STATUS ROWS -->"
+SITE_STATUS_END = "<!-- END GENERATED PAPER STATUS ROWS -->"
+GITHUB_MAIN = "https://github.com/nikhgarg/EconCSLib/blob/main/"
 
 STATUS_LABELS = {
     "formalized": "Formalized",
@@ -33,10 +38,10 @@ STATUS_GROUPS = {
 }
 
 PUBLICATION_OVERRIDES = {
-    "DSWG24DiscretizationBias": ("ACM FAccT / PNAS Nexus, 2024", 2024),
+    "DSWG24DiscretizationBias": ("PNAS Nexus, 2025", 2025),
     "GCG24UserItemFairness": ("NeurIPS, 2024", 2024),
     "GHW01DigitalGoods": ("SODA, 2001", 2001),
-    "GN21DriverSurgePricing": ("Management Science, 2021", 2021),
+    "GN21DriverSurgePricing": ("Management Science, 2022", 2022),
     "GS62CollegeAdmissions": ("American Mathematical Monthly, 1962", 1962),
     "LG21TestOptionalPolicies": ("EAAMO, 2021", 2021),
     "LMMS04FairDivision": ("ACM EC, 2004", 2004),
@@ -199,6 +204,11 @@ def human_payload(records: list[tuple[Path, dict[str, Any]]]) -> dict[str, Any]:
             "human_review counts saved human dashboard rows as reviewed/total. Agent audits are "
             "not counted as human review."
         ),
+        "identifier_policy": (
+            "Paper IDs and folder names are stable artifact identifiers and may track an arXiv, "
+            "conference, or original working-paper year. Publication fields use the published "
+            "citation title and year."
+        ),
         "papers": human_status_rows(records),
     }
 
@@ -304,6 +314,10 @@ def render_paper_status_md(payload: dict[str, Any]) -> str:
         "Human-review counts are dashboard rows saved by a human reviewer; agent",
         "source audits are not counted as human review.",
         "",
+        "Paper IDs and folder names are stable artifact identifiers and may track",
+        "an arXiv, conference, or original working-paper year. The table below uses",
+        "the published citation title and year.",
+        "",
         "| Paper info | Status | Human review | Lean LOC | Note |",
         "|---|---|---:|---:|---|",
     ]
@@ -338,6 +352,70 @@ def render_paper_status_md(payload: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def html_escape(text: object) -> str:
+    return html.escape(str(text), quote=True)
+
+
+def github_link(path: str) -> str:
+    return GITHUB_MAIN + path
+
+
+def render_site_status_block(payload: dict[str, Any]) -> str:
+    indent = " " * 14
+    lines = [f"{indent}{SITE_STATUS_BEGIN}"]
+    for row in payload["papers"]:
+        paper_href = row["source_url"] or github_link(row["paper_folder"])
+        status_href = github_link(row["review_entrypoint"])
+        note = html_escape(row["main_note"])
+        lines.extend(
+            [
+                f"{indent}<tr>",
+                f"{indent}  <td>",
+                (
+                    f'{indent}    <a class="paper-source" href="{html_escape(paper_href)}">'
+                    f"<cite>{html_escape(row['title'])}</cite></a> by"
+                ),
+                (
+                    f"{indent}    {html_escape(row['authors'])}; "
+                    f"{html_escape(row['publication'])}."
+                ),
+                f"{indent}  </td>",
+                (
+                    f'{indent}  <td><a href="{html_escape(status_href)}">'
+                    f"{html_escape(row['status'])}</a></td>"
+                ),
+                f"{indent}  <td>{int(row['lean_loc']):,}</td>",
+                f"{indent}  <td>{note}</td>",
+                f"{indent}</tr>",
+            ]
+        )
+    lines.append(f"{indent}{SITE_STATUS_END}")
+    return "\n".join(lines)
+
+
+def render_site_index(payload: dict[str, Any]) -> str:
+    current = SITE_INDEX.read_text(encoding="utf-8")
+    block = render_site_status_block(payload)
+    start = current.find(SITE_STATUS_BEGIN)
+    end = current.find(SITE_STATUS_END)
+    if start >= 0 and end >= start:
+        end += len(SITE_STATUS_END)
+        line_start = current.rfind("\n", 0, start) + 1
+        line_end = current.find("\n", end)
+        if line_end < 0:
+            return current[:line_start] + block
+        return current[:line_start] + block + current[line_end:]
+
+    tbody_start = current.find("<tbody>")
+    if tbody_start < 0:
+        raise ValueError(f"{SITE_INDEX.relative_to(ROOT)} should contain a paper status <tbody>")
+    tbody_open_end = current.find(">", tbody_start)
+    tbody_end = current.find("</tbody>", tbody_open_end)
+    if tbody_open_end < 0 or tbody_end < 0:
+        raise ValueError(f"{SITE_INDEX.relative_to(ROOT)} should contain a complete paper status <tbody>")
+    return current[: tbody_open_end + 1] + "\n" + block + "\n            " + current[tbody_end:]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="fail if generated status files are out of sync")
@@ -351,6 +429,7 @@ def main() -> int:
         HUMAN_STATUS: json.dumps(human, indent=2, ensure_ascii=False) + "\n",
         DOCS_PAPER_STATUS: render_paper_status_md(human),
         README: render_readme(records),
+        SITE_INDEX: render_site_index(human),
     }
     if args.check:
         stale = []

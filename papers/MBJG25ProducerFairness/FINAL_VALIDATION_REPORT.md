@@ -1,7 +1,7 @@
 # Final Validation Report: Producer Fairness
 
 ## 1. Source and Scope
-- Paper: *Balancing Producer Fairness and Efficiency via Bayesian Rating System Design*
+- Paper: *Balancing Producer Fairness and Efficiency via Prior-Weighted Rating System Design*
 - Source version: [arXiv:2207.04369](https://arxiv.org/abs/2207.04369) / ICWSM 2025
 - Lean folder: `MBJG25ProducerFairness/`
 - Human-facing theorem file: `MBJG25ProducerFairness/PaperInterface.lean`
@@ -38,4 +38,4 @@
 
 ## 7. Final Verdict
 - Completion status: complete
-- Summary: The core mathematical results of the Bayesian Rating System Design paper (Theorems 3.1 and 3.2) are fully formalized in Lean. A minor bug in the strictness of the variance-decrease clause was identified and corrected with an interior-quality assumption.
+- Summary: The core mathematical results of the Prior-Weighted Rating System Design paper (Theorems 3.1 and 3.2) are fully formalized in Lean. A minor bug in the strictness of the variance-decrease clause was identified and corrected with an interior-quality assumption.

@@ -1,10 +1,10 @@
-# Balancing Producer Fairness and Efficiency via Bayesian Rating System Design
+# Balancing Producer Fairness and Efficiency via Prior-Weighted Rating System Design
 
 Machine-readable status source: [`status.json`](status.json).
 
 ## Source Version
 
-- Paper: *Balancing Producer Fairness and Efficiency via Bayesian Rating System Design*
+- Paper: *Balancing Producer Fairness and Efficiency via Prior-Weighted Rating System Design*
 - Authors: Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg
 - Version formalized: arXiv:2207.04369 / ICWSM 2025 version
 - arXiv URL: https://arxiv.org/abs/2207.04369

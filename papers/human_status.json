@@ -5,6 +5,7 @@
   "sort_policy": "Formalized papers first, including formalized-with-caveat rows, ordered by publication year; partially formalized public papers follow in publication-year order.",
   "note_policy": "main_note is intentionally sparse. Fully formalized papers have a blank note unless a source-version or proof-route note is important for a public reader.",
   "review_count_policy": "human_review counts saved human dashboard rows as reviewed/total. Agent audits are not counted as human review.",
+  "identifier_policy": "Paper IDs and folder names are stable artifact identifiers and may track an arXiv, conference, or original working-paper year. Publication fields use the published citation title and year.",
   "papers": [
     {
       "id": "GS62CollegeAdmissions",
@@ -47,7 +48,7 @@
       "status": "Formalized",
       "human_review": "0/19",
       "lean_loc": 598,
-      "main_note": "Theorem 8.2 follows the journal version; the broader preliminary wording is documented as refuted.",
+      "main_note": "The journal version is used as the corrected source for Theorem 8.2.",
       "paper_folder": "papers/GHW01DigitalGoods",
       "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md"
     },
@@ -67,21 +68,6 @@
       "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md"
     },
     {
-      "id": "GN21DriverSurgePricing",
-      "title": "Driver Surge Pricing",
-      "authors": "Nikhil Garg and Hamid Nazerzadeh",
-      "publication": "Management Science, 2021",
-      "publication_year": 2021,
-      "source_url": "https://arxiv.org/pdf/1905.07544",
-      "paper_info": "Driver Surge Pricing by Nikhil Garg and Hamid Nazerzadeh; Management Science, 2021.",
-      "status": "Formalized",
-      "human_review": "0/24",
-      "lean_loc": 143056,
-      "main_note": "",
-      "paper_folder": "papers/GN21DriverSurgePricing",
-      "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md"
-    },
-    {
       "id": "LG21TestOptionalPolicies",
       "title": "Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps",
       "authors": "Zhi Liu and Nikhil Garg",
@@ -97,19 +83,19 @@
       "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md"
     },
     {
-      "id": "DSWG24DiscretizationBias",
-      "title": "Addressing Discretization-Induced Bias in Demographic Prediction",
-      "authors": "Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg",
-      "publication": "ACM FAccT / PNAS Nexus, 2024",
-      "publication_year": 2024,
-      "source_url": "https://arxiv.org/pdf/2405.16762",
-      "paper_info": "Addressing Discretization-Induced Bias in Demographic Prediction by Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg; ACM FAccT / PNAS Nexus, 2024.",
+      "id": "GN21DriverSurgePricing",
+      "title": "Driver Surge Pricing",
+      "authors": "Nikhil Garg and Hamid Nazerzadeh",
+      "publication": "Management Science, 2022",
+      "publication_year": 2022,
+      "source_url": "https://arxiv.org/pdf/1905.07544",
+      "paper_info": "Driver Surge Pricing by Nikhil Garg and Hamid Nazerzadeh; Management Science, 2022.",
       "status": "Formalized",
-      "human_review": "0/32",
-      "lean_loc": 26033,
+      "human_review": "0/24",
+      "lean_loc": 143056,
       "main_note": "",
-      "paper_folder": "papers/DSWG24DiscretizationBias",
-      "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md"
+      "paper_folder": "papers/GN21DriverSurgePricing",
+      "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "GCG24UserItemFairness",
@@ -127,13 +113,28 @@
       "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md"
     },
     {
+      "id": "DSWG24DiscretizationBias",
+      "title": "Addressing Discretization-Induced Bias in Demographic Prediction",
+      "authors": "Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg",
+      "publication": "PNAS Nexus, 2025",
+      "publication_year": 2025,
+      "source_url": "https://arxiv.org/pdf/2405.16762",
+      "paper_info": "Addressing Discretization-Induced Bias in Demographic Prediction by Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg; PNAS Nexus, 2025.",
+      "status": "Formalized",
+      "human_review": "0/32",
+      "lean_loc": 26033,
+      "main_note": "",
+      "paper_folder": "papers/DSWG24DiscretizationBias",
+      "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md"
+    },
+    {
       "id": "MBJG25ProducerFairness",
-      "title": "Balancing Producer Fairness and Efficiency via Bayesian Rating System Design",
+      "title": "Balancing Producer Fairness and Efficiency via Prior-Weighted Rating System Design",
       "authors": "Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg",
       "publication": "ICWSM, 2025",
       "publication_year": 2025,
       "source_url": "https://arxiv.org/pdf/2207.04369",
-      "paper_info": "Balancing Producer Fairness and Efficiency via Bayesian Rating System Design by Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg; ICWSM, 2025.",
+      "paper_info": "Balancing Producer Fairness and Efficiency via Prior-Weighted Rating System Design by Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg; ICWSM, 2025.",
       "status": "Formalized",
       "human_review": "0/17",
       "lean_loc": 580,

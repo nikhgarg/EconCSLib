@@ -15,7 +15,7 @@
       <nav class="nav" aria-label="Primary">
         <a class="brand" href="#">
           <span class="brand-name">EconCSLib:</span>
-          <span class="brand-subtitle">an AI-generated Lean 4 library for Economics and Computation</span>
+          <span class="brand-subtitle">AI-Assisted Lean Formalization for Economics &amp; Computation research</span>
         </a>
       </nav>
 
@@ -54,6 +54,11 @@
             selected public partial formalizations whose remaining assumptions
             are explicit.
           </p>
+          <p>
+            Folder IDs are stable artifact identifiers and may track an arXiv,
+            conference, or original working-paper year. The table uses the
+            published citation title and year.
+          </p>
         </div>
 
         <div class="table-wrap" role="region" aria-label="Paper status table" tabindex="0">
@@ -67,11 +72,11 @@
               </tr>
             </thead>
             <tbody>
+              <!-- BEGIN GENERATED PAPER STATUS ROWS -->
               <tr>
                 <td>
                   <a class="paper-source" href="http://www.jstor.org/stable/2312726"><cite>College Admissions and the Stability of Marriage</cite></a> by
-                  D. Gale and L. S. Shapley; American Mathematical Monthly,
-                  1962.
+                  D. Gale and L. S. Shapley; American Mathematical Monthly, 1962.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
                 <td>381</td>
@@ -89,30 +94,19 @@
               <tr>
                 <td>
                   <a class="paper-source" href="https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf"><cite>Competitive Auctions and Digital Goods</cite></a> by
-                  Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright;
-                  SODA, 2001.
+                  Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright; SODA, 2001.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
                 <td>598</td>
-                <td>Theorem 8.2 follows the journal version; the broader preliminary wording is refuted in the source audit. The paper-local LOC is small because most auction infrastructure and proof work lives in the reusable auctions library.</td>
+                <td>The journal version is used as the corrected source for Theorem 8.2.</td>
               </tr>
               <tr>
                 <td>
                   <a class="paper-source" href="https://people.eecs.berkeley.edu/~vazirani/pubs/adwords.pdf"><cite>AdWords and Generalized Online Matching</cite></a> by
-                  Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V.
-                  Vazirani; Journal of the ACM, 2007.
+                  Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V. Vazirani; Journal of the ACM, 2007.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
                 <td>13,221</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>
-                  <a class="paper-source" href="https://arxiv.org/pdf/1905.07544"><cite>Driver Surge Pricing</cite></a> by
-                  Nikhil Garg and Hamid Nazerzadeh; Management Science, 2021.
-                </td>
-                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>143,056</td>
                 <td></td>
               </tr>
               <tr>
@@ -126,19 +120,17 @@
               </tr>
               <tr>
                 <td>
-                  <a class="paper-source" href="https://arxiv.org/pdf/2405.16762"><cite>Addressing Discretization-Induced Bias in Demographic Prediction</cite></a> by
-                  Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg;
-                  ACM FAccT / PNAS Nexus, 2024.
+                  <a class="paper-source" href="https://arxiv.org/pdf/1905.07544"><cite>Driver Surge Pricing</cite></a> by
+                  Nikhil Garg and Hamid Nazerzadeh; Management Science, 2022.
                 </td>
-                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>26,033</td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>143,056</td>
                 <td></td>
               </tr>
               <tr>
                 <td>
                   <a class="paper-source" href="https://openreview.net/pdf?id=ZOZjMs3JTs"><cite>User-item fairness tradeoffs in recommendations</cite></a> by
-                  Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg;
-                  NeurIPS, 2024.
+                  Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg; NeurIPS, 2024.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
                 <td>45,906</td>
@@ -146,9 +138,17 @@
               </tr>
               <tr>
                 <td>
-                  <a class="paper-source" href="https://arxiv.org/pdf/2207.04369"><cite>Balancing Producer Fairness and Efficiency via Bayesian Rating System Design</cite></a> by
-                  Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil
-                  Garg; ICWSM, 2025.
+                  <a class="paper-source" href="https://arxiv.org/pdf/2405.16762"><cite>Addressing Discretization-Induced Bias in Demographic Prediction</cite></a> by
+                  Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg; PNAS Nexus, 2025.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>26,033</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="paper-source" href="https://arxiv.org/pdf/2207.04369"><cite>Balancing Producer Fairness and Efficiency via Prior-Weighted Rating System Design</cite></a> by
+                  Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg; ICWSM, 2025.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
                 <td>580</td>
@@ -157,23 +157,22 @@
               <tr>
                 <td>
                   <a class="paper-source" href="https://jmvidal.cse.sc.edu/library/lehmann02a.pdf"><cite>Truth Revelation in Approximately Efficient Combinatorial Auctions</cite></a> by
-                  Daniel Lehmann, Liadan Ita O'Callaghan, and Yoav Shoham;
-                  Journal of the ACM, 2002.
+                  Daniel Lehmann, Liadan Ita O&#x27;Callaghan, and Yoav Shoham; Journal of the ACM, 2002.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
                 <td>7,288</td>
-                <td>Greedy approximation/truthfulness, Theorem 6.1 reductions, and an abstract complexity-class note are closed; native machine-level NP-hardness, polynomial-time, and randomized-class semantics remain external.</td>
+                <td>Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external.</td>
               </tr>
               <tr>
                 <td>
                   <a class="paper-source" href="https://www.cs.cmu.edu/~arielpro/15896s15/docs/paper12a.pdf"><cite>On Approximately Fair Allocations of Indivisible Goods</cite></a> by
-                  Richard J. Lipton, Evangelos Markakis, Elchanan Mossel, and
-                  Amin Saberi; ACM EC, 2004.
+                  Richard J. Lipton, Evangelos Markakis, Elchanan Mossel, and Amin Saberi; ACM EC, 2004.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
                 <td>80,220</td>
                 <td>Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.</td>
               </tr>
+              <!-- END GENERATED PAPER STATUS ROWS -->
             </tbody>
           </table>
         </div>

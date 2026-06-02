@@ -63,7 +63,9 @@ Completed papers should also have:
   rows/slices, interface metadata, and artifact paths. After editing it, run
   `python3 scripts/sync_paper_status.py` to regenerate the detailed aggregate
   `papers/status.json`, the compact human-facing `papers/human_status.json`,
-  and `docs/PAPER_STATUS.md`. Do not hand-edit those generated status files.
+  `docs/PAPER_STATUS.md`, the root `README.md` status table, and the
+  `site/index.html` status table. Do not hand-edit those generated status files
+  or rows.
 - `FORMALIZATION_PLAN.md`: lightweight outside-Lean proof scratchpad.
 - `DependencyDAG.tex`: proof map with every named result and definition-like
   paper object represented; status and caveat text should agree with

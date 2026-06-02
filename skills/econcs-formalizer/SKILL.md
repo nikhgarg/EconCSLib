@@ -105,9 +105,9 @@ In EconCSLib, paper-local `status.json` files are the source of truth for
 status, human-review row counts, review-surface slices, and artifact paths.
 After changing status metadata, run `python3 scripts/sync_paper_status.py`.
 That command regenerates the detailed `papers/status.json`, the compact
-human-facing `papers/human_status.json`, and `docs/PAPER_STATUS.md`. Do not
-hand-edit those generated status files. The README and Pages status summaries
-should mirror `papers/human_status.json`.
+human-facing `papers/human_status.json`, `docs/PAPER_STATUS.md`, the root
+`README.md` status table, and the `site/index.html` status table. Do not
+hand-edit those generated status files or rows.
 
 When a proof is blocked, think outside Lean as needed, patch the mathematical
 argument yourself, and then implement the patched proof in Lean. Do not stop at
@@ -1329,10 +1329,10 @@ pass:
   `ProofInterface.lean` or implementation modules. Curate the review rows and
   optional slices in paper-local `status.json` under `review_surface`, then run
   `python3 scripts/sync_paper_status.py` to refresh `papers/status.json`,
-  `papers/human_status.json`, and `docs/PAPER_STATUS.md`; after that, refresh
-  the ignored dashboard cache. Do not confuse "0/N reviewed" with stale or
-  failed Lean validation; it only means no human review entries have been
-  saved.
+  `papers/human_status.json`, `docs/PAPER_STATUS.md`, the root README status
+  table, and the site status table; after that, refresh the ignored dashboard
+  cache. Do not confuse "0/N reviewed" with stale or failed Lean validation; it
+  only means no human review entries have been saved.
   Final human review should normally expose a compact source-facing surface,
   not every proof endpoint. Do not report an unfiltered declaration count such
   as hundreds of rows as the human dashboard surface in a final validation
@@ -1385,11 +1385,12 @@ pass:
   witness interfaces, no standalone proof-facing formula aliases in the audit
   ledger, no stale `Lean witness` report language, and no completed-paper status
   rows that hide caveats in prose.
-- Update the front repository `README.md` paper-status table and
-  `docs/ECONCSLEAN_CURRENT_STATUS.md` at the same time, using the exact caveats
-  from the final report. Do not let the front README keep stale "partial" or
-  "active" wording after a paper-local validation report says a paper is
-  formalized.
+- Update paper-local `status.json`, then run
+  `python3 scripts/sync_paper_status.py` so the front repository README,
+  `docs/PAPER_STATUS.md`, `papers/human_status.json`, and the site table all use
+  the exact caveats from the final report. Do not let any public status surface
+  keep stale "partial" or "active" wording after a paper-local validation report
+  says a paper is formalized.
 - Use one status vocabulary per artifact. At paper and repository level,
   `formalized` is the status for a paper/result whose Lean statement and proof
   compile with its caveats documented. Lean verification is the mechanism, not a

@@ -4,10 +4,10 @@ import EconCSLib.Learning.Bandits.ThompsonSampling
 import EconCSLib.Algorithms.Online.Regret
 
 /-!
-# Paper Interface: Bayesian Rating Fairness
+# Paper Interface: Prior-Weighted Rating Fairness
 
 This file is the single-file human-facing Lean interface for the ICWSM 2025
-*Balancing Producer Fairness and Efficiency via Bayesian Rating System Design*
+*Balancing Producer Fairness and Efficiency via Prior-Weighted Rating System Design*
 formalization. The declarations are ordered to match paper presentation:
 
 1. fixed binary-rating model definitions,

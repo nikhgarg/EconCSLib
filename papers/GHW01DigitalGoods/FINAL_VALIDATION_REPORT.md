@@ -5,10 +5,11 @@
 - Lean formalization status: `formalized`.
 - Human dashboard status: 0/19 rows reviewed, 19 unreviewed, 0 stale, 0
   mismatch. No human review entries have been saved yet.
-- Paper correctness verdict: the later journal version resolves the only
-  substantive source ambiguity found here. The broad preliminary Theorem 8.2
-  wording is false as a weak DSIC/bid-independent statement; the journal
-  monotone-auction statement is the source of truth for Section 8.2.
+- Paper correctness verdict: the journal version is used as the corrected
+  source for Theorem 8.2 and resolves the only substantive source ambiguity
+  found here. The broad preliminary Theorem 8.2 wording is false as a weak
+  DSIC/bid-independent statement; the journal monotone-auction statement is the
+  source of truth for Section 8.2.
 - Qualitative proof verdict: the formalization follows the paper's section
   structure. Section 8.2 uses a direct finite PMF layer-cake proof from the
   journal raw-CDF monotonicity condition instead of assuming a common-seed
@@ -181,8 +182,9 @@ declarations remain only as auxiliary reusable-library/audit material.
 - Preliminary Theorem 8.2, read literally as weak truthfulness plus
   bid-independent pricing, is false. Lean records a two-bidder threshold
   counterexample earning `101` against fixed-price benchmark `100`.
-- The journal version corrects the Section 8.2 scope by using monotone
-  truthful randomized auctions. No other source inconsistency was found.
+- The journal version is used as the corrected source for Theorem 8.2, using
+  monotone truthful randomized auctions. No other source inconsistency was
+  found.
 
 ## 13. Validation Checks
 

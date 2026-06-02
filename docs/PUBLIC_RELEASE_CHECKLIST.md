@@ -17,10 +17,10 @@ external contributions.
 - [ ] Each public `papers/<PaperName>/status.json` is current, and
       `python3 scripts/sync_paper_status.py --check` confirms that the generated
       `papers/status.json`, `papers/human_status.json`, and
-      `docs/PAPER_STATUS.md` are in sync.
-- [ ] `README.md` and the site status table summarize the same public paper set,
-      statuses, review counts, Lean LOC, and sparse notes as
-      `papers/human_status.json`.
+      `docs/PAPER_STATUS.md`, `README.md`, and `site/index.html` are in sync.
+- [ ] The generated `README.md`, `docs/PAPER_STATUS.md`, and site status tables
+      summarize the same public paper set, statuses, review counts, Lean LOC,
+      and sparse notes as `papers/human_status.json`.
 - [ ] Status labels use `Formalized`, `Formalized with caveat`, or
       `Partially formalized`; do not publish `Verified in Lean` as a separate
       status category.
@@ -58,14 +58,15 @@ Each public paper folder should have:
       library changes that are public-safe.
 - [ ] Merge the filtered history into the public repository.
 - [ ] Update paper-local `status.json`, run `python3 scripts/sync_paper_status.py`,
-      and then update `README.md`, the site summary, and the relevant roadmap or
-      release notes.
+      and then update surrounding README/site prose, roadmap, or release notes
+      only if needed.
 
 ## GitHub Pages Readiness
 
 - [ ] Decide whether the reviewed workshop paper PDF should be linked
       externally or added as a final public artifact.
-- [ ] Confirm the site status table matches `papers/human_status.json` and
+- [ ] Run `python3 scripts/sync_paper_status.py --check` to confirm the site
+      status table matches `papers/human_status.json` and
       `docs/PAPER_STATUS.md`.
 - [x] The Pages workflow is tracked as `.github/workflows/pages.yml`.
 - [ ] Confirm the Pages workflow completes and the Pages URL serves the site.

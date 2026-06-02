@@ -51,19 +51,24 @@ proves.
 Paper status changes frequently. Each paper folder has a paper-local
 `status.json`; the generated human-facing snapshot is
 [`papers/human_status.json`](papers/human_status.json), and the generated
-markdown table is [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md).
+markdown/site tables are [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md) and
+[`site/index.html`](site/index.html).
+
+Paper IDs and folder names are stable artifact identifiers and may track an
+arXiv, conference, or original working-paper year. Public status tables use the
+published citation title and year.
 
 <!-- BEGIN GENERATED PAPER STATUS TABLE -->
 | Paper | Status | Review | Interface | Human summary |
 |---|---:|---:|---:|---|
 | [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized | 0/7 | OK: 109 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library. |
 | [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 468 lines |  |
-| [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/19 | OK: 290 lines | Theorem 8.2 follows the journal version; the broader preliminary wording is documented as refuted. |
+| [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/19 | OK: 290 lines | The journal version is used as the corrected source for Theorem 8.2. |
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines |  |
-| [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 184 lines |  |
 | [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 92 lines |  |
-| [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | 0/32 | OK: 406 lines |  |
+| [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 184 lines |  |
 | [GCG24 User Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 235 lines |  |
+| [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | 0/32 | OK: 406 lines |  |
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized | 0/17 | OK: 296 lines | Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1. |
 | [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 174 lines | Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external. |
 | [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/33 | OK: 171 lines | Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure. |
@@ -78,6 +83,8 @@ For more detail, use:
   status, review counts, and interface metadata.
 - [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md) for the generated public paper
   status table.
+- [`site/index.html`](site/index.html) for the generated public website status
+  table.
 - Individual `papers/<PaperName>/README.md` files for paper-specific caveats.
 
 Partial public formalizations are included when the remaining assumption seam is

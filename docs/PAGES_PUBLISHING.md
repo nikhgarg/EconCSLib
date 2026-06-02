@@ -18,11 +18,11 @@ repository are ready.
 
 1. Decide whether the paper PDF should be linked externally or added as a final
    reviewed public artifact.
-2. Review `site/index.html` for accurate paper status and contact text.
-3. Run `python3 scripts/sync_paper_status.py --check`, then confirm
-   `papers/human_status.json`, `docs/PAPER_STATUS.md`, and the site status
-   table describe the same papers, statuses, review counts, Lean LOC, and
-   sparse notes. Use `papers/status.json` for detailed audit metadata.
+2. Review `site/index.html` for accurate contact text and non-generated prose.
+3. Run `python3 scripts/sync_paper_status.py --check` to confirm
+   `papers/status.json`, `papers/human_status.json`, `docs/PAPER_STATUS.md`,
+   `README.md`, and the generated site status table are in sync. Use
+   `papers/status.json` for detailed audit metadata.
 4. Run `python3 scripts/audit_repository.py` and confirm there are 0 errors.
 5. Preview the static site locally, for example:
 
@@ -44,11 +44,11 @@ Treat the site as a summary layer. The source of truth remains:
   metadata;
 - generated `papers/human_status.json` for compact public status;
 - generated `papers/status.json` for detailed aggregate status;
-- `README.md`, `docs/PAPER_STATUS.md`, and `site/index.html` for human
-  summaries;
+- generated status tables in `README.md`, `docs/PAPER_STATUS.md`, and
+  `site/index.html` for human summaries;
 - paper-local `FINAL_VALIDATION_REPORT.md` files for detailed caveats; and
 - `CONTRIBUTING.md` for the contribution policy.
 
 When a paper status changes, update the paper-local `status.json`, run
-`python3 scripts/sync_paper_status.py`, then update the site and README summary
-layers only if their prose or table snapshot needs to change.
+`python3 scripts/sync_paper_status.py`, then update site or README prose only
+if surrounding non-generated text needs to change.

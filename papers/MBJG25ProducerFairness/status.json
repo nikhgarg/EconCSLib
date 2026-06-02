@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "id": "MBJG25ProducerFairness",
-  "title": "Balancing Producer Fairness and Efficiency via Bayesian Rating System Design",
+  "title": "Balancing Producer Fairness and Efficiency via Prior-Weighted Rating System Design",
   "authors": "Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg",
   "source_version": "ICWSM 2025 / arXiv:2207.04369",
   "build_target": "lake build MBJG25ProducerFairness",

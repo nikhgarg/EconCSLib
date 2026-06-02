@@ -3,7 +3,7 @@
   "id": "GN21DriverSurgePricing",
   "title": "Driver Surge Pricing",
   "authors": "Nikhil Garg and Hamid Nazerzadeh",
-  "source_version": "Management Science / arXiv v4, 2021",
+  "source_version": "Management Science 2022 / arXiv v4, 2021",
   "build_target": "lake build GN21DriverSurgePricing",
   "status": "formalized",
   "main_caveat": "Named CTMC lemmas and Theorems 1--4 are exposed; zero-mass boundary behavior is audited separately.",

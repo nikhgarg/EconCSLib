@@ -19,10 +19,10 @@ The extracted text cache `GHW01DigitalGoods.txt` is tracked and used for
 named-statement searches. The source PDFs are public at the links above, but
 the ignored local PDF cache may be absent from a public checkout; refresh the
 text cache only if the source PDF changes. A 2026-06-01 web search did not find
-public TeX/source. The later journal version is the controlling source where it
-refines the preliminary text: it clarifies anonymity/set-of-bids and
-masked-vector language, and it supplies the corrected Section 8.2
-monotone-auction statement. This folder keeps the InterTrust/SODA
+public TeX/source. The journal version is used as the corrected source for
+Theorem 8.2, and as the controlling source where it refines the preliminary
+text: it clarifies anonymity/set-of-bids and masked-vector language, and it
+supplies the corrected Section 8.2 monotone-auction statement. This folder keeps the InterTrust/SODA
 theorem-number labels as a crosswalk for the existing Lean audit endpoints;
 where the preliminary and journal statements conflict, the journal statement
 controls.
@@ -47,7 +47,7 @@ wrappers no longer take the old raw proof-adapter structures directly.
 Theorem 6.2 constructs the ranked top-prefix sampling model internally,
 Corollary 4.2 constructs the cutoff truncation internally, Theorem 9.3 is
 closed against the paper's set-of-bids focused-outcome convention, and Theorem
-8.2 is closed against the journal version's monotone truthful
+8.2 is closed against the journal version's corrected monotone truthful
 randomized-offer theorem. The literal weak-DSIC/bid-independent reading of the
 technical-report Theorem 8.2 is kept as a source-audit counterexample: a
 two-bidder threshold auction can earn `101` against fixed-price benchmark
@@ -108,9 +108,10 @@ convention.
 ## Maintainer Notes
 
 - Last passing paper build: `lake build GHW01DigitalGoods`.
-- Current status: formalized. The old broad technical-report Theorem 8.2
-  wording is false; the journal monotone randomized-offer endpoint is the
-  controlling paper-facing theorem used here.
+- Current status: formalized. The journal version is used as the corrected
+  source for Theorem 8.2; the old broad technical-report wording is false, and
+  the journal monotone randomized-offer endpoint is the controlling
+  paper-facing theorem used here.
 - Do not redo: Section 7.2 tightness for `ghwTightValue`; it is closed through
   `paper_theorem7_2_tightness_ratio_for_repeated_bid_family`.
 - Do not redo: Theorem 4.1 now has a verified base-two real-log wrapper,
