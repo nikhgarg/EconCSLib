@@ -25734,6 +25734,32 @@ theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price_le_final
           htail_price
 
 /--
+Completed ranks drawn from a clock-sorted exact-drop schedule have all reached
+their displayed finite `B*` thresholds by the deterministic final clock.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_completed_threshold_le_final_state_clock_of_subset_of_clock_sorted
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (scheduledRanks : List ℕ)
+    (completedRanks : Finset ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice scheduledRanks)
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    ∀ rank,
+      rank ∈ completedRanks →
+        paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) ≤
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state scheduledRanks).clockPrice := by
+  intro rank hrank
+  simpa [paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price_le_final_state_clock_of_mem_of_clock_sorted
+      model state hsorted (hsubset rank hrank)
+
+/--
 Adjacent-threshold sortedness for exact-drop schedules. Unlike
 `paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted`, this
 predicate does not mention the current clock; it only states that scheduled

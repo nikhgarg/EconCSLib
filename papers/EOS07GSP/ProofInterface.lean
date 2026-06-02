@@ -4411,6 +4411,33 @@ theorem theorem8_clock_sorted_schedule_threshold_le_final_clock_of_mem
       model state hsorted hrank
 
 /--
+Completed ranks that are included in a clock-sorted finite schedule have all
+reached their displayed finite `B*` thresholds by the deterministic final
+clock.
+-/
+theorem theorem8_clock_sorted_schedule_completed_threshold_le_final_clock
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (scheduledRanks : List ℕ)
+    (completedRanks : Finset ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice scheduledRanks)
+    (hsubset :
+      ∀ rank, rank ∈ completedRanks → rank ∈ scheduledRanks) :
+    ∀ rank,
+      rank ∈ completedRanks →
+        theorem8BStarThresholdBid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) ≤
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state scheduledRanks).clockPrice := by
+  intro rank hrank
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_completed_threshold_le_final_state_clock_of_subset_of_clock_sorted
+      model state scheduledRanks completedRanks hsorted hsubset rank hrank
+
+/--
 Clock-sorted finite schedules supply both the named-strategy reachability
 history and the exact finite `B*` dropout history for the deterministic
 schedule final state.
