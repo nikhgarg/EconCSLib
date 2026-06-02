@@ -4372,6 +4372,45 @@ theorem theorem8_cold_start_clock_sorted_schedule_trace_source_extensive_exact_d
           hterminal_unscheduled rank hnot_mem)
 
 /--
+Clock-sorted finite schedules end at a clock weakly above their initial clock.
+-/
+theorem theorem8_clock_sorted_schedule_initial_clock_le_final_clock
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks) :
+    state.clockPrice ≤
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks).clockPrice := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_initial_clock_le_final_state_clock_of_clock_sorted
+      model state ranks hsorted
+
+/--
+Every rank listed in a clock-sorted finite schedule has reached its displayed
+finite `B*` threshold by the deterministic final clock.
+-/
+theorem theorem8_clock_sorted_schedule_threshold_le_final_clock_of_mem
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    {ranks : List ℕ} {rank : ℕ}
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hrank : rank ∈ ranks) :
+    theorem8BStarThresholdBid
+        model.value model.clickThroughRate (model.remaining + 1)
+        (rank + 1) ≤
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks).clockPrice := by
+  simpa [theorem8BStarThresholdBid,
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price_le_final_state_clock_of_mem_of_clock_sorted
+      model state hsorted hrank
+
+/--
 Clock-sorted finite schedules supply both the named-strategy reachability
 history and the exact finite `B*` dropout history for the deterministic
 schedule final state.

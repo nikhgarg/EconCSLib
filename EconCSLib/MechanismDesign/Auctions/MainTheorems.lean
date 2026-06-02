@@ -25633,6 +25633,107 @@ theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_l
       · exact le_trans hhead (ih htail htail_mem)
 
 /--
+Clock-sorted exact-drop schedules never end below their initial clock. Each
+scheduled step advances weakly upward to the next finite `B*` threshold.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_initial_clock_le_final_state_clock_of_clock_sorted
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :
+    ∀ (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+      (ranks : List ℕ),
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks →
+        state.clockPrice ≤
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice := by
+  intro state ranks
+  induction ranks generalizing state with
+  | nil =>
+      intro _hsorted
+      simp [paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state]
+  | cons head tail ih =>
+      intro hsorted
+      rcases hsorted with ⟨hhead, htail⟩
+      let nextState :=
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state
+          model state head
+      have hnext :
+          nextState.clockPrice ≤
+            (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+              model nextState tail).clockPrice := by
+        simpa [nextState,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price,
+          PaperTheorem8GeneralizedEnglishAuctionState.recordDropout,
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock] using
+          ih nextState htail
+      have hstate_to_next : state.clockPrice ≤ nextState.clockPrice := by
+        simpa [nextState,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price,
+          PaperTheorem8GeneralizedEnglishAuctionState.recordDropout,
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock] using
+          hhead
+      simpa [nextState,
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state]
+        using le_trans hstate_to_next hnext
+
+/--
+Every rank listed in a clock-sorted exact-drop schedule has its finite `B*`
+threshold reached by the deterministic final clock.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price_le_final_state_clock_of_mem_of_clock_sorted
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ) :
+    ∀ {ranks : List ℕ} {rank : ℕ},
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks →
+      rank ∈ ranks →
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+            model rank ≤
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice := by
+  intro ranks
+  induction ranks generalizing state with
+  | nil =>
+      intro rank _hsorted hrank
+      simp at hrank
+  | cons head tail ih =>
+      intro rank hsorted hrank
+      rcases hsorted with ⟨hhead, htail⟩
+      let nextState :=
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state
+          model state head
+      simp only [List.mem_cons] at hrank
+      rcases hrank with hsame | htail_mem
+      · subst rank
+        have hnext :
+            nextState.clockPrice ≤
+              (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+                model nextState tail).clockPrice := by
+          simpa [nextState,
+            paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state,
+            paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price,
+            PaperTheorem8GeneralizedEnglishAuctionState.recordDropout,
+            PaperTheorem8GeneralizedEnglishAuctionState.advanceClock] using
+            paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_initial_clock_le_final_state_clock_of_clock_sorted
+              model nextState tail htail
+        simpa [nextState,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price,
+          PaperTheorem8GeneralizedEnglishAuctionState.recordDropout,
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock] using hnext
+      · have htail_price :=
+          ih nextState htail htail_mem
+        simpa [nextState,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_next_state,
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price,
+          PaperTheorem8GeneralizedEnglishAuctionState.recordDropout,
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock] using
+          htail_price
+
+/--
 Adjacent-threshold sortedness for exact-drop schedules. Unlike
 `paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted`, this
 predicate does not mention the current clock; it only states that scheduled
