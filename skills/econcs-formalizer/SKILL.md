@@ -424,12 +424,13 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   main branch onto public `main` only when a substantial public change matters
   to private work, especially library/API, generated-status, workflow, or CI
   changes, when a paper is finished, or before preparing a public PR. Routine
-  private proof commits and pushes do not require a rebase; it is fine to push
-  the current private branch as-is after a normal proof checkpoint. Batch rebases
-  at major proof/status milestones or when the user explicitly asks. Do not
-  rebase private after every small public-only documentation commit. After an
-  intentional private rebase, push with `git push --force-with-lease origin
-  main`; never use a blind force push.
+  private proof commits and checkpoint pushes do not require a rebase. It is
+  allowed and usually preferred to push the current private branch as-is after a
+  normal proof checkpoint; do not treat pushing itself as a rebase trigger. Batch
+  rebases at major proof/status milestones, such as when a paper is finished, or
+  when the user explicitly asks. Do not rebase private after every small
+  public-only documentation commit. After an intentional private rebase, push
+  with `git push --force-with-lease origin main`; never use a blind force push.
 - When a paper exists in both private and public, choose one primary worktree
   for the current task and keep all builds, dashboard refreshes, reports, DAGs,
   and commits in that same repo. Use the public repo as primary for public
@@ -953,10 +954,11 @@ the Lean statements against the paper.
   when a named theorem/proposition/lemma from the paper is proven or when
   moving on from a paper; otherwise keep related intermediate proof work
   together in the working tree. A local commit does not automatically require a
-  rebase or generated-status refresh. A routine private push can happen without
-  rebasing; rebase only at major milestones such as a finished paper, before
-  publication/PR work, after meaningful public library/API changes, or on
-  explicit request.
+  rebase or generated-status refresh. A routine private proof checkpoint can be
+  pushed without rebasing first; do not insert a rebase just because you are
+  about to push. Rebase only at major milestones such as when a paper is
+  finished, before publication/PR work, after meaningful public library/API
+  changes, or on explicit request.
 - Prioritize finishing the theorem over creating frequent checkpoints. Once the
   finite scaffold is stable, spend effort on the hard remaining bridge rather
   than packaging every helper lemma as a separate commit or documentation pass.
