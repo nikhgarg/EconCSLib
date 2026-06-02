@@ -24481,6 +24481,51 @@ theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_re
                 hsame] using hactive)
 
 /--
+For a clock-disciplined source step, any rank that newly drops records exactly
+its finite `B*` threshold. Clock discipline supplies the no-overshoot side of
+the equality, while strategy consistency supplies that the threshold has been
+reached.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_new_dropout_record_eq_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    {rank : ℕ}
+    (hactive : state.IsActive rank)
+    (hinactive : ¬ next.IsActive rank) :
+    next.lastDropout rank =
+      some
+        (paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  have hrecord_and_threshold :=
+    paper_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_eq_and_threshold_le
+      model
+      (paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_to_strategy_step
+        model hstep)
+      hactive hinactive
+  have hclock :
+      state.clockPrice =
+        paper_theorem8_bstar_threshold_bid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1) := by
+    exact
+      le_antisymm
+        (paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_realized_new_dropout_no_overshoot
+          model hstep hstate_no_overshoot hactive hinactive)
+        hrecord_and_threshold.2
+  simpa [hclock] using hrecord_and_threshold.1
+
+/--
 A clock-disciplined source step can be viewed as a one-step
 clock-disciplined history.
 -/

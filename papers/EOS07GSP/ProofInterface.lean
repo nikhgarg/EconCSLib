@@ -3739,6 +3739,41 @@ theorem theorem8_clock_disciplined_strategy_step_realized_new_dropout_no_oversho
       hactive hinactive
 
 /--
+At any realized new dropout of a clock-disciplined source step, the new
+dropout record is exactly the rank's finite `B*` threshold. This packages the
+one-step exact-record bridge needed by source-transition proofs.
+-/
+theorem theorem8_clock_disciplined_strategy_step_new_dropout_record_eq_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    {rank : ℕ}
+    (hactive : state.IsActive rank)
+    (hinactive : ¬ next.IsActive rank) :
+    next.lastDropout rank =
+      some
+        (theorem8BStarThresholdBid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_new_dropout_record_eq_threshold
+      model hstep
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      hactive hinactive
+
+/--
 A clock-disciplined source step is the corresponding one-step
 clock-disciplined history.
 -/

@@ -3037,6 +3037,9 @@ theorem audit_theorem8_bstar_ranked_threshold_strategy_step_new_dropout_record_e
     le_antisymm hno_overshoot hrecord_and_threshold.2
   simpa [hclock] using hrecord_and_threshold.1
 
+def audit_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_new_dropout_record_eq_threshold :=
+  paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_new_dropout_record_eq_threshold
+
 /-- Audit for Theorem 8 source histories: ordinary named-strategy histories
 upgrade to no-overshoot histories once every realized new-dropout step is known
 not to overshoot that rank's finite `B*` threshold. -/
