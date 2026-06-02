@@ -19,6 +19,7 @@
       "human_review": "0/7",
       "lean_loc": 381,
       "main_note": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.",
+      "main_note_citation": null,
       "paper_folder": "papers/GS62CollegeAdmissions",
       "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md"
     },
@@ -34,6 +35,7 @@
       "human_review": "0/27",
       "lean_loc": 8877,
       "main_note": "",
+      "main_note_citation": null,
       "paper_folder": "papers/Roth82StableMatching",
       "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md"
     },
@@ -48,7 +50,11 @@
       "status": "Formalized",
       "human_review": "0/19",
       "lean_loc": 598,
-      "main_note": "The journal version is used as the corrected source for Theorem 8.2.",
+      "main_note": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared auctions library. The journal version is used as the corrected source for Theorem 8.2.",
+      "main_note_citation": {
+        "label": "Goldberg et al. 2006",
+        "url": "https://www.sciencedirect.com/science/article/pii/S0899825606000303"
+      },
       "paper_folder": "papers/GHW01DigitalGoods",
       "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md"
     },
@@ -64,6 +70,7 @@
       "human_review": "0/39",
       "lean_loc": 13221,
       "main_note": "",
+      "main_note_citation": null,
       "paper_folder": "papers/MSVV07AdWords",
       "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md"
     },
@@ -79,6 +86,7 @@
       "human_review": "0/16",
       "lean_loc": 127936,
       "main_note": "",
+      "main_note_citation": null,
       "paper_folder": "papers/LG21TestOptionalPolicies",
       "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md"
     },
@@ -94,6 +102,7 @@
       "human_review": "0/24",
       "lean_loc": 143056,
       "main_note": "",
+      "main_note_citation": null,
       "paper_folder": "papers/GN21DriverSurgePricing",
       "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md"
     },
@@ -109,6 +118,7 @@
       "human_review": "0/18",
       "lean_loc": 45906,
       "main_note": "",
+      "main_note_citation": null,
       "paper_folder": "papers/GCG24UserItemFairness",
       "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md"
     },
@@ -124,6 +134,7 @@
       "human_review": "0/32",
       "lean_loc": 26033,
       "main_note": "",
+      "main_note_citation": null,
       "paper_folder": "papers/DSWG24DiscretizationBias",
       "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md"
     },
@@ -139,6 +150,7 @@
       "human_review": "0/17",
       "lean_loc": 580,
       "main_note": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
+      "main_note_citation": null,
       "paper_folder": "papers/MBJG25ProducerFairness",
       "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md"
     },
@@ -154,6 +166,7 @@
       "human_review": "0/30",
       "lean_loc": 7288,
       "main_note": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external.",
+      "main_note_citation": null,
       "paper_folder": "papers/LOS02CombinatorialAuctions",
       "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md"
     },
@@ -169,6 +182,7 @@
       "human_review": "0/33",
       "lean_loc": 80220,
       "main_note": "Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.",
+      "main_note_citation": null,
       "paper_folder": "papers/LMMS04FairDivision",
       "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md"
     }

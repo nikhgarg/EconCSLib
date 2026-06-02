@@ -70,6 +70,21 @@ README_TITLE_OVERRIDES = {
 }
 
 
+def note_citation(payload: dict[str, Any]) -> dict[str, str] | None:
+    raw = payload.get("human_summary_citation")
+    if not isinstance(raw, dict):
+        return None
+    label = raw.get("label")
+    url = raw.get("url")
+    if not isinstance(label, str) or not isinstance(url, str):
+        return None
+    label = label.strip()
+    url = url.strip()
+    if not label or not url:
+        return None
+    return {"label": label, "url": url}
+
+
 def paper_dirs() -> list[Path]:
     return sorted(
         folder
@@ -169,6 +184,7 @@ def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[s
             "human_review": human_review_label(payload),
             "lean_loc": lean_loc(folder),
             "main_note": human_note(payload),
+            "main_note_citation": note_citation(payload),
             "paper_folder": str(folder.relative_to(ROOT)),
             "review_entrypoint": payload["review_entrypoint"],
         }
@@ -217,6 +233,18 @@ def md_escape(text: str) -> str:
     return " ".join(text.split()).replace("|", r"\|")
 
 
+def md_note_with_citation(note: str, citation: dict[str, str] | None) -> str:
+    note = md_escape(note)
+    if not citation:
+        return note
+    label = md_escape(citation["label"])
+    url = citation["url"]
+    rendered_citation = f"[{label}]({url})"
+    if note.endswith("."):
+        return f"{note[:-1]} {rendered_citation}."
+    return f"{note} {rendered_citation}"
+
+
 def repo_relative_link(path: str) -> str:
     return f"../{path}"
 
@@ -244,7 +272,7 @@ def readme_paper_label(paper_id: str) -> str:
 
 
 def readme_note(payload: dict[str, Any]) -> str:
-    return human_note(payload)
+    return md_note_with_citation(human_note(payload), note_citation(payload))
 
 
 def readme_interface_label(payload: dict[str, Any]) -> str:
@@ -337,7 +365,7 @@ def render_paper_status_md(payload: dict[str, Any]) -> str:
                     status_link,
                     md_escape(row["human_review"]),
                     f"{int(row['lean_loc']):,}",
-                    md_escape(row["main_note"]),
+                    md_note_with_citation(row["main_note"], row.get("main_note_citation")),
                 ]
             )
             + " |"
@@ -360,13 +388,25 @@ def github_link(path: str) -> str:
     return GITHUB_MAIN + path
 
 
+def html_note_with_citation(note: str, citation: dict[str, str] | None) -> str:
+    rendered = html_escape(note)
+    if not citation:
+        return rendered
+    label = html_escape(citation["label"])
+    url = html_escape(citation["url"])
+    rendered_citation = f'<a href="{url}">{label}</a>'
+    if rendered.endswith("."):
+        return f"{rendered[:-1]} {rendered_citation}."
+    return f"{rendered} {rendered_citation}"
+
+
 def render_site_status_block(payload: dict[str, Any]) -> str:
     indent = " " * 14
     lines = [f"{indent}{SITE_STATUS_BEGIN}"]
     for row in payload["papers"]:
         paper_href = row["source_url"] or github_link(row["paper_folder"])
         status_href = github_link(row["review_entrypoint"])
-        note = html_escape(row["main_note"])
+        note = html_note_with_citation(row["main_note"], row.get("main_note_citation"))
         lines.extend(
             [
                 f"{indent}<tr>",

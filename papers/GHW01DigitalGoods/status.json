@@ -7,7 +7,11 @@
   "build_target": "lake build GHW01DigitalGoods",
   "status": "formalized",
   "main_caveat": "Theorem 8.2 is formalized against the journal version's monotone truthful randomized-auction statement; Lean records a two-bidder 101 > 100 counterexample to the broader InterTrust/SODA reading. Theorem 9.3 is closed against the paper's focused set-of-bids deterministic auction convention.",
-  "human_summary": "The journal version is used as the corrected source for Theorem 8.2.",
+  "human_summary": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared auctions library. The journal version is used as the corrected source for Theorem 8.2.",
+  "human_summary_citation": {
+    "label": "Goldberg et al. 2006",
+    "url": "https://www.sciencedirect.com/science/article/pii/S0899825606000303"
+  },
   "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

@@ -45,19 +45,40 @@
     </header>
 
     <main>
-      <section class="band" id="status" aria-labelledby="status-title">
+      <section class="band contact" id="contribute" aria-labelledby="contribute-title">
+        <div class="section-heading">
+          <p class="eyebrow">Contribute</p>
+          <h2 id="contribute-title">Interested in contributing or formalizing your own paper?</h2>
+          <p>
+            Contributions are welcome while the contribution policy is still a
+            draft. To protect unfinished work, new paper formalizations should
+            start in a private workflow and be proposed through a public-safe
+            pull request when ready. For questions or contributions, contact
+            <a href="mailto:ngarg@cornell.edu">ngarg@cornell.edu</a>.
+          </p>
+          <p>
+            To get started in formalizing your own paper, clone the repository
+            and open an LLM agent tool (I use Codex with GPT 5.5 in xhigh
+            thinking mode). Give the agent the paper link, and ask it to
+            formalize the paper using the skill and workflow in the repository.
+            (And please let me know what your experience is like).
+          </p>
+        </div>
+        <p class="more-link">
+          Read
+          <a href="https://github.com/nikhgarg/EconCSLib/blob/main/CONTRIBUTING.md">
+            CONTRIBUTING.md
+          </a>.
+        </p>
+      </section>
+
+      <section class="band" id="status" aria-label="Current status">
         <div class="section-heading">
           <p class="eyebrow">Current status</p>
-          <h2 id="status-title">Public paper artifacts</h2>
           <p>
             The public repository currently contains formalized papers and
             selected public partial formalizations whose remaining assumptions
             are explicit.
-          </p>
-          <p>
-            Folder IDs are stable artifact identifiers and may track an arXiv,
-            conference, or original working-paper year. The table uses the
-            published citation title and year.
           </p>
         </div>
 
@@ -98,7 +119,7 @@
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
                 <td>598</td>
-                <td>The journal version is used as the corrected source for Theorem 8.2.</td>
+                <td>This only uses a few lines of code as its infrastructure has largely been elevated to the shared auctions library. The journal version is used as the corrected source for Theorem 8.2 <a href="https://www.sciencedirect.com/science/article/pii/S0899825606000303">Goldberg et al. 2006</a>.</td>
               </tr>
               <tr>
                 <td>
@@ -176,33 +197,6 @@
             </tbody>
           </table>
         </div>
-      </section>
-
-      <section class="band contact" id="contribute" aria-labelledby="contribute-title">
-        <div class="section-heading">
-          <p class="eyebrow">Contribute</p>
-          <h2 id="contribute-title">Interested in contributing or formalizing your own paper?</h2>
-          <p>
-            Contributions are welcome while the contribution policy is still a
-            draft. To protect unfinished work, new paper formalizations should
-            start in a private workflow and be proposed through a public-safe
-            pull request when ready. For questions or contributions, contact
-            <a href="mailto:ngarg@cornell.edu">ngarg@cornell.edu</a>.
-          </p>
-          <p>
-            To get started in formalizing your own paper, clone the repository
-            and open an LLM agent tool (I use Codex with GPT 5.5 in xhigh
-            thinking mode). Give the agent the paper link, and ask it to
-            formalize the paper using the skill and workflow in the repository.
-            (And please let me know what your experience is like).
-          </p>
-        </div>
-        <p class="more-link">
-          Read
-          <a href="https://github.com/nikhgarg/EconCSLib/blob/main/CONTRIBUTING.md">
-            CONTRIBUTING.md
-          </a>.
-        </p>
       </section>
     </main>
 
