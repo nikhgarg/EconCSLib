@@ -99,5 +99,37 @@ abbrev theorem8_local_deviation_terminal_dynamic_full_conclusion :=
 abbrev theorem8_exact_record_full_vcg_conclusion :=
   @theorem8_finite_active_exact_record_source_game_full_vcg_conclusion
 
+/-- Theorem 8: complete finite source schedule gives the displayed PBE formulas. -/
+abbrev theorem8_complete_finite_schedule_source_extensive_displayed_conclusion :=
+  @EOS07GSP.audit_theorem8_strict_ordered_complete_fin_schedule_source_extensive_trace_full_displayed_conclusion_of_threshold_sorted
+
+/-- Theorem 8: price-sorted finite schedule discharges source-event obligations. -/
+abbrev theorem8_price_sorted_finite_schedule_source_event_boundary :=
+  @EOS07GSP.audit_theorem8_strict_ordered_price_sorted_fin_schedule_source_event_boundary
+
+/-- Theorem 8: price-sorted finite source event gives full VCG conclusion. -/
+abbrev theorem8_price_sorted_finite_schedule_source_event_threshold_event_vcg :=
+  @EOS07GSP.audit_theorem8_strict_ordered_price_sorted_fin_schedule_source_event_threshold_event_trace_full_vcg_conclusion
+
+/-- Theorem 8: belief price-sorted finite source event gives full VCG conclusion. -/
+abbrev theorem8_price_sorted_finite_schedule_belief_source_event_threshold_event_vcg :=
+  @EOS07GSP.audit_theorem8_strict_ordered_price_sorted_fin_schedule_belief_source_event_threshold_event_trace_full_vcg_conclusion
+
+/-- Theorem 8: price-sorted finite schedule gives ordered displayed PBE formulas. -/
+abbrev theorem8_price_sorted_finite_schedule_source_event_ordered_displayed_conclusion :=
+  @EOS07GSP.audit_theorem8_strict_ordered_price_sorted_fin_schedule_source_event_trace_ordered_displayed_paper_conclusion
+
+/-- Theorem 8: belief-explicit price-sorted finite schedule conclusion. -/
+abbrev theorem8_price_sorted_finite_schedule_belief_source_event_ordered_displayed_conclusion :=
+  @EOS07GSP.audit_theorem8_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_ordered_displayed_paper_conclusion
+
+/-- Theorem 8: price-sorted finite source-event boundary plus ordered payoff. -/
+abbrev theorem8_price_sorted_finite_schedule_source_event_boundary_ordered_displayed_conclusion :=
+  @EOS07GSP.audit_theorem8_strict_ordered_price_sorted_fin_schedule_source_event_boundary_ordered_displayed_paper_conclusion
+
+/-- Theorem 8: belief price-sorted source-event boundary plus ordered payoff. -/
+abbrev theorem8_price_sorted_finite_schedule_belief_source_event_boundary_ordered_displayed_conclusion :=
+  @EOS07GSP.audit_theorem8_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_ordered_displayed_paper_conclusion
+
 end PaperInterface
 end EOS07GSP

@@ -551,6 +551,17 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
 - Use local envy-freeness as an outcome-level certificate for "no profitable
   assigned-slot deviation" before proving full Nash equilibrium of a sorted GSP
   mechanism.
+- For EOS-style local envy-free/stable-assignment lemmas, do not label missing
+  appendix derivations as caveats when the assumptions are in the paper. If the
+  current Lean wrapper assumes global all-assigned-slot no-rematch but the paper
+  defines adjacent local envy-freeness and derives global no-rematch from
+  equilibrium, assortativity, and telescoping adjacent inequalities, mark the
+  row conditional and name that missing bridge.
+- Likewise, when the paper's stable-assignment-to-GSP converse assumes
+  `N > K`, invokes Shapley-Shubik to get an efficient/assortative assignment,
+  and then constructs bids, a Lean outcome-level `StableAssignment ->
+  SlotEnvyFree` shortcut is conditional, not caveated. The remaining work is
+  the characterization plus bid-construction/static-equilibrium bridge.
 
 ## Combinatorial Auctions
 

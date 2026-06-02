@@ -50,8 +50,8 @@ therefore starts at Remarks 1--3 before Definition 4.
 | Remark 2, VCG truthfulness, `EOS07GSP.txt:388` | formalized with certificate | `PaperInterface.lean` exposes the generic VCG position-mechanism truthfulness theorem from reported-welfare maximization, the externality-tax utility identity, and own-report-independent taxes |
 | Remark 3, GSP is not truthful, `EOS07GSP.txt:390` | formalized | `PaperInterface.lean` GSP counterexample declaration |
 | Definition 4, locally envy-free equilibrium, `EOS07GSP.txt:443` | formalized | locally-envy-free audit declarations |
-| Lemma 5, locally envy-free equilibrium gives stable assignment, `EOS07GSP.txt:465` | formalized with documented caveat | stable-assignment bridge audit declarations |
-| Lemma 6, stable assignment gives locally envy-free outcome, `EOS07GSP.txt:466` | formalized with documented caveat | stable-to-slot-envy-free audit declarations |
+| Lemma 5, locally envy-free equilibrium gives stable assignment, `EOS07GSP.txt:465` | conditional | current bridge assumes the formal all-assigned-slot no-rematch predicate; paper appendix's adjacent-LEF/equilibrium/order/telescoping derivation remains to be formalized |
+| Lemma 6, stable assignment gives locally envy-free outcome, `EOS07GSP.txt:466` | conditional | current bridge is outcome-level; paper's `N > K`, Shapley-Shubik characterization, bid construction, and static-equilibrium converse remain to be linked |
 | Theorem 7, `B*` locally envy-free equilibrium and revenue comparison, `EOS07GSP.txt:481` | conditional | `PaperInterface.lean` ranked `B*` paper conclusion plus canonical-tail audit declarations |
 | Theorem 8, generalized-English unique PBE, `EOS07GSP.txt:539` | conditional, with finite/no-overshoot/clock-disciplined source routes closed | `PaperInterface.lean` source-iff, no-overshoot terminal/dynamic, clock-disciplined terminal-history, and source-extensive terminal-record endpoints |
 

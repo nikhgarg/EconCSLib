@@ -6,6 +6,9 @@ This is the first file to read after the pause. It is intentionally shorter
 than the older handoff and points to exact files/declarations for the next
 proof pass.
 
+For the current proof strategy, read `THEOREM8_FINISH_STRATEGY.md` before
+opening the large theorem files.
+
 ## Current Validation Boundary
 
 The latest Lean validation after the no-overshoot dropout-step wrapper was:

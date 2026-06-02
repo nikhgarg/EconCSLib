@@ -1269,6 +1269,42 @@ abbrev Theorem8StrategyHistoryAdvanceSafe
   PaperTheorem8BStarRankedThresholdStrategyHistoryAdvanceSafe model hhist
 
 /--
+History-local threshold-event advance safety for a concrete generated Theorem
+8 history. This strengthens local advance safety by recording that every
+realized clock advance occurs at some active rank's finite `B*` threshold.
+-/
+abbrev Theorem8StrategyHistoryThresholdEventAdvanceSafe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState) : Prop :=
+  PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+    model hhist
+
+/--
+Threshold-event advance safety forgets to the older local advance-safety proof
+object.
+-/
+theorem theorem8_strategy_history_threshold_event_advance_safe_to_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState}
+    (hevent_safe :
+      Theorem8StrategyHistoryThresholdEventAdvanceSafe model hhist) :
+    Theorem8StrategyHistoryAdvanceSafe model hhist := by
+  simpa [Theorem8StrategyHistoryThresholdEventAdvanceSafe,
+    Theorem8StrategyHistoryAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_threshold_event_advance_safe_to_advance_safe
+      model hevent_safe
+
+/--
 History-local advance safety plus initial no-overshoot gives the no-overshoot
 history object used by the terminal record layer.
 -/
@@ -1331,6 +1367,260 @@ theorem theorem8_strategy_history_local_advance_safe_exact_drop_history
           hstate_no_overshoot rank hactive)
 
 /--
+A locally safe prefix plus a terminal final ordinary source step gives the
+no-overshoot source-history object consumed by terminal-record endpoints.
+-/
+theorem theorem8_strategy_history_local_advance_safe_append_single_step_terminal_to_no_overshoot_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState :
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {hprefix :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state midState}
+    (hprefix_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hprefix)
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        midState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_local_advance_safe_append_single_step_terminal_to_no_overshoot_strategy_history
+      model hprefix_safe hstep hterminal
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/--
+The same composed prefix-plus-terminal-step path gives exact finite `B*`
+dropout records.
+-/
+theorem theorem8_strategy_history_local_advance_safe_append_single_step_terminal_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState :
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {hprefix :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state midState}
+    (hprefix_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hprefix)
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        midState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model state finalState := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_local_advance_safe_append_single_step_terminal_exact_drop_history
+      model hprefix_safe hstep hterminal
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/--
+Cold-start composed prefix-plus-terminal-step paths give no-overshoot source
+histories without restating the initial no-overshoot invariant.
+-/
+theorem theorem8_cold_start_strategy_history_local_advance_safe_append_single_step_terminal_to_no_overshoot_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {midState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {hprefix :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state midState}
+    (hprefix_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hprefix)
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        midState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_local_advance_safe_append_single_step_terminal_to_no_overshoot_strategy_history
+      model hvalue_nonneg hclick_mono hprefix_safe hstep hterminal
+
+/--
+Cold-start composed prefix-plus-terminal-step paths give exact finite `B*`
+dropout records.
+-/
+theorem theorem8_cold_start_strategy_history_local_advance_safe_append_single_step_terminal_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {midState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {hprefix :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state midState}
+    (hprefix_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hprefix)
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        midState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_local_advance_safe_append_single_step_terminal_exact_drop_history
+      model hvalue_nonneg hclick_mono hprefix_safe hstep hterminal
+
+/--
+Source-sequential rationality plus a locally safe prefix and terminal final
+step produces the source-extensive ledger and exact finite `B*` records.
+-/
+theorem theorem8_source_sequential_strategy_history_local_advance_safe_append_single_step_terminal_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState :
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {hprefix :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state midState}
+    (hsource_sequential :
+      paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+        model.clickThroughRate model.value model.remaining state
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hprefix_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hprefix)
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        midState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∃ hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining),
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1 ∧
+        PaperTheorem8BStarRankedThresholdExactDropHistory
+          model state finalState := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_sequential_strategy_history_local_advance_safe_append_single_step_terminal_exact_drop_obligations
+      model hsource_sequential hprefix_safe hstep hterminal
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/--
+Cold-start source-sequential version of the composed source-extensive exact
+record ledger; the paper cold-start assumptions discharge initial
+no-overshoot.
+-/
+theorem theorem8_cold_start_source_sequential_strategy_history_local_advance_safe_append_single_step_terminal_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {midState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {hprefix :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state midState}
+    (hsource_sequential :
+      paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+        model.clickThroughRate model.value model.remaining
+        paper_theorem8_bstar_ranked_threshold_cold_start_state
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hprefix_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hprefix)
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        midState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    ∃ hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining),
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1 ∧
+        PaperTheorem8BStarRankedThresholdExactDropHistory
+          model paper_theorem8_bstar_ranked_threshold_cold_start_state
+          finalState := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_source_sequential_strategy_history_local_advance_safe_append_single_step_terminal_exact_drop_obligations
+      model hvalue_nonneg hclick_mono hsource_sequential hprefix_safe
+      hstep hterminal
+
+/--
 Cold-start history-local advance safety gives the no-overshoot history object;
 initial no-overshoot is derived from the paper cold-start assumptions.
 -/
@@ -1377,6 +1667,54 @@ theorem theorem8_cold_start_strategy_history_local_advance_safe_exact_drop_histo
   exact
     paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_local_advance_safe_exact_drop_history
       model hvalue_nonneg hclick_mono hhist hadvance_safe
+
+/--
+Cold-start threshold-event-safe ordinary histories give no-overshoot histories;
+initial no-overshoot is derived from the paper cold-start assumptions.
+-/
+theorem theorem8_cold_start_strategy_history_threshold_event_advance_safe_to_no_overshoot_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state finalState)
+    (hevent_safe :
+      Theorem8StrategyHistoryThresholdEventAdvanceSafe model hhist) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  simpa [Theorem8StrategyHistoryThresholdEventAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_threshold_event_advance_safe_to_no_overshoot_strategy_history
+      model hvalue_nonneg hclick_mono hhist hevent_safe
+
+/--
+Cold-start threshold-event-safe ordinary histories give exact finite `B*`
+records; initial no-overshoot is derived from the paper cold-start assumptions.
+-/
+theorem theorem8_cold_start_strategy_history_threshold_event_advance_safe_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state finalState)
+    (hevent_safe :
+      Theorem8StrategyHistoryThresholdEventAdvanceSafe model hhist) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  simpa [Theorem8StrategyHistoryThresholdEventAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_threshold_event_advance_safe_exact_drop_history
+      model hvalue_nonneg hclick_mono hhist hevent_safe
 
 /--
 History-local advance-safe generated histories discharge the compact
@@ -1524,6 +1862,105 @@ theorem theorem8_clock_disciplined_trace_source_extensive_local_advance_safe_obl
       model htrace terminal
 
 /--
+Source-extensive rationality with matching history-local advance-safety
+evidence is equivalent to a terminal finite clock-disciplined trace.
+-/
+theorem theorem8_source_extensive_rationality_local_advance_safe_iff_terminal_clock_disciplined_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ} :
+    (∃ hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining),
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1) ↔
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+          model state finalState ∧
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          finalState := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_local_advance_safe_iff_terminal_clock_disciplined_strategy_trace
+      model
+
+/--
+Even source-extensive rationality plus history-local advance-safety does not
+give exact finite `B*` records if the initial state has already overshot an
+active rank's threshold.
+-/
+theorem theorem8_source_extensive_rationality_local_advance_safe_allows_preexisting_overshoot_not_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank : ℕ) :
+    let state :=
+      paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+        model rank
+    let finalState :=
+      PaperTheorem8GeneralizedEnglishAuctionState.recordDropout state rank
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃ hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState namedStrategy,
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1 ∧
+        ¬ PaperTheorem8BStarRankedThresholdExactDropHistory
+          model state finalState := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_local_advance_safe_allows_preexisting_overshoot_not_exact_drop_history
+      model rank
+
+/--
+Paper source-event traces package as source-extensive rationality records whose
+generated history carries threshold-event advance-safety evidence.
+-/
+theorem theorem8_source_event_trace_source_extensive_threshold_event_advance_safe_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        model state finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    ∃ hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining),
+      Theorem8StrategyHistoryThresholdEventAdvanceSafe
+        model hsource_extensive.2.1 := by
+  simpa [Theorem8StrategyHistoryThresholdEventAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_source_extensive_threshold_event_advance_safe_obligations
+      model htrace terminal
+
+/--
+Source-extensive rationality with threshold-event advance-safety evidence is
+equivalent to a terminal paper source-event trace.
+-/
+theorem theorem8_source_extensive_rationality_threshold_event_advance_safe_iff_terminal_source_event_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ} :
+    (∃ hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining),
+      Theorem8StrategyHistoryThresholdEventAdvanceSafe
+        model hsource_extensive.2.1) ↔
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+          model state finalState ∧
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          finalState := by
+  simpa [Theorem8StrategyHistoryThresholdEventAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_threshold_event_advance_safe_iff_terminal_source_event_trace
+      model
+
+/--
 Source-extensive rationality plus history-local advance safety discharges the
 exact-drop obligation ledger without the global advance-safe premise.
 -/
@@ -1587,6 +2024,141 @@ theorem theorem8_cold_start_source_extensive_rationality_local_advance_safe_exac
       model hvalue_nonneg hclick_mono hsource_extensive hadvance_safe
 
 /--
+Source-extensive rationality plus threshold-event advance safety discharges the
+exact-drop obligation ledger.
+-/
+theorem theorem8_source_extensive_rationality_threshold_event_advance_safe_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hevent_safe :
+      Theorem8StrategyHistoryThresholdEventAdvanceSafe
+        model hsource_extensive.2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  simpa [Theorem8StrategyHistoryThresholdEventAdvanceSafe,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_threshold_event_advance_safe_exact_drop_obligations
+      model hsource_extensive hevent_safe
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/--
+Cold-start source-extensive rationality plus threshold-event advance safety
+discharges the exact-drop ledger, deriving initial no-overshoot internally.
+-/
+theorem theorem8_cold_start_source_extensive_rationality_threshold_event_advance_safe_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hevent_safe :
+      Theorem8StrategyHistoryThresholdEventAdvanceSafe
+        model hsource_extensive.2.1) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState := by
+  simpa [Theorem8StrategyHistoryThresholdEventAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_threshold_event_advance_safe_exact_drop_obligations
+      model hvalue_nonneg hclick_mono hsource_extensive hevent_safe
+
+/--
+State-game PBE transport: any PBE of the state-based source-extensive
+terminal-record game yields the named finite `B*` source-extensive rationality
+package.
+-/
+def theorem8_source_extensive_state_game_pbe_named_source_extensive_rationality :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+
+/--
+State-game PBE plus threshold-event-safe source timing gives exact finite
+`B*` dropout history, with the initial no-overshoot premise explicit.
+-/
+def theorem8_source_extensive_state_game_pbe_exact_drop_history_of_threshold_event_advance_safe :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_exact_drop_history_of_threshold_event_advance_safe
+
+/--
+Belief-explicit state-game PBE transport: any PBE of the state-based
+source-extensive terminal-record game yields the named finite `B*`
+source-extensive rationality package.
+-/
+def theorem8_belief_source_extensive_state_game_pbe_named_source_extensive_rationality :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+
+/--
+Belief-explicit state-game PBE plus threshold-event-safe source timing gives
+exact finite `B*` dropout history, with the initial no-overshoot premise
+explicit.
+-/
+def theorem8_belief_source_extensive_state_game_pbe_exact_drop_history_of_threshold_event_advance_safe :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_exact_drop_history_of_threshold_event_advance_safe
+
+/--
+Source-extensive rationality plus history-local advance safety packages the
+preferred no-overshoot terminal-history certificate.
+-/
+def theorem8_no_overshoot_terminal_history_certificate_of_source_extensive_rationality_local_advance_safe :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_source_extensive_rationality_local_advance_safe
+
+/--
+Source-extensive rationality plus threshold-event advance safety packages the
+preferred no-overshoot terminal-history certificate.
+-/
+def theorem8_no_overshoot_terminal_history_certificate_of_source_extensive_rationality_threshold_event_advance_safe :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_source_extensive_rationality_threshold_event_advance_safe
+
+/--
+Cold-start source-extensive rationality plus history-local advance safety
+packages the preferred no-overshoot terminal-history certificate, deriving
+the initial no-overshoot facts from the cold-start assumptions.
+-/
+def theorem8_cold_start_no_overshoot_terminal_history_certificate_of_source_extensive_rationality_local_advance_safe :=
+  paper_theorem8_bstar_ranked_threshold_cold_start_no_overshoot_terminal_history_behavior_certificate_of_source_extensive_rationality_local_advance_safe
+
+/--
+Cold-start source-extensive rationality plus threshold-event advance safety
+packages the preferred no-overshoot terminal-history certificate, deriving
+the initial no-overshoot facts from the cold-start assumptions.
+-/
+def theorem8_cold_start_no_overshoot_terminal_history_certificate_of_source_extensive_rationality_threshold_event_advance_safe :=
+  paper_theorem8_bstar_ranked_threshold_cold_start_no_overshoot_terminal_history_behavior_certificate_of_source_extensive_rationality_threshold_event_advance_safe
+
+/--
+Source-event traces package the preferred no-overshoot terminal-history
+certificate directly after forgetting to the clock-disciplined trace consumed
+by the terminal-record checker.
+-/
+def theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace :=
+  paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_source_event_trace
+
+/--
 Clock-disciplined traces forget to ordinary generated histories while retaining
 the history-local advance-safety evidence.
 -/
@@ -1625,6 +2197,1119 @@ theorem theorem8_clock_disciplined_history_to_strategy_history_local_advance_saf
   simpa [Theorem8StrategyHistoryAdvanceSafe] using
     paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_strategy_history_local_advance_safe
       model hhist
+
+/--
+Paper-style source event steps: advances carry a threshold-event witness and
+active-rank clock safety; dropouts are ordinary named-strategy dropouts.
+-/
+abbrev Theorem8SourceEventStep
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :=
+  PaperTheorem8BStarRankedThresholdSourceEventStep model
+
+/-- Finite traces of paper-style source event steps. -/
+abbrev Theorem8SourceEventTrace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate) :=
+  PaperTheorem8BStarRankedThresholdSourceEventTrace model
+
+/--
+Clock-sorted no-duplicate exact-drop schedules generate paper-style source
+event traces. Each scheduled rank contributes the paper event pair: advance to
+its finite `B*` threshold, then drop that rank.
+-/
+theorem theorem8_exact_drop_schedule_clock_sorted_nodup_to_source_event_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hunscheduled_active_threshold :
+      ∀ scheduledRank,
+        scheduledRank ∈ ranks →
+          ∀ otherRank,
+            otherRank ∉ ranks →
+              state.IsActive otherRank →
+                paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_price
+                    model scheduledRank ≤
+                  theorem8BStarThresholdBid
+                    model.value model.clickThroughRate (model.remaining + 1)
+                    (otherRank + 1)) :
+    Theorem8SourceEventTrace model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks) := by
+  simpa [Theorem8SourceEventTrace, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_source_event_trace
+      model state ranks hsorted hnodup hinitial_active
+      (by
+        intro scheduledRank hscheduled otherRank hother_not_scheduled
+          hactive
+        simpa [theorem8BStarThresholdBid] using
+          hunscheduled_active_threshold scheduledRank hscheduled otherRank
+            hother_not_scheduled hactive)
+
+/--
+Schedule-to-source-event trace using the usual final unscheduled-rank
+terminality check instead of a separate per-step unscheduled-threshold side
+condition.
+-/
+theorem theorem8_exact_drop_schedule_clock_sorted_nodup_to_source_event_trace_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice <
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    Theorem8SourceEventTrace model state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model state ranks) := by
+  simpa [Theorem8SourceEventTrace, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_to_source_event_trace_of_final_clock_lt_unscheduled
+      model state ranks hsorted hnodup hinitial_active
+      (by
+        intro rank hnot_mem
+        simpa [theorem8BStarThresholdBid] using
+          hterminal_unscheduled rank hnot_mem)
+
+/--
+Cold-start specialization: exact-drop schedules from the EOS cold-start state
+generate paper-style source event traces from clock-sorted/no-duplicate
+schedule data and the final unscheduled-rank terminality check.
+-/
+theorem theorem8_cold_start_exact_drop_schedule_clock_sorted_nodup_to_source_event_trace_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+        ranks)
+    (hnodup : ranks.Nodup)
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model paper_theorem8_bstar_ranked_threshold_cold_start_state
+            ranks).clockPrice <
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    Theorem8SourceEventTrace
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        ranks) := by
+  exact
+    theorem8_exact_drop_schedule_clock_sorted_nodup_to_source_event_trace_of_final_clock_lt_unscheduled
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state ranks
+      hsorted hnodup
+      (by
+        intro rank _hrank
+        rfl)
+      hterminal_unscheduled
+
+/-- Source event steps forget to clock-disciplined source steps. -/
+theorem theorem8_source_event_step_to_clock_disciplined_strategy_step
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep : Theorem8SourceEventStep model state next) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+      model state next := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_source_event_step_to_clock_disciplined_strategy_step
+      model hstep
+
+/-- Source event steps forget to ordinary named-strategy steps. -/
+theorem theorem8_source_event_step_to_strategy_step
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep : Theorem8SourceEventStep model state next) :
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining)
+      state next := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_source_event_step_to_strategy_step
+      model hstep
+
+/--
+Source event steps are exactly ordinary named-strategy steps plus threshold
+event evidence for any realized clock advance.
+-/
+theorem theorem8_source_event_step_iff_strategy_step_threshold_event_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ} :
+    Theorem8SourceEventStep model state next ↔
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          state next ∧
+        ∀ newPrice,
+          next =
+            PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+              state newPrice →
+            (∃ eventRank,
+              state.IsActive eventRank ∧
+                newPrice =
+                  theorem8BStarThresholdBid
+                    model.value model.clickThroughRate
+                    (model.remaining + 1) (eventRank + 1)) ∧
+              ∀ rank,
+                state.IsActive rank →
+                  newPrice ≤
+                    theorem8BStarThresholdBid
+                      model.value model.clickThroughRate
+                      (model.remaining + 1) (rank + 1) := by
+  simpa [Theorem8SourceEventStep, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_event_step_iff_strategy_step_threshold_event_advance_safe
+      model
+
+/--
+A paper-style source event step preserves the active-rank no-overshoot
+invariant.
+-/
+theorem theorem8_source_event_step_preserves_state_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep : Theorem8SourceEventStep model state next)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∀ rank,
+      next.IsActive rank →
+        next.clockPrice ≤
+          theorem8BStarThresholdBid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) := by
+  simpa [Theorem8SourceEventStep, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_event_step_preserves_state_no_overshoot
+      model hstep
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/--
+One-event source scheduler. If `eventRank` is active and has the next active
+finite `B*` threshold, then advancing to that threshold and dropping the rank
+forms a paper-style source-event trace, an exact finite `B*` drop, a preserved
+no-overshoot invariant, and the expected terminal dropout record.
+-/
+theorem theorem8_next_active_threshold_source_event_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {eventRank : ℕ}
+    (hactive_event : state.IsActive eventRank)
+    (hclock_le_event :
+      state.clockPrice ≤
+        theorem8BStarThresholdBid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (eventRank + 1))
+    (hevent_min :
+      ∀ rank,
+        state.IsActive rank →
+          theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (eventRank + 1) ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    let eventPrice :=
+      theorem8BStarThresholdBid
+        model.value model.clickThroughRate (model.remaining + 1)
+        (eventRank + 1)
+    let midState :=
+      PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+        state eventPrice
+    let nextState :=
+      PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+        midState eventRank
+    Theorem8SourceEventTrace model state nextState ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state nextState ∧
+        (∀ rank,
+          nextState.IsActive rank →
+            nextState.clockPrice ≤
+              theorem8BStarThresholdBid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)) ∧
+          nextState.lastDropout eventRank = some eventPrice := by
+  simpa [Theorem8SourceEventTrace, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_next_active_threshold_source_event_trace
+      model hactive_event
+      (by
+        simpa [theorem8BStarThresholdBid] using hclock_le_event)
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hevent_min rank hactive)
+
+/--
+Cons-peel source-event constructor: build the head event from local
+next-threshold evidence and compose with an already-built tail trace.
+-/
+def theorem8_exact_drop_schedule_source_event_trace_cons_of_next_active_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_source_event_trace_cons_of_next_active_threshold
+
+/--
+Schedule-specialized cons-peel source-event constructor for a head/tail exact
+drop schedule.
+-/
+def theorem8_exact_drop_schedule_source_event_trace_cons_schedule_of_next_active_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_source_event_trace_cons_schedule_of_next_active_threshold
+
+/--
+At a realized new dropout of a paper-style source event step, the clock has not
+overshot the dropping rank's finite `B*` threshold.
+-/
+theorem theorem8_source_event_step_realized_new_dropout_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep : Theorem8SourceEventStep model state next)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    {rank : ℕ}
+    (hactive : state.IsActive rank)
+    (hinactive : ¬ next.IsActive rank) :
+    state.clockPrice ≤
+      theorem8BStarThresholdBid
+        model.value model.clickThroughRate (model.remaining + 1)
+        (rank + 1) := by
+  simpa [Theorem8SourceEventStep, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_event_step_realized_new_dropout_no_overshoot
+      model hstep
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      hactive hinactive
+
+/--
+At a realized new dropout of a paper-style source event step, the new dropout
+record is exactly the dropping rank's finite `B*` threshold.
+-/
+theorem theorem8_source_event_step_new_dropout_record_eq_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep : Theorem8SourceEventStep model state next)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    {rank : ℕ}
+    (hactive : state.IsActive rank)
+    (hinactive : ¬ next.IsActive rank) :
+    next.lastDropout rank =
+      some
+        (theorem8BStarThresholdBid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  simpa [Theorem8SourceEventStep, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_event_step_new_dropout_record_eq_threshold
+      model hstep
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      hactive hinactive
+
+/-- A single source event step is a one-step source event trace. -/
+theorem theorem8_source_event_step_to_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep : Theorem8SourceEventStep model state next) :
+    Theorem8SourceEventTrace model state next := by
+  simpa [Theorem8SourceEventTrace, Theorem8SourceEventStep] using
+    paper_theorem8_bstar_ranked_threshold_source_event_step_to_trace
+      model hstep
+
+/-- Append one checked source event step to an existing source event trace. -/
+theorem theorem8_source_event_trace_append_step
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state mid finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state mid)
+    (hstep : Theorem8SourceEventStep model mid finalState) :
+    Theorem8SourceEventTrace model state finalState := by
+  simpa [Theorem8SourceEventTrace, Theorem8SourceEventStep] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_append_step
+      model htrace hstep
+
+/-- Source event traces forget to clock-disciplined source traces. -/
+theorem theorem8_source_event_trace_to_clock_disciplined_strategy_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_to_clock_disciplined_strategy_trace
+      model htrace
+
+/--
+Source event traces preserve the active-rank no-overshoot invariant from the
+initial state to the final state.
+-/
+theorem theorem8_source_event_trace_preserves_state_no_overshoot
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∀ rank,
+      finalState.IsActive rank →
+        finalState.clockPrice ≤
+          theorem8BStarThresholdBid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) := by
+  simpa [Theorem8SourceEventTrace, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_preserves_state_no_overshoot
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/-- Source event traces forget directly to ordinary generated histories. -/
+theorem theorem8_source_event_trace_to_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState) :
+    PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining)
+      state finalState := by
+  simpa [Theorem8SourceEventTrace] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_to_strategy_history
+      model htrace
+
+/--
+Source event traces can be reused as clock-disciplined source histories when a
+downstream endpoint consumes the history relation instead of the trace relation.
+-/
+theorem theorem8_source_event_trace_to_clock_disciplined_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+      model state finalState := by
+  simpa [Theorem8SourceEventTrace] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_to_clock_disciplined_strategy_history
+      model htrace
+
+/--
+Source event traces produce ordinary generated histories with history-local
+advance-safety evidence.
+-/
+theorem theorem8_source_event_trace_to_strategy_history_local_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState) :
+    ∃ hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState,
+      Theorem8StrategyHistoryAdvanceSafe model hhist := by
+  simpa [Theorem8SourceEventTrace, Theorem8StrategyHistoryAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_to_strategy_history_local_advance_safe
+      model htrace
+
+/--
+Source event traces produce ordinary generated histories with threshold-event
+advance-safety evidence.
+-/
+theorem theorem8_source_event_trace_to_strategy_history_threshold_event_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState) :
+    ∃ hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState,
+      Theorem8StrategyHistoryThresholdEventAdvanceSafe model hhist := by
+  simpa [Theorem8SourceEventTrace,
+    Theorem8StrategyHistoryThresholdEventAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_to_strategy_history_threshold_event_advance_safe
+      model htrace
+
+/--
+Ordinary generated histories with threshold-event advance safety reconstruct
+the source event trace.
+-/
+theorem theorem8_strategy_history_to_source_event_trace_of_history_threshold_event_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hevent_safe :
+      Theorem8StrategyHistoryThresholdEventAdvanceSafe model hhist) :
+    Theorem8SourceEventTrace model state finalState := by
+  simpa [Theorem8SourceEventTrace,
+    Theorem8StrategyHistoryThresholdEventAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_to_source_event_trace_of_history_threshold_event_advance_safe
+      model hhist hevent_safe
+
+/--
+Source event traces are exactly ordinary generated histories equipped with
+threshold-event advance-safety evidence.
+-/
+theorem theorem8_source_event_trace_iff_strategy_history_threshold_event_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ} :
+    Theorem8SourceEventTrace model state finalState ↔
+      ∃ hhist :
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          state finalState,
+        Theorem8StrategyHistoryThresholdEventAdvanceSafe model hhist := by
+  simpa [Theorem8SourceEventTrace,
+    Theorem8StrategyHistoryThresholdEventAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_iff_strategy_history_threshold_event_advance_safe
+      model
+
+/--
+Threshold-event-safe ordinary histories give no-overshoot histories from
+initial no-overshoot.
+-/
+theorem theorem8_strategy_history_threshold_event_advance_safe_to_no_overshoot_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hevent_safe :
+      Theorem8StrategyHistoryThresholdEventAdvanceSafe model hhist)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  simpa [Theorem8StrategyHistoryThresholdEventAdvanceSafe,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_threshold_event_advance_safe_to_no_overshoot_strategy_history
+      model hhist hevent_safe
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/--
+Threshold-event-safe ordinary histories give exact finite `B*` records from
+initial no-overshoot.
+-/
+theorem theorem8_strategy_history_threshold_event_advance_safe_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hevent_safe :
+      Theorem8StrategyHistoryThresholdEventAdvanceSafe model hhist)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model state finalState := by
+  simpa [Theorem8StrategyHistoryThresholdEventAdvanceSafe,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_threshold_event_advance_safe_exact_drop_history
+      model hhist hevent_safe
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/-- Source event traces give no-overshoot histories from initial no-overshoot. -/
+theorem theorem8_source_event_trace_to_no_overshoot_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model state finalState := by
+  simpa [Theorem8SourceEventTrace, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_to_no_overshoot_strategy_history
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/-- Source event traces give exact finite `B*` records from initial no-overshoot. -/
+theorem theorem8_source_event_trace_to_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model state finalState := by
+  simpa [Theorem8SourceEventTrace, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_to_exact_drop_history
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/--
+Source event traces give the exact terminal record for any rank that starts
+active and is inactive at the audited final state.
+-/
+theorem theorem8_source_event_trace_final_record_eq_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    {rank : ℕ}
+    (hinitial_active : state.IsActive rank)
+    (hfinal_inactive : ¬ finalState.IsActive rank) :
+    finalState.lastDropout rank =
+      some
+        (theorem8BStarThresholdBid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  simpa [Theorem8SourceEventTrace, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_final_record_eq_threshold
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      hinitial_active hfinal_inactive
+
+/--
+Cold-start source-event traces give no-overshoot histories without a separate
+initial timing premise.
+-/
+theorem theorem8_cold_start_source_event_trace_to_no_overshoot_strategy_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState) :
+    PaperTheorem8BStarRankedThresholdNoOvershootStrategyHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  simpa [Theorem8SourceEventTrace] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_source_event_trace_to_no_overshoot_strategy_history
+      model hvalue_nonneg hclick_mono htrace
+
+/--
+Cold-start source-event traces give exact finite `B*` records without a
+separate initial timing premise.
+-/
+theorem theorem8_cold_start_source_event_trace_to_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState) :
+    PaperTheorem8BStarRankedThresholdExactDropHistory
+      model paper_theorem8_bstar_ranked_threshold_cold_start_state
+      finalState := by
+  simpa [Theorem8SourceEventTrace] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_source_event_trace_to_exact_drop_history
+      model hvalue_nonneg hclick_mono htrace
+
+/--
+Cold-start source-event traces give the exact terminal record for any inactive
+final rank without a separate initial timing premise.
+-/
+theorem theorem8_cold_start_source_event_trace_final_record_eq_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    {rank : ℕ}
+    (hfinal_inactive : ¬ finalState.IsActive rank) :
+    finalState.lastDropout rank =
+      some
+        (theorem8BStarThresholdBid
+          model.value model.clickThroughRate (model.remaining + 1)
+          (rank + 1)) := by
+  simpa [Theorem8SourceEventTrace, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_source_event_trace_final_record_eq_threshold
+      model hvalue_nonneg hclick_mono htrace hfinal_inactive
+
+/--
+Cold-start source-event traces package the no-overshoot terminal-history
+certificate directly; the cold-start state supplies initial activity and
+initial no-overshoot.
+-/
+def theorem8_cold_start_no_overshoot_terminal_history_certificate_of_source_event_trace :=
+  paper_theorem8_bstar_ranked_threshold_cold_start_no_overshoot_terminal_history_behavior_certificate_of_source_event_trace
+
+/--
+Completed-rank source-event endpoint. The source-event trace constructs the
+terminal no-overshoot certificate used by the source-extensive dynamic-game
+bridge, so callers only supply the source trace and the completed-rank
+threshold premise.
+-/
+def theorem8_source_event_trace_source_extensive_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_source_event_trace_source_extensive_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+/--
+Cold-start completed-rank source-event endpoint. This removes the generic
+source-event endpoint's initial-activity and initial no-overshoot premises for
+traces that start at the EOS cold-start state.
+-/
+def theorem8_cold_start_source_event_trace_source_extensive_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_event_trace_source_extensive_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+/--
+Belief-explicit completed-rank source-event endpoint. The source-event trace
+constructs the no-overshoot terminal certificate directly, so callers do not
+need to expose a separate clock-disciplined trace or generated-history
+local-safety witness.
+-/
+def theorem8_source_event_trace_belief_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_source_event_trace_belief_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+/--
+Cold-start belief-explicit completed-rank source-event endpoint. This removes
+the generic source-event endpoint's initial-activity and initial no-overshoot
+premises for traces that start at the EOS cold-start state.
+-/
+def theorem8_cold_start_source_event_trace_belief_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_event_trace_belief_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+/--
+Source-event traces discharge source-extensive rationality and exact finite
+`B*` records. The named strategy's source-sequential rationality is supplied
+internally after forgetting the event trace to a clock-disciplined trace.
+-/
+theorem theorem8_source_event_trace_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  simpa [Theorem8SourceEventTrace, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_event_trace_source_extensive_exact_drop_obligations
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      terminal
+
+/--
+Cold-start source-event traces discharge source-extensive rationality and
+exact finite `B*` records, with initial no-overshoot derived internally.
+-/
+theorem theorem8_cold_start_source_event_trace_source_extensive_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining) ∧
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState := by
+  simpa [Theorem8SourceEventTrace] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_source_event_trace_source_extensive_exact_drop_obligations
+      model hvalue_nonneg hclick_mono htrace terminal
+
+/--
+Source-sequential rationality plus a source event trace produces the
+source-extensive ledger and exact finite `B*` records for the same path.
+-/
+theorem theorem8_source_sequential_source_event_trace_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_sequential :
+      paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+        model.clickThroughRate model.value model.remaining state
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (htrace : Theorem8SourceEventTrace model state finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∃ hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining),
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1 ∧
+        PaperTheorem8BStarRankedThresholdExactDropHistory
+          model state finalState := by
+  simpa [Theorem8SourceEventTrace, Theorem8StrategyHistoryAdvanceSafe,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_sequential_source_event_trace_exact_drop_obligations
+      model hsource_sequential htrace hterminal
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+
+/--
+Cold-start source-sequential source-event traces discharge the same
+source-extensive/exact-record ledger with initial no-overshoot derived
+internally.
+-/
+theorem theorem8_cold_start_source_sequential_source_event_trace_exact_drop_obligations
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_sequential :
+      paper_theorem8_bstar_ranked_threshold_source_sequential_rationality_statement
+        model.clickThroughRate model.value model.remaining
+        paper_theorem8_bstar_ranked_threshold_cold_start_state
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    ∃ hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining),
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1 ∧
+        PaperTheorem8BStarRankedThresholdExactDropHistory
+          model paper_theorem8_bstar_ranked_threshold_cold_start_state
+          finalState := by
+  simpa [Theorem8SourceEventTrace, Theorem8StrategyHistoryAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_source_sequential_source_event_trace_exact_drop_obligations
+      model hvalue_nonneg hclick_mono hsource_sequential htrace hterminal
+
+/--
+Clock-sorted exact-drop schedules construct the source-event trace and use it
+to discharge the generated source-extensive ledger, history-local
+advance-safety, and exact finite `B*` records from the final unscheduled-rank
+clock bound.
+-/
+theorem theorem8_exact_drop_schedule_source_event_trace_exact_drop_obligations_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice <
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∃ htrace :
+      Theorem8SourceEventTrace model state
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model state ranks),
+      ∃ hsource_extensive :
+        paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+          model state
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks)
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining),
+        Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1 ∧
+          PaperTheorem8BStarRankedThresholdExactDropHistory
+            model state
+            (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+              model state ranks) := by
+  simpa [Theorem8SourceEventTrace, Theorem8StrategyHistoryAdvanceSafe,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_source_event_trace_exact_drop_obligations_of_final_clock_lt_unscheduled
+      model state ranks hsorted hnodup hinitial_active
+      (by
+        intro rank hnot_mem
+        simpa [theorem8BStarThresholdBid] using
+          hterminal_unscheduled rank hnot_mem)
+
+/--
+Clock-sorted exact-drop schedules construct the source-event trace and expose
+the stronger threshold-event advance-safety proof carried by that trace.
+-/
+theorem theorem8_exact_drop_schedule_source_event_trace_threshold_event_exact_drop_obligations_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (state : PaperTheorem8GeneralizedEnglishAuctionState ℕ)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model state.clockPrice ranks)
+    (hnodup : ranks.Nodup)
+    (hinitial_active : ∀ rank, rank ∈ ranks → state.IsActive rank)
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks).clockPrice <
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∃ htrace :
+      Theorem8SourceEventTrace model state
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model state ranks),
+      ∃ hsource_extensive :
+        paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+          model state
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model state ranks)
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining),
+        Theorem8StrategyHistoryThresholdEventAdvanceSafe
+            model hsource_extensive.2.1 ∧
+          PaperTheorem8BStarRankedThresholdExactDropHistory
+            model state
+            (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+              model state ranks) := by
+  simpa [Theorem8SourceEventTrace,
+    Theorem8StrategyHistoryThresholdEventAdvanceSafe,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted_nodup_source_event_trace_threshold_event_exact_drop_obligations_of_final_clock_lt_unscheduled
+      model state ranks hsorted hnodup hinitial_active
+      (by
+        intro rank hnot_mem
+        simpa [theorem8BStarThresholdBid] using
+          hterminal_unscheduled rank hnot_mem)
+
+/--
+Cold-start schedule specialization of the source-event trace/exact-record
+ledger. Initial activity is discharged by the EOS cold-start state.
+-/
+theorem theorem8_cold_start_exact_drop_schedule_source_event_trace_exact_drop_obligations_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+        ranks)
+    (hnodup : ranks.Nodup)
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model paper_theorem8_bstar_ranked_threshold_cold_start_state
+            ranks).clockPrice <
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∃ htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model paper_theorem8_bstar_ranked_threshold_cold_start_state
+          ranks),
+      ∃ hsource_extensive :
+        paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+          model paper_theorem8_bstar_ranked_threshold_cold_start_state
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model paper_theorem8_bstar_ranked_threshold_cold_start_state
+            ranks)
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining),
+        Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1 ∧
+          PaperTheorem8BStarRankedThresholdExactDropHistory
+            model paper_theorem8_bstar_ranked_threshold_cold_start_state
+            (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+              model paper_theorem8_bstar_ranked_threshold_cold_start_state
+              ranks) := by
+  simpa [Theorem8SourceEventTrace, Theorem8StrategyHistoryAdvanceSafe,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_exact_drop_schedule_clock_sorted_nodup_source_event_trace_exact_drop_obligations_of_final_clock_lt_unscheduled
+      model ranks hsorted hnodup
+      (by
+        intro rank hnot_mem
+        simpa [theorem8BStarThresholdBid] using
+          hterminal_unscheduled rank hnot_mem)
+
+/--
+Cold-start schedule specialization exposing the threshold-event-safe
+source-event ledger.
+-/
+theorem theorem8_cold_start_exact_drop_schedule_source_event_trace_threshold_event_exact_drop_obligations_of_final_clock_lt_unscheduled
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (ranks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state.clockPrice
+        ranks)
+    (hnodup : ranks.Nodup)
+    (hterminal_unscheduled :
+      ∀ rank,
+        rank ∉ ranks →
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model paper_theorem8_bstar_ranked_threshold_cold_start_state
+            ranks).clockPrice <
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) :
+    ∃ htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          model paper_theorem8_bstar_ranked_threshold_cold_start_state
+          ranks),
+      ∃ hsource_extensive :
+        paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+          model paper_theorem8_bstar_ranked_threshold_cold_start_state
+          (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            model paper_theorem8_bstar_ranked_threshold_cold_start_state
+            ranks)
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining),
+        Theorem8StrategyHistoryThresholdEventAdvanceSafe
+            model hsource_extensive.2.1 ∧
+          PaperTheorem8BStarRankedThresholdExactDropHistory
+            model paper_theorem8_bstar_ranked_threshold_cold_start_state
+            (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+              model paper_theorem8_bstar_ranked_threshold_cold_start_state
+              ranks) := by
+  simpa [Theorem8SourceEventTrace,
+    Theorem8StrategyHistoryThresholdEventAdvanceSafe,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_exact_drop_schedule_clock_sorted_nodup_source_event_trace_threshold_event_exact_drop_obligations_of_final_clock_lt_unscheduled
+      model ranks hsorted hnodup
+      (by
+        intro rank hnot_mem
+        simpa [theorem8BStarThresholdBid] using
+          hterminal_unscheduled rank hnot_mem)
+
+/--
+Schedule-level source-event completed-rank endpoint. A clock-sorted
+no-duplicate exact-drop schedule constructs the source-event trace, exact
+records, and completed-rank source-extensive PBE conclusion in one package.
+-/
+def theorem8_exact_drop_schedule_source_event_trace_completed_rank_conclusion_of_final_clock_lt_unscheduled :=
+  @paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_source_event_trace_completed_rank_paper_conclusion_of_final_clock_lt_unscheduled
+
+/--
+Belief-explicit schedule-level source-event completed-rank endpoint. The
+clock-sorted exact-drop schedule constructs the source-event trace and feeds
+the belief source-extensive PBE checker directly.
+-/
+def theorem8_exact_drop_schedule_source_event_trace_belief_completed_rank_conclusion_of_final_clock_lt_unscheduled :=
+  @paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_source_event_trace_belief_completed_rank_paper_conclusion_of_final_clock_lt_unscheduled
 
 /--
 Clock-sorted finite schedules produce an ordinary generated history bundled
@@ -2059,6 +3744,61 @@ theorem theorem8_strategy_history_local_advance_safe_source_iff_completed_thresh
         simpa using
           sequential_rationality_iff_source_sequential strategy belief)
       completedRanks hcompleted_threshold_le
+
+/--
+Trace-full source-iff endpoint from a generated named-strategy history with
+history-local advance safety.
+-/
+def theorem8_strategy_history_local_advance_safe_source_iff_trace_full_completed_threshold_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strategy_history_local_advance_safe_source_iff_trace_full_completed_threshold_conclusion
+    Belief
+
+/--
+Source-extensive rationality version of the history-local source-iff
+completed-threshold endpoint. The generated history and terminality proof are
+read from the source-extensive statement.
+-/
+def theorem8_source_extensive_rationality_local_advance_safe_source_iff_completed_threshold_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_local_advance_safe_source_iff_completed_threshold_conclusion
+    Belief
+
+/--
+Trace-full source-extensive rationality version of the history-local
+source-iff completed-threshold endpoint.
+-/
+def theorem8_source_extensive_rationality_local_advance_safe_source_iff_trace_full_completed_threshold_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_local_advance_safe_source_iff_trace_full_completed_threshold_conclusion
+    Belief
+
+/--
+Cold-start source-extensive rationality version of the source-iff
+completed-threshold endpoint.
+-/
+def theorem8_cold_start_source_extensive_rationality_local_advance_safe_source_iff_completed_threshold_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_local_advance_safe_source_iff_completed_threshold_conclusion
+    Belief
+
+/--
+Cold-start trace-full source-extensive rationality version of the source-iff
+completed-threshold endpoint.
+-/
+def theorem8_cold_start_source_extensive_rationality_local_advance_safe_source_iff_trace_full_completed_threshold_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_local_advance_safe_source_iff_trace_full_completed_threshold_conclusion
+    Belief
+
+/--
+Payoff-facing completed-rank utility equality from a generated named-strategy
+history with history-local advance safety and the source-iff bridge.
+-/
+def theorem8_strategy_history_local_advance_safe_source_iff_utility_eq_bstar_of_completed_threshold
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strategy_history_local_advance_safe_source_iff_terminal_record_utility_eq_bstar_of_completed_threshold_le
+    Belief
 
 /--
 Cold-start history-local advance-safe source-iff endpoint with completed-rank
@@ -2642,6 +4382,33 @@ theorem theorem8_clock_disciplined_terminal_history_source_iff_completed_thresho
       terminal initially_active completedRanks hcompleted_threshold_le
 
 /--
+Source-event trace source-iff endpoint for the full Theorem 8 conclusion. The
+event trace is converted internally to the clock-disciplined terminal history.
+-/
+noncomputable def theorem8_source_event_trace_source_iff_full_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_source_event_trace_source_iff_full_conclusion
+    Belief
+
+/--
+Source-event trace source-iff endpoint with completed-rank terminal-record
+formulas.
+-/
+noncomputable def theorem8_source_event_trace_source_iff_completed_threshold_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_source_event_trace_source_iff_completed_threshold_conclusion
+    Belief
+
+/--
+Payoff-facing source-event source-iff endpoint: completed-rank terminal-record
+utility equals the constructed successor-tail ranked-`B*` utility.
+-/
+def theorem8_source_event_trace_source_iff_utility_eq_bstar_of_completed_threshold
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_source_event_trace_source_iff_terminal_record_utility_eq_bstar_of_completed_threshold_le
+    Belief
+
+/--
 Cold-start source-iff endpoint for the full Theorem 8 conclusion. The
 clock-disciplined trace starts at the cold-start state, so the initial
 no-overshoot and initial-activity premises are derived internally.
@@ -2797,6 +4564,32 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_source_iff_comple
       dynamic concrete_belief_consistency
       sequential_rationality_iff_source_sequential hhist terminal completedRanks
       hcompleted_threshold_le
+
+/--
+Cold-start source-event trace source-iff endpoint for the full Theorem 8
+conclusion.
+-/
+noncomputable def theorem8_cold_start_source_event_trace_source_iff_full_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_event_trace_source_iff_full_conclusion
+    Belief
+
+/--
+Cold-start source-event trace source-iff endpoint with completed-rank
+terminal-record formulas.
+-/
+noncomputable def theorem8_cold_start_source_event_trace_source_iff_completed_threshold_conclusion
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_event_trace_source_iff_completed_threshold_conclusion
+    Belief
+
+/--
+Cold-start payoff-facing source-event source-iff endpoint.
+-/
+def theorem8_cold_start_source_event_trace_source_iff_utility_eq_bstar_of_completed_threshold
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_event_trace_source_iff_terminal_record_utility_eq_bstar_of_completed_threshold_le
+    Belief
 
 /--
 The source-extensive rationality target splits into exactly the local-deviation
@@ -4425,6 +6218,23 @@ theorem theorem8_no_overshoot_terminal_dynamic_trace_full_completed_rank_conclus
       cert completedRanks inactive_on_completed
 
 /--
+Source-sequential no-overshoot terminal-dynamic checker packaged as the
+source-shaped core source-completion certificate. The source-sequential
+equivalence is supplied by the checker itself.
+-/
+noncomputable def theorem8_source_sequential_no_overshoot_terminal_dynamic_source_sequential_core_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_no_overshoot_terminal_dynamic_source_sequential_core_source_completion_certificate
+
+/--
+Source-sequential no-overshoot terminal-dynamic checker packaged as the local
+one-step best-response plus threshold tie-breaking source certificate. This is
+the preferred local behavioral source boundary before adding finite
+terminal-record schedule data.
+-/
+noncomputable def theorem8_source_sequential_no_overshoot_terminal_dynamic_one_step_tie_break_core_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_source_sequential_no_overshoot_terminal_dynamic
+
+/--
 Source-sequential no-overshoot terminal-history full conclusion where the
 strict ordered assumptions are stated directly on the terminal certificate's
 local model. This avoids a separate model-equality proof when the audited
@@ -4766,6 +6576,647 @@ theorem theorem8_ex_post_local_deviation_finite_schedule_all_completed_source_co
   simpa [theorem8BStarThresholdBid] using
     paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_ex_post_local_deviation_source_completion_of_clock_sorted_nodup
       source scheduledRanks hfinal hsorted hnodup
+
+/--
+Trace-full finite-schedule source-completion endpoint. A finite exact-schedule
+source-completion certificate gives unique PBE, the named finite `B*` strategy,
+the generated terminal history, exact finite `B*` dropout history, and
+completed-rank terminal-record formulas.
+-/
+def theorem8_finite_schedule_source_completion_trace_full_completed_rank_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion
+
+/--
+Trace-full finite-schedule endpoint from the minimized core source-completion
+certificate. This is the preferred wrapper when downstream code has only the
+core source-PBE obligations and finite schedule data.
+-/
+def theorem8_finite_schedule_core_source_completion_trace_full_completed_rank_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_core_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion
+
+/--
+Trace-full finite exact-history endpoint from the minimized core
+source-completion certificate.
+-/
+def theorem8_finite_exact_history_core_source_completion_trace_full_completed_rank_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_core_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion
+
+/--
+Certificate-level source-completion constructor from a generated named-strategy
+history with history-local advance safety. This is the reusable entry point
+when the source proof has a concrete generated history rather than a prebuilt
+exact-drop history certificate.
+-/
+noncomputable def theorem8_finite_exact_history_core_source_completion_certificate_of_strategy_history_local_advance_safe_source_iff_completed_threshold_le
+    {Belief : Type*} :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_core_source_completion_certificate_of_strategy_history_local_advance_safe_source_iff_completed_threshold_le
+    Belief
+
+/--
+Source-sequential constructed-checker specialization of the local-advance-safe
+finite exact-history source-completion certificate. The checker discharges unit
+belief consistency and the source-sequential rationality iff internally.
+-/
+noncomputable def theorem8_source_sequential_finite_exact_history_core_source_completion_certificate_of_strategy_history_local_advance_safe_completed_threshold_le :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_finite_exact_history_core_source_completion_certificate_of_strategy_history_local_advance_safe_completed_threshold_le
+
+/--
+Source-sequential finite exact-history core certificate from a generated
+history with local advance safety when completed ranks are identified by final
+inactivity.
+-/
+noncomputable def theorem8_source_sequential_finite_exact_history_core_source_completion_certificate_of_strategy_history_local_advance_safe_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_finite_exact_history_core_source_completion_certificate_of_strategy_history_local_advance_safe_inactive_completed
+
+/--
+Source-sequential finite exact-history core certificate from an explicit
+clock-disciplined source trace and completed-rank terminal-clock cutoffs.
+-/
+noncomputable def theorem8_source_sequential_clock_disciplined_strategy_trace_finite_exact_history_core_source_completion_certificate_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_trace_finite_exact_history_core_source_completion_certificate_of_completed_threshold_le
+
+/--
+Source-sequential finite exact-history core certificate from an explicit
+clock-disciplined source trace when completed ranks are identified by final
+inactivity.
+-/
+noncomputable def theorem8_source_sequential_clock_disciplined_strategy_trace_finite_exact_history_core_source_completion_certificate_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_trace_finite_exact_history_core_source_completion_certificate_of_inactive_completed
+
+/--
+Source-sequential finite exact-history core certificate from a source-event
+trace and completed-rank terminal-clock cutoffs.
+-/
+noncomputable def theorem8_source_sequential_source_event_trace_finite_exact_history_core_source_completion_certificate_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_event_trace_finite_exact_history_core_source_completion_certificate_of_completed_threshold_le
+
+/--
+Source-sequential finite exact-history core certificate from a source-event
+trace when completed ranks are identified by final inactivity.
+-/
+noncomputable def theorem8_source_sequential_source_event_trace_finite_exact_history_core_source_completion_certificate_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_event_trace_finite_exact_history_core_source_completion_certificate_of_inactive_completed
+
+/--
+Source-sequential finite exact-history core certificate from an explicit
+clock-disciplined source history and completed-rank terminal-clock cutoffs.
+-/
+noncomputable def theorem8_source_sequential_clock_disciplined_strategy_history_finite_exact_history_core_source_completion_certificate_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_history_finite_exact_history_core_source_completion_certificate_of_completed_threshold_le
+
+/--
+Source-sequential finite exact-history core certificate from an explicit
+clock-disciplined source history when completed ranks are identified by final
+inactivity.
+-/
+noncomputable def theorem8_source_sequential_clock_disciplined_strategy_history_finite_exact_history_core_source_completion_certificate_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_history_finite_exact_history_core_source_completion_certificate_of_inactive_completed
+
+/--
+Cold-start source-sequential finite exact-history core certificate from an
+explicit clock-disciplined source trace.
+-/
+noncomputable def theorem8_cold_start_source_sequential_clock_disciplined_strategy_trace_finite_exact_history_core_source_completion_certificate_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_trace_finite_exact_history_core_source_completion_certificate_of_completed_threshold_le
+
+/--
+Cold-start source-sequential finite exact-history core certificate from an
+explicit clock-disciplined source trace when completed ranks are identified by
+final inactivity.
+-/
+noncomputable def theorem8_cold_start_source_sequential_clock_disciplined_strategy_trace_finite_exact_history_core_source_completion_certificate_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_trace_finite_exact_history_core_source_completion_certificate_of_inactive_completed
+
+/--
+Cold-start source-sequential finite exact-history core certificate from a
+source-event trace.
+-/
+noncomputable def theorem8_cold_start_source_sequential_source_event_trace_finite_exact_history_core_source_completion_certificate_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_event_trace_finite_exact_history_core_source_completion_certificate_of_completed_threshold_le
+
+/--
+Cold-start source-sequential finite exact-history core certificate from a
+source-event trace when completed ranks are identified by final inactivity.
+-/
+noncomputable def theorem8_cold_start_source_sequential_source_event_trace_finite_exact_history_core_source_completion_certificate_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_event_trace_finite_exact_history_core_source_completion_certificate_of_inactive_completed
+
+/--
+Cold-start source-sequential finite exact-history core certificate from an
+explicit clock-disciplined source history.
+-/
+noncomputable def theorem8_cold_start_source_sequential_clock_disciplined_strategy_history_finite_exact_history_core_source_completion_certificate_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_history_finite_exact_history_core_source_completion_certificate_of_completed_threshold_le
+
+/--
+Cold-start source-sequential finite exact-history core certificate from an
+explicit clock-disciplined source history when completed ranks are identified by
+final inactivity.
+-/
+noncomputable def theorem8_cold_start_source_sequential_clock_disciplined_strategy_history_finite_exact_history_core_source_completion_certificate_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_history_finite_exact_history_core_source_completion_certificate_of_inactive_completed
+
+/--
+Source-sequential source-extensive finite exact-history core certificate with
+history-local advance safety when completed ranks are identified by final
+inactivity.
+-/
+noncomputable def theorem8_source_sequential_source_extensive_rationality_local_advance_safe_finite_exact_history_core_source_completion_certificate_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_extensive_rationality_local_advance_safe_finite_exact_history_core_source_completion_certificate_of_inactive_completed
+
+/--
+Source-sequential source-extensive finite exact-history core certificate with
+threshold-event-safe source timing when completed ranks are identified by final
+inactivity.
+-/
+noncomputable def theorem8_source_sequential_source_extensive_rationality_threshold_event_advance_safe_finite_exact_history_core_source_completion_certificate_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_extensive_rationality_threshold_event_advance_safe_finite_exact_history_core_source_completion_certificate_of_inactive_completed
+
+/--
+Cold-start source-sequential source-extensive finite exact-history core
+certificate with history-local advance safety when completed ranks are
+identified by final inactivity.
+-/
+noncomputable def theorem8_cold_start_source_sequential_source_extensive_rationality_local_advance_safe_finite_exact_history_core_source_completion_certificate_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_extensive_rationality_local_advance_safe_finite_exact_history_core_source_completion_certificate_of_inactive_completed
+
+/--
+Cold-start source-sequential source-extensive finite exact-history core
+certificate with threshold-event-safe source timing when completed ranks are
+identified by final inactivity.
+-/
+noncomputable def theorem8_cold_start_source_sequential_source_extensive_rationality_threshold_event_advance_safe_finite_exact_history_core_source_completion_certificate_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_extensive_rationality_threshold_event_advance_safe_finite_exact_history_core_source_completion_certificate_of_inactive_completed
+
+/--
+Trace-full source-sequential generated-history endpoint with history-local
+advance safety and completed-rank terminal-record formulas.
+-/
+def theorem8_source_sequential_strategy_history_local_advance_safe_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_strategy_history_local_advance_safe_trace_full_completed_threshold_conclusion
+
+/--
+Payoff-facing source-sequential generated-history endpoint with history-local
+advance safety: completed-rank terminal-record utility equals the constructed
+successor-tail ranked-`B*` utility.
+-/
+def theorem8_source_sequential_strategy_history_local_advance_safe_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_strategy_history_local_advance_safe_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Trace-full source-sequential source-extensive endpoint with history-local
+advance safety. The source-extensive package supplies generated history and
+terminality; Lean derives the exact finite `B*` records internally.
+-/
+def theorem8_source_sequential_source_extensive_rationality_local_advance_safe_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_extensive_rationality_local_advance_safe_trace_full_completed_threshold_conclusion
+
+/--
+Payoff-facing source-sequential source-extensive endpoint with history-local
+advance safety.
+-/
+def theorem8_source_sequential_source_extensive_rationality_local_advance_safe_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_extensive_rationality_local_advance_safe_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Trace-full source-sequential source-extensive endpoint with threshold-event-safe
+source timing and completed-rank terminal-record formulas.
+-/
+def theorem8_source_sequential_source_extensive_rationality_threshold_event_advance_safe_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_extensive_rationality_threshold_event_advance_safe_trace_full_completed_threshold_conclusion
+
+/--
+Payoff-facing source-sequential source-extensive endpoint with
+threshold-event-safe source timing.
+-/
+def theorem8_source_sequential_source_extensive_rationality_threshold_event_advance_safe_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_extensive_rationality_threshold_event_advance_safe_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Trace-full source-sequential source-extensive endpoint where completed ranks are
+identified by final inactivity instead of explicit terminal-clock inequalities.
+-/
+def theorem8_source_sequential_source_extensive_rationality_local_advance_safe_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_extensive_rationality_local_advance_safe_trace_full_completed_rank_conclusion_of_inactive_completed
+
+/--
+Payoff-facing source-sequential source-extensive endpoint where completed ranks
+are identified by final inactivity.
+-/
+def theorem8_source_sequential_source_extensive_rationality_local_advance_safe_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_extensive_rationality_local_advance_safe_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Trace-full source-sequential source-extensive endpoint with threshold-event-safe
+source timing where completed ranks are identified by final inactivity.
+-/
+def theorem8_source_sequential_source_extensive_rationality_threshold_event_advance_safe_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_extensive_rationality_threshold_event_advance_safe_trace_full_completed_rank_conclusion_of_inactive_completed
+
+/--
+Payoff-facing source-sequential source-extensive endpoint with
+threshold-event-safe source timing where completed ranks are identified by
+final inactivity.
+-/
+def theorem8_source_sequential_source_extensive_rationality_threshold_event_advance_safe_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_extensive_rationality_threshold_event_advance_safe_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Cold-start trace-full source-sequential source-extensive endpoint with
+history-local advance safety.
+-/
+def theorem8_cold_start_source_sequential_source_extensive_rationality_local_advance_safe_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_extensive_rationality_local_advance_safe_trace_full_completed_threshold_conclusion
+
+/--
+Cold-start payoff-facing source-sequential source-extensive endpoint with
+history-local advance safety.
+-/
+def theorem8_cold_start_source_sequential_source_extensive_rationality_local_advance_safe_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_extensive_rationality_local_advance_safe_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Cold-start trace-full source-sequential source-extensive endpoint with
+threshold-event-safe source timing.
+-/
+def theorem8_cold_start_source_sequential_source_extensive_rationality_threshold_event_advance_safe_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_extensive_rationality_threshold_event_advance_safe_trace_full_completed_threshold_conclusion
+
+/--
+Cold-start payoff-facing source-sequential source-extensive endpoint with
+threshold-event-safe source timing.
+-/
+def theorem8_cold_start_source_sequential_source_extensive_rationality_threshold_event_advance_safe_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_extensive_rationality_threshold_event_advance_safe_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Cold-start trace-full source-sequential source-extensive endpoint where completed
+ranks are identified by final inactivity.
+-/
+def theorem8_cold_start_source_sequential_source_extensive_rationality_local_advance_safe_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_extensive_rationality_local_advance_safe_trace_full_completed_rank_conclusion_of_inactive_completed
+
+/--
+Cold-start payoff-facing source-sequential source-extensive endpoint where
+completed ranks are identified by final inactivity.
+-/
+def theorem8_cold_start_source_sequential_source_extensive_rationality_local_advance_safe_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_extensive_rationality_local_advance_safe_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Cold-start trace-full source-sequential source-extensive endpoint with
+threshold-event-safe source timing where completed ranks are identified by
+final inactivity.
+-/
+def theorem8_cold_start_source_sequential_source_extensive_rationality_threshold_event_advance_safe_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_extensive_rationality_threshold_event_advance_safe_trace_full_completed_rank_conclusion_of_inactive_completed
+
+/--
+Cold-start payoff-facing source-sequential source-extensive endpoint with
+threshold-event-safe source timing where completed ranks are identified by
+final inactivity.
+-/
+def theorem8_cold_start_source_sequential_source_extensive_rationality_threshold_event_advance_safe_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_extensive_rationality_threshold_event_advance_safe_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Trace-full source-sequential endpoint from an explicit clock-disciplined source
+trace and terminality.
+-/
+def theorem8_source_sequential_clock_disciplined_strategy_trace_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_trace_trace_full_completed_threshold_conclusion
+
+/--
+Payoff-facing source-sequential endpoint from an explicit clock-disciplined
+source trace and terminality.
+-/
+def theorem8_source_sequential_clock_disciplined_strategy_trace_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_trace_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Trace-full source-sequential endpoint from an explicit clock-disciplined source
+trace, terminality, and final inactivity on completed ranks.
+-/
+def theorem8_source_sequential_clock_disciplined_strategy_trace_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_trace_trace_full_completed_rank_conclusion_of_inactive_completed
+
+/--
+Payoff-facing inactive-completed source-sequential endpoint from an explicit
+clock-disciplined source trace and terminality.
+-/
+def theorem8_source_sequential_clock_disciplined_strategy_trace_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_trace_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Trace-full source-sequential endpoint from a source-event trace and
+terminality.
+-/
+def theorem8_source_sequential_source_event_trace_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_event_trace_trace_full_completed_threshold_conclusion
+
+/--
+Payoff-facing source-sequential endpoint from a source-event trace and
+terminality.
+-/
+def theorem8_source_sequential_source_event_trace_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_event_trace_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Trace-full source-sequential endpoint from a source-event trace, terminality,
+and final inactivity on completed ranks.
+-/
+def theorem8_source_sequential_source_event_trace_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_event_trace_trace_full_completed_rank_conclusion_of_inactive_completed
+
+/--
+Payoff-facing inactive-completed source-sequential endpoint from a source-event
+trace and terminality.
+-/
+def theorem8_source_sequential_source_event_trace_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_event_trace_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Cold-start trace-full completed-threshold source-sequential endpoint from a
+source-event trace and terminality.
+-/
+def theorem8_cold_start_source_sequential_source_event_trace_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_event_trace_trace_full_completed_threshold_conclusion
+
+/--
+Cold-start payoff-facing completed-threshold source-sequential endpoint from a
+source-event trace and terminality.
+-/
+def theorem8_cold_start_source_sequential_source_event_trace_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_event_trace_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Cold-start trace-full inactive-completed source-sequential endpoint from a
+source-event trace and terminality.
+-/
+def theorem8_cold_start_source_sequential_source_event_trace_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_event_trace_trace_full_completed_rank_conclusion_of_inactive_completed
+
+/--
+Cold-start payoff-facing inactive-completed source-sequential endpoint from a
+source-event trace and terminality.
+-/
+def theorem8_cold_start_source_sequential_source_event_trace_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_event_trace_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Cold-start trace-full completed-threshold source-sequential endpoint from an
+explicit clock-disciplined source trace and terminality.
+-/
+def theorem8_cold_start_source_sequential_clock_disciplined_strategy_trace_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_trace_trace_full_completed_threshold_conclusion
+
+/--
+Cold-start payoff-facing completed-threshold source-sequential endpoint from
+an explicit clock-disciplined source trace and terminality.
+-/
+def theorem8_cold_start_source_sequential_clock_disciplined_strategy_trace_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_trace_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Cold-start trace-full inactive-completed source-sequential endpoint from an
+explicit clock-disciplined source trace and terminality.
+-/
+def theorem8_cold_start_source_sequential_clock_disciplined_strategy_trace_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_trace_trace_full_completed_rank_conclusion_of_inactive_completed
+
+/--
+Cold-start payoff-facing inactive-completed source-sequential endpoint from an
+explicit clock-disciplined source trace and terminality.
+-/
+def theorem8_cold_start_source_sequential_clock_disciplined_strategy_trace_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_trace_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Trace-full source-sequential endpoint from an explicit clock-disciplined source
+history and terminality.
+-/
+def theorem8_source_sequential_clock_disciplined_strategy_history_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_history_trace_full_completed_threshold_conclusion
+
+/--
+Payoff-facing source-sequential endpoint from an explicit clock-disciplined
+source history and terminality.
+-/
+def theorem8_source_sequential_clock_disciplined_strategy_history_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_history_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Trace-full source-sequential endpoint from an explicit clock-disciplined source
+history, terminality, and final inactivity on completed ranks.
+-/
+def theorem8_source_sequential_clock_disciplined_strategy_history_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_history_trace_full_completed_rank_conclusion_of_inactive_completed
+
+/--
+Payoff-facing inactive-completed source-sequential endpoint from an explicit
+clock-disciplined source history and terminality.
+-/
+def theorem8_source_sequential_clock_disciplined_strategy_history_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_history_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Cold-start trace-full source-sequential endpoint from an explicit
+clock-disciplined source history and completed-rank terminal-clock cutoffs.
+-/
+def theorem8_cold_start_source_sequential_clock_disciplined_strategy_history_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_history_trace_full_completed_threshold_conclusion
+
+/--
+Cold-start payoff-facing source-sequential endpoint from an explicit
+clock-disciplined source history and completed-rank terminal-clock cutoffs.
+-/
+def theorem8_cold_start_source_sequential_clock_disciplined_strategy_history_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_history_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Cold-start trace-full inactive-completed source-sequential endpoint from an
+explicit clock-disciplined source history and terminality.
+-/
+def theorem8_cold_start_source_sequential_clock_disciplined_strategy_history_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_history_trace_full_completed_rank_conclusion_of_inactive_completed
+
+/--
+Cold-start payoff-facing inactive-completed source-sequential endpoint from an
+explicit clock-disciplined source history and terminality.
+-/
+def theorem8_cold_start_source_sequential_clock_disciplined_strategy_history_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_history_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Certificate-level source-sequential constructor from an explicit
+clock-disciplined source trace and terminality.
+-/
+noncomputable def theorem8_source_sequential_clock_disciplined_strategy_trace_one_step_tie_break_core_source_completion_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_trace_one_step_tie_break_core_source_completion_certificate
+
+/--
+Certificate-level source-sequential constructor from a paper-style source-event
+trace and terminality.
+-/
+noncomputable def theorem8_source_sequential_source_event_trace_one_step_tie_break_core_source_completion_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_event_trace_one_step_tie_break_core_source_completion_certificate
+
+/--
+Certificate-level source-sequential constructor from an explicit
+clock-disciplined source history and terminality.
+-/
+noncomputable def theorem8_source_sequential_clock_disciplined_strategy_history_one_step_tie_break_core_source_completion_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_clock_disciplined_strategy_history_one_step_tie_break_core_source_completion_certificate
+
+/--
+Cold-start certificate-level source-sequential constructor from an explicit
+clock-disciplined source trace and terminality.
+-/
+noncomputable def theorem8_cold_start_source_sequential_clock_disciplined_strategy_trace_one_step_tie_break_core_source_completion_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_trace_one_step_tie_break_core_source_completion_certificate
+
+/--
+Cold-start certificate-level source-sequential constructor from a paper-style
+source-event trace and terminality.
+-/
+noncomputable def theorem8_cold_start_source_sequential_source_event_trace_one_step_tie_break_core_source_completion_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_event_trace_one_step_tie_break_core_source_completion_certificate
+
+/--
+Cold-start certificate-level source-sequential constructor from an explicit
+clock-disciplined source history and terminality.
+-/
+noncomputable def theorem8_cold_start_source_sequential_clock_disciplined_strategy_history_one_step_tie_break_core_source_completion_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_clock_disciplined_strategy_history_one_step_tie_break_core_source_completion_certificate
+
+/--
+One-stop trace-full finite-schedule endpoint from the dynamic certificate and
+clock-sorted no-duplicate schedule data, with the conclusion stated against
+the constructed terminal-dynamic certificate rather than an internal
+source-completion certificate.
+-/
+def theorem8_dynamic_clock_sorted_finite_schedule_trace_full_source_completion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_dynamic_clock_sorted_finite_schedule_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion
+
+/--
+All-scheduled specialization of the stable dynamic finite-schedule endpoint.
+The completed rank set is `scheduledRanks.toFinset`.
+-/
+def theorem8_dynamic_clock_sorted_finite_schedule_all_scheduled_trace_full_source_completion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_dynamic_clock_sorted_finite_schedule_all_scheduled_exists_unique_pbe_with_trace_full_terminal_record_conclusion
+
+/--
+Trace-full all-scheduled finite-schedule endpoint specialized to the strict
+ordered local-deviation constructed outcome, with the conclusion stated
+against the constructed terminal-dynamic certificate.
+-/
+def theorem8_local_deviation_dynamic_clock_sorted_finite_schedule_all_scheduled_trace_full_source_completion :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_dynamic_clock_sorted_finite_schedule_all_scheduled_exists_unique_pbe_with_trace_full_terminal_record_conclusion
+
+/--
+Completed-rank trace-full finite-schedule endpoint specialized to the strict
+ordered local-deviation constructed outcome.
+-/
+def theorem8_local_deviation_dynamic_clock_sorted_finite_schedule_trace_full_completed_rank_source_completion :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_dynamic_clock_sorted_finite_schedule_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion
+
+/--
+Active-set characterization for the constructed local-deviation terminal
+dynamic from a clock-sorted no-duplicate finite schedule.
+-/
+def theorem8_local_deviation_terminal_dynamic_final_state_active_iff_not_mem :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_final_state_active_iff_not_mem_of_clock_sorted_nodup_unscheduled_threshold_gt
+
+/--
+Scheduled ranks are inactive in the constructed local-deviation terminal
+dynamic from a clock-sorted no-duplicate finite schedule.
+-/
+def theorem8_local_deviation_terminal_dynamic_final_state_inactive_of_mem :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_final_state_inactive_of_mem_clock_sorted_nodup_unscheduled_threshold_gt
+
+/--
+Terminal-record characterization for scheduled ranks in the constructed
+local-deviation terminal dynamic.
+-/
+def theorem8_local_deviation_terminal_dynamic_final_state_terminal_record_eq_threshold_of_mem :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_terminal_dynamic_final_state_terminal_record_eq_threshold_of_mem_clock_sorted_nodup_unscheduled_threshold_gt
+
+/--
+Cold-start threshold-sorted nonempty finite-schedule specialization of the
+local-deviation trace-full endpoint.
+-/
+def theorem8_local_deviation_cold_start_threshold_sorted_append_singleton_trace_full_source_completion :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_threshold_sorted_append_singleton_exists_unique_pbe_with_trace_full_terminal_record_conclusion
+
+/--
+Cold-start threshold-sorted nonempty finite-schedule specialization with a
+checked finite subset of completed ranks.
+-/
+def theorem8_local_deviation_cold_start_threshold_sorted_append_singleton_trace_full_completed_rank_source_completion :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_threshold_sorted_append_singleton_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion
+
+/--
+Cold-start threshold-sorted active-set characterization for the constructed
+local-deviation terminal dynamic.
+-/
+def theorem8_local_deviation_cold_start_threshold_sorted_terminal_dynamic_final_state_active_iff_not_mem :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_threshold_sorted_append_singleton_terminal_dynamic_final_state_active_iff_not_mem
+
+/--
+Cold-start threshold-sorted scheduled-rank inactivity for the constructed
+local-deviation terminal dynamic.
+-/
+def theorem8_local_deviation_cold_start_threshold_sorted_terminal_dynamic_final_state_inactive_of_mem :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_threshold_sorted_append_singleton_terminal_dynamic_final_state_inactive_of_mem
+
+/--
+Cold-start threshold-sorted terminal-record characterization for scheduled
+ranks in the constructed local-deviation terminal dynamic.
+-/
+def theorem8_local_deviation_cold_start_threshold_sorted_terminal_dynamic_final_state_terminal_record_eq_threshold_of_mem :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_threshold_sorted_append_singleton_terminal_dynamic_final_state_terminal_record_eq_threshold_of_mem
+
+/--
+Cold-start singleton trace-full specialization of the local-deviation
+finite-schedule endpoint.
+-/
+def theorem8_local_deviation_cold_start_singleton_trace_full_source_completion :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_singleton_exists_unique_pbe_with_trace_full_terminal_record_conclusion
+
+/--
+Cold-start pair trace-full specialization of the local-deviation
+finite-schedule endpoint.
+-/
+def theorem8_local_deviation_cold_start_pair_trace_full_source_completion :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_pair_exists_unique_pbe_with_trace_full_terminal_record_conclusion
+
+/--
+Finite-schedule constructor from the local one-step/tie-break source
+certificate and clock-sorted no-duplicate exact-drop schedule data.
+-/
+noncomputable def theorem8_finite_schedule_one_step_tie_break_core_source_completion_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_core_source_completion_certificate_of_one_step_tie_break_clock_sorted_nodup
+
+/--
+All-scheduled finite-schedule constructor from the local one-step/tie-break
+source certificate.
+-/
+noncomputable def theorem8_finite_schedule_all_scheduled_one_step_tie_break_core_source_completion_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_core_source_completion_certificate_of_one_step_tie_break_clock_sorted_nodup
+
+/--
+Trace-full finite-schedule endpoint from the local one-step/tie-break source
+certificate and clock-sorted no-duplicate exact-drop schedule data.
+-/
+noncomputable def theorem8_finite_schedule_one_step_tie_break_trace_full_completed_rank_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_one_step_tie_break_core_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_clock_sorted_nodup
+
+/--
+All-scheduled trace-full finite-schedule endpoint from the local
+one-step/tie-break source certificate.
+-/
+noncomputable def theorem8_finite_schedule_all_scheduled_one_step_tie_break_trace_full_completed_rank_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_schedule_all_scheduled_one_step_tie_break_core_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_clock_sorted_nodup
 
 /--
 All-scheduled finite-schedule source-iff endpoint.  The source side supplies
@@ -5700,6 +8151,20 @@ theorem theorem8_cold_start_strategy_step_allows_unsafe_advance
       model rank
 
 /--
+Ordinary named-strategy steps do not satisfy the realized-dropout
+no-overshoot timing invariant. This is the exact boundary showing that the
+source proof must provide clock discipline, realized-dropout no-overshoot, or
+an equivalent timing premise.
+-/
+theorem theorem8_not_realized_new_dropout_no_overshoot_statement_for_ordinary_strategy_step
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank : ℕ) :
+    ¬ theorem8RealizedNewDropoutNoOvershootStatement model := by
+  simpa [theorem8RealizedNewDropoutNoOvershootStatement] using
+    paper_theorem8_bstar_ranked_threshold_not_realized_new_dropout_no_overshoot_statement_for_ordinary_strategy_step
+      model rank
+
+/--
 Ordinary strategy-consistent histories are not enough to recover exact finite
 `B*` terminal records.  This witness has a terminal named-strategy history in
 which the only active rank drops after its finite `B*` threshold, so its
@@ -5886,6 +8351,205 @@ theorem theorem8_clock_disciplined_strategy_step_to_strategy_step
       model hstep
 
 /--
+Clock discipline is exactly ordinary named-strategy source semantics plus the
+local active-rank no-overshoot condition for any realized clock advance.
+-/
+theorem theorem8_clock_disciplined_strategy_step_iff_strategy_step_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ} :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyStep
+        model state next ↔
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          state next ∧
+        ∀ newPrice,
+          next =
+            PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+              state newPrice →
+          ∀ rank,
+            state.IsActive rank →
+              newPrice ≤
+                theorem8BStarThresholdBid
+                  model.value model.clickThroughRate
+                  (model.remaining + 1) (rank + 1) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_step_iff_strategy_step_advance_safe
+      model
+
+/--
+Terminal named-strategy states keep every active rank strictly below its finite
+`B*` threshold. This is the local terminal cutoff fact used by the source
+timing bridge.
+-/
+theorem theorem8_strategy_terminal_active_clock_lt_threshold
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state) :
+    ∀ rank,
+      state.IsActive rank →
+        state.clockPrice <
+          theorem8BStarThresholdBid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_terminal_active_clock_lt_threshold_bid
+      model hterminal
+
+/--
+Terminality of an advanced next state gives the same active-rank safety bound
+used by clock discipline for that final advance. This isolates the part of the
+source-timing obligation that follows from the terminal predicate itself.
+-/
+theorem theorem8_terminal_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {newPrice : ℝ}
+    (hnext :
+      next =
+        PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+          state newPrice)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        next) :
+    ∀ rank,
+      state.IsActive rank →
+        newPrice ≤
+          theorem8BStarThresholdBid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_terminal_advance_safe
+      model hnext hterminal
+
+/--
+Step-shaped terminal advance safety. When an ordinary named-strategy step lands
+in a terminal advanced state, the realized advance satisfies the active-rank
+clock-safety premise required by the clock-disciplined bridge.
+-/
+theorem theorem8_strategy_step_terminal_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state next : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state next)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        next) :
+    ∀ newPrice,
+      next =
+        PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+          state newPrice →
+      ∀ rank,
+        state.IsActive rank →
+          newPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1) := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_step_terminal_advance_safe
+      model hstep hterminal
+
+/--
+One-step terminal histories have the exact local advance-safety object consumed
+by the clock-disciplined/no-overshoot bridge.
+-/
+theorem theorem8_single_step_terminal_strategy_history_local_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    PaperTheorem8BStarRankedThresholdStrategyHistoryAdvanceSafe model
+      (PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory.cons
+        hstep
+        (PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory.refl
+          finalState)) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_single_step_terminal_strategy_history_local_advance_safe
+      model hstep hterminal
+
+/--
+History-local advance safety composes. This lets the source proof assemble a
+clock-safe generated history from separately verified generated segments.
+-/
+theorem theorem8_strategy_history_local_advance_safe_trans
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState :
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {hfirst :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state midState}
+    {hsecond :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        midState finalState}
+    (hfirst_safe : Theorem8StrategyHistoryAdvanceSafe model hfirst)
+    (hsecond_safe : Theorem8StrategyHistoryAdvanceSafe model hsecond) :
+    Theorem8StrategyHistoryAdvanceSafe model
+      (PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory.trans
+        hfirst hsecond) := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe] using
+    PaperTheorem8BStarRankedThresholdStrategyHistoryAdvanceSafe.trans
+      model hfirst_safe hsecond_safe
+
+/--
+A locally advance-safe prefix remains locally advance-safe after appending a
+terminal ordinary source step. Terminality discharges only the final advance
+case; earlier advance obligations stay attached to the prefix proof object.
+-/
+theorem theorem8_strategy_history_local_advance_safe_append_single_step_terminal
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state midState finalState :
+      PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {hprefix :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state midState}
+    (hprefix_safe : Theorem8StrategyHistoryAdvanceSafe model hprefix)
+    (hstep :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyStep
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        midState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState) :
+    Theorem8StrategyHistoryAdvanceSafe model
+      (PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory.trans
+        hprefix
+        (PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory.cons
+          hstep
+          (PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory.refl
+            finalState))) := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_local_advance_safe_append_single_step_terminal
+      model hprefix_safe hstep hterminal
+
+/--
 One-step clock discipline preserves the active-rank no-overshoot invariant.
 This is the source-step form of the timing invariant used by the exact-record
 bridge.
@@ -6018,6 +8682,25 @@ theorem theorem8_clock_disciplined_strategy_step_to_trace
       model hstep
 
 /--
+Clock-disciplined finite traces are exactly ordinary generated histories
+equipped with the local active-rank advance-safety proof object.
+-/
+theorem theorem8_clock_disciplined_strategy_trace_iff_strategy_history_local_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ} :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState ↔
+      ∃ hordinary :
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          state finalState,
+        Theorem8StrategyHistoryAdvanceSafe model hordinary := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_iff_strategy_history_local_advance_safe
+      model
+
+/--
 A finite trace of clock-disciplined source steps induces the existing
 clock-disciplined history object consumed by the terminal-record endpoints.
 -/
@@ -6032,6 +8715,41 @@ theorem theorem8_clock_disciplined_strategy_trace_to_clock_disciplined_strategy_
   exact
     paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_trace_to_clock_disciplined_strategy_history
       model htrace
+
+/--
+Clock-disciplined source histories can be represented as finite
+clock-disciplined traces.
+-/
+theorem theorem8_clock_disciplined_strategy_history_to_clock_disciplined_strategy_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model state finalState) :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+      model state finalState := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_to_clock_disciplined_strategy_trace
+      model hhist
+
+/--
+Clock-disciplined source histories are exactly ordinary generated histories
+equipped with the local active-rank advance-safety proof object.
+-/
+theorem theorem8_clock_disciplined_strategy_history_iff_strategy_history_local_advance_safe
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ} :
+    PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model state finalState ↔
+      ∃ hordinary :
+        PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+          (paper_theorem8_bstar_ranked_threshold_strategy
+            model.value model.clickThroughRate model.remaining)
+          state finalState,
+        Theorem8StrategyHistoryAdvanceSafe model hordinary := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_clock_disciplined_strategy_history_iff_strategy_history_local_advance_safe
+      model
 
 /--
 Clock-disciplined source histories compose. This is useful when source
@@ -9097,6 +11815,129 @@ theorem theorem8_strict_ordered_cold_start_threshold_sorted_schedule_source_exte
           hunscheduled_last rank hnot_mem)
 
 /--
+Strict-ordered cold-start threshold-sorted append schedule source-event ledger.
+The same paper-facing schedule checks construct a source-event trace and exact
+records.
+-/
+def theorem8_strict_ordered_cold_start_threshold_sorted_schedule_source_event_trace_exact_drop_obligations :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_threshold_sorted_append_singleton_source_event_trace_exact_drop_obligations
+
+/--
+Clock-sorted exact-drop schedules feed the ex-post local-deviation
+source-completion layer through the source-event trace generated by the same
+deterministic schedule.
+-/
+def theorem8_strict_ordered_exact_drop_schedule_source_event_trace_ex_post_source_completion_trace_full_completed_rank_conclusion_of_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_drop_schedule_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_final_clock_lt_unscheduled
+
+/--
+Payoff-facing exact-drop schedule endpoint for reviewed ranks in the ex-post
+local-deviation source-completion layer.
+-/
+def theorem8_strict_ordered_exact_drop_schedule_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_completed_rank_of_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_drop_schedule_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_rank_of_final_clock_lt_unscheduled
+
+/--
+Schedule-level source-event ex-post source-completion endpoint with reviewed
+ranks supplied as terminally inactive ranks.
+-/
+def theorem8_strict_ordered_exact_drop_schedule_source_event_trace_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_drop_schedule_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed_of_final_clock_lt_unscheduled
+
+/--
+Payoff-facing schedule-level ex-post source-completion endpoint from terminal
+inactivity of reviewed ranks.
+-/
+def theorem8_strict_ordered_exact_drop_schedule_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_inactive_completed_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_drop_schedule_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed_of_final_clock_lt_unscheduled
+
+/--
+Cold-start clock-sorted exact-drop schedules feed the ex-post local-deviation
+source-completion layer through their generated source-event trace.
+-/
+def theorem8_strict_ordered_cold_start_exact_drop_schedule_source_event_trace_ex_post_source_completion_trace_full_completed_rank_conclusion_of_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_exact_drop_schedule_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_final_clock_lt_unscheduled
+
+/--
+Payoff-facing cold-start exact-drop schedule endpoint for reviewed scheduled
+ranks in the ex-post local-deviation source-completion layer.
+-/
+def theorem8_strict_ordered_cold_start_exact_drop_schedule_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_completed_rank_of_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_exact_drop_schedule_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_rank_of_final_clock_lt_unscheduled
+
+/--
+Cold-start schedule-level source-event ex-post source-completion endpoint with
+reviewed ranks supplied as terminally inactive ranks.
+-/
+def theorem8_strict_ordered_cold_start_exact_drop_schedule_source_event_trace_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_exact_drop_schedule_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed_of_final_clock_lt_unscheduled
+
+/--
+Payoff-facing cold-start schedule-level source-completion endpoint from
+terminal inactivity of reviewed ranks.
+-/
+def theorem8_strict_ordered_cold_start_exact_drop_schedule_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_inactive_completed_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_exact_drop_schedule_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed_of_final_clock_lt_unscheduled
+
+/--
+All-scheduled clock-sorted exact-drop schedule source-event ex-post
+source-completion endpoint.
+-/
+def theorem8_strict_ordered_exact_drop_schedule_all_scheduled_source_event_trace_ex_post_source_completion_trace_full_completed_rank_conclusion_of_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_drop_schedule_all_scheduled_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_final_clock_lt_unscheduled
+
+/--
+Payoff-facing all-scheduled exact-drop schedule endpoint in the ex-post
+source-completion layer.
+-/
+def theorem8_strict_ordered_exact_drop_schedule_all_scheduled_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_scheduled_rank_of_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_drop_schedule_all_scheduled_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_scheduled_rank_of_final_clock_lt_unscheduled
+
+/--
+Cold-start all-scheduled source-event ex-post source-completion endpoint.
+-/
+def theorem8_strict_ordered_cold_start_exact_drop_schedule_all_scheduled_source_event_trace_ex_post_source_completion_trace_full_completed_rank_conclusion_of_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_exact_drop_schedule_all_scheduled_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_final_clock_lt_unscheduled
+
+/--
+Payoff-facing cold-start all-scheduled source-event ex-post endpoint.
+-/
+def theorem8_strict_ordered_cold_start_exact_drop_schedule_all_scheduled_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_scheduled_rank_of_final_clock_lt_unscheduled :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_exact_drop_schedule_all_scheduled_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_scheduled_rank_of_final_clock_lt_unscheduled
+
+/--
+Cold-start singleton source-event ex-post source-completion endpoint.
+-/
+def theorem8_strict_ordered_cold_start_singleton_source_event_trace_ex_post_source_completion_trace_full_completed_rank_conclusion :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_singleton_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion
+
+/--
+Payoff-facing cold-start singleton source-event ex-post endpoint.
+-/
+def theorem8_strict_ordered_cold_start_singleton_source_event_trace_ex_post_source_completion_utility_eq_bstar :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_singleton_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar
+
+/--
+Cold-start ordered-pair source-event ex-post source-completion endpoint.
+-/
+def theorem8_strict_ordered_cold_start_pair_source_event_trace_ex_post_source_completion_trace_full_completed_rank_conclusion :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_pair_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion
+
+/--
+Payoff-facing cold-start ordered-pair source-event ex-post endpoint for the
+first scheduled rank.
+-/
+def theorem8_strict_ordered_cold_start_pair_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_first :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_pair_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_first
+
+/--
+Payoff-facing cold-start ordered-pair source-event ex-post endpoint for the
+second scheduled rank.
+-/
+def theorem8_strict_ordered_cold_start_pair_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_second :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_pair_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_second
+
+/--
 Finite-schedule bridge bundling the source-extensive/local-advance-safe ledger
 with the trace-refined completed-rank source-extensive PBE conclusion.
 -/
@@ -9109,6 +11950,20 @@ conclusion used by the ex-post local-deviation source-completion layer.
 -/
 def theorem8_strict_ordered_cold_start_threshold_sorted_schedule_source_extensive_local_advance_safe_ex_post_source_completion_trace_full_completed_rank_conclusion :=
   paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_threshold_sorted_append_singleton_source_extensive_local_advance_safe_ex_post_source_completion_trace_full_completed_rank_terminal_record_conclusion
+
+/--
+Source-event append-schedule endpoint for the trace-full completed-rank PBE
+conclusion used by the ex-post local-deviation source-completion layer.
+-/
+def theorem8_strict_ordered_cold_start_threshold_sorted_schedule_source_event_trace_ex_post_source_completion_trace_full_completed_rank_conclusion :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_threshold_sorted_append_singleton_source_event_trace_ex_post_source_completion_trace_full_completed_rank_terminal_record_conclusion
+
+/--
+Payoff-facing source-event append-schedule endpoint for reviewed completed
+ranks in the ex-post local-deviation source-completion layer.
+-/
+def theorem8_strict_ordered_cold_start_threshold_sorted_schedule_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_completed_rank :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_threshold_sorted_append_singleton_source_event_trace_ex_post_source_completion_terminal_record_utility_eq_bstar_of_completed_rank
 
 /--
 Clock-sorted finite schedules end at a clock weakly above their initial clock.
@@ -9444,6 +12299,125 @@ theorem theorem8_cold_start_clock_sorted_finite_schedule_leaves_active_unschedul
       model ranks hsorted hnodup
 
 /--
+Finite generalized-English source histories from an all-active `ℕ`-rank state
+cannot end with all ranks inactive. This is the source-history analogue of the
+finite exact-schedule obstruction above.
+-/
+theorem theorem8_strategy_history_not_no_active_of_initial_all_active
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        strategy state finalState)
+    (hinitial_active : ∀ rank, state.IsActive rank) :
+    ¬ (∀ rank, ¬ finalState.IsActive rank) := by
+  exact
+    paper_theorem8_generalized_english_strategy_history_not_no_active_of_initial_all_active
+      hhist hinitial_active
+
+/--
+Cold-start ordinary named-strategy source histories over `ℕ` cannot supply the
+all-ranks-inactive terminality premise.
+-/
+theorem theorem8_cold_start_strategy_history_not_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state finalState) :
+    ¬ (∀ rank, ¬ finalState.IsActive rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_not_no_active
+      model hhist
+
+/--
+Source-extensive rationality contains a finite generated named-strategy
+history, so from an all-active `ℕ` initial state it cannot be paired with
+all-ranks-inactive terminality.
+-/
+theorem theorem8_source_extensive_rationality_not_no_active_of_initial_all_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model initialState finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hinitial_active : ∀ rank, initialState.IsActive rank) :
+    ¬ (∀ rank, ¬ finalState.IsActive rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_not_no_active_of_initial_all_active
+      model hsource_extensive hinitial_active
+
+/--
+Cold-start source-extensive rationality over the infinite `ℕ` rank model cannot
+provide the all-ranks-inactive terminality premise.
+-/
+theorem theorem8_cold_start_source_extensive_rationality_not_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)) :
+    ¬ (∀ rank, ¬ finalState.IsActive rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_not_no_active
+      model hsource_extensive
+
+/--
+Cold-start clock-disciplined traces are still finite source traces, so they
+also cannot supply the all-ranks-inactive terminality premise over `ℕ`.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_trace_not_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState) :
+    ¬ (∀ rank, ¬ finalState.IsActive rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_trace_not_no_active
+      model htrace
+
+/--
+Cold-start clock-disciplined histories likewise cannot produce an all-inactive
+terminal state over the infinite `ℕ` rank model.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_history_not_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyHistory
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState) :
+    ¬ (∀ rank, ¬ finalState.IsActive rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_clock_disciplined_strategy_history_not_no_active
+      model hhist
+
+/--
+The same terminality obstruction holds for the paper-style source-event trace:
+from the infinite all-active cold-start state, any finite source-event trace
+leaves some natural rank active.
+-/
+theorem theorem8_cold_start_source_event_trace_not_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState) :
+    ¬ (∀ rank, ¬ finalState.IsActive rank) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_source_event_trace_not_no_active
+      model htrace
+
+/--
 Finite-active cold-start terminality helper. If the source instance has an
 explicit finite active set and the exact-drop schedule covers exactly that set,
 then the deterministic final state has no active ranks left. This is the
@@ -9549,6 +12523,130 @@ theorem theorem8_finite_active_exact_record_cold_start_clock_sorted_schedule_no_
   exact
     paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_no_active_of_finite_active_exact_record_cold_start_covers
       model activeRanks scheduledRanks hsorted hnodup hcover
+
+/--
+Finite-active exact-record schedules generate the paper's source-event trace:
+each scheduled rank advances to its finite `B*` threshold and then drops. The
+finite active-set cover discharges the unscheduled-active side condition.
+-/
+theorem theorem8_finite_active_exact_record_schedule_to_source_event_trace
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ) (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks).clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    (hcover : ∀ rank, rank ∈ activeRanks ↔ rank ∈ scheduledRanks) :
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        model activeRanks
+    Theorem8SourceEventTrace model initialState
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model initialState scheduledRanks) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_schedule_to_source_event_trace
+      model activeRanks scheduledRanks hsorted hnodup hcover
+
+/--
+Schedule-support specialization of the finite-active source-event trace:
+the active set is exactly `scheduledRanks.toFinset`.
+-/
+theorem theorem8_finite_active_exact_record_schedule_to_source_event_trace_of_schedule_support
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (scheduledRanks : List ℕ)
+    (hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        model
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model scheduledRanks.toFinset).clockPrice
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup) :
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        model scheduledRanks.toFinset
+    Theorem8SourceEventTrace model initialState
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        model initialState scheduledRanks) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_schedule_to_source_event_trace_of_schedule_support
+      model scheduledRanks hsorted hnodup
+
+/--
+Strict-ordered threshold-sorted finite-active schedules generate the
+source-event trace directly, with the initial clock check discharged by the
+strict ordered model.
+-/
+theorem theorem8_strict_ordered_finite_active_exact_record_schedule_to_source_event_trace_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledRanks : List ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel scheduledRanks.toFinset
+    Theorem8SourceEventTrace localModel initialState
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState scheduledRanks) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_to_source_event_trace_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup
+
+/--
+Finite-active exact-record source-event schedule endpoint with the full
+source-extensive state-game VCG conclusion. This strengthens the finite-active
+schedule route by returning the paper-style source-event trace witness.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_schedule_source_event_trace_full_vcg_conclusion_of_threshold_sorted :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_source_event_trace_full_vcg_conclusion_of_threshold_sorted
+
+/--
+Finite-active exact-record source-event schedule endpoint with the ordered
+paper payoff package: ranked slots, finite `B*` payments, VCG-tail accounting,
+payment bounds, individual rationality, and no positive transfers.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_schedule_source_event_trace_ordered_paper_conclusion_of_threshold_sorted :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_source_event_trace_ordered_paper_conclusion_of_threshold_sorted
+
+/--
+Premise-free singleton finite-active source-event endpoint. The only active
+rank is scheduled by the one-event source scheduler, yielding the full
+source-extensive state-game VCG/PBE conclusion.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_singleton_source_event_trace_full_vcg_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_singleton_source_event_trace_full_vcg_conclusion
+
+/--
+Belief-explicit singleton finite-active source-event endpoint. This is the
+belief source-extensive version of the premise-free singleton source-event
+state-game conclusion.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_singleton_belief_source_event_trace_full_vcg_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_singleton_belief_source_event_trace_full_vcg_conclusion
+
+/--
+Belief-explicit finite-active exact-record source-event schedule endpoint with
+the full state-game VCG conclusion and an explicit source-event trace witness.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_schedule_belief_source_event_trace_full_vcg_conclusion_of_threshold_sorted :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_belief_source_event_trace_full_vcg_conclusion_of_threshold_sorted
+
+/--
+Belief-explicit finite-active source-event schedule endpoint with the ordered
+paper payoff package.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_schedule_belief_source_event_trace_ordered_paper_conclusion_of_threshold_sorted :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_belief_source_event_trace_ordered_paper_conclusion_of_threshold_sorted
 
 /--
 Exact-record finite-active source-game endpoint. For the state-based
@@ -9904,6 +13002,100 @@ theorem theorem8FinScheduleRanks_nodup {n : ℕ}
     paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks_nodup hnodup
 
 /--
+Finite-index source-event schedule wrapper. A displayed `Fin n` schedule,
+after translation to natural ranks, generates the paper-style source-event
+trace under the same threshold-sorted/no-duplicate checks used by the finite
+source-extensive endpoints.
+-/
+theorem theorem8_strict_ordered_fin_schedule_to_source_event_trace_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup) :
+    let rankSchedule := theorem8FinScheduleRanks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel rankSchedule.toFinset
+    Theorem8SourceEventTrace localModel initialState
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule) := by
+  simpa [theorem8FinScheduleRanks] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_fin_schedule_to_source_event_trace_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup
+
+/--
+Displayed finite-schedule source-event boundary. Any threshold-sorted
+duplicate-free `Fin n` schedule generates the source-event trace, the
+source-extensive ledger, threshold-event timing evidence, exact finite `B*`
+records, terminality, and terminal-record outcome identity for its finite
+support.
+-/
+theorem theorem8_strict_ordered_fin_schedule_source_event_boundary_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_fin_schedule_source_event_boundary_statement
+      model scheduledRanks := by
+  simpa [theorem8FinScheduleRanks] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_fin_schedule_source_event_boundary_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup
+
+/--
+Displayed finite source-event endpoint. A threshold-sorted duplicate-free
+`Fin n` schedule generates the source-event trace and full VCG state-game
+conclusion while retaining threshold-event timing evidence.
+-/
+theorem theorem8_strict_ordered_fin_schedule_source_event_threshold_event_trace_full_vcg_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_fin_schedule_source_event_threshold_event_trace_full_vcg_conclusion_statement
+      model scheduledRanks := by
+  simpa [theorem8FinScheduleRanks] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_fin_schedule_source_event_threshold_event_trace_full_vcg_conclusion_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup
+
+/--
+Belief-explicit displayed finite source-event endpoint with the same
+threshold-event-retaining full VCG conclusion.
+-/
+theorem theorem8_strict_ordered_fin_schedule_belief_source_event_threshold_event_trace_full_vcg_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_fin_schedule_belief_source_event_threshold_event_trace_full_vcg_conclusion_statement
+      model scheduledRanks := by
+  simpa [theorem8FinScheduleRanks] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_fin_schedule_belief_source_event_threshold_event_trace_full_vcg_conclusion_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup
+
+/--
 Finite-index completion check. If the displayed `Fin n` schedule is
 threshold-sorted and has no duplicates, then the exact-record finite-active
 source instance generated from that schedule has no active ranks after the
@@ -9970,6 +13162,483 @@ theorem theorem8_strict_ordered_complete_fin_schedule_displayed_ranks_active_the
     paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks] using
     paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_displayed_ranks_active_then_inactive_of_threshold_sorted
       model scheduledRanks hthreshold_sorted hnodup hcomplete
+
+/--
+Complete finite-index source-extensive endpoint. A threshold-sorted
+duplicate-free displayed schedule that contains every displayed rank gives the
+named finite `B*` strategy as the unique PBE, with generated trace, exact-drop
+history, active-to-inactive evidence, and terminal slot/payment formulas for
+every displayed rank.
+-/
+theorem theorem8_strict_ordered_complete_fin_schedule_source_extensive_trace_full_displayed_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks) :
+    let rankSchedule := theorem8FinScheduleRanks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank : Fin n,
+                    initialState.IsActive rank.val ∧
+                      ¬ finalState.IsActive rank.val ∧
+                        (G.outcomeOf strategy).slotOf rank.val =
+                            some rank.val ∧
+                          (G.outcomeOf strategy).paymentPerClick rank.val =
+                            paper_theorem8_bstar_threshold_bid
+                              localModel.value localModel.clickThroughRate
+                              (localModel.remaining + 1)
+                              (rank.val + 1)) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [theorem8FinScheduleRanks,
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_source_extensive_trace_full_displayed_conclusion_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+
+/--
+Complete finite-index source-event endpoint. This is the source-extensive
+displayed conclusion above, packaged with the source-event trace generated by
+the same displayed finite schedule.
+-/
+theorem theorem8_strict_ordered_complete_fin_schedule_source_event_trace_full_displayed_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks) :
+    let rankSchedule := theorem8FinScheduleRanks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace : Theorem8SourceEventTrace localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                strategy initialState finalState ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  strategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    (∀ rank : Fin n,
+                      initialState.IsActive rank.val ∧
+                        ¬ finalState.IsActive rank.val ∧
+                          (G.outcomeOf strategy).slotOf rank.val =
+                              some rank.val ∧
+                            (G.outcomeOf strategy).paymentPerClick rank.val =
+                              paper_theorem8_bstar_threshold_bid
+                                localModel.value localModel.clickThroughRate
+                                (localModel.remaining + 1)
+                                (rank.val + 1)) ∧
+                      ∀ bidder,
+                        (G.outcomeOf strategy).utility G.environment G.values
+                            bidder =
+                          G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [theorem8FinScheduleRanks,
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks,
+    Theorem8SourceEventTrace] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_source_event_trace_full_displayed_conclusion_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+
+/--
+Complete finite-index source-event endpoint with displayed-rank facts and the
+global ordered paper payoff package.
+-/
+theorem theorem8_strict_ordered_complete_fin_schedule_source_event_trace_ordered_displayed_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks) :
+    let rankSchedule := theorem8FinScheduleRanks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace : Theorem8SourceEventTrace localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                strategy initialState finalState ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  strategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    (∀ rank : Fin n,
+                      initialState.IsActive rank.val ∧
+                        ¬ finalState.IsActive rank.val ∧
+                          (G.outcomeOf strategy).slotOf rank.val =
+                              some rank.val ∧
+                            (G.outcomeOf strategy).paymentPerClick rank.val =
+                              paper_theorem8_bstar_threshold_bid
+                                localModel.value localModel.clickThroughRate
+                                (localModel.remaining + 1)
+                                (rank.val + 1)) ∧
+                      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                        localModel G strategy := by
+  simpa [theorem8FinScheduleRanks,
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks,
+    Theorem8SourceEventTrace] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_source_event_trace_ordered_displayed_paper_conclusion_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+
+/--
+Belief-explicit complete finite-index source-extensive endpoint. This is the
+belief-carrying counterpart of
+`theorem8_strict_ordered_complete_fin_schedule_source_extensive_trace_full_displayed_conclusion_of_threshold_sorted`.
+-/
+theorem theorem8_strict_ordered_complete_fin_schedule_belief_source_extensive_trace_full_displayed_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks) :
+    let rankSchedule := theorem8FinScheduleRanks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank : Fin n,
+                    initialState.IsActive rank.val ∧
+                      ¬ finalState.IsActive rank.val ∧
+                        (G.outcomeOf strategy).slotOf rank.val =
+                            some rank.val ∧
+                          (G.outcomeOf strategy).paymentPerClick rank.val =
+                            paper_theorem8_bstar_threshold_bid
+                              localModel.value localModel.clickThroughRate
+                              (localModel.remaining + 1)
+                              (rank.val + 1)) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [theorem8FinScheduleRanks,
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_belief_source_extensive_trace_full_displayed_conclusion_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+
+/--
+Belief-explicit complete finite-index source-event endpoint. This packages the
+belief source-extensive displayed conclusion with the paper-style source-event
+trace generated by the same displayed finite schedule.
+-/
+theorem theorem8_strict_ordered_complete_fin_schedule_belief_source_event_trace_full_displayed_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks) :
+    let rankSchedule := theorem8FinScheduleRanks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace : Theorem8SourceEventTrace localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                strategy initialState finalState ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  strategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    (∀ rank : Fin n,
+                      initialState.IsActive rank.val ∧
+                        ¬ finalState.IsActive rank.val ∧
+                          (G.outcomeOf strategy).slotOf rank.val =
+                              some rank.val ∧
+                            (G.outcomeOf strategy).paymentPerClick rank.val =
+                              paper_theorem8_bstar_threshold_bid
+                                localModel.value localModel.clickThroughRate
+                                (localModel.remaining + 1)
+                                (rank.val + 1)) ∧
+                      ∀ bidder,
+                        (G.outcomeOf strategy).utility G.environment G.values
+                            bidder =
+                          G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [theorem8FinScheduleRanks,
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks,
+    Theorem8SourceEventTrace] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_belief_source_event_trace_full_displayed_conclusion_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+
+/--
+Belief-explicit complete finite-index source-event endpoint with displayed-rank
+facts and the global ordered paper payoff package.
+-/
+theorem theorem8_strict_ordered_complete_fin_schedule_belief_source_event_trace_ordered_displayed_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks) :
+    let rankSchedule := theorem8FinScheduleRanks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace : Theorem8SourceEventTrace localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                strategy initialState finalState ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  strategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    (∀ rank : Fin n,
+                      initialState.IsActive rank.val ∧
+                        ¬ finalState.IsActive rank.val ∧
+                          (G.outcomeOf strategy).slotOf rank.val =
+                              some rank.val ∧
+                            (G.outcomeOf strategy).paymentPerClick rank.val =
+                              paper_theorem8_bstar_threshold_bid
+                                localModel.value localModel.clickThroughRate
+                                (localModel.remaining + 1)
+                                (rank.val + 1)) ∧
+                      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                        localModel G strategy := by
+  simpa [theorem8FinScheduleRanks,
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks,
+    Theorem8SourceEventTrace] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_belief_source_event_trace_ordered_displayed_paper_conclusion_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+
+/--
+Price-sorted finite source-history boundary package. The canonical displayed
+schedule produces the paper-style source-event trace, source-extensive ledger,
+threshold-event advance-safety evidence, and exact finite `B*` records.
+-/
+theorem theorem8_strict_ordered_price_sorted_fin_schedule_source_event_boundary
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_statement
+      model n := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary
+      model n
+
+/--
+Canonical price-sorted finite source-event endpoint feeding the terminal-record
+state game directly while retaining threshold-event timing evidence.
+-/
+theorem theorem8_strict_ordered_price_sorted_fin_schedule_source_event_threshold_event_trace_full_vcg_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_threshold_event_trace_full_vcg_conclusion_statement
+      model n := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_threshold_event_trace_full_vcg_conclusion
+      model n
+
+/--
+Belief-explicit canonical price-sorted finite source-event endpoint feeding
+the terminal-record state game while retaining threshold-event timing evidence.
+-/
+theorem theorem8_strict_ordered_price_sorted_fin_schedule_belief_source_event_threshold_event_trace_full_vcg_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_threshold_event_trace_full_vcg_conclusion_statement
+      model n := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_threshold_event_trace_full_vcg_conclusion
+      model n
+
+/--
+Complete finite-index source-event endpoint with the displayed schedule chosen
+internally by sorting `List.finRange n` by exact finite `B*` threshold. This
+removes the manual schedule, threshold-sortedness, no-duplicate, and
+completeness certificates from the paper-facing call site.
+-/
+theorem theorem8_strict_ordered_price_sorted_fin_schedule_source_event_trace_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_trace_ordered_displayed_paper_conclusion_statement
+      model n := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_trace_ordered_displayed_paper_conclusion
+      model n
+
+/--
+Belief-explicit complete finite-index source-event endpoint with the displayed
+schedule chosen internally by exact finite `B*` threshold sorting.
+-/
+theorem theorem8_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_ordered_displayed_paper_conclusion_statement
+      model n := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_ordered_displayed_paper_conclusion
+      model n
+
+/--
+Canonical price-sorted finite-index source-event endpoint combining the
+source-event timing boundary with the ordered displayed PBE/payoff conclusion.
+-/
+theorem theorem8_strict_ordered_price_sorted_fin_schedule_source_event_boundary_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_ordered_displayed_paper_conclusion_statement
+      model n := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_ordered_displayed_paper_conclusion
+      model n
+
+/--
+Belief-explicit canonical price-sorted finite-index endpoint combining the
+source-event timing boundary with the ordered displayed PBE/payoff conclusion.
+-/
+theorem theorem8_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_ordered_displayed_paper_conclusion_statement
+      model n := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_ordered_displayed_paper_conclusion
+      model n
 
 /--
 Finite-index schedule wrapper for the source-extensive finite exact-record
@@ -10264,6 +13933,889 @@ theorem theorem8_strict_ordered_fin_schedule_belief_source_extensive_displayed_r
     paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks] using
     paper_theorem8_bstar_ranked_threshold_strict_ordered_fin_schedule_belief_source_extensive_displayed_rank_formulas_of_threshold_sorted
       model scheduledRanks hthreshold_sorted hnodup
+
+/--
+Generic state-game source-extensive endpoint from a terminal-record outcome
+equality. This is the schedule-free target for source paths that already
+produce the named generated history, terminality, and exact-drop record.
+-/
+theorem theorem8_source_extensive_state_game_trace_full_vcg_conclusion_of_terminal_record_outcome_eq_bstar
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhistory :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        initialState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hexact :
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model initialState finalState)
+    (houtcome :
+      paper_theorem8_terminal_dropout_record_outcome finalState =
+        paper_theorem8_bstar_ranked_threshold_outcome
+          model.value model.clickThroughRate (model.remaining + 1)) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_terminal_record_outcome_eq_bstar
+      model hhistory hterminal hexact houtcome
+
+/--
+Belief-explicit generic state-game source-extensive endpoint from a
+terminal-record outcome equality.
+-/
+theorem theorem8_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_terminal_record_outcome_eq_bstar
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhistory :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        initialState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hexact :
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model initialState finalState)
+    (houtcome :
+      paper_theorem8_terminal_dropout_record_outcome finalState =
+        paper_theorem8_bstar_ranked_threshold_outcome
+          model.value model.clickThroughRate (model.remaining + 1)) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_terminal_record_outcome_eq_bstar
+      model hhistory hterminal hexact houtcome
+
+/--
+Source-event state-game endpoint from a terminal-record outcome equality. The
+event trace supplies generated history and exact records, so this endpoint does
+not require every rank to be initially active.
+-/
+def theorem8_source_event_trace_source_extensive_state_game_trace_full_vcg_conclusion_of_terminal_record_outcome_eq_bstar :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_event_trace_terminal_record_outcome_eq_bstar
+
+/--
+Source-event state-game endpoint retaining threshold-event advance-safety
+evidence for the generated source history.
+-/
+def theorem8_source_event_trace_source_extensive_state_game_threshold_event_trace_full_vcg_conclusion_of_terminal_record_outcome_eq_bstar :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_terminal_record_outcome_eq_bstar
+
+/--
+Belief-explicit source-event state-game endpoint from a terminal-record outcome
+equality.
+-/
+def theorem8_source_event_trace_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_terminal_record_outcome_eq_bstar :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_event_trace_terminal_record_outcome_eq_bstar
+
+/--
+Belief-explicit source-event state-game endpoint retaining threshold-event
+advance-safety evidence for the generated source history.
+-/
+def theorem8_source_event_trace_belief_source_extensive_state_game_threshold_event_trace_full_vcg_conclusion_of_terminal_record_outcome_eq_bstar :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_terminal_record_outcome_eq_bstar
+
+/--
+All-active/all-terminal exact-drop-history source-extensive state-game
+endpoint. Exact finite `B*` history supplies the terminal-record outcome
+equality internally.
+-/
+theorem theorem8_source_extensive_state_game_trace_full_vcg_conclusion_of_exact_drop_history_all_active_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhistory :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        initialState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hexact :
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model initialState finalState)
+    (hinitial_active : ∀ rank, initialState.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_exact_drop_history_all_active_no_active
+      model hhistory hterminal hexact hinitial_active hno_active
+
+/--
+Belief-explicit all-active/all-terminal exact-drop-history state-game endpoint.
+-/
+theorem theorem8_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_exact_drop_history_all_active_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhistory :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        initialState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hexact :
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model initialState finalState)
+    (hinitial_active : ∀ rank, initialState.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_exact_drop_history_all_active_no_active
+      model hhistory hterminal hexact hinitial_active hno_active
+
+/--
+Local-safety state-game source-extensive endpoint. The source-extensive
+package gives the generated history and terminality; history-local advance
+safety plus initial no-overshoot derives exact finite `B*` records, and
+all-active/all-terminal states give the full VCG state-game conclusion.
+-/
+theorem theorem8_source_extensive_state_game_trace_full_vcg_conclusion_of_local_advance_safe_all_active_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model initialState finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_active : ∀ rank, initialState.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_extensive_rationality_local_advance_safe_all_active_no_active
+      model hsource_extensive hadvance_safe hstate_no_overshoot
+      hinitial_active hno_active
+
+/--
+Belief-explicit counterpart of
+`theorem8_source_extensive_state_game_trace_full_vcg_conclusion_of_local_advance_safe_all_active_no_active`.
+-/
+theorem theorem8_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_local_advance_safe_all_active_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model initialState finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_active : ∀ rank, initialState.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_extensive_rationality_local_advance_safe_all_active_no_active
+      model hsource_extensive hadvance_safe hstate_no_overshoot
+      hinitial_active hno_active
+
+def theorem8_source_extensive_state_game_trace_full_vcg_conclusion_of_threshold_event_advance_safe_all_active_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_all_active_no_active
+
+def theorem8_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_threshold_event_advance_safe_all_active_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_all_active_no_active
+
+def theorem8_source_extensive_state_game_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_all_active_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_all_active_no_active
+
+def theorem8_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_all_active_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_all_active_no_active
+
+/--
+Cold-start local-safety state-game source-extensive endpoint. The paper
+cold-start state supplies initial activity and initial no-overshoot, leaving
+only generated source-extensive rationality, history-local advance safety, and
+final all-ranks inactivity.
+-/
+theorem theorem8_cold_start_source_extensive_state_game_trace_full_vcg_conclusion_of_local_advance_safe_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy paper_theorem8_bstar_ranked_threshold_cold_start_state
+              finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model paper_theorem8_bstar_ranked_threshold_cold_start_state
+                  finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_extensive_rationality_local_advance_safe_no_active
+      model hvalue_nonneg hclick_mono hsource_extensive hadvance_safe
+      hno_active
+
+/--
+Belief-explicit cold-start local-safety state-game endpoint.
+-/
+theorem theorem8_cold_start_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_local_advance_safe_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy paper_theorem8_bstar_ranked_threshold_cold_start_state
+              finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model paper_theorem8_bstar_ranked_threshold_cold_start_state
+                  finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_extensive_rationality_local_advance_safe_no_active
+      model hvalue_nonneg hclick_mono hsource_extensive hadvance_safe
+      hno_active
+
+def theorem8_cold_start_source_extensive_state_game_trace_full_vcg_conclusion_of_threshold_event_advance_safe_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_no_active
+
+def theorem8_cold_start_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_threshold_event_advance_safe_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_no_active
+
+def theorem8_cold_start_source_extensive_state_game_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_no_active
+
+def theorem8_cold_start_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_no_active
+
+/--
+Clock-disciplined trace version of the state-game source-extensive endpoint.
+This is the direct proof target for source paths whose timing discipline has
+already been established as a trace relation.
+-/
+theorem theorem8_source_extensive_state_game_trace_full_vcg_conclusion_of_clock_disciplined_trace_all_active_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model initialState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_active : ∀ rank, initialState.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_clock_disciplined_strategy_trace_all_active_no_active
+      model htrace hterminal hstate_no_overshoot hinitial_active hno_active
+
+/--
+Belief-explicit clock-disciplined trace version of the state-game endpoint.
+-/
+theorem theorem8_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_clock_disciplined_trace_all_active_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model initialState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_active : ∀ rank, initialState.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_clock_disciplined_strategy_trace_all_active_no_active
+      model htrace hterminal hstate_no_overshoot hinitial_active hno_active
+
+/--
+Cold-start clock-disciplined trace state-game endpoint. The cold-start state
+discharges initial activity and initial no-overshoot.
+-/
+theorem theorem8_cold_start_source_extensive_state_game_trace_full_vcg_conclusion_of_clock_disciplined_trace_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy paper_theorem8_bstar_ranked_threshold_cold_start_state
+              finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model paper_theorem8_bstar_ranked_threshold_cold_start_state
+                  finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_clock_disciplined_strategy_trace_no_active
+      model hvalue_nonneg hclick_mono htrace hterminal hno_active
+
+/--
+Belief-explicit cold-start clock-disciplined trace state-game endpoint.
+-/
+theorem theorem8_cold_start_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_clock_disciplined_trace_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy paper_theorem8_bstar_ranked_threshold_cold_start_state
+              finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model paper_theorem8_bstar_ranked_threshold_cold_start_state
+                  finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_cold_start_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_clock_disciplined_strategy_trace_no_active
+      model hvalue_nonneg hclick_mono htrace hterminal hno_active
+
+/--
+Source-event trace state-game endpoint. The event trace forgets to the
+clock-disciplined trace used by the existing VCG/PBE state-game theorem.
+-/
+theorem theorem8_source_extensive_state_game_trace_full_vcg_conclusion_of_source_event_trace_all_active_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model initialState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_active : ∀ rank, initialState.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [Theorem8SourceEventTrace, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_event_trace_all_active_no_active
+      model htrace hterminal
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      hinitial_active hno_active
+
+/-- Belief-explicit source-event trace state-game endpoint. -/
+theorem theorem8_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_source_event_trace_all_active_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model initialState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_active : ∀ rank, initialState.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy initialState finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [Theorem8SourceEventTrace, theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_event_trace_all_active_no_active
+      model htrace hterminal
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          hstate_no_overshoot rank hactive)
+      hinitial_active hno_active
+
+/-- Cold-start source-event trace state-game endpoint. -/
+theorem theorem8_cold_start_source_extensive_state_game_trace_full_vcg_conclusion_of_source_event_trace_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy paper_theorem8_bstar_ranked_threshold_cold_start_state
+              finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model paper_theorem8_bstar_ranked_threshold_cold_start_state
+                  finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [Theorem8SourceEventTrace] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_event_trace_no_active
+      model hvalue_nonneg hclick_mono htrace hterminal hno_active
+
+/-- Belief-explicit cold-start source-event trace state-game endpoint. -/
+theorem theorem8_cold_start_belief_source_extensive_state_game_trace_full_vcg_conclusion_of_source_event_trace_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hclick_mono : ∀ rank,
+      model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy paper_theorem8_bstar_ranked_threshold_cold_start_state
+              finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model paper_theorem8_bstar_ranked_threshold_cold_start_state
+                  finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [Theorem8SourceEventTrace] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_trace_full_vcg_conclusion_of_source_event_trace_no_active
+      model hvalue_nonneg hclick_mono htrace hterminal hno_active
 
 /--
 Meaning of the finite exact-record source-extensive PBE predicate: behavioral
@@ -10920,6 +15472,78 @@ theorem theorem8_source_extensive_rationality_local_advance_safe_belief_trace_al
       model hsource_extensive hadvance_safe hstate_no_overshoot initially_active
       hno_active
 
+noncomputable def theorem8_source_extensive_rationality_threshold_event_advance_safe_trace_all_terminal_vcg_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_threshold_event_advance_safe_trace_all_terminal_vcg_conclusion
+
+noncomputable def theorem8_source_extensive_rationality_threshold_event_advance_safe_belief_trace_all_terminal_vcg_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_threshold_event_advance_safe_belief_trace_all_terminal_vcg_conclusion
+
+noncomputable def theorem8_strategy_history_threshold_event_advance_safe_trace_all_terminal_vcg_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strategy_history_threshold_event_advance_safe_trace_all_terminal_vcg_conclusion
+
+noncomputable def theorem8_strategy_history_threshold_event_advance_safe_belief_trace_all_terminal_vcg_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strategy_history_threshold_event_advance_safe_belief_trace_all_terminal_vcg_conclusion
+
+noncomputable def theorem8_cold_start_source_extensive_rationality_threshold_event_advance_safe_trace_all_terminal_vcg_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_threshold_event_advance_safe_trace_all_terminal_vcg_conclusion
+
+noncomputable def theorem8_cold_start_source_extensive_rationality_threshold_event_advance_safe_belief_trace_all_terminal_vcg_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_threshold_event_advance_safe_belief_trace_all_terminal_vcg_conclusion
+
+noncomputable def theorem8_cold_start_strategy_history_threshold_event_advance_safe_trace_all_terminal_vcg_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_threshold_event_advance_safe_trace_all_terminal_vcg_conclusion
+
+noncomputable def theorem8_cold_start_strategy_history_threshold_event_advance_safe_belief_trace_all_terminal_vcg_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_threshold_event_advance_safe_belief_trace_all_terminal_vcg_conclusion
+
+noncomputable def theorem8_source_extensive_rationality_threshold_event_advance_safe_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_threshold_event_advance_safe_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+noncomputable def theorem8_source_extensive_rationality_threshold_event_advance_safe_trace_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_threshold_event_advance_safe_trace_completed_rank_paper_conclusion_of_inactive_completed
+
+noncomputable def theorem8_source_extensive_rationality_threshold_event_advance_safe_belief_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_threshold_event_advance_safe_belief_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+noncomputable def theorem8_source_extensive_rationality_threshold_event_advance_safe_belief_trace_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_threshold_event_advance_safe_belief_trace_completed_rank_paper_conclusion_of_inactive_completed
+
+noncomputable def theorem8_strategy_history_threshold_event_advance_safe_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strategy_history_threshold_event_advance_safe_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+noncomputable def theorem8_strategy_history_threshold_event_advance_safe_trace_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strategy_history_threshold_event_advance_safe_trace_completed_rank_paper_conclusion_of_inactive_completed
+
+noncomputable def theorem8_strategy_history_threshold_event_advance_safe_belief_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strategy_history_threshold_event_advance_safe_belief_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+noncomputable def theorem8_strategy_history_threshold_event_advance_safe_belief_trace_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strategy_history_threshold_event_advance_safe_belief_trace_completed_rank_paper_conclusion_of_inactive_completed
+
+noncomputable def theorem8_cold_start_source_extensive_rationality_threshold_event_advance_safe_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_threshold_event_advance_safe_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+noncomputable def theorem8_cold_start_source_extensive_rationality_threshold_event_advance_safe_trace_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_threshold_event_advance_safe_trace_completed_rank_paper_conclusion_of_inactive_completed
+
+noncomputable def theorem8_cold_start_source_extensive_rationality_threshold_event_advance_safe_belief_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_threshold_event_advance_safe_belief_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+noncomputable def theorem8_cold_start_source_extensive_rationality_threshold_event_advance_safe_belief_trace_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_threshold_event_advance_safe_belief_trace_completed_rank_paper_conclusion_of_inactive_completed
+
+noncomputable def theorem8_cold_start_strategy_history_threshold_event_advance_safe_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_threshold_event_advance_safe_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+noncomputable def theorem8_cold_start_strategy_history_threshold_event_advance_safe_trace_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_threshold_event_advance_safe_trace_completed_rank_paper_conclusion_of_inactive_completed
+
+noncomputable def theorem8_cold_start_strategy_history_threshold_event_advance_safe_belief_trace_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_threshold_event_advance_safe_belief_trace_completed_rank_paper_conclusion_of_completed_threshold_le
+
+noncomputable def theorem8_cold_start_strategy_history_threshold_event_advance_safe_belief_trace_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_threshold_event_advance_safe_belief_trace_completed_rank_paper_conclusion_of_inactive_completed
+
 /--
 Completed-rank version of the local-safety conditional source theorem for the
 ordinary source-extensive checker. Source-extensive rationality and local
@@ -10986,6 +15610,68 @@ theorem theorem8_source_extensive_rationality_local_advance_safe_trace_completed
     paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_local_advance_safe_trace_completed_rank_paper_conclusion_of_completed_threshold_le
       model hsource_extensive hadvance_safe hstate_no_overshoot
       initially_active completedRanks hcompleted_threshold_le
+      hvalue_nonneg hvalue_mono hclick_mono
+
+/--
+Completed-rank version of the local-safety conditional source theorem where
+reviewed ranks are identified by final inactivity. The no-overshoot terminal
+certificate converts final inactivity into the threshold reachability used by
+the terminal-record formulas.
+-/
+theorem theorem8_source_extensive_rationality_local_advance_safe_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (initially_active : ∀ rank, state.IsActive rank)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
+    let terminalCert :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_source_extensive_rationality_local_advance_safe
+        model hsource_extensive hadvance_safe hstate_no_overshoot
+        initially_active
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy state finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model state finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe,
+    terminalRecordSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_local_advance_safe_trace_completed_rank_paper_conclusion_of_inactive_completed
+      model hsource_extensive hadvance_safe hstate_no_overshoot
+      initially_active completedRanks inactive_on_completed
       hvalue_nonneg hvalue_mono hclick_mono
 
 /--
@@ -11067,6 +15753,73 @@ theorem theorem8_source_extensive_rationality_local_advance_safe_belief_trace_co
       hvalue_nonneg hvalue_mono hclick_mono model.click_pos
 
 /--
+Belief-explicit completed-rank source theorem where reviewed ranks are
+identified by final inactivity instead of explicit terminal-clock threshold
+inequalities.
+-/
+theorem theorem8_source_extensive_rationality_local_advance_safe_belief_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (initially_active : ∀ rank, state.IsActive rank)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
+    let htrace :=
+      theorem8_source_extensive_rationality_to_clock_disciplined_trace_of_history_advance_safe
+        model hsource_extensive hadvance_safe
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot hsource_extensive.2.2
+        initially_active
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe,
+    terminalRecordBeliefSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_source_extensive_rationality_to_clock_disciplined_trace_of_history_advance_safe,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_local_advance_safe_belief_trace_completed_rank_paper_conclusion_of_inactive_completed
+      model hsource_extensive hadvance_safe hstate_no_overshoot
+      initially_active completedRanks inactive_on_completed
+      hvalue_nonneg hvalue_mono hclick_mono
+
+/--
 Generated-history completed-rank counterpart of the belief-explicit
 local-safety source theorem.  The source-extensive rationality record is built
 internally from the named finite `B*` strategy history and terminality proof.
@@ -11142,6 +15895,75 @@ theorem theorem8_strategy_history_local_advance_safe_belief_trace_completed_thre
       hvalue_nonneg hvalue_mono hclick_mono
 
 /--
+Belief-explicit generated-history completed-rank endpoint where completed ranks
+are identified by final inactivity.
+-/
+theorem theorem8_strategy_history_local_advance_safe_belief_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hhist)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (initially_active : ∀ rank, state.IsActive rank)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
+    let htrace :=
+      paper_theorem8_bstar_ranked_threshold_strategy_history_to_clock_disciplined_strategy_trace_of_history_advance_safe
+        model hhist hadvance_safe
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot terminal initially_active
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe,
+    terminalRecordBeliefSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_local_advance_safe_belief_trace_completed_rank_paper_conclusion_of_inactive_completed
+      model hhist terminal hadvance_safe hstate_no_overshoot initially_active
+      completedRanks inactive_on_completed hvalue_nonneg hvalue_mono
+      hclick_mono
+
+/--
 Generated-history completed-rank counterpart of the local-safety source
 theorem for the ordinary source-extensive checker. The source-extensive
 rationality record is built internally from the named finite `B*` strategy
@@ -11215,6 +16037,76 @@ theorem theorem8_strategy_history_local_advance_safe_trace_completed_threshold_c
       model hhist terminal hadvance_safe hstate_no_overshoot initially_active
       completedRanks hcompleted_threshold_le
       hvalue_nonneg hvalue_mono hclick_mono
+
+/--
+Generated-history completed-rank endpoint where completed ranks are identified
+by final inactivity. The local-safety proof builds the no-overshoot terminal
+certificate, and inactivity on reviewed ranks supplies the terminal-clock
+threshold facts internally.
+-/
+theorem theorem8_strategy_history_local_advance_safe_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        state finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hhist)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (initially_active : ∀ rank, state.IsActive rank)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
+    let terminalCert :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_no_overshoot_strategy_history
+        model
+        (paper_theorem8_bstar_ranked_threshold_strategy_history_local_advance_safe_to_no_overshoot_strategy_history
+          model hhist hadvance_safe hstate_no_overshoot)
+        terminal
+        initially_active
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy state finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model state finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe,
+    terminalRecordSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_strategy_history_local_advance_safe_trace_completed_rank_paper_conclusion_of_inactive_completed
+      model hhist terminal hadvance_safe hstate_no_overshoot initially_active
+      completedRanks inactive_on_completed hvalue_nonneg hvalue_mono
+      hclick_mono
 
 /--
 Generated-history local-safety all-terminal theorem. The source-extensive
@@ -11532,6 +16424,63 @@ theorem theorem8_cold_start_source_extensive_rationality_local_advance_safe_trac
       hvalue_nonneg hvalue_mono hclick_mono
 
 /--
+Cold-start completed-rank source theorem where completed ranks are identified
+by final inactivity. Initial no-overshoot and initial activity are discharged
+from the paper cold-start state, while inactivity supplies the terminal-clock
+threshold facts through the no-overshoot terminal certificate.
+-/
+theorem theorem8_cold_start_source_extensive_rationality_local_advance_safe_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank) :
+    let hstate_no_overshoot :=
+      paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos
+    let terminalCert :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_source_extensive_rationality_local_advance_safe
+        model hsource_extensive hadvance_safe hstate_no_overshoot
+        (fun rank => by rfl)
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe,
+    terminalRecordSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_local_advance_safe_trace_completed_rank_paper_conclusion_of_inactive_completed
+      model hvalue_nonneg hvalue_mono hclick_mono hsource_extensive
+      hadvance_safe completedRanks inactive_on_completed
+
+/--
 Cold-start completed-rank version of the belief-explicit local-safety source
 theorem.  The paper cold-start state supplies initial no-overshoot and initial
 activity; the caller supplies only the completed-rank terminal-clock checks and
@@ -11600,6 +16549,66 @@ theorem theorem8_cold_start_source_extensive_rationality_local_advance_safe_beli
         model hvalue_nonneg hclick_mono model.click_pos)
       (fun rank => by rfl) completedRanks hcompleted_threshold_le
       hvalue_nonneg hvalue_mono hclick_mono
+
+/--
+Cold-start belief-explicit completed-rank source theorem where completed ranks
+are identified by final inactivity.
+-/
+theorem theorem8_cold_start_source_extensive_rationality_local_advance_safe_belief_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hsource_extensive.2.1)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank) :
+    let htrace :=
+      theorem8_source_extensive_rationality_to_clock_disciplined_trace_of_history_advance_safe
+        model hsource_extensive hadvance_safe
+    let hstate_no_overshoot :=
+      paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot hsource_extensive.2.2
+        (fun rank => by rfl)
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe,
+    terminalRecordBeliefSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_source_extensive_rationality_to_clock_disciplined_trace_of_history_advance_safe,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_source_extensive_rationality_local_advance_safe_belief_trace_completed_rank_paper_conclusion_of_inactive_completed
+      model hvalue_nonneg hvalue_mono hclick_mono hsource_extensive
+      hadvance_safe completedRanks inactive_on_completed
 
 /--
 Cold-start generated-history completed-rank endpoint.  The caller supplies the
@@ -11675,6 +16684,69 @@ theorem theorem8_cold_start_strategy_history_local_advance_safe_belief_trace_com
       hvalue_nonneg hvalue_mono hclick_mono
 
 /--
+Cold-start belief-explicit generated-history completed-rank endpoint where
+completed ranks are identified by final inactivity.
+-/
+theorem theorem8_cold_start_strategy_history_local_advance_safe_belief_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hhist)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank) :
+    let htrace :=
+      paper_theorem8_bstar_ranked_threshold_strategy_history_to_clock_disciplined_strategy_trace_of_history_advance_safe
+        model hhist hadvance_safe
+    let hstate_no_overshoot :=
+      paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot terminal (fun rank => by rfl)
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe,
+    terminalRecordBeliefSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_local_advance_safe_belief_trace_completed_rank_paper_conclusion_of_inactive_completed
+      model hvalue_nonneg hvalue_mono hclick_mono hhist terminal
+      hadvance_safe completedRanks inactive_on_completed
+
+/--
 Cold-start generated-history completed-rank endpoint for the ordinary
 source-extensive checker. The caller supplies the realized named-strategy
 history, its local advance-safety proof, terminality, and the finite
@@ -11746,6 +16818,69 @@ theorem theorem8_cold_start_strategy_history_local_advance_safe_trace_completed_
         model hvalue_nonneg hclick_mono model.click_pos)
       (fun rank => by rfl) completedRanks hcompleted_threshold_le
       hvalue_nonneg hvalue_mono hclick_mono
+
+/--
+Cold-start generated-history completed-rank endpoint where completed ranks are
+identified by final inactivity.
+-/
+theorem theorem8_cold_start_strategy_history_local_advance_safe_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hhist :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        paper_theorem8_bstar_ranked_threshold_cold_start_state finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hadvance_safe :
+      Theorem8StrategyHistoryAdvanceSafe model hhist)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank) :
+    let hstate_no_overshoot :=
+      paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos
+    let terminalCert :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_of_no_overshoot_strategy_history
+        model
+        (paper_theorem8_bstar_ranked_threshold_strategy_history_local_advance_safe_to_no_overshoot_strategy_history
+          model hhist hadvance_safe hstate_no_overshoot)
+        terminal
+        (fun rank => by rfl)
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [Theorem8StrategyHistoryAdvanceSafe,
+    terminalRecordSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid] using
+    paper_theorem8_bstar_ranked_threshold_cold_start_strategy_history_local_advance_safe_trace_completed_rank_paper_conclusion_of_inactive_completed
+      model hvalue_nonneg hvalue_mono hclick_mono hhist terminal
+      hadvance_safe completedRanks inactive_on_completed
 
 /--
 Cold-start generated-history local-safety all-terminal theorem. The source
@@ -12464,6 +17599,145 @@ theorem theorem8_clock_disciplined_strategy_trace_source_extensive_trace_complet
       hvalue_nonneg hvalue_mono hclick_mono hclick_pos
 
 /--
+Trace-level clock-disciplined source-extensive endpoint where completed ranks
+are supplied by final inactivity rather than terminal-clock inequalities.
+-/
+theorem theorem8_clock_disciplined_strategy_trace_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot terminal initially_active
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [terminalRecordSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_history,
+    theorem8_clock_disciplined_strategy_trace_to_clock_disciplined_strategy_history] using
+    theorem8_clock_disciplined_terminal_history_source_extensive_trace_completed_rank_conclusion
+      model
+      (theorem8_clock_disciplined_strategy_trace_to_clock_disciplined_strategy_history
+        model htrace)
+      hstate_no_overshoot terminal initially_active completedRanks
+      inactive_on_completed hvalue_nonneg hvalue_mono hclick_mono
+      hclick_pos
+
+/--
+Source-event source-extensive endpoint where completed ranks are supplied by
+final inactivity.  The event trace is stricter than clock discipline and is
+forgotten internally to the trace endpoint above.
+-/
+theorem theorem8_source_event_trace_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace
+        model htrace
+        (by
+          intro rank hactive
+          simpa [theorem8BStarThresholdBid] using
+            hstate_no_overshoot rank hactive)
+        terminal initially_active
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [terminalRecordSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace,
+    theorem8_source_event_trace_to_clock_disciplined_strategy_trace,
+    Theorem8SourceEventTrace] using
+    theorem8_clock_disciplined_strategy_trace_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+      model
+      (theorem8_source_event_trace_to_clock_disciplined_strategy_trace
+        model htrace)
+      hstate_no_overshoot terminal initially_active completedRanks
+      inactive_on_completed hvalue_nonneg hvalue_mono hclick_mono
+      hclick_pos
+
+/--
 Cold-start source-extensive clock-disciplined trace endpoint. The PBE checker
 still carries the generated history and terminality proof, but the initial
 no-overshoot and initial-activity premises are derived from the cold-start
@@ -12595,6 +17869,126 @@ theorem theorem8_cold_start_clock_disciplined_strategy_trace_source_extensive_tr
       terminal (fun rank => by rfl) completedRanks
       hcompleted_threshold_le hvalue_nonneg hvalue_mono hclick_mono
       model.click_pos
+
+/--
+Cold-start trace-level source-extensive endpoint where completed ranks are
+identified by final inactivity.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_trace_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
+    let hstate_no_overshoot :=
+      paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot terminal (fun rank => by rfl)
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [terminalRecordSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
+    theorem8_clock_disciplined_strategy_trace_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+      model htrace
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos)
+      terminal (fun rank => by rfl) completedRanks inactive_on_completed
+      hvalue_nonneg hvalue_mono hclick_mono model.click_pos
+
+/--
+Cold-start source-event source-extensive endpoint where completed ranks are
+identified by final inactivity.
+-/
+theorem theorem8_cold_start_source_event_trace_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      theorem8_cold_start_no_overshoot_terminal_history_certificate_of_source_event_trace
+        model hvalue_nonneg hclick_mono htrace terminal
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [terminalRecordSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_cold_start_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    Theorem8SourceEventTrace] using
+    theorem8_source_event_trace_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+            model hvalue_nonneg hclick_mono model.click_pos rank hactive)
+      terminal (fun rank => by rfl) completedRanks inactive_on_completed
+      hvalue_nonneg hvalue_mono hclick_mono model.click_pos
 
 /--
 Cold-start source-extensive clock-disciplined trace endpoint with direct
@@ -13286,6 +18680,257 @@ theorem theorem8_clock_disciplined_strategy_trace_source_extensive_trace_all_ter
     theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
     paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_exists_unique_pbe_with_trace_all_terminal_vcg_conclusion_of_clock_disciplined_strategy_trace
       model htrace hstate_no_overshoot terminal initially_active hno_active
+
+/--
+Trace-refined source-event all-terminal source-extensive endpoint.  This keeps
+the paper-style event trace at the boundary and forgets it internally to the
+clock-disciplined trace consumed by the terminal-record checker.
+-/
+theorem theorem8_source_event_trace_source_extensive_trace_all_terminal_vcg_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace
+        model htrace
+        (by
+          intro rank hactive
+          simpa [theorem8BStarThresholdBid] using
+            hstate_no_overshoot rank hactive)
+        terminal initially_active
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [terminalRecordSourceExtensiveGame, theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace,
+    theorem8_source_event_trace_to_clock_disciplined_strategy_trace,
+    Theorem8SourceEventTrace] using
+    theorem8_clock_disciplined_strategy_trace_source_extensive_trace_all_terminal_vcg_conclusion
+      model
+      (theorem8_source_event_trace_to_clock_disciplined_strategy_trace
+        model htrace)
+      hstate_no_overshoot terminal initially_active hno_active
+
+/--
+Trace-refined belief-explicit source-event all-terminal endpoint.  This is the
+source-event counterpart of the clock-disciplined belief checker.
+-/
+theorem theorem8_source_event_trace_belief_source_extensive_trace_all_terminal_vcg_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace
+        model htrace
+        (by
+          intro rank hactive
+          simpa [theorem8BStarThresholdBid] using
+            hstate_no_overshoot rank hactive)
+        terminal initially_active
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [terminalRecordBeliefSourceExtensiveGame, theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace,
+    theorem8_source_event_trace_to_clock_disciplined_strategy_trace,
+    Theorem8SourceEventTrace] using
+    theorem8_clock_disciplined_strategy_trace_belief_source_extensive_trace_all_terminal_vcg_conclusion
+      model
+      (theorem8_source_event_trace_to_clock_disciplined_strategy_trace
+        model htrace)
+      hstate_no_overshoot terminal initially_active hno_active
+
+/--
+Cold-start source-event all-terminal source-extensive endpoint.  The
+cold-start state discharges initial no-overshoot and initial activity while the
+statement keeps the paper-style event trace at the boundary.
+-/
+theorem theorem8_cold_start_source_event_trace_source_extensive_trace_all_terminal_vcg_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      theorem8_cold_start_no_overshoot_terminal_history_certificate_of_source_event_trace
+        model hvalue_nonneg hclick_mono htrace terminal
+    let G := terminalRecordSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [terminalRecordSourceExtensiveGame, theorem8BStarThresholdBid,
+    theorem8_cold_start_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    Theorem8SourceEventTrace] using
+    theorem8_source_event_trace_source_extensive_trace_all_terminal_vcg_conclusion
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+            model hvalue_nonneg hclick_mono model.click_pos rank hactive)
+      terminal (fun rank => by rfl) hno_active
+
+/--
+Cold-start belief-explicit source-event all-terminal endpoint.
+-/
+theorem theorem8_cold_start_source_event_trace_belief_source_extensive_trace_all_terminal_vcg_conclusion
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      theorem8_cold_start_no_overshoot_terminal_history_certificate_of_source_event_trace
+        model hvalue_nonneg hclick_mono htrace terminal
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  simpa [terminalRecordBeliefSourceExtensiveGame, theorem8BStarThresholdBid,
+    theorem8_cold_start_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    Theorem8SourceEventTrace] using
+    theorem8_source_event_trace_belief_source_extensive_trace_all_terminal_vcg_conclusion
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+            model hvalue_nonneg hclick_mono model.click_pos rank hactive)
+      terminal (fun rank => by rfl) hno_active
 
 /--
 Cold-start all-terminal source-extensive endpoint.  Starting from the paper's
@@ -14693,6 +20338,264 @@ theorem theorem8_cold_start_clock_disciplined_terminal_history_belief_source_ext
     paper_theorem8_bstar_ranked_threshold_cold_start_terminal_record_belief_source_extensive_dynamic_game_exists_unique_pbe_with_trace_completed_rank_paper_conclusion_of_clock_disciplined_terminal_history_inactive_completed
       model hhist terminal completedRanks inactive_on_completed
       hvalue_nonneg hvalue_mono hclick_mono
+
+/--
+Trace-level belief-explicit clock-disciplined endpoint where completed ranks
+are supplied by final inactivity.
+-/
+theorem theorem8_clock_disciplined_strategy_trace_belief_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot terminal initially_active
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [terminalRecordBeliefSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_history,
+    theorem8_clock_disciplined_strategy_trace_to_clock_disciplined_strategy_history] using
+    theorem8_clock_disciplined_terminal_history_belief_source_extensive_trace_completed_rank_conclusion
+      model
+      (theorem8_clock_disciplined_strategy_trace_to_clock_disciplined_strategy_history
+        model htrace)
+      hstate_no_overshoot terminal initially_active completedRanks
+      inactive_on_completed hvalue_nonneg hvalue_mono hclick_mono
+      hclick_pos
+
+/--
+Belief-explicit source-event endpoint where completed ranks are supplied by
+final inactivity.
+-/
+theorem theorem8_source_event_trace_belief_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {state finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace : Theorem8SourceEventTrace model state finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        state.IsActive rank →
+          state.clockPrice ≤
+            theorem8BStarThresholdBid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (initially_active : ∀ rank, state.IsActive rank)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    (hclick_pos : ∀ i, 0 < model.clickThroughRate i) :
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace
+        model htrace
+        (by
+          intro rank hactive
+          simpa [theorem8BStarThresholdBid] using
+            hstate_no_overshoot rank hactive)
+        terminal initially_active
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [terminalRecordBeliefSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace,
+    theorem8_source_event_trace_to_clock_disciplined_strategy_trace,
+    Theorem8SourceEventTrace] using
+    theorem8_clock_disciplined_strategy_trace_belief_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+      model
+      (theorem8_source_event_trace_to_clock_disciplined_strategy_trace
+        model htrace)
+      hstate_no_overshoot terminal initially_active completedRanks
+      inactive_on_completed hvalue_nonneg hvalue_mono hclick_mono
+      hclick_pos
+
+/--
+Cold-start trace-level belief-explicit endpoint where completed ranks are
+supplied by final inactivity.
+-/
+theorem theorem8_cold_start_clock_disciplined_strategy_trace_belief_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdClockDisciplinedStrategyTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i) :
+    let hstate_no_overshoot :=
+      paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos
+    let terminalCert :=
+      theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace
+        model htrace hstate_no_overshoot terminal (fun rank => by rfl)
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [terminalRecordBeliefSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_no_overshoot_terminal_certificate_of_clock_disciplined_trace] using
+    theorem8_clock_disciplined_strategy_trace_belief_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+      model htrace
+      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+        model hvalue_nonneg hclick_mono model.click_pos)
+      terminal (fun rank => by rfl) completedRanks inactive_on_completed
+      hvalue_nonneg hvalue_mono hclick_mono model.click_pos
+
+/--
+Cold-start belief-explicit source-event endpoint where completed ranks are
+supplied by final inactivity.
+-/
+theorem theorem8_cold_start_source_event_trace_belief_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ i, 0 ≤ model.value i)
+    (hvalue_mono : ∀ i, model.value (i + 1) ≤ model.value i)
+    (hclick_mono : ∀ i,
+      model.clickThroughRate (i + 1) ≤ model.clickThroughRate i)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      Theorem8SourceEventTrace
+        model paper_theorem8_bstar_ranked_threshold_cold_start_state
+        finalState)
+    (terminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (completedRanks : Finset ℕ)
+    (inactive_on_completed :
+      ∀ rank, rank ∈ completedRanks → ¬ finalState.IsActive rank) :
+    let terminalCert :=
+      theorem8_cold_start_no_overshoot_terminal_history_certificate_of_source_event_trace
+        model hvalue_nonneg hclick_mono htrace terminal
+    let ordinary :=
+      paper_theorem8_bstar_ranked_threshold_no_overshoot_terminal_history_behavior_certificate_to_terminal_history_behavior_certificate
+        terminalCert
+    let G := terminalRecordBeliefSourceExtensiveGame terminalCert
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              strategy terminalCert.initialState terminalCert.finalState ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                strategy terminalCert.finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  terminalCert.localModel terminalCert.initialState
+                  terminalCert.finalState ∧
+                ∀ rank,
+                  rank ∈ completedRanks →
+                    completedRankPaperFormula ordinary G strategy rank := by
+  simpa [terminalRecordBeliefSourceExtensiveGame, completedRankPaperFormula,
+    theorem8BStarThresholdBid,
+    theorem8_cold_start_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    theorem8_no_overshoot_terminal_history_certificate_of_source_event_trace,
+    Theorem8SourceEventTrace] using
+    theorem8_source_event_trace_belief_source_extensive_trace_completed_rank_conclusion_of_inactive_completed
+      model htrace
+      (by
+        intro rank hactive
+        simpa [theorem8BStarThresholdBid] using
+          paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
+            model hvalue_nonneg hclick_mono model.click_pos rank hactive)
+      terminal (fun rank => by rfl) completedRanks inactive_on_completed
+      hvalue_nonneg hvalue_mono hclick_mono model.click_pos
 
 /--
 Belief-explicit source-extensive finite-schedule endpoint.  This is the same
@@ -16691,6 +22594,62 @@ def theorem8_strict_ordered_source_extensive_rationality_realized_new_dropout_ex
   @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_realized_new_dropout_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
 
 /--
+Payoff-facing realized-new-dropout source-extensive ex-post source-completion
+endpoint for completed ranks certified by terminal-clock threshold evidence.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_realized_new_dropout_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_realized_new_dropout_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Realized-new-dropout source-extensive ex-post source-completion endpoint with
+completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_realized_new_dropout_ex_post_source_completion_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_realized_new_dropout_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_inactive_completed
+
+/--
+Trace-full realized-new-dropout source-extensive ex-post source-completion
+endpoint with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_realized_new_dropout_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_realized_new_dropout_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing realized-new-dropout source-extensive ex-post source-completion
+endpoint with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_realized_new_dropout_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_realized_new_dropout_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Source-sequential source-extensive realized-new-dropout timing bridge to the
+local one-step/tie-break source-completion certificate.
+-/
+noncomputable def theorem8_strict_ordered_source_sequential_source_extensive_rationality_realized_new_dropout_one_step_tie_break_core_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_sequential_source_extensive_rationality_realized_new_dropout_one_step_tie_break_core_source_completion_certificate
+
+/--
+Cold-start source-sequential source-extensive realized-new-dropout timing
+bridge to the local one-step/tie-break source-completion certificate.
+-/
+noncomputable def theorem8_strict_ordered_cold_start_source_sequential_source_extensive_rationality_realized_new_dropout_one_step_tie_break_core_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_sequential_source_extensive_rationality_realized_new_dropout_one_step_tie_break_core_source_completion_certificate
+
+/--
+Source-extensive realized-new-dropout timing bridge to the local
+one-step/tie-break source-completion certificate.
+-/
+noncomputable def theorem8_strict_ordered_source_extensive_rationality_realized_new_dropout_one_step_tie_break_core_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_realized_new_dropout_one_step_tie_break_core_source_completion_certificate
+
+/--
+Cold-start source-extensive realized-new-dropout timing bridge to the local
+one-step/tie-break source-completion certificate.
+-/
+noncomputable def theorem8_strict_ordered_cold_start_source_extensive_rationality_realized_new_dropout_one_step_tie_break_core_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_extensive_rationality_realized_new_dropout_one_step_tie_break_core_source_completion_certificate
+
+/--
 Exact-drop-history ex-post local-deviation source-completion endpoint. This
 uses exact finite `B*` history plus terminality directly; it does not require
 the full source-extensive rationality package as a premise.
@@ -16711,6 +22670,27 @@ endpoint from exact history and terminality.
 -/
 def theorem8_strict_ordered_exact_drop_history_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
   @paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_drop_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Exact-drop-history ex-post source-completion endpoint with completed ranks
+certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_exact_drop_history_ex_post_source_completion_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_drop_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_inactive_completed
+
+/--
+Trace-full exact-drop-history ex-post source-completion endpoint with completed
+ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_exact_drop_history_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_drop_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing exact-drop-history ex-post source-completion endpoint with
+completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_exact_drop_history_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_exact_drop_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
 
 /--
 Exact-history source-extensive generated-history version of the ex-post
@@ -16735,6 +22715,55 @@ def theorem8_strict_ordered_source_extensive_rationality_exact_drop_history_ex_p
   @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_exact_drop_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
 
 /--
+Exact-history source-extensive ex-post source-completion endpoint with
+completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_exact_drop_history_ex_post_source_completion_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_exact_drop_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_inactive_completed
+
+/--
+Trace-full exact-history source-extensive ex-post source-completion endpoint
+with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_exact_drop_history_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_exact_drop_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing exact-history source-extensive ex-post source-completion endpoint
+with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_exact_drop_history_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_exact_drop_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Local-advance-safe source-extensive generated-history bridge to the local
+one-step/tie-break source-completion certificate.
+-/
+noncomputable def theorem8_strict_ordered_source_extensive_rationality_local_advance_safe_one_step_tie_break_core_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_local_advance_safe_one_step_tie_break_core_source_completion_certificate
+
+/--
+Threshold-event-safe source-extensive generated-history bridge to the local
+one-step/tie-break source-completion certificate.
+-/
+noncomputable def theorem8_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_one_step_tie_break_core_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_one_step_tie_break_core_source_completion_certificate
+
+/--
+Cold-start local-advance-safe source-extensive bridge to the local
+one-step/tie-break source-completion certificate.
+-/
+noncomputable def theorem8_strict_ordered_cold_start_source_extensive_rationality_local_advance_safe_one_step_tie_break_core_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_extensive_rationality_local_advance_safe_one_step_tie_break_core_source_completion_certificate
+
+/--
+Cold-start threshold-event-safe source-extensive bridge to the local
+one-step/tie-break source-completion certificate.
+-/
+noncomputable def theorem8_strict_ordered_cold_start_source_extensive_rationality_threshold_event_advance_safe_one_step_tie_break_core_certificate :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_extensive_rationality_threshold_event_advance_safe_one_step_tie_break_core_source_completion_certificate
+
+/--
 Local-advance-safe source-extensive generated-history version of the ex-post
 local-deviation source-completion endpoint. The exact finite `B*` history is
 derived from the generated history and local advance-safety evidence.
@@ -16755,6 +22784,413 @@ for completed ranks.
 -/
 def theorem8_strict_ordered_source_extensive_rationality_local_advance_safe_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
   @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_local_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Local-advance-safe source-extensive ex-post source-completion endpoint with
+completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_local_advance_safe_ex_post_source_completion_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_local_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_inactive_completed
+
+/--
+Trace-full local-advance-safe source-extensive ex-post source-completion
+endpoint with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_local_advance_safe_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_local_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing local-advance-safe source-extensive ex-post source-completion
+endpoint with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_local_advance_safe_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_local_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Threshold-event-safe source-extensive generated-history version of the ex-post
+local-deviation source-completion endpoint for completed ranks.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_source_completion_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Trace-full threshold-event-safe source-extensive generated-history version of
+the ex-post local-deviation source-completion endpoint.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing threshold-event-safe source-extensive source-completion endpoint
+for completed ranks.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Threshold-event-safe source-extensive ex-post source-completion endpoint with
+completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_source_completion_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_terminal_record_conclusion_of_inactive_completed
+
+/--
+Trace-full threshold-event-safe source-extensive ex-post source-completion
+endpoint with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing threshold-event-safe source-extensive ex-post source-completion
+endpoint with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_threshold_event_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Global advance-safe source-extensive ex-post source-completion endpoint for
+completed ranks certified by terminal-clock threshold evidence.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_advance_safe_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing global advance-safe source-extensive ex-post source-completion
+endpoint for completed ranks certified by terminal-clock threshold evidence.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_advance_safe_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Global advance-safe source-extensive ex-post source-completion endpoint with
+completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_advance_safe_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing global advance-safe source-extensive ex-post source-completion
+endpoint with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_extensive_rationality_advance_safe_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_extensive_rationality_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Cold-start source-extensive global advance-safe ex-post source-completion
+endpoint for completed ranks certified by terminal-clock threshold evidence.
+-/
+def theorem8_strict_ordered_cold_start_source_extensive_rationality_advance_safe_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_extensive_rationality_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing cold-start source-extensive global advance-safe ex-post
+source-completion endpoint for completed ranks.
+-/
+def theorem8_strict_ordered_cold_start_source_extensive_rationality_advance_safe_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_extensive_rationality_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Cold-start source-extensive global advance-safe ex-post source-completion
+endpoint with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_cold_start_source_extensive_rationality_advance_safe_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_extensive_rationality_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing cold-start source-extensive global advance-safe ex-post
+source-completion endpoint with completed ranks certified by terminal
+inactivity.
+-/
+def theorem8_strict_ordered_cold_start_source_extensive_rationality_advance_safe_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_extensive_rationality_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Generated-history global advance-safe ex-post source-completion endpoint for
+completed ranks certified by terminal-clock threshold evidence.
+-/
+def theorem8_strict_ordered_strategy_history_advance_safe_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_strategy_history_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing generated-history global advance-safe ex-post source-completion
+endpoint for completed ranks.
+-/
+def theorem8_strict_ordered_strategy_history_advance_safe_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_strategy_history_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Generated-history global advance-safe ex-post source-completion endpoint with
+completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_strategy_history_advance_safe_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_strategy_history_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing generated-history global advance-safe ex-post source-completion
+endpoint with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_strategy_history_advance_safe_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_strategy_history_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Generated-history threshold-event-safe ex-post source-completion endpoint for
+completed ranks certified by terminal-clock threshold evidence.
+-/
+def theorem8_strict_ordered_strategy_history_threshold_event_advance_safe_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_strategy_history_threshold_event_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing generated-history threshold-event-safe ex-post
+source-completion endpoint for completed ranks.
+-/
+def theorem8_strict_ordered_strategy_history_threshold_event_advance_safe_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_strategy_history_threshold_event_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Generated-history threshold-event-safe ex-post source-completion endpoint with
+completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_strategy_history_threshold_event_advance_safe_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_strategy_history_threshold_event_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing generated-history threshold-event-safe ex-post
+source-completion endpoint with completed ranks certified directly by terminal
+inactivity.
+-/
+def theorem8_strict_ordered_strategy_history_threshold_event_advance_safe_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_strategy_history_threshold_event_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Cold-start generated-history global advance-safe ex-post source-completion
+endpoint for completed ranks certified by terminal-clock threshold evidence.
+-/
+def theorem8_strict_ordered_cold_start_strategy_history_advance_safe_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_strategy_history_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing cold-start generated-history global advance-safe ex-post
+source-completion endpoint for completed ranks.
+-/
+def theorem8_strict_ordered_cold_start_strategy_history_advance_safe_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_strategy_history_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Cold-start generated-history global advance-safe ex-post source-completion
+endpoint with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_cold_start_strategy_history_advance_safe_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_strategy_history_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing cold-start generated-history global advance-safe ex-post
+source-completion endpoint with completed ranks certified by terminal
+inactivity.
+-/
+def theorem8_strict_ordered_cold_start_strategy_history_advance_safe_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_strategy_history_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Cold-start generated-history threshold-event-safe ex-post source-completion
+endpoint for completed ranks certified by terminal-clock threshold evidence.
+-/
+def theorem8_strict_ordered_cold_start_strategy_history_threshold_event_advance_safe_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_strategy_history_threshold_event_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing cold-start generated-history threshold-event-safe ex-post
+source-completion endpoint for completed ranks.
+-/
+def theorem8_strict_ordered_cold_start_strategy_history_threshold_event_advance_safe_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_strategy_history_threshold_event_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Cold-start generated-history threshold-event-safe ex-post source-completion
+endpoint with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_cold_start_strategy_history_threshold_event_advance_safe_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_strategy_history_threshold_event_advance_safe_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing cold-start generated-history threshold-event-safe ex-post
+source-completion endpoint with completed ranks certified by terminal
+inactivity.
+-/
+def theorem8_strict_ordered_cold_start_strategy_history_threshold_event_advance_safe_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_strategy_history_threshold_event_advance_safe_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Clock-disciplined trace version of the ex-post local-deviation
+source-completion endpoint. The disciplined source trace derives exact finite
+`B*` records internally before exposing the trace-full completed-rank
+terminal-record conclusion.
+-/
+def theorem8_strict_ordered_clock_disciplined_strategy_trace_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_clock_disciplined_strategy_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing clock-disciplined trace ex-post source-completion endpoint for
+completed ranks.
+-/
+def theorem8_strict_ordered_clock_disciplined_strategy_trace_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_clock_disciplined_strategy_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Clock-disciplined trace ex-post source-completion endpoint with completed
+ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_clock_disciplined_strategy_trace_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_clock_disciplined_strategy_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing clock-disciplined trace ex-post source-completion endpoint with
+completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_clock_disciplined_strategy_trace_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_clock_disciplined_strategy_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Clock-disciplined source-history ex-post source-completion endpoint for
+completed ranks certified by terminal-clock threshold evidence.
+-/
+def theorem8_strict_ordered_clock_disciplined_strategy_history_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_clock_disciplined_strategy_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing clock-disciplined source-history ex-post source-completion
+endpoint for completed ranks.
+-/
+def theorem8_strict_ordered_clock_disciplined_strategy_history_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_clock_disciplined_strategy_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Clock-disciplined source-history ex-post source-completion endpoint with
+completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_clock_disciplined_strategy_history_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_clock_disciplined_strategy_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing clock-disciplined source-history ex-post source-completion
+endpoint with completed ranks certified by terminal inactivity.
+-/
+def theorem8_strict_ordered_clock_disciplined_strategy_history_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_clock_disciplined_strategy_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Cold-start clock-disciplined trace ex-post source-completion endpoint for
+completed ranks certified by terminal-clock threshold evidence.
+-/
+def theorem8_strict_ordered_cold_start_clock_disciplined_strategy_trace_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_clock_disciplined_strategy_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing cold-start clock-disciplined trace ex-post source-completion
+endpoint for completed ranks.
+-/
+def theorem8_strict_ordered_cold_start_clock_disciplined_strategy_trace_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_clock_disciplined_strategy_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Cold-start clock-disciplined trace ex-post source-completion endpoint with
+completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_cold_start_clock_disciplined_strategy_trace_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_clock_disciplined_strategy_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing cold-start clock-disciplined trace ex-post source-completion
+endpoint with completed ranks certified by terminal inactivity.
+-/
+def theorem8_strict_ordered_cold_start_clock_disciplined_strategy_trace_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_clock_disciplined_strategy_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Cold-start clock-disciplined source-history ex-post source-completion endpoint
+for completed ranks certified by terminal-clock threshold evidence.
+-/
+def theorem8_strict_ordered_cold_start_clock_disciplined_strategy_history_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_clock_disciplined_strategy_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing cold-start clock-disciplined source-history ex-post
+source-completion endpoint for completed ranks.
+-/
+def theorem8_strict_ordered_cold_start_clock_disciplined_strategy_history_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_clock_disciplined_strategy_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Cold-start clock-disciplined source-history ex-post source-completion endpoint
+with completed ranks certified directly by terminal inactivity.
+-/
+def theorem8_strict_ordered_cold_start_clock_disciplined_strategy_history_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_clock_disciplined_strategy_history_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing cold-start clock-disciplined source-history ex-post
+source-completion endpoint with completed ranks certified by terminal
+inactivity.
+-/
+def theorem8_strict_ordered_cold_start_clock_disciplined_strategy_history_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_clock_disciplined_strategy_history_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Source-event trace version of the ex-post local-deviation source-completion
+endpoint.
+-/
+def theorem8_strict_ordered_source_event_trace_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing source-event trace ex-post source-completion endpoint for
+completed ranks.
+-/
+def theorem8_strict_ordered_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Source-event trace ex-post source-completion endpoint with completed ranks
+certified by terminal inactivity in the generated source history.
+-/
+def theorem8_strict_ordered_source_event_trace_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing source-event trace ex-post source-completion endpoint with
+completed ranks certified by terminal inactivity.
+-/
+def theorem8_strict_ordered_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
+
+/--
+Cold-start source-event trace version of the ex-post local-deviation
+source-completion endpoint. The EOS cold-start state supplies initial
+no-overshoot and all-ranks activity.
+-/
+def theorem8_strict_ordered_cold_start_source_event_trace_ex_post_source_completion_trace_full_completed_threshold_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_completed_threshold_le
+
+/--
+Payoff-facing cold-start source-event trace ex-post source-completion endpoint
+for completed ranks.
+-/
+def theorem8_strict_ordered_cold_start_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_completed_threshold :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_completed_threshold_le
+
+/--
+Cold-start source-event trace ex-post source-completion endpoint with completed
+ranks certified by terminal inactivity in the generated source history.
+-/
+def theorem8_strict_ordered_cold_start_source_event_trace_ex_post_source_completion_trace_full_completed_rank_conclusion_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_event_trace_ex_post_local_deviation_source_completion_exists_unique_pbe_with_trace_full_completed_rank_terminal_record_conclusion_of_inactive_completed
+
+/--
+Payoff-facing cold-start source-event trace ex-post source-completion endpoint
+with completed ranks certified by terminal inactivity.
+-/
+def theorem8_strict_ordered_cold_start_source_event_trace_ex_post_source_completion_utility_eq_bstar_of_inactive_completed :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_cold_start_source_event_trace_ex_post_local_deviation_source_completion_terminal_record_utility_eq_bstar_of_inactive_completed
 
 /--
 No-overshoot terminal-history ex-post source-completion endpoint with completed

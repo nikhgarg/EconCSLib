@@ -82,6 +82,13 @@ also proves that a broader arbitrary abstraction is false but the paper-facing
 source theorem is closed, mark the paper theorem `formalized` and record the
 broader abstraction as a scope note or out-of-scope failed generalization, not
 as a caveat on the paper result.
+Use `conditional` for an incomplete proof boundary: a wrapper still takes an
+explicit certificate, witness, imported theorem, shortcut predicate, or
+paper-model hypothesis that should be derived from the source assumptions. Do
+not call this a caveat merely because Lean has not yet connected the paper's
+own assumptions or appendix derivation. A caveat means the final theorem differs
+from the source statement; a conditional status means the source statement may
+be faithful but some derivation remains undischarged.
 Do not use `formalized with caveat` for source-quality notes, poor OCR, or an
 audit observation that does not change the closed paper-facing theorem. Put that
 note in the final report and leave the status `formalized`.
