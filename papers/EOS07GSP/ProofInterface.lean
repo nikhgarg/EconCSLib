@@ -1668,6 +1668,50 @@ theorem theorem8_ex_post_finite_source_named_strategy_local_deviation_of_one_ste
       cert hbest
 
 /--
+Finite ex-post source boundary with the named finite `B*` one-step
+best-response proof discharged by the strict model rather than passed as a
+paper-facing assumption.
+-/
+theorem theorem8_ex_post_finite_source_named_strategy_sequentially_rational_for_all_beliefs_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief) :
+    ∀ belief : Belief,
+      cert.source.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)
+        belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_sequentially_rational_for_all_beliefs_of_strict_model
+      cert
+
+/--
+Finite ex-post source boundary, belief-free citation form: the named finite
+`B*` strategy satisfies the local-deviation rationality predicate from the
+strict model alone.
+-/
+theorem theorem8_ex_post_finite_source_named_strategy_local_deviation_of_strict_model
+    {Belief : Type*}
+    [hbelief : Nonempty Belief]
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief) :
+    paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+      cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+      cert.source.integrated.dynamic.base.strictModel.value
+      cert.source.integrated.dynamic.base.strictModel.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_local_deviation_of_strict_model
+      cert
+
+/--
 Theorem 8 source-shaped finite-schedule endpoint.  From strict ordered paper
 assumptions and a sorted no-duplicate finite dropout schedule, the
 source-shaped dynamic game has a unique PBE with the full ordered

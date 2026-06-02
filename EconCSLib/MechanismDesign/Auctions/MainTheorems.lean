@@ -57337,6 +57337,72 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_histor
       cert.source hbest
 
 /--
+Core ex-post source boundary with the named-strategy best-response premise
+discharged from the strict finite `B*` model.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_sequentially_rational_for_all_beliefs_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    ∀ belief : Belief,
+      cert.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.integrated.dynamic.base.strictModel.value
+          cert.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.integrated.dynamic.base.strictModel.remaining)
+        belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_sequentially_rational_for_all_beliefs
+      cert
+      (paper_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+        cert.integrated.dynamic.base.strictModel)
+
+/--
+All-rank ex-post exact-history source boundary with the named-strategy
+best-response premise discharged from the strict finite `B*` model.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_sequentially_rational_for_all_beliefs_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief) :
+    ∀ belief : Belief,
+      cert.source.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)
+        belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_sequentially_rational_for_all_beliefs
+      cert
+      (paper_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+        cert.source.integrated.dynamic.base.strictModel)
+
+/--
+Finite ex-post exact-history source boundary with the named-strategy
+best-response premise discharged from the strict finite `B*` model.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_sequentially_rational_for_all_beliefs_of_strict_model
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief) :
+    ∀ belief : Belief,
+      cert.source.integrated.dynamic.base.game.isSequentiallyRational
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          cert.source.integrated.dynamic.base.strictModel.value
+          cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+          cert.source.integrated.dynamic.base.strictModel.remaining)
+        belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_sequentially_rational_for_all_beliefs
+      cert
+      (paper_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+        cert.source.integrated.dynamic.base.strictModel)
+
+/--
 Finite ex-post exact-history source boundary, arbitrary-strategy
 characterization: source sequential rationality is exactly local deviation for
 every strategy and belief.
@@ -57568,6 +57634,80 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_histor
   exact
     paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_local_deviation_of_one_step_best_response
       cert (Classical.choice hbelief) hbest
+
+/--
+Core ex-post source boundary, belief-free citation form with the named finite
+`B*` local-deviation predicate discharged from the strict model.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_local_deviation_of_strict_model
+    {Belief : Type*}
+    [hbelief : Nonempty Belief]
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationCoreSourceCompletionCertificate
+        Belief) :
+    paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+      cert.integrated.dynamic.base.strictModel.clickThroughRate
+      cert.integrated.dynamic.base.strictModel.value
+      cert.integrated.dynamic.base.strictModel.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.integrated.dynamic.base.strictModel.value
+        cert.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_core_source_completion_named_strategy_local_deviation_of_one_step_best_response_of_nonempty_beliefs
+      cert
+      (paper_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+        cert.integrated.dynamic.base.strictModel)
+
+/--
+All-rank ex-post exact-history source boundary, belief-free citation form with
+the named finite `B*` local-deviation predicate discharged from the strict
+model.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_local_deviation_of_strict_model
+    {Belief : Type*}
+    [hbelief : Nonempty Belief]
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostLocalDeviationExactHistorySourceCompletionCertificate
+        Belief) :
+    paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+      cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+      cert.source.integrated.dynamic.base.strictModel.value
+      cert.source.integrated.dynamic.base.strictModel.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_ex_post_local_deviation_exact_history_source_completion_named_strategy_local_deviation_of_one_step_best_response_of_nonempty_beliefs
+      cert
+      (paper_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+        cert.source.integrated.dynamic.base.strictModel)
+
+/--
+Finite ex-post exact-history source boundary, belief-free citation form with
+the named finite `B*` local-deviation predicate discharged from the strict
+model.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_local_deviation_of_strict_model
+    {Belief : Type*}
+    [hbelief : Nonempty Belief]
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedFiniteExactHistoryExPostLocalDeviationSourceCompletionCertificate
+        Belief) :
+    paper_theorem8_bstar_ranked_threshold_local_deviation_sequential_rationality_statement
+      cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+      cert.source.integrated.dynamic.base.strictModel.value
+      cert.source.integrated.dynamic.base.strictModel.remaining
+      (paper_theorem8_bstar_ranked_threshold_strategy
+        cert.source.integrated.dynamic.base.strictModel.value
+        cert.source.integrated.dynamic.base.strictModel.clickThroughRate
+        cert.source.integrated.dynamic.base.strictModel.remaining) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_exact_history_ex_post_local_deviation_source_completion_named_strategy_local_deviation_of_one_step_best_response_of_nonempty_beliefs
+      cert
+      (paper_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+        cert.source.integrated.dynamic.base.strictModel)
 
 /--
 Core ex-post source boundary, belief-independent named-strategy equivalence.
