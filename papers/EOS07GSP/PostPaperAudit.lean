@@ -6504,6 +6504,34 @@ def audit_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_comple
     paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_certificate_of_one_step_tie_break
       cert
 
+/-- Audit for Theorem 8 strict ordered source-completion: the existing core
+source-completion certificate also packages as the local one-step/tie-break
+core certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_core
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedCoreSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_core
+      cert
+
+/-- Audit for Theorem 8 strict ordered source-completion: the full
+source-completion certificate also packages as the local one-step/tie-break
+core certificate. -/
+def audit_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_source_completion
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+      Belief := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_source_completion
+      cert
+
 /-- Audit for Theorem 8 strict ordered source-completion: the paper's
 one-sided Step 1/Step 2 source certificate also packages as the local
 one-step/tie-break core certificate. -/
