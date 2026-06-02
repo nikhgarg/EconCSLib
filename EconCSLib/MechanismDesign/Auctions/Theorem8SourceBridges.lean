@@ -13,6 +13,60 @@ namespace EconCSLib
 namespace Auction
 
 /--
+The paper's one-sided Step 1/Step 2 source-completion certificate can also be
+read as a one-step/tie-break core source-completion certificate.  Step 1/Step 2
+already imply every PBE strategy is extensionally the named finite `B*`
+strategy; the named strategy's one-step optimality and threshold tie-breaking
+then supply the local behavioral fields.
+-/
+def paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_one_sided
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedOneSidedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+      Belief where
+  integrated := cert.integrated
+  concrete_belief_consistency := cert.concrete_belief_consistency
+  one_step_best_response_implies_sequential_rationality := by
+    intro _hbest
+    exact cert.concrete_sequential_rationality
+  pbe_one_step_best_response := by
+    intro strategy hpbe
+    have hstrategy :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_pbe_strategy_eq_named
+        cert hpbe
+    rw [hstrategy]
+    exact
+      paper_theorem8_bstar_ranked_threshold_strict_named_strategy_one_step_best_response
+        cert.integrated.dynamic.base.strictModel
+  pbe_drop_at_threshold := by
+    intro strategy hpbe
+    have hstrategy :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_pbe_strategy_eq_named
+        cert hpbe
+    rw [hstrategy]
+    exact
+      paper_theorem8_bstar_ranked_threshold_strict_named_strategy_drop_at_threshold
+        cert.integrated.dynamic.base.strictModel
+
+/--
+Ex-post one-sided source completion also packages as the one-step/tie-break
+core source certificate, by first forgetting the ex-post rationality field to
+the belief-specific one-sided certificate.
+-/
+def paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_ex_post_one_sided
+    {Belief : Type*}
+    (cert :
+      PaperTheorem8BStarRankedThresholdStrictOrderedExPostOneSidedSourceCompletionCertificate
+        Belief) :
+    PaperTheorem8BStarRankedThresholdStrictOrderedOneStepTieBreakCoreSourceCompletionCertificate
+      Belief :=
+  paper_theorem8_bstar_ranked_threshold_strict_ordered_one_step_tie_break_core_source_completion_certificate_of_one_sided
+    (paper_theorem8_bstar_ranked_threshold_strict_ordered_one_sided_source_completion_certificate_of_ex_post
+      cert)
+
+/--
 Generated named-strategy histories satisfy exact finite `B*` dropout records
 when every clock advance is active-rank safe and the initial state has not
 already overshot any active rank's finite `B*` threshold.
