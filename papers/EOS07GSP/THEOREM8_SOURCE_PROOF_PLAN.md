@@ -49,6 +49,26 @@ specific source-history/PBE seam to attack before rereading this longer plan.
 - The finite exact-history and sorted finite-schedule endpoints now have core
   source-completion versions, so the strongest finite human-facing endpoint can
   take only the three core source-PBE obligations plus the exact schedule.
+- The finite exact-record state-game route now has direct source-game PBE
+  endpoints. The proof strategy is to work in a finite displayed `Fin n` state
+  where the active set is exactly the finite schedule and every unscheduled
+  natural rank starts inactive with its exact finite `B*` dropout record. That
+  avoids the formal obstruction that a finite schedule cannot exhaust the
+  ambient `ℕ` cold-start state. Once a complete displayed schedule is
+  threshold-sorted and duplicate-free, Lean derives no active displayed ranks,
+  exact terminal records, the VCG outcome, displayed slot/payment formulas, and
+  the ordered payoff package from a source-game PBE plus threshold-event timing
+  evidence.
+- The canonical finite version now specializes that route to the price-sorted
+  `List (Fin n)` schedule. Lean builds the schedule internally, proves
+  threshold-sortedness, no-duplication, and completeness, and exposes ordinary
+  and belief-explicit wrappers:
+  `paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion`
+  and
+  `paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion`.
+  In `PaperInterface.lean`, use
+  `theorem8_price_sorted_finite_schedule_pbe_displayed_ordered_conclusion` or
+  `theorem8_price_sorted_finite_schedule_belief_pbe_displayed_ordered_conclusion`.
 - A one-stop constructor now builds the finite-schedule core
   source-completion certificate directly from the terminal-dynamic certificate,
   final-state equality, clock-sorted no-duplicate schedule, and completed-rank
@@ -345,8 +365,16 @@ is the concrete generalized-English extensive-form argument:
    prefer the finite exact-record state-game wrappers
    `theorem8_strict_ordered_finite_active_exact_record_schedule_source_extensive_trace_full_vcg_conclusion_of_threshold_sorted`,
    `theorem8_strict_ordered_finite_active_exact_record_schedule_belief_source_extensive_trace_full_vcg_conclusion_of_threshold_sorted`,
-   or the `List (Fin n)` wrapper
-   `theorem8_strict_ordered_fin_schedule_belief_source_extensive_displayed_rank_formulas_of_threshold_sorted`.
+   or the direct-PBE wrappers
+   `theorem8_complete_finite_schedule_pbe_displayed_ordered_conclusion`,
+   `theorem8_complete_finite_schedule_belief_pbe_displayed_ordered_conclusion`,
+   `theorem8_price_sorted_finite_schedule_pbe_displayed_ordered_conclusion`,
+   and
+   `theorem8_price_sorted_finite_schedule_belief_pbe_displayed_ordered_conclusion`.
+   Use the older `List (Fin n)` source-extensive wrapper
+   `theorem8_strict_ordered_fin_schedule_belief_source_extensive_displayed_rank_formulas_of_threshold_sorted`
+   when only displayed rank formulas are needed rather than the full direct-PBE
+   ordered payoff package.
    If the source proof first needs only the schedule-generated reachability and
    exact-record objects, use `theorem8_clock_sorted_schedule_history_obligations`.
    Do not try to get an all-ranks-inactive conclusion from a finite cold-start
@@ -523,13 +551,14 @@ is the concrete generalized-English extensive-form argument:
 
 The reusable finite-schedule constructor route is closed for the audited
 source-extensive terminal-record checker, and the finite exact-record
-state-game route is closed for genuinely finite displayed rank sets. The next
-Lean target should be the fully general concrete extensive-form proof: belief
-consistency, source-shaped sequential rationality for arbitrary
-reachable/off-path states, and the source no-overshoot timing argument that
-feeds the exact-record bridge. A separate finite-bidder source model would also
-be useful, but it should be introduced only if the paper-facing finite-index
-state-game wrapper is not enough for review.
+state-game route is closed for genuinely finite displayed rank sets, including
+the canonical price-sorted direct-PBE endpoint. The next Lean target should be
+the fully general concrete extensive-form proof: belief consistency,
+source-shaped sequential rationality for arbitrary reachable/off-path states,
+and the source no-overshoot timing argument that feeds the exact-record bridge.
+A separate finite-bidder source model would also be useful only if future
+review needs a source syntax closer to the paper's finite bidder set than the
+closed finite exact-record state-game wrapper.
 
 Closed finite-schedule construction route:
 

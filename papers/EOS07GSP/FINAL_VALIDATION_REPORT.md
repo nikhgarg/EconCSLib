@@ -1,24 +1,26 @@
 # Final Validation Report: EOS07GSP
 
-Date: 2026-05-16
+Date: 2026-06-03
 
 ## Verdict
 
 This paper is not yet fully formalized in Lean. The current folder has a compiling
 post-paper audit ledger and strong paper-facing endpoints for Sections 2.2--2.3,
 Theorem 7, and finite/no-overshoot/clock-disciplined source routes for Theorem
-8. The remaining gap is the unconstrained generalized-English source game:
-concrete belief consistency, the game-level source sequential-rationality iff,
-and exact terminal-record generation when no schedule, no-overshoot, or
-clock-discipline evidence is supplied.
+8. The finite exact-record version now has direct source-game PBE endpoints for
+complete displayed finite schedules and for the canonical price-sorted `Fin n`
+schedule, ordinary and belief-explicit. The remaining gap is the unconstrained
+generalized-English source game: concrete belief consistency, the game-level
+source sequential-rationality iff, and exact terminal-record generation when no
+schedule, no-overshoot, or clock-discipline evidence is supplied.
 
 ## Current handoff note
 
 Start with `START_HERE_NEXT_AGENT.md` before continuing Theorem 8. It is the
-short pickup file for the 2026-05-16 pause and points to the live proof plan,
-audit report, and older detailed handoff. The latest source obligation
-additions expose direct source-iff, no-overshoot terminal/dynamic, and
-clock-disciplined terminal-history wrappers in `PaperInterface.lean`. The
+short pickup file and points to the live proof plan, audit report, and older
+detailed handoff. The latest source obligation additions expose direct
+source-iff, no-overshoot terminal/dynamic, clock-disciplined terminal-history,
+and finite exact-record direct-PBE wrappers in `PaperInterface.lean`. The
 latest theorem edits compiled under `lake build EOS07GSP`; rerun that target
 after any further Lean edits.
 
@@ -53,7 +55,7 @@ therefore starts at Remarks 1--3 before Definition 4.
 | Lemma 5, locally envy-free equilibrium gives stable assignment, `EOS07GSP.txt:465` | conditional | current bridge assumes the formal all-assigned-slot no-rematch predicate; paper appendix's adjacent-LEF/equilibrium/order/telescoping derivation remains to be formalized |
 | Lemma 6, stable assignment gives locally envy-free outcome, `EOS07GSP.txt:466` | conditional | current bridge is outcome-level; paper's `N > K`, Shapley-Shubik characterization, bid construction, and static-equilibrium converse remain to be linked |
 | Theorem 7, `B*` locally envy-free equilibrium and revenue comparison, `EOS07GSP.txt:481` | conditional | `PaperInterface.lean` ranked `B*` paper conclusion plus canonical-tail audit declarations |
-| Theorem 8, generalized-English unique PBE, `EOS07GSP.txt:539` | conditional, with finite/no-overshoot/clock-disciplined source routes closed | `PaperInterface.lean` source-iff, no-overshoot terminal/dynamic, clock-disciplined terminal-history, and source-extensive terminal-record endpoints |
+| Theorem 8, generalized-English unique PBE, `EOS07GSP.txt:539` | conditional, with finite direct-PBE/no-overshoot/clock-disciplined source routes closed | `PaperInterface.lean` source-iff, no-overshoot terminal/dynamic, clock-disciplined terminal-history, finite exact-record direct-PBE, and source-extensive terminal-record endpoints |
 
 ## Important completed endpoints
 
@@ -93,6 +95,15 @@ therefore starts at Remarks 1--3 before Definition 4.
   forces the finite `B*` cutoff rule and equality to the named finite `B*`
   strategy. The named finite `B*` strategy itself now exposes the
   drop-at-threshold tie-breaking fact directly.
+- Theorem 8 finite exact-record state-game route now has direct source-game PBE
+  endpoints for complete displayed `List (Fin n)` schedules and for the
+  canonical price-sorted finite schedule. The price-sorted wrappers
+  `theorem8_price_sorted_finite_schedule_pbe_displayed_ordered_conclusion` and
+  `theorem8_price_sorted_finite_schedule_belief_pbe_displayed_ordered_conclusion`
+  generate the schedule internally and return unique PBE, named finite `B*`
+  strategy, threshold-event-safe generated history, terminality, exact finite
+  records, displayed slot/payment formulas, and the ordered payoff package.
+  They still retain the source-timing premise for the PBE-generated history.
 - The strict off-threshold part is separated: one-step best response alone
   implies post-threshold dropping and pre-threshold non-dropping, leaving only
   exact-threshold tie-breaking as a separate behavioral convention.

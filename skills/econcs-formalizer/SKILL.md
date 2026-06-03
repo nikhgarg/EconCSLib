@@ -985,6 +985,13 @@ the Lean statements against the paper.
   than packaging every helper lemma as a separate commit or documentation pass.
   Commit only when a substantial named result is genuinely closed, when moving
   papers, or when the user explicitly asks for a checkpoint.
+- When a finite version of a theorem is the requested milestone, finish the
+  finite public endpoint first and validate it through the paper interface.
+  Only then refresh the paper-local status source, README/proof-plan/final
+  report, DAG source and rendered PDF, and any skill lessons, then make one
+  milestone commit and push. The documentation should state which finite
+  hypotheses remain and should not imply the infinite or unconstrained source
+  theorem is closed.
 - Detailed lemmas may live in many files, but the central theorem file should be
   the stable public interface for that paper.
 

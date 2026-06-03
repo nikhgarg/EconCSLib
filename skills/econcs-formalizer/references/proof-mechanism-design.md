@@ -791,6 +791,15 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   finite paper checks, or introduce a finite-active source state whose inactive
   outside ranks already carry exact records. Do not paper over the distinction
   with an all-terminal wrapper.
+- For finite exact-record PBE endpoints, make the finite state explicit rather
+  than pretending a finite schedule completed an infinite cold start. A robust
+  pattern is: displayed active ranks are `List (Fin n)`, internal ranks are the
+  translated natural list, inactive outside ranks start with exact records,
+  complete displayed schedules prove active-to-inactive for every `Fin n` rank,
+  and a canonical price-sorted wrapper discharges threshold-sortedness,
+  no-duplication, and completeness internally. Keep any source-timing or
+  threshold-event premise visible in the final theorem unless the real source
+  transition relation has proved it.
 - For belief-explicit source-extensive PBE checkers, let the belief object carry
   the generated source history and terminality proof. Then expose projection
   theorems that recover generated history, terminality, and exact/no-overshoot

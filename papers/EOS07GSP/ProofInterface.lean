@@ -8247,6 +8247,55 @@ theorem theorem8_source_extensive_rationality_allows_overshoot_not_exact_drop_hi
       model rank
 
 /--
+State-game PBE does not by itself repair an already-overshot source state. The
+source-extensive terminal-record game has the named strategy as a PBE for the
+overshoot witness, but the terminal record is not an exact finite `B*`
+dropout history.
+-/
+theorem theorem8_source_extensive_state_game_pbe_allows_overshoot_not_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank : ℕ) :
+    let state :=
+      paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+        model rank
+    let finalState :=
+      PaperTheorem8GeneralizedEnglishAuctionState.recordDropout state rank
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model state finalState).PerfectBayesianEquilibrium namedStrategy ∧
+      ¬ PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  simpa using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_allows_overshoot_not_exact_drop_history
+      model rank
+
+/--
+Belief-explicit state-game PBE has the same boundary: beliefs package the
+source history and terminality, but do not replace source-event/no-overshoot
+timing evidence.
+-/
+theorem theorem8_belief_source_extensive_state_game_pbe_allows_overshoot_not_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank : ℕ) :
+    let state :=
+      paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+        model rank
+    let finalState :=
+      PaperTheorem8GeneralizedEnglishAuctionState.recordDropout state rank
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model state finalState).PerfectBayesianEquilibrium namedStrategy ∧
+      ¬ PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  simpa using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_allows_overshoot_not_exact_drop_history
+      model rank
+
+/--
 Source-history bridge for arbitrary ordinary histories.  A history generated
 by the named finite `B*` strategy has exact finite `B*` dropout records as soon
 as each actual dropout step is known not to overshoot that rank's threshold.
@@ -12619,6 +12668,20 @@ def theorem8_strict_ordered_finite_active_exact_record_schedule_source_event_tra
   @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_source_event_trace_ordered_paper_conclusion_of_threshold_sorted
 
 /--
+Finite-active exact-record source-event schedule endpoint retaining
+threshold-event timing evidence and the ordered paper payoff package.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_schedule_source_event_trace_threshold_event_ordered_paper_conclusion_of_threshold_sorted :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_source_event_trace_threshold_event_ordered_paper_conclusion_of_threshold_sorted
+
+/--
+Finite-active exact-record schedule endpoint stated directly from a source-game
+PBE with threshold-event-safe timing and the ordered paper payoff package.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_schedule_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_threshold_sorted :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_threshold_sorted
+
+/--
 Premise-free singleton finite-active source-event endpoint. The only active
 rank is scheduled by the one-event source scheduler, yielding the full
 source-extensive state-game VCG/PBE conclusion.
@@ -12647,6 +12710,21 @@ paper payoff package.
 -/
 def theorem8_strict_ordered_finite_active_exact_record_schedule_belief_source_event_trace_ordered_paper_conclusion_of_threshold_sorted :=
   @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_belief_source_event_trace_ordered_paper_conclusion_of_threshold_sorted
+
+/--
+Belief-explicit finite-active source-event schedule endpoint retaining
+threshold-event timing evidence and the ordered paper payoff package.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_schedule_belief_source_event_trace_threshold_event_ordered_paper_conclusion_of_threshold_sorted :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_belief_source_event_trace_threshold_event_ordered_paper_conclusion_of_threshold_sorted
+
+/--
+Belief-explicit finite-active exact-record schedule endpoint stated directly
+from a belief source-game PBE with threshold-event-safe timing and the ordered
+paper payoff package.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_schedule_belief_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_threshold_sorted :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_belief_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_threshold_sorted
 
 /--
 Exact-record finite-active source-game endpoint. For the state-based
@@ -13353,6 +13431,78 @@ theorem theorem8_strict_ordered_complete_fin_schedule_source_event_trace_ordered
       model scheduledRanks hthreshold_sorted hnodup hcomplete
 
 /--
+Complete finite-index source-event endpoint with displayed-rank facts,
+threshold-event timing evidence, and the global ordered paper payoff package.
+-/
+theorem theorem8_strict_ordered_complete_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks) :
+    let rankSchedule := theorem8FinScheduleRanks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace : Theorem8SourceEventTrace localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            (∃ hhistory :
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                namedStrategy initialState finalState,
+              Theorem8StrategyHistoryThresholdEventAdvanceSafe
+                localModel hhistory) ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  namedStrategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    (∀ rank : Fin n,
+                      initialState.IsActive rank.val ∧
+                        ¬ finalState.IsActive rank.val ∧
+                          (G.outcomeOf strategy).slotOf rank.val =
+                              some rank.val ∧
+                            (G.outcomeOf strategy).paymentPerClick rank.val =
+                              paper_theorem8_bstar_threshold_bid
+                                localModel.value localModel.clickThroughRate
+                                (localModel.remaining + 1)
+                                (rank.val + 1)) ∧
+                      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                        localModel G strategy := by
+  simpa [theorem8FinScheduleRanks,
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks,
+    Theorem8SourceEventTrace,
+    Theorem8StrategyHistoryThresholdEventAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+
+/--
+Complete finite-index endpoint stated directly from a source-game PBE, retaining
+displayed-rank formulas and the ordered paper payoff package.
+-/
+def theorem8_strict_ordered_complete_fin_schedule_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion_of_threshold_sorted :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion_of_threshold_sorted
+
+/--
 Belief-explicit complete finite-index source-extensive endpoint. This is the
 belief-carrying counterpart of
 `theorem8_strict_ordered_complete_fin_schedule_source_extensive_trace_full_displayed_conclusion_of_threshold_sorted`.
@@ -13540,6 +13690,79 @@ theorem theorem8_strict_ordered_complete_fin_schedule_belief_source_event_trace_
       model scheduledRanks hthreshold_sorted hnodup hcomplete
 
 /--
+Belief-explicit complete finite-index source-event endpoint with displayed-rank
+facts, threshold-event timing evidence, and the global ordered payoff package.
+-/
+theorem theorem8_strict_ordered_complete_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (theorem8FinScheduleRanks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks) :
+    let rankSchedule := theorem8FinScheduleRanks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace : Theorem8SourceEventTrace localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            (∃ hhistory :
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                namedStrategy initialState finalState,
+              Theorem8StrategyHistoryThresholdEventAdvanceSafe
+                localModel hhistory) ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  namedStrategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    (∀ rank : Fin n,
+                      initialState.IsActive rank.val ∧
+                        ¬ finalState.IsActive rank.val ∧
+                          (G.outcomeOf strategy).slotOf rank.val =
+                              some rank.val ∧
+                            (G.outcomeOf strategy).paymentPerClick rank.val =
+                              paper_theorem8_bstar_threshold_bid
+                                localModel.value localModel.clickThroughRate
+                                (localModel.remaining + 1)
+                                (rank.val + 1)) ∧
+                      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                        localModel G strategy := by
+  simpa [theorem8FinScheduleRanks,
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks,
+    Theorem8SourceEventTrace,
+    Theorem8StrategyHistoryThresholdEventAdvanceSafe] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+
+/--
+Belief-explicit complete finite-index endpoint stated directly from a belief
+source-game PBE, retaining displayed-rank formulas and the ordered paper payoff
+package.
+-/
+def theorem8_strict_ordered_complete_fin_schedule_belief_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion_of_threshold_sorted :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_belief_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion_of_threshold_sorted
+
+/--
 Price-sorted finite source-history boundary package. The canonical displayed
 schedule produces the paper-style source-event trace, source-extensive ledger,
 threshold-event advance-safety evidence, and exact finite `B*` records.
@@ -13599,6 +13822,21 @@ theorem theorem8_strict_ordered_price_sorted_fin_schedule_source_event_trace_ord
       model n
 
 /--
+Complete finite-index source-event endpoint with the displayed schedule chosen
+internally by exact finite `B*` threshold sorting, retaining threshold-event
+timing evidence in the ordered displayed payoff conclusion.
+-/
+theorem theorem8_strict_ordered_price_sorted_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_statement
+      model n := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion
+      model n
+
+/--
 Belief-explicit complete finite-index source-event endpoint with the displayed
 schedule chosen internally by exact finite `B*` threshold sorting.
 -/
@@ -13611,6 +13849,36 @@ theorem theorem8_strict_ordered_price_sorted_fin_schedule_belief_source_event_tr
   exact
     paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_ordered_displayed_paper_conclusion
       model n
+
+/--
+Belief-explicit complete finite-index source-event endpoint with the displayed
+schedule chosen internally by exact finite `B*` threshold sorting, retaining
+threshold-event timing evidence in the ordered displayed payoff conclusion.
+-/
+theorem theorem8_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_statement
+      model n := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion
+      model n
+
+/--
+Canonical price-sorted finite-index endpoint stated directly from a source-game
+PBE. The displayed `Fin n` schedule is generated internally by exact finite
+`B*` threshold sorting.
+-/
+def theorem8_strict_ordered_price_sorted_fin_schedule_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion
+
+/--
+Belief-explicit canonical price-sorted finite-index endpoint stated directly
+from a belief source-game PBE.
+-/
+def theorem8_strict_ordered_price_sorted_fin_schedule_belief_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion
 
 /--
 Canonical price-sorted finite-index source-event endpoint combining the
@@ -13627,6 +13895,21 @@ theorem theorem8_strict_ordered_price_sorted_fin_schedule_source_event_boundary_
       model n
 
 /--
+Canonical price-sorted finite-index source-event endpoint combining the
+source-event timing boundary with the threshold-event-retaining ordered
+displayed PBE/payoff conclusion.
+-/
+theorem theorem8_strict_ordered_price_sorted_fin_schedule_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion_statement
+      model n := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion
+      model n
+
+/--
 Belief-explicit canonical price-sorted finite-index endpoint combining the
 source-event timing boundary with the ordered displayed PBE/payoff conclusion.
 -/
@@ -13638,6 +13921,21 @@ theorem theorem8_strict_ordered_price_sorted_fin_schedule_belief_source_event_bo
       model n := by
   exact
     paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_ordered_displayed_paper_conclusion
+      model n
+
+/--
+Belief-explicit canonical price-sorted finite-index endpoint combining the
+source-event timing boundary with the threshold-event-retaining ordered
+displayed PBE/payoff conclusion.
+-/
+theorem theorem8_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion_statement
+      model n := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion
       model n
 
 /--
@@ -14069,6 +14367,209 @@ advance-safety evidence for the generated source history.
 -/
 def theorem8_source_event_trace_belief_source_extensive_state_game_threshold_event_trace_full_vcg_conclusion_of_terminal_record_outcome_eq_bstar :=
   @paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_terminal_record_outcome_eq_bstar
+
+/--
+Exact-drop histories preserve the initial dropout record of any rank that
+already starts inactive.
+-/
+def theorem8_exact_drop_history_final_record_eq_initial_of_initial_inactive :=
+  @paper_theorem8_bstar_ranked_threshold_exact_drop_history_final_record_eq_initial_of_initial_inactive
+
+/--
+Exact-drop histories identify the terminal-record `B*` outcome when initially
+inactive ranks already carry exact finite `B*` records and no rank remains
+active terminally.
+-/
+def theorem8_exact_drop_history_terminal_record_outcome_eq_bstar_of_initial_inactive_records :=
+  @paper_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_record_outcome_eq_bstar_of_initial_inactive_records
+
+/--
+Source-event traces identify the terminal-record `B*` outcome from exact
+initial records on initially inactive ranks.
+-/
+def theorem8_source_event_trace_terminal_record_outcome_eq_bstar_of_initial_inactive_records :=
+  @paper_theorem8_bstar_ranked_threshold_source_event_trace_terminal_record_outcome_eq_bstar_of_initial_inactive_records
+
+/--
+Schedule-free source-event state-game endpoint for finite-active source states
+whose initially inactive ranks already carry exact finite `B*` records.
+-/
+def theorem8_source_event_trace_source_extensive_state_game_threshold_event_trace_full_vcg_conclusion_of_initial_inactive_records_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_initial_inactive_records_no_active
+
+/--
+Belief-explicit schedule-free source-event state-game endpoint for
+finite-active source states with exact initial inactive records.
+-/
+def theorem8_source_event_trace_belief_source_extensive_state_game_threshold_event_trace_full_vcg_conclusion_of_initial_inactive_records_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_initial_inactive_records_no_active
+
+/--
+Finite-active state-game endpoint from source-extensive rationality plus
+threshold-event-safe generated history. Initially inactive ranks may be present
+when they already carry exact finite `B*` records.
+-/
+def theorem8_source_extensive_rationality_threshold_event_advance_safe_state_game_threshold_event_trace_full_vcg_conclusion_of_initial_inactive_records_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_initial_inactive_records_no_active
+
+/--
+Belief-explicit finite-active state-game endpoint from source-extensive
+rationality plus threshold-event-safe generated history.
+-/
+def theorem8_belief_source_extensive_rationality_threshold_event_advance_safe_state_game_threshold_event_trace_full_vcg_conclusion_of_initial_inactive_records_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_initial_inactive_records_no_active
+
+/--
+Direct-PBE finite-active state-game endpoint from threshold-event-safe timing
+and exact initial inactive records.
+-/
+def theorem8_pbe_threshold_event_advance_safe_state_game_threshold_event_trace_full_vcg_conclusion_of_initial_inactive_records_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_initial_inactive_records_no_active
+
+/--
+Belief-explicit direct-PBE finite-active state-game endpoint from
+threshold-event-safe timing and exact initial inactive records.
+-/
+def theorem8_belief_pbe_threshold_event_advance_safe_state_game_threshold_event_trace_full_vcg_conclusion_of_initial_inactive_records_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_initial_inactive_records_no_active
+
+/--
+Finite exact-record cold-start source-event endpoint. The initially inactive
+ranks already carry exact finite `B*` records, so no schedule-specific terminal
+outcome equality is needed.
+-/
+def theorem8_finite_active_exact_record_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+
+/--
+Belief-explicit finite exact-record cold-start source-event endpoint.
+-/
+def theorem8_finite_active_exact_record_belief_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_belief_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+
+/--
+Finite exact-record cold-start endpoint from source-extensive rationality plus
+threshold-event-safe timing.
+-/
+def theorem8_finite_active_exact_record_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+
+/--
+Belief-explicit finite exact-record cold-start endpoint from source-extensive
+rationality plus threshold-event-safe timing.
+-/
+def theorem8_finite_active_exact_record_belief_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_belief_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+
+/--
+Finite exact-record cold-start endpoint stated directly from a source-game PBE
+with threshold-event-safe timing.
+-/
+def theorem8_finite_active_exact_record_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+
+/--
+Belief-explicit finite exact-record cold-start endpoint stated directly from a
+belief source-game PBE with threshold-event-safe timing.
+-/
+def theorem8_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+
+/--
+Strict ordered finite exact-record source-event endpoint. The EOS strict
+ordered local model discharges initial no-overshoot internally.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+
+/--
+Belief-explicit strict ordered finite exact-record source-event endpoint.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_belief_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+
+/--
+Strict ordered finite exact-record endpoint from source-extensive rationality
+plus threshold-event-safe timing.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+
+/--
+Belief-explicit strict ordered finite exact-record endpoint from source-extensive
+rationality plus threshold-event-safe timing.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_belief_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+
+/--
+Strict ordered finite exact-record endpoint stated directly from a source-game
+PBE with threshold-event-safe timing.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+
+/--
+Belief-explicit strict ordered finite exact-record endpoint stated directly from
+a belief source-game PBE with threshold-event-safe timing.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+
+/--
+Strict ordered source-state game payoff lift from terminal-record VCG equality.
+-/
+def theorem8_strict_ordered_terminal_record_source_extensive_state_game_ordered_payoff_conclusion_of_outcome_eq_vcg :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_record_source_extensive_dynamic_game_of_states_ordered_state_game_payoff_conclusion_of_outcome_eq_vcg
+
+/--
+Belief-explicit strict ordered source-state game payoff lift from
+terminal-record VCG equality.
+-/
+def theorem8_strict_ordered_terminal_record_belief_source_extensive_state_game_ordered_payoff_conclusion_of_outcome_eq_vcg :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_record_belief_source_extensive_dynamic_game_of_states_ordered_state_game_payoff_conclusion_of_outcome_eq_vcg
+
+/--
+Strict ordered finite exact-record source-event endpoint with the ordered paper
+payoff package.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_source_event_trace_threshold_event_ordered_paper_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_source_event_trace_threshold_event_ordered_paper_conclusion_of_no_active
+
+/--
+Belief-explicit strict ordered finite exact-record source-event endpoint with
+the ordered paper payoff package.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_belief_source_event_trace_threshold_event_ordered_paper_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_source_event_trace_threshold_event_ordered_paper_conclusion_of_no_active
+
+/--
+Strict ordered finite exact-record source-extensive endpoint with the ordered
+paper payoff package.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_source_extensive_rationality_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_source_extensive_rationality_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active
+
+/--
+Belief-explicit strict ordered finite exact-record source-extensive endpoint
+with the ordered paper payoff package.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_belief_source_extensive_rationality_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_source_extensive_rationality_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active
+
+/--
+Strict ordered finite exact-record direct-PBE endpoint with the ordered paper
+payoff package.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active
+
+/--
+Belief-explicit strict ordered finite exact-record direct-PBE endpoint with the
+ordered paper payoff package.
+-/
+def theorem8_strict_ordered_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active :=
+  @paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active
 
 /--
 All-active/all-terminal exact-drop-history source-extensive state-game

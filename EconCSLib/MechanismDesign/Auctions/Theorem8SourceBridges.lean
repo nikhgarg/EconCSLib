@@ -8376,6 +8376,82 @@ theorem paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_exte
       model hsource_extensive hevent_safe hstate_no_overshoot).2
 
 /--
+State-based source-extensive PBE alone does not recover exact finite `B*`
+dropout records. The overshoot witness is a PBE of the source-extensive
+terminal-record game, but its terminal record is not an exact-drop history.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_allows_overshoot_not_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank : ℕ) :
+    let state :=
+      paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+        model rank
+    let finalState :=
+      PaperTheorem8GeneralizedEnglishAuctionState.recordDropout state rank
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model state finalState).PerfectBayesianEquilibrium namedStrategy ∧
+      ¬ PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  dsimp
+  rcases
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_allows_overshoot_not_exact_drop_history
+      model rank with
+    ⟨hsource_extensive, hnot_exact⟩
+  exact
+    ⟨(paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_iff_source_extensive
+        model
+        (paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+          model rank)
+        (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+          (paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+            model rank) rank)
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)).mpr
+        hsource_extensive,
+      hnot_exact⟩
+
+/--
+Belief-explicit source-extensive PBE has the same boundary: belief consistency
+packages the generated history, but it does not by itself rule out an
+already-overshot source state.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_allows_overshoot_not_exact_drop_history
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (rank : ℕ) :
+    let state :=
+      paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+        model rank
+    let finalState :=
+      PaperTheorem8GeneralizedEnglishAuctionState.recordDropout state rank
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model state finalState).PerfectBayesianEquilibrium namedStrategy ∧
+      ¬ PaperTheorem8BStarRankedThresholdExactDropHistory
+        model state finalState := by
+  dsimp
+  rcases
+    paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_allows_overshoot_not_exact_drop_history
+      model rank with
+    ⟨hsource_extensive, hnot_exact⟩
+  exact
+    ⟨(paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_iff_source_extensive
+        model
+        (paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+          model rank)
+        (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+          (paper_theorem8_bstar_ranked_threshold_single_active_overshoot_state
+            model rank) rank)
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)).mpr
+        hsource_extensive,
+      hnot_exact⟩
+
+/--
 Source-extensive rationality plus threshold-event advance safety directly
 builds the no-overshoot terminal-history certificate used by the terminal-
 record source-extensive endpoints.
@@ -22912,6 +22988,1587 @@ theorem paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_exte
     exact hstrategy.2.1
 
 /--
+Exact-drop histories preserve the initial dropout record of any rank that is
+already inactive at the start. Advances never change records, and a dropout
+transition can only record an initially active rank.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_history_final_record_eq_initial_of_initial_inactive
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hexact :
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model initialState finalState)
+    {rank : ℕ} (hinactive : ¬ initialState.IsActive rank) :
+    finalState.lastDropout rank = initialState.lastDropout rank := by
+  induction hexact with
+  | refl state =>
+      rfl
+  | @advance state finalState newPrice _hclock htail ih =>
+      have hinactive_next :
+          ¬ (PaperTheorem8GeneralizedEnglishAuctionState.advanceClock
+            state newPrice).IsActive rank := by
+        simpa [PaperTheorem8GeneralizedEnglishAuctionState.IsActive,
+          PaperTheorem8GeneralizedEnglishAuctionState.advanceClock] using
+          hinactive
+      simpa [PaperTheorem8GeneralizedEnglishAuctionState.advanceClock] using
+        ih hinactive_next
+  | @dropout state finalState dropped hactive _hclock htail ih =>
+      have hne : rank ≠ dropped := by
+        intro hsame
+        exact hinactive (by simpa [hsame] using hactive)
+      have hinactive_next :
+          ¬ (PaperTheorem8GeneralizedEnglishAuctionState.recordDropout
+            state dropped).IsActive rank := by
+        intro hactive_next
+        have hactive_state : state.IsActive rank := by
+          simpa [PaperTheorem8GeneralizedEnglishAuctionState.IsActive,
+            PaperTheorem8GeneralizedEnglishAuctionState.recordDropout, hne]
+            using hactive_next
+        exact hinactive hactive_state
+      simpa [PaperTheorem8GeneralizedEnglishAuctionState.recordDropout, hne]
+        using ih hinactive_next
+
+/--
+If ranks that start inactive already carry exact finite `B*` dropout records,
+then an exact-drop history with no active terminal ranks has exact terminal
+records for every rank.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_records_eq_thresholds_of_initial_inactive_records
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hexact :
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model initialState finalState)
+    (hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    ∀ rank,
+      finalState.lastDropout rank =
+        some
+          (paper_theorem8_bstar_threshold_bid
+            model.value model.clickThroughRate (model.remaining + 1)
+            (rank + 1)) := by
+  intro rank
+  by_cases hactive : initialState.IsActive rank
+  · exact
+      paper_theorem8_bstar_ranked_threshold_exact_drop_history_final_record_eq_threshold
+        model hexact hactive (hno_active rank)
+  · rw [
+      paper_theorem8_bstar_ranked_threshold_exact_drop_history_final_record_eq_initial_of_initial_inactive
+        model hexact hactive]
+    exact hinitial_inactive_records rank hactive
+
+/--
+Exact-drop histories close the terminal-record-to-constructed-`B*` bridge even
+from finite-active source states, provided initially inactive ranks already
+carry exact finite `B*` records.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_record_outcome_eq_bstar_of_initial_inactive_records
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hexact :
+      PaperTheorem8BStarRankedThresholdExactDropHistory
+        model initialState finalState)
+    (hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    paper_theorem8_terminal_dropout_record_outcome finalState =
+      paper_theorem8_bstar_ranked_threshold_outcome
+        model.value model.clickThroughRate (model.remaining + 1) := by
+  exact
+    paper_theorem8_terminal_dropout_record_outcome_eq_bstar_ranked_threshold_outcome_of_exact_records'
+      model.value model.clickThroughRate (model.remaining + 1) finalState
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_records_eq_thresholds_of_initial_inactive_records
+        model hexact hinitial_inactive_records hno_active)
+
+/--
+Source-event traces close the terminal-record outcome bridge from finite-active
+source states whose initially inactive ranks already carry exact finite `B*`
+records.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_source_event_trace_terminal_record_outcome_eq_bstar_of_initial_inactive_records
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        model initialState finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    paper_theorem8_terminal_dropout_record_outcome finalState =
+      paper_theorem8_bstar_ranked_threshold_outcome
+        model.value model.clickThroughRate (model.remaining + 1) := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_exact_drop_history_terminal_record_outcome_eq_bstar_of_initial_inactive_records
+      model
+      (paper_theorem8_bstar_ranked_threshold_source_event_trace_to_exact_drop_history
+        model htrace hstate_no_overshoot)
+      hinitial_inactive_records hno_active
+
+/--
+Schedule-free finite-active source-event endpoint. The source-event trace gives
+the generated named history and exact-drop records; exact initial records for
+initially inactive ranks plus final no-active identify the terminal-record
+outcome with the constructed `B*`/VCG target.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_initial_inactive_records_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        model initialState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_terminal_record_outcome_eq_bstar
+      model htrace hterminal hstate_no_overshoot
+      (paper_theorem8_bstar_ranked_threshold_source_event_trace_terminal_record_outcome_eq_bstar_of_initial_inactive_records
+        model htrace hstate_no_overshoot hinitial_inactive_records hno_active)
+
+/--
+Belief-explicit schedule-free finite-active source-event endpoint.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_initial_inactive_records_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        model initialState finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_terminal_record_outcome_eq_bstar
+      model htrace hterminal hstate_no_overshoot
+      (paper_theorem8_bstar_ranked_threshold_source_event_trace_terminal_record_outcome_eq_bstar_of_initial_inactive_records
+        model htrace hstate_no_overshoot hinitial_inactive_records hno_active)
+
+/--
+Finite-active source-extensive endpoint from threshold-event-safe generated
+history. This removes the all-initially-active premise: initially inactive
+ranks may be present as long as they already carry exact finite `B*` records.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_initial_inactive_records_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model initialState finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        model hsource_extensive.2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_initial_inactive_records_no_active
+      model
+      (paper_theorem8_bstar_ranked_threshold_strategy_history_to_source_event_trace_of_history_threshold_event_advance_safe
+        model hsource_extensive.2.1 hevent_safe)
+      hsource_extensive.2.2 hstate_no_overshoot
+      hinitial_inactive_records hno_active
+
+/--
+Belief-explicit finite-active source-extensive endpoint from threshold-event-
+safe generated history and exact initial inactive records.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_initial_inactive_records_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model initialState finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        model hsource_extensive.2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_initial_inactive_records_no_active
+      model
+      (paper_theorem8_bstar_ranked_threshold_strategy_history_to_source_event_trace_of_history_threshold_event_advance_safe
+        model hsource_extensive.2.1 hevent_safe)
+      hsource_extensive.2.2 hstate_no_overshoot
+      hinitial_inactive_records hno_active
+
+/--
+Direct-PBE finite-active source-extensive endpoint. A PBE of the state game
+transports to named source-extensive rationality; threshold-event timing plus
+exact initial inactive records gives the full VCG trace conclusion without an
+all-initially-active assumption.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_initial_inactive_records_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        model
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model := model) (initialState := initialState)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_initial_inactive_records_no_active
+      (model := model) (initialState := initialState)
+      (finalState := finalState)
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+        (model := model) (initialState := initialState)
+        (finalState := finalState) (strategy := strategy) hpbe)
+      hevent_safe hstate_no_overshoot hinitial_inactive_records hno_active
+
+/--
+Belief-explicit direct-PBE finite-active endpoint from threshold-event timing
+and exact initial inactive records.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_initial_inactive_records_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        model
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model := model) (initialState := initialState)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  exact
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_initial_inactive_records_no_active
+      (model := model) (initialState := initialState)
+      (finalState := finalState)
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+        (model := model) (initialState := initialState)
+        (finalState := finalState) (strategy := strategy) hpbe)
+      hevent_safe hstate_no_overshoot hinitial_inactive_records hno_active
+
+/--
+The finite exact-record cold start stores exact finite `B*` records on every
+rank outside the active finite support.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_inactive_records
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ) :
+    ∀ rank,
+      ¬ (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks).IsActive rank →
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks).lastDropout rank =
+          some
+            (paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1)) := by
+  intro rank hinactive
+  have hnot_mem : rank ∉ activeRanks := by
+    intro hmem
+    exact hinactive
+      ((paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_active_iff
+        model activeRanks rank).mpr hmem)
+  exact
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_lastDropout_of_not_mem
+      model activeRanks hnot_mem
+
+/--
+Finite exact-record cold-start source-event endpoint. Initially inactive ranks
+already carry their exact finite `B*` records, so final no-active is enough to
+identify the terminal-record outcome without naming the schedule that generated
+the trace.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        model
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks)
+        finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks).IsActive rank →
+          (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            model activeRanks).clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        model activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      model activeRanks
+  have hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)) := by
+    simpa [initialState] using
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_inactive_records
+        model activeRanks
+  simpa [initialState] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_initial_inactive_records_no_active
+      model htrace hterminal hstate_no_overshoot hinitial_inactive_records
+      hno_active
+
+/--
+Belief-explicit finite exact-record cold-start source-event endpoint.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_belief_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        model
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks)
+        finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining)
+        finalState)
+    (hstate_no_overshoot :
+      ∀ rank,
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks).IsActive rank →
+          (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            model activeRanks).clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        model activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      model activeRanks
+  have hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)) := by
+    simpa [initialState] using
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_inactive_records
+        model activeRanks
+  simpa [initialState] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_initial_inactive_records_no_active
+      model htrace hterminal hstate_no_overshoot hinitial_inactive_records
+      hno_active
+
+/--
+Finite exact-record cold-start endpoint from source-extensive rationality plus
+threshold-event-safe timing. This is the finite-active version of the direct
+source-history bridge, with the inactive ledger supplied by the cold-start state.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks)
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        model hsource_extensive.2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks).IsActive rank →
+          (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            model activeRanks).clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        model activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      model activeRanks
+  have hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)) := by
+    simpa [initialState] using
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_inactive_records
+        model activeRanks
+  simpa [initialState] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_initial_inactive_records_no_active
+      (model := model) (initialState := initialState)
+      (finalState := finalState)
+      hsource_extensive hevent_safe hstate_no_overshoot
+      hinitial_inactive_records hno_active
+
+/--
+Belief-explicit finite exact-record cold-start source-extensive endpoint from
+threshold-event-safe timing.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_belief_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        model
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks)
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          model.value model.clickThroughRate model.remaining))
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        model hsource_extensive.2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks).IsActive rank →
+          (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            model activeRanks).clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        model activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      model activeRanks
+  have hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)) := by
+    simpa [initialState] using
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_inactive_records
+        model activeRanks
+  simpa [initialState] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_extensive_rationality_threshold_event_advance_safe_initial_inactive_records_no_active
+      (model := model) (initialState := initialState)
+      (finalState := finalState)
+      hsource_extensive hevent_safe hstate_no_overshoot
+      hinitial_inactive_records hno_active
+
+/--
+Finite exact-record cold-start endpoint stated directly from a source-game PBE.
+The PBE supplies the named source-history package; threshold-event timing plus
+the exact inactive ledger gives the full finite-active VCG conclusion.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks)
+        finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        model
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model := model)
+          (initialState :=
+            paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+              model activeRanks)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks).IsActive rank →
+          (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            model activeRanks).clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        model activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      model activeRanks
+  have hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)) := by
+    simpa [initialState] using
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_inactive_records
+        model activeRanks
+  simpa [initialState] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_initial_inactive_records_no_active
+      (model := model) (initialState := initialState)
+      (finalState := finalState) (strategy := strategy)
+      hpbe hevent_safe hstate_no_overshoot
+      hinitial_inactive_records hno_active
+
+/--
+Belief-explicit finite exact-record cold-start endpoint stated directly from a
+belief source-game PBE.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks)
+        finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        model
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model := model)
+          (initialState :=
+            paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+              model activeRanks)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)
+    (hstate_no_overshoot :
+      ∀ rank,
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          model activeRanks).IsActive rank →
+          (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            model activeRanks).clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              model.value model.clickThroughRate (model.remaining + 1)
+              (rank + 1))
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        model activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        model initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        model.value model.clickThroughRate model.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              model hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                model initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      model activeRanks
+  have hinitial_inactive_records :
+      ∀ rank,
+        ¬ initialState.IsActive rank →
+          initialState.lastDropout rank =
+            some
+              (paper_theorem8_bstar_threshold_bid
+                model.value model.clickThroughRate (model.remaining + 1)
+                (rank + 1)) := by
+    simpa [initialState] using
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_inactive_records
+        model activeRanks
+  simpa [initialState] using
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_pbe_threshold_event_advance_safe_initial_inactive_records_no_active
+      (model := model) (initialState := initialState)
+      (finalState := finalState) (strategy := strategy)
+      hpbe hevent_safe hstate_no_overshoot
+      hinitial_inactive_records hno_active
+
+/--
+Strict ordered finite exact-record source-event endpoint. Under the strict
+ordered EOS local model, the finite exact-record cold start discharges initial
+no-overshoot automatically.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          activeRanks)
+        finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).value
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).clickThroughRate
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  have hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              localModel.value localModel.clickThroughRate
+              (localModel.remaining + 1) (rank + 1) := by
+    simpa [localModel, initialState] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_cold_start_initial_no_overshoot
+        model activeRanks)
+  simpa [localModel, initialState] using
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+      localModel activeRanks htrace hterminal hstate_no_overshoot hno_active
+
+/--
+Belief-explicit strict ordered finite exact-record source-event endpoint.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          activeRanks)
+        finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).value
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).clickThroughRate
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  have hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              localModel.value localModel.clickThroughRate
+              (localModel.remaining + 1) (rank + 1) := by
+    simpa [localModel, initialState] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_cold_start_initial_no_overshoot
+        model activeRanks)
+  simpa [localModel, initialState] using
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_belief_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+      localModel activeRanks htrace hterminal hstate_no_overshoot hno_active
+
+/--
+Strict ordered finite exact-record source-extensive endpoint. The strict local
+model supplies the finite cold-start no-overshoot premise internally.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        localModel
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks)
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          localModel.value localModel.clickThroughRate localModel.remaining))
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        hsource_extensive.2.1)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  have hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              localModel.value localModel.clickThroughRate
+              (localModel.remaining + 1) (rank + 1) := by
+    simpa [localModel, initialState] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_cold_start_initial_no_overshoot
+        model activeRanks)
+  simpa [localModel, initialState] using
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+      localModel activeRanks hsource_extensive hevent_safe
+      hstate_no_overshoot hno_active
+
+/--
+Belief-explicit strict ordered finite exact-record source-extensive endpoint.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        localModel
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks)
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          localModel.value localModel.clickThroughRate localModel.remaining))
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        hsource_extensive.2.1)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  have hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              localModel.value localModel.clickThroughRate
+              (localModel.remaining + 1) (rank + 1) := by
+    simpa [localModel, initialState] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_cold_start_initial_no_overshoot
+        model activeRanks)
+  simpa [localModel, initialState] using
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_belief_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+      localModel activeRanks hsource_extensive hevent_safe
+      hstate_no_overshoot hno_active
+
+/--
+Strict ordered finite exact-record endpoint stated directly from a source-game
+PBE. The strict local model supplies initial no-overshoot internally.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks)
+        finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model :=
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+              model)
+          (initialState :=
+            paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              activeRanks)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  have hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              localModel.value localModel.clickThroughRate
+              (localModel.remaining + 1) (rank + 1) := by
+    simpa [localModel, initialState] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_cold_start_initial_no_overshoot
+        model activeRanks)
+  simpa [localModel, initialState] using
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+      localModel activeRanks hpbe hevent_safe hstate_no_overshoot hno_active
+
+/--
+Belief-explicit strict ordered finite exact-record endpoint stated directly from
+a belief source-game PBE.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks)
+        finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model :=
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+              model)
+          (initialState :=
+            paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              activeRanks)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank,
+                    (G.outcomeOf strategy).slotOf rank =
+                        G.vcgOutcome.slotOf rank ∧
+                      (G.outcomeOf strategy).paymentPerClick rank =
+                        G.vcgOutcome.paymentPerClick rank) ∧
+                    ∀ bidder,
+                      (G.outcomeOf strategy).utility G.environment G.values
+                          bidder =
+                        G.vcgOutcome.utility G.environment G.values bidder := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  have hstate_no_overshoot :
+      ∀ rank,
+        initialState.IsActive rank →
+          initialState.clockPrice ≤
+            paper_theorem8_bstar_threshold_bid
+              localModel.value localModel.clickThroughRate
+              (localModel.remaining + 1) (rank + 1) := by
+    simpa [localModel, initialState] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_cold_start_initial_no_overshoot
+        model activeRanks)
+  simpa [localModel, initialState] using
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+      localModel activeRanks hpbe hevent_safe hstate_no_overshoot hno_active
+
+/--
 All-active/all-terminal exact-drop-history specialization of the generic
 state-game source-extensive endpoint. In this common source-game case, exact
 finite `B*` history itself supplies the terminal-record outcome equality.
@@ -24404,36 +26061,9 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact
             paper_theorem8_bstar_threshold_bid
               localModel.value localModel.clickThroughRate
               (localModel.remaining + 1) (rank + 1) := by
-    intro rank _hactive
-    have hcold_active :
-        paper_theorem8_bstar_ranked_threshold_cold_start_state.IsActive rank := by
-      rfl
-    simpa [localModel, initialState,
-      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state,
-      paper_theorem8_bstar_ranked_threshold_cold_start_state,
-      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate,
-      paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        localModel
-        (by
-          intro rank
-          simpa [localModel,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate,
-            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-            model.value_nonneg rank)
-        (by
-          intro rank
-          simpa [localModel,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate,
-            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-            le_of_lt (model.current_lt rank))
-        localModel.click_pos rank hcold_active)
+    simpa [localModel, activeRanks, initialState] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_cold_start_initial_no_overshoot
+        model activeRanks)
   have houtcome :
       paper_theorem8_terminal_dropout_record_outcome finalState =
         paper_theorem8_bstar_ranked_threshold_outcome
@@ -24480,6 +26110,955 @@ def PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
           (G.outcomeOf strategy).IndividuallyRational
             G.environment G.values ∧
             paper_position_no_positive_transfers (G.outcomeOf strategy)
+
+/--
+If a state-game outcome is the constructed ranked `B*` outcome, ordered model
+assumptions give the paper-facing payoff package: ranked slots, finite `B*`
+payments, VCG-tail total payments, payment bounds, individual rationality, and
+no positive transfers.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_ordered_state_game_payoff_conclusion_of_outcome_eq_bstar
+    {Belief : Type*}
+    (model : PaperTheorem8BStarRankedThresholdLocalOptimalityCertificate)
+    (hvalue_nonneg : ∀ rank, 0 ≤ model.value rank)
+    (hvalue_mono : ∀ rank, model.value (rank + 1) ≤ model.value rank)
+    (hclick_mono :
+      ∀ rank, model.clickThroughRate (rank + 1) ≤ model.clickThroughRate rank)
+    (hclick_pos : ∀ rank, 0 < model.clickThroughRate rank)
+    (G :
+      PaperTheorem8GeneralizedEnglishDynamicGame
+        ℕ ℕ (PaperTheorem8GeneralizedEnglishStrategy ℕ) Belief)
+    (strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ)
+    (henvironment :
+      G.environment =
+        ({ clickThroughRate := model.clickThroughRate } :
+          PositionEnvironment ℕ))
+    (hvalues : G.values = model.value)
+    (houtcome :
+      G.outcomeOf strategy =
+        paper_theorem8_bstar_ranked_threshold_outcome
+          model.value model.clickThroughRate (model.remaining + 1)) :
+    PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+      model G strategy := by
+  rw [PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion,
+    houtcome, henvironment, hvalues]
+  exact
+    paper_theorem8_bstar_ranked_threshold_constructed_outcome_ordered_paper_conclusion
+      (value := model.value)
+      (clickThroughRate := model.clickThroughRate)
+      (remaining := model.remaining + 1)
+      hvalue_nonneg hvalue_mono hclick_mono hclick_pos
+
+/--
+Strict ordered source-state games inherit the ordered payoff package from any
+outcome equality to the terminal-record VCG outcome.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_record_source_extensive_dynamic_game_of_states_ordered_state_game_payoff_conclusion_of_outcome_eq_vcg
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hout :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      let G :=
+        paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+          localModel initialState finalState
+      G.outcomeOf strategy = G.vcgOutcome) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+      localModel G strategy := by
+  dsimp at hout ⊢
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  have houtcome_bstar :
+      G.outcomeOf strategy =
+        paper_theorem8_bstar_ranked_threshold_outcome
+          localModel.value localModel.clickThroughRate
+          (localModel.remaining + 1) := by
+    simpa [localModel, G,
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states] using
+      hout
+  exact
+    paper_theorem8_bstar_ranked_threshold_ordered_state_game_payoff_conclusion_of_outcome_eq_bstar
+      localModel
+      (by
+        intro rank
+        simpa [localModel,
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+          paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+          paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+          model.value_nonneg rank)
+      (by
+        intro rank
+        simpa [localModel,
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+          paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+          paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+          model.value_mono rank)
+      (by
+        intro rank
+        simpa [localModel,
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+          paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+          paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+          le_of_lt (model.current_lt rank))
+      (by
+        intro rank
+        simpa [localModel,
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+          paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+          paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+          model.click_pos rank)
+      G strategy
+      (by
+        simp [G,
+          paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states])
+      (by
+        simp [G,
+          paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states])
+      houtcome_bstar
+
+/--
+Belief-explicit strict ordered source-state games inherit the ordered payoff
+package from outcome equality to the terminal-record VCG outcome.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_record_belief_source_extensive_dynamic_game_of_states_ordered_state_game_payoff_conclusion_of_outcome_eq_vcg
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {initialState finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hout :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      let G :=
+        paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+          localModel initialState finalState
+      G.outcomeOf strategy = G.vcgOutcome) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+      localModel G strategy := by
+  dsimp at hout ⊢
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  have houtcome_bstar :
+      G.outcomeOf strategy =
+        paper_theorem8_bstar_ranked_threshold_outcome
+          localModel.value localModel.clickThroughRate
+          (localModel.remaining + 1) := by
+    simpa [localModel, G,
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states] using
+      hout
+  exact
+    paper_theorem8_bstar_ranked_threshold_ordered_state_game_payoff_conclusion_of_outcome_eq_bstar
+      localModel
+      (by
+        intro rank
+        simpa [localModel,
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+          paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+          paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+          model.value_nonneg rank)
+      (by
+        intro rank
+        simpa [localModel,
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+          paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+          paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+          model.value_mono rank)
+      (by
+        intro rank
+        simpa [localModel,
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+          paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+          paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+          le_of_lt (model.current_lt rank))
+      (by
+        intro rank
+        simpa [localModel,
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+          paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+          paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+          model.click_pos rank)
+      G strategy
+      (by
+        simp [G,
+          paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states])
+      (by
+        simp [G,
+          paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states])
+      houtcome_bstar
+
+/--
+Schedule-free strict ordered finite exact-record source-event endpoint with
+the paper-facing ordered payoff package. The finite exact-record initial state
+already records exact finite `B*` dropouts for initially inactive ranks; the
+source-event trace supplies threshold-event timing evidence, and final
+no-active identifies the terminal-record outcome globally.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_source_event_trace_threshold_event_ordered_paper_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          activeRanks)
+        finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).value
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).clickThroughRate
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                    localModel G strategy := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hbase :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+      model activeRanks htrace hterminal hno_active
+  dsimp [localModel, initialState, G, namedStrategy] at hbase
+  rcases hbase with ⟨strategy, hstrategy, hunique⟩
+  rcases hstrategy with
+    ⟨hpbe, hnamed, hhistory, hterminal_named, hexact, hout, _hslotpay,
+      _hutil⟩
+  have houtcome_bstar :
+      G.outcomeOf strategy =
+        paper_theorem8_bstar_ranked_threshold_outcome
+          localModel.value localModel.clickThroughRate
+          (localModel.remaining + 1) := by
+    simpa [G,
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states] using
+      hout
+  have hpayoff :
+      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+        localModel G strategy := by
+    exact
+      paper_theorem8_bstar_ranked_threshold_ordered_state_game_payoff_conclusion_of_outcome_eq_bstar
+        localModel
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.value_nonneg rank)
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.value_mono rank)
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            le_of_lt (model.current_lt rank))
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.click_pos rank)
+        G strategy
+        (by
+          simp [G,
+            paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states])
+        (by
+          simp [G,
+            paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states])
+        houtcome_bstar
+  refine ⟨strategy, ?_, ?_⟩
+  · exact
+      ⟨hpbe, hnamed, hhistory, hterminal_named, hexact, hout, hpayoff⟩
+  · intro other hother
+    rcases hother with
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, _hpayoff_other⟩
+    exact hunique other
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other,
+        (by
+          intro rank
+          exact
+            ⟨congrArg (fun outcome => outcome.slotOf rank) hout_other,
+              congrArg (fun outcome => outcome.paymentPerClick rank)
+                hout_other⟩),
+        (by
+          intro bidder
+          exact
+            congrArg
+              (fun outcome =>
+                outcome.utility G.environment G.values bidder)
+              hout_other)⟩
+
+/--
+Belief-explicit schedule-free strict ordered finite exact-record source-event
+endpoint with the ordered paper payoff package.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_source_event_trace_threshold_event_ordered_paper_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model)
+          activeRanks)
+        finalState)
+    (hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).value
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).clickThroughRate
+          (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model).remaining)
+        finalState)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                  localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                    localModel G strategy := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hbase :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_source_event_trace_threshold_event_full_vcg_conclusion_of_no_active
+      model activeRanks htrace hterminal hno_active
+  dsimp [localModel, initialState, G, namedStrategy] at hbase
+  rcases hbase with ⟨strategy, hstrategy, hunique⟩
+  rcases hstrategy with
+    ⟨hpbe, hnamed, hhistory, hterminal_named, hexact, hout, _hslotpay,
+      _hutil⟩
+  have houtcome_bstar :
+      G.outcomeOf strategy =
+        paper_theorem8_bstar_ranked_threshold_outcome
+          localModel.value localModel.clickThroughRate
+          (localModel.remaining + 1) := by
+    simpa [G,
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states] using
+      hout
+  have hpayoff :
+      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+        localModel G strategy := by
+    exact
+      paper_theorem8_bstar_ranked_threshold_ordered_state_game_payoff_conclusion_of_outcome_eq_bstar
+        localModel
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.value_nonneg rank)
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.value_mono rank)
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            le_of_lt (model.current_lt rank))
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.click_pos rank)
+        G strategy
+        (by
+          simp [G,
+            paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states])
+        (by
+          simp [G,
+            paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states])
+        houtcome_bstar
+  refine ⟨strategy, ?_, ?_⟩
+  · exact
+      ⟨hpbe, hnamed, hhistory, hterminal_named, hexact, hout, hpayoff⟩
+  · intro other hother
+    rcases hother with
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, _hpayoff_other⟩
+    exact hunique other
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other,
+        (by
+          intro rank
+          exact
+            ⟨congrArg (fun outcome => outcome.slotOf rank) hout_other,
+              congrArg (fun outcome => outcome.paymentPerClick rank)
+                hout_other⟩),
+        (by
+          intro bidder
+          exact
+            congrArg
+              (fun outcome =>
+                outcome.utility G.environment G.values bidder)
+              hout_other)⟩
+
+/--
+Strict ordered finite exact-record source-extensive endpoint with the ordered
+paper payoff package.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_source_extensive_rationality_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        localModel
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks)
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          localModel.value localModel.clickThroughRate localModel.remaining))
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        hsource_extensive.2.1)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                    localModel G strategy := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hbase :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+      model activeRanks hsource_extensive hevent_safe hno_active
+  dsimp [localModel, initialState, G, namedStrategy] at hbase
+  rcases hbase with ⟨strategy, hstrategy, hunique⟩
+  rcases hstrategy with
+    ⟨hpbe, hnamed, hhistory, hterminal_named, hexact, hout, _hslotpay,
+      _hutil⟩
+  have hpayoff :
+      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+        localModel G strategy := by
+    simpa [localModel, initialState, G] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_record_source_extensive_dynamic_game_of_states_ordered_state_game_payoff_conclusion_of_outcome_eq_vcg
+        (model := model) (initialState := initialState)
+        (finalState := finalState) (strategy := strategy)
+        (by
+          simpa [localModel, initialState, G] using hout))
+  refine ⟨strategy, ?_, ?_⟩
+  · exact
+      ⟨hpbe, hnamed, hhistory, hterminal_named, hexact, hout, hpayoff⟩
+  · intro other hother
+    rcases hother with
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, _hpayoff_other⟩
+    exact hunique other
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other,
+        (by
+          intro rank
+          exact
+            ⟨congrArg (fun outcome => outcome.slotOf rank) hout_other,
+              congrArg (fun outcome => outcome.paymentPerClick rank)
+                hout_other⟩),
+        (by
+          intro bidder
+          exact
+            congrArg
+              (fun outcome =>
+                outcome.utility G.environment G.values bidder)
+              hout_other)⟩
+
+/--
+Belief-explicit strict ordered finite exact-record source-extensive endpoint with
+the ordered paper payoff package.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_source_extensive_rationality_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    (hsource_extensive :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+        localModel
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks)
+        finalState
+        (paper_theorem8_bstar_ranked_threshold_strategy
+          localModel.value localModel.clickThroughRate localModel.remaining))
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        hsource_extensive.2.1)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                    localModel G strategy := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hbase :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_source_extensive_rationality_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+      model activeRanks hsource_extensive hevent_safe hno_active
+  dsimp [localModel, initialState, G, namedStrategy] at hbase
+  rcases hbase with ⟨strategy, hstrategy, hunique⟩
+  rcases hstrategy with
+    ⟨hpbe, hnamed, hhistory, hterminal_named, hexact, hout, _hslotpay,
+      _hutil⟩
+  have hpayoff :
+      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+        localModel G strategy := by
+    simpa [localModel, initialState, G] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_record_belief_source_extensive_dynamic_game_of_states_ordered_state_game_payoff_conclusion_of_outcome_eq_vcg
+        (model := model) (initialState := initialState)
+        (finalState := finalState) (strategy := strategy)
+        (by
+          simpa [localModel, initialState, G] using hout))
+  refine ⟨strategy, ?_, ?_⟩
+  · exact
+      ⟨hpbe, hnamed, hhistory, hterminal_named, hexact, hout, hpayoff⟩
+  · intro other hother
+    rcases hother with
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, _hpayoff_other⟩
+    exact hunique other
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other,
+        (by
+          intro rank
+          exact
+            ⟨congrArg (fun outcome => outcome.slotOf rank) hout_other,
+              congrArg (fun outcome => outcome.paymentPerClick rank)
+                hout_other⟩),
+        (by
+          intro bidder
+          exact
+            congrArg
+              (fun outcome =>
+                outcome.utility G.environment G.values bidder)
+              hout_other)⟩
+
+/--
+Strict ordered finite exact-record endpoint stated directly from a source-game
+PBE, with the ordered paper payoff package.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks)
+        finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model :=
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+              model)
+          (initialState :=
+            paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              activeRanks)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                    localModel G strategy := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hbase :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+      model activeRanks hpbe hevent_safe hno_active
+  dsimp [localModel, initialState, G, namedStrategy] at hbase
+  rcases hbase with ⟨pbeStrategy, hstrategy, hunique⟩
+  rcases hstrategy with
+    ⟨hpbe_named, hnamed, hhistory, hterminal_named, hexact, hout,
+      _hslotpay, _hutil⟩
+  have hpayoff :
+      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+        localModel G pbeStrategy := by
+    simpa [localModel, initialState, G] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_record_source_extensive_dynamic_game_of_states_ordered_state_game_payoff_conclusion_of_outcome_eq_vcg
+        (model := model) (initialState := initialState)
+        (finalState := finalState) (strategy := pbeStrategy)
+        (by
+          simpa [localModel, initialState, G] using hout))
+  refine ⟨pbeStrategy, ?_, ?_⟩
+  · exact
+      ⟨hpbe_named, hnamed, hhistory, hterminal_named, hexact, hout,
+        hpayoff⟩
+  · intro other hother
+    rcases hother with
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, _hpayoff_other⟩
+    exact hunique other
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other,
+        (by
+          intro rank
+          exact
+            ⟨congrArg (fun outcome => outcome.slotOf rank) hout_other,
+              congrArg (fun outcome => outcome.paymentPerClick rank)
+                hout_other⟩),
+        (by
+          intro bidder
+          exact
+            congrArg
+              (fun outcome =>
+                outcome.utility G.environment G.values bidder)
+              hout_other)⟩
+
+/--
+Belief-explicit strict ordered finite exact-record endpoint stated directly from
+a belief source-game PBE, with the ordered paper payoff package.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (activeRanks : Finset ℕ)
+    {finalState : PaperTheorem8GeneralizedEnglishAuctionState ℕ}
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel
+        (paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks)
+        finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model :=
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+              model)
+          (initialState :=
+            paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+              (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+                model)
+              activeRanks)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)
+    (hno_active : ∀ rank, ¬ finalState.IsActive rank) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                    localModel G strategy := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hbase :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_full_vcg_conclusion_of_no_active
+      model activeRanks hpbe hevent_safe hno_active
+  dsimp [localModel, initialState, G, namedStrategy] at hbase
+  rcases hbase with ⟨pbeStrategy, hstrategy, hunique⟩
+  rcases hstrategy with
+    ⟨hpbe_named, hnamed, hhistory, hterminal_named, hexact, hout,
+      _hslotpay, _hutil⟩
+  have hpayoff :
+      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+        localModel G pbeStrategy := by
+    simpa [localModel, initialState, G] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_terminal_record_belief_source_extensive_dynamic_game_of_states_ordered_state_game_payoff_conclusion_of_outcome_eq_vcg
+        (model := model) (initialState := initialState)
+        (finalState := finalState) (strategy := pbeStrategy)
+        (by
+          simpa [localModel, initialState, G] using hout))
+  refine ⟨pbeStrategy, ?_, ?_⟩
+  · exact
+      ⟨hpbe_named, hnamed, hhistory, hterminal_named, hexact, hout,
+        hpayoff⟩
+  · intro other hother
+    rcases hother with
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, _hpayoff_other⟩
+    exact hunique other
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other,
+        (by
+          intro rank
+          exact
+            ⟨congrArg (fun outcome => outcome.slotOf rank) hout_other,
+              congrArg (fun outcome => outcome.paymentPerClick rank)
+                hout_other⟩),
+        (by
+          intro bidder
+          exact
+            congrArg
+              (fun outcome =>
+                outcome.utility G.environment G.values bidder)
+              hout_other)⟩
 
 /--
 Finite-active source-event schedule endpoint with the paper-facing ordered
@@ -24554,108 +27133,56 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact
   rcases hbase with ⟨htrace, strategy, hstrategy, hunique⟩
   rcases hstrategy with
     ⟨hpbe, hnamed, hhistory, hterminal, hexact, hout, _hslotpay, _hutil⟩
+  have houtcome_bstar :
+      G.outcomeOf strategy =
+        paper_theorem8_bstar_ranked_threshold_outcome
+          localModel.value localModel.clickThroughRate
+          (localModel.remaining + 1) := by
+    simpa [G,
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states] using
+      hout
   have hpayoff :
       PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
         localModel G strategy := by
-    change
-      (∀ rank,
-        (G.outcomeOf strategy).slotOf rank = some rank) ∧
-        (∀ rank,
-          (G.outcomeOf strategy).paymentPerClick rank =
-            paper_theorem8_bstar_threshold_bid
-              localModel.value localModel.clickThroughRate
-              (localModel.remaining + 1) (rank + 1)) ∧
-          (∀ rank,
-            localModel.clickThroughRate rank *
-                (G.outcomeOf strategy).paymentPerClick rank =
-              paper_theorem7_ranked_vcg_tail_payment
-                localModel.value localModel.clickThroughRate rank
-                (localModel.remaining + 1)) ∧
-            (∀ rank,
-              0 ≤ (G.outcomeOf strategy).paymentPerClick rank ∧
-              (G.outcomeOf strategy).paymentPerClick rank ≤
-                localModel.value rank) ∧
-              (G.outcomeOf strategy).IndividuallyRational
-                G.environment G.values ∧
-                paper_position_no_positive_transfers
-                  (G.outcomeOf strategy)
-    rw [hout]
-    have hconstructed :
-        (∀ rank,
-          (paper_theorem8_bstar_ranked_threshold_outcome
-            localModel.value localModel.clickThroughRate
-            (localModel.remaining + 1)).slotOf rank = some rank) ∧
-          (∀ rank,
-            (paper_theorem8_bstar_ranked_threshold_outcome
-              localModel.value localModel.clickThroughRate
-              (localModel.remaining + 1)).paymentPerClick rank =
-              paper_theorem8_bstar_threshold_bid
-                localModel.value localModel.clickThroughRate
-                (localModel.remaining + 1) (rank + 1)) ∧
-            (∀ rank,
-              localModel.clickThroughRate rank *
-                  (paper_theorem8_bstar_ranked_threshold_outcome
-                    localModel.value localModel.clickThroughRate
-                    (localModel.remaining + 1)).paymentPerClick rank =
-                paper_theorem7_ranked_vcg_tail_payment
-                  localModel.value localModel.clickThroughRate rank
-                  (localModel.remaining + 1)) ∧
-              (∀ rank,
-                0 ≤
-                  (paper_theorem8_bstar_ranked_threshold_outcome
-                    localModel.value localModel.clickThroughRate
-                    (localModel.remaining + 1)).paymentPerClick rank ∧
-                (paper_theorem8_bstar_ranked_threshold_outcome
-                  localModel.value localModel.clickThroughRate
-                  (localModel.remaining + 1)).paymentPerClick rank ≤
-                  localModel.value rank) ∧
-                (paper_theorem8_bstar_ranked_threshold_outcome
-                  localModel.value localModel.clickThroughRate
-                  (localModel.remaining + 1)).IndividuallyRational
-                  ({ clickThroughRate := localModel.clickThroughRate } :
-                    PositionEnvironment ℕ)
-                  localModel.value ∧
-                  paper_position_no_positive_transfers
-                    (paper_theorem8_bstar_ranked_threshold_outcome
-                      localModel.value localModel.clickThroughRate
-                      (localModel.remaining + 1)) := by
-      exact
-        paper_theorem8_bstar_ranked_threshold_constructed_outcome_ordered_paper_conclusion
-          (value := localModel.value)
-          (clickThroughRate := localModel.clickThroughRate)
-          (remaining := localModel.remaining + 1)
-          (by
-            intro rank
-            simpa [localModel,
-              paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-              paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-              paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-              model.value_nonneg rank)
-          (by
-            intro rank
-            simpa [localModel,
-              paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-              paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-              paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-              model.value_mono rank)
-          (by
-            intro rank
-            simpa [localModel,
-              paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-              paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-              paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-              le_of_lt (model.current_lt rank))
-          (by
-            intro rank
-            simpa [localModel,
-              paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-              paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-              paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-              model.click_pos rank)
-    simpa [PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion,
-      G,
-      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states] using
-      hconstructed
+    exact
+      paper_theorem8_bstar_ranked_threshold_ordered_state_game_payoff_conclusion_of_outcome_eq_bstar
+        localModel
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.value_nonneg rank)
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.value_mono rank)
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            le_of_lt (model.current_lt rank))
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.click_pos rank)
+        G strategy
+        (by
+          simp [G,
+            paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states])
+        (by
+          simp [G,
+            paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states])
+        houtcome_bstar
   refine ⟨htrace, strategy, ?_, ?_⟩
   · exact ⟨hpbe, hnamed, hhistory, hterminal, hexact, hout, hpayoff⟩
   · intro other hother
@@ -24678,6 +27205,434 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact
               (fun outcome =>
                 outcome.utility G.environment G.values bidder)
               hout_other)⟩
+
+/--
+Finite-active source-event schedule endpoint retaining threshold-event timing
+evidence and the ordered paper payoff package. This is the schedule
+specialization of the schedule-free finite exact-record source-event theorem:
+threshold-sortedness and no-duplicates build the event trace; schedule support
+gives terminal no-active.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_source_event_trace_threshold_event_ordered_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledRanks : List ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := scheduledRanks.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState scheduledRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            (∃ hhistory :
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                namedStrategy initialState finalState,
+              PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+                localModel hhistory) ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  namedStrategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                      localModel G strategy := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let activeRanks := scheduledRanks.toFinset
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let finalState :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      localModel initialState scheduledRanks
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        localModel initialState.clockPrice scheduledRanks := by
+    simpa [localModel, initialState,
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state,
+      paper_theorem8_bstar_ranked_threshold_cold_start_state] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_of_threshold_sorted
+        model scheduledRanks hthreshold_sorted)
+  have htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        localModel initialState finalState := by
+    simpa [localModel, activeRanks, initialState, finalState] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_to_source_event_trace_of_threshold_sorted
+        model scheduledRanks hthreshold_sorted hnodup)
+  have hno_active :
+      ∀ rank, ¬ finalState.IsActive rank := by
+    simpa [localModel, activeRanks, initialState, finalState] using
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_no_active_of_finite_active_exact_record_cold_start_covers
+        localModel activeRanks scheduledRanks hsorted hnodup
+        (by
+          intro rank
+          simp [activeRanks]))
+  have hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        namedStrategy finalState := by
+    intro rank hactive _hstrategy
+    exact hno_active rank hactive
+  refine ⟨htrace, ?_⟩
+  simpa [localModel, activeRanks, initialState, finalState, G,
+    namedStrategy] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_source_event_trace_threshold_event_ordered_paper_conclusion_of_no_active
+      model activeRanks htrace hterminal hno_active
+
+/--
+Belief-explicit finite-active source-event schedule endpoint retaining
+threshold-event timing evidence and the ordered paper payoff package.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_belief_source_event_trace_threshold_event_ordered_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledRanks : List ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := scheduledRanks.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState scheduledRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            (∃ hhistory :
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                namedStrategy initialState finalState,
+              PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+                localModel hhistory) ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  namedStrategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                      localModel G strategy := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let activeRanks := scheduledRanks.toFinset
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let finalState :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      localModel initialState scheduledRanks
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        localModel initialState.clockPrice scheduledRanks := by
+    simpa [localModel, initialState,
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state,
+      paper_theorem8_bstar_ranked_threshold_cold_start_state] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_of_threshold_sorted
+        model scheduledRanks hthreshold_sorted)
+  have htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        localModel initialState finalState := by
+    simpa [localModel, activeRanks, initialState, finalState] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_to_source_event_trace_of_threshold_sorted
+        model scheduledRanks hthreshold_sorted hnodup)
+  have hno_active :
+      ∀ rank, ¬ finalState.IsActive rank := by
+    simpa [localModel, activeRanks, initialState, finalState] using
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_no_active_of_finite_active_exact_record_cold_start_covers
+        localModel activeRanks scheduledRanks hsorted hnodup
+        (by
+          intro rank
+          simp [activeRanks]))
+  have hterminal :
+      PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+        namedStrategy finalState := by
+    intro rank hactive _hstrategy
+    exact hno_active rank hactive
+  refine ⟨htrace, ?_⟩
+  simpa [localModel, activeRanks, initialState, finalState, G,
+    namedStrategy] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_source_event_trace_threshold_event_ordered_paper_conclusion_of_no_active
+      model activeRanks htrace hterminal hno_active
+
+/--
+Finite-active exact-record schedule endpoint stated directly from a source-game
+PBE. Threshold sortedness supplies final no-active for the constructed schedule
+state; the PBE plus threshold-event timing gives the ordered payoff package.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledRanks : List ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      let activeRanks := scheduledRanks.toFinset
+      let initialState :=
+        paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks
+      let finalState :=
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          localModel initialState scheduledRanks
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (let localModel :=
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model
+        let activeRanks := scheduledRanks.toFinset
+        let initialState :=
+          paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            localModel activeRanks
+        let finalState :=
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            localModel initialState scheduledRanks
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model := localModel) (initialState := initialState)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := scheduledRanks.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState scheduledRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                    localModel G strategy := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let activeRanks := scheduledRanks.toFinset
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let finalState :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      localModel initialState scheduledRanks
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        localModel initialState.clockPrice scheduledRanks := by
+    simpa [localModel, initialState,
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state,
+      paper_theorem8_bstar_ranked_threshold_cold_start_state] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_of_threshold_sorted
+        model scheduledRanks hthreshold_sorted)
+  have hno_active :
+      ∀ rank, ¬ finalState.IsActive rank := by
+    simpa [localModel, activeRanks, initialState, finalState] using
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_no_active_of_finite_active_exact_record_cold_start_covers
+        localModel activeRanks scheduledRanks hsorted hnodup
+        (by
+          intro rank
+          simp [activeRanks]))
+  simpa [localModel, activeRanks, initialState, finalState, G,
+    namedStrategy] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active
+      model activeRanks hpbe hevent_safe hno_active
+
+/--
+Belief-explicit finite-active exact-record schedule endpoint stated directly
+from a belief source-game PBE.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_belief_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (scheduledRanks : List ℕ)
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        scheduledRanks)
+    (hnodup : scheduledRanks.Nodup)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      let activeRanks := scheduledRanks.toFinset
+      let initialState :=
+        paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks
+      let finalState :=
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          localModel initialState scheduledRanks
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (let localModel :=
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model
+        let activeRanks := scheduledRanks.toFinset
+        let initialState :=
+          paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            localModel activeRanks
+        let finalState :=
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            localModel initialState scheduledRanks
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model := localModel) (initialState := initialState)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)) :
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := scheduledRanks.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState scheduledRanks
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                    localModel G strategy := by
+  dsimp
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let activeRanks := scheduledRanks.toFinset
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let finalState :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      localModel initialState scheduledRanks
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hsorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_clock_sorted
+        localModel initialState.clockPrice scheduledRanks := by
+    simpa [localModel, initialState,
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state,
+      paper_theorem8_bstar_ranked_threshold_cold_start_state] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_cold_start_clock_sorted_of_threshold_sorted
+        model scheduledRanks hthreshold_sorted)
+  have hno_active :
+      ∀ rank, ¬ finalState.IsActive rank := by
+    simpa [localModel, activeRanks, initialState, finalState] using
+      (paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state_no_active_of_finite_active_exact_record_cold_start_covers
+        localModel activeRanks scheduledRanks hsorted hnodup
+        (by
+          intro rank
+          simp [activeRanks]))
+  simpa [localModel, activeRanks, initialState, finalState, G,
+    namedStrategy] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_belief_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_no_active
+      model activeRanks hpbe hevent_safe hno_active
 
 /--
 Singleton finite-active exact-record source-event endpoint. Starting from the
@@ -25124,108 +28079,56 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact
   rcases hbase with ⟨htrace, strategy, hstrategy, hunique⟩
   rcases hstrategy with
     ⟨hpbe, hnamed, hhistory, hterminal, hexact, hout, _hslotpay, _hutil⟩
+  have houtcome_bstar :
+      G.outcomeOf strategy =
+        paper_theorem8_bstar_ranked_threshold_outcome
+          localModel.value localModel.clickThroughRate
+          (localModel.remaining + 1) := by
+    simpa [G,
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states] using
+      hout
   have hpayoff :
       PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
         localModel G strategy := by
-    change
-      (∀ rank,
-        (G.outcomeOf strategy).slotOf rank = some rank) ∧
-        (∀ rank,
-          (G.outcomeOf strategy).paymentPerClick rank =
-            paper_theorem8_bstar_threshold_bid
-              localModel.value localModel.clickThroughRate
-              (localModel.remaining + 1) (rank + 1)) ∧
-          (∀ rank,
-            localModel.clickThroughRate rank *
-                (G.outcomeOf strategy).paymentPerClick rank =
-              paper_theorem7_ranked_vcg_tail_payment
-                localModel.value localModel.clickThroughRate rank
-                (localModel.remaining + 1)) ∧
-            (∀ rank,
-              0 ≤ (G.outcomeOf strategy).paymentPerClick rank ∧
-              (G.outcomeOf strategy).paymentPerClick rank ≤
-                localModel.value rank) ∧
-              (G.outcomeOf strategy).IndividuallyRational
-                G.environment G.values ∧
-                paper_position_no_positive_transfers
-                  (G.outcomeOf strategy)
-    rw [hout]
-    have hconstructed :
-        (∀ rank,
-          (paper_theorem8_bstar_ranked_threshold_outcome
-            localModel.value localModel.clickThroughRate
-            (localModel.remaining + 1)).slotOf rank = some rank) ∧
-          (∀ rank,
-            (paper_theorem8_bstar_ranked_threshold_outcome
-              localModel.value localModel.clickThroughRate
-              (localModel.remaining + 1)).paymentPerClick rank =
-              paper_theorem8_bstar_threshold_bid
-                localModel.value localModel.clickThroughRate
-                (localModel.remaining + 1) (rank + 1)) ∧
-            (∀ rank,
-              localModel.clickThroughRate rank *
-                  (paper_theorem8_bstar_ranked_threshold_outcome
-                    localModel.value localModel.clickThroughRate
-                    (localModel.remaining + 1)).paymentPerClick rank =
-                paper_theorem7_ranked_vcg_tail_payment
-                  localModel.value localModel.clickThroughRate rank
-                  (localModel.remaining + 1)) ∧
-              (∀ rank,
-                0 ≤
-                  (paper_theorem8_bstar_ranked_threshold_outcome
-                    localModel.value localModel.clickThroughRate
-                    (localModel.remaining + 1)).paymentPerClick rank ∧
-                (paper_theorem8_bstar_ranked_threshold_outcome
-                  localModel.value localModel.clickThroughRate
-                  (localModel.remaining + 1)).paymentPerClick rank ≤
-                  localModel.value rank) ∧
-                (paper_theorem8_bstar_ranked_threshold_outcome
-                  localModel.value localModel.clickThroughRate
-                  (localModel.remaining + 1)).IndividuallyRational
-                  ({ clickThroughRate := localModel.clickThroughRate } :
-                    PositionEnvironment ℕ)
-                  localModel.value ∧
-                  paper_position_no_positive_transfers
-                    (paper_theorem8_bstar_ranked_threshold_outcome
-                      localModel.value localModel.clickThroughRate
-                      (localModel.remaining + 1)) := by
-      exact
-        paper_theorem8_bstar_ranked_threshold_constructed_outcome_ordered_paper_conclusion
-          (value := localModel.value)
-          (clickThroughRate := localModel.clickThroughRate)
-          (remaining := localModel.remaining + 1)
-          (by
-            intro rank
-            simpa [localModel,
-              paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-              paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-              paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-              model.value_nonneg rank)
-          (by
-            intro rank
-            simpa [localModel,
-              paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-              paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-              paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-              model.value_mono rank)
-          (by
-            intro rank
-            simpa [localModel,
-              paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-              paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-              paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-              le_of_lt (model.current_lt rank))
-          (by
-            intro rank
-            simpa [localModel,
-              paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-              paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-              paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-              model.click_pos rank)
-    simpa [PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion,
-      G,
-      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states] using
-      hconstructed
+    exact
+      paper_theorem8_bstar_ranked_threshold_ordered_state_game_payoff_conclusion_of_outcome_eq_bstar
+        localModel
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.value_nonneg rank)
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.value_mono rank)
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            le_of_lt (model.current_lt rank))
+        (by
+          intro rank
+          simpa [localModel,
+            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
+            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
+            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
+            model.click_pos rank)
+        G strategy
+        (by
+          simp [G,
+            paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states])
+        (by
+          simp [G,
+            paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states])
+        houtcome_bstar
   refine ⟨htrace, strategy, ?_, ?_⟩
   · exact ⟨hpbe, hnamed, hhistory, hterminal, hexact, hout, hpayoff⟩
   · intro other hother
@@ -25559,6 +28462,259 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedu
         hexact_other, hout_other, hpayoff_other⟩
 
 /--
+Complete finite-index source-event endpoint with displayed-rank facts,
+threshold-event timing evidence, and the global ordered payoff package.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks) :
+    let rankSchedule :=
+      paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            (∃ hhistory :
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                namedStrategy initialState finalState,
+              PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+                localModel hhistory) ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  namedStrategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    (∀ rank : Fin n,
+                      initialState.IsActive rank.val ∧
+                        ¬ finalState.IsActive rank.val ∧
+                          (G.outcomeOf strategy).slotOf rank.val =
+                              some rank.val ∧
+                            (G.outcomeOf strategy).paymentPerClick rank.val =
+                              paper_theorem8_bstar_threshold_bid
+                                localModel.value localModel.clickThroughRate
+                                (localModel.remaining + 1)
+                                (rank.val + 1)) ∧
+                      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                        localModel G strategy := by
+  dsimp
+  let rankSchedule :=
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let activeRanks := rankSchedule.toFinset
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let finalState :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      localModel initialState rankSchedule
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hbase :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_source_event_trace_threshold_event_ordered_paper_conclusion_of_threshold_sorted
+      model rankSchedule hthreshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks_nodup
+          hnodup)
+  have hdisplayed_active :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_displayed_ranks_active_then_inactive_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+  dsimp [rankSchedule, localModel, activeRanks, initialState, finalState, G,
+    namedStrategy] at hbase hdisplayed_active
+  rcases hbase with ⟨htrace, strategy, hstrategy, hunique⟩
+  rcases hstrategy with
+    ⟨hpbe, hnamed, hhistory, hterminal, hexact, hout, hpayoff⟩
+  refine ⟨htrace, strategy, ?_, ?_⟩
+  · refine ⟨hpbe, hnamed, hhistory, hterminal, hexact, hout, ?_, hpayoff⟩
+    intro rank
+    exact
+      ⟨(hdisplayed_active rank).1,
+        (hdisplayed_active rank).2,
+        congrArg (fun outcome => outcome.slotOf rank.val) hout,
+        congrArg (fun outcome => outcome.paymentPerClick rank.val) hout⟩
+  · intro other hother
+    rcases hother with
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, _hdisplayed_other, hpayoff_other⟩
+    exact hunique other
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, hpayoff_other⟩
+
+/--
+Complete finite-index endpoint stated directly from a source-game PBE, retaining
+displayed-rank formulas and the ordered paper payoff package.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      let rankSchedule :=
+        paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      let activeRanks := rankSchedule.toFinset
+      let initialState :=
+        paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks
+      let finalState :=
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          localModel initialState rankSchedule
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (let rankSchedule :=
+          paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+        let localModel :=
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model
+        let activeRanks := rankSchedule.toFinset
+        let initialState :=
+          paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            localModel activeRanks
+        let finalState :=
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            localModel initialState rankSchedule
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model := localModel) (initialState := initialState)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)) :
+    let rankSchedule :=
+      paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank : Fin n,
+                    initialState.IsActive rank.val ∧
+                      ¬ finalState.IsActive rank.val ∧
+                        (G.outcomeOf strategy).slotOf rank.val =
+                            some rank.val ∧
+                          (G.outcomeOf strategy).paymentPerClick rank.val =
+                            paper_theorem8_bstar_threshold_bid
+                              localModel.value localModel.clickThroughRate
+                              (localModel.remaining + 1)
+                              (rank.val + 1)) ∧
+                    PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                      localModel G strategy := by
+  dsimp
+  let rankSchedule :=
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let activeRanks := rankSchedule.toFinset
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let finalState :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      localModel initialState rankSchedule
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hbase :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_threshold_sorted
+      model rankSchedule hthreshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks_nodup
+          hnodup)
+      hpbe hevent_safe
+  have hdisplayed_active :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_displayed_ranks_active_then_inactive_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+  dsimp [rankSchedule, localModel, activeRanks, initialState, finalState, G,
+    namedStrategy] at hbase hdisplayed_active
+  rcases hbase with ⟨pbeStrategy, hstrategy, hunique⟩
+  rcases hstrategy with
+    ⟨hpbe_named, hnamed, hhistory, hterminal, hexact, hout, hpayoff⟩
+  refine ⟨pbeStrategy, ?_, ?_⟩
+  · refine
+      ⟨hpbe_named, hnamed, hhistory, hterminal, hexact, hout, ?_,
+        hpayoff⟩
+    intro rank
+    exact
+      ⟨(hdisplayed_active rank).1,
+        (hdisplayed_active rank).2,
+        congrArg (fun outcome => outcome.slotOf rank.val) hout,
+        congrArg (fun outcome => outcome.paymentPerClick rank.val) hout⟩
+  · intro other hother
+    rcases hother with
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, _hdisplayed_other, hpayoff_other⟩
+    exact hunique other
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, hpayoff_other⟩
+
+/--
 Belief-explicit complete finite-index source-extensive endpoint. This is the
 belief-carrying counterpart of the source-extensive displayed conclusion above:
 the source PBE witness carries generated history and terminality, and the final
@@ -25853,6 +29009,260 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedu
     ⟨hpbe, hnamed, hhistory, hterminal, hexact, hout, hpayoff⟩
   refine ⟨htrace, strategy, ?_, ?_⟩
   · refine ⟨hpbe, hnamed, hhistory, hterminal, hexact, hout, ?_, hpayoff⟩
+    intro rank
+    exact
+      ⟨(hdisplayed_active rank).1,
+        (hdisplayed_active rank).2,
+        congrArg (fun outcome => outcome.slotOf rank.val) hout,
+        congrArg (fun outcome => outcome.paymentPerClick rank.val) hout⟩
+  · intro other hother
+    rcases hother with
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, _hdisplayed_other, hpayoff_other⟩
+    exact hunique other
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, hpayoff_other⟩
+
+/--
+Belief-explicit complete finite-index source-event endpoint with displayed-rank
+facts, threshold-event timing evidence, and the global ordered payoff package.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks) :
+    let rankSchedule :=
+      paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            (∃ hhistory :
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                namedStrategy initialState finalState,
+              PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+                localModel hhistory) ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  namedStrategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    (∀ rank : Fin n,
+                      initialState.IsActive rank.val ∧
+                        ¬ finalState.IsActive rank.val ∧
+                          (G.outcomeOf strategy).slotOf rank.val =
+                              some rank.val ∧
+                            (G.outcomeOf strategy).paymentPerClick rank.val =
+                              paper_theorem8_bstar_threshold_bid
+                                localModel.value localModel.clickThroughRate
+                                (localModel.remaining + 1)
+                                (rank.val + 1)) ∧
+                      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                        localModel G strategy := by
+  dsimp
+  let rankSchedule :=
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let activeRanks := rankSchedule.toFinset
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let finalState :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      localModel initialState rankSchedule
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hbase :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_belief_source_event_trace_threshold_event_ordered_paper_conclusion_of_threshold_sorted
+      model rankSchedule hthreshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks_nodup
+          hnodup)
+  have hdisplayed_active :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_displayed_ranks_active_then_inactive_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+  dsimp [rankSchedule, localModel, activeRanks, initialState, finalState, G,
+    namedStrategy] at hbase hdisplayed_active
+  rcases hbase with ⟨htrace, strategy, hstrategy, hunique⟩
+  rcases hstrategy with
+    ⟨hpbe, hnamed, hhistory, hterminal, hexact, hout, hpayoff⟩
+  refine ⟨htrace, strategy, ?_, ?_⟩
+  · refine ⟨hpbe, hnamed, hhistory, hterminal, hexact, hout, ?_, hpayoff⟩
+    intro rank
+    exact
+      ⟨(hdisplayed_active rank).1,
+        (hdisplayed_active rank).2,
+        congrArg (fun outcome => outcome.slotOf rank.val) hout,
+        congrArg (fun outcome => outcome.paymentPerClick rank.val) hout⟩
+  · intro other hother
+    rcases hother with
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, _hdisplayed_other, hpayoff_other⟩
+    exact hunique other
+      ⟨hpbe_other, hnamed_other, hhistory_other, hterminal_other,
+        hexact_other, hout_other, hpayoff_other⟩
+
+/--
+Belief-explicit complete finite-index endpoint stated directly from a belief
+source-game PBE, retaining displayed-rank formulas and the ordered payoff
+package.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_belief_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion_of_threshold_sorted
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    {n : ℕ} (scheduledRanks : List (Fin n))
+    (hthreshold_sorted :
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_threshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks))
+    (hnodup : scheduledRanks.Nodup)
+    (hcomplete : ∀ rank : Fin n, rank ∈ scheduledRanks)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      let rankSchedule :=
+        paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      let activeRanks := rankSchedule.toFinset
+      let initialState :=
+        paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks
+      let finalState :=
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          localModel initialState rankSchedule
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (let rankSchedule :=
+          paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+        let localModel :=
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model
+        let activeRanks := rankSchedule.toFinset
+        let initialState :=
+          paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            localModel activeRanks
+        let finalState :=
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            localModel initialState rankSchedule
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model := localModel) (initialState := initialState)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)) :
+    let rankSchedule :=
+      paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium strategy ∧
+        strategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf strategy = G.vcgOutcome ∧
+                  (∀ rank : Fin n,
+                    initialState.IsActive rank.val ∧
+                      ¬ finalState.IsActive rank.val ∧
+                        (G.outcomeOf strategy).slotOf rank.val =
+                            some rank.val ∧
+                          (G.outcomeOf strategy).paymentPerClick rank.val =
+                            paper_theorem8_bstar_threshold_bid
+                              localModel.value localModel.clickThroughRate
+                              (localModel.remaining + 1)
+                              (rank.val + 1)) ∧
+                    PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                      localModel G strategy := by
+  dsimp
+  let rankSchedule :=
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let activeRanks := rankSchedule.toFinset
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let finalState :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      localModel initialState rankSchedule
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hbase :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_schedule_belief_pbe_threshold_event_advance_safe_ordered_paper_conclusion_of_threshold_sorted
+      model rankSchedule hthreshold_sorted
+        (paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks_nodup
+          hnodup)
+      hpbe hevent_safe
+  have hdisplayed_active :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_displayed_ranks_active_then_inactive_of_threshold_sorted
+      model scheduledRanks hthreshold_sorted hnodup hcomplete
+  dsimp [rankSchedule, localModel, activeRanks, initialState, finalState, G,
+    namedStrategy] at hbase hdisplayed_active
+  rcases hbase with ⟨pbeStrategy, hstrategy, hunique⟩
+  rcases hstrategy with
+    ⟨hpbe_named, hnamed, hhistory, hterminal, hexact, hout, hpayoff⟩
+  refine ⟨pbeStrategy, ?_, ?_⟩
+  · refine
+      ⟨hpbe_named, hnamed, hhistory, hterminal, hexact, hout, ?_,
+        hpayoff⟩
     intro rank
     exact
       ⟨(hdisplayed_active rank).1,
@@ -26610,36 +30020,9 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_sc
             paper_theorem8_bstar_threshold_bid
               localModel.value localModel.clickThroughRate
               (localModel.remaining + 1) (rank + 1) := by
-    intro rank _hactive
-    have hcold_active :
-        paper_theorem8_bstar_ranked_threshold_cold_start_state.IsActive rank := by
-      rfl
-    simpa [localModel, initialState,
-      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state,
-      paper_theorem8_bstar_ranked_threshold_cold_start_state,
-      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate,
-      paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        localModel
-        (by
-          intro rank
-          simpa [localModel,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate,
-            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-            model.value_nonneg rank)
-        (by
-          intro rank
-          simpa [localModel,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate,
-            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-            le_of_lt (model.current_lt rank))
-        localModel.click_pos rank hcold_active)
+    simpa [localModel, activeRanks, initialState] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_cold_start_initial_no_overshoot
+        model activeRanks)
   refine ⟨htrace, ?_⟩
   simpa [localModel, activeRanks, initialState, finalState, G, namedStrategy] using
     paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_terminal_record_outcome_eq_bstar
@@ -26749,36 +30132,9 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_sc
             paper_theorem8_bstar_threshold_bid
               localModel.value localModel.clickThroughRate
               (localModel.remaining + 1) (rank + 1) := by
-    intro rank _hactive
-    have hcold_active :
-        paper_theorem8_bstar_ranked_threshold_cold_start_state.IsActive rank := by
-      rfl
-    simpa [localModel, initialState,
-      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state,
-      paper_theorem8_bstar_ranked_threshold_cold_start_state,
-      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-      paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate,
-      paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-      (paper_theorem8_bstar_ranked_threshold_cold_start_initial_no_overshoot
-        localModel
-        (by
-          intro rank
-          simpa [localModel,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate,
-            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-            model.value_nonneg rank)
-        (by
-          intro rank
-          simpa [localModel,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model,
-            paper_theorem8_bstar_ranked_threshold_local_optimality_certificate_of_strict,
-            paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_constructed_outcome_certificate,
-            paper_theorem8_bstar_ranked_threshold_strict_local_optimality_certificate_of_strict_ordered] using
-            le_of_lt (model.current_lt rank))
-        localModel.click_pos rank hcold_active)
+    simpa [localModel, activeRanks, initialState] using
+      (paper_theorem8_bstar_ranked_threshold_strict_ordered_finite_active_exact_record_cold_start_initial_no_overshoot
+        model activeRanks)
   refine ⟨htrace, ?_⟩
   simpa [localModel, activeRanks, initialState, finalState, G, namedStrategy] using
     paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_exists_unique_pbe_with_threshold_event_trace_full_vcg_conclusion_of_source_event_trace_terminal_record_outcome_eq_bstar
@@ -26853,6 +30209,88 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_sc
       model n := by
   simpa [paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_trace_ordered_displayed_paper_conclusion_statement] using
     paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_source_event_trace_ordered_displayed_paper_conclusion_of_threshold_sorted
+      model
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+        model n)
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_threshold_sorted
+        model n)
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_nodup
+        model n)
+      (fun rank =>
+        paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_complete
+          model rank)
+
+/--
+Statement for the complete finite-index source-event endpoint using the
+price-sorted schedule, retaining threshold-event timing evidence in the
+state-game conclusion.
+-/
+noncomputable def paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_statement
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) : Prop :=
+    let scheduledRanks :=
+      paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+        model n
+    let rankSchedule :=
+      paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            (∃ hhistory :
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                namedStrategy initialState finalState,
+              PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+                localModel hhistory) ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  namedStrategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    (∀ rank : Fin n,
+                      initialState.IsActive rank.val ∧
+                        ¬ finalState.IsActive rank.val ∧
+                          (G.outcomeOf strategy).slotOf rank.val =
+                              some rank.val ∧
+                            (G.outcomeOf strategy).paymentPerClick rank.val =
+                              paper_theorem8_bstar_threshold_bid
+                                localModel.value localModel.clickThroughRate
+                                (localModel.remaining + 1)
+                                (rank.val + 1)) ∧
+                      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                        localModel G strategy
+
+/--
+Complete finite-index source-event endpoint using the price-sorted schedule,
+retaining threshold-event timing evidence in the state-game conclusion.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_statement
+      model n := by
+  simpa [paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_statement] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_of_threshold_sorted
       model
       (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
         model n)
@@ -26941,6 +30379,310 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_sc
       (fun rank =>
         paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_complete
           model rank)
+
+/--
+Statement for the belief-explicit complete finite-index source-event endpoint
+using the price-sorted schedule and retaining threshold-event timing evidence
+in the state-game conclusion.
+-/
+noncomputable def paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_statement
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) : Prop :=
+    let scheduledRanks :=
+      paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+        model n
+    let rankSchedule :=
+      paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        localModel initialState finalState,
+      ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+        G.PerfectBayesianEquilibrium strategy ∧
+          strategy = namedStrategy ∧
+            (∃ hhistory :
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                namedStrategy initialState finalState,
+              PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+                localModel hhistory) ∧
+              PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                  namedStrategy finalState ∧
+                PaperTheorem8BStarRankedThresholdExactDropHistory
+                    localModel initialState finalState ∧
+                  G.outcomeOf strategy = G.vcgOutcome ∧
+                    (∀ rank : Fin n,
+                      initialState.IsActive rank.val ∧
+                        ¬ finalState.IsActive rank.val ∧
+                          (G.outcomeOf strategy).slotOf rank.val =
+                              some rank.val ∧
+                            (G.outcomeOf strategy).paymentPerClick rank.val =
+                              paper_theorem8_bstar_threshold_bid
+                                localModel.value localModel.clickThroughRate
+                                (localModel.remaining + 1)
+                                (rank.val + 1)) ∧
+                      PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                        localModel G strategy
+
+/--
+Belief-explicit complete finite-index source-event endpoint using the
+price-sorted schedule and retaining threshold-event timing evidence in the
+state-game conclusion.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_statement
+      model n := by
+  simpa [paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_statement] using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_of_threshold_sorted
+      model
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+        model n)
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_threshold_sorted
+        model n)
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_nodup
+        model n)
+      (fun rank =>
+        paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_complete
+          model rank)
+
+/--
+Canonical price-sorted finite-index endpoint stated directly from a source-game
+PBE.  The displayed schedule is generated internally by exact finite `B*`
+threshold sorting; the only remaining behavioral premise is the threshold-event
+advance-safety evidence for the PBE-generated source history.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      let scheduledRanks :=
+        paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+          model n
+      let rankSchedule :=
+        paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      let activeRanks := rankSchedule.toFinset
+      let initialState :=
+        paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks
+      let finalState :=
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          localModel initialState rankSchedule
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (let scheduledRanks :=
+          paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+            model n
+        let rankSchedule :=
+          paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+        let localModel :=
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model
+        let activeRanks := rankSchedule.toFinset
+        let initialState :=
+          paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            localModel activeRanks
+        let finalState :=
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            localModel initialState rankSchedule
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model := localModel) (initialState := initialState)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)) :
+    let scheduledRanks :=
+      paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+        model n
+    let rankSchedule :=
+      paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! pbeStrategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium pbeStrategy ∧
+        pbeStrategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf pbeStrategy = G.vcgOutcome ∧
+                  (∀ rank : Fin n,
+                    initialState.IsActive rank.val ∧
+                      ¬ finalState.IsActive rank.val ∧
+                        (G.outcomeOf pbeStrategy).slotOf rank.val =
+                            some rank.val ∧
+                          (G.outcomeOf pbeStrategy).paymentPerClick rank.val =
+                            paper_theorem8_bstar_threshold_bid
+                              localModel.value localModel.clickThroughRate
+                              (localModel.remaining + 1)
+                              (rank.val + 1)) ∧
+                    PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                      localModel G pbeStrategy := by
+  simpa using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion_of_threshold_sorted
+      model
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+        model n)
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_threshold_sorted
+        model n)
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_nodup
+        model n)
+      (fun rank =>
+        paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_complete
+          model rank)
+      hpbe hevent_safe
+
+/--
+Belief-explicit canonical price-sorted finite-index endpoint stated directly
+from a belief source-game PBE, with the same internally generated displayed
+schedule and threshold-event timing premise.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ)
+    {strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ}
+    (hpbe :
+      let scheduledRanks :=
+        paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+          model n
+      let rankSchedule :=
+        paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+      let localModel :=
+        paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model
+      let activeRanks := rankSchedule.toFinset
+      let initialState :=
+        paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+          localModel activeRanks
+      let finalState :=
+        paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+          localModel initialState rankSchedule
+      (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState).PerfectBayesianEquilibrium strategy)
+    (hevent_safe :
+      PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+        (paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+          model)
+        (let scheduledRanks :=
+          paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+            model n
+        let rankSchedule :=
+          paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+        let localModel :=
+          paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+            model
+        let activeRanks := rankSchedule.toFinset
+        let initialState :=
+          paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+            localModel activeRanks
+        let finalState :=
+          paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+            localModel initialState rankSchedule
+        (paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states_pbe_named_source_extensive_rationality
+          (model := localModel) (initialState := initialState)
+          (finalState := finalState) (strategy := strategy) hpbe).2.1)) :
+    let scheduledRanks :=
+      paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+        model n
+    let rankSchedule :=
+      paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃! pbeStrategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+      G.PerfectBayesianEquilibrium pbeStrategy ∧
+        pbeStrategy = namedStrategy ∧
+          (∃ hhistory :
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+              namedStrategy initialState finalState,
+            PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+              localModel hhistory) ∧
+            PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                namedStrategy finalState ∧
+              PaperTheorem8BStarRankedThresholdExactDropHistory
+                localModel initialState finalState ∧
+                G.outcomeOf pbeStrategy = G.vcgOutcome ∧
+                  (∀ rank : Fin n,
+                    initialState.IsActive rank.val ∧
+                      ¬ finalState.IsActive rank.val ∧
+                        (G.outcomeOf pbeStrategy).slotOf rank.val =
+                            some rank.val ∧
+                          (G.outcomeOf pbeStrategy).paymentPerClick rank.val =
+                            paper_theorem8_bstar_threshold_bid
+                              localModel.value localModel.clickThroughRate
+                              (localModel.remaining + 1)
+                              (rank.val + 1)) ∧
+                    PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                      localModel G pbeStrategy := by
+  simpa using
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_complete_fin_schedule_belief_pbe_threshold_event_advance_safe_ordered_displayed_paper_conclusion_of_threshold_sorted
+      model
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+        model n)
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_threshold_sorted
+        model n)
+      (paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_nodup
+        model n)
+      (fun rank =>
+        paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule_complete
+          model rank)
+      hpbe hevent_safe
 
 /--
 Price-sorted finite-index endpoint combining the source-event boundary package
@@ -27055,6 +30797,122 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_sc
   exact ⟨htrace, hsource_extensive, hevent_safe, hexact, hordered_pbe⟩
 
 /--
+Price-sorted finite-index endpoint combining the source-event boundary package
+with the threshold-event-retaining ordered displayed PBE/payoff conclusion.
+-/
+noncomputable def paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion_statement
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) : Prop :=
+    let scheduledRanks :=
+      paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+        model n
+    let rankSchedule :=
+      paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        localModel initialState finalState,
+      ∃ hsource_extensive :
+        paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+          localModel initialState finalState namedStrategy,
+        PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+            localModel hsource_extensive.2.1 ∧
+          PaperTheorem8BStarRankedThresholdExactDropHistory
+              localModel initialState finalState ∧
+            ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+              G.PerfectBayesianEquilibrium strategy ∧
+                strategy = namedStrategy ∧
+                  (∃ hhistory :
+                    PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                      namedStrategy initialState finalState,
+                    PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+                      localModel hhistory) ∧
+                    PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                        namedStrategy finalState ∧
+                      PaperTheorem8BStarRankedThresholdExactDropHistory
+                          localModel initialState finalState ∧
+                        G.outcomeOf strategy = G.vcgOutcome ∧
+                          (∀ rank : Fin n,
+                            initialState.IsActive rank.val ∧
+                              ¬ finalState.IsActive rank.val ∧
+                                (G.outcomeOf strategy).slotOf rank.val =
+                                    some rank.val ∧
+                                  (G.outcomeOf strategy).paymentPerClick
+                                      rank.val =
+                                    paper_theorem8_bstar_threshold_bid
+                                      localModel.value
+                                      localModel.clickThroughRate
+                                      (localModel.remaining + 1)
+                                      (rank.val + 1)) ∧
+                            PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                              localModel G strategy
+
+/--
+The canonical price-sorted displayed schedule supplies both source-event timing
+evidence and the threshold-event-retaining ordered displayed payoff
+conclusion.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion_statement
+      model n := by
+  dsimp [paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion_statement]
+  let scheduledRanks :=
+    paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+      model n
+  let rankSchedule :=
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let activeRanks := rankSchedule.toFinset
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let finalState :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      localModel initialState rankSchedule
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hboundary :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary
+      model n
+  have hordered :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion
+      model n
+  dsimp [paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_statement,
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_statement,
+    scheduledRanks, rankSchedule, localModel, activeRanks, initialState,
+    finalState, G, namedStrategy] at hboundary hordered
+  rcases hboundary with
+    ⟨htrace, hsource_extensive, hevent_safe, hexact, _hterminal,
+      _houtcome⟩
+  rcases hordered with ⟨_htrace_ordered, hordered_pbe⟩
+  exact ⟨htrace, hsource_extensive, hevent_safe, hexact, hordered_pbe⟩
+
+/--
 Belief-explicit price-sorted finite-index endpoint combining the source-event
 boundary package with the ordered displayed PBE/payoff conclusion.
 -/
@@ -27158,6 +31016,123 @@ theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_sc
       model n
   dsimp [paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_statement,
     paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_ordered_displayed_paper_conclusion_statement,
+    scheduledRanks, rankSchedule, localModel, activeRanks, initialState,
+    finalState, G, namedStrategy] at hboundary hordered
+  rcases hboundary with
+    ⟨htrace, hsource_extensive, hevent_safe, hexact, _hterminal,
+      _houtcome⟩
+  rcases hordered with ⟨_htrace_ordered, hordered_pbe⟩
+  exact ⟨htrace, hsource_extensive, hevent_safe, hexact, hordered_pbe⟩
+
+/--
+Belief-explicit price-sorted finite-index endpoint combining the source-event
+boundary package with the threshold-event-retaining ordered displayed
+PBE/payoff conclusion.
+-/
+noncomputable def paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion_statement
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) : Prop :=
+    let scheduledRanks :=
+      paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+        model n
+    let rankSchedule :=
+      paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+    let localModel :=
+      paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+        model
+    let activeRanks := rankSchedule.toFinset
+    let initialState :=
+      paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+        localModel activeRanks
+    let finalState :=
+      paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+        localModel initialState rankSchedule
+    let G :=
+      paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+        localModel initialState finalState
+    let namedStrategy :=
+      paper_theorem8_bstar_ranked_threshold_strategy
+        localModel.value localModel.clickThroughRate localModel.remaining
+    ∃ htrace :
+      PaperTheorem8BStarRankedThresholdSourceEventTrace
+        localModel initialState finalState,
+      ∃ hsource_extensive :
+        paper_theorem8_bstar_ranked_threshold_source_extensive_rationality_statement
+          localModel initialState finalState namedStrategy,
+        PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+            localModel hsource_extensive.2.1 ∧
+          PaperTheorem8BStarRankedThresholdExactDropHistory
+              localModel initialState finalState ∧
+            ∃! strategy : PaperTheorem8GeneralizedEnglishStrategy ℕ,
+              G.PerfectBayesianEquilibrium strategy ∧
+                strategy = namedStrategy ∧
+                  (∃ hhistory :
+                    PaperTheorem8GeneralizedEnglishAuctionState.StrategyHistory
+                      namedStrategy initialState finalState,
+                    PaperTheorem8BStarRankedThresholdStrategyHistoryThresholdEventAdvanceSafe
+                      localModel hhistory) ∧
+                    PaperTheorem8GeneralizedEnglishAuctionState.StrategyTerminal
+                        namedStrategy finalState ∧
+                      PaperTheorem8BStarRankedThresholdExactDropHistory
+                          localModel initialState finalState ∧
+                        G.outcomeOf strategy = G.vcgOutcome ∧
+                          (∀ rank : Fin n,
+                            initialState.IsActive rank.val ∧
+                              ¬ finalState.IsActive rank.val ∧
+                                (G.outcomeOf strategy).slotOf rank.val =
+                                    some rank.val ∧
+                                  (G.outcomeOf strategy).paymentPerClick
+                                      rank.val =
+                                    paper_theorem8_bstar_threshold_bid
+                                      localModel.value
+                                      localModel.clickThroughRate
+                                      (localModel.remaining + 1)
+                                      (rank.val + 1)) ∧
+                            PaperTheorem8BStarRankedThresholdOrderedStateGamePayoffConclusion
+                              localModel G strategy
+
+/--
+Belief-explicit canonical price-sorted displayed schedule endpoint supplying
+both source-event timing evidence and the threshold-event-retaining ordered
+displayed payoff conclusion.
+-/
+theorem paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion
+    (model :
+      PaperTheorem8BStarRankedThresholdStrictOrderedLocalOptimalityCertificate)
+    (n : ℕ) :
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion_statement
+      model n := by
+  dsimp [paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_boundary_threshold_event_ordered_displayed_paper_conclusion_statement]
+  let scheduledRanks :=
+    paper_theorem8_bstar_ranked_threshold_price_sorted_fin_schedule
+      model n
+  let rankSchedule :=
+    paper_theorem8_bstar_ranked_threshold_fin_schedule_ranks scheduledRanks
+  let localModel :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_local_deviation_exact_schedule_model
+      model
+  let activeRanks := rankSchedule.toFinset
+  let initialState :=
+    paper_theorem8_bstar_ranked_threshold_finite_active_exact_record_cold_start_state
+      localModel activeRanks
+  let finalState :=
+    paper_theorem8_bstar_ranked_threshold_exact_drop_schedule_final_state
+      localModel initialState rankSchedule
+  let G :=
+    paper_theorem8_bstar_ranked_threshold_terminal_record_belief_source_extensive_dynamic_game_of_states
+      localModel initialState finalState
+  let namedStrategy :=
+    paper_theorem8_bstar_ranked_threshold_strategy
+      localModel.value localModel.clickThroughRate localModel.remaining
+  have hboundary :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary
+      model n
+  have hordered :=
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion
+      model n
+  dsimp [paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_source_event_boundary_statement,
+    paper_theorem8_bstar_ranked_threshold_strict_ordered_price_sorted_fin_schedule_belief_source_event_trace_threshold_event_ordered_displayed_paper_conclusion_statement,
     scheduledRanks, rankSchedule, localModel, activeRanks, initialState,
     finalState, G, namedStrategy] at hboundary hordered
   rcases hboundary with

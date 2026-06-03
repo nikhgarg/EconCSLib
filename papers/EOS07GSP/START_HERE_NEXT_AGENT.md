@@ -1,6 +1,6 @@
 # EOS07GSP Startup Handoff
 
-Date: 2026-06-01
+Date: 2026-06-03
 
 This is the first file to read after the pause. It is intentionally shorter
 than the older handoff and points to exact files/declarations for the next
@@ -11,15 +11,15 @@ opening the large theorem files.
 
 ## Current Validation Boundary
 
-The latest Lean validation after the no-overshoot dropout-step wrapper was:
+The latest Lean validation after the finite exact-record direct-PBE
+price-sorted endpoint was:
 
 ```bash
-lake build EOS07GSP
-lake build EOS07GSP.PostPaperAudit
+lake build EOS07GSP.ProofInterface EOS07GSP.PostPaperAudit EOS07GSP.PaperInterface EOS07GSP
 ```
 
-Both commands passed after the latest Theorem 8 source-boundary work. Rerun the
-two commands above before any further Lean commit.
+That command passed after the latest Theorem 8 source-boundary work. Rerun it
+before any further Lean commit.
 
 ## Shared Worktree Rules
 
@@ -55,6 +55,13 @@ The formal counterexample
 shows that ordinary `StrategyHistory` is too weak: a rank can drop after its
 finite `B*` threshold and therefore record the wrong terminal price.
 
+The finite exact-record direct-PBE version is closed. Use
+`theorem8_price_sorted_finite_schedule_pbe_displayed_ordered_conclusion` or
+`theorem8_price_sorted_finite_schedule_belief_pbe_displayed_ordered_conclusion`
+for the canonical finite displayed schedule; these build the price-sorted
+`Fin n` schedule internally and retain only the threshold-event timing premise
+for the PBE-generated history.
+
 ## What To Reuse
 
 Use these as the strongest public entry points before adding new code:
@@ -76,12 +83,16 @@ Use these as the strongest public entry points before adding new code:
 - `theorem8_cold_start_clock_disciplined_terminal_history_belief_source_extensive_trace_completed_threshold_conclusion`
 - `theorem8_cold_start_clock_disciplined_terminal_history_belief_source_extensive_trace_all_terminal_vcg_conclusion`
 - `theorem8_strict_ordered_fin_schedule_belief_source_extensive_displayed_rank_formulas_of_threshold_sorted`
+- `theorem8_complete_finite_schedule_pbe_displayed_ordered_conclusion`
+- `theorem8_complete_finite_schedule_belief_pbe_displayed_ordered_conclusion`
+- `theorem8_price_sorted_finite_schedule_pbe_displayed_ordered_conclusion`
+- `theorem8_price_sorted_finite_schedule_belief_pbe_displayed_ordered_conclusion`
 - `theorem8_ex_post_local_deviation_exact_history_source_full_conclusion_terminal_record_outcome_eq_bstar`
 
 Search for them with:
 
 ```bash
-rg -n "theorem8_no_overshoot_strategy_history_to_exact_drop_history|theorem8_clock_disciplined_strategy_history_to_exact_drop_history|belief_source_extensive_trace_all_terminal|ex_post_local_deviation_exact_history_source_full_conclusion" papers/EOS07GSP EconCSLib/MechanismDesign/Auctions/MainTheorems.lean
+rg -n "theorem8_no_overshoot_strategy_history_to_exact_drop_history|theorem8_clock_disciplined_strategy_history_to_exact_drop_history|price_sorted_finite_schedule_pbe_displayed_ordered|belief_source_extensive_trace_all_terminal|ex_post_local_deviation_exact_history_source_full_conclusion" papers/EOS07GSP EconCSLib/MechanismDesign/Auctions
 ```
 
 ## Next Proof Target
@@ -113,8 +124,10 @@ conditional on no-overshoot/clock-discipline.
 
 ## What Not To Spend Time On
 
-- Do not add more finite-schedule endpoints unless they remove a source-history
-  premise from the full theorem.
+- Do not add more finite-schedule endpoints unless a reviewer asks for a
+  different finite presentation or the endpoint removes a source-history
+  premise from the full theorem. The canonical finite direct-PBE endpoint is
+  already exposed.
 - Do not try to derive an all-ranks-inactive conclusion from a finite schedule
   in the current `ℕ`-rank cold-start model. Lean already proves
   `theorem8_cold_start_clock_sorted_finite_schedule_leaves_active_unscheduled_rank`.
@@ -141,8 +154,7 @@ Read in this order:
 After any Lean edit:
 
 ```bash
-lake build EOS07GSP
-lake build EOS07GSP.PostPaperAudit
+lake build EOS07GSP.ProofInterface EOS07GSP.PostPaperAudit EOS07GSP.PaperInterface EOS07GSP
 ```
 
 After documentation-only edits, at least run:

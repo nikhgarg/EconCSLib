@@ -46,7 +46,7 @@
 \node[dag_conditional, text width=4.8cm] (Thm7) at (21.0,-5.5)
   {\textbf{Theorem 7}\\$B^*$ has VCG-equivalent payoffs and LEF/stability consequences under explicit ranked/canonical-tail certificate hypotheses};
 \node[dag_conditional, text width=4.8cm] (Thm8) at (28.8,-5.5)
-  {\textbf{Theorem 8}\\generalized-English auction has unique PBE with finite-$B^*$ threshold strategy and VCG outcome, conditional on source-game PBE and exact/no-overshoot history obligations};
+  {\textbf{Theorem 8}\\generalized-English auction has unique PBE with finite-$B^*$ threshold strategy and VCG outcome; finite direct-PBE exact-record endpoint closed, full source game conditional};
 
 \node[dag_template_note, text width=19.0cm] (AuditNote) at (18.5,-17.4) {
   \textbf{Initial source inventory.} The refreshed NBER Working Paper 11765 text
@@ -60,15 +60,16 @@
   \textbf{Current Theorem 8 boundary.} The finite payoff algebra, threshold
   strategy behavior, terminal-record formulas, completed-rank and all-rank
   no-overshoot endpoints, shifted continuation-threshold bridge, and
-  source-completion certificate plumbing compile. Belief-explicit state-game
-  projections and cold-start sorted-schedule completion endpoints now route
-  through source-layer bridge theorems.
+  source-completion certificate plumbing compile. The finite exact-record
+  state-game route now has complete displayed-schedule and canonical
+  price-sorted direct-PBE endpoints, ordinary and belief-explicit, with
+  displayed slot/payment formulas and ordered payoff packages.
   The full paper theorem remains conditional until the real generalized-English
   source game supplies the arbitrary-history generation and PBE identification
   needed to remove the remaining source-completion boundary.
 };
 
-\draw[dag_dashed_arrow] (Position.south) |- (Remark1.north);
+\draw[dag_dashed_arrow] (Position.west) -- ++(-1.1,0) |- (Remark1.north);
 \draw[dag_dashed_arrow] (Position) -- (Remark2);
 \draw[dag_arrow] (Position.south) |- (Remark3.north);
 \draw[dag_arrow] (Remark3) -- (Examples);

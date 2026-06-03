@@ -19,6 +19,20 @@ exact-drop histories already give reusable source-completion endpoints. Bare
 arbitrary histories should not be used directly, because overshoot histories
 can record dropout prices after the finite `B*` threshold.
 
+The finite exact-record version is now closed in the state-game setting. The
+key proof idea is to use a finite displayed `Fin n` source state whose active
+ranks are exactly the scheduled ranks, while every unscheduled natural rank is
+initially inactive with its exact finite `B*` record. Complete displayed
+schedules then give all displayed ranks active-to-inactive, exact records, VCG
+outcome, displayed slot/payment formulas, and the ordered payoff package. The
+canonical wrapper
+`theorem8_price_sorted_finite_schedule_pbe_displayed_ordered_conclusion`
+builds the price-sorted schedule internally; its belief-explicit counterpart is
+`theorem8_price_sorted_finite_schedule_belief_pbe_displayed_ordered_conclusion`.
+Both still require threshold-event timing evidence for the PBE-generated source
+history, so they are finite direct-PBE endpoints rather than the unconstrained
+full generalized-English theorem.
+
 ## Preferred Route
 
 1. Keep working at the source bridge layer, not in paper-interface aliases.
@@ -34,13 +48,11 @@ can record dropout prices after the finite `B*` threshold.
 
 ## Next Lean Move
 
-Use the already green non-cold-start disciplined-trace endpoint and the
-finite-schedule trace-full source-completion endpoints. Reintroduce cold-start
-clock-disciplined source-completion only through a theorem with an explicit,
-stable conclusion; avoid wrappers whose inferred result type depends on
-internally generated proof witnesses.
-
-Next, continue from the one-stop dynamic clock-sorted finite-schedule trace-full
-source-completion bridge. It removes repeated downstream certificate
-reconstruction and produces a reusable library-style bridge for future
-dynamic-auction proofs.
+Do not add more finite exact-record or price-sorted schedule wrappers unless a
+reviewer asks for a different presentation. The next Lean move is the general
+source theorem: prove a concrete source-history invariant that supplies
+no-overshoot or clock-discipline for realized named-strategy dropouts, then
+lift it to histories and feed it into the existing source-extensive or
+source-shaped all-terminal endpoints. In parallel, prove the concrete
+belief-consistency and source sequential-rationality iff needed by the real
+generalized-English source game.

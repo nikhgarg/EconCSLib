@@ -37,11 +37,10 @@ Reusable position-auction and GSP primitives live in
 
 `PaperInterface.lean` is the compact human-facing review surface: it exposes
 the GSP counterexample, running example, Theorem 7 ranked `B*` conclusion, the
-current finite completed-rank Theorem 8 source-extensive terminal-record
-endpoint, and the all-rank no-overshoot ex-post source-completion
+current finite Theorem 8 exact-record direct-PBE endpoints, the source-extensive
+terminal-record route, and the all-rank no-overshoot ex-post source-completion
 terminal-record endpoint. It also exposes the local no-overshoot source-history
-route through `theorem8_no_overshoot_strategy_history_to_exact_drop_history`
-and
+route through `theorem8_no_overshoot_strategy_history_to_exact_drop_history` and
 `theorem8_no_overshoot_strategy_history_terminal_record_outcome_eq_bstar`;
 use `theorem8_no_overshoot_terminal_certificate_of_strategy_history` to feed a
 raw no-overshoot source history into the source-extensive endpoints, or
@@ -139,6 +138,21 @@ The companion displayed-formula wrapper
 or
 `theorem8_strict_ordered_fin_schedule_belief_source_extensive_displayed_rank_formulas_of_threshold_sorted`
 states the slot and finite-`B*` payment formula directly for each `Fin n` rank.
+The finite exact-record direct-PBE route is now also exposed without manual
+schedule certificates. Use
+`theorem8_complete_finite_schedule_pbe_displayed_ordered_conclusion` and its
+belief-explicit counterpart when supplying an arbitrary complete threshold-
+sorted `List (Fin n)` schedule. Use
+`theorem8_price_sorted_finite_schedule_pbe_displayed_ordered_conclusion` and
+`theorem8_price_sorted_finite_schedule_belief_pbe_displayed_ordered_conclusion`
+for the canonical finite version: Lean builds the price-sorted displayed
+schedule internally, proves threshold-sortedness/no-duplication/completeness,
+and returns the unique source-game PBE, named finite `B*` strategy, generated
+threshold-event-safe history, terminality, exact finite records, displayed
+rank slot/payment formulas, and ordered payoff package. These endpoints still
+assume the threshold-event timing evidence for the PBE-generated source
+history; they do not close the full arbitrary-history generalized-English
+source proof.
 
 ## Handoff note
 
@@ -153,7 +167,7 @@ it is no longer the first pickup file.
 | Paper item | Lean declaration | Status | File | Remaining assumptions / notes |
 |---|---|---|---|---|
 | Position-auction interface and GSP truthfulness predicates | `PositionEnvironment`, `PositionOutcome`, `PositionMechanism.TruthfulDominantStrategy` | formalized | `EconCSLib/MechanismDesign/Auctions/Position.lean` | None; status note: formalized support |
-| Remark 1, same bids produce weakly higher GSP payments than VCG payments | `paper_remark1_ranked_vcg_per_click_le_truthful_gsp_payment`, `remark1_truthful_gsp_payment_weakly_dominates_vcg_per_click`, `paper_eos_running_example_truthful_gsp_revenue_gt_vcg_revenue` | formalized | `EOS07GSP/MainTheorems.lean`, `EOS07GSP/PaperInterface.lean` | The generic ranked induction proves each finite VCG per-click tail payment is weakly below the truthful GSP next-bid payment under ordered nonnegative values and positive click-through rate at the displayed rank; the running example remains as a concrete check. |
+| Remark 1, same bids produce weakly higher GSP payments than VCG payments | `paper_remark1_ranked_vcg_per_click_le_truthful_gsp_payment`, `remark1_truthful_gsp_payment_weakly_dominates_vcg_per_click`, `paper_eos_running_example_truthful_gsp_revenue_gt_vcg_revenue` | formalized | `EOS07GSP/MainTheorems.lean`, `EOS07GSP/PaperInterface.lean` | None |
 | Remark 2, truth-telling is a dominant strategy under VCG | `paper_remark2_vcg_position_mechanism_truthful`, `remark2_vcg_position_mechanism_truthful` | formalized with caveat | `EconCSLib/MechanismDesign/Auctions/Position.lean`, `EOS07GSP/PaperInterface.lean` | The reusable VCG certificate records reported-welfare maximization, the VCG utility-as-welfare-minus-tax identity, and own-report-independent taxes; any position mechanism satisfying that certificate is dominant-strategy truthful. This avoids committing the paper folder to a concrete argmax implementation. |
 | Remark 3, truth-telling is not a dominant strategy under GSP | `paper_gsp_truthful_bidding_not_dominant_example`, `paper_gsp_mechanism_not_truthful`, `paper_sorted_gsp_three_bidder_two_slot_not_truthful` | formalized | `EOS07GSP/MainTheorems.lean` | None; concrete three-bidder/two-slot GSP deviation proves the remark. |
 | GSP is not dominant-strategy truthful | `paper_gsp_truthful_bidding_not_dominant_example`, `paper_gsp_mechanism_not_truthful`, `paper_sorted_gsp_three_bidder_two_slot_not_truthful` | formalized | `EOS07GSP/MainTheorems.lean` | None; concrete three-bidder/two-slot GSP witness suffices to refute dominant-strategy truthfulness. |
