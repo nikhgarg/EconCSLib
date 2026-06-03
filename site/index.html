@@ -62,6 +62,7 @@
               <tr>
                 <th>Paper</th>
                 <th>Status</th>
+                <th>Human review</th>
                 <th>Lean LOC</th>
                 <th>Note</th>
               </tr>
@@ -74,6 +75,7 @@
                   1962.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>0/7</td>
                 <td>381</td>
                 <td>This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.</td>
               </tr>
@@ -83,6 +85,7 @@
                   Alvin E. Roth; Mathematics of Operations Research, 1982.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>0/27</td>
                 <td>8,877</td>
                 <td></td>
               </tr>
@@ -93,8 +96,9 @@
                   SODA, 2001.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>0/19</td>
                 <td>598</td>
-                <td>Theorem 8.2 follows the journal version; the broader preliminary wording is refuted in the source audit. The paper-local LOC is small because most auction infrastructure and proof work lives in the reusable auctions library.</td>
+                <td>Theorem 8.2 follows the journal version; the broader preliminary wording is documented as refuted.</td>
               </tr>
               <tr>
                 <td>
@@ -103,6 +107,7 @@
                   Vazirani; Journal of the ACM, 2007.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>0/39</td>
                 <td>13,221</td>
                 <td></td>
               </tr>
@@ -112,7 +117,8 @@
                   Nikhil Garg and Hamid Nazerzadeh; Management Science, 2021.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>143,056</td>
+                <td>0/24</td>
+                <td>141,928</td>
                 <td></td>
               </tr>
               <tr>
@@ -121,7 +127,8 @@
                   Zhi Liu and Nikhil Garg; EAAMO, 2021.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>127,936</td>
+                <td>0/16</td>
+                <td>125,476</td>
                 <td></td>
               </tr>
               <tr>
@@ -131,6 +138,7 @@
                   ACM FAccT / PNAS Nexus, 2024.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>0/32</td>
                 <td>26,033</td>
                 <td></td>
               </tr>
@@ -141,6 +149,7 @@
                   NeurIPS, 2024.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
+                <td>0/18</td>
                 <td>45,906</td>
                 <td></td>
               </tr>
@@ -151,6 +160,7 @@
                   Garg; ICWSM, 2025.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md">Formalized with caveat</a></td>
+                <td>0/17</td>
                 <td>580</td>
                 <td>Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.</td>
               </tr>
@@ -161,8 +171,9 @@
                   Journal of the ACM, 2002.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
+                <td>0/30</td>
                 <td>7,288</td>
-                <td>Greedy approximation/truthfulness, Theorem 6.1 reductions, and an abstract complexity-class note are closed; native machine-level NP-hardness, polynomial-time, and randomized-class semantics remain external.</td>
+                <td>Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external.</td>
               </tr>
               <tr>
                 <td>
@@ -171,8 +182,59 @@
                   Amin Saberi; ACM EC, 2004.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
+                <td>0/33</td>
                 <td>80,220</td>
                 <td>Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.</td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="paper-source" href="https://github.com/nikhgarg/EconCSLib/tree/main/papers/KR21Monoculture"><cite>Algorithmic Monoculture and Social Welfare</cite></a> by
+                  Jon Kleinberg and Manish Raghavan; arXiv:2101.05853.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/KR21Monoculture/README.md">Partially formalized</a></td>
+                <td>0/6</td>
+                <td>43,162</td>
+                <td>Continuous RUM endpoints are exposed; arbitrary-size Mallows dominance and remaining paper-scope bridges remain open.</td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="paper-source" href="https://github.com/nikhgarg/EconCSLib/tree/main/papers/GLM20DroppingStandardizedTesting"><cite>Dropping Standardized Testing for Admissions Trades Off Information and Access</cite></a> by
+                  Nikhil Garg, Hannah Li, and Faidra Monachou; arXiv:2010.04396 / Management Science accepted version, 2026.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GLM20DroppingStandardizedTesting/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
+                <td>0/50</td>
+                <td>113,536</td>
+                <td>Main early results and selected Section 5 bridge endpoints are exposed; Bayesian-game row identifications remain open.</td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="paper-source" href="https://github.com/nikhgarg/EconCSLib/tree/main/papers/EOS07GSP"><cite>Internet Advertising and the Generalized Second-Price Auction</cite></a> by
+                  Benjamin Edelman, Michael Ostrovsky, and Michael Schwarz; NBER Working Paper 11765 / AER 2007 publication citation.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/EOS07GSP/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
+                <td>0/42</td>
+                <td>43,936</td>
+                <td>Non-truthfulness, examples, Theorem 7, and finite Theorem 8 direct-PBE endpoints are exposed; full source-game completion remains open.</td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="paper-source" href="https://github.com/nikhgarg/EconCSLib/tree/main/papers/IM05MarriageHonestyStability"><cite>Marriage, Honesty, and Stability</cite></a> by
+                  Nicole Immorlica and Mohammad Mahdian; MIT-LCS-TR-913 / SODA 2005.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/IM05MarriageHonestyStability/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
+                <td>0/6</td>
+                <td>35,304</td>
+                <td>Matching preliminaries and theorem wrappers are exposed; Algorithm 4.1 and experiment constructions remain open.</td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="paper-source" href="https://github.com/nikhgarg/EconCSLib/tree/main/papers/PRPKG24AccuracyDiversity"><cite>Reconciling the Accuracy-Diversity Trade-off in Recommendations</cite></a> by
+                  Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg; arXiv:2307.15142v1.
+                </td>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/PRPKG24AccuracyDiversity/README.md">Partially formalized</a></td>
+                <td>0/36</td>
+                <td>35,252</td>
+                <td>Finite optimization and distribution checkpoints are exposed; general order-statistic certificates remain open.</td>
               </tr>
             </tbody>
           </table>
