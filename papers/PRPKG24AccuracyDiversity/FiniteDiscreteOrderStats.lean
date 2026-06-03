@@ -474,17 +474,9 @@ theorem pmfExp_le_const_mul_pmfProb_of_forall_le_indicator {Ω : Type*}
     (μ : PMF Ω) (p : Ω → Prop) [DecidablePred p]
     (f : Ω → ℝ) (C : ℝ)
     (hpoint : ∀ ω, f ω ≤ C * (if p ω then (1 : ℝ) else 0)) :
-    EconCSLib.pmfExp μ f ≤ C * EconCSLib.pmfProb μ p := by
-  classical
-  calc
-    EconCSLib.pmfExp μ f
-        ≤ EconCSLib.pmfExp μ
-            (fun ω => C * (if p ω then (1 : ℝ) else 0)) :=
-          EconCSLib.pmfExp_le_pmfExp_of_forall_le μ f
-            (fun ω => C * (if p ω then (1 : ℝ) else 0)) hpoint
-    _ = C * EconCSLib.pmfProb μ p := by
-          rw [EconCSLib.pmfExp_const_mul]
-          rfl
+    EconCSLib.pmfExp μ f ≤ C * EconCSLib.pmfProb μ p :=
+  EconCSLib.pmfExp_le_const_mul_pmfProb_of_forall_le_indicator
+    μ p f C hpoint
 
 /--
 Finite-PMF lift of the top-mass failure upper marginal bound, for an old
@@ -829,25 +821,8 @@ theorem pmfPairExp_indicator_and_eq_mul_pmfProb
     [DecidablePred p] [DecidablePred q] :
     EconCSLib.pmfPairExp μ ν
         (fun a b => if p a ∧ q b then (1 : ℝ) else 0) =
-      EconCSLib.pmfProb μ p * EconCSLib.pmfProb ν q := by
-  classical
-  unfold EconCSLib.pmfPairExp
-  calc
-    EconCSLib.pmfExp μ
-        (fun a => EconCSLib.pmfExp ν
-          (fun b => if p a ∧ q b then (1 : ℝ) else 0))
-        =
-        EconCSLib.pmfExp μ
-          (fun a => (if p a then (1 : ℝ) else 0) *
-            EconCSLib.pmfProb ν q) := by
-          refine EconCSLib.pmfExp_congr μ ?_
-          intro a
-          by_cases hp : p a
-          · simp [hp, EconCSLib.pmfProb]
-          · simp [hp]
-    _ = EconCSLib.pmfProb μ p * EconCSLib.pmfProb ν q := by
-          rw [EconCSLib.pmfExp_mul_const]
-          rfl
+      EconCSLib.pmfProb μ p * EconCSLib.pmfProb ν q :=
+  EconCSLib.pmfPairExp_indicator_and_eq_mul_pmfProb μ ν p q
 
 /-- Subtractive linearity for finite pair expectations. -/
 theorem pmfPairExp_sub

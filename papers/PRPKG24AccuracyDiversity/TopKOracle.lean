@@ -5,31 +5,36 @@ open scoped BigOperators
 
 namespace PRPKG24AccuracyDiversity
 
+/-!
+The paper-facing names below are thin aliases for the reusable bottom-indexed
+order-statistic bridge in `EconCSLib.Foundations.Probability.OrderStatistics`.
+The local file keeps the PRPKG `TopKValueOracle` layer because it depends on
+the paper's allocation types.
+-/
+
 /--
 Paper Definition 3 interface: `μ rank sampleSize` is the expected value of the
 `rank`-th smallest order statistic among `sampleSize` i.i.d. draws.
-
-The paper indexes order statistics from the bottom, so the top-`k` sum over
-`a` samples is `μ(a,a) + μ(a-1,a) + ...`.
 -/
-noncomputable def orderStatisticTopKSumFromMean
-    (μ : ℕ → ℕ → ℝ) (k a : ℕ) : ℝ :=
-  ∑ i ∈ Finset.range (min k a), μ (a - i) a
+noncomputable abbrev orderStatisticTopKSumFromMean :
+    (ℕ → ℕ → ℝ) → ℕ → ℕ → ℝ :=
+  EconCSLib.Probability.orderStatisticTopKSumFromMean
 
 @[simp] theorem orderStatisticTopKSumFromMean_zero_samples
     (μ : ℕ → ℕ → ℝ) (k : ℕ) :
     orderStatisticTopKSumFromMean μ k 0 = 0 := by
-  simp [orderStatisticTopKSumFromMean]
+  exact EconCSLib.Probability.orderStatisticTopKSumFromMean_zero_samples μ k
 
 @[simp] theorem orderStatisticTopKSumFromMean_zero_k
     (μ : ℕ → ℕ → ℝ) (a : ℕ) :
     orderStatisticTopKSumFromMean μ 0 a = 0 := by
-  simp [orderStatisticTopKSumFromMean]
+  exact EconCSLib.Probability.orderStatisticTopKSumFromMean_zero_k μ a
 
 theorem orderStatisticTopKSumFromMean_eq_source_sum
     (μ : ℕ → ℕ → ℝ) (k a : ℕ) :
     orderStatisticTopKSumFromMean μ k a =
-      ∑ i ∈ Finset.range (min k a), μ (a - i) a := rfl
+      ∑ i ∈ Finset.range (min k a), μ (a - i) a :=
+  EconCSLib.Probability.orderStatisticTopKSumFromMean_eq_source_sum μ k a
 
 /--
 When the sample count is at least `k`, the paper's `min k a` top-`k`
@@ -39,9 +44,8 @@ theorem orderStatisticTopKSumFromMean_eq_fin_sum_of_le
     (μ : ℕ → ℕ → ℝ) {k a : ℕ} (hka : k ≤ a) :
     orderStatisticTopKSumFromMean μ k a =
       ∑ i : Fin k, μ (a - i.val) a := by
-  unfold orderStatisticTopKSumFromMean
-  rw [min_eq_left hka]
-  exact (Fin.sum_univ_eq_sum_range (fun i => μ (a - i) a) k).symm
+  exact EconCSLib.Probability.orderStatisticTopKSumFromMean_eq_fin_sum_of_le
+    μ hka
 
 /--
 Fixed-`k` endpoint loss form of
@@ -51,7 +55,8 @@ theorem orderStatisticTopKLossFromMean_eq_fin_loss_of_le
     (M : ℝ) (μ : ℕ → ℕ → ℝ) {k a : ℕ} (hka : k ≤ a) :
     (k : ℝ) * M - orderStatisticTopKSumFromMean μ k a =
       (k : ℝ) * M - ∑ i : Fin k, μ (a - i.val) a := by
-  rw [orderStatisticTopKSumFromMean_eq_fin_sum_of_le μ hka]
+  exact EconCSLib.Probability.orderStatisticTopKLossFromMean_eq_fin_loss_of_le
+    M μ hka
 
 /-!
 ## Pointwise tuple source bridge
@@ -67,21 +72,14 @@ The `rank`-th smallest value of a concrete `a`-sample, using the paper's
 one-based rank convention.  Out-of-range ranks are set to zero; the top-`k`
 sum theorem below only evaluates valid ranks.
 -/
-noncomputable def sampleOrderStatisticValue {a : ℕ}
+noncomputable abbrev sampleOrderStatisticValue {a : ℕ}
     (sample : Fin a → ℝ) (rank : ℕ) : ℝ :=
-  if hrank : 0 < rank ∧ rank ≤ a then
-    EconCSLib.Probability.ascendingOrderStatistic sample
-      ⟨rank - 1, by omega⟩
-  else 0
+  EconCSLib.Probability.sampleOrderStatisticValue sample rank
 
 theorem sampleOrderStatisticValue_measurable {a : ℕ} (rank : ℕ) :
     Measurable
       (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) := by
-  by_cases hrank : 0 < rank ∧ rank ≤ a
-  · simpa [sampleOrderStatisticValue, hrank] using
-      EconCSLib.Probability.ascendingOrderStatistic_measurable
-        (⟨rank - 1, by omega⟩ : Fin a)
-  · simp [sampleOrderStatisticValue, hrank]
+  exact EconCSLib.Probability.sampleOrderStatisticValue_measurable rank
 
 theorem sampleOrderStatisticValue_integrable_of_ae_bounds
     (L U : ℝ) {a : ℕ} (μ : MeasureTheory.Measure (Fin a → ℝ))
@@ -90,11 +88,8 @@ theorem sampleOrderStatisticValue_integrable_of_ae_bounds
       ∀ᵐ sample ∂μ, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ U) :
     MeasureTheory.Integrable
       (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) μ := by
-  by_cases hrank : 0 < rank ∧ rank ≤ a
-  · simpa [sampleOrderStatisticValue, hrank] using
-      EconCSLib.Probability.ascendingOrderStatistic_integrable_of_ae_bounds
-        L U μ (⟨rank - 1, by omega⟩ : Fin a) h_bounds
-  · simp [sampleOrderStatisticValue, hrank]
+  exact EconCSLib.Probability.sampleOrderStatisticValue_integrable_of_ae_bounds
+    L U μ rank h_bounds
 
 theorem sampleOrderStatisticValue_topKRange_integrable_of_ae_bounds
     (L U : ℝ) {a : ℕ} (μ : MeasureTheory.Measure (Fin a → ℝ))
@@ -104,9 +99,9 @@ theorem sampleOrderStatisticValue_topKRange_integrable_of_ae_bounds
     ∀ i ∈ Finset.range (min k a),
       MeasureTheory.Integrable
         (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample (a - i)) μ := by
-  intro i _hi
-  exact sampleOrderStatisticValue_integrable_of_ae_bounds
-    L U μ (a - i) h_bounds
+  exact
+    EconCSLib.Probability.sampleOrderStatisticValue_topKRange_integrable_of_ae_bounds
+      L U μ k h_bounds
 
 /--
 Pointwise Proposition 5 bridge: the paper's bottom-indexed order-statistic
@@ -119,29 +114,17 @@ theorem orderStatisticTopKSumFromSample_eq_sampleTopKSum
           if sampleSize = a then sampleOrderStatisticValue sample rank else 0)
         k a =
       EconCSLib.Probability.sampleTopKSum sample k := by
-  unfold orderStatisticTopKSumFromMean EconCSLib.Probability.sampleTopKSum
-  rw [Finset.sum_fin_eq_sum_range]
-  apply Finset.sum_congr rfl
-  intro i hi
-  have hi_lt : i < min k a := Finset.mem_range.mp hi
-  have hi_lt_k : i < k := lt_of_lt_of_le hi_lt (min_le_left k a)
-  have hi_lt_a : i < a := lt_of_lt_of_le hi_lt (min_le_right k a)
-  have hrank_pos : 0 < a - i := Nat.sub_pos_of_lt hi_lt_a
-  have hrank_le : a - i ≤ a := Nat.sub_le a i
-  simp [sampleOrderStatisticValue, hrank_pos, hrank_le, hi_lt_k, hi_lt_a]
-  unfold EconCSLib.Probability.upperOrderStatistic
-  congr 1
+  exact EconCSLib.Probability.orderStatisticTopKSumFromSample_eq_sampleTopKSum
+    sample k
 
 /--
 Expected paper order-statistic mean induced by a sample law on `a` real
 draws.  The value is only intended at `sampleSize = a`; other sample sizes are
 set to zero so the function has the paper's global `ℕ → ℕ → ℝ` shape.
 -/
-noncomputable def expectedSampleOrderStatisticMean {a : ℕ}
+noncomputable abbrev expectedSampleOrderStatisticMean {a : ℕ}
     (μ : MeasureTheory.Measure (Fin a → ℝ)) (rank sampleSize : ℕ) : ℝ :=
-  if sampleSize = a then
-    ∫ sample, sampleOrderStatisticValue sample rank ∂μ
-  else 0
+  EconCSLib.Probability.expectedSampleOrderStatisticMean μ rank sampleSize
 
 /--
 Expectation form of the pointwise Proposition 5 bridge: if `μ_D` is induced
@@ -157,33 +140,9 @@ theorem expectedSampleOrderStatisticTopKSum_eq_expectedSampleTopKSum
     orderStatisticTopKSumFromMean
         (expectedSampleOrderStatisticMean μ) k a =
       EconCSLib.Probability.expectedSampleTopKSum μ k := by
-  calc
-    orderStatisticTopKSumFromMean
-        (expectedSampleOrderStatisticMean μ) k a
-        = ∑ i ∈ Finset.range (min k a),
-            ∫ sample, sampleOrderStatisticValue sample (a - i) ∂μ := by
-          unfold orderStatisticTopKSumFromMean expectedSampleOrderStatisticMean
-          simp
-    _ = ∫ sample,
-          ∑ i ∈ Finset.range (min k a),
-            sampleOrderStatisticValue sample (a - i) ∂μ := by
-          rw [MeasureTheory.integral_finset_sum]
-          exact h_integrable
-    _ = ∫ sample,
-          orderStatisticTopKSumFromMean
-            (fun rank sampleSize =>
-              if sampleSize = a then sampleOrderStatisticValue sample rank else 0)
-            k a ∂μ := by
-          exact MeasureTheory.integral_congr_ae
-            (Filter.Eventually.of_forall
-              (fun sample => by
-                simp [orderStatisticTopKSumFromMean]))
-    _ = EconCSLib.Probability.expectedSampleTopKSum μ k := by
-          unfold EconCSLib.Probability.expectedSampleTopKSum
-          exact MeasureTheory.integral_congr_ae
-            (Filter.Eventually.of_forall
-              (fun sample =>
-                orderStatisticTopKSumFromSample_eq_sampleTopKSum sample k))
+  exact
+    EconCSLib.Probability.expectedSampleOrderStatisticTopKSum_eq_expectedSampleTopKSum
+      μ k h_integrable
 
 /--
 Expected bounded-support top-`k` reflection in the paper's `μ_D` interface.
@@ -205,20 +164,18 @@ theorem expectedSampleOrderStatisticTopKEndpointLoss_eq_expectedReflectedBottomK
         orderStatisticTopKSumFromMean
           (expectedSampleOrderStatisticMean μ) k a =
       EconCSLib.Probability.expectedReflectedBottomKSum M μ k := by
-  rw [expectedSampleOrderStatisticTopKSum_eq_expectedSampleTopKSum
-    μ k h_order_integrable]
   exact
-    EconCSLib.Probability.expectedSampleTopKEndpointLoss_eq_expectedReflectedBottomKSum
-      M μ k h_top_integrable
+    EconCSLib.Probability.expectedSampleOrderStatisticTopKEndpointLoss_eq_expectedReflectedBottomKSum
+      M μ k h_order_integrable h_top_integrable
 
 /--
 Paper-shaped expected order-statistic mean induced by a family of finite sample
 laws, one law for each sample size.
 -/
-noncomputable def expectedOrderStatisticMeanSeq
+noncomputable abbrev expectedOrderStatisticMeanSeq
     (sampleMeasure : (a : ℕ) → MeasureTheory.Measure (Fin a → ℝ))
     (rank sampleSize : ℕ) : ℝ :=
-  expectedSampleOrderStatisticMean (sampleMeasure sampleSize) rank sampleSize
+  EconCSLib.Probability.expectedOrderStatisticMeanSeq sampleMeasure rank sampleSize
 
 /--
 Varying-sample-size version of
@@ -236,9 +193,9 @@ theorem expectedOrderStatisticMeanSeq_topKSum_eq_expectedSampleTopKSum
     orderStatisticTopKSumFromMean
         (expectedOrderStatisticMeanSeq sampleMeasure) k a =
       EconCSLib.Probability.expectedSampleTopKSum (sampleMeasure a) k := by
-  simpa [expectedOrderStatisticMeanSeq] using
-    expectedSampleOrderStatisticTopKSum_eq_expectedSampleTopKSum
-      (sampleMeasure a) k h_integrable
+  exact
+    EconCSLib.Probability.expectedOrderStatisticMeanSeq_topKSum_eq_expectedSampleTopKSum
+      sampleMeasure k a h_integrable
 
 /--
 Varying-sample-size bounded reflection bridge in the global `μ_D(rank,a)`
@@ -262,9 +219,9 @@ theorem expectedOrderStatisticMeanSeq_topKEndpointLoss_eq_expectedReflectedBotto
           (expectedOrderStatisticMeanSeq sampleMeasure) k a =
       EconCSLib.Probability.expectedReflectedBottomKSum
         M (sampleMeasure a) k := by
-  simpa [expectedOrderStatisticMeanSeq] using
-    expectedSampleOrderStatisticTopKEndpointLoss_eq_expectedReflectedBottomKSum
-      M (sampleMeasure a) k h_order_integrable h_top_integrable
+  exact
+    EconCSLib.Probability.expectedOrderStatisticMeanSeq_topKEndpointLoss_eq_expectedReflectedBottomKSum
+      M sampleMeasure k h_order_integrable h_top_integrable
 
 /--
 Oracle for the expected value of the best `ℓ` consumed items among `q` recommendations

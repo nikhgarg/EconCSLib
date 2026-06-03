@@ -42,6 +42,18 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `expectedReflectedBottomKSum_eq_sum_reflectedAscendingOrderStatistic_of_le`.
   The fixed-`k` version is the right entry point after the eventual
   sample-size prefix in asymptotic arguments.
+- If a source states expected order statistics as a bottom-indexed
+  `μ(rank, sampleSize)` function, use the shared
+  `orderStatisticTopKSumFromMean`, `sampleOrderStatisticValue`,
+  `expectedSampleOrderStatisticMean`, and `expectedOrderStatisticMeanSeq`
+  bridge in `OrderStatistics` before adding paper-local notation.  The generic
+  bridge already connects that source notation to `sampleTopKSum` and
+  reflected endpoint-loss expectations.
+- For a fixed finite family of rank terms with a common asymptotic scale, use
+  `EconCSLib.Math.finite_sum_asymptoticEquivalent_common_scale` instead of
+  rebuilding finite-sum asymptotic algebra in a paper file. If the paper has a
+  main term plus an `o(scale)` remainder, use
+  `EconCSLib.Math.asymptoticEquivalent_add_negligible_common_scale`.
 
 ## Measure-Zero And Almost-Everywhere Seams
 
@@ -54,6 +66,11 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   and upper orthants, prove the boundary set has zero measure from no-atoms or
   density assumptions, then use the a.e. indicator route for continuity or
   limit statements. Existing reusable entry points include
+  `ae_of_forall_not_mem_null`, `ae_eq_of_forall_not_mem_null`,
+  `ae_iff_of_forall_not_mem_null`, `ae_eq_decide_of_ae_iff`,
+  `ae_eq_if_of_ae_iff`, `ae_eq_setIndicator_of_ae_iff_mem`,
+  `ae_eq_setIndicator_of_forall_not_mem_null`,
+  `ae_iff_le_lt_of_level_null`, `ae_iff_lt_le_of_level_null`,
   `MeasureTheory.tendsto_measure_of_ae_tendsto_indicator_of_isFiniteMeasure`,
   `measure_eq_zero_iff_ae_notMem`,
   `lowerLeftRectangleMass_continuous_of_boundary_null`,
@@ -65,10 +82,50 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `continuous_cdf_of_noAtoms`,
   `correlatedStandardGaussianLaw_noAtoms_map_fst`, and
   `correlatedStandardGaussianLaw_noAtoms_map_snd`.
+- For LG/GLM-style upper-tail instability intervals, use
+  `standardGaussian_toMeasure_Ico_threshold_normalUpperTailMean_pos` when the
+  interval is `[threshold, upperTailMean)`. It packages the strict upper-tail
+  mean comparison and the positive Gaussian interval-mass fact, so paper files
+  do not need a local `hupper` followed by `GaussianScaleLaw.toMeasure_Ico_pos`.
+- For KR-style random-utility Gaussian reductions that normalize an arbitrary
+  positive standard deviation to the paper's variance-`1/2` convention, use
+  `EconCSLib.Foundations.Probability.BivariateGaussian` before adding
+  paper-local scaling proofs. The reusable entry points are
+  `gaussianVarianceFromStd`, `canonicalHalfVarianceScale`,
+  `gaussianReal_map_canonicalHalfVarianceScale`,
+  `independentGaussianPairMeasureWithStd`,
+  `independentGaussianPairMeasureHalf`, `pairStrictWinnerBelowEvent`,
+  `pairStrictBothBelowEvent`, and
+  `independentGaussianStrictConditionalWinnerRatioWithStd_eq_scaled`.
+  Paper files should keep theorem-numbered names as thin wrappers over these
+  declarations.
 - Keep strict/weak threshold semantics explicit. A.e. equivalence lets strict
   and weak cutoff policies differ on a null boundary, but the paper-facing
   theorem should say which version is used for pointwise wrappers and which
-  version is only identified a.e.
+  version is only identified a.e. Use the level-null cutoff lemmas before
+  adding paper-local assumptions equating strict and weak threshold events.
+- For endpoint-touching interval algebra, use null symmetric-difference lemmas
+  before writing paper-local set extensionality. Reusable names include
+  `measure_set_congr_of_symmDiff_null`,
+  `measure_symmDiff_union_left_eq_zero`,
+  `measure_symmDiff_diff_left_eq_zero`,
+  `measure_diff_left_congr_of_symmDiff_null`,
+  `measure_symmDiff_Ioo_union_Ioo_touching_eq_zero`,
+  `measure_symmDiff_Ioo_union_Ioi_touching_eq_zero`,
+  `ae_eq_set_union_left`, `ae_eq_set_diff_left`,
+  `ae_eq_Ioo_union_Ioo_touching`, and `ae_eq_Ioo_union_Ioi_touching`. These
+  are the right tools for GN-style "open interval plus adjacent interval/ray"
+  rewrites when the shared endpoint has zero mass.
+- For a.e. source-equilibrium contradictions of the form "selected types must
+  satisfy `reference <= value`, but there is positive mass of selected types
+  with `value < reference`", use
+  `ae_imp_le_contradicts_positive_selected_lt_mass`. If the source gives
+  positive mass for a cutoff interval instead of the selected event directly,
+  use `positive_selected_lt_mass_of_positive_lower_lt_mass` to transfer that
+  mass through the cutoff rule. This is the reusable LG pattern for both
+  optional-reporting reporters and report-required test takers, and it applies
+  to any continuous-type binary-choice paper with an a.e. best-response
+  implication.
 
 ## Continuous Reward And CTMC Seams
 
@@ -76,6 +133,20 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   rates. Prove measured `T`, `Q`, and scaled-earning identities first, then
   derive measured reward-rate statements only when positive mass/time
   denominators are available.
+- For accepted-set continuous reward accounting over real trip lengths or
+  quantities, use `ContinuousReward` before adding policy-local algebra:
+  `acceptedSetReward_union`, `acceptedSetTime_union`,
+  `acceptedSetReward_diff`, `acceptedSetTime_diff`,
+  `acceptedSetReward_eq_zero_of_measure_zero`,
+  `acceptedSetTime_eq_zero_of_measure_zero`,
+  `continuousSetRenewalRewardRate_le_union_of_le_average`,
+  `continuousSetRenewalRewardRate_le_diff_of_average_le`,
+  `continuousSetRenewalRewardRate_lt_union_of_lt_average`,
+  `continuousSetRenewalRewardRate_lt_diff_of_average_lt`,
+  `continuousSetRenewalRewardRate_diff_eq_self_of_zero_component`, and
+  `continuousSetRenewalRewardRate_union_eq_self_of_zero_component`. In
+  paper files, local wrappers should usually be one `simpa` after unfolding
+  paper aliases for reward, time, average rate, and renewal reward.
 - When an older CTMC source certificate stores a fixed-state identity as
   scaled earning `W = R*T` but the next lemma needs the measured reward-rate
   equality, add the tiny converse bridge from
@@ -378,6 +449,12 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
 - For probability-delta comparisons, prove the tiny indicator inequality over
   the finite outcome type, then lift it with a generic PMF lemma comparing
   indicator differences.
+- For finite-PMF event bounds, use
+  `pmfExp_le_const_mul_pmfProb_of_forall_le_indicator` when a pointwise
+  estimate has the form `X x <= C * 1_E x`, and use
+  `pmfPairExp_indicator_and_eq_mul_pmfProb` when an independent pair event
+  factors into separate left/right indicators. Keep paper-local copies as thin
+  wrappers if old theorem names are part of the paper interface.
 - For finite independent-sampling concentration, check Mathlib's
   `Probability.Moments.SubGaussian` before proving Chernoff/Hoeffding from
   scratch. A fast reusable seam is: compose independent variables with a
@@ -566,10 +643,15 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   `GaussianHazardCertificate.normalTail_pos`,
   `GaussianHazardCertificate.normalDensity_div_normalTail_eq_hazard_div_scale`,
   `GaussianHazardCertificate.normalUpperTailMean_mono_threshold`,
+  `GaussianHazardCertificate.normalUpperTailMean_gt_threshold`,
   `GaussianHazardCertificate.mixtureTailMass_pos`, and
   `GaussianHazardCertificate.mixtureUpperTailMean_mul_tailMass_eq_numerator`
   for location-scale tail, academic-merit, and finite-mixture admitted-mean
-  comparisons.
+  comparisons. The certificate field
+  `GaussianHazardCertificate.hazard_gt_arg_of_pos` packages the Mills-ratio
+  fact that the standard-normal hazard is above every positive standardized
+  cutoff; the concrete mathlib-backed standard-normal theorem is
+  `standardGaussian_normalUpperTailMean_gt_threshold`.
   For no-barrier admissions cutoffs, prefer constructing thresholds with
   `StandardGaussianCDFAPI.exists_mixtureTailMass_eq_of_capacity_mem_Ioo` plus
   concrete `standardGaussianCDF_tendsto_atBot`/`standardGaussianCDF_tendsto_atTop`
@@ -1162,11 +1244,31 @@ continuous densities, CTMCs, renewal-reward reductions, and RUM/noise models.
   normalization, and score-to-ranking interface facts.
 - Upstream only paper-neutral RUM infrastructure. Good `EconCSLib` candidates
   include additive noise well-ordering, Gaussian/Laplacian kernels, scalar
-  contraction geometry, and density-product swap inequalities; these live in
-  `EconCSLib.Foundations.Probability.RandomUtility`. Keep concrete ranking
-  encodings, six hard-coded three-candidate rankings, lambda/delta payoff
-  certificates, and theorem-number wrappers in the paper folder unless a second
-  paper actually needs that same abstraction.
+  contraction geometry, pointwise density-product swap inequalities, finite
+  density-product atom comparisons, and continuous `withDensity`
+  change-of-variables comparisons. The pure order/noise layer lives in
+  `EconCSLib.Foundations.Probability.RandomUtility`; finite and continuous
+  score-density wrappers live in
+  `EconCSLib.Foundations.Probability.RandomUtilityDensity`. Reuse
+  `StrictlyWellOrderedNoise`, `WeaklyWellOrderedNoise`,
+  `gaussianNoiseKernel_strictlyWellOrdered`,
+  `laplacianNoiseKernel_weaklyWellOrdered`, `rumContractScore`,
+  `rumContractScore_preserves_weak_order`,
+  `rumContractScore_preserves_strict_order`,
+  `rum3_contract_top_first_of_original_top_first`,
+  `rum3_contract_bottom_first_imp_original_bottom_first`,
+  `rum3_swap_middle_transition_geometry`,
+  `rum3_swap_middle_source_score_lt`,
+  `weaklyWellOrderedNoise_swap12_density3_le`, and
+  `strictlyWellOrderedNoise_swap23_density3_lt`; then call
+  `rum3ScoreDensityENN`, `rum3_swap12_mass_le_of_density_formula`,
+  `rum3_swap23_mass_lt_of_density_formula`,
+  `rum3_withDensity_swap12_measure_le_of_density_formula`, and
+  `rum3_withDensity_swap23_measure_lt_of_density_formula` before proving
+  KR-style local versions. Keep concrete ranking encodings, six hard-coded
+  three-candidate rankings, lambda/delta payoff certificates, and
+  theorem-number wrappers in the paper folder unless a second paper actually
+  needs that same abstraction.
 - For continuous distributional inputs that feed a finite theorem over
   rankings, push the measure through the ranking map and convert the finite
   pushforward to a `PMF`. Prove a bridge saying `pmfProb` equals the continuous

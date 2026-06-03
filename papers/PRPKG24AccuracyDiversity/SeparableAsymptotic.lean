@@ -1,6 +1,7 @@
 import PRPKG24AccuracyDiversity.Exchange
 import PRPKG24AccuracyDiversity.Optimization
 import PRPKG24AccuracyDiversity.TopKOracle
+import EconCSLib.Applications.RecommenderSystems.AllocationSequence
 import EconCSLib.Foundations.Probability.OrderStatistics
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Data.Nat.Choose.Bounds
@@ -21,11 +22,7 @@ theorem tendsToZero_if_lt_const
     (threshold : ℕ) (C : ℝ) :
     EconCSLib.Math.TendsToZero
       (fun N => if N < threshold then C else ε N) := by
-  rw [EconCSLib.Math.TendsToZero] at hε ⊢
-  refine Tendsto.congr' ?_ hε
-  filter_upwards [eventually_atTop.2
-      ⟨threshold, fun N hN => hN⟩] with N hN
-  simp [not_lt.mpr hN]
+  exact EconCSLib.Math.tendsToZero_if_lt_const hε threshold C
 
 /--
 Source Theorem 1(i) asymptotic algebra: an exact geometric tail has the
@@ -878,63 +875,51 @@ structure PairwiseScaledSublinearHomogeneityCertificate {T : ℕ} [NeZero T]
 
 namespace PairwiseScaledSublinearHomogeneityCertificate
 
+noncomputable def toShared {T : ℕ} [NeZero T]
+    {Mseq : ℕ → ConsumptionModel T} {weight : ItemType T → ℝ}
+    {G : GammaHomogeneityProfile T}
+    (hcert : PairwiseScaledSublinearHomogeneityCertificate Mseq weight G) :
+    EconCSLib.Allocation.PairwiseScaledSublinearProfileCertificate
+      (fun N => (Mseq N).likelihood)
+      (fun N => (Mseq N).valueOfCount)
+      weight G.targetShare where
+  weight_pos := hcert.weight_pos
+  target_eq := hcert.targetShare_eq
+  error := hcert.error
+  error_nonneg := hcert.error_nonneg
+  error_tends_to_zero := hcert.error_tends_to_zero
+  pairwise_scaled := by
+    intro N a hN hopt i j
+    have hopt' : (Mseq N).IsOptimalAtTotal N a := by
+      simpa [EconCSLib.Allocation.IsOptimalAtTotal,
+        ConsumptionModel.IsOptimalAtTotal, ConsumptionModel.FeasibleAtTotal,
+        ConsumptionModel.objective] using hopt
+    exact hcert.pairwise_scaled N a hN hopt' i j
+
 theorem asymptoticHomogeneity {T : ℕ} [NeZero T]
     {Mseq : ℕ → ConsumptionModel T} {weight : ItemType T → ℝ}
     {G : GammaHomogeneityProfile T}
     (hcert : PairwiseScaledSublinearHomogeneityCertificate Mseq weight G) :
     ConsumptionModel.AsymptoticHomogeneity Mseq G := by
-  let W : ℝ := ∑ i : ItemType T, weight i
-  refine ⟨fun N => hcert.error N * W, ?_, ?_⟩
-  · have herr : Tendsto hcert.error atTop (nhds 0) := by
-      simpa [EconCSLib.Math.TendsToZero] using hcert.error_tends_to_zero
-    have hW : Tendsto (fun _ : ℕ => W) atTop (nhds W) := tendsto_const_nhds
-    have hmul := herr.mul hW
-    simpa [EconCSLib.Math.TendsToZero, W] using hmul
-  · intro N a hN hopt
-    have hNsum : (∑ i : ItemType T, (a.count i : ℝ)) = (N : ℝ) := by
-      rw [← Nat.cast_sum]
-      exact_mod_cast hopt.1
-    have hC_nonneg : 0 ≤ hcert.error N * (N : ℝ) := by
-      exact mul_nonneg (hcert.error_nonneg N) (Nat.cast_nonneg N)
-    have hpair_close :
-        ∀ t,
-          |(a.count t : ℝ) -
-            weight t * ((N : ℝ) / ∑ i : ItemType T, weight i)| ≤
-            (hcert.error N * (N : ℝ)) * weight t := by
-      intro t
-      exact
-        GammaHomogeneityProfile.count_abs_sub_weighted_average_le_of_pairwise_scaled_bounded
-          a weight hNsum hcert.weight_pos hC_nonneg
-          (hcert.pairwise_scaled N a hN hopt) t
-    have hclose :
-        ∀ t,
-          |(a.count t : ℝ) - (N : ℝ) * G.targetShare t| ≤
-            (hcert.error N * (N : ℝ)) * W := by
-      intro t
-      have htarget :
-          (N : ℝ) * G.targetShare t =
-            weight t * ((N : ℝ) / ∑ i : ItemType T, weight i) := by
-        rw [hcert.targetShare_eq t]
-        ring
-      have hweight_le_sum : weight t ≤ W := by
-        dsimp [W]
-        exact Finset.single_le_sum
-          (fun i _ => le_of_lt (hcert.weight_pos i)) (Finset.mem_univ t)
-      calc
-        |(a.count t : ℝ) - (N : ℝ) * G.targetShare t|
-            = |(a.count t : ℝ) -
-                weight t * ((N : ℝ) / ∑ i : ItemType T, weight i)| := by
-              rw [htarget]
-        _ ≤ (hcert.error N * (N : ℝ)) * weight t := hpair_close t
-        _ ≤ (hcert.error N * (N : ℝ)) * W := by
-              exact mul_le_mul_of_nonneg_left hweight_le_sum hC_nonneg
-    have happ :=
-      GammaHomogeneityProfile.approx_of_count_abs_error
-        G a hopt.1 hN
-        (C := (hcert.error N * (N : ℝ)) * W) hclose
-    convert happ using 1
-    have hN_ne : (N : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hN)
-    field_simp [hN_ne]
+  have hgeneric :
+      EconCSLib.Allocation.AsymptoticProfile
+        (fun N => (Mseq N).likelihood)
+        (fun N => (Mseq N).valueOfCount)
+        G.targetShare :=
+    hcert.toShared.asymptoticProfile
+  rcases hgeneric with ⟨ε, hε, happrox⟩
+  refine ⟨ε, hε, ?_⟩
+  intro N a hN hopt
+  have hopt' :
+      EconCSLib.Allocation.IsOptimalAtTotal
+        (Mseq N).likelihood (Mseq N).valueOfCount N a := by
+    simpa [EconCSLib.Allocation.IsOptimalAtTotal,
+      ConsumptionModel.IsOptimalAtTotal, ConsumptionModel.FeasibleAtTotal,
+      ConsumptionModel.objective] using hopt
+  have happ := happrox N a hN hopt'
+  simpa [EconCSLib.Allocation.HasApproxShare,
+    GammaHomogeneityProfile.Approx, CountAllocation.HasApproxRepresentation,
+    CountAllocation.representation] using happ
 
 end PairwiseScaledSublinearHomogeneityCertificate
 
@@ -967,102 +952,53 @@ structure PairwiseScaledSublinearFOCCertificate {T : ℕ} [NeZero T]
 
 namespace PairwiseScaledSublinearFOCCertificate
 
+noncomputable def toShared {T : ℕ} [NeZero T]
+    {Mseq : ℕ → ConsumptionModel T} {weight : ItemType T → ℝ}
+    {G : GammaHomogeneityProfile T}
+    (hcert : PairwiseScaledSublinearFOCCertificate Mseq weight G) :
+    EconCSLib.Allocation.PairwiseScaledSublinearFOCCertificate
+      (fun N => (Mseq N).likelihood)
+      (fun N => (Mseq N).valueOfCount)
+      weight G.targetShare where
+  weight_pos := hcert.weight_pos
+  target_eq := hcert.targetShare_eq
+  error := hcert.error
+  error_nonneg := hcert.error_nonneg
+  error_tends_to_zero := hcert.error_tends_to_zero
+  large_gap_backward_lt_forward := by
+    intro N a hN hopt src dst hgap
+    have hopt' : (Mseq N).IsOptimalAtTotal N a := by
+      simpa [EconCSLib.Allocation.IsOptimalAtTotal,
+        ConsumptionModel.IsOptimalAtTotal, ConsumptionModel.FeasibleAtTotal,
+        ConsumptionModel.objective] using hopt
+    have hdom :=
+      hcert.large_gap_backward_lt_forward N a hN hopt' src dst hgap
+    simpa [ConsumptionModel.weightedBackwardMarginal,
+      ConsumptionModel.weightedForwardMarginal, ConsumptionModel.marginalValue,
+      EconCSLib.Allocation.weightedBackwardMarginal,
+      EconCSLib.Allocation.weightedForwardMarginal,
+      EconCSLib.Allocation.marginal] using hdom
+
 noncomputable def toPairwiseScaledSublinearHomogeneityCertificate
     {T : ℕ} [NeZero T] {Mseq : ℕ → ConsumptionModel T}
     {weight : ItemType T → ℝ} {G : GammaHomogeneityProfile T}
     (hcert : PairwiseScaledSublinearFOCCertificate Mseq weight G) :
-    PairwiseScaledSublinearHomogeneityCertificate Mseq weight G where
-  weight_pos := hcert.weight_pos
-  targetShare_eq := hcert.targetShare_eq
-  error := hcert.error
-  error_nonneg := hcert.error_nonneg
-  error_tends_to_zero := hcert.error_tends_to_zero
-  pairwise_scaled := by
-    intro N a hN hopt src dst
-    have hC_nonneg : 0 ≤ hcert.error N * (N : ℝ) := by
-      exact mul_nonneg (hcert.error_nonneg N) (Nat.cast_nonneg N)
-    have no_large_gap :
-        ¬ hcert.error N * (N : ℝ) <
-          (a.count src : ℝ) / weight src -
-            (a.count dst : ℝ) / weight dst := by
-      intro hgap
-      have hdiff_pos :
-          0 <
-            (a.count src : ℝ) / weight src -
-              (a.count dst : ℝ) / weight dst :=
-        lt_of_le_of_lt hC_nonneg hgap
-      have hdst_nonneg :
-          0 ≤ (a.count dst : ℝ) / weight dst :=
-        div_nonneg (Nat.cast_nonneg _) (le_of_lt (hcert.weight_pos dst))
-      have hsrc_div_pos : 0 < (a.count src : ℝ) / weight src := by
-        linarith
-      have hsrc_pos : 0 < a.count src := by
-        by_contra hnot
-        have hzero : a.count src = 0 := Nat.eq_zero_of_not_pos hnot
-        rw [hzero] at hsrc_div_pos
-        simp at hsrc_div_pos
-      have hne : src ≠ dst := by
-        intro hsame
-        subst dst
-        have hneg :
-            hcert.error N * (N : ℝ) < 0 := by
-          simpa using hgap
-        exact (not_lt_of_ge hC_nonneg) hneg
-      have hfoc :=
-        ConsumptionModel.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
-          (M := Mseq N) N hopt hne hsrc_pos
-      have hdom :=
-        hcert.large_gap_backward_lt_forward N a hN hopt src dst hgap
-      exact (not_lt_of_ge hfoc) hdom
-    have hupper :
-        (a.count src : ℝ) / weight src -
-            (a.count dst : ℝ) / weight dst ≤ hcert.error N * (N : ℝ) :=
-      le_of_not_gt no_large_gap
-    have no_large_gap_rev :
-        ¬ hcert.error N * (N : ℝ) <
-          (a.count dst : ℝ) / weight dst -
-            (a.count src : ℝ) / weight src := by
-      intro hgap
-      have hdiff_pos :
-          0 <
-            (a.count dst : ℝ) / weight dst -
-              (a.count src : ℝ) / weight src :=
-        lt_of_le_of_lt hC_nonneg hgap
-      have hsrc_nonneg :
-          0 ≤ (a.count src : ℝ) / weight src :=
-        div_nonneg (Nat.cast_nonneg _) (le_of_lt (hcert.weight_pos src))
-      have hdst_div_pos : 0 < (a.count dst : ℝ) / weight dst := by
-        linarith
-      have hdst_pos : 0 < a.count dst := by
-        by_contra hnot
-        have hzero : a.count dst = 0 := Nat.eq_zero_of_not_pos hnot
-        rw [hzero] at hdst_div_pos
-        simp at hdst_div_pos
-      have hne : dst ≠ src := by
-        intro hsame
-        subst src
-        have hneg :
-            hcert.error N * (N : ℝ) < 0 := by
-          simpa using hgap
-        exact (not_lt_of_ge hC_nonneg) hneg
-      have hfoc :=
-        ConsumptionModel.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
-          (M := Mseq N) N hopt hne hdst_pos
-      have hdom :=
-        hcert.large_gap_backward_lt_forward N a hN hopt dst src hgap
-      exact (not_lt_of_ge hfoc) hdom
-    have hlower :
-        -(hcert.error N * (N : ℝ)) ≤
-          (a.count src : ℝ) / weight src -
-            (a.count dst : ℝ) / weight dst := by
-      have hrev :
-          (a.count dst : ℝ) / weight dst -
-              (a.count src : ℝ) / weight src ≤
-            hcert.error N * (N : ℝ) :=
-        le_of_not_gt no_large_gap_rev
-      linarith
-    rw [abs_le]
-    exact ⟨hlower, hupper⟩
+    PairwiseScaledSublinearHomogeneityCertificate Mseq weight G :=
+  let hshared := hcert.toShared.toPairwiseScaledSublinearProfileCertificate
+  { weight_pos := hshared.weight_pos
+    targetShare_eq := hshared.target_eq
+    error := hshared.error
+    error_nonneg := hshared.error_nonneg
+    error_tends_to_zero := hshared.error_tends_to_zero
+    pairwise_scaled := by
+      intro N a hN hopt i j
+      have hopt' :
+          EconCSLib.Allocation.IsOptimalAtTotal
+            (Mseq N).likelihood (Mseq N).valueOfCount N a := by
+        simpa [EconCSLib.Allocation.IsOptimalAtTotal,
+          ConsumptionModel.IsOptimalAtTotal, ConsumptionModel.FeasibleAtTotal,
+          ConsumptionModel.objective] using hopt
+      exact hshared.pairwise_scaled N a hN hopt' i j }
 
 theorem asymptoticHomogeneity {T : ℕ} [NeZero T]
     {Mseq : ℕ → ConsumptionModel T} {weight : ItemType T → ℝ}
@@ -1110,150 +1046,92 @@ structure PairwiseScaledEventualSublinearFOCCertificate {T : ℕ} [NeZero T]
 
 namespace PairwiseScaledEventualSublinearFOCCertificate
 
+noncomputable def toShared {T : ℕ} [NeZero T]
+    {Mseq : ℕ → ConsumptionModel T} {weight : ItemType T → ℝ}
+    {G : GammaHomogeneityProfile T}
+    (hcert : PairwiseScaledEventualSublinearFOCCertificate Mseq weight G) :
+    EconCSLib.Allocation.PairwiseScaledEventualSublinearFOCCertificate
+      (fun N => (Mseq N).likelihood)
+      (fun N => (Mseq N).valueOfCount)
+      weight G.targetShare where
+  weight_pos := hcert.weight_pos
+  target_eq := hcert.targetShare_eq
+  baseError := hcert.base_error
+  baseError_nonneg := hcert.base_error_nonneg
+  baseError_tends_to_zero := hcert.base_error_tends_to_zero
+  floor := hcert.floor
+  count_floor_eventually := by
+    filter_upwards [hcert.count_floor_eventually] with N hN a hNpos hopt
+    have hopt' : (Mseq N).IsOptimalAtTotal N a := by
+      simpa [EconCSLib.Allocation.IsOptimalAtTotal,
+        ConsumptionModel.IsOptimalAtTotal, ConsumptionModel.FeasibleAtTotal,
+        ConsumptionModel.objective] using hopt
+    exact hN a hNpos hopt'
+  large_gap_backward_lt_forward_after_floor := by
+    filter_upwards [hcert.large_gap_backward_lt_forward_after_floor] with
+      N hN a hNpos hopt src dst hsrc hdst hgap
+    have hopt' : (Mseq N).IsOptimalAtTotal N a := by
+      simpa [EconCSLib.Allocation.IsOptimalAtTotal,
+        ConsumptionModel.IsOptimalAtTotal, ConsumptionModel.FeasibleAtTotal,
+        ConsumptionModel.objective] using hopt
+    have hdom := hN a hNpos hopt' src dst hsrc hdst hgap
+    simpa [ConsumptionModel.weightedBackwardMarginal,
+      ConsumptionModel.weightedForwardMarginal, ConsumptionModel.marginalValue,
+      EconCSLib.Allocation.weightedBackwardMarginal,
+      EconCSLib.Allocation.weightedForwardMarginal,
+      EconCSLib.Allocation.marginal] using hdom
+
 noncomputable def toPairwiseScaledSublinearFOCCertificate
     {T : ℕ} [NeZero T] {Mseq : ℕ → ConsumptionModel T}
     {weight : ItemType T → ℝ} {G : GammaHomogeneityProfile T}
     (hcert : PairwiseScaledEventualSublinearFOCCertificate Mseq weight G) :
-    PairwiseScaledSublinearFOCCertificate Mseq weight G := by
-  classical
-  let floorThreshold : ℕ :=
-    Classical.choose (eventually_atTop.1 hcert.count_floor_eventually)
-  have hfloorThreshold :
-      ∀ N ≥ floorThreshold,
-        ∀ a : CountAllocation T, 0 < N → (Mseq N).IsOptimalAtTotal N a →
-          ∀ t, hcert.floor < a.count t :=
-    Classical.choose_spec (eventually_atTop.1 hcert.count_floor_eventually)
-  let asymThreshold : ℕ :=
-    Classical.choose
-      (eventually_atTop.1 hcert.large_gap_backward_lt_forward_after_floor)
-  have hasymThreshold :
-      ∀ N ≥ asymThreshold,
-        ∀ a : CountAllocation T, 0 < N → (Mseq N).IsOptimalAtTotal N a →
-          ∀ src dst,
-            hcert.floor < a.count src →
-            hcert.floor < a.count dst →
-            hcert.base_error N * (N : ℝ) <
-              (a.count src : ℝ) / weight src -
-                (a.count dst : ℝ) / weight dst →
-            (Mseq N).weightedBackwardMarginal src (a.count src) <
-              (Mseq N).weightedForwardMarginal dst (a.count dst) :=
-    Classical.choose_spec
-      (eventually_atTop.1 hcert.large_gap_backward_lt_forward_after_floor)
-  let threshold : ℕ := max floorThreshold asymThreshold
-  let finitePrefixError : ℝ := (∑ t : ItemType T, 1 / weight t) + 1
-  refine
-    { weight_pos := hcert.weight_pos
-      targetShare_eq := hcert.targetShare_eq
-      error := fun N => if N < threshold then finitePrefixError else hcert.base_error N
-      error_nonneg := ?_
-      error_tends_to_zero := ?_
-      large_gap_backward_lt_forward := ?_ }
-  · intro N
-    by_cases hN : N < threshold
-    · have hsum_nonneg :
-          0 ≤ ∑ t : ItemType T, 1 / weight t := by
-        exact Finset.sum_nonneg
-          (fun t _ => div_nonneg zero_le_one
-            (le_of_lt (hcert.weight_pos t)))
-      rw [if_pos hN]
-      dsimp [finitePrefixError]
-      linarith
-    · simp [hN, hcert.base_error_nonneg N]
-  · exact tendsToZero_if_lt_const
-      hcert.base_error_tends_to_zero threshold finitePrefixError
-  · intro N a hNpos hopt src dst hgap
-    by_cases hsmall : N < threshold
-    · exfalso
-      have hgap_small :
-          finitePrefixError * (N : ℝ) <
-            (a.count src : ℝ) / weight src -
-              (a.count dst : ℝ) / weight dst := by
-        simpa [hsmall] using hgap
-      have hsrc_count_le_total : a.count src ≤ N := by
-        have hle := EconCSLib.Allocation.count_le_total a src
-        rw [hopt.1] at hle
-        exact hle
-      have hsrc_count_le_total_real :
-          (a.count src : ℝ) ≤ (N : ℝ) := by
-        exact_mod_cast hsrc_count_le_total
-      have hdst_div_nonneg :
-          0 ≤ (a.count dst : ℝ) / weight dst :=
-        div_nonneg (Nat.cast_nonneg _)
-          (le_of_lt (hcert.weight_pos dst))
-      have hdiff_le_src_div :
-          (a.count src : ℝ) / weight src -
-              (a.count dst : ℝ) / weight dst ≤
-            (a.count src : ℝ) / weight src := by
-        linarith
-      have hsrc_div_le_N_inv :
-          (a.count src : ℝ) / weight src ≤
-            (N : ℝ) * (1 / weight src) := by
-        rw [div_eq_mul_inv, one_div]
-        exact mul_le_mul_of_nonneg_right hsrc_count_le_total_real
-          (inv_nonneg.mpr (le_of_lt (hcert.weight_pos src)))
-      have hinv_le_sum :
-          1 / weight src ≤ ∑ t : ItemType T, 1 / weight t := by
-        exact Finset.single_le_sum
-          (fun t _ => div_nonneg zero_le_one
-            (le_of_lt (hcert.weight_pos t)))
-          (Finset.mem_univ src)
-      have hN_nonneg : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
-      have hN_inv_le_sum :
-          (N : ℝ) * (1 / weight src) ≤
-            (N : ℝ) * ∑ t : ItemType T, 1 / weight t :=
-        mul_le_mul_of_nonneg_left hinv_le_sum hN_nonneg
-      have hdiff_le_sum :
-          (a.count src : ℝ) / weight src -
-              (a.count dst : ℝ) / weight dst ≤
-            (N : ℝ) * ∑ t : ItemType T, 1 / weight t :=
-        le_trans hdiff_le_src_div
-          (le_trans hsrc_div_le_N_inv hN_inv_le_sum)
-      have hNpos_real : 0 < (N : ℝ) := by
-        exact_mod_cast hNpos
-      have hsum_lt_prefix :
-          (N : ℝ) * ∑ t : ItemType T, 1 / weight t <
-            finitePrefixError * (N : ℝ) := by
-        have hsum_lt :
-            (∑ t : ItemType T, 1 / weight t) < finitePrefixError := by
-          dsimp [finitePrefixError]
-          linarith
-        calc
-          (N : ℝ) * ∑ t : ItemType T, 1 / weight t
-              < (N : ℝ) * finitePrefixError :=
-                mul_lt_mul_of_pos_left hsum_lt hNpos_real
-          _ = finitePrefixError * (N : ℝ) := by ring
-      exact not_lt_of_ge
-        (le_trans hdiff_le_sum (le_of_lt hsum_lt_prefix)) hgap_small
-    · have hthreshold_le_N : threshold ≤ N := le_of_not_gt hsmall
-      have hfloorThreshold_le_threshold : floorThreshold ≤ threshold := by
-        dsimp [threshold]
-        exact le_max_left floorThreshold asymThreshold
-      have hasymThreshold_le_threshold : asymThreshold ≤ threshold := by
-        dsimp [threshold]
-        exact le_max_right floorThreshold asymThreshold
-      have hfloorThreshold_le_N : floorThreshold ≤ N :=
-        le_trans hfloorThreshold_le_threshold hthreshold_le_N
-      have hasymThreshold_le_N : asymThreshold ≤ N :=
-        le_trans hasymThreshold_le_threshold hthreshold_le_N
-      have hcounts_floor :
-          ∀ t, hcert.floor < a.count t :=
-        hfloorThreshold N hfloorThreshold_le_N a hNpos hopt
-      have hdomN :=
-        hasymThreshold N hasymThreshold_le_N
-      have hgap_base :
-          hcert.base_error N * (N : ℝ) <
-            (a.count src : ℝ) / weight src -
-              (a.count dst : ℝ) / weight dst := by
-        simpa [hsmall] using hgap
-      exact hdomN a hNpos hopt src dst
-        (hcounts_floor src) (hcounts_floor dst) hgap_base
+    PairwiseScaledSublinearFOCCertificate Mseq weight G :=
+  let hshared := hcert.toShared.toPairwiseScaledSublinearFOCCertificate
+  { weight_pos := hshared.weight_pos
+    targetShare_eq := hshared.target_eq
+    error := hshared.error
+    error_nonneg := hshared.error_nonneg
+    error_tends_to_zero := hshared.error_tends_to_zero
+    large_gap_backward_lt_forward := by
+      intro N a hN hopt src dst hgap
+      have hopt' :
+          EconCSLib.Allocation.IsOptimalAtTotal
+            (Mseq N).likelihood (Mseq N).valueOfCount N a := by
+        simpa [EconCSLib.Allocation.IsOptimalAtTotal,
+          ConsumptionModel.IsOptimalAtTotal, ConsumptionModel.FeasibleAtTotal,
+          ConsumptionModel.objective] using hopt
+      have hdom :=
+        hshared.large_gap_backward_lt_forward N a hN hopt' src dst hgap
+      simpa [ConsumptionModel.weightedBackwardMarginal,
+        ConsumptionModel.weightedForwardMarginal, ConsumptionModel.marginalValue,
+        EconCSLib.Allocation.weightedBackwardMarginal,
+        EconCSLib.Allocation.weightedForwardMarginal,
+        EconCSLib.Allocation.marginal] using hdom }
 
 theorem asymptoticHomogeneity {T : ℕ} [NeZero T]
     {Mseq : ℕ → ConsumptionModel T} {weight : ItemType T → ℝ}
     {G : GammaHomogeneityProfile T}
     (hcert : PairwiseScaledEventualSublinearFOCCertificate Mseq weight G) :
-    ConsumptionModel.AsymptoticHomogeneity Mseq G :=
-  hcert.toPairwiseScaledSublinearFOCCertificate.asymptoticHomogeneity
+    ConsumptionModel.AsymptoticHomogeneity Mseq G := by
+  have hgeneric :
+      EconCSLib.Allocation.AsymptoticProfile
+        (fun N => (Mseq N).likelihood)
+        (fun N => (Mseq N).valueOfCount)
+        G.targetShare :=
+    hcert.toShared.asymptoticProfile
+  rcases hgeneric with ⟨ε, hε, happrox⟩
+  refine ⟨ε, hε, ?_⟩
+  intro N a hN hopt
+  have hopt' :
+      EconCSLib.Allocation.IsOptimalAtTotal
+        (Mseq N).likelihood (Mseq N).valueOfCount N a := by
+    simpa [EconCSLib.Allocation.IsOptimalAtTotal,
+      ConsumptionModel.IsOptimalAtTotal, ConsumptionModel.FeasibleAtTotal,
+      ConsumptionModel.objective] using hopt
+  have happ := happrox N a hN hopt'
+  simpa [EconCSLib.Allocation.HasApproxShare,
+    GammaHomogeneityProfile.Approx, CountAllocation.HasApproxRepresentation,
+    CountAllocation.representation] using happ
 
 end PairwiseScaledEventualSublinearFOCCertificate
 
@@ -1461,6 +1339,50 @@ structure TopKUniformEventualSublinearFOCCertificate {T : ℕ} [NeZero T]
 
 namespace TopKUniformEventualSublinearFOCCertificate
 
+noncomputable def toPairwiseScaledEventualSublinearFOCCertificate
+    {T : ℕ} [NeZero T]
+    {O : TopKValueOracle T} {likelihood : ItemType T → ℝ} {k : ℕ}
+    (hcert : TopKUniformEventualSublinearFOCCertificate O likelihood k) :
+    PairwiseScaledEventualSublinearFOCCertificate
+      (fun _ => O.toConsumptionModel likelihood k)
+      (fun _ : ItemType T => (1 : ℝ)) (uniformProfile T) where
+  weight_pos := by
+    intro t
+    norm_num
+  targetShare_eq := by
+    intro t
+    rw [uniformProfile_targetShare]
+    simp [Finset.sum_const, Fintype.card_fin]
+  base_error := hcert.base_error
+  base_error_nonneg := hcert.base_error_nonneg
+  base_error_tends_to_zero := hcert.base_error_tends_to_zero
+  floor := hcert.floor
+  count_floor_eventually := hcert.count_floor_eventually
+  large_gap_backward_lt_forward_after_floor := by
+    filter_upwards [hcert.large_gap_backward_lt_forward_after_floor] with
+      N hN a _hNpos hopt src dst hsrc hdst hgap
+    have hsrc_count_le_N : a.count src ≤ N := by
+      have hle := EconCSLib.Allocation.count_le_total a src
+      rw [hopt.1] at hle
+      exact hle
+    have hdst_count_le_N : a.count dst ≤ N := by
+      have hle := EconCSLib.Allocation.count_le_total a dst
+      rw [hopt.1] at hle
+      exact hle
+    have hgap_unweighted :
+        hcert.base_error N * (N : ℝ) <
+          (a.count src : ℝ) - (a.count dst : ℝ) := by
+      simpa using hgap
+    have hdom :=
+      hN src dst (a.count src) (a.count dst)
+        hsrc_count_le_N hdst_count_le_N hsrc hdst hgap_unweighted
+    have hsrc_pos : 0 < a.count src := Nat.zero_lt_of_lt hsrc
+    unfold ConsumptionModel.weightedBackwardMarginal
+      ConsumptionModel.weightedForwardMarginal ConsumptionModel.marginalValue
+      EconCSLib.Allocation.marginal TopKValueOracle.toConsumptionModel
+    rw [dif_neg hsrc_pos.ne']
+    exact hdom
+
 noncomputable def of_count_floor_certificate {T : ℕ} [NeZero T]
     {O : TopKValueOracle T} {likelihood : ItemType T → ℝ} {k : ℕ}
     (hfloor : TopKUniformCountFloorCertificate O likelihood k)
@@ -1493,102 +1415,40 @@ noncomputable def of_count_floor_certificate {T : ℕ} [NeZero T]
 noncomputable def toTopKUniformSublinearFOCCertificate {T : ℕ} [NeZero T]
     {O : TopKValueOracle T} {likelihood : ItemType T → ℝ} {k : ℕ}
     (hcert : TopKUniformEventualSublinearFOCCertificate O likelihood k) :
-    TopKUniformSublinearFOCCertificate O likelihood k := by
-  classical
-  let floorThreshold : ℕ :=
-    Classical.choose (eventually_atTop.1 hcert.count_floor_eventually)
-  have hfloorThreshold :
-      ∀ N ≥ floorThreshold,
-        ∀ a : CountAllocation T, 0 < N →
-          (O.toConsumptionModel likelihood k).IsOptimalAtTotal N a →
-          ∀ t, hcert.floor < a.count t :=
-    Classical.choose_spec (eventually_atTop.1 hcert.count_floor_eventually)
-  let asymThreshold : ℕ :=
-    Classical.choose
-      (eventually_atTop.1 hcert.large_gap_backward_lt_forward_after_floor)
-  have hasymThreshold :
-      ∀ N ≥ asymThreshold,
-        ∀ src dst qsrc qdst,
-          qsrc ≤ N →
-          qdst ≤ N →
-          hcert.floor < qsrc →
-          hcert.floor < qdst →
-          hcert.base_error N * (N : ℝ) < (qsrc : ℝ) - (qdst : ℝ) →
-          likelihood src *
-              (O.expectedTopSum k src qsrc -
-                O.expectedTopSum k src (qsrc - 1)) <
-            likelihood dst *
-              (O.expectedTopSum k dst (qdst + 1) -
-                O.expectedTopSum k dst qdst) :=
-    Classical.choose_spec
-      (eventually_atTop.1 hcert.large_gap_backward_lt_forward_after_floor)
-  let threshold : ℕ := max floorThreshold asymThreshold
-  let finitePrefixError : ℝ := 2
-  refine
-    { error := fun N => if N < threshold then finitePrefixError else hcert.base_error N
-      error_nonneg := ?_
-      error_tends_to_zero := ?_
-      large_gap_backward_lt_forward := ?_ }
-  · intro N
-    by_cases hN : N < threshold
-    · simp [hN, finitePrefixError]
-    · simp [hN, hcert.base_error_nonneg N]
-  · exact tendsToZero_if_lt_const
-      hcert.base_error_tends_to_zero threshold finitePrefixError
-  · intro N a hNpos hopt src dst hgap
-    by_cases hsmall : N < threshold
-    · exfalso
-      have hgap_small :
-          finitePrefixError * (N : ℝ) <
-            (a.count src : ℝ) - (a.count dst : ℝ) := by
-        simpa [hsmall] using hgap
-      have hsrc_count_le_N : a.count src ≤ N := by
-        have hle := EconCSLib.Allocation.count_le_total a src
-        rw [hopt.1] at hle
-        exact hle
-      have hsrc_count_le_N_real : (a.count src : ℝ) ≤ (N : ℝ) := by
-        exact_mod_cast hsrc_count_le_N
-      have hdst_nonneg : 0 ≤ (a.count dst : ℝ) := Nat.cast_nonneg _
-      have hdiff_le_N :
-          (a.count src : ℝ) - (a.count dst : ℝ) ≤ (N : ℝ) := by
-        linarith
-      have hNpos_real : 0 < (N : ℝ) := by exact_mod_cast hNpos
-      have hN_lt_twoN : (N : ℝ) < finitePrefixError * (N : ℝ) := by
-        dsimp [finitePrefixError]
-        nlinarith
-      exact not_lt_of_ge (le_trans hdiff_le_N (le_of_lt hN_lt_twoN))
-        hgap_small
-    · have hthreshold_le_N : threshold ≤ N := le_of_not_gt hsmall
-      have hfloorThreshold_le_threshold : floorThreshold ≤ threshold := by
-        dsimp [threshold]
-        exact le_max_left floorThreshold asymThreshold
-      have hasymThreshold_le_threshold : asymThreshold ≤ threshold := by
-        dsimp [threshold]
-        exact le_max_right floorThreshold asymThreshold
-      have hfloorThreshold_le_N : floorThreshold ≤ N :=
-        le_trans hfloorThreshold_le_threshold hthreshold_le_N
-      have hasymThreshold_le_N : asymThreshold ≤ N :=
-        le_trans hasymThreshold_le_threshold hthreshold_le_N
-      have hcounts_floor :
-          ∀ t, hcert.floor < a.count t :=
-        hfloorThreshold N hfloorThreshold_le_N a hNpos hopt
-      have hdomN :=
-        hasymThreshold N hasymThreshold_le_N
-      have hsrc_count_le_N : a.count src ≤ N := by
-        have hle := EconCSLib.Allocation.count_le_total a src
-        rw [hopt.1] at hle
-        exact hle
-      have hdst_count_le_N : a.count dst ≤ N := by
-        have hle := EconCSLib.Allocation.count_le_total a dst
-        rw [hopt.1] at hle
-        exact hle
-      have hgap_base :
-          hcert.base_error N * (N : ℝ) <
-            (a.count src : ℝ) - (a.count dst : ℝ) := by
-        simpa [hsmall] using hgap
-      exact hdomN src dst (a.count src) (a.count dst)
-        hsrc_count_le_N hdst_count_le_N
-        (hcounts_floor src) (hcounts_floor dst) hgap_base
+    TopKUniformSublinearFOCCertificate O likelihood k :=
+  let hpair :=
+    hcert.toPairwiseScaledEventualSublinearFOCCertificate
+      |>.toPairwiseScaledSublinearFOCCertificate
+  { error := hpair.error
+    error_nonneg := hpair.error_nonneg
+    error_tends_to_zero := hpair.error_tends_to_zero
+    large_gap_backward_lt_forward := by
+      intro N a hN hopt src dst hgap
+      have hgap_scaled :
+          hpair.error N * (N : ℝ) <
+            (a.count src : ℝ) / (1 : ℝ) -
+              (a.count dst : ℝ) / (1 : ℝ) := by
+        simpa using hgap
+      have hdom :=
+        hpair.large_gap_backward_lt_forward N a hN hopt src dst hgap_scaled
+      have hC_nonneg : 0 ≤ hpair.error N * (N : ℝ) :=
+        mul_nonneg (hpair.error_nonneg N) (Nat.cast_nonneg N)
+      have hdiff_pos :
+          0 < (a.count src : ℝ) - (a.count dst : ℝ) :=
+        lt_of_le_of_lt hC_nonneg hgap
+      have hsrc_pos : 0 < a.count src := by
+        by_contra hnot
+        have hzero : a.count src = 0 := Nat.eq_zero_of_not_pos hnot
+        have hdst_nonneg : 0 ≤ (a.count dst : ℝ) := Nat.cast_nonneg _
+        rw [hzero] at hdiff_pos
+        have hnonpos : (0 : ℝ) - (a.count dst : ℝ) ≤ 0 := by
+          linarith
+        exact (not_lt_of_ge hnonpos) (by simpa using hdiff_pos)
+      unfold ConsumptionModel.weightedBackwardMarginal
+        ConsumptionModel.weightedForwardMarginal ConsumptionModel.marginalValue
+        EconCSLib.Allocation.marginal TopKValueOracle.toConsumptionModel at hdom
+      rw [dif_neg hsrc_pos.ne'] at hdom
+      exact hdom }
 
 theorem asymptoticHomogeneity {T : ℕ} [NeZero T]
     {O : TopKValueOracle T} {likelihood : ItemType T → ℝ} {k : ℕ}

@@ -52,6 +52,9 @@ They may assume Lean familiarity and may be more detailed.
 - [PROBABILITY_LIBRARY_ROADMAP.md](PROBABILITY_LIBRARY_ROADMAP.md) and
   [OPTIMIZATION_LIBRARY_ROADMAP.md](OPTIMIZATION_LIBRARY_ROADMAP.md): reusable
   library roadmaps.
+- [ECONCS_LIBRARY_EXTRACTION_PLAN.md](ECONCS_LIBRARY_EXTRACTION_PLAN.md):
+  cross-paper extraction and cleanup plan for probability, rankings,
+  stochastic processes, continuous analysis, and design optimization.
 
 Detailed proof-strategy rules for agents live in
 [`skills/econcs-formalizer/`](../skills/econcs-formalizer/).

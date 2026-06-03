@@ -85,18 +85,26 @@ theorem expectedBestAfterRemoval_eq_firstMover_sub_firstChoiceGapMass {n : ℕ}
     expectedBestAfterRemoval μ value c =
       expectedFirstMoverUtility μ value - firstChoiceGapMass μ value c := by
   unfold expectedBestAfterRemoval expectedFirstMoverUtility firstChoiceGapMass
+    EconCSLib.SocialChoice.Ranking.firstChoiceGapMass
   rw [← pmfExp_sub]
   congr 1
   funext π
   by_cases h : firstChoice π = c
   · subst c
-    simp only [if_true]
     calc
       value (bestRemainingAfter π (firstChoice π)) = value (secondChoice π) := by
         simpa [firstChoice, secondChoice] using
           congrArg value (bestRemainingAfter_of_eq π)
       _ = value (firstChoice π) - valueGap value π := by
-        simp [valueGap, firstChoice, secondChoice]
+        simp [valueGap, EconCSLib.SocialChoice.Ranking.valueGap,
+          firstChoice, secondChoice,
+          EconCSLib.SocialChoice.Ranking.firstChoice,
+          EconCSLib.SocialChoice.Ranking.secondChoice]
+      _ = value (firstChoice π) -
+          (if firstChoice π = EconCSLib.SocialChoice.Ranking.firstChoice π
+            then EconCSLib.SocialChoice.Ranking.valueGap value π else 0) := by
+        simp [valueGap, EconCSLib.SocialChoice.Ranking.valueGap,
+          firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice]
   · have hc : c ≠ firstChoice π := by
       intro hc
       exact h hc.symm

@@ -118,17 +118,10 @@ theorem exists_count_gt_of_card_mul_lt_total
     {T : ℕ} [NeZero T] (a : CountAllocation T) {K : ℕ}
     (hgt : T * K < EconCSLib.Allocation.total a) :
     ∃ t : ItemType T, K < a.count t := by
-  by_contra hnone
-  push Not at hnone
-  have hsum_le : EconCSLib.Allocation.total a ≤ T * K := by
-    unfold EconCSLib.Allocation.total
-    calc
-      (∑ t : ItemType T, a.count t)
-          ≤ ∑ _t : ItemType T, K := by
-            exact Finset.sum_le_sum (fun t _ => hnone t)
-      _ = T * K := by
-            simp [Finset.sum_const, Fintype.card_fin]
-  exact (not_lt_of_ge hsum_le) hgt
+  have hgt' :
+      Fintype.card (ItemType T) * K < EconCSLib.Allocation.total a := by
+    simpa [Fintype.card_fin] using hgt
+  exact EconCSLib.Allocation.exists_count_gt_of_card_mul_lt_total a hgt'
 
 /-- If the allocation has nonzero total, type representations sum to one. -/
 theorem sum_representation_eq_one_of_total_ne_zero {T : ℕ}
@@ -245,68 +238,8 @@ theorem count_abs_sub_weighted_average_le_of_pairwise_scaled_bounded {T : ℕ}
     ∀ t,
       |(a.count t : ℝ) -
         weight t * (N / ∑ i : ItemType T, weight i)| ≤ C * weight t := by
-  classical
-  let y : ItemType T → ℝ := fun i => (a.count i : ℝ) / weight i
-  have hWpos : 0 < ∑ i : ItemType T, weight i := by
-    exact Finset.sum_pos (fun i _ => hweight_pos i) Finset.univ_nonempty
-  have hy_sum : (∑ i : ItemType T, weight i * y i) = N := by
-    calc
-      (∑ i : ItemType T, weight i * y i)
-          = ∑ i : ItemType T, (a.count i : ℝ) := by
-            refine Finset.sum_congr rfl ?_
-            intro i _
-            dsimp [y]
-            field_simp [y, (ne_of_gt (hweight_pos i))]
-      _ = N := hN
-  intro t
-  have hlower_point : ∀ j, y t - C ≤ y j := by
-    intro j
-    have h := (abs_le.mp (hpair t j)).2
-    linarith
-  have hupper_point : ∀ j, y j ≤ y t + C := by
-    intro j
-    have h := (abs_le.mp (hpair t j)).1
-    linarith
-  have hlower_sum :
-      (∑ j : ItemType T, weight j) * (y t - C) ≤ N := by
-    rw [← hy_sum]
-    calc
-      (∑ j : ItemType T, weight j) * (y t - C)
-          = ∑ j : ItemType T, weight j * (y t - C) := by
-            rw [Finset.sum_mul]
-      _ ≤ ∑ j : ItemType T, weight j * y j := by
-            exact Finset.sum_le_sum (fun j _ =>
-              mul_le_mul_of_nonneg_left (hlower_point j) (le_of_lt (hweight_pos j)))
-  have hupper_sum :
-      N ≤ (∑ j : ItemType T, weight j) * (y t + C) := by
-    rw [← hy_sum]
-    calc
-      (∑ j : ItemType T, weight j * y j)
-          ≤ ∑ j : ItemType T, weight j * (y t + C) := by
-            exact Finset.sum_le_sum (fun j _ =>
-              mul_le_mul_of_nonneg_left (hupper_point j) (le_of_lt (hweight_pos j)))
-      _ = (∑ j : ItemType T, weight j) * (y t + C) := by
-            rw [Finset.sum_mul]
-  have hlow_avg : y t - C ≤ N / ∑ i : ItemType T, weight i := by
-    exact (le_div_iff₀ hWpos).2 (by simpa [mul_comm] using hlower_sum)
-  have hupp_avg : N / ∑ i : ItemType T, weight i ≤ y t + C := by
-    exact (div_le_iff₀ hWpos).2 (by simpa [mul_comm] using hupper_sum)
-  have hy_close : |y t - N / ∑ i : ItemType T, weight i| ≤ C := by
-    rw [abs_le]
-    constructor <;> linarith
-  have hcount_eq : (a.count t : ℝ) = weight t * y t := by
-    dsimp [y]
-    field_simp [y, (ne_of_gt (hweight_pos t))]
-  calc
-    |(a.count t : ℝ) - weight t * (N / ∑ i : ItemType T, weight i)|
-        = |weight t * (y t - N / ∑ i : ItemType T, weight i)| := by
-          rw [hcount_eq]
-          ring_nf
-    _ = weight t * |y t - N / ∑ i : ItemType T, weight i| := by
-          rw [abs_mul, abs_of_pos (hweight_pos t)]
-    _ ≤ weight t * C := by
-          exact mul_le_mul_of_nonneg_left hy_close (le_of_lt (hweight_pos t))
-    _ = C * weight t := by ring
+  exact EconCSLib.Allocation.count_abs_sub_weighted_average_le_of_pairwise_scaled_bounded
+    a weight hN hweight_pos hC hpair
 
 end GammaHomogeneityProfile
 
@@ -335,31 +268,9 @@ theorem count_abs_sub_uniform_average_le_C_of_pairwise_bounded
     (hbound : ∀ i j : ItemType T, (a.count i : ℝ) ≤ (a.count j : ℝ) + C)
     (t : ItemType T) :
     |(a.count t : ℝ) - (N : ℝ) / (T : ℝ)| ≤ C := by
-  have hTposNat : 0 < T := Nat.pos_of_ne_zero (NeZero.ne T)
-  have hTpos : 0 < (T : ℝ) := by exact_mod_cast hTposNat
-  have hTne : (T : ℝ) ≠ 0 := ne_of_gt hTpos
-  have hsum_counts : (∑ j : ItemType T, (a.count j : ℝ)) = (N : ℝ) := by
-    rw [← Nat.cast_sum]
-    exact_mod_cast hN
-  rw [abs_le]
-  constructor
-  · -- (a.count t) - N/T >= -C  => T * (a.count t) - N >= -T * C => T * (a.count t) + T * C >= N
-    field_simp [hTne]
-    have hsum : (∑ j : ItemType T, (a.count j : ℝ)) ≤ ∑ j : ItemType T, ((a.count t : ℝ) + C) := by
-      apply Finset.sum_le_sum
-      intro j _
-      exact hbound j t
-    simp [Finset.sum_const, Fintype.card_fin, nsmul_eq_mul] at hsum
-    linarith
-  · -- (a.count t) - N/T <= C => T * (a.count t) - N <= T * C => T * (a.count t) <= N + T * C
-    field_simp [hTne]
-    have hsum : (∑ j : ItemType T, (a.count t : ℝ)) ≤ ∑ j : ItemType T, ((a.count j : ℝ) + C) := by
-      apply Finset.sum_le_sum
-      intro j _
-      exact hbound t j
-    rw [Finset.sum_add_distrib] at hsum
-    simp [hsum_counts, Finset.sum_const, Fintype.card_fin, nsmul_eq_mul] at hsum
-    linarith
+  simpa [Fintype.card_fin] using
+    EconCSLib.Allocation.count_abs_sub_uniform_average_le_C_of_pairwise_bounded
+      a hN hbound t
 
 /--
 If all type counts differ pairwise by at most one, then each count is within
@@ -373,56 +284,9 @@ theorem count_abs_sub_uniform_average_le_one_of_pairwise_balanced
     (hbal : ∀ i j : ItemType T, a.count i ≤ a.count j + 1)
     (t : ItemType T) :
     |(a.count t : ℝ) - (N : ℝ) / (T : ℝ)| ≤ 1 := by
-  have hTposNat : 0 < T := Nat.pos_of_ne_zero (NeZero.ne T)
-  have hTpos : 0 < (T : ℝ) := by exact_mod_cast hTposNat
-  have hTne : (T : ℝ) ≠ 0 := ne_of_gt hTpos
-  have hsum_counts : (∑ j : ItemType T, (a.count j : ℝ)) = (N : ℝ) := by
-    rw [← Nat.cast_sum]
-    exact_mod_cast hN
-  have hsum_add_one :
-      (∑ j : ItemType T, ((a.count j : ℝ) + 1)) = (N : ℝ) + (T : ℝ) := by
-    calc
-      (∑ j : ItemType T, ((a.count j : ℝ) + 1))
-          = (∑ j : ItemType T, (a.count j : ℝ)) +
-              ∑ _j : ItemType T, (1 : ℝ) := by
-              simpa using (Finset.sum_add_distrib
-                (s := (Finset.univ : Finset (ItemType T)))
-                (f := fun j : ItemType T => (a.count j : ℝ))
-                (g := fun _j : ItemType T => (1 : ℝ)))
-      _ = (N : ℝ) + (T : ℝ) := by
-          simp [hsum_counts, Finset.sum_const, Fintype.card_fin, nsmul_eq_mul]
-  have hsum_const_count :
-      (∑ _j : ItemType T, (a.count t : ℝ)) =
-        (T : ℝ) * (a.count t : ℝ) := by
-    simp [Finset.sum_const, Fintype.card_fin, nsmul_eq_mul]
-  have hsum_const_count_add_one :
-      (∑ _j : ItemType T, ((a.count t : ℝ) + 1)) =
-        (T : ℝ) * (a.count t : ℝ) + (T : ℝ) := by
-    simp [Finset.sum_const, Fintype.card_fin, nsmul_eq_mul]
-  have hupper_sum :
-      ∑ j : ItemType T, (a.count t : ℝ) ≤
-        ∑ j : ItemType T, ((a.count j : ℝ) + 1) := by
-    refine Finset.sum_le_sum ?_
-    intro j _hj
-    exact_mod_cast hbal t j
-  have hupper : (T : ℝ) * (a.count t : ℝ) ≤ (N : ℝ) + (T : ℝ) := by
-    rw [← hsum_const_count, ← hsum_add_one]
-    exact hupper_sum
-  have hlower_sum :
-      ∑ j : ItemType T, (a.count j : ℝ) ≤
-        ∑ j : ItemType T, ((a.count t : ℝ) + 1) := by
-    refine Finset.sum_le_sum ?_
-    intro j _hj
-    exact_mod_cast hbal j t
-  have hlower : (N : ℝ) ≤ (T : ℝ) * (a.count t : ℝ) + (T : ℝ) := by
-    rw [← hsum_counts, ← hsum_const_count_add_one]
-    exact hlower_sum
-  rw [abs_le]
-  constructor
-  · field_simp [hTne]
-    nlinarith
-  · field_simp [hTne]
-    nlinarith
+  simpa [Fintype.card_fin] using
+    EconCSLib.Allocation.count_abs_sub_uniform_average_le_one_of_pairwise_balanced
+      a hN hbal t
 
 /--
 Pairwise-balanced counts are approximately `0`-homogeneous, with finite

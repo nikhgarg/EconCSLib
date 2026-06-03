@@ -1905,6 +1905,7 @@ structure GaussianHazardCertificate where
   tail_pos : ∀ z, 0 < 1 - api.cdf z
   hazard_eq : ∀ z, hazard z = api.density z / (1 - api.cdf z)
   hazard_pos : ∀ z, 0 < hazard z
+  hazard_gt_arg_of_pos : ∀ {z : ℝ}, 0 < z → z < hazard z
   hazard_mono : Monotone hazard
   scaled_hazard_mono :
     ∀ {a x y : ℝ}, 0 < a → 0 < x → x ≤ y →
@@ -1950,6 +1951,40 @@ theorem normalUpperTailMean_mono_threshold
       (mul_le_mul_of_nonneg_left
         (C.hazard_mono (L.standardize_mono hxy)) L.scale_pos.le)
       L.mean
+
+/--
+The conditional mean above a Gaussian threshold is strictly above the
+threshold.  For nonpositive standardized thresholds this only uses positivity
+of the hazard; for positive standardized thresholds it uses the Mills-ratio
+fact packaged in `hazard_gt_arg_of_pos`.
+-/
+theorem normalUpperTailMean_gt_threshold
+    (C : GaussianHazardCertificate)
+    (L : GaussianScaleLaw) (threshold : ℝ) :
+    threshold < C.normalUpperTailMean L threshold := by
+  let z : ℝ := L.standardize threshold
+  have hthreshold_std :
+      L.mean + L.scale * L.standardize threshold = threshold := by
+    simpa [GaussianScaleLaw.unstandardize] using
+      L.unstandardize_standardize threshold
+  have hcore : z < C.hazard z := by
+    by_cases hz_nonpos : z ≤ 0
+    · have hhaz_pos : 0 < C.hazard z := C.hazard_pos z
+      linarith
+    · have hz_pos : 0 < z := lt_of_not_ge hz_nonpos
+      exact C.hazard_gt_arg_of_pos hz_pos
+  have hmul :
+      L.scale * z < L.scale * C.hazard z :=
+    mul_lt_mul_of_pos_left hcore L.scale_pos
+  calc
+    threshold = L.mean + L.scale * z := by
+      dsimp [z]
+      exact hthreshold_std.symm
+    _ < L.mean + L.scale * C.hazard z := by
+      simpa [add_comm, add_left_comm, add_assoc] using
+        add_lt_add_left hmul L.mean
+    _ = C.normalUpperTailMean L threshold := by
+      simp [normalUpperTailMean, z]
 
 theorem normalUpperTailMean_le_of_same_mean_scale_le_above_mean
     (C : GaussianHazardCertificate)

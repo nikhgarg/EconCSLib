@@ -195,6 +195,14 @@ the source theorem requires it. Finite analogues are useful scaffolds only when
 they shorten the faithful proof. If the fastest honest route is a direct
 measure/integral/renewal/CTMC statement, build that statement directly and keep
 the paper-facing wrapper source-level.
+When a proof pattern appears in two papers, or is clearly standard for future
+EconCS papers, move the mathematical core into the library before adding more
+paper-local wrappers. Common examples are selected-below-reference a.e.
+contradictions, accepted-set reward add/remove algebra, two-point pooled
+estimate comparisons, monotone capacity cutoffs with region characterizations,
+score-induced ranking laws, and ranking-law pushforwards from continuous
+random utility models. Keep theorem-numbered names in the paper file as thin
+adapters over those shared declarations.
 For continuous strategy/type-space games, treat strategy, equilibrium,
 best-response, uniqueness, policy-optimality, and indifference-boundary claims
 as almost-everywhere statements under the relevant type or information law by
@@ -952,14 +960,18 @@ the Lean statements against the paper.
     claimed paper and library files, a stale-status grep over the README/DAG/
     final report, and `git diff --check`. Do not mark the audit complete until
     all required commands succeed.
-- **Post-formalization library extraction pass:** Once a paper theorem closes,
-  scan the proof for reusable primitives that belong in `EconCSLib` rather than
-  the paper namespace. Good candidates include model-neutral definitions,
-  algorithm trace APIs, invariants, side-symmetry lemmas, finite-cardinality
-  bridges, and monotonicity/termination facts. Move stable reusable APIs before
-  final validation when the extraction is local and low-risk. If the extraction
-  would require a broader naming/API design pass, leave the paper-facing wrapper
-  in place and record concrete migration candidates in the final report.
+- **Post-formalization library elevation pass:** Once a paper theorem closes,
+  scan the proof for reusable primitives, proof results, and proof techniques
+  that belong in `EconCSLib` rather than the paper namespace. Good candidates
+  include model-neutral definitions, algorithm trace APIs, invariants,
+  side-symmetry lemmas, finite-cardinality bridges, monotonicity/termination
+  facts, reusable certificate constructors, common proof decompositions, and
+  tactic patterns that would help another paper. Run this pass deliberately as
+  part of closeout: elevate stable reusable APIs/results before final validation
+  when the extraction is local and low-risk. If the extraction would require a
+  broader naming/API design pass, leave the paper-facing wrapper in place and
+  record concrete migration candidates, likely destination modules, and the
+  proof technique worth preserving in the final report.
 - Batch paper-folder `README.md` and campaign-report updates for throughput.
   Update them when a named lemma/proposition/theorem is closed, before a commit,
   before stopping or moving papers, or after a long stretch without status
@@ -1008,9 +1020,12 @@ search.
   inspect.
 - If shell startup prints `Failed to create stream fd: Operation not permitted`
   before otherwise successful command output, treat it as an Ubuntu
-  `im-config`/`systemd-cat` login-shell warning, not a repo failure. In Codex
-  tool calls, use non-login shells (`login:false`) for routine commands to
-  avoid the noise; do not spend proof-debugging time on it.
+  `im-config`/`systemd-cat` login-shell warning, not a repo failure. On Ubuntu
+  images this can come from `/etc/profile.d/im-config_wayland.sh` sourcing
+  `/usr/share/im-config/initializer`, whose `systemd-cat` logging fails under
+  sandboxed non-systemd sessions. Confirm with `bash -l -c true` if needed. In
+  Codex tool calls, use non-login shells (`login:false`, e.g. `/bin/bash`) for
+  routine commands to avoid the noise; do not spend proof-debugging time on it.
 - Use a five-minute resume path before opening large Lean files: read the
   paper handoff/README current-target section, `rg` the exact public wrapper
   and remaining assumption names, inspect only those theorem neighborhoods, and
@@ -1371,11 +1386,12 @@ pass:
   library seams that saved time or would have saved time if used earlier.
 - Run a proof-level library-lift pass before final handoff. Inspect the
   paper-local proof modules for thin wrappers around `EconCSLib`, generic
-  lemmas that are not paper-specific, and repeated theorem patterns that would
-  serve another paper. Extract small, targeted generic lemmas immediately when
-  the destination is clear and the build can be checked; otherwise record the
-  candidate and destination in the final report. Do not perform a risky broad
-  move during final closeout.
+  lemmas that are not paper-specific, reusable certificate constructors,
+  proof-result patterns, and techniques that would serve another paper. Extract
+  small, targeted generic lemmas/results immediately when the destination is
+  clear and the build can be checked; otherwise record the candidate,
+  destination module, and reusable proof idea in the final report. Do not
+  perform a risky broad move during final closeout.
 - Run a skill-update pass as a required post-formalization step. If the paper
   taught a reusable workflow lesson, update this skill or its reference files
   before final handoff; if it did not, state that explicitly in the final

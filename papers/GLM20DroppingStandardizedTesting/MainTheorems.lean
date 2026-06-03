@@ -6516,27 +6516,9 @@ theorem paper_lemma3_school_cutoff_existsUnique_and_capacity_region_of_strictAnt
       applicantMass admissionThreshold = capacity ∧
         ∀ z : ℝ,
           applicantMass z ≤ capacity ↔ admissionThreshold ≤ z := by
-  rcases
-    existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop
-      hcont hanti hatBot hatTop hcapacity with
-    ⟨admissionThreshold, hthreshold, hunique⟩
-  refine ⟨admissionThreshold, ⟨hthreshold, ?_⟩, ?_⟩
-  · intro z
-    constructor
-    · intro hmass
-      by_contra hnot
-      have hzlt : z < admissionThreshold := lt_of_not_ge hnot
-      have hstrict := hanti hzlt
-      rw [hthreshold] at hstrict
-      linarith
-    · intro hle
-      rcases lt_or_eq_of_le hle with hlt | rfl
-      · have hstrict := hanti hlt
-        rw [hthreshold] at hstrict
-        exact le_of_lt hstrict
-      · exact le_of_eq hthreshold
-  · intro admissionThreshold' hprops
-    exact hunique admissionThreshold' hprops.1
+  exact
+    existsUnique_eq_and_upper_region_of_continuous_strictAnti_tendsto_atBot_atTop
+      hcont hanti hatBot hatTop hcapacity
 
 /--
 Proposition 2(i) school-threshold support for two schools.

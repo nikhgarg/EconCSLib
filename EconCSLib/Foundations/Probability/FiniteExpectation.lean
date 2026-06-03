@@ -677,6 +677,59 @@ theorem pmfExp_le_pmfExp_of_forall_le {α : Type*} [Fintype α] [DecidableEq α]
     intro a _
     exact mul_le_mul_of_nonneg_left (h a) ENNReal.toReal_nonneg)
 
+/--
+Expectation upper bound from a pointwise event-indicator upper bound.  This is
+the finite-PMF form of the common step `X <= C * 1_E`, hence
+`E[X] <= C * Pr[E]`.
+-/
+theorem pmfExp_le_const_mul_pmfProb_of_forall_le_indicator
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p]
+    (f : α → ℝ) (C : ℝ)
+    (hpoint : ∀ a, f a ≤ C * (if p a then (1 : ℝ) else 0)) :
+    pmfExp μ f ≤ C * pmfProb μ p := by
+  classical
+  calc
+    pmfExp μ f
+        ≤ pmfExp μ (fun a => C * (if p a then (1 : ℝ) else 0)) :=
+          pmfExp_le_pmfExp_of_forall_le μ f
+            (fun a => C * (if p a then (1 : ℝ) else 0)) hpoint
+    _ = C * pmfProb μ p := by
+          rw [pmfExp_const_mul]
+          rfl
+
+/--
+For independent finite PMFs, the pair expectation of an event indicator
+`p a ∧ q b` factors as the product of the two event probabilities.
+-/
+theorem pmfPairExp_indicator_and_eq_mul_pmfProb
+    {α β : Type*} [Fintype α] [DecidableEq α]
+    [Fintype β] [DecidableEq β]
+    (μ : PMF α) (ν : PMF β)
+    (p : α → Prop) (q : β → Prop)
+    [DecidablePred p] [DecidablePred q] :
+    pmfPairExp μ ν
+        (fun a b => if p a ∧ q b then (1 : ℝ) else 0) =
+      pmfProb μ p * pmfProb ν q := by
+  classical
+  unfold pmfPairExp
+  calc
+    pmfExp μ
+        (fun a => pmfExp ν
+          (fun b => if p a ∧ q b then (1 : ℝ) else 0))
+        =
+        pmfExp μ
+          (fun a => (if p a then (1 : ℝ) else 0) *
+            pmfProb ν q) := by
+          refine pmfExp_congr μ ?_
+          intro a
+          by_cases hp : p a
+          · simp [hp, pmfProb]
+          · simp [hp]
+    _ = pmfProb μ p * pmfProb ν q := by
+          rw [pmfExp_mul_const]
+          rfl
+
 /-- Expectation of the reciprocal successor of a natural-valued finite random variable. -/
 noncomputable def pmfExpReciprocalSucc {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (X : α → ℕ) : ℝ :=

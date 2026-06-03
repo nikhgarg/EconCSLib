@@ -80,26 +80,13 @@ end FeasibleAllocationCode
 theorem exists_isOptimalAtTotal {T : ℕ} [Nonempty (ItemType T)]
     (M : ConsumptionModel T) (N : ℕ) :
     ∃ a : CountAllocation T, M.IsOptimalAtTotal N a := by
-  classical
-  let instCode : Nonempty (FeasibleAllocationCode T N) :=
-    ⟨FeasibleAllocationCode.singleton (T := T) (N := N)⟩
-  haveI : Nonempty (FeasibleAllocationCode T N) := instCode
-  let score : FeasibleAllocationCode T N → ℝ :=
-    fun x => M.objective x.toAllocation
-  obtain ⟨xmax, _hxmem, hxmax⟩ :=
-    Finset.exists_mem_eq_sup'
-      (s := (Finset.univ : Finset (FeasibleAllocationCode T N)))
-      (H := Finset.univ_nonempty) (f := score)
-  refine ⟨xmax.toAllocation, ?_, ?_⟩
-  · exact FeasibleAllocationCode.toAllocation_feasible xmax
+  obtain ⟨a, htotal, hopt⟩ :=
+    EconCSLib.Allocation.exists_isOptimalAtTotal
+      M.likelihood M.valueOfCount N
+  refine ⟨a, ?_, ?_⟩
+  · exact htotal
   · intro b hb
-    let xb : FeasibleAllocationCode T N :=
-      FeasibleAllocationCode.ofFeasible b hb
-    have hle : score xb ≤ EconCSLib.finiteMax score :=
-      EconCSLib.le_finiteMax score xb
-    unfold EconCSLib.finiteMax at hle
-    rw [hxmax] at hle
-    simpa [score, xb] using hle
+    exact hopt b hb
 
 /-- Objective values attainable by allocations of exactly `N` items. -/
 def attainableValuesAtTotal {T : ℕ}

@@ -35,8 +35,9 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `EconCSLib.IsChoiceEquilibriumAE` with projections
   `isChoiceEquilibriumAE_feasible_ae`,
   `isChoiceEquilibriumAE_best_response_ae`,
-  `isChoiceEquilibriumAE_consistency`, and the bridge
-  `isChoiceEquilibriumAE_of_pointwise`.
+  `isChoiceEquilibriumAE_consistency`, the pointwise bridge
+  `isChoiceEquilibriumAE_of_pointwise`, and the off-null-set constructor
+  `isChoiceEquilibriumAE_of_forall_not_mem_null`.
 - For binary cutoff strategies with null boundaries, use
   `EconCSLib.NoProfitableBinaryChoiceDeviationAE` and
   `bool_choice_eq_decide_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_no_tie`
@@ -47,6 +48,16 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `noProfitableBinaryChoiceDeviationAE_of_bool_best_response_ae` and
   `bool_best_response_ae_of_noProfitableBinaryChoiceDeviationAE` to move
   between raw `∀ action : Bool` best-response clauses and the named predicate.
+  If the only discrepancy is strict versus weak cutoff syntax at a null
+  indifference level, use `ae_iff_le_lt_of_level_null`,
+  `ae_iff_lt_le_of_level_null`, `ae_eq_decide_of_ae_iff`, or
+  `ae_eq_if_of_ae_iff` from `MeasureInequalities` instead of adding a
+  paper-local tie-convention field. When the proof already has a null payoff
+  tie set, use
+  `choice_rule_iff_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_null_tie`
+  or
+  `bool_choice_eq_decide_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_null_tie`
+  directly.
 - LG21 is the nearest model for Gaussian reporting/taking games with null
   boundary behavior. Its route defines `lg21SourceEquilibriumAE` in
   `papers/LG21TestOptionalPolicies/Theorem32AEEquilibrium.lean`, exposes

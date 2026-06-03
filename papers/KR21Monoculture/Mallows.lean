@@ -1,5 +1,6 @@
 import KR21Monoculture.WeakCompetition
 import KR21Monoculture.Kendall
+import EconCSLib.SocialChoice.Ranking.Mallows
 import Mathlib.Algebra.BigOperators.Field
 
 open scoped BigOperators
@@ -56,6 +57,31 @@ def centerSecond : Candidate n := secondChoice M.center
 @[simp] theorem partition_ne_zero : M.partition ≠ 0 := by
   exact ne_of_gt M.partition_pos
 
+/--
+Shared-library view of the KR-local Mallows specification.
+
+The KR file keeps its local structure so downstream paper proofs can continue
+rewriting with fields such as `M.partition_eq_sum`.  This adapter is the
+preferred route when a proof only needs reusable Mallows law facts.
+-/
+def toShared : EconCSLib.SocialChoice.Ranking.MallowsSpec n where
+  center := M.center
+  q := M.q
+  law := M.law
+  partition := M.partition
+  q_pos := M.q_pos
+  partition_pos := M.partition_pos
+  partition_eq_sum := by
+    simpa [EconCSLib.SocialChoice.Ranking.mallowsPartition,
+      EconCSLib.SocialChoice.Ranking.mallowsWeight, mallowsPartition,
+      mallowsWeight, EconCSLib.SocialChoice.Ranking.kendallTau, kendallTau]
+      using M.partition_eq_sum
+  law_apply_toReal := by
+    intro π
+    simpa [EconCSLib.SocialChoice.Ranking.mallowsWeight, mallowsWeight,
+      EconCSLib.SocialChoice.Ranking.kendallTau, kendallTau]
+      using M.law_apply_toReal π
+
 /-- The unnormalised mass of rankings whose first choice is `c`. -/
 noncomputable def firstWeight (c : Candidate n) : ℝ :=
   ∑ π : Ranking n,
@@ -71,31 +97,8 @@ noncomputable def firstSecondWeight (c d : Candidate n) : ℝ :=
 /-- First-choice probabilities reduce to finite Mallows weights. -/
 theorem firstChoiceProb_eq_firstWeight_div_partition (c : Candidate n) :
     firstChoiceProb M.law c = M.firstWeight c / M.partition := by
-  classical
-  unfold firstChoiceProb pmfProb pmfExp firstWeight
-  calc
-    ∑ π : Ranking n, (M.law π).toReal *
-        (if c = firstChoice π then (1 : ℝ) else 0)
-        = ∑ π : Ranking n,
-            (mallowsWeight M.q M.center π / M.partition) *
-              (if c = firstChoice π then (1 : ℝ) else 0) := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          rw [M.law_apply_toReal]
-    _ = ∑ π : Ranking n,
-          (if c = firstChoice π then mallowsWeight M.q M.center π else 0) /
-            M.partition := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          by_cases h : c = firstChoice π
-          · have h' : c = π 0 := by simpa [firstChoice] using h
-            simp [h']
-          · have h' : c ≠ π 0 := by simpa [firstChoice] using h
-            simp [h']
-    _ = (∑ π : Ranking n,
-          if c = firstChoice π then mallowsWeight M.q M.center π else 0) /
-            M.partition := by
-          rw [Finset.sum_div]
+  simpa [firstChoiceProb, EconCSLib.SocialChoice.Ranking.firstChoiceProb]
+    using (M.toShared).firstChoiceProb_eq_firstWeight_div_partition c
 
 /-- Probability that a Mallows draw begins with the ordered pair `(c,d)`. -/
 noncomputable def firstSecondChoiceProb (c d : Candidate n) : ℝ :=
@@ -132,142 +135,52 @@ noncomputable def pairWrongProb (c d : Candidate n) : ℝ :=
     (fun π => rankOf M.center c < rankOf M.center d ∧
       rankOf π d < rankOf π c)
 
+@[simp] theorem toShared_firstWeight (c : Candidate n) :
+    (M.toShared).firstWeight c = M.firstWeight c := by
+  rfl
+
+@[simp] theorem toShared_firstSecondWeight (c d : Candidate n) :
+    (M.toShared).firstSecondWeight c d = M.firstSecondWeight c d := by
+  rfl
+
+@[simp] theorem toShared_pairCorrectWeight (c d : Candidate n) :
+    (M.toShared).pairCorrectWeight c d = M.pairCorrectWeight c d := by
+  rfl
+
+@[simp] theorem toShared_pairWrongWeight (c d : Candidate n) :
+    (M.toShared).pairWrongWeight c d = M.pairWrongWeight c d := by
+  rfl
+
 /-- First/second-choice probabilities reduce to finite Mallows weights. -/
 theorem firstSecondChoiceProb_eq_firstSecondWeight_div_partition
     (c d : Candidate n) :
     M.firstSecondChoiceProb c d = M.firstSecondWeight c d / M.partition := by
-  classical
-  unfold firstSecondChoiceProb pmfProb pmfExp firstSecondWeight
-  calc
-    ∑ π : Ranking n, (M.law π).toReal *
-        (if c = firstChoice π ∧ d = secondChoice π then (1 : ℝ) else 0)
-        = ∑ π : Ranking n,
-            (mallowsWeight M.q M.center π / M.partition) *
-              (if c = firstChoice π ∧ d = secondChoice π then (1 : ℝ) else 0) := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          rw [M.law_apply_toReal]
-    _ = ∑ π : Ranking n,
-          (if c = firstChoice π ∧ d = secondChoice π
-            then mallowsWeight M.q M.center π else 0) /
-            M.partition := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          by_cases h : c = firstChoice π ∧ d = secondChoice π
-          · have hc : c = π 0 := by simpa [firstChoice] using h.1
-            have hd : d = π 1 := by simpa [secondChoice] using h.2
-            simp [hc, hd]
-          · have h' : ¬(c = π 0 ∧ d = π 1) := by
-              intro hraw
-              apply h
-              exact ⟨by simpa [firstChoice] using hraw.1,
-                by simpa [secondChoice] using hraw.2⟩
-            simp [h']
-    _ = (∑ π : Ranking n,
-          if c = firstChoice π ∧ d = secondChoice π
-            then mallowsWeight M.q M.center π else 0) /
-            M.partition := by
-          rw [Finset.sum_div]
+  simpa [firstSecondChoiceProb,
+    EconCSLib.SocialChoice.Ranking.MallowsSpec.firstSecondChoiceProb]
+    using (M.toShared).firstSecondChoiceProb_eq_firstSecondWeight_div_partition c d
 
 /-- Pair-correct probabilities reduce to finite Mallows weights. -/
 theorem pairCorrectProb_eq_pairCorrectWeight_div_partition
     (c d : Candidate n) :
     M.pairCorrectProb c d = M.pairCorrectWeight c d / M.partition := by
-  classical
-  unfold pairCorrectProb pmfProb pmfExp pairCorrectWeight
-  calc
-    ∑ π : Ranking n, (M.law π).toReal *
-        (if rankOf M.center c < rankOf M.center d ∧
-            rankOf π c < rankOf π d then (1 : ℝ) else 0)
-        = ∑ π : Ranking n,
-            (mallowsWeight M.q M.center π / M.partition) *
-              (if rankOf M.center c < rankOf M.center d ∧
-                  rankOf π c < rankOf π d then (1 : ℝ) else 0) := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          rw [M.law_apply_toReal]
-    _ = ∑ π : Ranking n,
-          (if rankOf M.center c < rankOf M.center d ∧
-              rankOf π c < rankOf π d
-            then mallowsWeight M.q M.center π else 0) /
-            M.partition := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          by_cases h :
-              rankOf M.center c < rankOf M.center d ∧
-                rankOf π c < rankOf π d
-          · simp [h]
-          · simp [h]
-    _ = (∑ π : Ranking n,
-          if rankOf M.center c < rankOf M.center d ∧
-              rankOf π c < rankOf π d
-            then mallowsWeight M.q M.center π else 0) /
-            M.partition := by
-          rw [Finset.sum_div]
+  simpa [pairCorrectProb,
+    EconCSLib.SocialChoice.Ranking.MallowsSpec.pairCorrectProb]
+    using (M.toShared).pairCorrectProb_eq_pairCorrectWeight_div_partition c d
 
 /-- Pair-wrong probabilities reduce to finite Mallows weights. -/
 theorem pairWrongProb_eq_pairWrongWeight_div_partition
     (c d : Candidate n) :
     M.pairWrongProb c d = M.pairWrongWeight c d / M.partition := by
-  classical
-  unfold pairWrongProb pmfProb pmfExp pairWrongWeight
-  calc
-    ∑ π : Ranking n, (M.law π).toReal *
-        (if rankOf M.center c < rankOf M.center d ∧
-            rankOf π d < rankOf π c then (1 : ℝ) else 0)
-        = ∑ π : Ranking n,
-            (mallowsWeight M.q M.center π / M.partition) *
-              (if rankOf M.center c < rankOf M.center d ∧
-                  rankOf π d < rankOf π c then (1 : ℝ) else 0) := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          rw [M.law_apply_toReal]
-    _ = ∑ π : Ranking n,
-          (if rankOf M.center c < rankOf M.center d ∧
-              rankOf π d < rankOf π c
-            then mallowsWeight M.q M.center π else 0) /
-            M.partition := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          by_cases h :
-              rankOf M.center c < rankOf M.center d ∧
-                rankOf π d < rankOf π c
-          · simp [h]
-          · simp [h]
-    _ = (∑ π : Ranking n,
-          if rankOf M.center c < rankOf M.center d ∧
-              rankOf π d < rankOf π c
-            then mallowsWeight M.q M.center π else 0) /
-            M.partition := by
-          rw [Finset.sum_div]
+  simpa [pairWrongProb,
+    EconCSLib.SocialChoice.Ranking.MallowsSpec.pairWrongProb]
+    using (M.toShared).pairWrongProb_eq_pairWrongWeight_div_partition c d
 
 /-- Correct and wrong pair-order weights partition the Mallows mass for a
 center-ordered pair. -/
 theorem pairCorrectWeight_add_pairWrongWeight_eq_partition
     {c d : Candidate n} (hcd : rankOf M.center c < rankOf M.center d) :
     M.pairCorrectWeight c d + M.pairWrongWeight c d = M.partition := by
-  classical
-  unfold pairCorrectWeight pairWrongWeight
-  rw [← Finset.sum_add_distrib]
-  rw [M.partition_eq_sum]
-  unfold mallowsPartition
-  refine Finset.sum_congr rfl ?_
-  intro π _
-  have hcd_ne : c ≠ d := by
-    intro h
-    rw [h] at hcd
-    exact (lt_irrefl (rankOf M.center d)) hcd
-  have hrank_ne : rankOf π c ≠ rankOf π d := by
-    intro h
-    apply hcd_ne
-    have hc : π (rankOf π c) = c := by simp [rankOf]
-    have hd : π (rankOf π d) = d := by simp [rankOf]
-    rw [← hc, h, hd]
-  rcases lt_or_gt_of_ne hrank_ne with hcorr | hwrong
-  · have hnot_wrong : ¬rankOf π d < rankOf π c := not_lt_of_gt hcorr
-    simp [hcd, hcorr, hnot_wrong]
-  · have hnot_corr : ¬rankOf π c < rankOf π d := not_lt_of_gt hwrong
-    simp [hcd, hwrong, hnot_corr]
+  simpa using (M.toShared).pairCorrectWeight_add_pairWrongWeight_eq_partition hcd
 
 /-- Correct pair probability as normalized correct-vs-wrong pair mass. -/
 theorem pairCorrectProb_eq_pairCorrectWeight_div_correct_add_wrong
@@ -281,57 +194,20 @@ theorem pairCorrectProb_eq_pairCorrectWeight_div_correct_add_wrong
 /-- The first-choice weights partition the Mallows partition function. -/
 theorem sum_firstWeight_eq_partition :
     (∑ c : Candidate n, M.firstWeight c) = M.partition := by
-  classical
-  unfold firstWeight
-  rw [M.partition_eq_sum]
-  unfold mallowsPartition
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl ?_
-  intro π _
-  have hsum :
-      (∑ c : Candidate n,
-        if c = firstChoice π then mallowsWeight M.q M.center π else 0) =
-        mallowsWeight M.q M.center π := by
-    simpa using
-      (Finset.sum_ite_eq' Finset.univ (firstChoice π)
-        (fun _ : Candidate n => mallowsWeight M.q M.center π))
-  rw [hsum]
+  simpa using (M.toShared).sum_firstWeight_eq_partition
 
 /-- For a fixed first candidate, summing over second candidates recovers first mass. -/
 theorem sum_firstSecondWeight_right_eq_firstWeight (c : Candidate n) :
     (∑ d : Candidate n, M.firstSecondWeight c d) = M.firstWeight c := by
-  classical
-  unfold firstSecondWeight firstWeight
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl ?_
-  intro π _
-  by_cases hc : c = firstChoice π
-  · have hsum :
-      (∑ d : Candidate n,
-        if d = secondChoice π then mallowsWeight M.q M.center π else 0) =
-        mallowsWeight M.q M.center π := by
-        simpa using
-          (Finset.sum_ite_eq' Finset.univ (secondChoice π)
-            (fun _ : Candidate n => mallowsWeight M.q M.center π))
-    simpa [hc] using hsum
-  · have hc' : c ≠ π 0 := by simpa [firstChoice] using hc
-    simp [hc']
+  simpa using (M.toShared).sum_firstSecondWeight_right_eq_firstWeight c
 
 /-- The probability version of `sum_firstSecondWeight_right_eq_firstWeight`. -/
 theorem sum_firstSecondChoiceProb_right_eq_firstChoiceProb (c : Candidate n) :
     (∑ d : Candidate n, M.firstSecondChoiceProb c d) = firstChoiceProb M.law c := by
-  classical
-  rw [M.firstChoiceProb_eq_firstWeight_div_partition c]
-  calc
-    ∑ d : Candidate n, M.firstSecondChoiceProb c d
-        = ∑ d : Candidate n, M.firstSecondWeight c d / M.partition := by
-          refine Finset.sum_congr rfl ?_
-          intro d _
-          rw [M.firstSecondChoiceProb_eq_firstSecondWeight_div_partition c d]
-    _ = (∑ d : Candidate n, M.firstSecondWeight c d) / M.partition := by
-          rw [Finset.sum_div]
-    _ = M.firstWeight c / M.partition := by
-          rw [M.sum_firstSecondWeight_right_eq_firstWeight c]
+  simpa [firstChoiceProb, EconCSLib.SocialChoice.Ranking.firstChoiceProb,
+    firstSecondChoiceProb,
+    EconCSLib.SocialChoice.Ranking.MallowsSpec.firstSecondChoiceProb]
+    using (M.toShared).sum_firstSecondChoiceProb_right_eq_firstChoiceProb c
 
 /-- First-choice probability of the center's first candidate in weight form. -/
 theorem centerFirstProb_eq :

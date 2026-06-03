@@ -139,12 +139,123 @@ division, rankings, Mallows models, and social-choice/ranking papers.
 - For rank-weight monotonicity, first prove the PMF/fiber decomposition, convert
   to a pure rank-only weight formula, then prove a generic cleared
   weighted-average lemma from pairwise cross-ratio or prefix dominance.
+- Use `EconCSLib.SocialChoice.Ranking.Basic` for paper-independent finite
+  ranking primitives before adding paper-local notation. It provides
+  `Candidate`, `Ranking`, `firstChoice`, `secondChoice`, `rankOf`,
+  `swapTopTwo`, `bestRemainingAfter`, and the standard top-two/rank simp
+  lemmas. In KR21, `KR21Monoculture.Basic` is only a compatibility layer.
+- Use `EconCSLib.SocialChoice.Ranking.Kendall` for inversion predicates,
+  inversion finsets, `kendallTau`, deletion/relabeling formulas through
+  `cycleRange` and `cycleIcc`, and center-transposition invariance. In KR21,
+  `KR21Monoculture.Kendall` keeps paper names and the `valueGap` wrappers.
+- Use `EconCSLib.SocialChoice.Ranking.Probability` when a continuous random
+  ranking map must be turned into a finite ranking law. It provides the
+  discrete measurable-space instance, `firstChoiceProb`,
+  `rankingPMFOfMeasure`, `rankingPMFOfMeasure_eventProb`,
+  `bestRemainingAfterProb_rankingPMFOfMeasure`, and
+  `firstChoiceProb_rankingPMFOfMeasure`. In paper files, keep theorem-number
+  names such as `rumRankingPMFOfMeasure`, but implement them as wrappers around
+  the shared pushforward and event-probability bridge.
+- Use `EconCSLib.SocialChoice.Ranking.Mallows` for the paper-independent
+  finite Mallows law/weight layer: `mallowsWeight`, `mallowsPartition`,
+  `MallowsSpec`, first/first-second/pair-correct/pair-wrong weights and
+  probabilities, and finite normalization identities. In KR21, do not replace
+  the local `MallowsSpec` by a type alias casually: later files rely on field
+  rewrite shapes such as `M.partition_eq_sum`. Prefer an explicit
+  local-to-shared adapter when thinning the paper file.
+- Use `EconCSLib.SocialChoice.Ranking.MallowsSequential` for Mallows laws over
+  a feasible remaining set before copying KR sequential finite sums. It owns
+  `MallowsSpec.bestInSetWeight`, pair best-in-set/correct-wrong fiber
+  identities, swap-reindexed best-in-set fiber sums, nonnegativity/zero-mass
+  and partition lemmas, expected-best normalization by unnormalized fibers, and
+  `expectedBestInSet_le_of_bestInSetWeight_cross`. In KR21 wrappers, call these
+  through `M.toShared` and bridge local definitions with small `[simp]` lemmas
+  such as `shared_bestInSet_eq`, `shared_swapCandidatePositions_eq`, and
+  `MallowsSpec.toShared_bestInSetWeight`; do not import KR from the library.
+- Use `EconCSLib.SocialChoice.Ranking.RankPower` before copying finite
+  geometric rank-sum algebra from KR. It owns `candidateRankPowerSum`,
+  `candidateRankReversePowerSum`, `candidateRankPrefixPowerSum`,
+  `candidateRankRemovalPowerSum`, `candidateRankBestAfterRemovalWeight`,
+  the removal-sum closed form and `(1 - q)` identity, best-after-removal
+  below/above/self simplifications, rank-power positivity/monotonicity, and
+  the inner nonnegativity/strictness helpers used in Mallows
+  rank-factorization proofs. In KR21, keep paper-facing names in
+  `MallowsPairwise.lean` as wrappers around this module.
+- Use `EconCSLib.SocialChoice.Ranking.MallowsRankFactorization` when a paper
+  has already established first/top-two Mallows fiber factorization. It owns
+  the assumption package `MallowsSpec.RankFactorization`, the first-tail versus
+  removal-sum identity, and first-weight prefix algebra. In KR21, keep the
+  paper-facing `RankFactorization` structure stable and call the shared lemmas
+  through `RankFactorization.toShared`; leave concrete `rankFactorization`
+  constructors paper-local until the underlying identity-center fiber
+  decompositions are themselves reusable.
+- Use `EconCSLib.SocialChoice.Ranking.Payoff` for paper-neutral finite
+  ranking-law payoff algebra before proving KR-style local versions. It
+  provides `firstChoiceMissProb`, `valueGap`, `expectedFirstMoverUtility`,
+  `expectedSecondMoverShared`, `secondMoverUtility`,
+  `expectedSecondMoverIndependent`, `expectedWelfareOrdered`,
+  `rerankingGainOnPair`, `expectedRerankingGain`,
+  `secondMoverFirstLawSwitchGain`, first-choice probability bounds and
+  sum-to-one, miss-probability complement and positivity,
+  `firstChoiceGapMass`, `firstChoiceCollisionDiff`,
+  `sum_firstChoiceGapMass_eq_expectedGap`,
+  `expectedFirstMoverUtility_eq_sum_firstChoiceProb`,
+  `expectedSecondMoverShared_eq_sum_secondChoiceProb`,
+  `innerRerankingGain_eq_missProb_mul_gap`,
+  `expectedRerankingGain_eq_expect_missProb_mul_gap`,
+  `expectedRerankingGain_eq_sum_firstChoiceMissProb_mul_firstChoiceGapMass`,
+  `expectedCollisionLossDiff_eq_sum_collisionDiff_mul_firstChoiceGapMass`, and
+  `secondMoverFirstLawSwitchGain_eq_expected_collision_loss_diff`. In KR21,
+  `Expectation`, `RerankingGain`, `FirstChoice`, `WeakCompetition`, and
+  `FirstChoiceDecomposition` should preserve paper-facing names but delegate
+  generic finite-sum proofs to this shared module.
+- Use `EconCSLib.SocialChoice.Ranking.Score` for KR-style three-score ranking
+  maps before writing paper-local case splits. It provides `rum3RankByScores`,
+  `rum3RankByScoreFns`, the six concrete three-candidate rankings, no-tie and
+  top/middle/bottom score predicates, first/second-choice simp lemmas,
+  `bestRemainingAfter_rum3RankByScores_remove*`, and the score-order
+  consequences from first-choice or best-remaining outcomes. Keep measurability
+  of score functions in the RUM/probability file; the score module is pure
+  finite social-choice code.
+- Use `EconCSLib.SocialChoice.Ranking.Sequential` for probability-free
+  sequential choice primitives before adding paper-local definitions. It owns
+  `bestInSet`, rank-minimality and membership lemmas, full-set/
+  removed-singleton/singleton/pair simplifications, center-rank relabeling,
+  candidate-position swaps, swap rank simp lemmas, rank extensionality helpers,
+  deterministic best-in-set value improvement after correcting an inverted
+  pair, adjacent-correction reachability/monotonicity predicates, and bounded
+  prefix-cut indicators:
+  `deleteFirstChoicePrefixCut`, `bestInSetPrefixCutIndicator`,
+  `centerPrefixCutValue`, `weaklyOrderedBy_centerPrefixCutValue`,
+  `bestInSetPrefixCutIndicator_eq_centerPrefixCutValue`, and
+  `adjacentSwapImproves_bestInSetPrefixCutIndicator`. In KR21, keep
+  theorem-facing definitions reducible when later proofs unfold them, but prove
+  the generic lemmas by delegating to the shared module.
+- Use `EconCSLib.SocialChoice.Ranking.SequentialPayoff` for PMF expectations of
+  the best feasible candidate. It provides `expectedBestInSet`,
+  `expectedBestAfterRemoval`, and full-set/singleton/removed-singleton
+  simplifications. Paper-local names like `AccuracyFamily.expectedBestAfterRemoval`
+  should be wrappers around this shared definition when possible.
+- Use the library finite-sum layer before writing Mallows-local algebra:
+  `EconCSLib.FiniteSum.pair_sum_eq_ordered_swap_sum_of_injective_key`
+  performs the `(i,j)`/`(j,i)` regrouping by a reference rank key, and
+  `EconCSLib.FiniteSum.weighted_average_cross_nonneg_of_pairwise` /
+  `EconCSLib.FiniteSum.weighted_average_cross_pos_of_pairwise` discharge the
+  weak/strict pairwise-cross-ratio weighted-average comparison. In KR21,
+  `MallowsSpec.pair_sum_eq_ordered_swap_sum` and
+  `candidateWeightedAverage_cross_*_of_pairwise` are compatibility wrappers
+  around these shared lemmas.
 - If conditioning or deleting a rank creates piecewise weights, prove small
   closed-form below/above/self lemmas and a deletion-sum geometric identity
   before attempting the all-cases theorem.
 - For Mallows/ranking proofs, match pairwise decompositions when the paper
   compares `(i,j)` and `(j,i)` top-two events. Prove the top-two expansion,
   define ordered-pair terms, then prove antisymmetric swap identities.
+- Use the shared KR adjacent-order and bounded prefix-cut APIs before
+  recursive prefix-cut proofs. The generic declarations now live in
+  `EconCSLib.SocialChoice.Ranking.Sequential`; keep the recursive
+  identity-center Mallows dominance stack paper-local until a second paper
+  needs the same subset-marginal recursion.
 - Keep three Mallows layers separate: denominator-cleared paper sum, top-two
   pair/bracket regrouping, and rank-factorization formulas for first/top-two
   fibers.
@@ -340,9 +451,12 @@ division, rankings, Mallows models, and social-choice/ranking papers.
 
 ## Social Choice Probability Bridges
 
-- When only a ranking law changes, rewrite payoff differences as candidatewise
-  probability deltas times conditional continuation values. This often turns a
-  game/probability theorem into the scalar inequality written in the paper.
+- When only a ranking law changes, first try
+  `Ranking.Payoff.secondMoverFirstLawSwitchGain_eq_expected_collision_loss_diff`
+  or `expectedSecondMoverIndependent_le_of_collisionProb_le_and_gap_nonneg`.
+  These rewrite second-mover payoff differences as candidatewise collision
+  probability deltas times value gaps and often turn a game/probability theorem
+  into the scalar inequality written in the paper.
 - For finite conditional utilities with exactly two possible continuation
   values, use a generic two-outcome expectation lemma
   (`E[f] = Pr[event] * x + (1 - Pr[event]) * y`) before specializing notation.

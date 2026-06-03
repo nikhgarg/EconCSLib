@@ -1,4 +1,7 @@
 import KR21Monoculture.MallowsFiniteLemmas
+import EconCSLib.Foundations.Math.FiniteSum
+import EconCSLib.SocialChoice.Ranking.RankPower
+import EconCSLib.SocialChoice.Ranking.MallowsRankFactorization
 import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Data.Fin.Tuple.Basic
 import Mathlib.Order.Fin.Basic
@@ -84,179 +87,75 @@ noncomputable def candidateRankBestAfterRemovalWeight
 theorem candidateRankRemovalPowerSum_pos
     (n : ℕ) {q : ℝ} (hq_pos : 0 < q) (k : Candidate n) :
     0 < candidateRankRemovalPowerSum n q k := by
-  classical
-  unfold candidateRankRemovalPowerSum
-  by_cases hk0 : k = (0 : Candidate n)
-  · apply EconCSLib.sum_univ_pos_of_pos_of_nonneg (a₀ := (1 : Candidate n))
-    · have hk_lt_one : k < (1 : Candidate n) := by
-        rw [hk0]
-        change (0 : ℕ) < 1
-        omega
-      have hnot : ¬(1 : Candidate n) < k := not_lt_of_gt hk_lt_one
-      simp [hnot, hk_lt_one]
-    · intro r
-      by_cases hrk : r < k
-      · simp [hrk, pow_nonneg (le_of_lt hq_pos) (r : ℕ)]
-      · by_cases hkr : k < r
-        · simp [hrk, hkr, pow_nonneg (le_of_lt hq_pos) ((r : ℕ) - 1)]
-        · simp [hrk, hkr]
-  · apply EconCSLib.sum_univ_pos_of_pos_of_nonneg (a₀ := (0 : Candidate n))
-    · have hzero_lt : (0 : Candidate n) < k := by
-        change 0 < (k : ℕ)
-        by_contra hnot
-        have hkval : (k : ℕ) = 0 := by omega
-        exact hk0 (Fin.ext hkval)
-      simp [hzero_lt]
-    · intro r
-      by_cases hrk : r < k
-      · simp [hrk, pow_nonneg (le_of_lt hq_pos) (r : ℕ)]
-      · by_cases hkr : k < r
-        · simp [hrk, hkr, pow_nonneg (le_of_lt hq_pos) ((r : ℕ) - 1)]
-        · simp [hrk, hkr]
+  simpa [candidateRankRemovalPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum_pos n hq_pos k
 
 theorem candidateRankRemovalPowerSum_nonneg
     (n : ℕ) {q : ℝ} (hq_pos : 0 < q) (k : Candidate n) :
     0 ≤ candidateRankRemovalPowerSum n q k :=
-  le_of_lt (candidateRankRemovalPowerSum_pos n hq_pos k)
+  by
+    simpa [candidateRankRemovalPowerSum,
+      EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum] using
+      EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum_nonneg n hq_pos k
 
 theorem candidateRankBestAfterRemovalWeight_nonneg
     (n : ℕ) {q : ℝ} (hq_pos : 0 < q) (k r : Candidate n) :
     0 ≤ candidateRankBestAfterRemovalWeight n q k r := by
-  unfold candidateRankBestAfterRemovalWeight
-  by_cases hrk : r < k
-  · rw [if_pos hrk]
-    exact add_nonneg
-      (mul_nonneg (pow_nonneg (le_of_lt hq_pos) (r : ℕ))
-        (candidateRankRemovalPowerSum_nonneg n hq_pos k))
-      (pow_nonneg (le_of_lt hq_pos) ((r : ℕ) + (k : ℕ)))
-  · rw [if_neg hrk]
-    by_cases hkr : k < r
-    · rw [if_pos hkr]
-      exact add_nonneg
-        (mul_nonneg (pow_nonneg (le_of_lt hq_pos) (r : ℕ))
-          (candidateRankRemovalPowerSum_nonneg n hq_pos k))
-        (pow_nonneg (le_of_lt hq_pos) ((k : ℕ) + (r : ℕ) - 1))
-    · rw [if_neg hkr]
+  simpa [candidateRankBestAfterRemovalWeight,
+    EconCSLib.SocialChoice.Ranking.candidateRankBestAfterRemovalWeight,
+    candidateRankRemovalPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankBestAfterRemovalWeight_nonneg
+      n hq_pos k r
 
 theorem candidateRankRemovalPowerSum_eq_range
     (n : ℕ) (q : ℝ) (k : Candidate n) :
     candidateRankRemovalPowerSum n q k =
       ∑ m ∈ Finset.range (n + 1), q ^ m := by
-  classical
-  unfold candidateRankRemovalPowerSum Candidate
-  change
-    (∑ x : Fin (n + 2),
-      if x.val < k.val then q ^ x.val
-      else if k.val < x.val then q ^ (x.val - 1)
-      else 0) =
-      ∑ m ∈ Finset.range (n + 1), q ^ m
-  rw [Fin.sum_univ_eq_sum_range
-    (fun x : ℕ =>
-      if x < k.val then q ^ x
-      else if k.val < x then q ^ (x - 1)
-      else 0)
-    (n + 2)]
-  let a : ℕ := k.val
-  have ha_le : a ≤ n + 1 := by
-    have ha_lt : a < n + 2 := by
-      simp [a]
-    omega
-  have hfilter_lt :
-      (Finset.range (n + 2)).filter (fun i : ℕ => i < a) =
-        Finset.range a := by
-    ext i
-    simp [a]
-    omega
-  have hfilter_gt :
-      (Finset.range (n + 2)).filter (fun i : ℕ => a < i) =
-        Finset.Ico (a + 1) (n + 2) := by
-    ext i
-    simp [Finset.mem_Ico]
-    omega
-  have hsplit :
-      (∑ i ∈ Finset.range (n + 2),
-        if i < a then q ^ i else if a < i then q ^ (i - 1) else 0) =
-        (∑ i ∈ (Finset.range (n + 2)).filter (fun i : ℕ => i < a),
-          q ^ i) +
-          (∑ i ∈ (Finset.range (n + 2)).filter (fun i : ℕ => a < i),
-            q ^ (i - 1)) := by
-    rw [Finset.sum_filter, Finset.sum_filter]
-    rw [← Finset.sum_add_distrib]
-    refine Finset.sum_congr rfl ?_
-    intro i _
-    by_cases hia : i < a
-    · have hai_not : ¬a < i := not_lt_of_gt hia
-      simp [hia, hai_not]
-    · by_cases hai : a < i
-      · simp [hia, hai]
-      · simp [hia, hai]
-  have hshift :
-      (∑ i ∈ Finset.Ico (a + 1) (n + 2), q ^ (i - 1)) =
-        ∑ i ∈ Finset.Ico a (n + 1), q ^ i := by
-    have h :=
-      (Finset.sum_Ico_add'
-        (fun x : ℕ => q ^ (x - 1)) a (n + 1) 1).symm
-    simpa [Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using h
-  calc
-    (∑ i ∈ Finset.range (n + 2),
-        if i < ↑k then q ^ i else if ↑k < i then q ^ (i - 1) else 0)
-        =
-        (∑ i ∈ Finset.range (n + 2),
-          if i < a then q ^ i else if a < i then q ^ (i - 1) else 0) := by
-          simp [a]
-    _ = (∑ i ∈ Finset.range a, q ^ i) +
-          (∑ i ∈ Finset.Ico (a + 1) (n + 2), q ^ (i - 1)) := by
-          rw [hsplit, hfilter_lt, hfilter_gt]
-    _ = (∑ i ∈ Finset.range a, q ^ i) +
-          (∑ i ∈ Finset.Ico a (n + 1), q ^ i) := by
-          rw [hshift]
-    _ = ∑ m ∈ Finset.range (n + 1), q ^ m := by
-          exact Finset.sum_range_add_sum_Ico (fun m : ℕ => q ^ m) ha_le
+  simpa [candidateRankRemovalPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum_eq_range n q k
 
 theorem candidateRankRemovalPowerSum_mul_one_sub
     (n : ℕ) (q : ℝ) (k : Candidate n) :
     candidateRankRemovalPowerSum n q k * (1 - q) = 1 - q ^ (n + 1) := by
-  rw [candidateRankRemovalPowerSum_eq_range]
-  exact geom_sum_mul_neg q (n + 1)
+  simpa [candidateRankRemovalPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum_mul_one_sub n q k
 
 @[simp] theorem candidateRankBestAfterRemovalWeight_self
     (n : ℕ) (q : ℝ) (k : Candidate n) :
     candidateRankBestAfterRemovalWeight n q k k = 0 := by
-  unfold candidateRankBestAfterRemovalWeight
-  simp
+  simpa [candidateRankBestAfterRemovalWeight,
+    EconCSLib.SocialChoice.Ranking.candidateRankBestAfterRemovalWeight,
+    candidateRankRemovalPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankBestAfterRemovalWeight_self n q k
 
 theorem candidateRankBestAfterRemovalWeight_of_lt
     (n : ℕ) (q : ℝ) {k r : Candidate n} (hrk : r < k) :
     candidateRankBestAfterRemovalWeight n q k r =
       q ^ (r : ℕ) *
         (candidateRankRemovalPowerSum n q k + q ^ (k : ℕ)) := by
-  unfold candidateRankBestAfterRemovalWeight
-  rw [if_pos hrk]
-  rw [pow_add]
-  ring
+  simpa [candidateRankBestAfterRemovalWeight,
+    EconCSLib.SocialChoice.Ranking.candidateRankBestAfterRemovalWeight,
+    candidateRankRemovalPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankBestAfterRemovalWeight_of_lt
+      n q hrk
 
 theorem candidateRankBestAfterRemovalWeight_of_gt
     (n : ℕ) (q : ℝ) {k r : Candidate n} (hkr : k < r) :
     candidateRankBestAfterRemovalWeight n q k r =
       q ^ ((r : ℕ) - 1) *
         (q * candidateRankRemovalPowerSum n q k + q ^ (k : ℕ)) := by
-  unfold candidateRankBestAfterRemovalWeight
-  rw [if_neg (not_lt_of_gt hkr), if_pos hkr]
-  have hr_pos : 0 < (r : ℕ) :=
-    lt_of_le_of_lt (Nat.zero_le (k : ℕ)) hkr
-  have hpow_r : q ^ (r : ℕ) = q ^ ((r : ℕ) - 1) * q := by
-    calc
-      q ^ (r : ℕ) = q ^ (((r : ℕ) - 1) + 1) := by
-        congr 1
-        omega
-      _ = q ^ ((r : ℕ) - 1) * q := by rw [pow_add, pow_one]
-  have hpow_kr :
-      q ^ ((k : ℕ) + (r : ℕ) - 1) =
-        q ^ (((r : ℕ) - 1) + (k : ℕ)) := by
-    congr 1
-    omega
-  rw [hpow_r, hpow_kr, pow_add]
-  ring
+  simpa [candidateRankBestAfterRemovalWeight,
+    EconCSLib.SocialChoice.Ranking.candidateRankBestAfterRemovalWeight,
+    candidateRankRemovalPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankBestAfterRemovalWeight_of_gt
+      n q hkr
 
 /--
 Rank-only conditional top-gap summand.
@@ -282,50 +181,30 @@ noncomputable def candidateRankConditionalGap
 
 theorem candidateRankPowerSum_pos (n : ℕ) {q : ℝ} (hq_pos : 0 < q) :
     0 < candidateRankPowerSum n q := by
-  classical
-  unfold candidateRankPowerSum
-  apply EconCSLib.sum_univ_pos_of_pos_of_nonneg (a₀ := (0 : Candidate n))
-  · simp
-  · intro i
-    exact pow_nonneg (le_of_lt hq_pos) (i : ℕ)
+  simpa [candidateRankPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankPowerSum_pos n hq_pos
 
 theorem candidateRankReversePowerSum_pos (n : ℕ) {q : ℝ} (hq_pos : 0 < q) :
     0 < candidateRankReversePowerSum n q := by
-  classical
-  unfold candidateRankReversePowerSum
-  apply EconCSLib.sum_univ_pos_of_pos_of_nonneg
-    (a₀ := (⟨n + 1, by omega⟩ : Candidate n))
-  · simp
-  · intro i
-    exact pow_nonneg (le_of_lt hq_pos) _
+  simpa [candidateRankReversePowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankReversePowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankReversePowerSum_pos n hq_pos
 
 theorem candidateRankPowerSum_strict_mono
     (n : ℕ) {q₁ q₂ : ℝ} (hq₁_nonneg : 0 ≤ q₁) (hq_lt : q₁ < q₂) :
     candidateRankPowerSum n q₁ < candidateRankPowerSum n q₂ := by
-  classical
-  unfold candidateRankPowerSum
-  refine Finset.sum_lt_sum ?hle ?hstrict
-  · intro i _
-    exact pow_le_pow_left₀ hq₁_nonneg (le_of_lt hq_lt) (i : ℕ)
-  · refine ⟨(1 : Candidate n), Finset.mem_univ _, ?_⟩
-    simpa using hq_lt
+  simpa [candidateRankPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankPowerSum_strict_mono
+      n hq₁_nonneg hq_lt
 
 theorem natPower_mul_lt_mul_natPower
     {q₁ q₂ : ℝ} (hq₁_pos : 0 < q₁) (hq_lt : q₁ < q₂)
     {i j : ℕ} (hij : i < j) :
     q₁ ^ j * q₂ ^ i < q₁ ^ i * q₂ ^ j := by
-  have hq₂_pos : 0 < q₂ := lt_trans hq₁_pos hq_lt
-  obtain ⟨d, hd_pos, hd_eq⟩ :
-      ∃ d : ℕ, 0 < d ∧ j = i + d := by
-    refine ⟨j - i, Nat.sub_pos_of_lt hij, ?_⟩
-    exact (Nat.add_sub_of_le (le_of_lt hij)).symm
-  have hpow : q₁ ^ d < q₂ ^ d := by
-    exact pow_lt_pow_left₀ hq_lt (le_of_lt hq₁_pos) (Nat.ne_of_gt hd_pos)
-  have hscale : 0 < q₁ ^ i * q₂ ^ i :=
-    mul_pos (pow_pos hq₁_pos i) (pow_pos hq₂_pos i)
-  have hmul := mul_lt_mul_of_pos_left hpow hscale
-  rw [hd_eq, pow_add, pow_add]
-  nlinarith
+  exact EconCSLib.SocialChoice.Ranking.natPower_mul_lt_mul_natPower
+    hq₁_pos hq_lt hij
 
 theorem candidateRankRemovalBoundaryFactor_cross_nonneg
     (n : ℕ) {q₁ q₂ : ℝ} (hq₁_pos : 0 < q₁)
@@ -1144,34 +1023,28 @@ theorem candidateRankConditionalGap_strictAnti
 
 theorem candidateRankPowerSum_mul_one_sub (n : ℕ) (q : ℝ) :
     candidateRankPowerSum n q * (1 - q) = 1 - q ^ (n + 2) := by
-  simpa [candidateRankPowerSum, Candidate, Fin.sum_univ_eq_sum_range] using
-    (geom_sum_mul_neg q (n + 2))
+  simpa [candidateRankPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankPowerSum_mul_one_sub n q
 
 theorem candidateRankPowerSum_inner_nonneg
     {n : ℕ} {q : ℝ} (hq_nonneg : 0 ≤ q) (hq_le_one : q ≤ 1)
     {r s : Candidate n} (hrs : r < s) :
     0 ≤ (candidateRankPowerSum n q - q ^ (r : ℕ)) -
       q * (candidateRankPowerSum n q - q ^ (s : ℕ)) := by
-  have hgeom := candidateRankPowerSum_mul_one_sub n q
-  have hs_succ_le : s.val + 1 ≤ n + 2 := s.2
-  have hpow_succ_le : q ^ (n + 2) ≤ q ^ (s.val + 1) :=
-    pow_le_pow_of_le_one hq_nonneg hq_le_one hs_succ_le
-  have hpow_r_le_one : q ^ (r : ℕ) ≤ 1 :=
-    pow_le_one₀ hq_nonneg hq_le_one
-  have hmain : 0 ≤ (1 - q ^ (r : ℕ)) + (q ^ (s.val + 1) - q ^ (n + 2)) := by
-    exact add_nonneg (sub_nonneg.mpr hpow_r_le_one) (sub_nonneg.mpr hpow_succ_le)
-  have hpow_succ : q * q ^ (s : ℕ) = q ^ (s.val + 1) := by
-    rw [pow_succ']
-  nlinarith
+  simpa [candidateRankPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankPowerSum_inner_nonneg
+      hq_nonneg hq_le_one hrs
 
 theorem candidateRankPowerSum_inner_pos_zero_one
     {n : ℕ} (hn : 0 < n) {q : ℝ} (hq_pos : 0 < q) (hq_lt_one : q < 1) :
     0 < (candidateRankPowerSum n q - q ^ (0 : ℕ)) -
       q * (candidateRankPowerSum n q - q ^ (1 : ℕ)) := by
-  have hgeom := candidateRankPowerSum_mul_one_sub n q
-  have hpow_lt : q ^ (n + 2) < q ^ (2 : ℕ) := by
-    exact pow_lt_pow_right_of_lt_one₀ hq_pos hq_lt_one (by omega)
-  nlinarith [hgeom, hpow_lt]
+  simpa [candidateRankPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankPowerSum] using
+    EconCSLib.SocialChoice.Ranking.candidateRankPowerSum_inner_pos_zero_one
+      (n := n) hn hq_pos hq_lt_one
 
 /-- The fiber of rankings whose first center-rank is `r`, for the identity center. -/
 noncomputable def reflFirstChoiceFiber (n : ℕ) (r : Candidate n) :
@@ -4409,6 +4282,29 @@ structure RankFactorization where
           (M.q ^ ((rankOf M.center c : ℕ) + (rankOf M.center d : ℕ) - 1) *
             firstSecondTail)
 
+noncomputable def RankFactorization.toShared (fac : M.RankFactorization) :
+    (M.toShared).RankFactorization where
+  firstTail := fac.firstTail
+  firstSecondTail := fac.firstSecondTail
+  firstTail_pos := fac.firstTail_pos
+  firstSecondTail_pos := fac.firstSecondTail_pos
+  partition_eq := by
+    simpa [candidateRankPowerSum,
+      EconCSLib.SocialChoice.Ranking.candidateRankPowerSum] using
+      fac.partition_eq
+  firstWeight_eq := by
+    intro c
+    simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+      fac.firstWeight_eq c
+  firstSecondWeight_eq_of_lt := by
+    intro c d hcd
+    exact fac.firstSecondWeight_eq_of_lt c d
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcd)
+  firstSecondWeight_swap_eq_of_lt := by
+    intro c d hcd
+    exact fac.firstSecondWeight_swap_eq_of_lt c d
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcd)
+
 noncomputable def rankFactorization : M.RankFactorization where
   firstTail := M.firstWeight M.centerFirst
   firstSecondTail := M.firstSecondWeight M.centerFirst M.centerSecond
@@ -4431,105 +4327,11 @@ theorem firstTail_eq_firstSecondTail_mul_removalPowerSum
     fac.firstTail =
       fac.firstSecondTail *
         candidateRankRemovalPowerSum n M.q (rankOf M.center c) := by
-  classical
-  let k : Candidate n := rankOf M.center c
-  have hc_center : M.center k = c := by
-    simp [k, rankOf]
-  have hsum_center :
-      (∑ r : Candidate n, M.firstSecondWeight c (M.center r)) =
-        M.firstWeight c := by
-    have hcomp :
-        (∑ r : Candidate n, M.firstSecondWeight c (M.center r)) =
-          ∑ d : Candidate n, M.firstSecondWeight c d := by
-      simpa using
-        (Equiv.sum_comp M.center
-          (fun d : Candidate n => M.firstSecondWeight c d))
-    rw [hcomp, M.sum_firstSecondWeight_right_eq_firstWeight c]
-  have hleft :
-      (∑ r : Candidate n, M.firstSecondWeight c (M.center r)) =
-        M.q ^ (k : ℕ) * fac.firstSecondTail *
-          candidateRankRemovalPowerSum n M.q k := by
-    unfold candidateRankRemovalPowerSum
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl ?_
-    intro r _
-    by_cases hrk : r < k
-    · have hlt : rankOf M.center (M.center r) < rankOf M.center c := by
-        simpa [k, rankOf] using hrk
-      have hpow :
-          M.q *
-              (M.q ^ ((r : ℕ) + (k : ℕ) - 1) *
-                fac.firstSecondTail) =
-            M.q ^ (k : ℕ) * fac.firstSecondTail * M.q ^ (r : ℕ) := by
-        have hsum :
-            ((r : ℕ) + (k : ℕ) - 1) + 1 = (k : ℕ) + (r : ℕ) := by
-          have hrk_nat : (r : ℕ) < (k : ℕ) := hrk
-          omega
-        rw [← mul_assoc M.q (M.q ^ ((r : ℕ) + (k : ℕ) - 1)) fac.firstSecondTail]
-        rw [← pow_succ', hsum, pow_add]
-        ring
-      rw [fac.firstSecondWeight_swap_eq_of_lt (M.center r) c hlt]
-      rw [← hc_center]
-      have hrk' : r < rankOf M.center c := by
-        simpa [k] using hrk
-      rw [if_pos hrk']
-      simp [rankOf]
-      exact hpow
-    · by_cases hkr : k < r
-      · have hlt : rankOf M.center c < rankOf M.center (M.center r) := by
-          simpa [k, rankOf] using hkr
-        have hpow :
-            M.q ^ ((k : ℕ) + (r : ℕ) - 1) * fac.firstSecondTail =
-              M.q ^ (k : ℕ) * fac.firstSecondTail * M.q ^ ((r : ℕ) - 1) := by
-          have hsum :
-              (k : ℕ) + (r : ℕ) - 1 = (k : ℕ) + ((r : ℕ) - 1) := by
-            have hkr_nat : (k : ℕ) < (r : ℕ) := hkr
-            omega
-          rw [hsum, pow_add]
-          ring
-        rw [fac.firstSecondWeight_eq_of_lt c (M.center r) hlt]
-        have hkr' : rankOf M.center c < r := by
-          simpa [k] using hkr
-        have hrk' : ¬r < rankOf M.center c := by
-          simpa [k] using hrk
-        rw [if_neg hrk', if_pos hkr']
-        simp [rankOf]
-        exact hpow
-      · have hr_eq : r = k := le_antisymm (le_of_not_gt hkr) (le_of_not_gt hrk)
-        subst r
-        have hself : M.firstSecondWeight c c = 0 := by
-          unfold firstSecondWeight
-          apply Finset.sum_eq_zero
-          intro π _
-          have hnot : ¬(c = firstChoice π ∧ c = secondChoice π) := by
-            intro h
-            have hfs : firstChoice π = secondChoice π := h.1.symm.trans h.2
-            exact firstChoice_ne_secondChoice π hfs
-          have hraw : ¬(c = π 0 ∧ c = π 1) := by
-            intro h
-            apply hnot
-            exact ⟨by simpa [firstChoice] using h.1,
-              by simpa [secondChoice] using h.2⟩
-          simp [firstChoice, secondChoice, hraw]
-        simpa [hc_center] using hself
-  have hright :
-      M.firstWeight c = M.q ^ (k : ℕ) * fac.firstTail := by
-    rw [fac.firstWeight_eq c]
-  have hqk : M.q ^ (k : ℕ) ≠ 0 := ne_of_gt (pow_pos M.q_pos (k : ℕ))
-  have hmain :
-      M.q ^ (k : ℕ) *
-          (fac.firstSecondTail * candidateRankRemovalPowerSum n M.q k) =
-        M.q ^ (k : ℕ) * fac.firstTail := by
-    calc
-      M.q ^ (k : ℕ) *
-          (fac.firstSecondTail * candidateRankRemovalPowerSum n M.q k)
-          = M.q ^ (k : ℕ) * fac.firstSecondTail *
-              candidateRankRemovalPowerSum n M.q k := by ring
-      _ = (∑ r : Candidate n, M.firstSecondWeight c (M.center r)) := by
-            rw [hleft]
-      _ = M.firstWeight c := hsum_center
-      _ = M.q ^ (k : ℕ) * fac.firstTail := hright
-  exact (mul_left_cancel₀ hqk hmain).symm
+  simpa [candidateRankRemovalPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankRemovalPowerSum,
+    rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+    (M.toShared).firstTail_eq_firstSecondTail_mul_removalPowerSum
+      (RankFactorization.toShared (M := M) fac) c
 
 /-- Unnormalised first-choice mass of a center-rank prefix. -/
 noncomputable def firstWeightPrefix (k : Fin (n + 1)) : ℝ :=
@@ -4539,31 +4341,13 @@ noncomputable def firstWeightPrefix (k : Fin (n + 1)) : ℝ :=
 theorem firstWeightPrefix_eq_rankPrefixPowerSum_mul
     (fac : M.RankFactorization) (k : Fin (n + 1)) :
     M.firstWeightPrefix k = candidateRankPrefixPowerSum n M.q k * fac.firstTail := by
-  classical
-  unfold firstWeightPrefix candidateRankPrefixPowerSum
-  calc
-    (∑ c : Candidate n,
-        if (rankOf M.center c : ℕ) ≤ k.val then M.firstWeight c else 0)
-        = ∑ c : Candidate n,
-            if (rankOf M.center c : ℕ) ≤ k.val then
-              M.q ^ (rankOf M.center c : ℕ) * fac.firstTail
-            else
-              0 := by
-          refine Finset.sum_congr rfl ?_
-          intro c _
-          rw [fac.firstWeight_eq c]
-    _ = ∑ r : Candidate n,
-          if (r : ℕ) ≤ k.val then M.q ^ (r : ℕ) * fac.firstTail else 0 := by
-          simpa [rankOf] using
-            (Equiv.sum_comp M.center.symm
-              (fun r : Candidate n =>
-                if (r : ℕ) ≤ k.val then M.q ^ (r : ℕ) * fac.firstTail else 0))
-    _ = (∑ r : Candidate n,
-          if (r : ℕ) ≤ k.val then M.q ^ (r : ℕ) else 0) * fac.firstTail := by
-          rw [Finset.sum_mul]
-          refine Finset.sum_congr rfl ?_
-          intro r _
-          by_cases hr : (r : ℕ) ≤ k.val <;> simp [hr]
+  simpa [firstWeightPrefix,
+    EconCSLib.SocialChoice.Ranking.MallowsSpec.firstWeightPrefix,
+    candidateRankPrefixPowerSum,
+    EconCSLib.SocialChoice.Ranking.candidateRankPrefixPowerSum,
+    rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+    (M.toShared).firstWeightPrefix_eq_rankPrefixPowerSum_mul
+      (RankFactorization.toShared (M := M) fac) k
 
 /-- The ordered-pair summand in the cleared independent-reranking numerator. -/
 noncomputable def independentPairTerm
@@ -4772,7 +4556,10 @@ theorem firstChoiceGapWeight_eq_sum_firstSecondWeight
                   0)
                   = mallowsWeight M.q M.center π *
                       (value c - value (secondChoice π)) := by
-                    simp [hc, valueGap]
+                    simp [hc, valueGap, EconCSLib.SocialChoice.Ranking.valueGap,
+                      firstChoice, secondChoice,
+                      EconCSLib.SocialChoice.Ranking.firstChoice,
+                      EconCSLib.SocialChoice.Ranking.secondChoice]
               _ = ∑ d : Candidate n,
                     (if c = firstChoice π ∧ d = secondChoice π then
                       mallowsWeight M.q M.center π * (value c - value d)
@@ -4927,58 +4714,13 @@ theorem pair_sum_eq_ordered_swap_sum
     (∑ c : Candidate n, ∑ d : Candidate n, t c d) =
       ∑ c : Candidate n, ∑ d : Candidate n,
         if rankOf ρ c < rankOf ρ d then t c d + t d c else 0 := by
-  classical
-  have hsplit : ∀ c d : Candidate n,
-      t c d =
-        (if rankOf ρ c < rankOf ρ d then t c d else 0) +
-          (if rankOf ρ d < rankOf ρ c then t c d else 0) := by
-    intro c d
-    by_cases hlt : rankOf ρ c < rankOf ρ d
-    · have hnot : ¬ rankOf ρ d < rankOf ρ c := not_lt_of_gt hlt
-      simp [hlt, hnot]
-    · by_cases hgt : rankOf ρ d < rankOf ρ c
-      · simp [hlt, hgt]
-      · have heq_rank : rankOf ρ c = rankOf ρ d := le_antisymm
-          (le_of_not_gt hgt) (le_of_not_gt hlt)
-        have hcd : c = d := by
-          exact ρ.symm.injective heq_rank
-        subst d
-        simp [hdiag]
-  calc
-    (∑ c : Candidate n, ∑ d : Candidate n, t c d)
-        = ∑ c : Candidate n, ∑ d : Candidate n,
-            ((if rankOf ρ c < rankOf ρ d then t c d else 0) +
-              (if rankOf ρ d < rankOf ρ c then t c d else 0)) := by
-          refine Finset.sum_congr rfl ?_
-          intro c _
-          refine Finset.sum_congr rfl ?_
-          intro d _
-          exact hsplit c d
-    _ = (∑ c : Candidate n, ∑ d : Candidate n,
-            if rankOf ρ c < rankOf ρ d then t c d else 0) +
-          (∑ c : Candidate n, ∑ d : Candidate n,
-            if rankOf ρ d < rankOf ρ c then t c d else 0) := by
-          simp_rw [Finset.sum_add_distrib]
-    _ = (∑ c : Candidate n, ∑ d : Candidate n,
-            if rankOf ρ c < rankOf ρ d then t c d else 0) +
-          (∑ c : Candidate n, ∑ d : Candidate n,
-            if rankOf ρ c < rankOf ρ d then t d c else 0) := by
-          have hswap :
-              (∑ c : Candidate n, ∑ d : Candidate n,
-                if rankOf ρ d < rankOf ρ c then t c d else 0) =
-                ∑ c : Candidate n, ∑ d : Candidate n,
-                  if rankOf ρ c < rankOf ρ d then t d c else 0 := by
-            rw [Finset.sum_comm]
-          rw [hswap]
-    _ = ∑ c : Candidate n, ∑ d : Candidate n,
-          if rankOf ρ c < rankOf ρ d then t c d + t d c else 0 := by
-          rw [← Finset.sum_add_distrib]
-          refine Finset.sum_congr rfl ?_
-          intro c _
-          rw [← Finset.sum_add_distrib]
-          refine Finset.sum_congr rfl ?_
-          intro d _
-          by_cases hlt : rankOf ρ c < rankOf ρ d <;> simp [hlt]
+  exact
+    EconCSLib.FiniteSum.pair_sum_eq_ordered_swap_sum_of_injective_key
+      (fun c : Candidate n => rankOf ρ c)
+      (by
+        intro c d h
+        exact ρ.symm.injective h)
+      t hdiag
 
 /--
 The ordered top-two pair sum can be regrouped over center-ordered unordered
@@ -5245,67 +4987,9 @@ theorem candidateWeightedAverage_cross_nonneg_of_pairwise
           (∑ i : Candidate n, wA i * B i) -
         (∑ j : Candidate n, wA j) *
           (∑ i : Candidate n, wH i * B i) := by
-  classical
-  let t : Candidate n → Candidate n → ℝ := fun i j =>
-    wA i * B i * wH j - wH i * B i * wA j
-  have hdouble :
-      (∑ j : Candidate n, wH j) *
-          (∑ i : Candidate n, wA i * B i) -
-        (∑ j : Candidate n, wA j) *
-          (∑ i : Candidate n, wH i * B i) =
-        ∑ i : Candidate n, ∑ j : Candidate n, t i j := by
-    calc
-      (∑ j : Candidate n, wH j) *
-            (∑ i : Candidate n, wA i * B i) -
-          (∑ j : Candidate n, wA j) *
-            (∑ i : Candidate n, wH i * B i)
-          =
-          (∑ i : Candidate n, ∑ j : Candidate n,
-              wA i * B i * wH j) -
-            (∑ i : Candidate n, ∑ j : Candidate n,
-              wH i * B i * wA j) := by
-            rw [Finset.sum_mul, Finset.sum_mul]
-            simp_rw [Finset.mul_sum]
-            rw [Finset.sum_comm]
-            congr 1
-            · refine Finset.sum_congr rfl ?_
-              intro i _
-              refine Finset.sum_congr rfl ?_
-              intro j _
-              ring
-            · rw [Finset.sum_comm]
-              refine Finset.sum_congr rfl ?_
-              intro i _
-              refine Finset.sum_congr rfl ?_
-              intro j _
-              ring
-      _ = ∑ i : Candidate n, ∑ j : Candidate n, t i j := by
-            rw [← Finset.sum_sub_distrib]
-            refine Finset.sum_congr rfl ?_
-            intro i _
-            rw [← Finset.sum_sub_distrib]
-  rw [hdouble]
-  rw [MallowsSpec.pair_sum_eq_ordered_swap_sum (Equiv.refl (Candidate n)) t
-    (by
-      intro i
-      simp [t]
-      ring)]
-  apply Finset.sum_nonneg
-  intro i _
-  apply Finset.sum_nonneg
-  intro j _
-  by_cases hij : rankOf (Equiv.refl (Candidate n)) i <
-      rankOf (Equiv.refl (Candidate n)) j
-  · have hij' : i < j := by
-      simpa [rankOf] using hij
-    have heq :
-        t i j + t j i =
-          (wA i * wH j - wA j * wH i) * (B i - B j) := by
-      simp [t]
-      ring
-    rw [if_pos hij, heq]
-    exact mul_nonneg (hpair i j hij') (sub_nonneg.mpr (hB i j hij'))
-  · simp [hij]
+  exact
+    EconCSLib.FiniteSum.weighted_average_cross_nonneg_of_pairwise
+      (α := Candidate n) hpair hB
 
 /--
 Strict finite weighted-average comparison from pairwise cross-ratio dominance.
@@ -5327,111 +5011,9 @@ theorem candidateWeightedAverage_cross_pos_of_pairwise
           (∑ i : Candidate n, wA i * B i) -
         (∑ j : Candidate n, wA j) *
           (∑ i : Candidate n, wH i * B i) := by
-  classical
-  let t : Candidate n → Candidate n → ℝ := fun i j =>
-    wA i * B i * wH j - wH i * B i * wA j
-  have hdouble :
-      (∑ j : Candidate n, wH j) *
-          (∑ i : Candidate n, wA i * B i) -
-        (∑ j : Candidate n, wA j) *
-          (∑ i : Candidate n, wH i * B i) =
-        ∑ i : Candidate n, ∑ j : Candidate n, t i j := by
-    calc
-      (∑ j : Candidate n, wH j) *
-            (∑ i : Candidate n, wA i * B i) -
-          (∑ j : Candidate n, wA j) *
-            (∑ i : Candidate n, wH i * B i)
-          =
-          (∑ i : Candidate n, ∑ j : Candidate n,
-              wA i * B i * wH j) -
-            (∑ i : Candidate n, ∑ j : Candidate n,
-              wH i * B i * wA j) := by
-            rw [Finset.sum_mul, Finset.sum_mul]
-            simp_rw [Finset.mul_sum]
-            rw [Finset.sum_comm]
-            congr 1
-            · refine Finset.sum_congr rfl ?_
-              intro i _
-              refine Finset.sum_congr rfl ?_
-              intro j _
-              ring
-            · rw [Finset.sum_comm]
-              refine Finset.sum_congr rfl ?_
-              intro i _
-              refine Finset.sum_congr rfl ?_
-              intro j _
-              ring
-      _ = ∑ i : Candidate n, ∑ j : Candidate n, t i j := by
-            rw [← Finset.sum_sub_distrib]
-            refine Finset.sum_congr rfl ?_
-            intro i _
-            rw [← Finset.sum_sub_distrib]
-  rw [hdouble]
-  rw [MallowsSpec.pair_sum_eq_ordered_swap_sum (Equiv.refl (Candidate n)) t
-    (by
-      intro i
-      simp [t]
-      ring)]
-  rcases hpair_pos with ⟨i₀, j₀, hij₀, hcross₀⟩
-  apply EconCSLib.sum_univ_pos_of_pos_of_nonneg
-    (f := fun i : Candidate n =>
-      ∑ j : Candidate n,
-        if rankOf (Equiv.refl (Candidate n)) i <
-            rankOf (Equiv.refl (Candidate n)) j then
-          t i j + t j i
-        else 0)
-    (a₀ := i₀)
-  · apply EconCSLib.sum_univ_pos_of_pos_of_nonneg
-      (f := fun j : Candidate n =>
-        if rankOf (Equiv.refl (Candidate n)) i₀ <
-            rankOf (Equiv.refl (Candidate n)) j then
-          t i₀ j + t j i₀
-        else 0)
-      (a₀ := j₀)
-    · have hlt₀ : rankOf (Equiv.refl (Candidate n)) i₀ <
-          rankOf (Equiv.refl (Candidate n)) j₀ := by
-        simpa [rankOf] using hij₀
-      have heq :
-          t i₀ j₀ + t j₀ i₀ =
-            (wA i₀ * wH j₀ - wA j₀ * wH i₀) * (B i₀ - B j₀) := by
-        simp [t]
-        ring
-      have hgap : 0 < B i₀ - B j₀ := sub_pos.mpr (hB hij₀)
-      exact if_pos hlt₀ ▸ by
-        rw [heq]
-        exact mul_pos hcross₀ hgap
-    · intro j
-      by_cases hlt : rankOf (Equiv.refl (Candidate n)) i₀ <
-          rankOf (Equiv.refl (Candidate n)) j
-      · have hij : i₀ < j := by
-          simpa [rankOf] using hlt
-        have heq :
-            t i₀ j + t j i₀ =
-              (wA i₀ * wH j - wA j * wH i₀) * (B i₀ - B j) := by
-          simp [t]
-          ring
-        exact if_pos hlt ▸ by
-          rw [heq]
-          exact mul_nonneg (hpair_nonneg i₀ j hij)
-            (le_of_lt (sub_pos.mpr (hB hij)))
-      · simp [hlt]
-  · intro i
-    apply Finset.sum_nonneg
-    intro j _
-    by_cases hlt : rankOf (Equiv.refl (Candidate n)) i <
-        rankOf (Equiv.refl (Candidate n)) j
-    · have hij : i < j := by
-        simpa [rankOf] using hlt
-      have heq :
-          t i j + t j i =
-            (wA i * wH j - wA j * wH i) * (B i - B j) := by
-        simp [t]
-        ring
-      exact if_pos hlt ▸ by
-        rw [heq]
-        exact mul_nonneg (hpair_nonneg i j hij)
-          (le_of_lt (sub_pos.mpr (hB hij)))
-    · simp [hlt]
+  exact
+    EconCSLib.FiniteSum.weighted_average_cross_pos_of_pairwise
+      (α := Candidate n) hpair_nonneg hpair_pos hB
 
 theorem candidateRankCollisionWeight_cross_pos
     (n : ℕ) {q₁ q₂ : ℝ} (hq₁_pos : 0 < q₁) (hq_lt : q₁ < q₂)

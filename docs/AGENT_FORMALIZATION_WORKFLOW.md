@@ -82,6 +82,17 @@ report. It is better to prove a source-faithful theorem by a cleaner route than
 to spend large amounts of time following an informal proof line-by-line, as long
 as the theorem statement and assumptions are explicit.
 
+## Post-Formalization Closeout
+
+Before declaring a paper complete, run a library elevation pass over the
+paper-local proof modules. Check whether any proof results, proof techniques,
+certificate constructors, model-neutral definitions, or reusable primitives
+should move into `EconCSLib` for other papers to reuse. Elevate local/low-risk
+items when the destination module is clear and the build can be checked. If the
+move needs broader API design, keep the paper-facing wrapper in place and record
+the candidate, destination module, and reusable proof idea in
+`FINAL_VALIDATION_REPORT.md`.
+
 ## Human Review Order
 
 When the agent says a paper is done, inspect:

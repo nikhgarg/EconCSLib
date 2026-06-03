@@ -190,17 +190,10 @@ theorem lg21_actorMean_le_reported_score_ae_contradicts_positive_below_mean_repo
       0 < μ {info |
         reportDecision info.base info.test = true ∧
           info.test < actorMean info.base}) : False :=
-  lg21_ae_property_contradicts_positive_failure_mass μ
-    (fun info =>
-      reportDecision info.base info.test = true →
-        actorMean info.base ≤ info.test)
-    (fun info =>
-      reportDecision info.base info.test = true ∧
-        info.test < actorMean info.base)
-    hAE
-    (fun info hbelow hAE_info =>
-      not_le_of_gt hbelow.2 (hAE_info hbelow.1))
-    hpos
+  EconCSLib.ae_imp_le_contradicts_positive_selected_lt_mass μ
+    (fun info => reportDecision info.base info.test = true)
+    (fun info => actorMean info.base) (fun info => info.test)
+    hAE hpos
 
 /--
 Optional-reporting affine a.e. source equilibrium is impossible if the realized
@@ -269,14 +262,14 @@ theorem lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibriumAE_o
       0 < μ {info |
         reportDecision info.base info.test = true ∧
           info.test < actorMean info.base} :=
-    lg21_measure_pos_of_subset
-      (A := {info : LG21AccessStudentInfo Skill Base ℝ |
-        cutoff info.base ≤ info.test ∧ info.test < actorMean info.base})
-      (B := {info : LG21AccessStudentInfo Skill Base ℝ |
-        reportDecision info.base info.test = true ∧
-          info.test < actorMean info.base})
-      (fun (info : LG21AccessStudentInfo Skill Base ℝ) hinfo =>
-        ⟨hreports_above_cutoff info.base info.test hinfo.1, hinfo.2⟩)
+    EconCSLib.positive_selected_lt_mass_of_positive_lower_lt_mass
+      (selected := fun info : LG21AccessStudentInfo Skill Base ℝ =>
+        reportDecision info.base info.test = true)
+      (lower := fun info => cutoff info.base)
+      (reference := fun info => actorMean info.base)
+      (value := fun info => info.test)
+      (fun info hcutoff =>
+        hreports_above_cutoff info.base info.test hcutoff)
       hpos
   exact
     lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_below_mean_reporter_mass
@@ -434,13 +427,6 @@ theorem lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibriumAE_o
           (fun base => (baseTerm base + signalWeight base * actorMean base) /
             denom base)
           estimationConsistent)) : False := by
-  have hupper :
-      decisionThreshold base0 <
-        GaussianHazardCertificate.normalUpperTailMean
-          standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
-          (actorLaw base0) (decisionThreshold base0) :=
-    paper_theorem3_2_standardGaussian_upper_tail_mean_gt_threshold
-      (actorLaw base0) (decisionThreshold base0)
   have hpos :
       0 < μ {info |
         info.base = base0 ∧ decisionThreshold base0 ≤ info.test ∧
@@ -449,7 +435,9 @@ theorem lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibriumAE_o
               standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
               (actorLaw base0) (decisionThreshold base0)} := by
     rw [hmarginal]
-    exact (actorLaw base0).toMeasure_Ico_pos hupper
+    exact
+      standardGaussian_toMeasure_Ico_threshold_normalUpperTailMean_pos
+        (actorLaw base0) (decisionThreshold base0)
   exact
     lg21OptionalReportingBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_gaussian_upper_tail_interval_mass
       μ takeDecision reportDecision estimationConsistent baseTerm signalWeight
@@ -835,17 +823,10 @@ theorem lg21_actorMean_le_taker_skill_ae_contradicts_positive_below_mean_taker_m
       0 < μ {info |
         takeDecision info.skill info.base = true ∧
           info.skill < actorMean info.base}) : False :=
-  lg21_ae_property_contradicts_positive_failure_mass μ
-    (fun info =>
-      takeDecision info.skill info.base = true →
-        actorMean info.base ≤ info.skill)
-    (fun info =>
-      takeDecision info.skill info.base = true ∧
-        info.skill < actorMean info.base)
-    hAE
-    (fun info hbelow hAE_info =>
-      not_le_of_gt hbelow.2 (hAE_info hbelow.1))
-    hpos
+  EconCSLib.ae_imp_le_contradicts_positive_selected_lt_mass μ
+    (fun info => takeDecision info.skill info.base = true)
+    (fun info => actorMean info.base) (fun info => info.skill)
+    hAE hpos
 
 /--
 Report-required affine a.e. source equilibrium is impossible if the realized
@@ -916,14 +897,14 @@ theorem lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_p
       0 < μ {info |
         takeDecision info.skill info.base = true ∧
           info.skill < actorMean info.base} :=
-    lg21_measure_pos_of_subset
-      (A := {info : LG21AccessStudentInfo ℝ Base Test |
-        cutoff info.base ≤ info.skill ∧ info.skill < actorMean info.base})
-      (B := {info : LG21AccessStudentInfo ℝ Base Test |
-        takeDecision info.skill info.base = true ∧
-          info.skill < actorMean info.base})
-      (fun (info : LG21AccessStudentInfo ℝ Base Test) hinfo =>
-        ⟨htakes_above_cutoff info.base info.skill hinfo.1, hinfo.2⟩)
+    EconCSLib.positive_selected_lt_mass_of_positive_lower_lt_mass
+      (selected := fun info : LG21AccessStudentInfo ℝ Base Test =>
+        takeDecision info.skill info.base = true)
+      (lower := fun info => cutoff info.base)
+      (reference := fun info => actorMean info.base)
+      (value := fun info => info.skill)
+      (fun info hcutoff =>
+        htakes_above_cutoff info.base info.skill hcutoff)
       hpos
   exact
     lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_below_mean_taker_mass
@@ -1084,13 +1065,6 @@ theorem lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_g
           (fun base actor => (baseTerm base + signalWeight base * actor) /
             denom base)
           estimationConsistent)) : False := by
-  have hupper :
-      decisionThreshold base0 <
-        GaussianHazardCertificate.normalUpperTailMean
-          standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
-          (actorLaw base0) (decisionThreshold base0) :=
-    paper_theorem3_2_standardGaussian_upper_tail_mean_gt_threshold
-      (actorLaw base0) (decisionThreshold base0)
   have hpos :
       0 < μ {info |
         info.base = base0 ∧ decisionThreshold base0 ≤ info.skill ∧
@@ -1099,7 +1073,9 @@ theorem lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_g
               standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
               (actorLaw base0) (decisionThreshold base0)} := by
     rw [hmarginal]
-    exact (actorLaw base0).toMeasure_Ico_pos hupper
+    exact
+      standardGaussian_toMeasure_Ico_threshold_normalUpperTailMean_pos
+        (actorLaw base0) (decisionThreshold base0)
   exact
     lg21ReportRequiredBaseSourceEquilibriumData_not_sourceEquilibriumAE_of_positive_gaussian_upper_tail_interval_mass
       μ takeDecision reportDecision estimationConsistent baseTerm signalWeight
@@ -2869,13 +2845,6 @@ theorem paper_theorem3_2_section3_law_optional_reporting_fairness_impossibility_
       μ takeDecision reportDecision estimationConsistent baseTerm signalWeight
       denom actorMean hweight hdenom hEq ?_
   intro e base test hne
-  have hupper :
-      cutoff e base <
-        GaussianHazardCertificate.normalUpperTailMean
-          standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
-          (actorLaw e base) (cutoff e base) :=
-    paper_theorem3_2_standardGaussian_upper_tail_mean_gt_threshold
-      (actorLaw e base) (cutoff e base)
   have hposLocal :
       0 < μ e {info |
         info.base = base ∧ cutoff e base ≤ info.test ∧
@@ -2884,7 +2853,9 @@ theorem paper_theorem3_2_section3_law_optional_reporting_fairness_impossibility_
               standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
               (actorLaw e base) (cutoff e base)} := by
     rw [hmarginal_of_nonblank e base test hne]
-    exact (actorLaw e base).toMeasure_Ico_pos hupper
+    exact
+      standardGaussian_toMeasure_Ico_threshold_normalUpperTailMean_pos
+        (actorLaw e base) (cutoff e base)
   exact
     lg21_measure_pos_of_subset
       (A := {info : LG21AccessStudentInfo Skill Base ℝ |
@@ -3040,13 +3011,6 @@ theorem paper_theorem3_2_section3_law_report_required_fairness_impossibility_of_
       μ takeDecision reportDecision estimationConsistent baseTerm signalWeight
       denom actorMean hweight hdenom houtside hEq ?_
   intro e base test hne
-  have hupper :
-      cutoff e base <
-        GaussianHazardCertificate.normalUpperTailMean
-          standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
-          (actorLaw e base) (cutoff e base) :=
-    paper_theorem3_2_standardGaussian_upper_tail_mean_gt_threshold
-      (actorLaw e base) (cutoff e base)
   have hposLocal :
       0 < μ e {info |
         info.base = base ∧ cutoff e base ≤ info.skill ∧
@@ -3055,7 +3019,9 @@ theorem paper_theorem3_2_section3_law_report_required_fairness_impossibility_of_
               standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
               (actorLaw e base) (cutoff e base)} := by
     rw [hmarginal_of_nonblank e base test hne]
-    exact (actorLaw e base).toMeasure_Ico_pos hupper
+    exact
+      standardGaussian_toMeasure_Ico_threshold_normalUpperTailMean_pos
+        (actorLaw e base) (cutoff e base)
   exact
     lg21_measure_pos_of_subset
       (A := {info : LG21AccessStudentInfo ℝ Base Test |

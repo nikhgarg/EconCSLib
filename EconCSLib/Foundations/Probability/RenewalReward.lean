@@ -105,6 +105,62 @@ theorem renewalRewardRate_remove_component_ge_of_average_le
   nlinarith
 
 /--
+Adding a positive-time component whose average reward rate is strictly above
+the current renewal-reward rate strictly increases the renewal-reward rate.
+-/
+theorem renewalRewardRate_lt_add_component_of_lt_average
+    (lambda reward time addedReward addedTime : ℝ)
+    (hlambda : 0 < lambda)
+    (htime_nonneg : 0 ≤ time)
+    (hadded_time_pos : 0 < addedTime)
+    (hcurrent_lt_added_average :
+      renewalRewardRate lambda reward time <
+        averageRewardRate addedReward addedTime) :
+    renewalRewardRate lambda reward time <
+      renewalRewardRate lambda (reward + addedReward) (time + addedTime) := by
+  unfold renewalRewardRate averageRewardRate at *
+  have hden_current : 0 < 1 + lambda * time := by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg]
+  have hden_added : 0 < 1 + lambda * (time + addedTime) := by
+    nlinarith [mul_pos hlambda hadded_time_pos]
+  have hcross :
+      lambda * reward * addedTime <
+        addedReward * (1 + lambda * time) := by
+    rw [div_lt_div_iff₀ hden_current hadded_time_pos] at hcurrent_lt_added_average
+    nlinarith
+  rw [div_lt_div_iff₀ hden_current hden_added]
+  nlinarith
+
+/--
+Removing a positive-time component whose average reward rate is strictly below
+the current renewal-reward rate strictly increases the renewal-reward rate.
+-/
+theorem renewalRewardRate_remove_component_gt_of_average_lt
+    (lambda reward time removedReward removedTime : ℝ)
+    (hlambda : 0 < lambda)
+    (htime_remaining_nonneg : 0 ≤ time - removedTime)
+    (hremoved_time_pos : 0 < removedTime)
+    (hremoved_average_lt_current :
+      averageRewardRate removedReward removedTime <
+        renewalRewardRate lambda reward time) :
+    renewalRewardRate lambda reward time <
+      renewalRewardRate lambda (reward - removedReward) (time - removedTime) := by
+  unfold renewalRewardRate averageRewardRate at *
+  have htime_nonneg : 0 ≤ time := by
+    linarith [le_of_lt hremoved_time_pos]
+  have hden_current : 0 < 1 + lambda * time := by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg]
+  have hden_remaining : 0 < 1 + lambda * (time - removedTime) := by
+    nlinarith [mul_nonneg (le_of_lt hlambda) htime_remaining_nonneg]
+  have hcross :
+      removedReward * (1 + lambda * time) <
+        lambda * reward * removedTime := by
+    rw [div_lt_div_iff₀ hremoved_time_pos hden_current] at hremoved_average_lt_current
+    nlinarith
+  rw [div_lt_div_iff₀ hden_current hden_remaining]
+  nlinarith
+
+/--
 If a policy replacement keeps total busy time fixed but strictly increases the
 per-cycle reward, then the renewal-reward earnings rate strictly increases.
 -/

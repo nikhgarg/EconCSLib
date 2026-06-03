@@ -25,6 +25,7 @@ import EconCSLib.Foundations.Probability.MeasureInequalities
 import EconCSLib.Foundations.Probability.Occupancy
 import EconCSLib.Foundations.Probability.OrderStatistics
 import EconCSLib.Foundations.Probability.RandomUtility
+import EconCSLib.Foundations.Probability.RandomUtilityDensity
 import EconCSLib.Foundations.Probability.RealDistribution
 import EconCSLib.Foundations.Probability.RealIntervalPartition
 import EconCSLib.Foundations.Probability.RenewalReward
@@ -76,6 +77,10 @@ Aggregate import for reusable probability infrastructure.
   `EconCSLib.Foundations.Probability.GaussianQuantile`,
   `EconCSLib.Foundations.Probability.GaussianHazardInverse`, and
   `EconCSLib.Foundations.Probability.StochasticDominance`.
+  `BivariateGaussian` includes correlated standard-Gaussian laws and
+  independent two-coordinate Gaussian product/variance-scaling bridges for
+  RUM-style conditional winner-ratio proofs.
 - Random-utility noise, contraction, and density-product inequalities:
-  `EconCSLib.Foundations.Probability.RandomUtility`.
+  `EconCSLib.Foundations.Probability.RandomUtility` and
+  `EconCSLib.Foundations.Probability.RandomUtilityDensity`.
 -/

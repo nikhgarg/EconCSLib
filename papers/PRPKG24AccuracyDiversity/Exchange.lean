@@ -1,5 +1,4 @@
 import PRPKG24AccuracyDiversity.Optimization
-import EconCSLib.Foundations.Math.FiniteSum
 import EconCSLib.Foundations.Math.FiniteRounding
 
 namespace PRPKG24AccuracyDiversity
@@ -65,36 +64,9 @@ theorem total_moveOne_eq {T : ℕ} (a : CountAllocation T)
     (hcan : EconCSLib.Allocation.CanMoveOne a src) :
     EconCSLib.Allocation.total (moveOne a src dst) =
       EconCSLib.Allocation.total a := by
-  classical
-  unfold EconCSLib.Allocation.total
-  have hsum :
-      (∑ t : ItemType T, ((moveOne a src dst).count t : ℝ)) =
-        (∑ t : ItemType T, (a.count t : ℝ)) +
-          (((moveOne a src dst).count src : ℝ) - (a.count src : ℝ)) +
-          (((moveOne a src dst).count dst : ℝ) - (a.count dst : ℝ)) := by
-    exact EconCSLib.FiniteSum.sum_eq_sum_add_sub_add_sub_of_eq_off
-      (f := fun t : ItemType T => ((moveOne a src dst).count t : ℝ))
-      (g := fun t : ItemType T => (a.count t : ℝ))
-      (a := src) (b := dst) hne
-      (by
-        intro x hxsrc hxdst
-        unfold moveOne EconCSLib.Allocation.moveOne
-        simp [hne, hxsrc, hxdst])
-  have hreal : ((∑ t : ItemType T, (moveOne a src dst).count t : ℕ) : ℝ) =
-      ((∑ t : ItemType T, a.count t : ℕ) : ℝ) := by
-    norm_num only [Nat.cast_sum]
-    rw [hsum]
-    unfold moveOne EconCSLib.Allocation.moveOne
-    have hle : 1 ≤ a.count src := Nat.succ_le_of_lt hcan
-    have hsrc_sub : ((a.count src - 1 : ℕ) : ℝ) = (a.count src : ℝ) - 1 := by
-      have hnat : a.count src - 1 + 1 = a.count src := Nat.sub_add_cancel hle
-      have hcast := congrArg (fun q : ℕ => (q : ℝ)) hnat
-      norm_num at hcast
-      linarith
-    simp [hne, hne.symm]
-    rw [hsrc_sub]
-    ring
-  exact_mod_cast hreal
+  simpa [moveOne] using
+    EconCSLib.Allocation.total_moveOne_eq
+      (a := a) (src := src) (dst := dst) hne hcan
 
 /--
 Exact objective accounting for one valid exchange: the destination gains its
@@ -106,39 +78,29 @@ theorem objective_moveOne_eq {T : ℕ} (M : ConsumptionModel T) (a : CountAlloca
     M.objective (moveOne a src dst) =
       M.objective a - M.weightedBackwardMarginal src (a.count src) +
         M.weightedForwardMarginal dst (a.count dst) := by
-  classical
-  unfold objective EconCSLib.Allocation.objective
-  have hsum :
-      (∑ t : ItemType T,
-          M.likelihood t * M.valueOfCount t ((moveOne a src dst).count t)) =
-        (∑ t : ItemType T, M.likelihood t * M.valueOfCount t (a.count t)) +
-          (M.likelihood src * M.valueOfCount src ((moveOne a src dst).count src) -
-            M.likelihood src * M.valueOfCount src (a.count src)) +
-          (M.likelihood dst * M.valueOfCount dst ((moveOne a src dst).count dst) -
-            M.likelihood dst * M.valueOfCount dst (a.count dst)) := by
-    exact EconCSLib.FiniteSum.sum_eq_sum_add_sub_add_sub_of_eq_off
-      (f := fun t : ItemType T =>
-        M.likelihood t * M.valueOfCount t ((moveOne a src dst).count t))
-      (g := fun t : ItemType T => M.likelihood t * M.valueOfCount t (a.count t))
-      (a := src) (b := dst) hne
-      (by
-        intro x hxsrc hxdst
-        unfold moveOne EconCSLib.Allocation.moveOne
-        simp [hne, hxsrc, hxdst])
-  rw [hsum]
-  unfold moveOne EconCSLib.Allocation.moveOne weightedBackwardMarginal
-    weightedForwardMarginal marginalValue EconCSLib.Allocation.marginal
-  have hsrc_ne_zero : ¬ a.count src = 0 := ne_of_gt hcan
-  simp [hne, hne.symm, hsrc_ne_zero]
-  ring
+  simpa [objective, moveOne, weightedBackwardMarginal, weightedForwardMarginal,
+    marginalValue, EconCSLib.Allocation.weightedBackwardMarginal,
+    EconCSLib.Allocation.weightedForwardMarginal, EconCSLib.Allocation.marginal] using
+      EconCSLib.Allocation.objective_moveOne_eq
+        (a := a) (weight := M.likelihood) (valueOfCount := M.valueOfCount)
+        (src := src) (dst := dst) hne hcan
 
 /-- The finite exchange-improvement target is closed by exact marginal accounting. -/
 theorem exchangeImprovementTarget {T : ℕ} (M : ConsumptionModel T) :
     ExchangeImprovementTarget M := by
   intro a src dst hne hcan hcond
-  rw [objective_moveOne_eq (M := M) (a := a) hne hcan]
-  unfold ExchangeCondition at hcond
-  linarith
+  have hcond' :
+      EconCSLib.Allocation.ExchangeCondition
+        M.likelihood M.valueOfCount a src dst := by
+    simpa [ExchangeCondition, weightedBackwardMarginal, weightedForwardMarginal,
+      marginalValue, EconCSLib.Allocation.ExchangeCondition,
+      EconCSLib.Allocation.weightedBackwardMarginal,
+      EconCSLib.Allocation.weightedForwardMarginal,
+      EconCSLib.Allocation.marginal] using hcond
+  simpa [objective, moveOne] using
+    EconCSLib.Allocation.objective_le_objective_moveOne_of_exchangeCondition
+      (a := a) (weight := M.likelihood) (valueOfCount := M.valueOfCount)
+      (src := src) (dst := dst) hne hcan hcond'
 
 /--
 At any finite optimum, moving one item from a positive source to a distinct
@@ -147,10 +109,15 @@ destination cannot strictly improve the objective.
 theorem noProfitableExchangeAtOptimumTarget {T : ℕ} (M : ConsumptionModel T) (N : ℕ) :
     NoProfitableExchangeAtOptimumTarget M N := by
   intro a src dst hopt hne hcan
-  exact hopt.2 (moveOne a src dst) (by
-    change EconCSLib.Allocation.total (moveOne a src dst) = N
-    rw [total_moveOne_eq (a := a) hne hcan]
-    exact hopt.1)
+  have hopt' :
+      EconCSLib.Allocation.IsOptimalAtTotal
+        M.likelihood M.valueOfCount N a := by
+    simpa [EconCSLib.Allocation.IsOptimalAtTotal, IsOptimalAtTotal,
+      FeasibleAtTotal, objective] using hopt
+  simpa [objective, moveOne] using
+    EconCSLib.Allocation.objective_moveOne_le_of_isOptimalAtTotal
+      (a := a) (weight := M.likelihood) (valueOfCount := M.valueOfCount)
+      (N := N) hopt' hne hcan
 
 /--
 First-order finite optimality condition: at an optimum, the weighted marginal
@@ -163,46 +130,61 @@ theorem weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum {T : ℕ}
     (hcan : EconCSLib.Allocation.CanMoveOne a src) :
     weightedForwardMarginal M dst (a.count dst) ≤
       weightedBackwardMarginal M src (a.count src) := by
-  have hno :=
-    noProfitableExchangeAtOptimumTarget
-      (M := M) N a src dst hopt hne hcan
-  rw [objective_moveOne_eq (M := M) (a := a) hne hcan] at hno
-  linarith
+  have hopt' :
+      EconCSLib.Allocation.IsOptimalAtTotal
+        M.likelihood M.valueOfCount N a := by
+    simpa [EconCSLib.Allocation.IsOptimalAtTotal, IsOptimalAtTotal,
+      FeasibleAtTotal, objective] using hopt
+  simpa [weightedBackwardMarginal, weightedForwardMarginal, marginalValue,
+    EconCSLib.Allocation.weightedBackwardMarginal,
+    EconCSLib.Allocation.weightedForwardMarginal,
+    EconCSLib.Allocation.marginal] using
+      EconCSLib.Allocation.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
+        (a := a) (weight := M.likelihood) (valueOfCount := M.valueOfCount)
+        (N := N) (src := src) (dst := dst) hopt' hne hcan
 
 theorem marginalValue_antitone_of_diminishing {T : ℕ}
     (M : ConsumptionModel T) (hDR : M.HasDiminishingReturns)
     (t : ItemType T) {q r : ℕ} (hqr : q ≤ r) :
     M.marginalValue t r ≤ M.marginalValue t q := by
-  exact Nat.le_induction (by rfl)
-    (fun n _ ih => le_trans (hDR t n) ih) r hqr
+  simpa [marginalValue, HasDiminishingReturns] using
+    EconCSLib.Allocation.marginal_antitone_of_diminishing
+      (valueOfCount := M.valueOfCount) hDR t hqr
 
 theorem weightedForwardMarginal_antitone_of_diminishing {T : ℕ}
     (M : ConsumptionModel T) (hDR : M.HasDiminishingReturns)
     (hlike_nonneg : ∀ t, 0 ≤ M.likelihood t)
     (t : ItemType T) {q r : ℕ} (hqr : q ≤ r) :
     M.weightedForwardMarginal t r ≤ M.weightedForwardMarginal t q := by
-  unfold weightedForwardMarginal
-  exact mul_le_mul_of_nonneg_left
-    (marginalValue_antitone_of_diminishing M hDR t hqr) (hlike_nonneg t)
+  simpa [weightedForwardMarginal, marginalValue, HasDiminishingReturns,
+    EconCSLib.Allocation.weightedForwardMarginal,
+    EconCSLib.Allocation.marginal] using
+      EconCSLib.Allocation.weightedForwardMarginal_antitone_of_diminishing
+        (weight := M.likelihood) (valueOfCount := M.valueOfCount)
+        hDR hlike_nonneg t hqr
 
 theorem weightedBackwardMarginal_eq_weightedForwardMarginal_pred {T : ℕ}
     (M : ConsumptionModel T) (t : ItemType T) {q : ℕ} (hq : 0 < q) :
     M.weightedBackwardMarginal t q = M.weightedForwardMarginal t (q - 1) := by
-  unfold weightedBackwardMarginal weightedForwardMarginal marginalValue
-    EconCSLib.Allocation.marginal
-  have hq_ne : ¬ q = 0 := ne_of_gt hq
-  have hq_cancel : q - 1 + 1 = q := Nat.sub_add_cancel (Nat.succ_le_of_lt hq)
-  simp [hq_ne, hq_cancel]
+  simpa [weightedBackwardMarginal, weightedForwardMarginal, marginalValue,
+    EconCSLib.Allocation.weightedBackwardMarginal,
+    EconCSLib.Allocation.weightedForwardMarginal,
+    EconCSLib.Allocation.marginal] using
+      EconCSLib.Allocation.weightedBackwardMarginal_eq_weightedForwardMarginal_pred
+        (weight := M.likelihood) (valueOfCount := M.valueOfCount) t hq
 
 theorem weightedBackwardMarginal_le_weightedForwardMarginal_of_diminishing
     {T : ℕ} (M : ConsumptionModel T) (hDR : M.HasDiminishingReturns)
     (hlike_nonneg : ∀ t, 0 ≤ M.likelihood t)
     (t : ItemType T) {q r : ℕ} (hrq : r + 1 ≤ q) :
     M.weightedBackwardMarginal t q ≤ M.weightedForwardMarginal t r := by
-  have hq_pos : 0 < q := lt_of_lt_of_le (Nat.succ_pos r) hrq
-  rw [weightedBackwardMarginal_eq_weightedForwardMarginal_pred M t hq_pos]
-  have hr_pred : r ≤ q - 1 := by omega
-  exact weightedForwardMarginal_antitone_of_diminishing M hDR hlike_nonneg t hr_pred
+  simpa [weightedBackwardMarginal, weightedForwardMarginal, marginalValue,
+    HasDiminishingReturns, EconCSLib.Allocation.weightedBackwardMarginal,
+    EconCSLib.Allocation.weightedForwardMarginal,
+    EconCSLib.Allocation.marginal] using
+      EconCSLib.Allocation.weightedBackwardMarginal_le_weightedForwardMarginal_of_diminishing
+        (weight := M.likelihood) (valueOfCount := M.valueOfCount)
+        hDR hlike_nonneg t hrq
 
 def StrictRoundingExchangeCertificateBetween {T : ℕ}
     (M : ConsumptionModel T)

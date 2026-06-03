@@ -185,47 +185,13 @@ theorem theorem3_scaled_count_pairwise_abs_le_of_total_lt
         (a.count j : ℝ) / theorem3LogShareWeight B j| ≤
         theorem3SmallNScaledBound B threshold := by
   intro i j
-  let U : ℝ := (threshold : ℝ) / theorem3LogShareWeightMin B
   have hmin_pos := theorem3LogShareWeightMin_pos B hprob_pos hprob_lt_one
-  have hU_nonneg : 0 ≤ U := by
-    dsimp [U]
-    exact div_nonneg (Nat.cast_nonneg threshold) (le_of_lt hmin_pos)
-  have hupper : ∀ t,
-      (a.count t : ℝ) / theorem3LogShareWeight B t ≤ U := by
-    intro t
-    have hweight_pos := theorem3LogShareWeight_pos B hprob_pos hprob_lt_one t
-    have hmin_le := theorem3LogShareWeightMin_le B t
-    have hcount_le_total := EconCSLib.Allocation.count_le_total a t
-    have hcount_le_N : a.count t ≤ N := by
-      simpa [htotal] using hcount_le_total
-    have hcount_le_threshold : (a.count t : ℝ) ≤ (threshold : ℝ) := by
-      exact_mod_cast (le_trans hcount_le_N (le_of_lt hNlt))
-    dsimp [U]
-    exact div_le_div₀ (Nat.cast_nonneg threshold) hcount_le_threshold
-      hmin_pos hmin_le
-  have hnonneg : ∀ t,
-      0 ≤ (a.count t : ℝ) / theorem3LogShareWeight B t := by
-    intro t
-    exact div_nonneg (Nat.cast_nonneg (a.count t))
-      (le_of_lt (theorem3LogShareWeight_pos B hprob_pos hprob_lt_one t))
-  rw [abs_le]
-  constructor
-  · have hlow : -U ≤
-        (a.count i : ℝ) / theorem3LogShareWeight B i -
-          (a.count j : ℝ) / theorem3LogShareWeight B j := by
-      linarith [hnonneg i, hupper j]
-    have hU_le : U ≤ 2 * U := by linarith
-    unfold theorem3SmallNScaledBound
-    dsimp [U] at hlow hU_le
-    linarith
-  · have hupp :
-        (a.count i : ℝ) / theorem3LogShareWeight B i -
-          (a.count j : ℝ) / theorem3LogShareWeight B j ≤ U := by
-      linarith [hupper i, hnonneg j]
-    have hU_le : U ≤ 2 * U := by linarith
-    unfold theorem3SmallNScaledBound
-    dsimp [U] at hupp hU_le
-    linarith
+  simpa [theorem3SmallNScaledBound] using
+    EconCSLib.Allocation.pairwise_scaled_abs_le_of_total_lt
+      (a := a) (weight := theorem3LogShareWeight B)
+      (N := N) (threshold := threshold)
+      (weightFloor := theorem3LogShareWeightMin B)
+      htotal hNlt hmin_pos (fun t => theorem3LogShareWeightMin_le B t) i j
 
 /--
 If the total count is larger than `T * K`, at least one type has count larger
@@ -235,17 +201,10 @@ theorem exists_count_gt_of_card_mul_lt_total
     {T : ℕ} [NeZero T] (a : CountAllocation T) {K : ℕ}
     (hgt : T * K < EconCSLib.Allocation.total a) :
     ∃ t : ItemType T, K < a.count t := by
-  by_contra hnone
-  push Not at hnone
-  have hsum_le : EconCSLib.Allocation.total a ≤ T * K := by
-    unfold EconCSLib.Allocation.total
-    calc
-      (∑ t : ItemType T, a.count t)
-          ≤ ∑ _t : ItemType T, K := by
-            exact Finset.sum_le_sum (fun t _ => hnone t)
-      _ = T * K := by
-            simp [Finset.sum_const, Fintype.card_fin]
-  exact (not_lt_of_ge hsum_le) hgt
+  have hgt' :
+      Fintype.card (ItemType T) * K < EconCSLib.Allocation.total a := by
+    simpa [Fintype.card_fin] using hgt
+  exact EconCSLib.Allocation.exists_count_gt_of_card_mul_lt_total a hgt'
 
 theorem theorem3LogShareProfile_normalizer_pos {T : ℕ} [NeZero T]
     (B : BernoulliSatisfactionModel T)

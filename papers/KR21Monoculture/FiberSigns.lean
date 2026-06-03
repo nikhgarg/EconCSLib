@@ -54,7 +54,9 @@ theorem valueGap_nonneg_on_firstFiber_of_weaklyOrderedBy {n : ℕ}
     exact sub_nonneg.mpr hle
   have hfirst_raw : π 0 = ρ 0 := by
     simpa [firstChoice] using hfirst.symm
-  simpa [valueGap, firstChoice, secondChoice, hfirst_raw] using hsub
+  simpa [valueGap, EconCSLib.SocialChoice.Ranking.valueGap,
+    firstChoice, secondChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    EconCSLib.SocialChoice.Ranking.secondChoice, hfirst_raw] using hsub
 
 /--
 If a ranking shares the reference top candidate, then strict monotonicity along the
@@ -79,7 +81,9 @@ theorem valueGap_pos_on_firstFiber_of_strictlyOrderedBy {n : ℕ}
     exact sub_pos.mpr hltv
   have hfirst_raw : π 0 = ρ 0 := by
     simpa [firstChoice] using hfirst.symm
-  simpa [valueGap, firstChoice, secondChoice, hfirst_raw] using hsub
+  simpa [valueGap, EconCSLib.SocialChoice.Ranking.valueGap,
+    firstChoice, secondChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    EconCSLib.SocialChoice.Ranking.secondChoice, hfirst_raw] using hsub
 
 /--
 Under a weak reference ordering, the gap mass of the reference top candidate is
@@ -127,13 +131,16 @@ theorem firstChoiceGapMass_pos_of_reference_mass_pos_and_strictlyOrderedBy {n : 
         simp [hraw, hgap]
       · have hraw : ρ 0 ≠ π 0 := by simpa [firstChoice] using hπ
         simp [hraw]
-  simpa [firstChoiceGapMass, pmfExp] using hsum
+  simpa [firstChoiceGapMass, EconCSLib.SocialChoice.Ranking.firstChoiceGapMass,
+    pmfExp, valueGap, EconCSLib.SocialChoice.Ranking.valueGap,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice] using hsum
 
 /-- Miss probability is positive exactly when first-choice probability is below one. -/
 theorem firstChoiceMissProb_pos_iff_firstChoiceProb_lt_one {n : ℕ}
     (μ : PMF (Ranking n)) (c : Candidate n) :
     0 < firstChoiceMissProb μ c ↔ firstChoiceProb μ c < 1 := by
-  unfold firstChoiceMissProb
+  unfold firstChoiceMissProb EconCSLib.SocialChoice.Ranking.firstChoiceMissProb
+    firstChoiceProb
   constructor <;> intro h <;>
     linarith [firstChoiceProb_nonneg (μ := μ) (c := c),
       firstChoiceProb_le_one (μ := μ) (c := c)]
@@ -142,7 +149,8 @@ theorem firstChoiceMissProb_pos_iff_firstChoiceProb_lt_one {n : ℕ}
 theorem firstChoiceMissProb_nonneg_iff_firstChoiceProb_le_one {n : ℕ}
     (μ : PMF (Ranking n)) (c : Candidate n) :
     0 ≤ firstChoiceMissProb μ c ↔ firstChoiceProb μ c ≤ 1 := by
-  unfold firstChoiceMissProb
+  unfold firstChoiceMissProb EconCSLib.SocialChoice.Ranking.firstChoiceMissProb
+    firstChoiceProb
   constructor <;> intro h <;> linarith
 
 /-- Collision difference is positive exactly when the better law puts more top mass on `c`. -/
@@ -150,7 +158,8 @@ theorem firstChoiceCollisionDiff_pos_iff {n : ℕ}
     (μBetter μWorse : PMF (Ranking n)) (c : Candidate n) :
     0 < firstChoiceCollisionDiff μBetter μWorse c ↔
       firstChoiceProb μWorse c < firstChoiceProb μBetter c := by
-  unfold firstChoiceCollisionDiff
+  unfold firstChoiceCollisionDiff EconCSLib.SocialChoice.Ranking.firstChoiceCollisionDiff
+    firstChoiceProb
   constructor <;> intro h <;> linarith
 
 /--
@@ -161,7 +170,8 @@ theorem firstChoiceCollisionDiff_nonneg_iff {n : ℕ}
     (μBetter μWorse : PMF (Ranking n)) (c : Candidate n) :
     0 ≤ firstChoiceCollisionDiff μBetter μWorse c ↔
       firstChoiceProb μWorse c ≤ firstChoiceProb μBetter c := by
-  unfold firstChoiceCollisionDiff
+  unfold firstChoiceCollisionDiff EconCSLib.SocialChoice.Ranking.firstChoiceCollisionDiff
+    firstChoiceProb
   constructor <;> intro h <;> linarith
 
 end KR21Monoculture

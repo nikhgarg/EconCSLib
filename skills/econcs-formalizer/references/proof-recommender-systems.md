@@ -34,11 +34,82 @@ allocation.
   bound is stronger than necessary. If finite FOCs plus tail/product
   asymptotics give `|a_i/w_i - a_j/w_j| ≤ ε_N N` with `ε_N → 0`, use a
   sublinear pairwise-scaled bridge to get the γ-profile limit.
+- For the finite weighted averaging step, call
+  `EconCSLib.Allocation.count_abs_sub_weighted_average_le_of_pairwise_scaled_bounded`.
+  PRPKG's
+  `GammaHomogeneityProfile.count_abs_sub_weighted_average_le_of_pairwise_scaled_bounded`
+  is only a paper-facing wrapper. This lemma converts pairwise bounded scaled
+  counts `|count_i / w_i - count_j / w_j| ≤ C` into
+  `|count_t - w_t * (N / sum w)| ≤ C * w_t`.
+- For finite count-pigeonhole steps, call
+  `EconCSLib.Allocation.exists_count_gt_of_card_mul_lt_total`: if total count
+  exceeds `Fintype.card κ * K`, some coordinate count exceeds `K`. PRPKG's
+  `exists_count_gt_of_card_mul_lt_total` wrappers only rewrite
+  `Fintype.card (Fin T)` to `T`.
+- For uniform count-balance steps, use
+  `EconCSLib.Allocation.count_abs_sub_uniform_average_le_C_of_pairwise_bounded`
+  or
+  `EconCSLib.Allocation.count_abs_sub_uniform_average_le_one_of_pairwise_balanced`.
+  PRPKG's uniform-profile wrappers should only translate the average from
+  `Fintype.card (Fin T)` to `T`.
+- For fixed-total finite count-objective existence, use
+  `EconCSLib.Allocation.exists_isOptimalAtTotal`. It packages the finite code
+  `Allocation.FeasibleCode`, decodes fixed-total allocations, and returns an
+  objective maximizer for any finite nonempty coordinate type. PRPKG's
+  `ConsumptionModel.exists_isOptimalAtTotal` is a wrapper.
+- For one-unit exchange and FOC arguments over weighted separable count
+  objectives, use the shared allocation layer first:
+  `EconCSLib.Allocation.objective_moveOne_eq` for exact marginal accounting,
+  `EconCSLib.Allocation.objective_le_objective_moveOne_of_exchangeCondition`
+  for weak improvement, and
+  `EconCSLib.Allocation.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum`
+  for the optimum FOC. Diminishing-returns comparisons should call
+  `EconCSLib.Allocation.marginal_antitone_of_diminishing`,
+  `EconCSLib.Allocation.weightedForwardMarginal_antitone_of_diminishing`,
+  `EconCSLib.Allocation.weightedBackwardMarginal_eq_weightedForwardMarginal_pred`,
+  or
+  `EconCSLib.Allocation.weightedBackwardMarginal_le_weightedForwardMarginal_of_diminishing`.
+  PRPKG's `ConsumptionModel.*` exchange theorems are paper-facing wrappers
+  around these generic declarations.
 - When the product/tail estimate is naturally one-sided, use the FOC-to-
   sublinear bridge: prove that any scaled-count gap larger than `ε_N N` makes
   the source backward marginal strictly smaller than the destination forward
   marginal. The finite FOC rules out the gap, and the sublinear scaled-count
   bridge gives the sequence limit.
+  The allocation-level theorem for the first step is
+  `EconCSLib.Allocation.pairwise_scaled_abs_le_of_large_gap_backward_lt_forward`;
+  it converts a large-gap marginal-dominance hypothesis plus fixed-total
+  optimality into pairwise scaled-count bounds. Use
+  `EconCSLib.Allocation.share_abs_sub_weighted_target_le_error_total_weight_of_pairwise_scaled`
+  when the next step is directly a target-share error bound.
+  If an asymptotic certificate needs deliberately large errors for finitely
+  many small `N`, use `EconCSLib.Math.tendsToZero_if_lt_const`.
+  For finite prefixes with positive target weights and `N < threshold`, use
+  `EconCSLib.Allocation.pairwise_scaled_abs_le_of_total_lt`.
+- For sequence-level target-profile conclusions, use
+  `EconCSLib.Allocation.AsymptoticProfileTarget`,
+  `EconCSLib.Allocation.AsymptoticProfile`, and
+  `EconCSLib.Allocation.OptimalSequence.convergesToProfile_of_asymptoticProfile`
+  rather than defining a new paper-local sequence interface. When the finite
+  proof gives pairwise scaled-count gaps `≤ ε_N N`, call
+  `EconCSLib.Allocation.asymptoticProfile_of_pairwise_scaled_sublinear`; when
+  it gives the FOC-style large-gap marginal dominance hypothesis directly,
+  call `EconCSLib.Allocation.asymptoticProfile_of_large_gap_backward_lt_forward`.
+  When the marginal dominance estimate is only eventual and requires all
+  compared counts above a fixed floor, call
+  `EconCSLib.Allocation.asymptoticProfile_of_eventual_large_gap_backward_lt_forward`;
+  it absorbs finite prefixes with a large temporary error schedule.
+- Prefer the certificate-shaped allocation API when paper statements already
+  package hypotheses as records:
+  `EconCSLib.Allocation.PairwiseScaledSublinearProfileCertificate`,
+  `EconCSLib.Allocation.PairwiseScaledSublinearFOCCertificate`, and
+  `EconCSLib.Allocation.PairwiseScaledEventualSublinearFOCCertificate`.
+  The FOC certificate has
+  `.toPairwiseScaledSublinearProfileCertificate`; the eventual certificate has
+  `.toPairwiseScaledSublinearFOCCertificate`; all three expose
+  `.asymptoticProfile`. In PRPKG, preserve source-facing certificate names but
+  add a `.toShared` adapter and delegate conversions/endpoints through these
+  shared records rather than copying the finite-prefix proof.
 - For PRPKG continuous order-statistic branches, let the probability layer
   produce `TopKScaledMarginalLimitCertificate` or a source-loss asymptotic
   certificate, then feed that into the existing floor-aware eventual FOC bridge.
@@ -54,7 +125,11 @@ allocation.
   and
   `paper_definition3_expected_order_statistic_mean_seq_topk_endpoint_loss_eq_expected_reflected_bottom_sum_of_ae_bounds`
   to avoid reproving sorted-tuple measurability/integrability at the paper
-  level. For the finite deterministic layer-cake step, use
+  level. For fixed finite-rank asymptotic assembly, use the library lemmas
+  `EconCSLib.Math.finite_sum_asymptoticEquivalent_common_scale` and
+  `EconCSLib.Math.asymptoticEquivalent_add_negligible_common_scale`; PRPKG's
+  paper-local names should remain wrappers around these. For the finite
+  deterministic layer-cake step, use
   `paper_definition3_reflected_bottom_sum_eq_integral_rank_count_indicator`;
   the measure-level count-layer bridge is
   `expectedReflectedBottomKSum_eq_integral_rank_count_layer_of_integrable`,

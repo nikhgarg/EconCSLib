@@ -49,6 +49,8 @@ standard-normal interfaces used by admissions and testing formalizations.
 - `standardGaussianLowerTailMeanCertificate`
 - `standardGaussian_normalCDF_mul_lowerTailMean_sub_tendsto_atBot`
 - `standardGaussianHazardInverseCertificate`
+- `standardGaussian_normalUpperTailMean_gt_threshold`
+- `standardGaussian_toMeasure_Ico_threshold_normalUpperTailMean_pos`
 -/
 
 open Filter MeasureTheory ProbabilityTheory Set Function
@@ -2400,6 +2402,10 @@ def standardGaussianHazardInverseCertificate :
     intro z
     rfl
   hazard_pos := standardGaussianHazard_pos
+  hazard_gt_arg_of_pos := by
+    intro z hz
+    rw [standardGaussianHazard_eq_millsHazard]
+    exact gaussianMillsHazard_gt_arg_of_pos hz
   hazard_mono := standardGaussianHazard_mono
   scaled_hazard_mono := standardGaussian_scaled_hazard_mono
   scaled_hazard_strictMono := standardGaussian_scaled_hazard_strictMono
@@ -2450,6 +2456,31 @@ theorem standardGaussian_normalUpperTailMean_strictMono_threshold
       add_lt_add_left hscaled L.mean
   simpa [GaussianHazardCertificate.normalUpperTailMean,
     standardGaussianHazardInverseCertificate] using hadd
+
+/--
+For a fixed location-scale Gaussian law, the mathlib-backed standard-normal
+upper-tail conditional mean is strictly above the threshold.
+-/
+theorem standardGaussian_normalUpperTailMean_gt_threshold
+    (L : GaussianScaleLaw) (threshold : ℝ) :
+    threshold <
+      (standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+        |>.normalUpperTailMean L threshold) :=
+  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+    |>.normalUpperTailMean_gt_threshold L threshold
+
+/--
+The interval from a Gaussian threshold up to its upper-tail conditional mean has
+positive Gaussian mass.
+-/
+theorem standardGaussian_toMeasure_Ico_threshold_normalUpperTailMean_pos
+    (L : GaussianScaleLaw) (threshold : ℝ) :
+    0 < L.toMeasure
+      (Ico threshold
+        (standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+          |>.normalUpperTailMean L threshold)) :=
+  L.toMeasure_Ico_pos
+    (standardGaussian_normalUpperTailMean_gt_threshold L threshold)
 
 end
 

@@ -1,5 +1,6 @@
 import KR21Monoculture.PaperDefinitions
 import EconCSLib.Foundations.Probability.FiniteExpectation
+import EconCSLib.SocialChoice.Ranking.Payoff
 
 open scoped BigOperators
 open EconCSLib
@@ -22,22 +23,29 @@ def rerankingGainOnPair {n : ℕ} (value : Candidate n → ℝ)
 @[simp] theorem rerankingGainOnPair_self {n : ℕ} (value : Candidate n → ℝ)
     (π : Ranking n) :
     rerankingGainOnPair value π π = 0 := by
-  simp [rerankingGainOnPair]
+  simpa [rerankingGainOnPair, EconCSLib.SocialChoice.Ranking.rerankingGainOnPair,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.rerankingGainOnPair_self value π
 
 @[simp] theorem rerankingGainOnPair_of_sameFirst {n : ℕ} (value : Candidate n → ℝ)
     (π σ : Ranking n) (h : firstChoice π = firstChoice σ) :
     rerankingGainOnPair value π σ = 0 := by
-  have h' : π 0 = σ 0 := by
-    simpa [firstChoice] using h
-  simp [rerankingGainOnPair, firstChoice, h']
+  simpa [rerankingGainOnPair, EconCSLib.SocialChoice.Ranking.rerankingGainOnPair,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.rerankingGainOnPair_of_sameFirst
+      value π σ h
 
 @[simp] theorem rerankingGainOnPair_of_neFirst {n : ℕ} (value : Candidate n → ℝ)
     (π σ : Ranking n) (h : firstChoice π ≠ firstChoice σ) :
     rerankingGainOnPair value π σ =
       value (firstChoice π) - value (secondChoice π) := by
-  have h' : π 0 ≠ σ 0 := by
-    simpa [firstChoice] using h
-  simp [rerankingGainOnPair, firstChoice, secondChoice, h']
+  simpa [rerankingGainOnPair, EconCSLib.SocialChoice.Ranking.rerankingGainOnPair,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.rerankingGainOnPair_of_neFirst
+      value π σ h
 
 /--
 Pointwise decomposition of the second mover's utility under an independent reranking
@@ -47,13 +55,13 @@ theorem secondMoverUtility_eq_shared_add_rerankingGain {n : ℕ}
     (value : Candidate n → ℝ) (π σ : Ranking n) :
     secondMoverUtility value π σ =
       secondMoverUtility value π π + rerankingGainOnPair value π σ := by
-  by_cases h : firstChoice π = firstChoice σ
-  · have h' : π 0 = σ 0 := by
-      simpa [firstChoice] using h
-    simp [secondMoverUtility_eq_if, rerankingGainOnPair, firstChoice, secondChoice, h']
-  · have h' : π 0 ≠ σ 0 := by
-      simpa [firstChoice] using h
-    simp [secondMoverUtility_eq_if, rerankingGainOnPair, firstChoice, secondChoice, h']
+  simpa [secondMoverUtility, EconCSLib.SocialChoice.Ranking.secondMoverUtility,
+    rerankingGainOnPair, EconCSLib.SocialChoice.Ranking.rerankingGainOnPair,
+    bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.secondMoverUtility_eq_shared_add_rerankingGain
+      value π σ
 
 /--
 Subtractive form of `secondMoverUtility_eq_shared_add_rerankingGain`.
@@ -62,8 +70,13 @@ theorem secondMoverUtility_sub_self_eq_rerankingGain {n : ℕ}
     (value : Candidate n → ℝ) (π σ : Ranking n) :
     secondMoverUtility value π σ - secondMoverUtility value π π =
       rerankingGainOnPair value π σ := by
-  rw [secondMoverUtility_eq_shared_add_rerankingGain]
-  ring
+  simpa [secondMoverUtility, EconCSLib.SocialChoice.Ranking.secondMoverUtility,
+    rerankingGainOnPair, EconCSLib.SocialChoice.Ranking.rerankingGainOnPair,
+    bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.secondMoverUtility_sub_self_eq_rerankingGain
+      value π σ
 
 /--
 A pair-lifted version of shared-reranking utility. This keeps both terms on the same
@@ -90,15 +103,18 @@ theorem expectedSecondMoverIndependent_sub_sharedOnPairs_eq_expectedRerankingGai
     {n : ℕ} (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
     expectedSecondMoverIndependent μ μ value - expectedSecondMoverSharedOnPairs μ value =
       expectedRerankingGain μ value := by
-  unfold expectedSecondMoverIndependent expectedSecondMoverSharedOnPairs
-    expectedRerankingGain pmfPairExp
-  rw [← pmfExp_sub]
-  congr 1
-  funext π
-  rw [← pmfExp_sub]
-  congr 1
-  funext σ
-  exact secondMoverUtility_sub_self_eq_rerankingGain (value := value) π σ
+  simpa [expectedSecondMoverIndependent,
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverIndependent,
+    expectedSecondMoverSharedOnPairs,
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverSharedOnPairs,
+    expectedRerankingGain, EconCSLib.SocialChoice.Ranking.expectedRerankingGain,
+    secondMoverUtility, EconCSLib.SocialChoice.Ranking.secondMoverUtility,
+    rerankingGainOnPair, EconCSLib.SocialChoice.Ranking.rerankingGainOnPair,
+    bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverIndependent_sub_sharedOnPairs_eq_expectedRerankingGain
+      (μ := μ) (value := value)
 
 /--
 Additive form of the pair-lifted Equation (3).
@@ -107,10 +123,18 @@ theorem expectedSecondMoverIndependent_eq_sharedOnPairs_add_expectedRerankingGai
     {n : ℕ} (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
     expectedSecondMoverIndependent μ μ value =
       expectedSecondMoverSharedOnPairs μ value + expectedRerankingGain μ value := by
-  have h :=
-    expectedSecondMoverIndependent_sub_sharedOnPairs_eq_expectedRerankingGain
+  simpa [expectedSecondMoverIndependent,
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverIndependent,
+    expectedSecondMoverSharedOnPairs,
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverSharedOnPairs,
+    expectedRerankingGain, EconCSLib.SocialChoice.Ranking.expectedRerankingGain,
+    secondMoverUtility, EconCSLib.SocialChoice.Ranking.secondMoverUtility,
+    rerankingGainOnPair, EconCSLib.SocialChoice.Ranking.rerankingGainOnPair,
+    bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverIndependent_eq_sharedOnPairs_add_expectedRerankingGain
       (μ := μ) (value := value)
-  linarith
 
 /--
 A positivity reformulation of the pair-lifted reranking preference.
@@ -140,8 +164,16 @@ theorem prefersIndependentRerankingOnPairs_iff {n : ℕ}
 @[simp] theorem expectedSecondMoverSharedOnPairs_eq_expectedSecondMoverShared
     {n : ℕ} (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
     expectedSecondMoverSharedOnPairs μ value = expectedSecondMoverShared μ value := by
-  unfold expectedSecondMoverSharedOnPairs expectedSecondMoverShared pmfPairExp
-  simp [pmfExp_const]
+  simpa [expectedSecondMoverSharedOnPairs,
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverSharedOnPairs,
+    expectedSecondMoverShared,
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverShared,
+    secondMoverUtility, EconCSLib.SocialChoice.Ranking.secondMoverUtility,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice,
+    bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice] using
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverSharedOnPairs_eq_expectedSecondMoverShared
+      (μ := μ) (value := value)
 
 /--
 The exact finite-sum Equation (3) identity for the shared-vs-independent formulation.
@@ -150,9 +182,18 @@ theorem expectedSecondMoverIndependent_sub_shared_eq_expectedRerankingGain
     {n : ℕ} (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
     expectedSecondMoverIndependent μ μ value - expectedSecondMoverShared μ value =
       expectedRerankingGain μ value := by
-  rw [← expectedSecondMoverSharedOnPairs_eq_expectedSecondMoverShared]
-  exact expectedSecondMoverIndependent_sub_sharedOnPairs_eq_expectedRerankingGain
-    (μ := μ) (value := value)
+  simpa [expectedSecondMoverIndependent,
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverIndependent,
+    expectedSecondMoverShared,
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverShared,
+    expectedRerankingGain, EconCSLib.SocialChoice.Ranking.expectedRerankingGain,
+    secondMoverUtility, EconCSLib.SocialChoice.Ranking.secondMoverUtility,
+    rerankingGainOnPair, EconCSLib.SocialChoice.Ranking.rerankingGainOnPair,
+    bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverIndependent_sub_shared_eq_expectedRerankingGain
+      (μ := μ) (value := value)
 
 /--
 Definition 2 in utility form is exactly positivity of the expected reranking gain.
@@ -182,7 +223,10 @@ theorem prefersIndependentReranking_iff_onPairs {n : ℕ}
 @[simp] theorem expectedRerankingGain_pure {n : ℕ}
     (π : Ranking n) (value : Candidate n → ℝ) :
     expectedRerankingGain (PMF.pure π) value = 0 := by
-  unfold expectedRerankingGain pmfPairExp
-  simp [pmfExp_pure]
+  simpa [expectedRerankingGain, EconCSLib.SocialChoice.Ranking.expectedRerankingGain,
+    rerankingGainOnPair, EconCSLib.SocialChoice.Ranking.rerankingGainOnPair,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.expectedRerankingGain_pure π value
 
 end KR21Monoculture

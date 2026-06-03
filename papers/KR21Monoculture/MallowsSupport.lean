@@ -187,7 +187,8 @@ theorem centerFirstMissProb_pos :
 theorem centerFirstProb_lt_one :
     firstChoiceProb M.law M.centerFirst < 1 := by
   have hmiss := M.centerFirstMissProb_pos
-  unfold firstChoiceMissProb at hmiss
+  unfold firstChoiceMissProb EconCSLib.SocialChoice.Ranking.firstChoiceMissProb at hmiss
+  unfold firstChoiceProb
   linarith
 
 /-- The center's top-two ordered pair has weight at least one. -/

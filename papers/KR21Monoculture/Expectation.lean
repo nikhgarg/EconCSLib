@@ -1,5 +1,6 @@
 import KR21Monoculture.Basic
 import EconCSLib.Foundations.Probability.FiniteExpectation
+import EconCSLib.SocialChoice.Ranking.Payoff
 
 open EconCSLib
 
@@ -26,42 +27,12 @@ theorem expectedSecondMoverShared_eq_sum_secondChoiceProb {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
     expectedSecondMoverShared μ value =
       ∑ c : Candidate n, secondChoiceProb μ c * value c := by
-  classical
-  unfold expectedSecondMoverShared secondChoiceProb pmfProb pmfExp
-  calc
-    ∑ π : Ranking n, (μ π).toReal * value (secondChoice π)
-        = ∑ π : Ranking n, ∑ c : Candidate n,
-            if c = secondChoice π then (μ π).toReal * value c else 0 := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          have hsum :
-              (∑ c : Candidate n,
-                if c = secondChoice π then (μ π).toReal * value c else 0) =
-                (μ π).toReal * value (secondChoice π) := by
-            simpa using
-              (Finset.sum_ite_eq' Finset.univ (secondChoice π)
-                (fun c : Candidate n => (μ π).toReal * value c))
-          rw [hsum]
-    _ = ∑ c : Candidate n, ∑ π : Ranking n,
-            if c = secondChoice π then (μ π).toReal * value c else 0 := by
-          exact Finset.sum_comm
-    _ = ∑ c : Candidate n, ∑ π : Ranking n,
-            ((μ π).toReal *
-              (if c = secondChoice π then (1 : ℝ) else 0)) * value c := by
-          refine Finset.sum_congr rfl ?_
-          intro c _
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          by_cases h : c = secondChoice π
-          · simp [h]
-          · simp
-    _ = ∑ c : Candidate n,
-          (∑ π : Ranking n,
-            (μ π).toReal *
-              (if c = secondChoice π then (1 : ℝ) else 0)) * value c := by
-          refine Finset.sum_congr rfl ?_
-          intro c _
-          rw [Finset.sum_mul]
+  simpa [expectedSecondMoverShared, secondChoiceProb,
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverShared,
+    EconCSLib.SocialChoice.Ranking.secondChoiceProb,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.expectedSecondMoverShared_eq_sum_secondChoiceProb
+      μ value
 
 /-- Pointwise utility to the second mover when the first mover uses `σ`
 and the second mover uses `π`. -/
@@ -78,20 +49,22 @@ noncomputable def expectedSecondMoverIndependent {n : ℕ}
 @[simp] theorem secondMoverUtility_self {n : ℕ} (value : Candidate n → ℝ)
     (π : Ranking n) :
     secondMoverUtility value π π = value (secondChoice π) := by
-  simp [secondMoverUtility, bestRemainingAfter]
+  simpa [secondMoverUtility, EconCSLib.SocialChoice.Ranking.secondMoverUtility,
+    bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.secondMoverUtility_self value π
 
 @[simp] theorem secondMoverUtility_eq_if {n : ℕ} (value : Candidate n → ℝ)
     (π σ : Ranking n) :
     secondMoverUtility value π σ =
       if firstChoice π = firstChoice σ then value (secondChoice π)
       else value (firstChoice π) := by
-  by_cases h : firstChoice π = firstChoice σ
-  · have h' : π 0 = σ 0 := by
-      simpa [firstChoice] using h
-    simp [secondMoverUtility, bestRemainingAfter, firstChoice, secondChoice, h']
-  · have h' : π 0 ≠ σ 0 := by
-      simpa [firstChoice] using h
-    simp [secondMoverUtility, bestRemainingAfter, firstChoice, h']
+  simpa [secondMoverUtility, EconCSLib.SocialChoice.Ranking.secondMoverUtility,
+    bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.secondMoverUtility_eq_if value π σ
 
 /-- Social welfare in the ordered version of the game where the `σ`-firm chooses
 first and the `π`-firm chooses second. -/
@@ -106,11 +79,21 @@ noncomputable def expectedWelfareOrdered {n : ℕ}
 @[simp] theorem welfareOrdered_eq {n : ℕ} (value : Candidate n → ℝ)
     (π σ : Ranking n) :
     welfareOrdered value π σ =
-      value (firstChoice σ) + value (bestRemainingAfter π (firstChoice σ)) := rfl
+      value (firstChoice σ) + value (bestRemainingAfter π (firstChoice σ)) := by
+  simpa [welfareOrdered, EconCSLib.SocialChoice.Ranking.welfareOrdered,
+    secondMoverUtility, EconCSLib.SocialChoice.Ranking.secondMoverUtility,
+    bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice] using
+    EconCSLib.SocialChoice.Ranking.welfareOrdered_eq value π σ
 
 @[simp] theorem welfareOrdered_self {n : ℕ} (value : Candidate n → ℝ)
     (π : Ranking n) :
     welfareOrdered value π π = value (firstChoice π) + value (secondChoice π) := by
-  simp [welfareOrdered, secondMoverUtility, bestRemainingAfter]
+  simpa [welfareOrdered, EconCSLib.SocialChoice.Ranking.welfareOrdered,
+    secondMoverUtility, EconCSLib.SocialChoice.Ranking.secondMoverUtility,
+    bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter,
+    firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice,
+    secondChoice, EconCSLib.SocialChoice.Ranking.secondChoice] using
+    EconCSLib.SocialChoice.Ranking.welfareOrdered_self value π
 
 end KR21Monoculture

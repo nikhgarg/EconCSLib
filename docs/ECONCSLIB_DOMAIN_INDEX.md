@@ -13,20 +13,34 @@ when you need material from a domain quickly.
 - Modules:
   - `EconCSLib.Foundations.Math`:
     `FiniteSum`, `FiniteRanking`, `FiniteRounding`, `FiniteSigns`,
-    `Sequence`, `Asymptotics`, `IntervalCrossing`,
+    `Sequence`, `Asymptotics`, `ConvexCombination`, `IntervalCrossing`,
     `EpsilonContinuity`, `PositiveDenominator`, `AffineThreshold`,
     `ThresholdCharacterization`, `ExponentialBounds`
     - `FiniteSum`: finite weighted-sum bounds, injective subfamily sum
       comparisons, weighted-share race bounds, finite averaging/cardinality
-      lower bounds, Cauchy-Schwarz, and finite telescoping/crossing helpers.
+      lower bounds, Cauchy-Schwarz, ordered-pair double-sum regrouping by an
+      injective key, pairwise cross-ratio-to-weighted-average comparisons, and
+      finite telescoping/crossing helpers.
     - `FiniteRanking`: finite-set ranking by real scores with deterministic
       tie-breaking, lower/upper rank prefix sets, rank-prefix cardinalities,
       rank-prefix monotonicity, and lower-vs-upper score comparisons.
     - `Asymptotics`: `TendsToZero` helpers, inverse-rate and inverse-square-root
       rate bridges, `1 / log n` and `log n / sqrt n` limit helpers,
       asymptotic-equivalence ratio/sandwich helpers, bounded-ratio-to-zero
-      lemmas, nonnegative `C / n` domination, and order-closed limit comparison
-      for real sequences.
+      lemmas, fixed finite-sum assembly over a common scale, negligible
+      remainder addition on that scale, nonnegative `C / n` domination,
+      finite-prefix replacement for zero-convergent schedules, and
+      order-closed limit comparison for real sequences.
+    - `ConvexCombination`: two-point weighted averages, denominator
+      positivity from positive/nonnegative weights, componentwise above/below
+      target comparisons, weighted-gap sign comparisons, and continuity of
+      parameterized weighted averages. Use this for LG-style pooled estimates
+      before adding paper-local fraction algebra.
+    - `ThresholdCharacterization`: one-dimensional monotone cutoff lemmas,
+      lower/upper cutoff strategies, compact interval crossings, unbounded
+      continuous strict-monotone/strict-antitone crossing, and strict-antitone
+      capacity cutoffs with the upper-region characterization
+      `{z | f z <= level} = {z | cutoff <= z}`.
     - `ExponentialBounds`: elementary `exp`/`log` inequalities for finite
       probability products, including `exp(-2/x) <= 1 - 1/x` for `x >= 2` and
       its finite-power form.
@@ -57,14 +71,15 @@ when you need material from a domain quickly.
     - `ChoiceEquilibrium`: static choice-equilibrium data, feasibility,
       best-response, and consistency projections.
     - `ChoiceEquilibriumAE`: almost-everywhere choice-equilibrium data for
-      continuous or mixed information laws with null boundary behavior.
+      continuous or mixed information laws, including a constructor from
+      pointwise feasibility and best response outside a null exception set.
     - `BinaryChoice`: two-action no-profitable-deviation predicates,
       projections from static choice equilibria, and threshold/tiebreak
       consequences for binary choice rules.
     - `BinaryChoiceAE`: almost-everywhere binary no-profitable-deviation
       predicates, conversions to and from raw Boolean best-response clauses,
-      a.e. projection from choice equilibria, no-tie threshold identification,
-      and affine cutoff consequences.
+      off-null-set constructors, a.e. projection from choice equilibria,
+      no-tie/null-tie threshold identification, and affine cutoff consequences.
     - `Endpoint`: one-dimensional endpoint-move calculus from derivative
       signs, first/last-zero stopping lemmas, and one-sided local
       improvement/decrease steps for cutoff and interval-endpoint proofs.
@@ -75,8 +90,10 @@ when you need material from a domain quickly.
   - `EconCSLib.Foundations.Probability`
     (`FiniteExpectation`, `FiniteMixture`, `FiniteLabel`, `FiniteSupportMGF`, `Kernel`, `Conditional`,
     `LargeDeviations`, `OrderStatistics`, `RealDistribution`, `MarkovChain`, `CTMC`, `MDP`,
-    `RenewalReward`, `ContinuousReward`, `Gaussian`, `StochasticDominance`, `MeasureInequalities`,
-    `Occupancy`, `Admissions`, `FairCoin`, `Weighted`, `WithoutReplacement`)
+    `RenewalReward`, `ContinuousReward`, `Gaussian`, `BivariateGaussian`,
+    `StochasticDominance`, `MeasureInequalities`,
+    `Occupancy`, `Admissions`, `FairCoin`, `Weighted`, `WithoutReplacement`,
+    `RandomUtility`, `RandomUtilityDensity`)
     - `FiniteExpectation`: finite PMF expectations/probabilities, relabeling,
       product-uniform decompositions, event-probability congruence, finite
       identical-product PMFs and all-coordinate event probabilities,
@@ -88,9 +105,10 @@ when you need material from a domain quickly.
       uniform finite function spaces and injective finite-function subtypes,
       expected finite-count linearity, finite union bounds, reciprocal-count
       perturbation bounds, expected-count lower bounds from uniformly likely
-      finite subfamilies, finite-PMF variance, second-moment formulas for
-      indicator counts, pairwise-negative-correlation variance bounds, and
-      Chebyshev lower-tail wrappers.
+      finite subfamilies, event-indicator expectation upper bounds, independent
+      pair indicator-event factorization, finite-PMF variance, second-moment
+      formulas for indicator counts, pairwise-negative-correlation variance
+      bounds, and Chebyshev lower-tail wrappers.
     - `FiniteMixture`: binary PMF mixtures, finite event shares, indexed
       positive-event-or-blank splits, blank-on-zero-share indexed values,
       positive-share mixture cancellation, PMF pushforward support lemmas, and
@@ -120,11 +138,22 @@ when you need material from a domain quickly.
     - `MeasureInequalities`: real-valued measure/probability wrappers,
       finite-subset mass transfer, positivity bridges from nonzero finite
       `ENNReal` mass to real-valued mass, positive finite `withDensity` mass,
-      finite-intersection probability lower bounds, and Hoeffding-style
+      boundary-null a.e. congruence for functions, predicates, Boolean
+      indicators, set indicators, and strict/weak real cutoffs, positive-mass
+      contradictions for a.e. weak/strict inequalities, selected-below-
+      reference a.e. implication contradictions and cutoff-event positive-mass
+      transfers, null
+      symmetric-difference congruence for adding/removing common context sets
+      and merging touching intervals/rays up to null endpoints, plus
+      finite-intersection probability lower bounds and Hoeffding-style
       independent bounded-sum bounds.
     - `ContinuousReward`: accepted-set mass/time/reward primitives over
-      positive real domains, renewal-reward and average-reward aliases, and
-      positive-domain bridges from zero accepted time to zero accepted mass.
+      positive real domains, reward/time union and difference formulas,
+      measure-zero component simplifications, average-reward comparison from
+      pointwise inequalities, renewal-reward and average-reward aliases,
+      add/remove marginal renewal-rate comparisons, zero-component
+      union/difference invariance, and positive-domain bridges from zero
+      accepted time to zero accepted mass.
     - `Gaussian`: Gaussian location-scale standardization, an abstract
       standard-normal CDF/density API, conjugate one-signal posterior
       precision/variance/mean formulas, posterior-mean monotonicity, finite
@@ -135,8 +164,18 @@ when you need material from a domain quickly.
       threshold pass-probability monotonicity in cutoffs and means,
       finite-mixture tail mass/capacity certificates, and a hazard-rate
       certificate boundary with location-scale tail positivity, density/tail
-      hazard conversion, upper-tail conditional mean monotonicity, and
-      finite-mixture admitted-mean accounting for GLM/LG-style testing papers.
+      hazard conversion, upper-tail conditional mean monotonicity, hazard
+      domination of positive standardized thresholds, upper-tail mean-above-
+      threshold certificates, positive Gaussian mass from a threshold to its
+      upper-tail conditional mean, and finite-mixture admitted-mean accounting
+      for GLM/LG-style testing papers.
+    - `BivariateGaussian`: correlated standard-Gaussian product laws,
+      coordinate projections/no-atoms, Owen affine standardization and
+      vertical/horizontal boundary-zero helpers, plus independent Gaussian pair
+      measures with arbitrary standard deviation, canonical variance-`1/2`
+      scaling, strict winner-below-cutoff and both-below-cutoff events, and the
+      reusable strict conditional winner-ratio scaling bridge for KR-style RUM
+      Gaussian reductions.
     - `FiniteSupportMGF`: finite-support MGF/log-MGF algebra, Legendre
       objectives, rate-function scaffolding, and finite rating-scale LDP model
       wrappers for rating-system large-deviation proofs.
@@ -148,9 +187,10 @@ when you need material from a domain quickly.
       a single positive-weight component or one certified pairwise error.
     - `OrderStatistics`: top-`k` expected-value oracles, marginal top-`k`
       values, diminishing/nonnegative marginal predicates, finite-type
-      scaled-marginal limit certificates, and eventual multiplicative marginal
-      sandwiches and strict marginal comparisons from scaled weight gaps for
-      diversity-aware recommendation style order-statistic proofs.
+      scaled-marginal limit certificates, bottom-indexed
+      `μ(rank, sampleSize)` mean bridges, and eventual multiplicative
+      marginal sandwiches and strict marginal comparisons from scaled weight
+      gaps for diversity-aware recommendation style order-statistic proofs.
     - `RealDistribution`: lower CDF mass, upper-tail mass, CDF/tail
       monotonicity, `ProbabilityTheory.cdf` identification, and upper-tail
       complement formulas plus threshold/capacity certificates for real-valued
@@ -172,6 +212,15 @@ when you need material from a domain quickly.
       cardinality, occupancy PMF, reciprocal empty-bin expectations, used-bin
       subset/equality comparisons, bin/domain relabeling for used and empty
       bins, one-ball recurrence bounds.
+    - `RandomUtility`: additive-noise well-ordering predicates, Gaussian and
+      Laplacian density kernels, one-coordinate contraction geometry,
+      three-alternative top/bottom preservation and swap-middle geometry, and
+      pointwise `swap12`/`swap23` density-product comparisons for continuous
+      RUM proofs.
+    - `RandomUtilityDensity`: three-coordinate additive-RUM score densities,
+      density measurability/positivity/normalization helpers, finite atom
+      density-swap mass comparisons, and continuous `withDensity` swap
+      comparisons for measure-preserving score-coordinate maps.
   - `EconCSLib.Foundations.Econometrics`
     (`RatingModels`)
 
@@ -179,8 +228,34 @@ when you need material from a domain quickly.
 
 - Entrypoint: `EconCSLib.Applications.RecommenderSystems`
 - Modules:
-  - `Policy`, `Allocation`
+  - `Policy`, `Allocation`, `AllocationSequence`
   - `Classwise`, `PolicyAveraging`
+  - `Allocation`: finite integer allocations, total/support/share/objective
+    primitives, one-unit move/marginal interfaces, weighted forward/backward
+    marginals, exchange conditions, fixed-total optimality, exact exchange
+    objective accounting, finite FOC lemmas, diminishing-returns marginal
+    monotonicity, large scaled-gap-to-FOC contradiction bridges, finite-prefix
+    scaled-count bounds from positive weight floors, share nonnegativity and
+    sum-to-one facts, finite count-pigeonhole facts, plus the generic pairwise
+    scaled-count to weighted target count-closeness bridge, scaled-count to
+    target-share closeness bridges, and uniform-average count-balance bridges
+    `Allocation.exists_count_gt_of_card_mul_lt_total` and
+    `Allocation.count_abs_sub_weighted_average_le_of_pairwise_scaled_bounded`,
+    `Allocation.count_abs_sub_uniform_average_le_C_of_pairwise_bounded`, and
+    `Allocation.count_abs_sub_uniform_average_le_one_of_pairwise_balanced`;
+    it also includes `Allocation.FeasibleCode` and
+    `Allocation.exists_isOptimalAtTotal` for finite fixed-total count-objective
+    maximization.
+  - `AllocationSequence`: feasible and optimal fixed-total allocation
+    sequences, uniform target-share approximation, coordinatewise convergence
+    to target profiles, asymptotic profile targets over generic fixed-total
+    objectives, and reusable endpoints turning sublinear pairwise scaled-count
+    bounds, FOC large-gap dominance, or floor-aware/eventual FOC dominance into
+    asymptotic profile convergence. Use
+    `Allocation.PairwiseScaledSublinearProfileCertificate`,
+    `Allocation.PairwiseScaledSublinearFOCCertificate`, and
+    `Allocation.PairwiseScaledEventualSublinearFOCCertificate` when a paper
+    wants certificate-shaped hypotheses with conversion methods.
 
 ## Mechanism Design
 
@@ -229,9 +304,68 @@ when you need material from a domain quickly.
 
 ## Social Choice
 
-- Entrypoint: `EconCSLib.SocialChoice.FairDivision`
+- Entrypoint: `EconCSLib.SocialChoice`
+- Narrow entrypoints: `EconCSLib.SocialChoice.FairDivision`,
+  `EconCSLib.SocialChoice.Ranking`
 - Modules:
   - `FairDivision/IndivisibleGoods`, `LMMSAlgorithm`
+  - `Ranking/Basic`, `Ranking/Kendall`, `Ranking/Probability`,
+    `Ranking/Mallows`, `Ranking/MallowsRankFactorization`,
+    `Ranking/MallowsSequential`, `Ranking/Payoff`, `Ranking/RankPower`,
+    `Ranking/Score`, `Ranking/Sequential`, `Ranking/SequentialPayoff`
+    - `Ranking/Basic`: finite candidate universes with at least two
+      candidates, full rankings as permutations, top-two choices, top-two
+      swaps, rank lookup, and the "best remaining after one candidate is
+      removed" primitive used by KR21-style sequential selection proofs.
+    - `Ranking/Kendall`: inversion predicates/finsets, Kendall tau distance,
+      first/second-choice deletion formulas, relabeling through `cycleRange`
+      and `cycleIcc`, center-transposition invariance, and center-order value
+      gap predicates.
+    - `Ranking/Probability`: discrete measurable-space instance for ranking
+      spaces, `firstChoiceProb`, pushforward PMFs from continuous ranking maps,
+      and event-probability bridges for first-choice and best-remaining events.
+    - `Ranking/Mallows`: finite Mallows weights and partition functions,
+      normalized Mallows-law specifications, first/first-second/pair-correct
+      and pair-wrong weights/probabilities, and finite partition/probability
+      normalization identities.
+    - `Ranking/MallowsRankFactorization`: assumption-driven Mallows
+      rank-factorization packages and algebra for first-choice tails,
+      removal-renormalized rank sums, and first-weight prefixes. Concrete
+      source-specific factorization constructors stay in paper files until
+      their fiber decompositions are reusable.
+    - `Ranking/MallowsSequential`: Mallows best-in-feasible-set fiber weights,
+      pair/correct-wrong fiber identities, swap-reindexed fiber sums,
+      fiber-partition normalization, expected best-in-set payoff normalization,
+      and the cross-ratio bridge from Mallows fibers to expected best-in-set
+      dominance.
+    - `Ranking/Payoff`: first-choice miss probabilities, top-vs-runner-up
+      value gaps, first/second-mover utility primitives, pair-lifted
+      reranking gains, first-choice gap masses, collision-probability
+      differences, finite first-choice fiber decompositions, and
+      first-mover-law switch payoff identities for ranking laws.
+    - `Ranking/RankPower`: finite geometric rank-power sums, prefix sums,
+      removal-renormalized rank sums, best-after-removal rank weights,
+      positivity/closed-form geometric identities, and rank-power
+      cross-ratio helpers used by Mallows rank-factorization proofs.
+    - `Ranking/Score`: pure three-score ranking maps for three-candidate
+      comparisons, concrete score-induced rankings, no-tie and score-order
+      predicates, first/second-choice simplification, best-remaining-after-one
+      simplification, and score-order implications from first-choice or
+      best-remaining outcomes.
+    - `Ranking/Sequential`: probability-free best-in-set and
+      candidate-position swap helpers for sequential choice proofs, including
+      `bestInSet`, rank-minimality/membership lemmas, center-rank relabeling,
+      `swapCandidatePositions`, its involutive equivalence, rank extensionality
+      helpers, deterministic best-in-set value improvement from correcting an
+      inverted pair, and adjacent-correction reachability/monotonicity
+      predicates such as `AdjacentSwapImproves`, `AdjacentCorrection`,
+      `WeakBruhatLe`, and `SwapImprovesOn`; it also owns bounded prefix-cut
+      indicators such as `deleteFirstChoicePrefixCut`,
+      `bestInSetPrefixCutIndicator`, `centerPrefixCutValue`, and
+      `adjacentSwapImproves_bestInSetPrefixCutIndicator`.
+    - `Ranking/SequentialPayoff`: finite PMF expectations of the best feasible
+      candidate, including `expectedBestInSet`, `expectedBestAfterRemoval`,
+      and full-set/singleton/removed-singleton simplification lemmas.
 
 ## Navigation tips
 

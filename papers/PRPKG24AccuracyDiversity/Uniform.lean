@@ -209,6 +209,8 @@ theorem uniform_orderStatisticTopKSumFromMean_eq_topKOrderStatisticSum
   have hi_le_q : i ≤ q :=
     le_trans (Nat.le_of_lt hi_lt) (min_le_right k q)
   have hden : (q : ℝ) + 1 ≠ 0 := by positivity
+  change ((q - i : ℕ) : ℝ) / ((q : ℝ) + 1) =
+    1 - ((i + 1 : ℕ) : ℝ) / ((q : ℝ) + 1)
   rw [Nat.cast_sub hi_le_q]
   field_simp [hden]
   norm_num only [Nat.cast_add, Nat.cast_one]

@@ -472,6 +472,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
 - [ ] Full named-result inventory copied to the README theorem table.
 - [ ] DAG graph includes all required paper-stage nodes and dependencies.
 - [ ] README status and remaining-assumption notes match proof artifacts.
+- [ ] Post-formalization library elevation pass completed: reusable proof
+      results, techniques, and primitives were moved into `EconCSLib` when
+      local/low-risk, or recorded with destination modules in the final report.
 - [ ] Final status review completed before publishing.
 
 ## Notes
@@ -479,6 +482,7 @@ This is a lightweight handoff document for source-to-Lean mapping.
 - Date reviewed:
 - Last theorem row formalized:
 - Outstanding assumptions / caveats:
+- Reusable library elevation candidates:
 
 """
 

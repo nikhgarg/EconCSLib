@@ -23,6 +23,11 @@ bookkeeping.
 - `owenAffineUpperSelectionMass_eq_correlatedStandardGaussian_verticalUpperStripMass`
 - `correlatedStandardGaussianLaw_verticalBoundaryLeft_real_eq_zero`
 - `correlatedStandardGaussianLaw_horizontalBoundaryLeft_real_eq_zero`
+- `gaussianVarianceFromStd`
+- `canonicalHalfVarianceScale`
+- `independentGaussianPairMeasureWithStd`
+- `independentGaussianPairMeasureHalf`
+- `independentGaussianStrictConditionalWinnerRatioWithStd_eq_scaled`
 -/
 
 open MeasureTheory ProbabilityTheory Set
@@ -677,6 +682,275 @@ theorem correlatedStandardGaussianLaw_horizontalBoundaryLeft_real_eq_zero
     Measure.map_apply (measurable_correlatedStandardGaussianMap rho) hboundary_meas,
     hmass]
   simp
+
+/-! ## Independent Gaussian products and canonical variance scaling -/
+
+/--
+Encode a real standard deviation as Mathlib's nonnegative variance parameter.
+
+Many EconCS papers state Gaussian primitives by standard deviation `σ`, while
+`ProbabilityTheory.gaussianReal` is parameterized by variance.
+-/
+def gaussianVarianceFromStd (σ : ℝ) : ℝ≥0 :=
+  NNReal.mk (σ ^ 2) (sq_nonneg σ)
+
+/--
+Positive scaling that sends a variance-`σ^2` Gaussian to the canonical
+variance `1 / 2` law used by several random-utility normalizations.
+-/
+noncomputable def canonicalHalfVarianceScale (σ : ℝ) : ℝ :=
+  (Real.sqrt 2 * σ)⁻¹
+
+theorem canonicalHalfVarianceScale_pos {σ : ℝ} (hσ : 0 < σ) :
+    0 < canonicalHalfVarianceScale σ := by
+  unfold canonicalHalfVarianceScale
+  exact inv_pos.mpr (mul_pos (Real.sqrt_pos.2 (by norm_num)) hσ)
+
+theorem canonicalHalfVarianceScale_ne_zero {σ : ℝ} (hσ : 0 < σ) :
+    canonicalHalfVarianceScale σ ≠ 0 :=
+  ne_of_gt (canonicalHalfVarianceScale_pos hσ)
+
+theorem canonicalHalfVarianceScale_sq_mul_gaussianVarianceFromStd
+    {σ : ℝ} (hσ : 0 < σ) :
+    NNReal.mk ((canonicalHalfVarianceScale σ) ^ 2)
+        (sq_nonneg (canonicalHalfVarianceScale σ)) *
+      gaussianVarianceFromStd σ =
+        (1 / 2 : ℝ≥0) := by
+  ext
+  unfold canonicalHalfVarianceScale gaussianVarianceFromStd
+  simp only [NNReal.coe_mul, NNReal.coe_mk]
+  have hsqrt_sq : (Real.sqrt (2 : ℝ)) ^ 2 = 2 := by
+    rw [Real.sq_sqrt (by norm_num)]
+  have hsqrt_ne : Real.sqrt (2 : ℝ) ≠ 0 :=
+    ne_of_gt (Real.sqrt_pos.2 (by norm_num))
+  have hσ_ne : σ ≠ 0 := ne_of_gt hσ
+  have hden_ne : Real.sqrt (2 : ℝ) * σ ≠ 0 :=
+    mul_ne_zero hsqrt_ne hσ_ne
+  field_simp [hden_ne, hσ_ne, hsqrt_ne]
+  simp [hsqrt_sq] at *
+
+/--
+Scaling a one-dimensional Gaussian with standard deviation `σ` by
+`canonicalHalfVarianceScale σ` gives the canonical variance-`1/2` Gaussian.
+-/
+theorem gaussianReal_map_canonicalHalfVarianceScale
+    {σ μ : ℝ} (hσ : 0 < σ) :
+    (ProbabilityTheory.gaussianReal μ (gaussianVarianceFromStd σ)).map
+        (fun x => canonicalHalfVarianceScale σ * x) =
+      ProbabilityTheory.gaussianReal
+        (canonicalHalfVarianceScale σ * μ) (1 / 2 : ℝ≥0) := by
+  rw [ProbabilityTheory.gaussianReal_map_const_mul]
+  rw [canonicalHalfVarianceScale_sq_mul_gaussianVarianceFromStd hσ]
+
+/-- Product law for two independent Gaussians with standard deviation `σ`. -/
+noncomputable def independentGaussianPairMeasureWithStd
+    (σ xi xj : ℝ) : Measure (ℝ × ℝ) :=
+  (ProbabilityTheory.gaussianReal xi (gaussianVarianceFromStd σ)).prod
+    (ProbabilityTheory.gaussianReal xj (gaussianVarianceFromStd σ))
+
+/-- Product law for two independent canonical variance-`1/2` Gaussians. -/
+noncomputable def independentGaussianPairMeasureHalf
+    (xi xj : ℝ) : Measure (ℝ × ℝ) :=
+  (ProbabilityTheory.gaussianReal xi (1 / 2 : ℝ≥0)).prod
+    (ProbabilityTheory.gaussianReal xj (1 / 2 : ℝ≥0))
+
+/-- Scale both coordinates of an independent Gaussian pair by the same factor. -/
+noncomputable def pairCanonicalHalfVarianceScaleMap
+    (σ : ℝ) : ℝ × ℝ → ℝ × ℝ :=
+  Prod.map
+    (fun x => canonicalHalfVarianceScale σ * x)
+    (fun x => canonicalHalfVarianceScale σ * x)
+
+/--
+Strict event that the first coordinate is below cutoff `a` and beats the
+second coordinate.
+-/
+def pairStrictWinnerBelowEvent (a : ℝ) : Set (ℝ × ℝ) :=
+  {p | p.1 < a ∧ p.2 < p.1}
+
+/-- Strict event that both coordinates are below cutoff `a`. -/
+def pairStrictBothBelowEvent (a : ℝ) : Set (ℝ × ℝ) :=
+  Set.Iio a ×ˢ Set.Iio a
+
+theorem pairStrictWinnerBelowEvent_measurable (a : ℝ) :
+    MeasurableSet (pairStrictWinnerBelowEvent a) := by
+  unfold pairStrictWinnerBelowEvent
+  exact (measurableSet_lt measurable_fst measurable_const).inter
+    (measurableSet_lt measurable_snd measurable_fst)
+
+theorem pairStrictBothBelowEvent_measurable (a : ℝ) :
+    MeasurableSet (pairStrictBothBelowEvent a) := by
+  unfold pairStrictBothBelowEvent
+  exact measurableSet_Iio.prod measurableSet_Iio
+
+/--
+The arbitrary-`σ` product law maps to the canonical variance-`1/2` product law
+under coordinatewise canonical scaling.
+-/
+theorem independentGaussianPairMeasureWithStd_map_canonicalHalfVarianceScale
+    {σ xi xj : ℝ} (hσ : 0 < σ) :
+    (independentGaussianPairMeasureWithStd σ xi xj).map
+        (pairCanonicalHalfVarianceScaleMap σ) =
+      independentGaussianPairMeasureHalf
+        (canonicalHalfVarianceScale σ * xi)
+        (canonicalHalfVarianceScale σ * xj) := by
+  unfold independentGaussianPairMeasureWithStd pairCanonicalHalfVarianceScaleMap
+    independentGaussianPairMeasureHalf
+  rw [← Measure.map_prod_map
+    (ProbabilityTheory.gaussianReal xi (gaussianVarianceFromStd σ))
+    (ProbabilityTheory.gaussianReal xj (gaussianVarianceFromStd σ))
+    (by fun_prop) (by fun_prop)]
+  rw [gaussianReal_map_canonicalHalfVarianceScale (σ := σ) (μ := xi) hσ,
+    gaussianReal_map_canonicalHalfVarianceScale (σ := σ) (μ := xj) hσ]
+
+theorem pairCanonicalHalfVarianceScaleMap_preimage_strictWinnerBelow
+    {σ a : ℝ} (hσ : 0 < σ) :
+    (pairCanonicalHalfVarianceScaleMap σ) ⁻¹'
+        pairStrictWinnerBelowEvent
+          (canonicalHalfVarianceScale σ * a) =
+      pairStrictWinnerBelowEvent a := by
+  have hc : 0 < canonicalHalfVarianceScale σ :=
+    canonicalHalfVarianceScale_pos hσ
+  ext p
+  simp [pairCanonicalHalfVarianceScaleMap, pairStrictWinnerBelowEvent]
+  constructor
+  · intro h
+    exact ⟨(mul_lt_mul_iff_right₀ hc).mp h.1,
+      (mul_lt_mul_iff_right₀ hc).mp h.2⟩
+  · intro h
+    exact ⟨(mul_lt_mul_iff_right₀ hc).mpr h.1,
+      (mul_lt_mul_iff_right₀ hc).mpr h.2⟩
+
+theorem pairCanonicalHalfVarianceScaleMap_preimage_strictBothBelow
+    {σ a : ℝ} (hσ : 0 < σ) :
+    (pairCanonicalHalfVarianceScaleMap σ) ⁻¹'
+        pairStrictBothBelowEvent
+          (canonicalHalfVarianceScale σ * a) =
+      pairStrictBothBelowEvent a := by
+  have hc : 0 < canonicalHalfVarianceScale σ :=
+    canonicalHalfVarianceScale_pos hσ
+  ext p
+  simp [pairCanonicalHalfVarianceScaleMap, pairStrictBothBelowEvent]
+  constructor
+  · intro h
+    exact ⟨(mul_lt_mul_iff_right₀ hc).mp h.1,
+      (mul_lt_mul_iff_right₀ hc).mp h.2⟩
+  · intro h
+    exact ⟨(mul_lt_mul_iff_right₀ hc).mpr h.1,
+      (mul_lt_mul_iff_right₀ hc).mpr h.2⟩
+
+theorem independentGaussianPairMeasureWithStd_strictWinnerBelow_eq_scaled
+    {σ xi xj a : ℝ} (hσ : 0 < σ) :
+    independentGaussianPairMeasureWithStd σ xi xj
+        (pairStrictWinnerBelowEvent a) =
+      independentGaussianPairMeasureHalf
+        (canonicalHalfVarianceScale σ * xi)
+        (canonicalHalfVarianceScale σ * xj)
+        (pairStrictWinnerBelowEvent
+          (canonicalHalfVarianceScale σ * a)) := by
+  have hmap :=
+    independentGaussianPairMeasureWithStd_map_canonicalHalfVarianceScale
+      (σ := σ) (xi := xi) (xj := xj) hσ
+  calc
+    independentGaussianPairMeasureWithStd σ xi xj
+        (pairStrictWinnerBelowEvent a)
+        = independentGaussianPairMeasureWithStd σ xi xj
+            ((pairCanonicalHalfVarianceScaleMap σ) ⁻¹'
+              pairStrictWinnerBelowEvent
+                (canonicalHalfVarianceScale σ * a)) := by
+          rw [pairCanonicalHalfVarianceScaleMap_preimage_strictWinnerBelow hσ]
+    _ = (independentGaussianPairMeasureWithStd σ xi xj).map
+          (pairCanonicalHalfVarianceScaleMap σ)
+          (pairStrictWinnerBelowEvent
+            (canonicalHalfVarianceScale σ * a)) := by
+          exact (Measure.map_apply
+            (μ := independentGaussianPairMeasureWithStd σ xi xj)
+            (f := pairCanonicalHalfVarianceScaleMap σ)
+            (by unfold pairCanonicalHalfVarianceScaleMap; fun_prop)
+            (pairStrictWinnerBelowEvent_measurable
+              (canonicalHalfVarianceScale σ * a))).symm
+    _ = independentGaussianPairMeasureHalf
+          (canonicalHalfVarianceScale σ * xi)
+          (canonicalHalfVarianceScale σ * xj)
+          (pairStrictWinnerBelowEvent
+            (canonicalHalfVarianceScale σ * a)) := by
+          rw [hmap]
+
+theorem independentGaussianPairMeasureWithStd_strictBothBelow_eq_scaled
+    {σ xi xj a : ℝ} (hσ : 0 < σ) :
+    independentGaussianPairMeasureWithStd σ xi xj
+        (pairStrictBothBelowEvent a) =
+      independentGaussianPairMeasureHalf
+        (canonicalHalfVarianceScale σ * xi)
+        (canonicalHalfVarianceScale σ * xj)
+        (pairStrictBothBelowEvent
+          (canonicalHalfVarianceScale σ * a)) := by
+  have hmap :=
+    independentGaussianPairMeasureWithStd_map_canonicalHalfVarianceScale
+      (σ := σ) (xi := xi) (xj := xj) hσ
+  calc
+    independentGaussianPairMeasureWithStd σ xi xj
+        (pairStrictBothBelowEvent a)
+        = independentGaussianPairMeasureWithStd σ xi xj
+            ((pairCanonicalHalfVarianceScaleMap σ) ⁻¹'
+              pairStrictBothBelowEvent
+                (canonicalHalfVarianceScale σ * a)) := by
+          rw [pairCanonicalHalfVarianceScaleMap_preimage_strictBothBelow hσ]
+    _ = (independentGaussianPairMeasureWithStd σ xi xj).map
+          (pairCanonicalHalfVarianceScaleMap σ)
+          (pairStrictBothBelowEvent
+            (canonicalHalfVarianceScale σ * a)) := by
+          exact (Measure.map_apply
+            (μ := independentGaussianPairMeasureWithStd σ xi xj)
+            (f := pairCanonicalHalfVarianceScaleMap σ)
+            (by unfold pairCanonicalHalfVarianceScaleMap; fun_prop)
+            (pairStrictBothBelowEvent_measurable
+              (canonicalHalfVarianceScale σ * a))).symm
+    _ = independentGaussianPairMeasureHalf
+          (canonicalHalfVarianceScale σ * xi)
+          (canonicalHalfVarianceScale σ * xj)
+          (pairStrictBothBelowEvent
+            (canonicalHalfVarianceScale σ * a)) := by
+          rw [hmap]
+
+/--
+Strict conditional ratio
+`Pr[X_i < a and X_j < X_i] / Pr[X_i < a and X_j < a]` for independent
+canonical variance-`1/2` Gaussians.
+-/
+noncomputable def independentGaussianStrictConditionalWinnerRatioHalf
+    (xi xj a : ℝ) : ℝ :=
+  (independentGaussianPairMeasureHalf xi xj
+      (pairStrictWinnerBelowEvent a)).toReal /
+    (independentGaussianPairMeasureHalf xi xj
+      (pairStrictBothBelowEvent a)).toReal
+
+/--
+Strict conditional winner ratio for independent Gaussians with standard
+deviation `σ`.
+-/
+noncomputable def independentGaussianStrictConditionalWinnerRatioWithStd
+    (σ xi xj a : ℝ) : ℝ :=
+  (independentGaussianPairMeasureWithStd σ xi xj
+      (pairStrictWinnerBelowEvent a)).toReal /
+    (independentGaussianPairMeasureWithStd σ xi xj
+      (pairStrictBothBelowEvent a)).toReal
+
+/--
+The arbitrary-`σ` strict conditional ratio is the canonical variance-`1/2`
+ratio after positive scaling of scores, means, and cutoff.
+-/
+theorem independentGaussianStrictConditionalWinnerRatioWithStd_eq_scaled
+    {σ xi xj a : ℝ} (hσ : 0 < σ) :
+    independentGaussianStrictConditionalWinnerRatioWithStd σ xi xj a =
+      independentGaussianStrictConditionalWinnerRatioHalf
+        (canonicalHalfVarianceScale σ * xi)
+        (canonicalHalfVarianceScale σ * xj)
+        (canonicalHalfVarianceScale σ * a) := by
+  unfold independentGaussianStrictConditionalWinnerRatioWithStd
+    independentGaussianStrictConditionalWinnerRatioHalf
+  rw [independentGaussianPairMeasureWithStd_strictWinnerBelow_eq_scaled hσ,
+    independentGaussianPairMeasureWithStd_strictBothBelow_eq_scaled hσ]
 
 end
 

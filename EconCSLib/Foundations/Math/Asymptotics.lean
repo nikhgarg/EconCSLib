@@ -1,8 +1,10 @@
 import Mathlib.Topology.Instances.Real.Lemmas
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Data.Fintype.BigOperators
 
 open Filter Topology
+open scoped BigOperators
 
 namespace EconCSLib
 namespace Math
@@ -30,6 +32,19 @@ def ExactInvRate (ε : ℕ → ℝ) : Prop :=
 /-- A sequence has exact paper-style `C / sqrt N` error rate. -/
 def ExactInvSqrtRate (ε : ℕ → ℝ) : Prop :=
   ∃ C > 0, ∀ N, ε N = C / Real.sqrt (N : ℝ)
+
+/--
+Changing finitely many entries of a zero-convergent error schedule preserves
+zero convergence.
+-/
+theorem tendsToZero_if_lt_const
+    {ε : ℕ → ℝ} (hε : TendsToZero ε) (threshold : ℕ) (C : ℝ) :
+    TendsToZero (fun N => if N < threshold then C else ε N) := by
+  rw [TendsToZero] at hε ⊢
+  refine Tendsto.congr' ?_ hε
+  filter_upwards [eventually_atTop.2
+      ⟨threshold, fun N hN => hN⟩] with N hN
+  simp [not_lt.mpr hN]
 
 namespace AsymptoticEquivalent
 
@@ -85,6 +100,91 @@ theorem eventually_sandwich_of_pos_right
         mul_le_mul_of_nonneg_right hratio.2 hy.le
 
 end AsymptoticEquivalent
+
+/--
+If finitely many terms are each asymptotic to a nonzero coefficient times a
+common scale, then their finite sum is asymptotic to the sum of the
+coefficients times that scale.
+-/
+theorem finite_sum_asymptoticEquivalent_common_scale
+    {ι : Type*} [Fintype ι]
+    (term : ι → ℕ → ℝ) (coeff : ι → ℝ) (scale : ℕ → ℝ)
+    (hcoeff_ne : ∀ i, coeff i ≠ 0)
+    (htotal_ne : (∑ i : ι, coeff i) ≠ 0)
+    (hscale_ne : ∀ᶠ n in atTop, scale n ≠ 0)
+    (hterm :
+      ∀ i,
+        AsymptoticEquivalent (term i)
+          (fun n => coeff i * scale n)) :
+    AsymptoticEquivalent
+      (fun n => ∑ i : ι, term i n)
+      (fun n => (∑ i : ι, coeff i) * scale n) := by
+  have hterm_scaled :
+      ∀ i,
+        Tendsto (fun n => term i n / scale n) atTop (nhds (coeff i)) := by
+    intro i
+    have hmul :
+        Tendsto
+          (fun n => term i n / (coeff i * scale n) * coeff i)
+          atTop (nhds (1 * coeff i)) := by
+      simpa [mul_comm] using (hterm i).const_mul (coeff i)
+    refine Tendsto.congr' ?_ (by simpa using hmul)
+    filter_upwards [hscale_ne] with n hn_scale
+    have hi := hcoeff_ne i
+    field_simp [hi, hn_scale]
+  have hsum_scaled :
+      Tendsto
+        (fun n => ∑ i : ι, term i n / scale n)
+        atTop (nhds (∑ i : ι, coeff i)) := by
+    exact tendsto_finset_sum Finset.univ
+      (fun i _ => hterm_scaled i)
+  have hratio_scaled :
+      Tendsto
+        (fun n => (∑ i : ι, term i n / scale n) /
+          (∑ i : ι, coeff i))
+        atTop (nhds 1) := by
+    have hdiv := hsum_scaled.div_const (∑ i : ι, coeff i)
+    simpa [htotal_ne] using hdiv
+  refine Tendsto.congr' ?_ hratio_scaled
+  filter_upwards [hscale_ne] with n hn_scale
+  have hsum_div :
+      (∑ i : ι, term i n / scale n) =
+        (∑ i : ι, term i n) / scale n := by
+    simp_rw [div_eq_mul_inv]
+    rw [Finset.sum_mul]
+  rw [hsum_div]
+  field_simp [htotal_ne, hn_scale]
+
+/--
+If a main term is asymptotic to `coeff * scale` and a remainder is `o(scale)`,
+their sum has the same asymptotic equivalent.
+-/
+theorem asymptoticEquivalent_add_negligible_common_scale
+    (main remainder scale : ℕ → ℝ) (coeff : ℝ)
+    (hcoeff_ne : coeff ≠ 0)
+    (hscale_ne : ∀ᶠ n in atTop, scale n ≠ 0)
+    (hmain :
+      AsymptoticEquivalent main
+        (fun n => coeff * scale n))
+    (hremainder :
+      Tendsto (fun n => remainder n / scale n) atTop (nhds 0)) :
+    AsymptoticEquivalent
+      (fun n => main n + remainder n)
+      (fun n => coeff * scale n) := by
+  have hremainder_ratio :
+      Tendsto
+        (fun n => remainder n / (coeff * scale n))
+        atTop (nhds 0) := by
+    have hdiv :=
+      hremainder.div_const coeff
+    refine Tendsto.congr' ?_ (by simpa [hcoeff_ne] using hdiv)
+    filter_upwards [hscale_ne] with n hn_scale
+    field_simp [hcoeff_ne, hn_scale]
+  rw [AsymptoticEquivalent] at hmain ⊢
+  have hsum := hmain.add hremainder_ratio
+  refine Tendsto.congr' ?_ (by simpa using hsum)
+  filter_upwards [hscale_ne] with n hn_scale
+  field_simp [hcoeff_ne, hn_scale]
 
 theorem ExactInvRate_implies_TendsToZeroInv (ε : ℕ → ℝ) :
     ExactInvRate ε → TendsToZeroInv ε := by

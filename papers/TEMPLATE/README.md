@@ -49,3 +49,11 @@ artifact paths, and the paper's top-level public status, then run
 - [ ] Update `status.json`, then regenerate `papers/status.json`.
 - [ ] Update theorem status table after each proof milestone.
 - [ ] Rebuild and inspect `DependencyDAG.pdf` after layout edits.
+
+## Post-Formalization Checklist
+
+- [ ] Run a library elevation pass over the paper-local proof modules. Move
+      reusable proof results, techniques, certificate constructors, and
+      primitives into `EconCSLib` when the destination is clear and the
+      extraction is local/low-risk; otherwise record the candidate and likely
+      destination module in `FINAL_VALIDATION_REPORT.md`.

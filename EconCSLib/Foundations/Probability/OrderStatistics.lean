@@ -41,6 +41,10 @@ it gives those analytic results a stable target interface.
 - `expectedReflectedBottomKSum_eq_sum_reflectedAscendingOrderStatistic`
 - `expectedReflectedBottomKSum_eq_sum_reflectedAscendingOrderStatistic_of_le`
 - `expectedSampleTopKEndpointLoss_eq_expectedReflectedBottomKSum`
+- `orderStatisticTopKSumFromMean`
+- `sampleOrderStatisticValue`
+- `expectedSampleOrderStatisticMean`
+- `expectedOrderStatisticMeanSeq`
 - `topKSourceEndpointLoss_eq_reflectedTopKMeanSum`
 - `TopKExpectationOracle.ScaledMarginalLimitCertificate`
 - `TopKExpectationOracle.ScaledMarginalLimitCertificate.eventually_marginal_sandwich`
@@ -1066,6 +1070,256 @@ theorem expectedSampleTopKEndpointLoss_eq_expectedReflectedBottomKSum
             (Filter.Eventually.of_forall
               (fun sample =>
                 sampleTopKEndpointLoss_eq_reflectedBottomKSum M sample k))
+
+/-!
+## Bottom-indexed paper order-statistic means
+
+Some papers state order-statistic expectations as a global function
+`μ rank sampleSize`, with one-based ranks from the bottom.  The bridge below
+connects that notation to the tuple-level `sampleTopKSum` API above.
+-/
+
+/--
+Top-`k` sum from bottom-indexed expected order-statistic means.  The rank
+argument is one-based: rank `a` is the largest item in an `a`-sample.
+-/
+def orderStatisticTopKSumFromMean
+    (μ : ℕ → ℕ → ℝ) (k a : ℕ) : ℝ :=
+  ∑ i ∈ Finset.range (min k a), μ (a - i) a
+
+@[simp] theorem orderStatisticTopKSumFromMean_zero_samples
+    (μ : ℕ → ℕ → ℝ) (k : ℕ) :
+    orderStatisticTopKSumFromMean μ k 0 = 0 := by
+  simp [orderStatisticTopKSumFromMean]
+
+@[simp] theorem orderStatisticTopKSumFromMean_zero_k
+    (μ : ℕ → ℕ → ℝ) (a : ℕ) :
+    orderStatisticTopKSumFromMean μ 0 a = 0 := by
+  simp [orderStatisticTopKSumFromMean]
+
+theorem orderStatisticTopKSumFromMean_eq_source_sum
+    (μ : ℕ → ℕ → ℝ) (k a : ℕ) :
+    orderStatisticTopKSumFromMean μ k a =
+      ∑ i ∈ Finset.range (min k a), μ (a - i) a := rfl
+
+/--
+When the sample count is at least `k`, the bottom-indexed top-`k`
+order-statistic sum is the `Fin k` sum over the upper order-statistic means.
+-/
+theorem orderStatisticTopKSumFromMean_eq_fin_sum_of_le
+    (μ : ℕ → ℕ → ℝ) {k a : ℕ} (hka : k ≤ a) :
+    orderStatisticTopKSumFromMean μ k a =
+      ∑ i : Fin k, μ (a - i.val) a := by
+  unfold orderStatisticTopKSumFromMean
+  rw [min_eq_left hka]
+  exact (Fin.sum_univ_eq_sum_range (fun i => μ (a - i) a) k).symm
+
+/--
+Fixed-`k` endpoint-loss form of
+`orderStatisticTopKSumFromMean_eq_fin_sum_of_le`.
+-/
+theorem orderStatisticTopKLossFromMean_eq_fin_loss_of_le
+    (M : ℝ) (μ : ℕ → ℕ → ℝ) {k a : ℕ} (hka : k ≤ a) :
+    (k : ℝ) * M - orderStatisticTopKSumFromMean μ k a =
+      (k : ℝ) * M - ∑ i : Fin k, μ (a - i.val) a := by
+  rw [orderStatisticTopKSumFromMean_eq_fin_sum_of_le μ hka]
+
+/--
+The `rank`-th smallest value of a concrete `a`-sample, using a one-based rank
+convention.  Out-of-range ranks are set to zero; the top-`k` bridge only
+evaluates valid ranks.
+-/
+def sampleOrderStatisticValue {a : ℕ}
+    (sample : Fin a → ℝ) (rank : ℕ) : ℝ :=
+  if hrank : 0 < rank ∧ rank ≤ a then
+    ascendingOrderStatistic sample ⟨rank - 1, by omega⟩
+  else 0
+
+theorem sampleOrderStatisticValue_measurable {a : ℕ} (rank : ℕ) :
+    Measurable
+      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) := by
+  by_cases hrank : 0 < rank ∧ rank ≤ a
+  · simpa [sampleOrderStatisticValue, hrank] using
+      ascendingOrderStatistic_measurable (⟨rank - 1, by omega⟩ : Fin a)
+  · simp [sampleOrderStatisticValue, hrank]
+
+theorem sampleOrderStatisticValue_integrable_of_ae_bounds
+    (L U : ℝ) {a : ℕ} (μ : MeasureTheory.Measure (Fin a → ℝ))
+    [MeasureTheory.IsFiniteMeasure μ] (rank : ℕ)
+    (h_bounds :
+      ∀ᵐ sample ∂μ, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ U) :
+    MeasureTheory.Integrable
+      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) μ := by
+  by_cases hrank : 0 < rank ∧ rank ≤ a
+  · simpa [sampleOrderStatisticValue, hrank] using
+      ascendingOrderStatistic_integrable_of_ae_bounds
+        L U μ (⟨rank - 1, by omega⟩ : Fin a) h_bounds
+  · simp [sampleOrderStatisticValue, hrank]
+
+theorem sampleOrderStatisticValue_topKRange_integrable_of_ae_bounds
+    (L U : ℝ) {a : ℕ} (μ : MeasureTheory.Measure (Fin a → ℝ))
+    [MeasureTheory.IsFiniteMeasure μ] (k : ℕ)
+    (h_bounds :
+      ∀ᵐ sample ∂μ, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ U) :
+    ∀ i ∈ Finset.range (min k a),
+      MeasureTheory.Integrable
+        (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample (a - i)) μ := by
+  intro i _hi
+  exact sampleOrderStatisticValue_integrable_of_ae_bounds
+    L U μ (a - i) h_bounds
+
+/--
+Pointwise bridge: the bottom-indexed order-statistic sum induced by a concrete
+sorted tuple equals the tuple-level top-`k` sample sum.
+-/
+theorem orderStatisticTopKSumFromSample_eq_sampleTopKSum
+    {a : ℕ} (sample : Fin a → ℝ) (k : ℕ) :
+    orderStatisticTopKSumFromMean
+        (fun rank sampleSize =>
+          if sampleSize = a then sampleOrderStatisticValue sample rank else 0)
+        k a =
+      sampleTopKSum sample k := by
+  unfold orderStatisticTopKSumFromMean sampleTopKSum
+  rw [Finset.sum_fin_eq_sum_range]
+  apply Finset.sum_congr rfl
+  intro i hi
+  have hi_lt : i < min k a := Finset.mem_range.mp hi
+  have hi_lt_k : i < k := lt_of_lt_of_le hi_lt (min_le_left k a)
+  have hi_lt_a : i < a := lt_of_lt_of_le hi_lt (min_le_right k a)
+  have hrank_pos : 0 < a - i := Nat.sub_pos_of_lt hi_lt_a
+  have hrank_le : a - i ≤ a := Nat.sub_le a i
+  simp [sampleOrderStatisticValue, hrank_pos, hrank_le, hi_lt_k, hi_lt_a]
+  unfold upperOrderStatistic
+  congr 1
+
+/--
+Expected bottom-indexed order-statistic mean induced by a sample law on `a`
+real draws.  The value is intended at `sampleSize = a`; other sample sizes are
+set to zero so the function has a global `ℕ → ℕ → ℝ` shape.
+-/
+def expectedSampleOrderStatisticMean {a : ℕ}
+    (μ : MeasureTheory.Measure (Fin a → ℝ)) (rank sampleSize : ℕ) : ℝ :=
+  if sampleSize = a then
+    ∫ sample, sampleOrderStatisticValue sample rank ∂μ
+  else 0
+
+/--
+Expectation form of the pointwise bridge: if the bottom-indexed mean function
+is induced by integrating sample order statistics, then its top-`k` sum is the
+expected tuple-level top-`k` sample sum.
+-/
+theorem expectedSampleOrderStatisticTopKSum_eq_expectedSampleTopKSum
+    {a : ℕ} (μ : MeasureTheory.Measure (Fin a → ℝ)) (k : ℕ)
+    (h_integrable :
+      ∀ i ∈ Finset.range (min k a),
+        MeasureTheory.Integrable
+          (fun sample => sampleOrderStatisticValue sample (a - i)) μ) :
+    orderStatisticTopKSumFromMean
+        (expectedSampleOrderStatisticMean μ) k a =
+      expectedSampleTopKSum μ k := by
+  calc
+    orderStatisticTopKSumFromMean
+        (expectedSampleOrderStatisticMean μ) k a
+        = ∑ i ∈ Finset.range (min k a),
+            ∫ sample, sampleOrderStatisticValue sample (a - i) ∂μ := by
+          unfold orderStatisticTopKSumFromMean expectedSampleOrderStatisticMean
+          simp
+    _ = ∫ sample,
+          ∑ i ∈ Finset.range (min k a),
+            sampleOrderStatisticValue sample (a - i) ∂μ := by
+          rw [MeasureTheory.integral_finset_sum]
+          exact h_integrable
+    _ = ∫ sample,
+          orderStatisticTopKSumFromMean
+            (fun rank sampleSize =>
+              if sampleSize = a then sampleOrderStatisticValue sample rank else 0)
+            k a ∂μ := by
+          exact MeasureTheory.integral_congr_ae
+            (Filter.Eventually.of_forall
+              (fun sample => by
+                simp [orderStatisticTopKSumFromMean]))
+    _ = expectedSampleTopKSum μ k := by
+          unfold expectedSampleTopKSum
+          exact MeasureTheory.integral_congr_ae
+            (Filter.Eventually.of_forall
+              (fun sample =>
+                orderStatisticTopKSumFromSample_eq_sampleTopKSum sample k))
+
+/--
+Expected bounded-support top-`k` reflection in the bottom-indexed mean
+interface.
+-/
+theorem expectedSampleOrderStatisticTopKEndpointLoss_eq_expectedReflectedBottomKSum
+    (M : ℝ) {a : ℕ} (μ : MeasureTheory.Measure (Fin a → ℝ))
+    [MeasureTheory.IsProbabilityMeasure μ] (k : ℕ)
+    (h_order_integrable :
+      ∀ i ∈ Finset.range (min k a),
+        MeasureTheory.Integrable
+          (fun sample => sampleOrderStatisticValue sample (a - i)) μ)
+    (h_top_integrable :
+      MeasureTheory.Integrable
+        (fun sample => sampleTopKSum sample k) μ) :
+    (min k a : ℝ) * M -
+        orderStatisticTopKSumFromMean
+          (expectedSampleOrderStatisticMean μ) k a =
+      expectedReflectedBottomKSum M μ k := by
+  rw [expectedSampleOrderStatisticTopKSum_eq_expectedSampleTopKSum
+    μ k h_order_integrable]
+  exact expectedSampleTopKEndpointLoss_eq_expectedReflectedBottomKSum
+    M μ k h_top_integrable
+
+/--
+Bottom-indexed expected order-statistic mean induced by a family of finite
+sample laws, one law for each sample size.
+-/
+def expectedOrderStatisticMeanSeq
+    (sampleMeasure : (a : ℕ) → MeasureTheory.Measure (Fin a → ℝ))
+    (rank sampleSize : ℕ) : ℝ :=
+  expectedSampleOrderStatisticMean (sampleMeasure sampleSize) rank sampleSize
+
+/--
+Varying-sample-size version of
+`expectedSampleOrderStatisticTopKSum_eq_expectedSampleTopKSum`.
+-/
+theorem expectedOrderStatisticMeanSeq_topKSum_eq_expectedSampleTopKSum
+    (sampleMeasure : (a : ℕ) → MeasureTheory.Measure (Fin a → ℝ))
+    (k a : ℕ)
+    (h_integrable :
+      ∀ i ∈ Finset.range (min k a),
+        MeasureTheory.Integrable
+          (fun sample => sampleOrderStatisticValue sample (a - i))
+          (sampleMeasure a)) :
+    orderStatisticTopKSumFromMean
+        (expectedOrderStatisticMeanSeq sampleMeasure) k a =
+      expectedSampleTopKSum (sampleMeasure a) k := by
+  simpa [expectedOrderStatisticMeanSeq] using
+    expectedSampleOrderStatisticTopKSum_eq_expectedSampleTopKSum
+      (sampleMeasure a) k h_integrable
+
+/--
+Varying-sample-size bounded reflection bridge in the global
+`μ rank sampleSize` interface.
+-/
+theorem expectedOrderStatisticMeanSeq_topKEndpointLoss_eq_expectedReflectedBottomKSum
+    (M : ℝ)
+    (sampleMeasure : (a : ℕ) → MeasureTheory.Measure (Fin a → ℝ))
+    {a : ℕ} [MeasureTheory.IsProbabilityMeasure (sampleMeasure a)] (k : ℕ)
+    (h_order_integrable :
+      ∀ i ∈ Finset.range (min k a),
+        MeasureTheory.Integrable
+          (fun sample => sampleOrderStatisticValue sample (a - i))
+          (sampleMeasure a))
+    (h_top_integrable :
+      MeasureTheory.Integrable
+        (fun sample => sampleTopKSum sample k)
+        (sampleMeasure a)) :
+    (min k a : ℝ) * M -
+        orderStatisticTopKSumFromMean
+          (expectedOrderStatisticMeanSeq sampleMeasure) k a =
+      expectedReflectedBottomKSum M (sampleMeasure a) k := by
+  simpa [expectedOrderStatisticMeanSeq] using
+    expectedSampleOrderStatisticTopKEndpointLoss_eq_expectedReflectedBottomKSum
+      M (sampleMeasure a) k h_order_integrable h_top_integrable
 
 /--
 Oracle for the expected value of the best `k` consumed items among `q` sampled

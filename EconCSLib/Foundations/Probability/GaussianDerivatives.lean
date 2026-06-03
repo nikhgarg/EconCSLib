@@ -3,6 +3,7 @@ import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Order.Filter.AtTopBot.Field
 import Mathlib.Topology.Order.IntermediateValue
+import EconCSLib.Foundations.Math.ThresholdCharacterization
 import EconCSLib.Foundations.Probability.Gaussian
 
 namespace EconCSLib
@@ -588,28 +589,13 @@ theorem existsUnique_mixtureTailMass_eq_and_region_of_capacity_mem_Ioo
       api.mixtureTailMass weight law threshold = capacity ∧
         ∀ z : ℝ,
           api.mixtureTailMass weight law z ≤ capacity ↔ threshold ≤ z := by
-  rcases api.existsUnique_mixtureTailMass_eq_of_capacity_mem_Ioo
-      hcdf_atBot hcdf_atTop hweight hpos hcapacity with
-    ⟨threshold, hthreshold, hunique⟩
-  have hanti : StrictAnti (api.mixtureTailMass weight law) :=
-    api.mixtureTailMass_strictAnti_threshold (law := law) hweight hpos
-  refine ⟨threshold, ⟨hthreshold, ?_⟩, ?_⟩
-  · intro z
-    constructor
-    · intro hmass
-      by_contra hnot
-      have hzlt : z < threshold := lt_of_not_ge hnot
-      have hstrict := hanti hzlt
-      rw [hthreshold] at hstrict
-      linarith
-    · intro hle
-      rcases lt_or_eq_of_le hle with hlt | rfl
-      · have hstrict := hanti hlt
-        rw [hthreshold] at hstrict
-        exact le_of_lt hstrict
-      · exact le_of_eq hthreshold
-  · intro threshold' hprops
-    exact hunique threshold' hprops.1
+  exact
+    EconCSLib.existsUnique_eq_and_upper_region_of_continuous_strictAnti_tendsto_atBot_atTop
+      (api.mixtureTailMass_continuous weight law)
+      (api.mixtureTailMass_strictAnti_threshold (law := law) hweight hpos)
+      (api.mixtureTailMass_tendsto_atBot_sum_weights hcdf_atBot weight law)
+      (api.mixtureTailMass_tendsto_atTop_zero hcdf_atTop weight law)
+      hcapacity
 
 end StandardGaussianCDFAPI
 

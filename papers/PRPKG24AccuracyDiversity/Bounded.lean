@@ -157,42 +157,9 @@ theorem finite_sum_asymptoticEquivalent_common_scale
           (fun n => coeff i * scale n)) :
     EconCSLib.Math.AsymptoticEquivalent
       (fun n => ∑ i : ι, term i n)
-      (fun n => (∑ i : ι, coeff i) * scale n) := by
-  have hterm_scaled :
-      ∀ i,
-        Tendsto (fun n => term i n / scale n) atTop (nhds (coeff i)) := by
-    intro i
-    have hmul :
-        Tendsto
-          (fun n => term i n / (coeff i * scale n) * coeff i)
-          atTop (nhds (1 * coeff i)) := by
-      simpa [mul_comm] using (hterm i).const_mul (coeff i)
-    refine Tendsto.congr' ?_ (by simpa using hmul)
-    filter_upwards [hscale_ne] with n hn_scale
-    have hi := hcoeff_ne i
-    field_simp [hi, hn_scale]
-  have hsum_scaled :
-      Tendsto
-        (fun n => ∑ i : ι, term i n / scale n)
-        atTop (nhds (∑ i : ι, coeff i)) := by
-    exact tendsto_finset_sum Finset.univ
-      (fun i _ => hterm_scaled i)
-  have hratio_scaled :
-      Tendsto
-        (fun n => (∑ i : ι, term i n / scale n) /
-          (∑ i : ι, coeff i))
-        atTop (nhds 1) := by
-    have hdiv := hsum_scaled.div_const (∑ i : ι, coeff i)
-    simpa [htotal_ne] using hdiv
-  refine Tendsto.congr' ?_ hratio_scaled
-  filter_upwards [hscale_ne] with n hn_scale
-  have hsum_div :
-      (∑ i : ι, term i n / scale n) =
-        (∑ i : ι, term i n) / scale n := by
-    simp_rw [div_eq_mul_inv]
-    rw [Finset.sum_mul]
-  rw [hsum_div]
-  field_simp [htotal_ne, hn_scale]
+      (fun n => (∑ i : ι, coeff i) * scale n) :=
+  EconCSLib.Math.finite_sum_asymptoticEquivalent_common_scale
+    term coeff scale hcoeff_ne htotal_ne hscale_ne hterm
 
 /--
 If a main term is asymptotic to `coeff * scale` and a remainder is
@@ -209,21 +176,9 @@ theorem asymptoticEquivalent_add_negligible_common_scale
       Tendsto (fun n => remainder n / scale n) atTop (nhds 0)) :
     EconCSLib.Math.AsymptoticEquivalent
       (fun n => main n + remainder n)
-      (fun n => coeff * scale n) := by
-  have hremainder_ratio :
-      Tendsto
-        (fun n => remainder n / (coeff * scale n))
-        atTop (nhds 0) := by
-    have hdiv :=
-      hremainder.div_const coeff
-    refine Tendsto.congr' ?_ (by simpa [hcoeff_ne] using hdiv)
-    filter_upwards [hscale_ne] with n hn_scale
-    field_simp [hcoeff_ne, hn_scale]
-  rw [EconCSLib.Math.AsymptoticEquivalent] at hmain ⊢
-  have hsum := hmain.add hremainder_ratio
-  refine Tendsto.congr' ?_ (by simpa using hsum)
-  filter_upwards [hscale_ne] with n hn_scale
-  field_simp [hcoeff_ne, hn_scale]
+      (fun n => coeff * scale n) :=
+  EconCSLib.Math.asymptoticEquivalent_add_negligible_common_scale
+    main remainder scale coeff hcoeff_ne hscale_ne hmain hremainder
 
 /-- The bounded branch's common scale, `a^(-1 / beta)`. -/
 noncomputable def boundedTailScale (beta : ℝ) (a : ℕ) : ℝ :=

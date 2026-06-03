@@ -1,3 +1,4 @@
+import EconCSLib.SocialChoice.Ranking.MallowsSequential
 import KR21Monoculture.MallowsPairwise
 import KR21Monoculture.Theorem1
 
@@ -30,64 +31,51 @@ noncomputable def bestInSet {n : ℕ} (π : Ranking n)
   else
     firstChoice π
 
+@[simp] theorem shared_bestInSet_eq {n : ℕ} (π : Ranking n)
+    (remaining : Finset (Candidate n)) :
+    EconCSLib.SocialChoice.Ranking.bestInSet π remaining =
+      bestInSet π remaining := by
+  unfold EconCSLib.SocialChoice.Ranking.bestInSet bestInSet
+  by_cases h : remaining.Nonempty
+  · simp only [dif_pos h]
+    change
+      π ((Finset.image (fun c : Candidate n => π.symm c) remaining).min' _) =
+        π ((Finset.image (fun c : Candidate n => π.symm c) remaining).min' _)
+    rfl
+  · simp [h, firstChoice, EconCSLib.SocialChoice.Ranking.firstChoice]
+
 /-- Characterization of `bestInSet` from a pointwise least rank in the set. -/
 theorem bestInSet_eq_of_forall_rank_le {n : ℕ} (π : Ranking n)
     (remaining : Finset (Candidate n)) {c : Candidate n}
     (hc : c ∈ remaining)
     (hmin : ∀ d : Candidate n, d ∈ remaining → rankOf π c ≤ rankOf π d) :
     bestInSet π remaining = c := by
-  classical
-  unfold bestInSet
-  have hnonempty : remaining.Nonempty := ⟨c, hc⟩
-  rw [dif_pos hnonempty]
-  have hmin' :
-      (remaining.image (rankOf π)).min' (Finset.image_nonempty.mpr hnonempty) =
-        rankOf π c := by
-    rw [Finset.min'_eq_iff]
-    constructor
-    · exact Finset.mem_image.mpr ⟨c, hc, rfl⟩
-    · intro r hr
-      rcases Finset.mem_image.mp hr with ⟨d, hd, hrd⟩
-      rw [← hrd]
-      exact hmin d hd
-  rw [hmin']
-  simp [rankOf]
+  simpa [bestInSet, rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_eq_of_forall_rank_le
+      π remaining hc
+      (fun d hd => by
+        simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hmin d hd)
 
 /-- The best element of a nonempty remaining set is itself remaining. -/
 theorem bestInSet_mem {n : ℕ} (π : Ranking n)
     {remaining : Finset (Candidate n)} (hremaining : remaining.Nonempty) :
     bestInSet π remaining ∈ remaining := by
-  classical
-  unfold bestInSet
-  rw [dif_pos hremaining]
-  have hmin :
-      (remaining.image (rankOf π)).min' (Finset.image_nonempty.mpr hremaining) ∈
-        remaining.image (rankOf π) :=
-    Finset.min'_mem _ _
-  rcases Finset.mem_image.mp hmin with ⟨c, hc, hc_rank⟩
-  rw [← hc_rank]
-  simpa [rankOf] using hc
+  simpa [bestInSet] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_mem π hremaining
 
 /-- The best element has weakly minimal rank among the remaining candidates. -/
 theorem rankOf_bestInSet_le {n : ℕ} (π : Ranking n)
     {remaining : Finset (Candidate n)} (hremaining : remaining.Nonempty)
     {d : Candidate n} (hd : d ∈ remaining) :
     rankOf π (bestInSet π remaining) ≤ rankOf π d := by
-  classical
-  unfold bestInSet
-  rw [dif_pos hremaining]
-  have hd_image : rankOf π d ∈ remaining.image (rankOf π) :=
-    Finset.mem_image.mpr ⟨d, hd, rfl⟩
-  have hmin_le :
-      (remaining.image (rankOf π)).min' (Finset.image_nonempty.mpr hremaining) ≤
-        rankOf π d :=
-    Finset.min'_le _ _ hd_image
-  simpa [rankOf] using hmin_le
+  simpa [bestInSet, rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+    EconCSLib.SocialChoice.Ranking.rankOf_bestInSet_le π hremaining hd
 
 @[simp] theorem rankOf_trans_center_symm {n : ℕ}
     (ρ π : Ranking n) (c : Candidate n) :
     rankOf (π.trans ρ.symm) (rankOf ρ c) = rankOf π c := by
-  simp [rankOf]
+  simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+    EconCSLib.SocialChoice.Ranking.rankOf_trans_center_symm ρ π c
 
 /--
 After relabeling candidates by center rank, the best remaining candidate is the
@@ -98,72 +86,58 @@ theorem bestInSet_trans_center_symm
     (hremaining : remaining.Nonempty) :
     bestInSet (π.trans ρ.symm) (remaining.image (rankOf ρ)) =
       rankOf ρ (bestInSet π remaining) := by
-  classical
-  refine bestInSet_eq_of_forall_rank_le
-    (π.trans ρ.symm) (remaining.image (rankOf ρ))
-    (c := rankOf ρ (bestInSet π remaining)) ?_ ?_
-  · exact Finset.mem_image.mpr
-      ⟨bestInSet π remaining, bestInSet_mem π hremaining, rfl⟩
-  · intro r hr
-    rcases Finset.mem_image.mp hr with ⟨d, hd, rfl⟩
-    rw [rankOf_trans_center_symm, rankOf_trans_center_symm]
-    exact rankOf_bestInSet_le π hremaining hd
+  simpa [bestInSet, EconCSLib.SocialChoice.Ranking.bestInSet,
+      rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_trans_center_symm
+      ρ π hremaining
 
 /-- Swapping the positions of two candidates in a ranking. -/
 def swapCandidatePositions {n : ℕ} (π : Ranking n)
     (c d : Candidate n) : Ranking n :=
   (Equiv.swap (rankOf π c) (rankOf π d)).trans π
 
+@[simp] theorem shared_swapCandidatePositions_eq {n : ℕ}
+    (π : Ranking n) (c d : Candidate n) :
+    EconCSLib.SocialChoice.Ranking.swapCandidatePositions π c d =
+      swapCandidatePositions π c d := by
+  unfold EconCSLib.SocialChoice.Ranking.swapCandidatePositions
+    swapCandidatePositions
+  simp [rankOf, EconCSLib.SocialChoice.Ranking.rankOf]
+
 @[simp] theorem rankOf_swapCandidatePositions_left {n : ℕ}
     (π : Ranking n) (c d : Candidate n) :
     rankOf (swapCandidatePositions π c d) c = rankOf π d := by
-  classical
-  unfold swapCandidatePositions rankOf
-  simp
+  simpa [swapCandidatePositions, rankOf,
+      EconCSLib.SocialChoice.Ranking.rankOf] using
+    EconCSLib.SocialChoice.Ranking.rankOf_swapCandidatePositions_left π c d
 
 @[simp] theorem rankOf_swapCandidatePositions_right {n : ℕ}
     (π : Ranking n) (c d : Candidate n) :
     rankOf (swapCandidatePositions π c d) d = rankOf π c := by
-  classical
-  unfold swapCandidatePositions rankOf
-  simp
+  simpa [swapCandidatePositions, rankOf,
+      EconCSLib.SocialChoice.Ranking.rankOf] using
+    EconCSLib.SocialChoice.Ranking.rankOf_swapCandidatePositions_right π c d
 
 theorem rankOf_swapCandidatePositions_of_ne {n : ℕ}
     (π : Ranking n) {c d e : Candidate n}
     (hec : e ≠ c) (hed : e ≠ d) :
     rankOf (swapCandidatePositions π c d) e = rankOf π e := by
-  classical
-  unfold swapCandidatePositions rankOf
-  have hrank_ne_c : π.symm e ≠ π.symm c := by
-    intro h
-    exact hec (π.symm.injective h)
-  have hrank_ne_d : π.symm e ≠ π.symm d := by
-    intro h
-    exact hed (π.symm.injective h)
-  exact Equiv.swap_apply_of_ne_of_ne hrank_ne_c hrank_ne_d
+  simpa [swapCandidatePositions, rankOf,
+      EconCSLib.SocialChoice.Ranking.rankOf] using
+    EconCSLib.SocialChoice.Ranking.rankOf_swapCandidatePositions_of_ne
+      π hec hed
 
 theorem swapCandidatePositions_comm {n : ℕ}
     (π : Ranking n) (c d : Candidate n) :
     swapCandidatePositions π c d = swapCandidatePositions π d c := by
-  unfold swapCandidatePositions
-  rw [Equiv.swap_comm (rankOf π c) (rankOf π d)]
+  simpa [swapCandidatePositions] using
+    EconCSLib.SocialChoice.Ranking.swapCandidatePositions_comm π c d
 
 theorem swapCandidatePositions_involutive {n : ℕ}
     (π : Ranking n) (c d : Candidate n) :
     swapCandidatePositions (swapCandidatePositions π c d) c d = π := by
-  classical
-  rw [swapCandidatePositions_comm (swapCandidatePositions π c d) c d]
-  change
-    (Equiv.swap (rankOf (swapCandidatePositions π c d) d)
-        (rankOf (swapCandidatePositions π c d) c)).trans
-      (swapCandidatePositions π c d) = π
-  rw [rankOf_swapCandidatePositions_right, rankOf_swapCandidatePositions_left]
-  rw [Equiv.swap_comm (rankOf π c) (rankOf π d)]
-  unfold swapCandidatePositions
-  apply Equiv.ext
-  intro x
-  apply π.injective
-  simp [Equiv.swap_comm]
+  simpa [swapCandidatePositions] using
+    EconCSLib.SocialChoice.Ranking.swapCandidatePositions_involutive π c d
 
 /-- Swapping two candidates' positions is an involutive equivalence on rankings. -/
 def swapCandidatePositionsEquiv {n : ℕ} (c d : Candidate n) :
@@ -177,23 +151,22 @@ def swapCandidatePositionsEquiv {n : ℕ} (c d : Candidate n) :
 theorem ranking_ext_of_rankOf {n : ℕ} {π σ : Ranking n}
     (h : ∀ c : Candidate n, rankOf π c = rankOf σ c) :
     π = σ := by
-  apply Equiv.ext
-  intro i
-  have hi := h (π i)
-  change π.symm (π i) = σ.symm (π i) at hi
-  simp only [Equiv.symm_apply_apply] at hi
-  have hσ := congrArg σ hi
-  simpa using hσ.symm
+  exact
+    EconCSLib.SocialChoice.Ranking.ranking_ext_of_rankOf
+      (fun c => by
+        simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using h c)
 
 theorem apply_eq_of_rankOf {n : ℕ} (π : Ranking n)
     {x c : Candidate n} (h : rankOf π c = x) : π x = c := by
-  have hπ := congrArg π h
-  simpa [rankOf] using hπ.symm
+  exact
+    EconCSLib.SocialChoice.Ranking.apply_eq_of_rankOf π
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using h)
 
 theorem eq_of_rankOf_eq {n : ℕ} (π : Ranking n)
     {c d : Candidate n} (h : rankOf π c = rankOf π d) : c = d := by
-  have hπ := congrArg π h
-  simpa [rankOf] using hπ
+  exact
+    EconCSLib.SocialChoice.Ranking.eq_of_rankOf_eq π
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using h)
 
 theorem rank_lt_adjacent_succ_iff_lt_castSucc_of_ne_castSucc
     {n : ℕ} (k : Fin (n + 1)) {r : Candidate n}
@@ -232,43 +205,18 @@ theorem bestInSet_swapCandidatePositions_of_bestInSet_eq
     {c d : Candidate n} (hc : c ∈ remaining) (hd : d ∈ remaining)
     (hbest : bestInSet π remaining = d) :
     bestInSet (swapCandidatePositions π c d) remaining = c := by
-  classical
-  refine bestInSet_eq_of_forall_rank_le
-    (swapCandidatePositions π c d) remaining hc ?_
-  intro e he
-  have hremaining : remaining.Nonempty := ⟨d, hd⟩
-  have hminπ :
-      rankOf π d ≤ rankOf π e := by
-    simpa [hbest] using rankOf_bestInSet_le π hremaining he
-  by_cases hec : e = c
-  · simp [hec]
-  · by_cases hed' : e = d
-    · subst e
-      have hmin_c :
-          rankOf π d ≤ rankOf π c := by
-        simpa [hbest] using rankOf_bestInSet_le π hremaining hc
-      simpa using hmin_c
-    · rw [rankOf_swapCandidatePositions_left]
-      rw [rankOf_swapCandidatePositions_of_ne π hec hed']
-      exact hminπ
+  simpa [bestInSet, swapCandidatePositions] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_swapCandidatePositions_of_bestInSet_eq
+      π hc hd (by simpa [bestInSet] using hbest)
 
 theorem bestInSet_swapCandidatePositions_eq_iff
     {n : ℕ} (π : Ranking n) {remaining : Finset (Candidate n)}
     {c d : Candidate n} (hc : c ∈ remaining) (hd : d ∈ remaining) :
     c = bestInSet (swapCandidatePositions π c d) remaining ↔
       d = bestInSet π remaining := by
-  constructor
-  · intro h
-    have hbest :
-        bestInSet (swapCandidatePositions π c d) remaining = c := h.symm
-    have hswap := bestInSet_swapCandidatePositions_of_bestInSet_eq
-      (swapCandidatePositions π c d) hd hc hbest
-    rw [swapCandidatePositions_comm (swapCandidatePositions π c d) d c,
-      swapCandidatePositions_involutive] at hswap
-    exact hswap.symm
-  · intro h
-    exact (bestInSet_swapCandidatePositions_of_bestInSet_eq
-      π hc hd h.symm).symm
+  simpa [bestInSet, swapCandidatePositions] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_swapCandidatePositions_eq_iff
+      π hc hd
 
 /--
 If `d` is not the best remaining candidate and `d` precedes `c`, then moving
@@ -282,43 +230,11 @@ theorem bestInSet_swapCandidatePositions_of_not_best
     (hnot : d ≠ bestInSet π remaining) :
     bestInSet (swapCandidatePositions π c d) remaining =
       bestInSet π remaining := by
-  classical
-  have hremaining : remaining.Nonempty := ⟨d, hd⟩
-  let b : Candidate n := bestInSet π remaining
-  have hb_mem : b ∈ remaining := bestInSet_mem π hremaining
-  have hb_le_d : rankOf π b ≤ rankOf π d :=
-    rankOf_bestInSet_le π hremaining hd
-  have hb_ne_d : b ≠ d := by
-    intro hbd
-    exact hnot hbd.symm
-  have hb_rank_ne_d : rankOf π b ≠ rankOf π d := by
-    intro h
-    exact hb_ne_d (by
-      simpa [rankOf] using congrArg π h)
-  have hb_lt_d : rankOf π b < rankOf π d :=
-    lt_of_le_of_ne hb_le_d hb_rank_ne_d
-  have hb_lt_c : rankOf π b < rankOf π c := lt_trans hb_lt_d hpos
-  have hb_ne_c : b ≠ c := by
-    intro hbc
-    have hb_le_d' : rankOf π c ≤ rankOf π d := by
-      simpa [hbc] using hb_le_d
-    exact (not_lt_of_ge hb_le_d') hpos
-  refine bestInSet_eq_of_forall_rank_le
-    (swapCandidatePositions π c d) remaining hb_mem ?_
-  intro e he
-  have hb_swap :
-      rankOf (swapCandidatePositions π c d) b = rankOf π b :=
-    rankOf_swapCandidatePositions_of_ne π hb_ne_c hb_ne_d
-  by_cases hec : e = c
-  · subst e
-    rw [hb_swap, rankOf_swapCandidatePositions_left]
-    exact le_of_lt hb_lt_d
-  · by_cases hed' : e = d
-    · subst e
-      rw [hb_swap, rankOf_swapCandidatePositions_right]
-      exact le_of_lt hb_lt_c
-    · rw [hb_swap, rankOf_swapCandidatePositions_of_ne π hec hed']
-      exact rankOf_bestInSet_le π hremaining he
+  simpa [bestInSet, swapCandidatePositions] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_swapCandidatePositions_of_not_best
+      π hc hd
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hpos)
+      (by simpa [bestInSet] using hnot)
 
 /--
 Correcting an inverted center-ordered pair inside the remaining set weakly
@@ -333,44 +249,29 @@ theorem bestInSet_value_le_swapCandidatePositions
     (hpos : rankOf π d < rankOf π c) :
     value (bestInSet π remaining) ≤
       value (bestInSet (swapCandidatePositions π c d) remaining) := by
-  classical
-  by_cases hbest : d = bestInSet π remaining
-  · have hswap :
-        bestInSet (swapCandidatePositions π c d) remaining = c :=
-      bestInSet_swapCandidatePositions_of_bestInSet_eq
-        π hc hd hbest.symm
-    rw [← hbest, hswap]
-    exact hvalue hcenter
-  · have hswap :
-        bestInSet (swapCandidatePositions π c d) remaining =
-          bestInSet π remaining :=
-      bestInSet_swapCandidatePositions_of_not_best
-        π hc hd hpos hbest
-    rw [hswap]
+  have hvalue' :
+      EconCSLib.SocialChoice.Ranking.WeaklyOrderedBy ρ value := by
+    intro a b hab
+    exact hvalue (by
+      simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hab)
+  simpa [bestInSet, swapCandidatePositions] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_value_le_swapCandidatePositions
+      ρ π hvalue'
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcenter)
+      hc hd
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hpos)
 
 theorem le_castSucc_of_le_succ_of_ne
     {n : ℕ} {k : Fin (n + 1)} {x : Fin (n + 2)}
     (hx : x ≤ k.succ) (hne : x ≠ k.succ) :
     x ≤ k.castSucc := by
-  rw [Fin.le_iff_val_le_val] at hx ⊢
-  change x.val ≤ k.val
-  change x.val ≤ k.val + 1 at hx
-  have hne_val : x.val ≠ k.val + 1 := by
-    intro hval
-    exact hne (Fin.ext hval)
-  omega
+  exact EconCSLib.SocialChoice.Ranking.le_castSucc_of_le_succ_of_ne hx hne
 
 theorem succ_le_of_castSucc_le_of_ne
     {n : ℕ} {k : Fin (n + 1)} {x : Fin (n + 2)}
     (hx : k.castSucc ≤ x) (hne : x ≠ k.castSucc) :
     k.succ ≤ x := by
-  rw [Fin.le_iff_val_le_val] at hx ⊢
-  change k.val + 1 ≤ x.val
-  change k.val ≤ x.val at hx
-  have hne_val : x.val ≠ k.val := by
-    intro hval
-    exact hne (Fin.ext hval)
-  omega
+  exact EconCSLib.SocialChoice.Ranking.succ_le_of_castSucc_le_of_ne hx hne
 
 /--
 Correcting an adjacent inverted pair weakly improves the deterministic
@@ -390,143 +291,15 @@ theorem bestInSet_value_le_adjacent_swapCandidatePositions
         (bestInSet
           (swapCandidatePositions π (π k.succ) (π k.castSucc))
           remaining) := by
-  classical
-  let c : Candidate n := π k.succ
-  let d : Candidate n := π k.castSucc
-  have hpos : rankOf π d < rankOf π c := by
-    simp [c, d, rankOf]
-  by_cases hc : c ∈ remaining
-  · by_cases hd : d ∈ remaining
-    · exact bestInSet_value_le_swapCandidatePositions
-        ρ π hvalue (by simpa [c, d] using hcenter) hc hd hpos
-    · let b : Candidate n := bestInSet π remaining
-      have hb_mem : b ∈ remaining := bestInSet_mem π hremaining
-      by_cases hbc : b = c
-      · have hbest_swap :
-            bestInSet
-                (swapCandidatePositions π c d) remaining = c := by
-          refine bestInSet_eq_of_forall_rank_le
-            (swapCandidatePositions π c d) remaining hc ?_
-          intro e he
-          by_cases hec : e = c
-          · simp [hec]
-          · have hed : e ≠ d := by
-              intro hed
-              exact hd (by simpa [hed] using he)
-            rw [rankOf_swapCandidatePositions_left]
-            rw [rankOf_swapCandidatePositions_of_ne π hec hed]
-            have hc_le_e : rankOf π c ≤ rankOf π e := by
-              simpa [b, hbc] using
-                rankOf_bestInSet_le π hremaining he
-            exact le_trans (le_of_lt hpos) hc_le_e
-        simpa [c, d, hbest_swap, b, hbc]
-      · have hb_ne_d : b ≠ d := by
-          intro hbd
-          exact hd (by simpa [b, hbd] using hb_mem)
-        have hbest_swap :
-            bestInSet
-                (swapCandidatePositions π c d) remaining = b := by
-          refine bestInSet_eq_of_forall_rank_le
-            (swapCandidatePositions π c d) remaining hb_mem ?_
-          intro e he
-          have hb_rank_swap :
-              rankOf (swapCandidatePositions π c d) b = rankOf π b :=
-            rankOf_swapCandidatePositions_of_ne π hbc hb_ne_d
-          by_cases hec : e = c
-          · rw [hb_rank_swap, hec, rankOf_swapCandidatePositions_left]
-            have hb_le_c : rankOf π b ≤ rankOf π c := by
-              simpa [b] using rankOf_bestInSet_le π hremaining hc
-            have hb_ne_c_rank : rankOf π b ≠ rankOf π c := by
-              intro hr
-              exact hbc (by simpa [rankOf] using congrArg π hr)
-            simpa [d, rankOf] using
-              le_castSucc_of_le_succ_of_ne
-                (k := k) (x := rankOf π b)
-                (by simpa [c, rankOf] using hb_le_c)
-                (by simpa [c, rankOf] using hb_ne_c_rank)
-          · have hed : e ≠ d := by
-              intro hed
-              exact hd (by simpa [hed] using he)
-            rw [hb_rank_swap,
-              rankOf_swapCandidatePositions_of_ne π hec hed]
-            exact rankOf_bestInSet_le π hremaining he
-        simpa [b, c, d, hbest_swap]
-  · by_cases hd : d ∈ remaining
-    · let b : Candidate n := bestInSet π remaining
-      have hb_mem : b ∈ remaining := bestInSet_mem π hremaining
-      by_cases hbd : b = d
-      · have hbest_swap :
-            bestInSet
-                (swapCandidatePositions π c d) remaining = d := by
-          refine bestInSet_eq_of_forall_rank_le
-            (swapCandidatePositions π c d) remaining hd ?_
-          intro e he
-          by_cases hed : e = d
-          · simp [hed]
-          · have hec : e ≠ c := by
-              intro hec
-              exact hc (by simpa [hec] using he)
-            rw [rankOf_swapCandidatePositions_right]
-            rw [rankOf_swapCandidatePositions_of_ne π hec hed]
-            have hd_le_e : rankOf π d ≤ rankOf π e := by
-              simpa [b, hbd] using
-                rankOf_bestInSet_le π hremaining he
-            have hd_ne_e_rank : rankOf π e ≠ rankOf π d := by
-              intro hr
-              exact hed (by simpa [rankOf] using congrArg π hr)
-            simpa [c, rankOf] using
-              succ_le_of_castSucc_le_of_ne
-                (k := k) (x := rankOf π e)
-                (by simpa [d, rankOf] using hd_le_e)
-                (by simpa [d, rankOf] using hd_ne_e_rank)
-        simpa [c, d, hbest_swap, b, hbd]
-      · have hb_ne_c : b ≠ c := by
-          intro hbc
-          exact hc (by simpa [b, hbc] using hb_mem)
-        have hbest_swap :
-            bestInSet
-                (swapCandidatePositions π c d) remaining = b := by
-          refine bestInSet_eq_of_forall_rank_le
-            (swapCandidatePositions π c d) remaining hb_mem ?_
-          intro e he
-          have hb_rank_swap :
-              rankOf (swapCandidatePositions π c d) b = rankOf π b :=
-            rankOf_swapCandidatePositions_of_ne π hb_ne_c hbd
-          by_cases hec : e = c
-          · exact False.elim (hc (by simpa [hec] using he))
-          · by_cases hed : e = d
-            · rw [hb_rank_swap, hed, rankOf_swapCandidatePositions_right]
-              have hb_le_d : rankOf π b ≤ rankOf π d := by
-                simpa [b] using rankOf_bestInSet_le π hremaining hd
-              exact le_trans hb_le_d (le_of_lt hpos)
-            · rw [hb_rank_swap,
-                rankOf_swapCandidatePositions_of_ne π hec hed]
-              exact rankOf_bestInSet_le π hremaining he
-        rw [hbest_swap]
-    · let b : Candidate n := bestInSet π remaining
-      have hb_mem : b ∈ remaining := bestInSet_mem π hremaining
-      have hb_ne_c : b ≠ c := by
-        intro hbc
-        exact hc (by simpa [b, hbc] using hb_mem)
-      have hb_ne_d : b ≠ d := by
-        intro hbd
-        exact hd (by simpa [b, hbd] using hb_mem)
-      have hbest_swap :
-          bestInSet
-              (swapCandidatePositions π c d) remaining = b := by
-        refine bestInSet_eq_of_forall_rank_le
-          (swapCandidatePositions π c d) remaining hb_mem ?_
-        intro e he
-        have hec : e ≠ c := by
-          intro hec
-          exact hc (by simpa [hec] using he)
-        have hed : e ≠ d := by
-          intro hed
-          exact hd (by simpa [hed] using he)
-        rw [rankOf_swapCandidatePositions_of_ne π hb_ne_c hb_ne_d]
-        rw [rankOf_swapCandidatePositions_of_ne π hec hed]
-        exact rankOf_bestInSet_le π hremaining he
-      rw [hbest_swap]
+  simpa [shared_bestInSet_eq, shared_swapCandidatePositions_eq] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_value_le_adjacent_swapCandidatePositions
+      ρ π hremaining
+      (by
+        intro c d hcd
+        exact hvalue (by
+          simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcd))
+      k
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcenter)
 
 /--
 A payoff improves when an adjacent pair of candidates is swapped to correct an
@@ -558,8 +331,19 @@ theorem AdjacentSwapImproves.le_of_adjacentCorrection
     (hF : AdjacentSwapImproves ρ F) {π σ : Ranking n}
     (hstep : AdjacentCorrection ρ π σ) :
     F π ≤ F σ := by
-  rcases hstep with ⟨k, hcenter, rfl⟩
-  exact hF π k hcenter
+  simpa [AdjacentSwapImproves, AdjacentCorrection, shared_swapCandidatePositions_eq,
+    rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+    EconCSLib.SocialChoice.Ranking.AdjacentSwapImproves.le_of_adjacentCorrection
+      (ρ := ρ) (F := F)
+      (by
+        intro π k hcenter
+        exact hF π k (by
+          simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcenter))
+      (by
+        rcases hstep with ⟨k, hcenter, hσ⟩
+        exact ⟨k, by
+          simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcenter,
+          by simpa [hσ, shared_swapCandidatePositions_eq]⟩)
 
 theorem AdjacentSwapImproves.le_of_weakBruhatLe
     {n : ℕ} {ρ : Ranking n} {F : Ranking n → ℝ}
@@ -579,8 +363,15 @@ theorem adjacentSwapImproves_bestInSet_value
     AdjacentSwapImproves ρ
       (fun π : Ranking n => value (bestInSet π remaining)) := by
   intro π k hcenter
-  exact bestInSet_value_le_adjacent_swapCandidatePositions
-    ρ π hremaining hvalue k hcenter
+  simpa [shared_bestInSet_eq, shared_swapCandidatePositions_eq] using
+    EconCSLib.SocialChoice.Ranking.adjacentSwapImproves_bestInSet_value
+      ρ hremaining
+      (by
+        intro c d hcd
+        exact hvalue (by
+          simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcd))
+      π k
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcenter)
 
 /--
 For a fixed remaining set, a payoff is monotone under corrections of inverted
@@ -600,8 +391,16 @@ theorem swapImprovesOn_bestInSet_value
     SwapImprovesOn remaining ρ
       (fun π : Ranking n => value (bestInSet π remaining)) := by
   intro π c d hc hd hcenter hpos
-  exact bestInSet_value_le_swapCandidatePositions
-    ρ π hvalue hcenter hc hd hpos
+  simpa [shared_bestInSet_eq, shared_swapCandidatePositions_eq] using
+    EconCSLib.SocialChoice.Ranking.swapImprovesOn_bestInSet_value
+      ρ remaining
+      (by
+        intro a b hab
+        exact hvalue (by
+          simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hab))
+      π c d hc hd
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcenter)
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hpos)
 
 /--
 Map an inversion of the ranking with `i` and `j` swapped back to an inversion
@@ -4933,23 +4732,10 @@ theorem succAbove_val_lt_deleteFirstChoicePrefixCut_iff
     {n : ℕ} (r : Candidate (n + 1)) (c : Candidate n) (cut : ℕ) :
     ((r.succAbove c : Candidate (n + 1)) : ℕ) < cut ↔
       (c : ℕ) < deleteFirstChoicePrefixCut r cut := by
-  unfold deleteFirstChoicePrefixCut
-  by_cases hcr : c.castSucc < r
-  · have hcr_nat : (c : ℕ) < (r : ℕ) := by exact hcr
-    rw [Fin.succAbove_of_castSucc_lt r c hcr]
-    by_cases hrcut : (r : ℕ) < cut
-    · simp [hrcut]
-      omega
-    · simp [hrcut]
-  · have hrc : r ≤ c.castSucc := le_of_not_gt hcr
-    have hrc_nat : (r : ℕ) ≤ (c : ℕ) := by exact hrc
-    rw [Fin.succAbove_of_le_castSucc r c hrc]
-    by_cases hrcut : (r : ℕ) < cut
-    · simp [hrcut]
-      omega
-    · have hcut_le_r : cut ≤ (r : ℕ) := by omega
-      simp [hrcut]
-      omega
+  simpa [deleteFirstChoicePrefixCut,
+    EconCSLib.SocialChoice.Ranking.deleteFirstChoicePrefixCut] using
+    EconCSLib.SocialChoice.Ranking.succAbove_val_lt_deleteFirstChoicePrefixCut_iff
+      r c cut
 
 /--
 Cut-form first-hit indicator.  This generalizes
@@ -4964,18 +4750,20 @@ noncomputable def bestInSetPrefixCutIndicator {n : ℕ}
 theorem bestInSetPrefixCutIndicator_nonneg {n : ℕ}
     (remaining : Finset (Candidate n)) (cut : ℕ) (τ : Ranking n) :
     0 ≤ bestInSetPrefixCutIndicator remaining cut τ := by
-  unfold bestInSetPrefixCutIndicator
-  by_cases hcut : ((bestInSet τ remaining : Candidate n) : ℕ) < cut
-  · simp [hcut]
-  · simp [hcut]
+  simpa [bestInSetPrefixCutIndicator,
+    EconCSLib.SocialChoice.Ranking.bestInSetPrefixCutIndicator,
+    shared_bestInSet_eq] using
+    EconCSLib.SocialChoice.Ranking.bestInSetPrefixCutIndicator_nonneg
+      remaining cut τ
 
 theorem bestInSetPrefixCutIndicator_le_one {n : ℕ}
     (remaining : Finset (Candidate n)) (cut : ℕ) (τ : Ranking n) :
     bestInSetPrefixCutIndicator remaining cut τ ≤ 1 := by
-  unfold bestInSetPrefixCutIndicator
-  by_cases hcut : ((bestInSet τ remaining : Candidate n) : ℕ) < cut
-  · simp [hcut]
-  · simp [hcut]
+  simpa [bestInSetPrefixCutIndicator,
+    EconCSLib.SocialChoice.Ranking.bestInSetPrefixCutIndicator,
+    shared_bestInSet_eq] using
+    EconCSLib.SocialChoice.Ranking.bestInSetPrefixCutIndicator_le_one
+      remaining cut τ
 
 theorem bestInSetPrefixCutIndicator_eq_of_adjacent_cut_not_mem
     {n : ℕ} {remaining : Finset (Candidate n)}
@@ -4983,24 +4771,11 @@ theorem bestInSetPrefixCutIndicator_eq_of_adjacent_cut_not_mem
     (hk : k ∉ remaining) (τ : Ranking n) :
     bestInSetPrefixCutIndicator remaining (k : ℕ) τ =
       bestInSetPrefixCutIndicator remaining ((k : ℕ) + 1) τ := by
-  classical
-  unfold bestInSetPrefixCutIndicator
-  have hb_mem : bestInSet τ remaining ∈ remaining :=
-    bestInSet_mem τ hremaining
-  have hb_ne : bestInSet τ remaining ≠ k := by
-    intro h
-    exact hk (by simpa [h] using hb_mem)
-  have hb_val_ne :
-      ((bestInSet τ remaining : Candidate n) : ℕ) ≠ (k : ℕ) := by
-    intro hval
-    exact hb_ne (Fin.ext hval)
-  have hiff :
-      ((bestInSet τ remaining : Candidate n) : ℕ) < (k : ℕ) ↔
-        ((bestInSet τ remaining : Candidate n) : ℕ) < (k : ℕ) + 1 := by
-    omega
-  by_cases hcut : ((bestInSet τ remaining : Candidate n) : ℕ) < (k : ℕ)
-  · rw [if_pos hcut, if_pos (hiff.mp hcut)]
-  · rw [if_neg hcut, if_neg (fun h => hcut (hiff.mpr h))]
+  simpa [bestInSetPrefixCutIndicator,
+    EconCSLib.SocialChoice.Ranking.bestInSetPrefixCutIndicator,
+    shared_bestInSet_eq] using
+    EconCSLib.SocialChoice.Ranking.bestInSetPrefixCutIndicator_eq_of_adjacent_cut_not_mem
+      hremaining hk τ
 
 /-- Cut-form prefix value in identity-center coordinates. -/
 noncomputable def centerPrefixCutValue {n : ℕ} (cut : ℕ)
@@ -5010,32 +4785,37 @@ noncomputable def centerPrefixCutValue {n : ℕ} (cut : ℕ)
 theorem weaklyOrderedBy_centerPrefixCutValue {n : ℕ} (cut : ℕ) :
     WeaklyOrderedBy (Equiv.refl (Candidate n)) (centerPrefixCutValue cut) := by
   intro c d hcd
-  unfold centerPrefixCutValue
-  by_cases hd : (d : ℕ) < cut
-  · have hc : (c : ℕ) < cut := by
-      have hcd_nat : (c : ℕ) < (d : ℕ) := by simpa [rankOf] using hcd
-      omega
-    simp [hc, hd]
-  · by_cases hc : (c : ℕ) < cut
-    · simp [hc, hd]
-    · simp [hc, hd]
+  have hle :=
+    EconCSLib.SocialChoice.Ranking.weaklyOrderedBy_centerPrefixCutValue
+      (n := n) (cut := cut) (a := c) (b := d)
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcd)
+  simpa [centerPrefixCutValue,
+    EconCSLib.SocialChoice.Ranking.centerPrefixCutValue] using hle
 
 theorem bestInSetPrefixCutIndicator_eq_centerPrefixCutValue
     {n : ℕ} (remaining : Finset (Candidate n)) (cut : ℕ)
     (τ : Ranking n) :
     bestInSetPrefixCutIndicator remaining cut τ =
       centerPrefixCutValue cut (bestInSet τ remaining) := by
-  rfl
+  simpa [bestInSetPrefixCutIndicator, centerPrefixCutValue,
+    EconCSLib.SocialChoice.Ranking.bestInSetPrefixCutIndicator,
+    EconCSLib.SocialChoice.Ranking.centerPrefixCutValue,
+    shared_bestInSet_eq] using
+    EconCSLib.SocialChoice.Ranking.bestInSetPrefixCutIndicator_eq_centerPrefixCutValue
+      remaining cut τ
 
 theorem adjacentSwapImproves_bestInSetPrefixCutIndicator
     {n : ℕ} {remaining : Finset (Candidate n)}
     (hremaining : remaining.Nonempty) (cut : ℕ) :
     AdjacentSwapImproves (Equiv.refl (Candidate n))
       (bestInSetPrefixCutIndicator remaining cut) := by
-  simpa [bestInSetPrefixCutIndicator, centerPrefixCutValue] using
-    adjacentSwapImproves_bestInSet_value
-      (Equiv.refl (Candidate n)) hremaining
-      (weaklyOrderedBy_centerPrefixCutValue cut)
+  intro π k hcenter
+  simpa [bestInSetPrefixCutIndicator,
+    EconCSLib.SocialChoice.Ranking.bestInSetPrefixCutIndicator,
+    shared_bestInSet_eq, shared_swapCandidatePositions_eq] using
+    EconCSLib.SocialChoice.Ranking.adjacentSwapImproves_bestInSetPrefixCutIndicator
+      (remaining := remaining) hremaining cut π k
+      (by simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcenter)
 
 /--
 Tail event produced by peeling the center-best candidate `0` when `0` remains.
@@ -11319,12 +11099,8 @@ theorem reflMallowsPayoffSum_cross_of_swapImprovesOn_univ
 /-- If all candidates remain, `bestInSet` is the first choice. -/
 @[simp] theorem bestInSet_univ {n : ℕ} (π : Ranking n) :
     bestInSet π Finset.univ = firstChoice π := by
-  classical
-  refine bestInSet_eq_of_forall_rank_le π Finset.univ
-    (c := firstChoice π) (Finset.mem_univ _) ?_
-  intro d _
-  rw [rankOf_firstChoice]
-  exact Fin.zero_le _
+  simpa [bestInSet, EconCSLib.SocialChoice.Ranking.bestInSet] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_univ π
 
 theorem reflMallowsBestInSetPrefixCutSum_zero_univ_one (q : ℝ) :
     reflMallowsBestInSetPrefixCutSum 0 q
@@ -11723,7 +11499,6 @@ theorem reflMallowsBestInSetWeight_univ_eq_reflFirstWeight
     reflFirstWeight reflFirstChoiceFiber
   rw [Finset.sum_filter]
   simp [bestInSet_univ, mul_ite]
-  rfl
 
 /-- If exactly candidate `c` has been removed, `bestInSet` is the existing
 two-firm `bestRemainingAfter`. -/
@@ -11731,100 +11506,24 @@ theorem bestInSet_univ_sdiff_singleton {n : ℕ} (π : Ranking n)
     (c : Candidate n) :
     bestInSet π (Finset.univ \ ({c} : Finset (Candidate n))) =
       bestRemainingAfter π c := by
-  classical
-  by_cases hfirst : firstChoice π = c
-  · have hmem : secondChoice π ∈
-        (Finset.univ \ ({c} : Finset (Candidate n))) := by
-      simp [hfirst.symm]
-    have hmin :
-        ∀ d : Candidate n,
-          d ∈ (Finset.univ \ ({c} : Finset (Candidate n))) →
-            rankOf π (secondChoice π) ≤ rankOf π d := by
-      intro d hd
-      have hd_ne_c : d ≠ c := by
-        simpa using hd
-      have hd_ne_first : d ≠ firstChoice π := by
-        intro hd_first
-        exact hd_ne_c (hd_first.trans hfirst)
-      by_cases hd_second : d = secondChoice π
-      · simp [hd_second]
-      · rw [rankOf_secondChoice]
-        exact le_of_lt
-          (one_lt_rankOf_of_ne_first_second π hd_ne_first hd_second)
-    calc
-      bestInSet π (Finset.univ \ ({c} : Finset (Candidate n)))
-          = secondChoice π :=
-            bestInSet_eq_of_forall_rank_le π
-              (Finset.univ \ ({c} : Finset (Candidate n)))
-              hmem hmin
-      _ = bestRemainingAfter π c := by
-            rw [← hfirst, bestRemainingAfter_of_eq]
-  · have hmem : firstChoice π ∈
-        (Finset.univ \ ({c} : Finset (Candidate n))) := by
-      rw [Finset.mem_sdiff]
-      exact ⟨Finset.mem_univ _, by simpa using hfirst⟩
-    have hmin :
-        ∀ d : Candidate n,
-          d ∈ (Finset.univ \ ({c} : Finset (Candidate n))) →
-            rankOf π (firstChoice π) ≤ rankOf π d := by
-      intro d hd
-      rw [rankOf_firstChoice]
-      exact Fin.zero_le _
-    calc
-      bestInSet π (Finset.univ \ ({c} : Finset (Candidate n)))
-          = firstChoice π :=
-            bestInSet_eq_of_forall_rank_le π
-              (Finset.univ \ ({c} : Finset (Candidate n)))
-              hmem hmin
-      _ = bestRemainingAfter π c := by
-            rw [bestRemainingAfter_of_ne π hfirst]
+  simpa [bestInSet, EconCSLib.SocialChoice.Ranking.bestInSet,
+      bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_univ_sdiff_singleton π c
 
 /-- If exactly one candidate remains, that candidate is chosen under every ranking. -/
 @[simp] theorem bestInSet_singleton {n : ℕ} (π : Ranking n)
     (c : Candidate n) :
     bestInSet π ({c} : Finset (Candidate n)) = c := by
-  classical
-  refine bestInSet_eq_of_forall_rank_le π ({c} : Finset (Candidate n))
-    (c := c) ?_ ?_
-  · simp
-  · intro d hd
-    have hd_eq : d = c := by
-      simpa using hd
-    rw [hd_eq]
+  simpa [bestInSet, EconCSLib.SocialChoice.Ranking.bestInSet] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_singleton π c
 
 theorem bestInSet_pair_eq_if_rank_lt {n : ℕ} (π : Ranking n)
     {c d : Candidate n} (hcd : c ≠ d) :
     bestInSet π ({c, d} : Finset (Candidate n)) =
       if rankOf π c < rankOf π d then c else d := by
-  classical
-  by_cases hlt : rankOf π c < rankOf π d
-  · rw [if_pos hlt]
-    refine bestInSet_eq_of_forall_rank_le π ({c, d} : Finset (Candidate n))
-      (c := c) ?_ ?_
-    · simp
-    · intro e he
-      have he_cases : e = c ∨ e = d := by
-        simpa using he
-      rcases he_cases with rfl | rfl
-      · rfl
-      · exact le_of_lt hlt
-  · rw [if_neg hlt]
-    have hdc : rankOf π d < rankOf π c := by
-      have hle : rankOf π d ≤ rankOf π c := le_of_not_gt hlt
-      have hne : rankOf π d ≠ rankOf π c := by
-        intro hrank
-        exact hcd (by
-          simpa [rankOf] using congrArg π hrank.symm)
-      exact lt_of_le_of_ne hle hne
-    refine bestInSet_eq_of_forall_rank_le π ({c, d} : Finset (Candidate n))
-      (c := d) ?_ ?_
-    · simp
-    · intro e he
-      have he_cases : e = c ∨ e = d := by
-        simpa using he
-      rcases he_cases with rfl | rfl
-      · exact le_of_lt hdc
-      · rfl
+  simpa [bestInSet, EconCSLib.SocialChoice.Ranking.bestInSet,
+      rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+    EconCSLib.SocialChoice.Ranking.bestInSet_pair_eq_if_rank_lt π hcd
 
 /-- Expected value of the best remaining candidate under a ranking law. -/
 noncomputable def expectedBestInSet {n : ℕ}
@@ -11836,25 +11535,33 @@ noncomputable def expectedBestInSet {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
     expectedBestInSet μ value Finset.univ =
       expectedFirstMoverUtility μ value := by
-  unfold expectedBestInSet expectedFirstMoverUtility
-  exact pmfExp_congr μ (fun π => by simp)
+  simpa [expectedBestInSet, EconCSLib.SocialChoice.Ranking.expectedBestInSet,
+      bestInSet, EconCSLib.SocialChoice.Ranking.bestInSet,
+      expectedFirstMoverUtility,
+      EconCSLib.SocialChoice.Ranking.expectedFirstMoverUtility] using
+    EconCSLib.SocialChoice.Ranking.expectedBestInSet_univ μ value
 
 theorem expectedBestInSet_univ_sdiff_singleton {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ) (c : Candidate n) :
     expectedBestInSet μ value
         (Finset.univ \ ({c} : Finset (Candidate n))) =
       AccuracyFamily.expectedBestAfterRemoval μ value c := by
-  unfold expectedBestInSet AccuracyFamily.expectedBestAfterRemoval
-  exact pmfExp_congr μ (fun π => by
-    rw [bestInSet_univ_sdiff_singleton])
+  simpa [expectedBestInSet, EconCSLib.SocialChoice.Ranking.expectedBestInSet,
+      AccuracyFamily.expectedBestAfterRemoval,
+      EconCSLib.SocialChoice.Ranking.expectedBestAfterRemoval,
+      bestInSet, EconCSLib.SocialChoice.Ranking.bestInSet,
+      bestRemainingAfter, EconCSLib.SocialChoice.Ranking.bestRemainingAfter] using
+    EconCSLib.SocialChoice.Ranking.expectedBestInSet_univ_sdiff_singleton
+      μ value c
 
 @[simp] theorem expectedBestInSet_singleton {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
     (c : Candidate n) :
     expectedBestInSet μ value ({c} : Finset (Candidate n)) =
       value c := by
-  unfold expectedBestInSet
-  simp [pmfExp_const]
+  simpa [expectedBestInSet, EconCSLib.SocialChoice.Ranking.expectedBestInSet,
+      bestInSet, EconCSLib.SocialChoice.Ranking.bestInSet] using
+    EconCSLib.SocialChoice.Ranking.expectedBestInSet_singleton μ value c
 
 namespace MallowsSpec
 
@@ -11866,30 +11573,17 @@ theorem expectedBestInSet_pair_eq_pairCorrectProb
     expectedBestInSet M.law value ({c, d} : Finset (Candidate n)) =
       M.pairCorrectProb c d * value c +
         (1 - M.pairCorrectProb c d) * value d := by
-  classical
-  have hne : c ≠ d := by
-    intro h
-    rw [h] at hcd
-    exact (lt_irrefl _) hcd
-  unfold expectedBestInSet
-  refine
-    pmfExp_eq_prob_mul_add_one_sub_prob_mul_of_forall_eq_if
-      M.law
-      (fun π : Ranking n =>
-        rankOf M.center c < rankOf M.center d ∧
-          rankOf π c < rankOf π d)
-      (fun π : Ranking n =>
-        value (bestInSet π ({c, d} : Finset (Candidate n))))
-      (value c) (value d) ?_
-  intro π
-  change
-    value (bestInSet π ({c, d} : Finset (Candidate n))) =
-      if rankOf M.center c < rankOf M.center d ∧ rankOf π c < rankOf π d
-      then value c else value d
-  rw [bestInSet_pair_eq_if_rank_lt π hne]
-  by_cases hπ : rankOf π c < rankOf π d
-  · simp [hcd, hπ]
-  · simp [hcd, hπ]
+  have hcd_shared :
+      EconCSLib.SocialChoice.Ranking.rankOf M.center c <
+        EconCSLib.SocialChoice.Ranking.rankOf M.center d := by
+    simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcd
+  simpa [expectedBestInSet,
+      EconCSLib.SocialChoice.Ranking.expectedBestInSet,
+      bestInSet, EconCSLib.SocialChoice.Ranking.bestInSet,
+      pairCorrectProb,
+      EconCSLib.SocialChoice.Ranking.MallowsSpec.pairCorrectProb,
+      rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+    (M.toShared).expectedBestInSet_pair_eq_pairCorrectProb value hcd_shared
 
 theorem expectedBestInSet_pair_le_of_pairCorrectProb_le
     {Mmore Mless : MallowsSpec n} (hcenter : Mmore.center = Mless.center)
@@ -11899,15 +11593,33 @@ theorem expectedBestInSet_pair_le_of_pairCorrectProb_le
     (hprob : Mless.pairCorrectProb c d ≤ Mmore.pairCorrectProb c d) :
     expectedBestInSet Mless.law value ({c, d} : Finset (Candidate n)) ≤
       expectedBestInSet Mmore.law value ({c, d} : Finset (Candidate n)) := by
-  classical
-  have hcd_less : rankOf Mless.center c < rankOf Mless.center d := by
-    simpa [← hcenter] using hcd
-  rw [Mless.expectedBestInSet_pair_eq_pairCorrectProb value hcd_less,
-    Mmore.expectedBestInSet_pair_eq_pairCorrectProb value hcd]
-  have hgap : 0 ≤ value c - value d := by
-    have hv := hvalue hcd
-    linarith
-  nlinarith
+  have hcenter_shared :
+      (Mmore.toShared).center = (Mless.toShared).center := by
+    simpa using hcenter
+  have hcd_shared :
+      EconCSLib.SocialChoice.Ranking.rankOf (Mmore.toShared).center c <
+        EconCSLib.SocialChoice.Ranking.rankOf (Mmore.toShared).center d := by
+    simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcd
+  have hvalue_shared :
+      EconCSLib.SocialChoice.Ranking.WeaklyOrderedBy
+        (Mmore.toShared).center value := by
+    intro a b hab
+    exact hvalue (by
+      simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hab)
+  have hprob_shared :
+      (Mless.toShared).pairCorrectProb c d ≤
+        (Mmore.toShared).pairCorrectProb c d := by
+    simpa [pairCorrectProb,
+      EconCSLib.SocialChoice.Ranking.MallowsSpec.pairCorrectProb] using hprob
+  simpa [expectedBestInSet,
+      EconCSLib.SocialChoice.Ranking.expectedBestInSet,
+      bestInSet, EconCSLib.SocialChoice.Ranking.bestInSet,
+      pairCorrectProb,
+      EconCSLib.SocialChoice.Ranking.MallowsSpec.pairCorrectProb,
+      rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+    EconCSLib.SocialChoice.Ranking.MallowsSpec.expectedBestInSet_pair_le_of_pairCorrectProb_le
+        (Mmore := Mmore.toShared) (Mless := Mless.toShared)
+        hcenter_shared hcd_shared hvalue_shared hprob_shared
 
 theorem expectedBestInSet_pair_lt_of_pairCorrectProb_lt
     {Mmore Mless : MallowsSpec n} (hcenter : Mmore.center = Mless.center)
@@ -11917,15 +11629,33 @@ theorem expectedBestInSet_pair_lt_of_pairCorrectProb_lt
     (hprob : Mless.pairCorrectProb c d < Mmore.pairCorrectProb c d) :
     expectedBestInSet Mless.law value ({c, d} : Finset (Candidate n)) <
       expectedBestInSet Mmore.law value ({c, d} : Finset (Candidate n)) := by
-  classical
-  have hcd_less : rankOf Mless.center c < rankOf Mless.center d := by
-    simpa [← hcenter] using hcd
-  rw [Mless.expectedBestInSet_pair_eq_pairCorrectProb value hcd_less,
-    Mmore.expectedBestInSet_pair_eq_pairCorrectProb value hcd]
-  have hgap : 0 < value c - value d := by
-    have hv := hvalue hcd
-    linarith
-  nlinarith
+  have hcenter_shared :
+      (Mmore.toShared).center = (Mless.toShared).center := by
+    simpa using hcenter
+  have hcd_shared :
+      EconCSLib.SocialChoice.Ranking.rankOf (Mmore.toShared).center c <
+        EconCSLib.SocialChoice.Ranking.rankOf (Mmore.toShared).center d := by
+    simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcd
+  have hvalue_shared :
+      EconCSLib.SocialChoice.Ranking.StrictlyOrderedBy
+        (Mmore.toShared).center value := by
+    intro a b hab
+    exact hvalue (by
+      simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hab)
+  have hprob_shared :
+      (Mless.toShared).pairCorrectProb c d <
+        (Mmore.toShared).pairCorrectProb c d := by
+    simpa [pairCorrectProb,
+      EconCSLib.SocialChoice.Ranking.MallowsSpec.pairCorrectProb] using hprob
+  simpa [expectedBestInSet,
+      EconCSLib.SocialChoice.Ranking.expectedBestInSet,
+      bestInSet, EconCSLib.SocialChoice.Ranking.bestInSet,
+      pairCorrectProb,
+      EconCSLib.SocialChoice.Ranking.MallowsSpec.pairCorrectProb,
+      rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using
+    EconCSLib.SocialChoice.Ranking.MallowsSpec.expectedBestInSet_pair_lt_of_pairCorrectProb_lt
+        (Mmore := Mmore.toShared) (Mless := Mless.toShared)
+        hcenter_shared hcd_shared hvalue_shared hprob_shared
 
 /-- Unnormalized Mallows weight of rankings whose best candidate in `remaining`
 is `c`. -/
@@ -11934,24 +11664,33 @@ noncomputable def bestInSetWeight
   ∑ π : Ranking n,
     if c = bestInSet π remaining then mallowsWeight M.q M.center π else 0
 
+@[simp] theorem toShared_bestInSetWeight
+    (remaining : Finset (Candidate n)) (c : Candidate n) :
+    (M.toShared).bestInSetWeight remaining c =
+      M.bestInSetWeight remaining c := by
+  simp [bestInSetWeight,
+    toShared,
+    EconCSLib.SocialChoice.Ranking.MallowsSpec.bestInSetWeight,
+    shared_bestInSet_eq,
+    mallowsWeight, EconCSLib.SocialChoice.Ranking.mallowsWeight,
+    kendallTau, EconCSLib.SocialChoice.Ranking.kendallTau,
+    inversionFinset, EconCSLib.SocialChoice.Ranking.inversionFinset,
+    invertedPair, EconCSLib.SocialChoice.Ranking.invertedPair,
+    rankOf, EconCSLib.SocialChoice.Ranking.rankOf]
+  rfl
+
 /-- On a center-ordered pair, the better candidate's best-in-set fiber is the
 usual pair-correct Mallows weight. -/
 theorem bestInSetWeight_pair_eq_pairCorrectWeight
     {c d : Candidate n} (hcd : rankOf M.center c < rankOf M.center d) :
     M.bestInSetWeight ({c, d} : Finset (Candidate n)) c =
       M.pairCorrectWeight c d := by
-  classical
-  have hne : c ≠ d := by
-    intro h
-    rw [h] at hcd
-    exact (lt_irrefl _) hcd
-  unfold bestInSetWeight pairCorrectWeight
-  refine Finset.sum_congr rfl ?_
-  intro π _
-  rw [bestInSet_pair_eq_if_rank_lt π hne]
-  by_cases hπ : rankOf π c < rankOf π d
-  · simp [hcd, hπ]
-  · simp [hcd, hπ, hne]
+  have hcd_shared :
+      EconCSLib.SocialChoice.Ranking.rankOf (M.toShared).center c <
+        EconCSLib.SocialChoice.Ranking.rankOf (M.toShared).center d := by
+    simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcd
+  simpa using
+    (M.toShared).bestInSetWeight_pair_eq_pairCorrectWeight hcd_shared
 
 /-- On a center-ordered pair, the worse candidate's best-in-set fiber is the
 usual pair-wrong Mallows weight. -/
@@ -11959,26 +11698,12 @@ theorem bestInSetWeight_pair_eq_pairWrongWeight
     {c d : Candidate n} (hcd : rankOf M.center c < rankOf M.center d) :
     M.bestInSetWeight ({c, d} : Finset (Candidate n)) d =
       M.pairWrongWeight c d := by
-  classical
-  have hne : c ≠ d := by
-    intro h
-    rw [h] at hcd
-    exact (lt_irrefl _) hcd
-  unfold bestInSetWeight pairWrongWeight
-  refine Finset.sum_congr rfl ?_
-  intro π _
-  rw [bestInSet_pair_eq_if_rank_lt π hne]
-  by_cases hπ : rankOf π c < rankOf π d
-  · have hnot : ¬ rankOf π d < rankOf π c := not_lt_of_gt hπ
-    simp [hcd, hπ, hne.symm, hnot]
-  · have hdc : rankOf π d < rankOf π c := by
-      have hle : rankOf π d ≤ rankOf π c := le_of_not_gt hπ
-      have hrank_ne : rankOf π d ≠ rankOf π c := by
-        intro hrank
-        exact hne (by
-          simpa [rankOf] using congrArg π hrank.symm)
-      exact lt_of_le_of_ne hle hrank_ne
-    simp [hcd, hπ, hdc]
+  have hcd_shared :
+      EconCSLib.SocialChoice.Ranking.rankOf (M.toShared).center c <
+        EconCSLib.SocialChoice.Ranking.rankOf (M.toShared).center d := by
+    simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcd
+  simpa using
+    (M.toShared).bestInSetWeight_pair_eq_pairWrongWeight hcd_shared
 
 /-- Pair-position reductions imply the best-in-set fiber cross inequality on a
 two-element remaining set. -/
@@ -12118,70 +11843,24 @@ theorem bestInSetWeight_eq_sum_swapCandidatePositions
           mallowsWeight M.q M.center (swapCandidatePositions π c d)
         else
           0 := by
-  classical
-  unfold bestInSetWeight
-  calc
-    (∑ π : Ranking n,
-        if c = bestInSet π remaining then mallowsWeight M.q M.center π else 0)
-        =
-        ∑ π : Ranking n,
-          if c = bestInSet (swapCandidatePositions π c d) remaining then
-            mallowsWeight M.q M.center (swapCandidatePositions π c d)
-          else
-            0 := by
-          simpa [swapCandidatePositionsEquiv] using
-            (Equiv.sum_comp (swapCandidatePositionsEquiv c d)
-              (fun π : Ranking n =>
-                if c = bestInSet π remaining then
-                  mallowsWeight M.q M.center π
-                else
-                  0)).symm
-    _ =
-        ∑ π : Ranking n,
-          if d = bestInSet π remaining then
-            mallowsWeight M.q M.center (swapCandidatePositions π c d)
-          else
-            0 := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          have hiff := bestInSet_swapCandidatePositions_eq_iff
-            (π := π) hc hd
-          by_cases hbest : d = bestInSet π remaining
-          · have hbest_swap :
-                c = bestInSet (swapCandidatePositions π c d) remaining :=
-              hiff.mpr hbest
-            rw [if_pos hbest_swap, if_pos hbest]
-          · have hbest_swap :
-                c ≠ bestInSet (swapCandidatePositions π c d) remaining := by
-              intro hc_best
-              exact hbest (hiff.mp hc_best)
-            rw [if_neg hbest_swap, if_neg hbest]
+  have hshared :=
+    (M.toShared).bestInSetWeight_eq_sum_swapCandidatePositions
+      remaining hc hd
+  rw [M.toShared_bestInSetWeight remaining c] at hshared
+  convert hshared using 1
 
 /-- Best-in-set fiber weights are nonnegative. -/
 theorem bestInSetWeight_nonneg
     (remaining : Finset (Candidate n)) (c : Candidate n) :
     0 ≤ M.bestInSetWeight remaining c := by
-  classical
-  unfold bestInSetWeight
-  exact Finset.sum_nonneg (by
-    intro π _
-    by_cases h : c = bestInSet π remaining
-    · simp [h, mallowsWeight, pow_nonneg (le_of_lt M.q_pos)]
-    · simp [h])
+  simpa using (M.toShared).bestInSetWeight_nonneg remaining c
 
 /-- A candidate outside a nonempty remaining set has zero best-in-set mass. -/
 theorem bestInSetWeight_eq_zero_of_not_mem
     {remaining : Finset (Candidate n)} (hremaining : remaining.Nonempty)
     {c : Candidate n} (hc : c ∉ remaining) :
     M.bestInSetWeight remaining c = 0 := by
-  classical
-  unfold bestInSetWeight
-  apply Finset.sum_eq_zero
-  intro π _
-  have hnot : c ≠ bestInSet π remaining := by
-    intro h
-    exact hc (by simpa [h] using bestInSet_mem π hremaining)
-  simp [hnot]
+  simpa using (M.toShared).bestInSetWeight_eq_zero_of_not_mem hremaining hc
 
 /--
 Double-sum reduction for the best-in-set fiber cross-ratio.
@@ -12209,47 +11888,38 @@ theorem bestInSetWeight_cross_nonneg_of_swap_pairwise_cross
           Mless.bestInSetWeight remaining d -
         Mmore.bestInSetWeight remaining d *
           Mless.bestInSetWeight remaining c := by
-  classical
-  rw [Mmore.bestInSetWeight_eq_sum_swapCandidatePositions remaining hc hd]
-  rw [Mless.bestInSetWeight_eq_sum_swapCandidatePositions remaining hc hd]
-  unfold MallowsSpec.bestInSetWeight
-  rw [Finset.sum_mul, Finset.sum_mul]
-  simp_rw [Finset.mul_sum]
-  rw [← Finset.sum_sub_distrib]
-  refine Finset.sum_nonneg ?_
-  intro π _
-  rw [← Finset.sum_sub_distrib]
-  refine Finset.sum_nonneg ?_
-  intro σ _
-  by_cases hπ : d = bestInSet π remaining
-  · by_cases hσ : d = bestInSet σ remaining
-    · have hbest_eq : bestInSet π remaining = bestInSet σ remaining :=
-        hπ.symm.trans hσ
-      simpa [hπ, hσ, hbest_eq] using hpair π σ hπ hσ
-    · simp [hσ]
-  · simp [hπ]
+  have hpair_shared :
+      ∀ π σ : Ranking n,
+        d = EconCSLib.SocialChoice.Ranking.bestInSet π remaining →
+        d = EconCSLib.SocialChoice.Ranking.bestInSet σ remaining →
+        0 ≤
+          EconCSLib.SocialChoice.Ranking.mallowsWeight
+              Mmore.toShared.q Mmore.toShared.center
+              (EconCSLib.SocialChoice.Ranking.swapCandidatePositions π c d) *
+            EconCSLib.SocialChoice.Ranking.mallowsWeight
+              Mless.toShared.q Mless.toShared.center σ -
+          EconCSLib.SocialChoice.Ranking.mallowsWeight
+              Mmore.toShared.q Mmore.toShared.center π *
+            EconCSLib.SocialChoice.Ranking.mallowsWeight
+              Mless.toShared.q Mless.toShared.center
+              (EconCSLib.SocialChoice.Ranking.swapCandidatePositions σ c d) := by
+    intro π σ hπ hσ
+    have hπ_local : d = bestInSet π remaining := by
+      simpa [shared_bestInSet_eq] using hπ
+    have hσ_local : d = bestInSet σ remaining := by
+      simpa [shared_bestInSet_eq] using hσ
+    convert hpair π σ hπ_local hσ_local using 1
+  simpa [toShared_bestInSetWeight] using
+    EconCSLib.SocialChoice.Ranking.MallowsSpec.bestInSetWeight_cross_nonneg_of_swap_pairwise_cross
+        (Mmore := Mmore.toShared) (Mless := Mless.toShared)
+        remaining hc hd hpair_shared
 
 /-- The best-in-set fibers partition the Mallows partition. -/
 theorem sum_bestInSetWeight_eq_partition
     (remaining : Finset (Candidate n)) :
     (∑ c : Candidate n, M.bestInSetWeight remaining c) = M.partition := by
-  classical
-  unfold bestInSetWeight
-  calc
-    (∑ c : Candidate n, ∑ π : Ranking n,
-        if c = bestInSet π remaining then mallowsWeight M.q M.center π else 0)
-        = (∑ π : Ranking n, ∑ c : Candidate n,
-            if c = bestInSet π remaining then mallowsWeight M.q M.center π else 0) := by
-          exact Finset.sum_comm
-    _ = ∑ π : Ranking n, mallowsWeight M.q M.center π := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          simpa using
-            (Finset.sum_ite_eq' Finset.univ (bestInSet π remaining)
-              (fun _ : Candidate n => mallowsWeight M.q M.center π))
-    _ = M.partition := by
-          rw [M.partition_eq_sum]
-          rfl
+  simpa [toShared, toShared_bestInSetWeight] using
+    (M.toShared).sum_bestInSetWeight_eq_partition remaining
 
 /-- Expected best-in-set value in terms of unnormalized Mallows fibers. -/
 theorem expectedBestInSet_eq_sum_bestInSetWeight_div_partition
@@ -12257,57 +11927,11 @@ theorem expectedBestInSet_eq_sum_bestInSetWeight_div_partition
     expectedBestInSet M.law value remaining =
       (∑ c : Candidate n, M.bestInSetWeight remaining c * value c) /
         M.partition := by
-  classical
-  unfold expectedBestInSet bestInSetWeight pmfExp
-  calc
-    ∑ π : Ranking n, (M.law π).toReal * value (bestInSet π remaining)
-        = ∑ π : Ranking n,
-            (mallowsWeight M.q M.center π / M.partition) *
-              value (bestInSet π remaining) := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          rw [M.law_apply_toReal]
-    _ = ∑ π : Ranking n,
-          (∑ c : Candidate n,
-            (if c = bestInSet π remaining then
-              mallowsWeight M.q M.center π * value c
-            else 0)) / M.partition := by
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          have hsum :
-              (∑ c : Candidate n,
-                if c = bestInSet π remaining then
-                  mallowsWeight M.q M.center π * value c
-                else 0) =
-                mallowsWeight M.q M.center π *
-                  value (bestInSet π remaining) := by
-            simpa using
-              (Finset.sum_ite_eq' Finset.univ (bestInSet π remaining)
-                (fun c : Candidate n => mallowsWeight M.q M.center π * value c))
-          rw [hsum]
-          ring
-    _ = (∑ π : Ranking n, ∑ c : Candidate n,
-          if c = bestInSet π remaining then
-            mallowsWeight M.q M.center π * value c
-          else 0) / M.partition := by
-          rw [Finset.sum_div]
-    _ = (∑ c : Candidate n, ∑ π : Ranking n,
-          if c = bestInSet π remaining then
-            mallowsWeight M.q M.center π * value c
-          else 0) / M.partition := by
-          rw [Finset.sum_comm]
-    _ = (∑ c : Candidate n,
-          M.bestInSetWeight remaining c * value c) / M.partition := by
-          congr 1
-          refine Finset.sum_congr rfl ?_
-          intro c _
-          unfold bestInSetWeight
-          rw [Finset.sum_mul]
-          refine Finset.sum_congr rfl ?_
-          intro π _
-          by_cases h : c = bestInSet π remaining
-          · simp [h]
-          · simp [h]
+  simpa [toShared, expectedBestInSet,
+      EconCSLib.SocialChoice.Ranking.expectedBestInSet,
+      shared_bestInSet_eq, toShared_bestInSetWeight] using
+    (M.toShared).expectedBestInSet_eq_sum_bestInSetWeight_div_partition
+      value remaining
 
 /--
 Identity-center coordinate form of the expected best-in-set payoff.  Relabeling
@@ -12414,68 +12038,32 @@ theorem expectedBestInSet_le_of_bestInSetWeight_cross
               Mless.bestInSetWeight remaining c) :
     expectedBestInSet Mless.law value remaining ≤
       expectedBestInSet Mmore.law value remaining := by
-  classical
-  let wMore : Candidate n → ℝ := fun r =>
-    Mmore.bestInSetWeight remaining (Mmore.center r)
-  let wLess : Candidate n → ℝ := fun r =>
-    Mless.bestInSetWeight remaining (Mmore.center r)
-  let B : Candidate n → ℝ := fun r => value (Mmore.center r)
-  have hB : ∀ i j : Candidate n, i < j → B j ≤ B i := by
-    intro i j hij
-    exact hvalue (by simpa [B, rankOf] using hij)
-  have hpair :
-      ∀ i j : Candidate n, i < j →
-        0 ≤ wMore i * wLess j - wMore j * wLess i := by
-    intro i j hij
-    simpa [wMore, wLess, rankOf] using
-      hcross (Mmore.center i) (Mmore.center j)
-        (by simpa [rankOf] using hij)
-  have hcore :
-      0 ≤
-        (∑ j : Candidate n, wLess j) *
-            (∑ i : Candidate n, wMore i * B i) -
-          (∑ j : Candidate n, wMore j) *
-            (∑ i : Candidate n, wLess i * B i) :=
-    candidateWeightedAverage_cross_nonneg_of_pairwise n hpair hB
-  have hmore_num :
-      (∑ c : Candidate n,
-        Mmore.bestInSetWeight remaining c * value c) =
-        ∑ r : Candidate n, wMore r * B r := by
-    simpa [wMore, B] using
-      (Equiv.sum_comp Mmore.center
-        (fun c : Candidate n =>
-          Mmore.bestInSetWeight remaining c * value c)).symm
-  have hless_num :
-      (∑ c : Candidate n,
-        Mless.bestInSetWeight remaining c * value c) =
-        ∑ r : Candidate n, wLess r * B r := by
-    simpa [wLess, B] using
-      (Equiv.sum_comp Mmore.center
-        (fun c : Candidate n =>
-          Mless.bestInSetWeight remaining c * value c)).symm
-  have hmore_den :
-      Mmore.partition = ∑ r : Candidate n, wMore r := by
-    rw [← Mmore.sum_bestInSetWeight_eq_partition remaining]
-    simpa [wMore] using
-      (Equiv.sum_comp Mmore.center
-        (fun c : Candidate n => Mmore.bestInSetWeight remaining c)).symm
-  have hless_den :
-      Mless.partition = ∑ r : Candidate n, wLess r := by
-    rw [← Mless.sum_bestInSetWeight_eq_partition remaining]
-    simpa [wLess] using
-      (Equiv.sum_comp Mmore.center
-        (fun c : Candidate n => Mless.bestInSetWeight remaining c)).symm
-  have hmore_den_pos : 0 < ∑ r : Candidate n, wMore r := by
-    rw [← hmore_den]
-    exact Mmore.partition_pos
-  have hless_den_pos : 0 < ∑ r : Candidate n, wLess r := by
-    rw [← hless_den]
-    exact Mless.partition_pos
-  rw [Mless.expectedBestInSet_eq_sum_bestInSetWeight_div_partition,
-    Mmore.expectedBestInSet_eq_sum_bestInSetWeight_div_partition]
-  rw [hless_num, hmore_num, hless_den, hmore_den]
-  exact EconCSLib.PositiveDenominator.div_le_div_of_cross_mul_le
-    hless_den_pos hmore_den_pos (by linarith)
+  have hvalue_shared :
+      EconCSLib.SocialChoice.Ranking.WeaklyOrderedBy
+        Mmore.toShared.center value := by
+    intro a b hab
+    exact hvalue (by
+      simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hab)
+  have hcross_shared :
+      ∀ c d : Candidate n,
+        EconCSLib.SocialChoice.Ranking.rankOf Mmore.toShared.center c <
+          EconCSLib.SocialChoice.Ranking.rankOf Mmore.toShared.center d →
+        0 ≤
+          Mmore.toShared.bestInSetWeight remaining c *
+              Mless.toShared.bestInSetWeight remaining d -
+            Mmore.toShared.bestInSetWeight remaining d *
+              Mless.toShared.bestInSetWeight remaining c := by
+    intro c d hcd
+    have hcd_local : rankOf Mmore.center c < rankOf Mmore.center d := by
+      simpa [rankOf, EconCSLib.SocialChoice.Ranking.rankOf] using hcd
+    simpa [MallowsSpec.toShared_bestInSetWeight] using
+      hcross c d hcd_local
+  simpa [expectedBestInSet,
+      EconCSLib.SocialChoice.Ranking.expectedBestInSet,
+      shared_bestInSet_eq] using
+    EconCSLib.SocialChoice.Ranking.expectedBestInSet_le_of_bestInSetWeight_cross
+      (Mmore := Mmore.toShared) (Mless := Mless.toShared)
+      remaining hvalue_shared hcross_shared
 
 /-- Identity-center two-candidate best-in-set fibers satisfy a strict Mallows
 cross inequality.  This is the pair case of the remaining arbitrary-set MLR

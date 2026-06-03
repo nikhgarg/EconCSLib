@@ -20,7 +20,7 @@ Current top-level areas:
 - `Foundations/`: finite math, graph/counting tools, probability, econometrics,
   optimization, asymptotics, and reusable proof infrastructure.
 - `MechanismDesign/`: auctions and mechanism primitives.
-- `SocialChoice/`: fair division and voting-style primitives.
+- `SocialChoice/`: fair division, finite ranking, and voting-style primitives.
 - `Markets/`: matching and platform/market primitives.
 - `Learning/`: bandits and learning models.
 - `Algorithms/`: online algorithms, complexity, and algorithmic proof tools.
@@ -63,6 +63,14 @@ or tail arguments should use
 upper-tail mass, monotonicity, and complement identities before adding
 paper-specific distribution-family asymptotics.
 
+Social-choice and ranking papers should start with
+`EconCSLib.SocialChoice.Ranking` for finite full rankings, first/second choice
+projections, top-two swaps, rank lookup, best-remaining-after-one-removal facts,
+inversion finsets, Kendall tau distance, and deletion/relabeling formulas.
+The base Mallows law/weight layer also lives there. KR21 keeps paper names as
+wrappers where stable; its local `MallowsSpec` is still preserved for later
+field-rewrite-heavy proof files until an explicit adapter is installed.
+
 Optimization foundations currently include finite pointwise argmax/existence
 lemmas, abstract expected-objective wrappers, feasible-set optimality
 certificates, finite feasible-search wrappers, move-graph exchange optimality,
@@ -72,6 +80,12 @@ witnesses, exchange arguments, binary best-response policies, threshold
 searches, or endpoint/current-bound optimality proofs should start with
 `EconCSLib.Foundations.Optimization`; the longer promotion plan lives in
 [`docs/OPTIMIZATION_LIBRARY_ROADMAP.md`](OPTIMIZATION_LIBRARY_ROADMAP.md).
+
+For cross-paper extraction candidates spanning probability, rankings,
+stochastic processes, continuous analysis, and design optimization, use
+[`docs/ECONCS_LIBRARY_EXTRACTION_PLAN.md`](ECONCS_LIBRARY_EXTRACTION_PLAN.md).
+It also records cleanup recipes for replacing paper-local proof scripts with
+shared lemmas while preserving paper-facing theorem names.
 
 ## Library Maintenance TODOs
 
