@@ -1014,6 +1014,14 @@ argument. The useful way to attack it is not to expand all game theory at once:
 
 ## Audit discipline
 
+The full paper DAG still routes through Lemma 5, Lemma 6, and Theorem 7 before
+Theorem 8. The finite exact-record direct-PBE endpoint is a closed finite route
+inside the Theorem 8 machinery, not a discharge of those upstream paper
+dependencies. For the fastest paper-level screening progress after the finite
+Theorem 8 milestone, close Lemma 5, then Lemma 6, then Theorem 7 before adding
+more full-Theorem-8 source-game wrappers, unless the user explicitly asks to
+continue Theorem 8.
+
 Whenever a named paper result is truly closed, update:
 
 - `PostPaperAudit.lean`

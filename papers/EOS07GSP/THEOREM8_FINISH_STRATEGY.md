@@ -1,6 +1,9 @@
 # Theorem 8 Finish Strategy
 
 This note is a short proof plan for the remaining EOS07GSP Theorem 8 route.
+It is not the fastest paper-level screening plan by itself: the paper DAG has
+upstream conditional nodes
+`Lemma 5 -> Lemma 6 -> Theorem 7 -> Theorem 8`.
 
 ## Current Boundary
 
@@ -33,6 +36,27 @@ Both still require threshold-event timing evidence for the PBE-generated source
 history, so they are finite direct-PBE endpoints rather than the unconstrained
 full generalized-English theorem.
 
+## Paper-DAG Priority Before More Theorem 8
+
+Do not treat the finite Theorem 8 endpoint as a replacement for Lemma 5, Lemma
+6, or Theorem 7. It is a parallel finite/direct-PBE subroute inside Theorem 8's
+dynamic machinery. To make the EOS paper screen more results as formalized as
+quickly as possible, pause new full-Theorem-8 source-game work and close the
+upstream static path first:
+
+1. Lemma 5: derive the formal global no-rematch/stable-assignment predicate
+   from the paper's adjacent LEF/equilibrium/no-tie/order argument.
+2. Lemma 6: formalize the Shapley-Shubik stable-assignment characterization
+   plus GSP bid construction/static-equilibrium converse under `N > K`.
+3. Theorem 7: remove or derive the explicit comparison-outcome
+   no-positive-transfers/no-subsidy premise, then route the `B*`
+   VCG-equivalent LEF/stability/revenue-minimality endpoint through Lemmas
+   5--6.
+4. Theorem 8 full source game: return to the source-history/PBE seam below.
+
+Theorem 8 work should resume immediately only when the user explicitly asks
+for it or when the upstream static path is already closed.
+
 ## Preferred Route
 
 1. Keep working at the source bridge layer, not in paper-interface aliases.
@@ -49,8 +73,9 @@ full generalized-English theorem.
 ## Next Lean Move
 
 Do not add more finite exact-record or price-sorted schedule wrappers unless a
-reviewer asks for a different presentation. The next Lean move is the general
-source theorem: prove a concrete source-history invariant that supplies
+reviewer asks for a different presentation. Once the paper-DAG upstream path is
+closed or explicitly deferred, the next Lean move for full Theorem 8 is the
+general source theorem: prove a concrete source-history invariant that supplies
 no-overshoot or clock-discipline for realized named-strategy dropouts, then
 lift it to histories and feed it into the existing source-extensive or
 source-shaped all-terminal endpoints. In parallel, prove the concrete

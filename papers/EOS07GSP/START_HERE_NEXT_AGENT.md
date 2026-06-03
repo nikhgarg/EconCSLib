@@ -6,8 +6,10 @@ This is the first file to read after the pause. It is intentionally shorter
 than the older handoff and points to exact files/declarations for the next
 proof pass.
 
-For the current proof strategy, read `THEOREM8_FINISH_STRATEGY.md` before
-opening the large theorem files.
+For the current proof strategy, read the "Fastest paper-DAG screening path"
+section below before opening the large theorem files. The Theorem 8 finite
+endpoint is useful, but the paper-level DAG still has upstream conditional
+nodes at Lemmas 5--6 and Theorem 7.
 
 ## Current Validation Boundary
 
@@ -37,11 +39,49 @@ git status --short --branch -- \
 
 - If committing EOS work, use `git commit --only` with explicit path names.
 
+## Fastest Paper-DAG Screening Path
+
+The DAG path is:
+
+```text
+Definition 4 -> Lemma 5 -> Lemma 6 -> Theorem 7 -> Theorem 8
+```
+
+The finite exact-record Theorem 8 endpoint does not discharge Lemma 5, Lemma 6,
+or Theorem 7. It is a closed finite/direct-PBE route inside Theorem 8's dynamic
+machinery. For the fastest paper-level progress and the most rows moving from
+conditional to formalized, do this before returning to the full Theorem 8
+source-game proof:
+
+1. Close Lemma 5. Target the appendix bridge from adjacent/local envy-free
+   equilibrium facts to the global formal no-rematch/stable-assignment
+   predicate. The current Lean theorem already proves stability from the
+   stronger all-assigned-slot `SlotEnvyFree` predicate; the missing work is the
+   source bridge from the paper's adjacent LEF/equilibrium/no-tie/order
+   assumptions to that predicate.
+2. Close Lemma 6. Target the paper's stable-assignment-to-GSP/LEF construction
+   under `N > K`: Shapley-Shubik stable-assignment characterization, the bid
+   construction, and the static-equilibrium converse. The current Lean theorem
+   only proves the outcome-level implication because `StableAssignment` already
+   contains no-rematch inequalities.
+3. Close Theorem 7. Reuse the existing `B*`, VCG-tail, ordered-values
+   envy-free/stability, no-positive-transfer, and revenue-minimality algebra.
+   The remaining paper-level cleanup is to remove or derive the explicit
+   comparison-outcome no-positive-transfers/no-subsidy premise and route the
+   result through the now-closed Lemmas 5--6.
+4. Return to full Theorem 8 only after the upstream static path is green, or if
+   the user explicitly asks for more Theorem 8 source-game work.
+
+This is the quickest path to making more source rows screen as formalized. More
+finite Theorem 8 schedule wrappers should wait unless a reviewer asks for a
+different finite presentation.
+
 ## What Is Actually Open
 
-The paper is not finished. The open Theorem 8 work is not payment algebra,
-finite schedule plumbing, or another display wrapper. The remaining hard seam
-is the fully concrete generalized-English source proof:
+The paper is not finished. After the upstream Lemma 5/Lemma 6/Theorem 7 path,
+the remaining open Theorem 8 work is not payment algebra, finite schedule
+plumbing, or another display wrapper. The remaining hard seam is the fully
+concrete generalized-English source proof:
 
 1. concrete belief consistency for the real source game;
 2. the game-level source sequential-rationality iff/local-deviation theorem for
@@ -97,7 +137,7 @@ rg -n "theorem8_no_overshoot_strategy_history_to_exact_drop_history|theorem8_clo
 
 ## Next Proof Target
 
-Do this next, in this order:
+If continuing the full Theorem 8 source proof, do this in this order:
 
 1. Pick the source-history invariant to prove. The most promising route is a
    cold-start source transition theorem that produces
