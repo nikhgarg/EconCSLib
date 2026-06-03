@@ -1,20 +1,19 @@
 # Repository Launch Plan
 
 This is the current maintainer plan for keeping the private and public
-repositories aligned while preparing GitHub Pages.
+repositories aligned after the initial public launch.
 
 ## Current State
 
 - `EconCSLib-private` is the private full-history incubator and remains the
   superset of paper work, handoff notes, partial formalizations, and reusable
   library development.
-- `EconCSLib` is the public release repository. It is already public on GitHub,
-  but broad announcement and GitHub Pages publication are still pending.
+- `EconCSLib` is the public release repository and is public on GitHub.
+  GitHub Pages is live at `https://gargnikhil.com/EconCSLib/`.
 - The public `main` branch contains the public Lean library, public paper
   folders, contribution docs, status docs, and release checklist.
 - The public `main` branch contains the static site source and Pages workflow.
-  The workflow enables GitHub Pages through `actions/configure-pages` on the
-  first successful deployment.
+  The workflow deploys the site through GitHub Actions.
 
 ## Public/Private Rule
 
@@ -31,31 +30,23 @@ public-safe reusable library changes.
 
 ## Pre-Announcement Checklist
 
-1. Confirm `git status --short` is clean in `EconCSLib-private`,
-   `EconCSLib-public`, and `2026_EconCSLibpaper`, or record intentional dirty
-   paper edits separately.
-2. Run `python3 scripts/audit_repository.py` in the public repository and
-   resolve all errors.
-3. Run `lake build EconCSLib` in the public repository from a clean checkout or
-   clean worktree.
-4. Run `python3 scripts/sync_paper_status.py --check` to confirm
-   `papers/status.json`, `papers/human_status.json`, `docs/PAPER_STATUS.md`,
-   `README.md`, and `site/index.html` list the same public papers and use only
-   the status vocabulary in `docs/STATUS.md`.
-5. Decide whether the reviewed workshop paper PDF should be linked externally
-   or added as a final public artifact.
-6. Decide and add the repository `LICENSE` before soliciting broad external
-   code contributions.
-7. Set the GitHub repository description. Set the homepage only after Pages is
-   enabled and the first deployment succeeds.
+As of 2026-06-03, the public repository is clean, `lake build EconCSLib`
+passes, `python3 scripts/sync_paper_status.py --check` passes,
+`python3 scripts/audit_repository.py` reports 0 errors, CI is green, Pages is
+deployed, the repository description is set, and the homepage points to the
+Pages URL.
 
-## Pages Activation Sequence
+The remaining pre-announcement decision is whether the reviewed workshop paper
+PDF should be linked externally or added as a final public artifact.
 
-1. Review `site/index.html` locally.
-2. Push `main`.
-3. Confirm the Pages workflow deploys from GitHub Actions.
-4. Confirm the Pages URL serves the site.
-5. Add the Pages URL to the repository homepage field.
+## Pages Maintenance
+
+1. Review `site/index.html` locally when making site changes.
+2. Run `python3 scripts/sync_paper_status.py --check` when status rows or
+   generated site rows change.
+3. Push `main`.
+4. Confirm the Pages workflow deploys from GitHub Actions.
+5. Confirm `https://gargnikhil.com/EconCSLib/` serves the updated site.
 
 ## Public Partial Import Policy
 
