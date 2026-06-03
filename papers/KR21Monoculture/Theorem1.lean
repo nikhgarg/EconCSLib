@@ -73,8 +73,7 @@ Expected value of the best candidate remaining under `μ` after a fixed candidat
 has already been removed.
 -/
 noncomputable def expectedBestAfterRemoval {n : ℕ}
-    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) (c : Candidate n) : ℝ :=
-  pmfExp μ (fun π => value (bestRemainingAfter π c))
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) (c : Candidate n) : ℝ := pmfExp μ (fun π => value (bestRemainingAfter π c))
 
 /--
 Removing candidate `c` lowers the top-choice value exactly on the first-choice
@@ -672,8 +671,7 @@ Paper Theorem 1, conditional on the final crossing certificate.
 theorem theorem1Target_of_payoffCertificate {n : ℕ}
     {F : AccuracyFamily n} {θH : ℝ}
     (cert : Theorem1PayoffCertificate F θH) :
-    Theorem1Target F θH := by
-  exact ⟨cert.θA, cert.theta_gt, hasKR21MonocultureParadox_of_payoffCertificate cert⟩
+    Theorem1Target F θH :=  ⟨cert.θA, cert.theta_gt, hasKR21MonocultureParadox_of_payoffCertificate cert⟩
 
 /--
 Paper Theorem 1, conditional on the crossing certificate produced by the paper's
@@ -817,8 +815,7 @@ Definition 3, read through `Model.PaperHypotheses`.
 theorem theorem1_g_lt_h_of_paperHypotheses {n : ℕ}
     (F : AccuracyFamily n) (θA θH : ℝ)
     (hpaper : Model.PaperHypotheses (F.modelAt θA θH)) :
-    theorem1_g F θA θH < theorem1_h F θA θH :=
-  theorem1_g_lt_h_of_prefersWeakerCompetition F θA θH hpaper.2
+    theorem1_g F θA θH < theorem1_h F θA θH := theorem1_g_lt_h_of_prefersWeakerCompetition F θA θH hpaper.2
 
 /-- Convert the paper-shaped interval certificate into the direct sign-change certificate. -/
 def signChangeNudgeCertificate_of_intervalAnalyticCertificate {n : ℕ}
@@ -868,8 +865,7 @@ Definition 2, read through `Model.PaperHypotheses` at equal accuracies.
 theorem theorem1_f_lt_g_of_paperHypotheses_equalAccuracy {n : ℕ}
     (F : AccuracyFamily n) (θ : ℝ)
     (hpaper : Model.PaperHypotheses (F.modelAt θ θ)) :
-    theorem1_f F θ θ < theorem1_g F θ θ :=
-  theorem1_f_lt_g_of_prefersIndependent_equalAccuracy F θ hpaper.1
+    theorem1_f F θ θ < theorem1_g F θ θ := theorem1_f_lt_g_of_prefersIndependent_equalAccuracy F θ hpaper.1
 
 /--
 Definition 2 plus atomwise continuity gives a left interval endpoint strictly

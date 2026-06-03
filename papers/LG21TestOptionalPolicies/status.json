@@ -17,13 +17,13 @@
   },
   "paper_interface": {
     "path": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
-    "line_count": 92,
+    "line_count": 76,
     "declaration_rows": 16,
     "review_rows": 16,
     "oversized": false,
     "maintainability_issue": null,
     "proof_interface_path": "papers/LG21TestOptionalPolicies/ProofInterface.lean",
-    "proof_interface_line_count": 25103
+    "proof_interface_line_count": 24096
   },
   "artifacts": {
     "readme": "papers/LG21TestOptionalPolicies/README.md",

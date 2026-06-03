@@ -16,8 +16,7 @@ theorem mallowsWeight_pos {n : ℕ} {q : ℝ} (hq : 0 < q)
 /-- Mallows weights are nonnegative when `q > 0`. -/
 theorem mallowsWeight_nonneg {n : ℕ} {q : ℝ} (hq : 0 < q)
     (ρ π : Ranking n) :
-    0 ≤ mallowsWeight q ρ π := by
-  exact le_of_lt (mallowsWeight_pos (hq := hq) ρ π)
+    0 ≤ mallowsWeight q ρ π :=  le_of_lt (mallowsWeight_pos (hq := hq) ρ π)
 
 /-- The finite Mallows partition function is strictly positive when `q > 0`. -/
 theorem mallowsPartition_pos {n : ℕ} {q : ℝ} (hq : 0 < q)
@@ -161,16 +160,16 @@ theorem one_le_centerFirstWeight :
   have hle :
       (if M.centerFirst = firstChoice M.center then mallowsWeight M.q M.center M.center else 0)
         ≤ ∑ π : Ranking n,
-            if M.centerFirst = firstChoice π then mallowsWeight M.q M.center π else 0 := by
-    exact Finset.single_le_sum hnonneg (by simp)
+            if M.centerFirst = firstChoice π then mallowsWeight M.q M.center π else 0 :=
+    Finset.single_le_sum hnonneg (by simp)
   simpa [MallowsSpec.centerFirst, mallowsWeight_center] using hle
 
 /-- The center's top candidate has positive first-choice probability. -/
 theorem centerFirstProb_pos :
     0 < firstChoiceProb M.law M.centerFirst := by
   rw [M.centerFirstProb_eq]
-  have hweight_pos : 0 < M.firstWeight M.centerFirst := by
-    exact lt_of_lt_of_le zero_lt_one (M.one_le_centerFirstWeight)
+  have hweight_pos : 0 < M.firstWeight M.centerFirst :=
+    lt_of_lt_of_le zero_lt_one (M.one_le_centerFirstWeight)
   exact div_pos hweight_pos M.partition_pos
 
 /--
@@ -219,16 +218,16 @@ theorem one_le_centerFirstSecondWeight :
         ≤ ∑ π : Ranking n,
             if M.centerFirst = firstChoice π ∧ M.centerSecond = secondChoice π
             then mallowsWeight M.q M.center π
-            else 0 := by
-    exact Finset.single_le_sum hnonneg (by simp)
+            else 0 :=
+    Finset.single_le_sum hnonneg (by simp)
   simpa [MallowsSpec.centerFirst, MallowsSpec.centerSecond, mallowsWeight_center] using hle
 
 /-- The center's ordered top-two pair has positive probability. -/
 theorem centerFirstSecondProb_pos :
     0 < M.firstSecondChoiceProb M.centerFirst M.centerSecond := by
   rw [M.centerFirstSecondProb_eq]
-  have hweight_pos : 0 < M.firstSecondWeight M.centerFirst M.centerSecond := by
-    exact lt_of_lt_of_le zero_lt_one (M.one_le_centerFirstSecondWeight)
+  have hweight_pos : 0 < M.firstSecondWeight M.centerFirst M.centerSecond :=
+    lt_of_lt_of_le zero_lt_one (M.one_le_centerFirstSecondWeight)
   exact div_pos hweight_pos M.partition_pos
 
 end MallowsSpec
@@ -306,24 +305,21 @@ Appendix E/F of the paper.
 -/
 theorem paperHypotheses_of_candidateSumCertificate
     {value : Candidate n → ℝ} (cert : C.CandidateSumCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.paperHypotheses_of_certificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.paperHypotheses_of_certificate
     (C.finiteLemmaCertificate_of_candidateSumCertificate cert)
 
 /-- A convenient name for value vectors that decrease down the common center ranking. -/
-def StrictlyCenterOrdered (value : Candidate n → ℝ) : Prop :=
-  StrictlyOrderedBy C.algorithm.center value
+def StrictlyCenterOrdered (value : Candidate n → ℝ) : Prop := StrictlyOrderedBy C.algorithm.center value
 
 /-- Under a strictly center-ordered value vector, the center top-two gap is positive. -/
 theorem center_valueGap_pos_of_strictlyCenterOrdered
     {value : Candidate n → ℝ} (hvalue : C.StrictlyCenterOrdered value) :
-    0 < valueGap value C.algorithm.center := by
-  exact center_valueGap_pos_of_strictlyOrderedBy hvalue
+    0 < valueGap value C.algorithm.center :=  center_valueGap_pos_of_strictlyOrderedBy hvalue
 
 /-- The algorithm law puts positive probability on the common center's top candidate. -/
 theorem algorithm_centerFirstProb_pos :
-    0 < firstChoiceProb C.algorithm.law C.algorithm.centerFirst := by
-  exact C.algorithm.centerFirstProb_pos
+    0 < firstChoiceProb C.algorithm.law C.algorithm.centerFirst :=  C.algorithm.centerFirstProb_pos
 
 /-- The human law also puts positive probability on the common center's top candidate. -/
 theorem human_centerFirstProb_pos :
@@ -332,8 +328,7 @@ theorem human_centerFirstProb_pos :
 
 /-- The common center's top-two ordered pair has positive probability under the algorithm law. -/
 theorem algorithm_centerTopTwoProb_pos :
-    0 < C.algorithm.firstSecondChoiceProb C.algorithm.centerFirst C.algorithm.centerSecond := by
-  exact C.algorithm.centerFirstSecondProb_pos
+    0 < C.algorithm.firstSecondChoiceProb C.algorithm.centerFirst C.algorithm.centerSecond :=  C.algorithm.centerFirstSecondProb_pos
 
 /-- The common center's top-two ordered pair has positive probability under the human law. -/
 theorem human_centerTopTwoProb_pos :

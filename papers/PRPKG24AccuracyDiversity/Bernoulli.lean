@@ -8,8 +8,7 @@ namespace PRPKG24AccuracyDiversity
 Expected satisfaction from `q` independent Bernoulli items when the user consumes one item:
 `1 - (1 - p)^q`.
 -/
-noncomputable def bernoulliAtLeastOneValue (p : ℝ) (q : ℕ) : ℝ :=
-  1 - (1 - p) ^ q
+noncomputable def bernoulliAtLeastOneValue (p : ℝ) (q : ℕ) : ℝ := 1 - (1 - p) ^ q
 
 @[simp] theorem bernoulliAtLeastOneValue_zero (p : ℝ) :
     bernoulliAtLeastOneValue p 0 = 0 := by
@@ -75,12 +74,10 @@ structure BernoulliSatisfactionModel (T : ℕ) where
 namespace BernoulliSatisfactionModel
 
 /-- Type likelihoods form a probability vector. -/
-def LikelihoodsSumToOne {T : ℕ} (B : BernoulliSatisfactionModel T) : Prop :=
-  ∑ t, B.likelihood t = 1
+def LikelihoodsSumToOne {T : ℕ} (B : BernoulliSatisfactionModel T) : Prop := ∑ t, B.likelihood t = 1
 
 /-- All success probabilities lie in `[0,1]`. -/
-def SuccessProbabilitiesValid {T : ℕ} (B : BernoulliSatisfactionModel T) : Prop :=
-  ∀ t, 0 ≤ B.successProb t ∧ B.successProb t ≤ 1
+def SuccessProbabilitiesValid {T : ℕ} (B : BernoulliSatisfactionModel T) : Prop := ∀ t, 0 ≤ B.successProb t ∧ B.successProb t ≤ 1
 
 /-- Convert the Bernoulli satisfaction model into the generic consumption model. -/
 noncomputable def toConsumptionModel {T : ℕ} (B : BernoulliSatisfactionModel T) : ConsumptionModel T where
@@ -89,8 +86,7 @@ noncomputable def toConsumptionModel {T : ℕ} (B : BernoulliSatisfactionModel T
 
 /-- Objective for the Bernoulli satisfaction model. -/
 noncomputable def objective {T : ℕ}
-    (B : BernoulliSatisfactionModel T) (a : CountAllocation T) : ℝ :=
-  B.toConsumptionModel.objective a
+    (B : BernoulliSatisfactionModel T) (a : CountAllocation T) : ℝ := B.toConsumptionModel.objective a
 
 @[simp] theorem objective_eq_consumption_objective {T : ℕ}
     (B : BernoulliSatisfactionModel T) (a : CountAllocation T) :

@@ -38,8 +38,7 @@ theorem twoTypeAllocation_objective (M : ConsumptionModel 2) (a b : ℕ) :
 Example 1 likelihoods: romance is type `0` with probability `p1`, action is
 type `1` with probability `p2`.
 -/
-noncomputable def example1Likelihood (p1 p2 : ℝ) : ItemType 2 → ℝ :=
-  fun t => if t = 0 then p1 else p2
+noncomputable def example1Likelihood (p1 p2 : ℝ) : ItemType 2 → ℝ := fun t => if t = 0 then p1 else p2
 
 @[simp] theorem example1Likelihood_zero (p1 p2 : ℝ) :
     example1Likelihood p1 p2 (0 : ItemType 2) = p1 := by
@@ -50,8 +49,7 @@ noncomputable def example1Likelihood (p1 p2 : ℝ) : ItemType 2 → ℝ :=
   simp [example1Likelihood]
 
 /-- Example 1's exponential mean, represented abstractly as `1 / lambda`. -/
-noncomputable def example1ExponentialMean (lambda : ℝ) : ℝ :=
-  lambda⁻¹
+noncomputable def example1ExponentialMean (lambda : ℝ) : ℝ := lambda⁻¹
 
 /--
 Example 1 all-consumed model: each genre has the same conditional exponential
@@ -67,8 +65,7 @@ The log-relaxation objective used in Example 1 for the top-one recommendation
 case, after replacing the expected exponential maximum by `(1/lambda) log a`.
 -/
 noncomputable def example1LogRelaxedObjective
-    (p1 p2 lambda x y : ℝ) : ℝ :=
-  (p1 / lambda) * Real.log x + (p2 / lambda) * Real.log y
+    (p1 p2 lambda x y : ℝ) : ℝ := (p1 / lambda) * Real.log x + (p2 / lambda) * Real.log y
 
 /--
 The calibrated relaxed split is feasible when the type probabilities sum to
@@ -105,8 +102,8 @@ theorem example1_weighted_log_objective_le_calibrated
       p1 * Real.log (x / (p1 * n)) +
           p2 * Real.log (y / (p2 * n)) ≤
         p1 * (x / (p1 * n) - 1) +
-          p2 * (y / (p2 * n) - 1) := by
-    exact add_le_add
+          p2 * (y / (p2 * n) - 1) :=
+    add_le_add
       (mul_le_mul_of_nonneg_left hlog_u (le_of_lt hp1))
       (mul_le_mul_of_nonneg_left hlog_v (le_of_lt hp2))
   have hterm1 :
@@ -153,8 +150,8 @@ theorem example1_log_relaxed_objective_le_calibrated
   have hscale :
       (1 / lambda) * (p1 * Real.log x + p2 * Real.log y) ≤
         (1 / lambda) *
-          (p1 * Real.log (p1 * n) + p2 * Real.log (p2 * n)) := by
-    exact mul_le_mul_of_nonneg_left hbase (le_of_lt (one_div_pos.mpr hlambda))
+          (p1 * Real.log (p1 * n) + p2 * Real.log (p2 * n)) :=
+    mul_le_mul_of_nonneg_left hbase (le_of_lt (one_div_pos.mpr hlambda))
   unfold example1LogRelaxedObjective
   convert hscale using 1 <;> ring
 

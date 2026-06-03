@@ -39,12 +39,10 @@ inductive GLM20School where
 deriving DecidableEq, Repr
 
 /-- Paper notation for the first school in Theorem 3. -/
-def glm20SchoolJ1 : GLM20School :=
-  GLM20School.J1
+def glm20SchoolJ1 : GLM20School := GLM20School.J1
 
 /-- Paper notation for the second school in Theorem 3. -/
-def glm20SchoolJ2 : GLM20School :=
-  GLM20School.J2
+def glm20SchoolJ2 : GLM20School := GLM20School.J2
 
 /-- The paper's two named schools are distinct. -/
 theorem glm20SchoolJ1_ne_J2 :
@@ -101,8 +99,7 @@ theorem glm20Group_populationShare_pos_of_pi_mem_Ioo
         (fun g : GLM20Group =>
           match g with
           | GLM20Group.groupA => 1 - pi
-          | GLM20Group.groupB => pi) GLM20Group.groupB := by
-  exact
+          | GLM20Group.groupB => pi) GLM20Group.groupB :=
     ⟨glm20GroupA_populationShare_pos_of_pi_lt_one hpi.2,
       glm20GroupB_populationShare_pos_of_pi_pos hpi.1⟩
 
@@ -130,13 +127,8 @@ theorem paper_theorem3_based_threshold_regularities_of_affine_decreasing
       (∀ g,
         StrictAntiOn (fun c => intercept g - slope g * c)
           (Set.Icc (leftCost g) (rightCost g))) := by
-  constructor
-  · intro g
-    exact (continuous_const.sub (continuous_const.mul continuous_id)).continuousOn
-  · intro g x _hx y _hy hxy
-    have hmul : slope g * x < slope g * y :=
-      mul_lt_mul_of_pos_left hxy (hslope g)
-    nlinarith
+  exact EconCSLib.indexed_affineDecreasing_regularities_Icc
+    (left := leftCost) (right := rightCost) intercept slope hslope
 
 /--
 Bundled low/high version of
@@ -185,8 +177,7 @@ Group-indexed source cost bounds for an interval without a separate upper
 inverse-CDF domain.
 -/
 def GLM20CostBounds {Group : Type*}
-    (cost left right : Group → ℝ) : Prop :=
-  ∀ g, 0 < left g ∧ left g < right g ∧ left g ≤ cost g ∧ cost g ≤ right g
+    (cost left right : Group → ℝ) : Prop := ∀ g, 0 < left g ∧ left g < right g ∧ left g ≤ cost g ∧ cost g ≤ right g
 
 /--
 Sub/full source cost bounds unpack into the interval and inverse-CDF domain
@@ -289,8 +280,7 @@ theorem paper_theorem3_capacity_cutoff_rows_components
                   glm20StrategicSubEstimateMassAbove api
                     (subEstimateLaw groupB) q2Sub ∧
             fullFullCutoff groupA ≤ q2Sub ∧
-              fullFullCutoff groupB ≤ q2Sub :=
-  hrows
+              fullFullCutoff groupB ≤ q2Sub := hrows
 
 /--
 Theorem 3 source rows for school `J2`'s condition-(11)--(12) survivor side.
@@ -334,8 +324,7 @@ theorem paper_theorem3_j2_survivor_rows_components
         subFullMass groupA ≥ capacity2 ∧
           populationShare groupA * subFullMerit J2 groupA >
             populationShare groupA * subSubMerit J2 groupA +
-              populationShare groupB * subSubMerit J2 groupB :=
-  hrows
+              populationShare groupB * subSubMerit J2 groupB := hrows
 
 /--
 Theorem 3 source rows for the strict-merit half of school `J2`'s
@@ -373,8 +362,7 @@ theorem paper_theorem3_j2_strict_survivor_merit_rows_components
           populationShare groupB * subSubMerit J2 groupB ∧
       populationShare groupA * subFullMerit J2 groupA >
         populationShare groupA * subSubMerit J2 groupA +
-          populationShare groupB * subSubMerit J2 groupB :=
-  hrows
+          populationShare groupB * subSubMerit J2 groupB := hrows
 
 /--
 The full condition-(11)--(12) school-`J2` survivor bundle implies the
@@ -390,8 +378,7 @@ theorem paper_theorem3_j2_strict_survivor_merit_rows_of_survivor_rows
       GLM20Theorem3J2SurvivorRows populationShare subFullMass
         subSubMerit subFullMerit J2 groupA groupB capacity2) :
     GLM20Theorem3J2StrictSurvivorMeritRows populationShare
-      subSubMerit subFullMerit J2 groupA groupB := by
-  exact ⟨hrows.2.1, hrows.2.2.2⟩
+      subSubMerit subFullMerit J2 groupA groupB :=  ⟨hrows.2.1, hrows.2.2.2⟩
 
 /--
 Feed a feasibility-aware endpoint that only needs the two strict school-`J2`
@@ -413,8 +400,7 @@ theorem paper_theorem3_feasible_endpoint_of_j2_strict_survivor_merit_rows
     (hrows :
       GLM20Theorem3J2StrictSurvivorMeritRows populationShare
         subSubMerit subFullMerit J2 groupA groupB) :
-    Conclusion :=
-  endpoint hrows.1 hrows.2
+    Conclusion := endpoint hrows.1 hrows.2
 
 /--
 Theorem 3 source row for the sub/full affine Gaussian tail-mean route:
@@ -462,8 +448,7 @@ theorem paper_theorem3_subFull_affine_tail_rows_components
                 slope g *
                   (q2Full g -
                     scale g * Q.quantile (1 - rightCost g / v2 g)) <
-            freeThreshold g) :=
-  hrows
+            freeThreshold g) := hrows
 
 /--
 Theorem 3 source rows for the full/sub affine threshold route.
@@ -529,8 +514,7 @@ theorem paper_theorem3_fullSub_affine_threshold_rows_components
                     lowIntercept g - lowSlope g * c ≤
                       highIntercept g - highSlope g * c) ∧
                     (∀ g, 0 < lowSlope g) ∧
-                      (∀ g, 0 < highSlope g) :=
-  hrows
+                      (∀ g, 0 < highSlope g) := hrows
 
 /--
 Theorem 3 source rows for the full/sub fixed posterior-law route.
@@ -1190,8 +1174,7 @@ theorem paper_theorem3_keep_signal_rows_components
         (∀ g, (J1DropFamily g).priorMean < J1DropThreshold g) ∧
           (∀ g, J1DropThreshold g ≤ J1KeepThreshold g) ∧
             (∀ g, (J2DropFamily g).priorMean < J2DropThreshold g) ∧
-              (∀ g, J2DropThreshold g ≤ J2KeepThreshold g) :=
-  hrows
+              (∀ g, J2DropThreshold g ≤ J2KeepThreshold g) := hrows
 
 /--
 The full/full capacity-fill premise used in Theorem 3 follows from the paper's

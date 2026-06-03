@@ -174,6 +174,95 @@ theorem convergesToProfile_of_asymptoticProfile
 end OptimalSequence
 
 /--
+If all positive-size finite optima have pairwise scaled-count gaps bounded by a
+fixed constant, then their shares converge to the profile proportional to
+`profileWeight` with an exact `C / N` rate.
+-/
+theorem asymptoticProfileTarget_of_pairwise_scaled_bounded
+    [Nonempty κ]
+    {objectiveWeightSeq : ℕ → κ → ℝ}
+    {valueOfCountSeq : ℕ → κ → ℕ → ℝ}
+    {profileWeight : κ → ℝ} {target : κ → ℝ}
+    {bound : ℝ}
+    (hweight_pos : ∀ k, 0 < profileWeight k)
+    (htarget :
+      ∀ k, target k = profileWeight k / ∑ i : κ, profileWeight i)
+    (hbound_pos : 0 < bound)
+    (hpair :
+      ∀ N (a : Allocation κ), 0 < N →
+        IsOptimalAtTotal (objectiveWeightSeq N) (valueOfCountSeq N) N a →
+          ∀ i j,
+            |(a.count i : ℝ) / profileWeight i -
+              (a.count j : ℝ) / profileWeight j| ≤ bound) :
+    AsymptoticProfileTarget objectiveWeightSeq valueOfCountSeq target
+      Math.ExactInvRate := by
+  refine
+    ⟨fun N => bound * (∑ i : κ, profileWeight i) / (N : ℝ), ?_, ?_⟩
+  · refine
+      ⟨bound * ∑ i : κ, profileWeight i,
+        mul_pos hbound_pos
+          (Finset.sum_pos (fun i _ => hweight_pos i) Finset.univ_nonempty),
+        fun N => rfl⟩
+  · intro N a hN hopt k
+    have hshare :=
+      share_abs_sub_weighted_target_le_total_weight_of_pairwise_scaled_bounded
+        (a := a) (weight := profileWeight) (N := N) (C := bound)
+        hopt.1 hN hweight_pos (le_of_lt hbound_pos)
+        (hpair N a hN hopt) k
+    simpa [HasApproxShare, htarget k] using hshare
+
+/--
+Certificate form of the bounded pairwise scaled-count profile bridge.
+
+This is the fixed-error counterpart to
+`PairwiseScaledSublinearProfileCertificate`: a uniform `O(1)` bound on scaled
+count gaps gives an exact `C / N` profile error rate.
+-/
+structure PairwiseScaledBoundedProfileCertificate
+    (objectiveWeightSeq : ℕ → κ → ℝ)
+    (valueOfCountSeq : ℕ → κ → ℕ → ℝ)
+    (profileWeight : κ → ℝ) (target : κ → ℝ) where
+  weight_pos : ∀ k, 0 < profileWeight k
+  target_eq :
+    ∀ k, target k = profileWeight k / ∑ i : κ, profileWeight i
+  bound : ℝ
+  bound_pos : 0 < bound
+  pairwise_scaled :
+    ∀ N (a : Allocation κ), 0 < N →
+      IsOptimalAtTotal (objectiveWeightSeq N) (valueOfCountSeq N) N a →
+        ∀ i j,
+          |(a.count i : ℝ) / profileWeight i -
+            (a.count j : ℝ) / profileWeight j| ≤ bound
+
+namespace PairwiseScaledBoundedProfileCertificate
+
+theorem asymptoticProfileTarget
+    [Nonempty κ]
+    {objectiveWeightSeq : ℕ → κ → ℝ}
+    {valueOfCountSeq : ℕ → κ → ℕ → ℝ}
+    {profileWeight : κ → ℝ} {target : κ → ℝ}
+    (hcert :
+      PairwiseScaledBoundedProfileCertificate
+        objectiveWeightSeq valueOfCountSeq profileWeight target) :
+    AsymptoticProfileTarget objectiveWeightSeq valueOfCountSeq target
+      Math.ExactInvRate :=
+  asymptoticProfileTarget_of_pairwise_scaled_bounded
+    hcert.weight_pos hcert.target_eq hcert.bound_pos hcert.pairwise_scaled
+
+theorem asymptoticProfile
+    [Nonempty κ]
+    {objectiveWeightSeq : ℕ → κ → ℝ}
+    {valueOfCountSeq : ℕ → κ → ℕ → ℝ}
+    {profileWeight : κ → ℝ} {target : κ → ℝ}
+    (hcert :
+      PairwiseScaledBoundedProfileCertificate
+        objectiveWeightSeq valueOfCountSeq profileWeight target) :
+    AsymptoticProfile objectiveWeightSeq valueOfCountSeq target :=
+  AsymptoticProfileTarget.of_exactInvRate hcert.asymptoticProfileTarget
+
+end PairwiseScaledBoundedProfileCertificate
+
+/--
 If all positive-size finite optima have pairwise scaled-count gaps at most
 `error N * N`, with `error -> 0`, then their shares converge to the profile
 proportional to `profileWeight`.

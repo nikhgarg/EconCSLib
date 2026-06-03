@@ -29,12 +29,10 @@ namespace ConsumptionModel
 
 /-- The finite count-objective induced by a consumption model. -/
 noncomputable def objective {T : ℕ}
-    (M : ConsumptionModel T) (a : CountAllocation T) : ℝ :=
-  EconCSLib.Allocation.objective a M.likelihood M.valueOfCount
+    (M : ConsumptionModel T) (a : CountAllocation T) : ℝ := EconCSLib.Allocation.objective a M.likelihood M.valueOfCount
 
 /-- `a` is feasible for a slate/recommendation set of size `N`. -/
-def FeasibleAtTotal {T : ℕ} (N : ℕ) (a : CountAllocation T) : Prop :=
-  EconCSLib.Allocation.HasTotal a N
+def FeasibleAtTotal {T : ℕ} (N : ℕ) (a : CountAllocation T) : Prop := EconCSLib.Allocation.HasTotal a N
 
 /-- `a` maximizes the consumption-constrained objective among allocations of size `N`. -/
 def IsOptimalAtTotal {T : ℕ}
@@ -44,21 +42,17 @@ def IsOptimalAtTotal {T : ℕ}
 
 /-- Marginal gain from adding one more item of type `t` after already recommending `q`. -/
 noncomputable def marginalValue {T : ℕ}
-    (M : ConsumptionModel T) (t : ItemType T) (q : ℕ) : ℝ :=
-  EconCSLib.Allocation.marginal M.valueOfCount t q
+    (M : ConsumptionModel T) (t : ItemType T) (q : ℕ) : ℝ := EconCSLib.Allocation.marginal M.valueOfCount t q
 
 /-- The model has nonnegative marginal values in every type. -/
-def HasNonnegativeMarginals {T : ℕ} (M : ConsumptionModel T) : Prop :=
-  EconCSLib.Allocation.HasNonnegativeMarginals M.valueOfCount
+def HasNonnegativeMarginals {T : ℕ} (M : ConsumptionModel T) : Prop := EconCSLib.Allocation.HasNonnegativeMarginals M.valueOfCount
 
 /-- The model has diminishing returns in every type. -/
-def HasDiminishingReturns {T : ℕ} (M : ConsumptionModel T) : Prop :=
-  EconCSLib.Allocation.HasDiminishingReturns M.valueOfCount
+def HasDiminishingReturns {T : ℕ} (M : ConsumptionModel T) : Prop := EconCSLib.Allocation.HasDiminishingReturns M.valueOfCount
 
 /-- Linear, no-consumption-constraint value: each additional item has the same value. -/
 def linearValueOfCount {T : ℕ}
-    (perItemValue : ItemType T → ℝ) : ItemType T → ℕ → ℝ :=
-  fun t q => (q : ℝ) * perItemValue t
+    (perItemValue : ItemType T → ℝ) : ItemType T → ℕ → ℝ := fun t q => (q : ℝ) * perItemValue t
 
 /-- The linearized objective used as the baseline that ignores consumption constraints. -/
 def linearized {T : ℕ}

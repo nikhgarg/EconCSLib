@@ -9,8 +9,7 @@ namespace KR21Monoculture
 abbrev RankingPair (n : ℕ) := Ranking n × Ranking n
 
 /-- The event that two rankings disagree on the first-position candidate. -/
-def disagreementEvent {n : ℕ} : RankingPair n → Prop :=
-  fun p => firstChoice p.1 ≠ firstChoice p.2
+def disagreementEvent {n : ℕ} : RankingPair n → Prop := fun p => firstChoice p.1 ≠ firstChoice p.2
 
 instance decidableDisagreementEvent {n : ℕ} : DecidablePred (@disagreementEvent n) := by
   intro p
@@ -18,17 +17,14 @@ instance decidableDisagreementEvent {n : ℕ} : DecidablePred (@disagreementEven
   infer_instance
 
 /-- The reranking-gain integrand viewed as a function on ranking pairs. -/
-def pairRerankingGain {n : ℕ} (value : Candidate n → ℝ) : RankingPair n → ℝ :=
-  fun p => rerankingGainOnPair value p.1 p.2
+def pairRerankingGain {n : ℕ} (value : Candidate n → ℝ) : RankingPair n → ℝ := fun p => rerankingGainOnPair value p.1 p.2
 
 /-- Probability that two i.i.d. ranking draws disagree on the first choice. -/
-noncomputable def disagreementProb {n : ℕ} (μ : PMF (Ranking n)) : ℝ :=
-  pmfPairProb μ μ disagreementEvent
+noncomputable def disagreementProb {n : ℕ} (μ : PMF (Ranking n)) : ℝ := pmfPairProb μ μ disagreementEvent
 
 /-- Conditional expected reranking gain given disagreement on the first choice. -/
 noncomputable def disagreementConditionalGain {n : ℕ}
-    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
-  pmfPairConditionalExp μ μ disagreementEvent (pairRerankingGain value)
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ := pmfPairConditionalExp μ μ disagreementEvent (pairRerankingGain value)
 
 @[simp] theorem pairRerankingGain_apply {n : ℕ} (value : Candidate n → ℝ)
     (π σ : Ranking n) :

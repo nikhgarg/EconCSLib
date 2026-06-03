@@ -3515,8 +3515,7 @@ theorem
         lowBasedThreshold g c ≤ highBasedThreshold g c) :
     (∀ g, highTestFreeMerit g < lowTestFreeMerit g) ∧
       (∀ g c, c ∈ Set.Ioo (leftCost g) (rightCost g) →
-        lowTestBasedMerit g c ≤ highTestBasedMerit g c) := by
-  exact
+        lowTestBasedMerit g c ≤ highTestBasedMerit g c) :=
     paper_proposition5_fullSub_ordered_merits_of_gaussian_tail_mean_formulas
       C lowTestBasedMerit lowTestFreeMerit highTestBasedMerit
       highTestFreeMerit
@@ -5115,8 +5114,7 @@ theorem
           J2 groupA groupB populationShare)
         glm20StrategicPolicyStatePair GLM20StrategicPolicyState.singleSub
         GLM20StrategicPolicyState.singleFull J2 groupA groupB
-        populationShare capacity2 survivingGroup := by
-  exact
+        populationShare capacity2 survivingGroup :=
     (glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_otherGroupKeepsTest_iff_components
       api subEstimateLaw subSubMass subFullMass fullFullCutoff
       fullSubCutoff subSubMerit subFullMerit fullSubMerit fullFullMerit

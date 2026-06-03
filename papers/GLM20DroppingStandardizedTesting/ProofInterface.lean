@@ -35,66 +35,55 @@ open MeasureTheory
 open scoped ENNReal
 
 /-- Paper policy notation: `P_full`, the test-using admissions policy. -/
-abbrev paperPFull : GLM20Policy :=
-  glm20PFull
+abbrev paperPFull : GLM20Policy := glm20PFull
 
 /-- Paper policy notation: `P_sub`, the test-dropping admissions policy. -/
-abbrev paperPSub : GLM20Policy :=
-  glm20PSub
+abbrev paperPSub : GLM20Policy := glm20PSub
 
 /-- Paper notation: the concrete bivariate standard-normal CDF `Phi_2(x,y;rho)`. -/
-abbrev paperStandardBivariateGaussianCDF (x y rho : ℝ) : ℝ :=
-  standardBivariateGaussianCDF x y rho
+abbrev paperStandardBivariateGaussianCDF (x y rho : ℝ) : ℝ := standardBivariateGaussianCDF x y rho
 
 /-- Paper notation: the correlated standard-Gaussian law with correlation `rho`. -/
-abbrev paperCorrelatedStandardGaussianLaw (rho : ℝ) : Measure (ℝ × ℝ) :=
-  correlatedStandardGaussianLaw rho
+abbrev paperCorrelatedStandardGaussianLaw (rho : ℝ) : Measure (ℝ × ℝ) := correlatedStandardGaussianLaw rho
 
 /-- Paper support: valid correlation parameters give a continuous `Phi_2(·,·;rho)`. -/
 theorem paper_interface_standardBivariateGaussianCDF_continuous_of_rho_sq_le_one
     {rho : ℝ} (hrho : rho ^ 2 ≤ 1) :
     Continuous fun p : ℝ × ℝ =>
-      paperStandardBivariateGaussianCDF p.1 p.2 rho :=
-  standardBivariateGaussianCDF_continuous_of_rho_sq_le_one hrho
+      paperStandardBivariateGaussianCDF p.1 p.2 rho := standardBivariateGaussianCDF_continuous_of_rho_sq_le_one hrho
 
 /-- Source group-fairness predicate: admitted group-B share equals population share. -/
 abbrev paperGroupFair {Group Policy : Type*}
-    (S : GLM20SourcePolicySurface Group Policy) (P : Policy) : Prop :=
-  glm20GroupFair S P
+    (S : GLM20SourcePolicySurface Group Policy) (P : Policy) : Prop := glm20GroupFair S P
 
 /-- Source individual-fairness predicate: every skill-level admission gap is zero. -/
 abbrev paperIndividualFair {Group Policy : Type*}
-    (S : GLM20SourcePolicySurface Group Policy) (P : Policy) : Prop :=
-  glm20IndividualFair S P
+    (S : GLM20SourcePolicySurface Group Policy) (P : Policy) : Prop := glm20IndividualFair S P
 
 /--
 Appendix F Definition 1, finite-kernel Blackwell sufficiency: the coarse
 experiment is obtained by garbling the rich experiment.
 -/
 abbrev paperBlackwellSufficient {Q RichSignal CoarseSignal : Type*}
-    (rich : Q → PMF RichSignal) (coarse : Q → PMF CoarseSignal) : Prop :=
-  glm20BlackwellSufficient rich coarse
+    (rich : Q → PMF RichSignal) (coarse : Q → PMF CoarseSignal) : Prop := glm20BlackwellSufficient rich coarse
 
 /-- Appendix F Definition 1: an explicit garbling kernel proves sufficiency. -/
 theorem paper_interface_blackwell_sufficient_bind
     {Q RichSignal CoarseSignal : Type*}
     (rich : Q → PMF RichSignal)
     (garbling : RichSignal → PMF CoarseSignal) :
-    paperBlackwellSufficient rich (fun q => (rich q).bind garbling) :=
-  glm20BlackwellSufficient_bind rich garbling
+    paperBlackwellSufficient rich (fun q => (rich q).bind garbling) := glm20BlackwellSufficient_bind rich garbling
 
 /-- Appendix F Definition 1: deterministic post-processing proves sufficiency. -/
 theorem paper_interface_blackwell_sufficient_map
     {Q RichSignal CoarseSignal : Type*}
     (rich : Q → PMF RichSignal) (f : RichSignal → CoarseSignal) :
-    paperBlackwellSufficient rich (fun q => (rich q).map f) :=
-  glm20BlackwellSufficient_map rich f
+    paperBlackwellSufficient rich (fun q => (rich q).map f) := glm20BlackwellSufficient_map rich f
 
 /-- Appendix F Definition 1: Blackwell sufficiency is reflexive. -/
 theorem paper_interface_blackwell_sufficient_refl
     {Q Signal : Type*} (experiment : Q → PMF Signal) :
-    paperBlackwellSufficient experiment experiment :=
-  glm20BlackwellSufficient_refl experiment
+    paperBlackwellSufficient experiment experiment := glm20BlackwellSufficient_refl experiment
 
 /-- Appendix F Definition 1: Blackwell sufficiency composes. -/
 theorem paper_interface_blackwell_sufficient_trans
@@ -104,8 +93,7 @@ theorem paper_interface_blackwell_sufficient_trans
     {coarse : Q → PMF CoarseSignal}
     (hrich_mid : paperBlackwellSufficient rich middle)
     (hmid_coarse : paperBlackwellSufficient middle coarse) :
-    paperBlackwellSufficient rich coarse :=
-  glm20BlackwellSufficient_trans hrich_mid hmid_coarse
+    paperBlackwellSufficient rich coarse := glm20BlackwellSufficient_trans hrich_mid hmid_coarse
 
 /--
 Appendix F / Proposition 7(i): with a single posterior-score crossing at
@@ -208,32 +196,23 @@ required almost everywhere under a realized student information law.
 abbrev paperStrategicEquilibriumAE
     {Student Action SchoolPolicy : Type*} [MeasurableSpace Student]
     (μ : Measure Student)
-    (E : GLM20StrategicEquilibriumData Student Action SchoolPolicy) : Prop :=
-  glm20StrategicEquilibriumAE μ E
+    (E : GLM20StrategicEquilibriumData Student Action SchoolPolicy) : Prop := glm20StrategicEquilibriumAE μ E
 
-abbrev paper_interface_strategic_equilibrium_ae_student_feasible :=
-  @glm20StrategicEquilibriumAE_student_feasible_ae
+abbrev paper_interface_strategic_equilibrium_ae_student_feasible := @glm20StrategicEquilibriumAE_student_feasible_ae
 
-abbrev paper_interface_strategic_equilibrium_ae_student_best_response :=
-  @glm20StrategicEquilibriumAE_student_best_response_ae
+abbrev paper_interface_strategic_equilibrium_ae_student_best_response := @glm20StrategicEquilibriumAE_student_best_response_ae
 
-abbrev paper_interface_strategic_equilibrium_ae_school_policy_feasible :=
-  @glm20StrategicEquilibriumAE_school_policy_feasible
+abbrev paper_interface_strategic_equilibrium_ae_school_policy_feasible := @glm20StrategicEquilibriumAE_school_policy_feasible
 
-abbrev paper_interface_strategic_equilibrium_ae_school_policy_best_response :=
-  @glm20StrategicEquilibriumAE_school_policy_best_response
+abbrev paper_interface_strategic_equilibrium_ae_school_policy_best_response := @glm20StrategicEquilibriumAE_school_policy_best_response
 
-abbrev paper_interface_strategic_equilibrium_ae_assignmentConsistent :=
-  @glm20StrategicEquilibriumAE_assignmentConsistent
+abbrev paper_interface_strategic_equilibrium_ae_assignmentConsistent := @glm20StrategicEquilibriumAE_assignmentConsistent
 
-abbrev paper_interface_strategic_equilibrium_ae_of_strategic_equilibrium :=
-  @glm20StrategicEquilibriumAE_of_strategicEquilibrium
+abbrev paper_interface_strategic_equilibrium_ae_of_strategic_equilibrium := @glm20StrategicEquilibriumAE_of_strategicEquilibrium
 
-abbrev paper_interface_strategic_equilibrium_ae_student_choice_equilibrium :=
-  @paper_section5_student_choice_equilibriumAE_of_strategic_equilibriumAE
+abbrev paper_interface_strategic_equilibrium_ae_student_choice_equilibrium := @paper_section5_student_choice_equilibriumAE_of_strategic_equilibriumAE
 
-abbrev paper_interface_strategic_equilibrium_ae_binary_choice_projection :=
-  @paper_section5_noProfitableBinaryChoiceDeviationAE_of_strategic_equilibriumAE
+abbrev paper_interface_strategic_equilibrium_ae_binary_choice_projection := @paper_section5_noProfitableBinaryChoiceDeviationAE_of_strategic_equilibriumAE
 
 /--
 Proposition 8(i), affirmative action under a fixed testing policy: if the
@@ -714,8 +693,7 @@ theorem paper_interface_proposition9_hatGamma_mono_of_test_variance_increases
 Proposition 9 paper formula for `\hat γ_g`, written with the displayed
 square-root precision ratio.
 -/
-abbrev paperHatGammaSource :=
-  paperProposition9HatGammaSource
+abbrev paperHatGammaSource := paperProposition9HatGammaSource
 
 /--
 Proposition 9 displayed-formula monotonicity: if the test precision falls, the
@@ -762,8 +740,7 @@ theorem paper_interface_proposition9_hatGammaSource_mono_of_test_variance_increa
 
 /-- Section 5 strategic-equilibrium predicate used by the paper-facing wrappers. -/
 abbrev paperStrategicEquilibrium {Student Action SchoolPolicy : Type*}
-    (E : GLM20StrategicEquilibriumData Student Action SchoolPolicy) : Prop :=
-  glm20StrategicEquilibrium E
+    (E : GLM20StrategicEquilibriumData Student Action SchoolPolicy) : Prop := glm20StrategicEquilibrium E
 
 /--
 Section 5 two-school binary-policy equilibrium helper: each school weakly
@@ -790,16 +767,13 @@ abbrev paperTwoSchoolBinaryPolicyFeasibleEquilibrium
     feasible1 feasible2 Psub Pfull P1 P2
 
 /-- Feasible binary-policy equilibrium characterization for `(P_sub,P_full)`. -/
-abbrev paper_interface_two_school_binary_policy_feasible_equilibrium_subFull_iff :=
-  @glm20TwoSchoolBinaryPolicyFeasibleEquilibrium_subFull_iff
+abbrev paper_interface_two_school_binary_policy_feasible_equilibrium_subFull_iff := @glm20TwoSchoolBinaryPolicyFeasibleEquilibrium_subFull_iff
 
 /-- Feasible binary-policy equilibrium characterization for `(P_full,P_sub)`. -/
-abbrev paper_interface_two_school_binary_policy_feasible_equilibrium_fullSub_iff :=
-  @glm20TwoSchoolBinaryPolicyFeasibleEquilibrium_fullSub_iff
+abbrev paper_interface_two_school_binary_policy_feasible_equilibrium_fullSub_iff := @glm20TwoSchoolBinaryPolicyFeasibleEquilibrium_fullSub_iff
 
 /-- Feasible binary-policy equilibrium characterization for `(P_full,P_full)`. -/
-abbrev paper_interface_two_school_binary_policy_feasible_equilibrium_fullFull_iff :=
-  @glm20TwoSchoolBinaryPolicyFeasibleEquilibrium_fullFull_iff
+abbrev paper_interface_two_school_binary_policy_feasible_equilibrium_fullFull_iff := @glm20TwoSchoolBinaryPolicyFeasibleEquilibrium_fullFull_iff
 
 /--
 Feasible binary-policy equilibrium characterization bundled for the three
@@ -898,8 +872,7 @@ abbrev paperTwoGroupWeightedAcademicMerit
     {Group Policy School Equilibrium : Type*}
     (S : GLM20StrategicPolicySurface Group Policy School Equilibrium)
     (J : School) (groupA groupB : Group) (populationShare : Group → ℝ)
-    (policy : Policy) : ℝ :=
-  glm20TwoGroupWeightedAcademicMerit S J groupA groupB populationShare policy
+    (policy : Policy) : ℝ := glm20TwoGroupWeightedAcademicMerit S J groupA groupB populationShare policy
 
 /-- Section 5 school academic-merit objective as a function of two school policies. -/
 abbrev paperTwoGroupWeightedAcademicMeritObjective
@@ -925,80 +898,64 @@ abbrev paperStrategicPolicyStatePair := glm20StrategicPolicyStatePair
 abbrev paperStrategicPolicyStateMass := @glm20StrategicPolicyStateMass
 
 /-- Section 5 admitted academic-merit table over the four policy states. -/
-abbrev paperStrategicPolicyStateAdmittedMerit :=
-  @glm20StrategicPolicyStateAdmittedMerit
+abbrev paperStrategicPolicyStateAdmittedMerit := @glm20StrategicPolicyStateAdmittedMerit
 
 /-- Override one school's admitted-merit row in a policy-state table. -/
-abbrev paperOverrideSchoolMeritRow :=
-  @glm20OverrideSchoolMeritRow
+abbrev paperOverrideSchoolMeritRow := @glm20OverrideSchoolMeritRow
 
 /--
 Theorem 3 source-family `(P_sub,P_full)` merit table with school `J1`'s row
 generated by the Gaussian upper-tail mean.
 -/
-abbrev paperTheorem3SourceFamilySubFullMeritTable :=
-  @glm20Theorem3SourceFamilySubFullMeritTable
+abbrev paperTheorem3SourceFamilySubFullMeritTable := @glm20Theorem3SourceFamilySubFullMeritTable
 
 /--
 Theorem 3 source-family `(P_sub,P_full)` fallback row for school `J2`:
 groups whose condition-(10) cutoff case expands under school `J1` receive zero
 admitted merit at school `J2`.
 -/
-abbrev paperTheorem3SourceFamilySubFullJ2ZeroFallback :=
-  @glm20Theorem3SourceFamilySubFullJ2ZeroFallback
+abbrev paperTheorem3SourceFamilySubFullJ2ZeroFallback := @glm20Theorem3SourceFamilySubFullJ2ZeroFallback
 
-abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_cutoff_of_subFullExpands :=
-  @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_cutoff_of_subFullExpands
+abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_cutoff_of_subFullExpands := @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_cutoff_of_subFullExpands
 
-abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_zero_of_subFullExpands :=
-  @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_zero_of_subFullExpands
+abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_zero_of_subFullExpands := @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_zero_of_subFullExpands
 
-abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_groupB_not_cutoff_of_groupA_expands :=
-  @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_groupB_not_cutoff_of_groupA_expands
+abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_groupB_not_cutoff_of_groupA_expands := @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_groupB_not_cutoff_of_groupA_expands
 
-abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_groupA_not_cutoff_of_groupB_expands :=
-  @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_groupA_not_cutoff_of_groupB_expands
+abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_groupA_not_cutoff_of_groupB_expands := @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_groupA_not_cutoff_of_groupB_expands
 
-abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_groupB_merit_gt_of_base_merit_gt :=
-  @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_groupB_merit_gt_of_base_merit_gt
+abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_groupB_merit_gt_of_base_merit_gt := @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_groupB_merit_gt_of_base_merit_gt
 
-abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_groupA_merit_gt_of_base_merit_gt :=
-  @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_groupA_merit_gt_of_base_merit_gt
+abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_groupA_merit_gt_of_base_merit_gt := @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_groupA_merit_gt_of_base_merit_gt
 
-abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_components_of_base_survivor_components :=
-  @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_components_of_base_survivor_components
+abbrev paper_interface_theorem3_sourceFamilySubFullJ2ZeroFallback_components_of_base_survivor_components := @glm20Theorem3SourceFamilySubFullJ2ZeroFallback_components_of_base_survivor_components
 
 /--
 Theorem 3(i) school-`J2` feasibility predicate on the concrete policy-state
 surface: at `(P_sub,P_full)`, feasibility is exactly the paper's condition
 (11) survivor-mass requirement.
 -/
-abbrev paperTheorem3PolicyStateSubFullJ2MassFeasible :=
-  @glm20Theorem3PolicyStateSubFullJ2MassFeasible
+abbrev paperTheorem3PolicyStateSubFullJ2MassFeasible := @glm20Theorem3PolicyStateSubFullJ2MassFeasible
 
 abbrev
-    paper_interface_theorem3_policyStateSubFullJ2MassFeasible_iff_sourceFamilySubFullExpands :=
-  @glm20Theorem3PolicyStateSubFullJ2MassFeasible_iff_sourceFamilySubFullExpands
+    paper_interface_theorem3_policyStateSubFullJ2MassFeasible_iff_sourceFamilySubFullExpands := @glm20Theorem3PolicyStateSubFullJ2MassFeasible_iff_sourceFamilySubFullExpands
 
 abbrev
-    paper_interface_theorem3_policyStateSubFullJ2MassFeasible_iff_policyStateExpands :=
-  @glm20Theorem3PolicyStateSubFullJ2MassFeasible_iff_policyStateExpands
+    paper_interface_theorem3_policyStateSubFullJ2MassFeasible_iff_policyStateExpands := @glm20Theorem3PolicyStateSubFullJ2MassFeasible_iff_policyStateExpands
 
 /--
 Theorem 3(i) concrete feasible policy-state surface: school `J2`'s
 `(P_sub,P_full)` feasibility is exactly condition (11), while school `J1`
 has no additional feasibility restriction.
 -/
-abbrev paperTheorem3PolicyStateSubFullMassFeasibleSurface :=
-  @glm20Theorem3PolicyStateSubFullMassFeasibleSurface
+abbrev paperTheorem3PolicyStateSubFullMassFeasibleSurface := @glm20Theorem3PolicyStateSubFullMassFeasibleSurface
 
 /--
 The concrete feasible Theorem 3(i) surface unfolds to condition (11) plus
 the two weighted academic-merit objective comparisons for `(P_sub,P_full)`.
 -/
 abbrev
-    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_subFull_iff_components :=
-  @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_subFull_iff_components
+    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_subFull_iff_components := @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_subFull_iff_components
 
 /--
 Theorem 3(i) concrete feasible-surface bridge: for a fixed condition-(10)
@@ -1007,8 +964,7 @@ threshold, the paper's condition-(11) feasibility surface has
 condition holds, once the Proposition 5 objective comparison bridge is known.
 -/
 abbrev
-    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_subFull_iff_theorem3Condition :=
-  @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_subFull_iff_theorem3Condition
+    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_subFull_iff_theorem3Condition := @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_subFull_iff_theorem3Condition
 
 /--
 Preferred Theorem 3(i) concrete feasible-surface bridge: condition (11) is
@@ -1016,8 +972,7 @@ supplied by the surface feasibility predicate, while Proposition 5 supplies
 the school-`J1` and school-`J2` objective bridges.
 -/
 abbrev
-    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_subFull_iff_theorem3Condition_of_objective_bridges :=
-  @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_subFull_iff_theorem3Condition_of_objective_bridges
+    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_subFull_iff_theorem3Condition_of_objective_bridges := @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_subFull_iff_theorem3Condition_of_objective_bridges
 
 /--
 Theorem 3(i) concrete positive-interval endpoint: constructs the sub/full
@@ -1025,16 +980,14 @@ cost threshold and proves the `(P_sub,P_full)` equilibrium equivalence on the
 paper's condition-(11) feasible policy-state surface.
 -/
 abbrev
-    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_subFull_interval :=
-  @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_subFull_interval
+    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_subFull_interval := @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_subFull_interval
 
 /--
 Theorem 3(i) source-family endpoint with school `J2`'s zero fallback and the
 concrete condition-(11) feasible surface.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_policy_state_table_j2_zero_fallback_subFull_interval :=
-  @paper_theorem3_source_conditions_of_policy_state_table_j2_zero_fallback_subFull_interval
+    paper_interface_theorem3_source_conditions_of_policy_state_table_j2_zero_fallback_subFull_interval := @paper_theorem3_source_conditions_of_policy_state_table_j2_zero_fallback_subFull_interval
 
 /--
 Theorem 3(i) standard-Gaussian source-model endpoint: equation (50) supplies
@@ -1042,8 +995,7 @@ the cost-merit regularity assumptions for the school-`J2` zero-fallback
 sub/full interval theorem on the concrete condition-(11) feasible surface.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_policy_state_table_j2_zero_fallback_subFull_interval_of_equation50 :=
-  @paper_theorem3_standardGaussian_source_conditions_of_policy_state_table_j2_zero_fallback_subFull_interval_of_equation50
+    paper_interface_theorem3_standardGaussian_source_conditions_of_policy_state_table_j2_zero_fallback_subFull_interval_of_equation50 := @paper_theorem3_standardGaussian_source_conditions_of_policy_state_table_j2_zero_fallback_subFull_interval_of_equation50
 
 /--
 Theorem 3(ii) concrete feasible-surface bridge: the condition-(11) feasible
@@ -1052,8 +1004,7 @@ full/sub equilibrium reduces to the ordinary Theorem 3(ii) objective
 condition.
 -/
 abbrev
-    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_fullSub_iff_theorem3Condition :=
-  @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_fullSub_iff_theorem3Condition
+    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_fullSub_iff_theorem3Condition := @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_fullSub_iff_theorem3Condition
 
 /--
 Theorem 3(ii) concrete positive-interval endpoint: constructs the low/high
@@ -1061,8 +1012,7 @@ cost thresholds and proves the `(P_full,P_sub)` equilibrium equivalence on the
 same condition-(11) feasible policy-state surface.
 -/
 abbrev
-    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_fullSub_interval :=
-  @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_fullSub_interval
+    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_fullSub_interval := @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_fullSub_interval
 
 /--
 Theorem 3(iii) concrete full/full endpoint: positive realized costs, obtained
@@ -1070,8 +1020,7 @@ from a positive cost interval, imply the paper's boundary-function condition
 on the condition-(11) feasible policy-state surface.
 -/
 abbrev
-    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_fullFull_condition_of_positive_cost_interval :=
-  @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_fullFull_condition_of_positive_cost_interval
+    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_fullFull_condition_of_positive_cost_interval := @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_fullFull_condition_of_positive_cost_interval
 
 /--
 Theorem 3 source-shaped concrete endpoint: combines verified parts (i) and
@@ -1079,8 +1028,7 @@ Theorem 3 source-shaped concrete endpoint: combines verified parts (i) and
 feasible policy-state surface.
 -/
 abbrev
-    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_source_conditions_of_i_ii_and_positive_cost_interval :=
-  @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_source_conditions_of_i_ii_and_positive_cost_interval
+    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_source_conditions_of_i_ii_and_positive_cost_interval := @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_source_conditions_of_i_ii_and_positive_cost_interval
 
 /--
 Theorem 3(i)--(ii) concrete positive-interval endpoint: constructs the
@@ -1088,323 +1036,261 @@ sub/full threshold and the full/sub low/high thresholds on the same
 condition-(11) feasible policy-state surface.
 -/
 abbrev
-    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_subFull_fullSub_interval :=
-  @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_subFull_fullSub_interval
+    paper_interface_theorem3_policyStateSubFullMassFeasibleSurface_subFull_fullSub_interval := @glm20Theorem3PolicyStateSubFullMassFeasibleSurface_subFull_fullSub_interval
 
 /--
 Theorem 3 source-family `(P_full,P_sub)` merit table with school `J2`'s row
 generated by the Gaussian upper-tail mean.
 -/
-abbrev paperTheorem3SourceFamilyFullSubMeritTable :=
-  @glm20Theorem3SourceFamilyFullSubMeritTable
+abbrev paperTheorem3SourceFamilyFullSubMeritTable := @glm20Theorem3SourceFamilyFullSubMeritTable
 
 /--
 Theorem 3 source-family `(P_full,P_full)` merit table with both school rows
 generated by Gaussian upper-tail means.
 -/
-abbrev paperTheorem3SourceFamilyFullFullMeritTable :=
-  @glm20Theorem3SourceFamilyFullFullMeritTable
+abbrev paperTheorem3SourceFamilyFullFullMeritTable := @glm20Theorem3SourceFamilyFullFullMeritTable
 
 /--
 Theorem 3 standard-Gaussian `(P_sub,P_full)` merit table with school `J1`'s
 row generated by the mathlib-backed Gaussian upper-tail mean.
 -/
-abbrev paperTheorem3StandardGaussianSourceFamilySubFullMeritTable :=
-  @glm20Theorem3StandardGaussianSourceFamilySubFullMeritTable
+abbrev paperTheorem3StandardGaussianSourceFamilySubFullMeritTable := @glm20Theorem3StandardGaussianSourceFamilySubFullMeritTable
 
 /--
 Theorem 3 standard-Gaussian `(P_full,P_sub)` merit table with school `J2`'s
 row generated by the mathlib-backed Gaussian upper-tail mean.
 -/
-abbrev paperTheorem3StandardGaussianSourceFamilyFullSubMeritTable :=
-  @glm20Theorem3StandardGaussianSourceFamilyFullSubMeritTable
+abbrev paperTheorem3StandardGaussianSourceFamilyFullSubMeritTable := @glm20Theorem3StandardGaussianSourceFamilyFullSubMeritTable
 
 /--
 Theorem 3 standard-Gaussian `(P_full,P_full)` merit table with both school
 rows generated by mathlib-backed Gaussian upper-tail means.
 -/
-abbrev paperTheorem3StandardGaussianSourceFamilyFullFullMeritTable :=
-  @glm20Theorem3StandardGaussianSourceFamilyFullFullMeritTable
+abbrev paperTheorem3StandardGaussianSourceFamilyFullFullMeritTable := @glm20Theorem3StandardGaussianSourceFamilyFullFullMeritTable
 
-abbrev paper_interface_strategicPolicyStateAdmittedMerit_pair_subSub :=
-  @glm20StrategicPolicyStateAdmittedMerit_pair_subSub
+abbrev paper_interface_strategicPolicyStateAdmittedMerit_pair_subSub := @glm20StrategicPolicyStateAdmittedMerit_pair_subSub
 
-abbrev paper_interface_strategicPolicyStateAdmittedMerit_pair_subFull :=
-  @glm20StrategicPolicyStateAdmittedMerit_pair_subFull
+abbrev paper_interface_strategicPolicyStateAdmittedMerit_pair_subFull := @glm20StrategicPolicyStateAdmittedMerit_pair_subFull
 
-abbrev paper_interface_strategicPolicyStateAdmittedMerit_pair_fullSub :=
-  @glm20StrategicPolicyStateAdmittedMerit_pair_fullSub
+abbrev paper_interface_strategicPolicyStateAdmittedMerit_pair_fullSub := @glm20StrategicPolicyStateAdmittedMerit_pair_fullSub
 
-abbrev paper_interface_strategicPolicyStateAdmittedMerit_pair_fullFull :=
-  @glm20StrategicPolicyStateAdmittedMerit_pair_fullFull
+abbrev paper_interface_strategicPolicyStateAdmittedMerit_pair_fullFull := @glm20StrategicPolicyStateAdmittedMerit_pair_fullFull
 
 /-- Section 5 diversity table over the four policy states. -/
-abbrev paperStrategicPolicyStateDiversity :=
-  @glm20StrategicPolicyStateDiversity
+abbrev paperStrategicPolicyStateDiversity := @glm20StrategicPolicyStateDiversity
 
-abbrev paper_interface_strategicPolicyStateDiversity_pair_subSub :=
-  @glm20StrategicPolicyStateDiversity_pair_subSub
+abbrev paper_interface_strategicPolicyStateDiversity_pair_subSub := @glm20StrategicPolicyStateDiversity_pair_subSub
 
-abbrev paper_interface_strategicPolicyStateDiversity_pair_subFull :=
-  @glm20StrategicPolicyStateDiversity_pair_subFull
+abbrev paper_interface_strategicPolicyStateDiversity_pair_subFull := @glm20StrategicPolicyStateDiversity_pair_subFull
 
-abbrev paper_interface_strategicPolicyStateDiversity_pair_fullSub :=
-  @glm20StrategicPolicyStateDiversity_pair_fullSub
+abbrev paper_interface_strategicPolicyStateDiversity_pair_fullSub := @glm20StrategicPolicyStateDiversity_pair_fullSub
 
-abbrev paper_interface_strategicPolicyStateDiversity_pair_fullFull :=
-  @glm20StrategicPolicyStateDiversity_pair_fullFull
+abbrev paper_interface_strategicPolicyStateDiversity_pair_fullFull := @glm20StrategicPolicyStateDiversity_pair_fullFull
 
 /--
 Theorem 3 source mass table with the paper's `K_g` formulas wired into the
 full/full and full/sub states.
 -/
-abbrev paperTheorem3PolicyStateCutoffMass :=
-  @glm20Theorem3PolicyStateCutoffMass
+abbrev paperTheorem3PolicyStateCutoffMass := @glm20Theorem3PolicyStateCutoffMass
 
 /--
 Theorem 3 concrete policy-state surface for schools maximizing weighted
 academic merit.
 -/
-abbrev paperTheorem3PolicyStateWeightedAcademicMeritSurface :=
-  @glm20Theorem3PolicyStateWeightedAcademicMeritSurface
+abbrev paperTheorem3PolicyStateWeightedAcademicMeritSurface := @glm20Theorem3PolicyStateWeightedAcademicMeritSurface
 
 /--
 Theorem 3 concrete policy-state surface with admitted merit supplied by the
 four paper policy-pair tables.
 -/
-abbrev paperTheorem3PolicyStateTableWeightedAcademicMeritSurface :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface
+abbrev paperTheorem3PolicyStateTableWeightedAcademicMeritSurface := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface
 
 /--
 Theorem 3 concrete policy-state table surface with fixed-pool merit rows
 generated from the source Gaussian families.
 -/
-abbrev paperTheorem3SourceFamilyPolicyStateTableSurface :=
-  @glm20Theorem3SourceFamilyPolicyStateTableSurface
+abbrev paperTheorem3SourceFamilyPolicyStateTableSurface := @glm20Theorem3SourceFamilyPolicyStateTableSurface
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_merit_subSub :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_merit_subSub
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_merit_subSub := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_merit_subSub
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_merit_subFull :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_merit_subFull
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_merit_subFull := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_merit_subFull
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_merit_fullSub :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_merit_fullSub
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_merit_fullSub := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_merit_fullSub
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_merit_fullFull :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_merit_fullFull
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_merit_fullFull := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_merit_fullFull
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_weighted_merit_zero_of_merit_zero :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_weighted_merit_zero_of_merit_zero
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_weighted_merit_zero_of_merit_zero := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_weighted_merit_zero_of_merit_zero
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_mass_ge_of_component :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_mass_ge_of_component
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_mass_ge_of_component := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_mass_ge_of_component
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_weighted_merit_gt_subSub_of_component :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_weighted_merit_gt_subSub_of_component
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_weighted_merit_gt_subSub_of_component := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_weighted_merit_gt_subSub_of_component
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_otherGroupKeepsTest_iff_components :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_otherGroupKeepsTest_iff_components
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_otherGroupKeepsTest_iff_components := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_otherGroupKeepsTest_iff_components
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_otherGroupKeepsTest_of_components :=
-  @paper_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_otherGroupKeepsTest_of_components
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_otherGroupKeepsTest_of_components := @paper_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_otherGroupKeepsTest_of_components
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_components_of_otherGroupKeepsTest :=
-  @paper_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_components_of_otherGroupKeepsTest
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_components_of_otherGroupKeepsTest := @paper_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_components_of_otherGroupKeepsTest
 
 /-- Paper Theorem 3 support: the paper's named groups are distinct. -/
-abbrev paper_interface_theorem3_groupA_ne_groupB :=
-  @glm20GroupA_ne_groupB
+abbrev paper_interface_theorem3_groupA_ne_groupB := @glm20GroupA_ne_groupB
 
 /-- Paper Theorem 3 support: the paper's named groups are distinct. -/
-abbrev paper_interface_theorem3_groupB_ne_groupA :=
-  @glm20GroupB_ne_groupA
+abbrev paper_interface_theorem3_groupB_ne_groupA := @glm20GroupB_ne_groupA
 
 /-- Paper Theorem 3 support: the first named school. -/
-abbrev paper_interface_theorem3_schoolJ1 :=
-  glm20SchoolJ1
+abbrev paper_interface_theorem3_schoolJ1 := glm20SchoolJ1
 
 /-- Paper Theorem 3 support: the second named school. -/
-abbrev paper_interface_theorem3_schoolJ2 :=
-  glm20SchoolJ2
+abbrev paper_interface_theorem3_schoolJ2 := glm20SchoolJ2
 
 /-- Paper Theorem 3 support: the paper's named schools are distinct. -/
-abbrev paper_interface_theorem3_schoolJ1_ne_schoolJ2 :=
-  @glm20SchoolJ1_ne_J2
+abbrev paper_interface_theorem3_schoolJ1_ne_schoolJ2 := @glm20SchoolJ1_ne_J2
 
 /-- Paper Theorem 3 support: the named population-share row `(1 - pi, pi)`. -/
-abbrev paper_interface_theorem3_populationShare :=
-  glm20Theorem3PopulationShare
+abbrev paper_interface_theorem3_populationShare := glm20Theorem3PopulationShare
 
 /--
 Paper Theorem 3 support: the concrete population-share notation
 `(1 - pi, pi)` supplies positive shares for groups A and B from `0 < pi < 1`.
 -/
-abbrev paper_interface_theorem3_group_populationShare_pos_of_pi_mem_Ioo :=
-  @glm20Group_populationShare_pos_of_pi_mem_Ioo
+abbrev paper_interface_theorem3_group_populationShare_pos_of_pi_mem_Ioo := @glm20Group_populationShare_pos_of_pi_mem_Ioo
 
 /--
 Paper Theorem 3 support: the named population-share row supplies positive
 shares for groups A and B from `0 < pi < 1`.
 -/
-abbrev paper_interface_theorem3_populationShare_pos_of_pi_mem_Ioo :=
-  @glm20Theorem3PopulationShare_pos_of_pi_mem_Ioo
+abbrev paper_interface_theorem3_populationShare_pos_of_pi_mem_Ioo := @glm20Theorem3PopulationShare_pos_of_pi_mem_Ioo
 /--
 Paper Theorem 3 support: affine-decreasing full-sub based threshold maps are
 continuous and strictly antitone on each cost interval.
 -/
-abbrev paper_interface_theorem3_based_threshold_regularities_of_affine_decreasing :=
-  @paper_theorem3_based_threshold_regularities_of_affine_decreasing
+abbrev paper_interface_theorem3_based_threshold_regularities_of_affine_decreasing := @paper_theorem3_based_threshold_regularities_of_affine_decreasing
 
 /--
 Paper Theorem 3 support: paired low/high affine-decreasing threshold maps
 generate the four regularity premises used by the fixed-law cost-row route.
 -/
-abbrev paper_interface_theorem3_low_high_based_threshold_regularities_of_affine_decreasing :=
-  @paper_theorem3_low_high_based_threshold_regularities_of_affine_decreasing
+abbrev paper_interface_theorem3_low_high_based_threshold_regularities_of_affine_decreasing := @paper_theorem3_low_high_based_threshold_regularities_of_affine_decreasing
 
 /--
 Paper Theorem 3 support: unpack the bundled sub/full affine Gaussian
 tail-mean row into positive scale, positive slope, and the two endpoint
 threshold crossings used by the lower wrapper.
 -/
-abbrev paper_interface_theorem3_subFull_affine_tail_rows_components :=
-  @paper_theorem3_subFull_affine_tail_rows_components
+abbrev paper_interface_theorem3_subFull_affine_tail_rows_components := @paper_theorem3_subFull_affine_tail_rows_components
 
 /--
 Paper Theorem 3 support: unpack the bundled full/sub affine threshold row into
 endpoint crossings, threshold-order rows, and positive affine slopes.
 -/
-abbrev paper_interface_theorem3_fullSub_affine_threshold_rows_components :=
-  @paper_theorem3_fullSub_affine_threshold_rows_components
+abbrev paper_interface_theorem3_fullSub_affine_threshold_rows_components := @paper_theorem3_fullSub_affine_threshold_rows_components
 
 /--
 Paper Theorem 3 support: bundled source rows for the two full/full capacity
 equations and four cutoff-order comparisons.
 -/
-abbrev paper_interface_theorem3_capacity_cutoff_rows_components :=
-  @paper_theorem3_capacity_cutoff_rows_components
+abbrev paper_interface_theorem3_capacity_cutoff_rows_components := @paper_theorem3_capacity_cutoff_rows_components
 
 
 /--
 Paper Theorem 3 support: full/full capacity fill follows from cutoff order and
 nonnegative population shares.
 -/
-abbrev paper_interface_theorem3_fullFull_fill_capacity_of_cutoff_le :=
-  @paper_theorem3_fullFull_fill_capacity_of_cutoff_le
+abbrev paper_interface_theorem3_fullFull_fill_capacity_of_cutoff_le := @paper_theorem3_fullFull_fill_capacity_of_cutoff_le
 
 /--
 Paper Theorem 3 support: both full/full capacity-fill inequalities follow
 from cutoff order and nonnegative population shares.
 -/
-abbrev paper_interface_theorem3_fullFull_fill_capacities_of_cutoff_le :=
-  @paper_theorem3_fullFull_fill_capacities_of_cutoff_le
+abbrev paper_interface_theorem3_fullFull_fill_capacities_of_cutoff_le := @paper_theorem3_fullFull_fill_capacities_of_cutoff_le
 
 /--
 Paper Theorem 3 support: apply an endpoint with two full/full fill premises
 using cutoff-order assumptions instead.
 -/
-abbrev paper_interface_theorem3_apply_fullFull_fill_of_cutoff_order :=
-  @paper_theorem3_apply_fullFull_fill_of_cutoff_order
+abbrev paper_interface_theorem3_apply_fullFull_fill_of_cutoff_order := @paper_theorem3_apply_fullFull_fill_of_cutoff_order
 
 /--
 Paper Theorem 3 support: positive-share version of the bundled cutoff-order
 full/full fill bridge.
 -/
-abbrev paper_interface_theorem3_fullFull_fill_capacities_of_cutoff_le_of_pos :=
-  @paper_theorem3_fullFull_fill_capacities_of_cutoff_le_of_pos
+abbrev paper_interface_theorem3_fullFull_fill_capacities_of_cutoff_le_of_pos := @paper_theorem3_fullFull_fill_capacities_of_cutoff_le_of_pos
 
 /--
 Paper Theorem 3 support: positive-share version of the cutoff-order endpoint
 adapter.
 -/
-abbrev paper_interface_theorem3_apply_fullFull_fill_of_cutoff_order_of_pos :=
-  @paper_theorem3_apply_fullFull_fill_of_cutoff_order_of_pos
+abbrev paper_interface_theorem3_apply_fullFull_fill_of_cutoff_order_of_pos := @paper_theorem3_apply_fullFull_fill_of_cutoff_order_of_pos
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_objective_subSub :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_objective_subSub
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_objective_subSub := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_objective_subSub
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_objective_subFull :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_objective_subFull
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_objective_subFull := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_objective_subFull
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_objective_fullSub :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_objective_fullSub
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_objective_fullSub := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_objective_fullSub
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_objective_fullFull :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_objective_fullFull
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_objective_fullFull := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_objective_fullFull
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_equilibrium_iff_components :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_equilibrium_iff_components
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_equilibrium_iff_components := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_equilibrium_iff_components
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_fullSub_equilibrium_iff_components :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_fullSub_equilibrium_iff_components
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_fullSub_equilibrium_iff_components := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_fullSub_equilibrium_iff_components
 
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_fullFull_equilibrium_iff_components :=
-  @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_fullFull_equilibrium_iff_components
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_fullFull_equilibrium_iff_components := @glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_fullFull_equilibrium_iff_components
 
 /--
 The concrete policy-state Theorem 3 surface has exactly the weighted
 academic-merit binary best-response predicate.
 -/
 abbrev
-    paper_interface_theorem3_policyStateWeightedAcademicMeritSurface_policyPairIsEquilibrium_iff :=
-  @glm20Theorem3PolicyStateWeightedAcademicMeritSurface_policyPairIsEquilibrium_iff
+    paper_interface_theorem3_policyStateWeightedAcademicMeritSurface_policyPairIsEquilibrium_iff := @glm20Theorem3PolicyStateWeightedAcademicMeritSurface_policyPairIsEquilibrium_iff
 
 /-- The policy-state cutoff mass at `(P_full,P_full)` is exactly `K_g`. -/
-abbrev paper_interface_theorem3_policyStateCutoffMass_fullFull_eq_K :=
-  @glm20Theorem3PolicyStateCutoffMass_fullFull_eq_K
+abbrev paper_interface_theorem3_policyStateCutoffMass_fullFull_eq_K := @glm20Theorem3PolicyStateCutoffMass_fullFull_eq_K
 
 /-- The policy-state cutoff mass at `(P_full,P_sub)` is exactly `K_g`. -/
-abbrev paper_interface_theorem3_policyStateCutoffMass_fullSub_eq_K :=
-  @glm20Theorem3PolicyStateCutoffMass_fullSub_eq_K
+abbrev paper_interface_theorem3_policyStateCutoffMass_fullSub_eq_K := @glm20Theorem3PolicyStateCutoffMass_fullSub_eq_K
 
 abbrev
-    paper_interface_theorem3_policyStateWeightedAcademicMeritSurface_mass_subSub :=
-  @glm20Theorem3PolicyStateWeightedAcademicMeritSurface_mass_subSub
+    paper_interface_theorem3_policyStateWeightedAcademicMeritSurface_mass_subSub := @glm20Theorem3PolicyStateWeightedAcademicMeritSurface_mass_subSub
 
 abbrev
-    paper_interface_theorem3_policyStateWeightedAcademicMeritSurface_mass_subFull :=
-  @glm20Theorem3PolicyStateWeightedAcademicMeritSurface_mass_subFull
+    paper_interface_theorem3_policyStateWeightedAcademicMeritSurface_mass_subFull := @glm20Theorem3PolicyStateWeightedAcademicMeritSurface_mass_subFull
 
 /--
 The concrete policy-state weighted-academic-merit surface has full/full mass
 exactly equal to the paper's `K_g` formula.
 -/
 abbrev
-    paper_interface_theorem3_policyStateWeightedAcademicMeritSurface_mass_fullFull_eq_K :=
-  @glm20Theorem3PolicyStateWeightedAcademicMeritSurface_mass_fullFull_eq_K
+    paper_interface_theorem3_policyStateWeightedAcademicMeritSurface_mass_fullFull_eq_K := @glm20Theorem3PolicyStateWeightedAcademicMeritSurface_mass_fullFull_eq_K
 
 /--
 The concrete policy-state weighted-academic-merit surface has full/sub mass
 exactly equal to the paper's `K_g` formula.
 -/
 abbrev
-    paper_interface_theorem3_policyStateWeightedAcademicMeritSurface_mass_fullSub_eq_K :=
-  @glm20Theorem3PolicyStateWeightedAcademicMeritSurface_mass_fullSub_eq_K
+    paper_interface_theorem3_policyStateWeightedAcademicMeritSurface_mass_fullSub_eq_K := @glm20Theorem3PolicyStateWeightedAcademicMeritSurface_mass_fullSub_eq_K
 
 /--
 Theorem 3(i), condition (10), on the source-family policy-state table surface:
 one group's application pool expands when school `J1` drops the test.
 -/
-abbrev paperTheorem3SourceFamilyPolicyStateTableSubFullExpands :=
-  @glm20Theorem3SourceFamilyPolicyStateTableSubFullExpands
+abbrev paperTheorem3SourceFamilyPolicyStateTableSubFullExpands := @glm20Theorem3SourceFamilyPolicyStateTableSubFullExpands
 
 /--
 Section 5 concrete two-policy surface for schools maximizing academic merit.
@@ -1461,25 +1347,20 @@ abbrev paperFeasibleWeightedAcademicMeritBinaryPolicySurface
 
 /-- The feasible weighted surface unfolds to the feasible binary game. -/
 abbrev
-    paper_interface_feasibleWeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff :=
-  @glm20FeasibleWeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff
+    paper_interface_feasibleWeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff := @glm20FeasibleWeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff
 
 /-- Pair-valued predicate agrees with `policyPairIsEquilibrium` on the feasible surface. -/
 abbrev
-    paper_interface_feasibleWeightedAcademicMeritBinaryPolicySurface_equilibriumPredicate_iff :=
-  @glm20FeasibleWeightedAcademicMeritBinaryPolicySurface_equilibriumPredicate_iff
+    paper_interface_feasibleWeightedAcademicMeritBinaryPolicySurface_equilibriumPredicate_iff := @glm20FeasibleWeightedAcademicMeritBinaryPolicySurface_equilibriumPredicate_iff
 
 /-- Feasible weighted-surface characterization for `(P_sub,P_full)`. -/
-abbrev paper_interface_feasibleWeightedAcademicMeritBinaryPolicySurface_subFull_iff :=
-  @glm20FeasibleWeightedAcademicMeritBinaryPolicySurface_subFull_iff
+abbrev paper_interface_feasibleWeightedAcademicMeritBinaryPolicySurface_subFull_iff := @glm20FeasibleWeightedAcademicMeritBinaryPolicySurface_subFull_iff
 
 /-- Feasible weighted-surface characterization for `(P_full,P_sub)`. -/
-abbrev paper_interface_feasibleWeightedAcademicMeritBinaryPolicySurface_fullSub_iff :=
-  @glm20FeasibleWeightedAcademicMeritBinaryPolicySurface_fullSub_iff
+abbrev paper_interface_feasibleWeightedAcademicMeritBinaryPolicySurface_fullSub_iff := @glm20FeasibleWeightedAcademicMeritBinaryPolicySurface_fullSub_iff
 
 /-- Feasible weighted-surface characterization for `(P_full,P_full)`. -/
-abbrev paper_interface_feasibleWeightedAcademicMeritBinaryPolicySurface_fullFull_iff :=
-  @glm20FeasibleWeightedAcademicMeritBinaryPolicySurface_fullFull_iff
+abbrev paper_interface_feasibleWeightedAcademicMeritBinaryPolicySurface_fullFull_iff := @glm20FeasibleWeightedAcademicMeritBinaryPolicySurface_fullFull_iff
 
 /--
 The paper weighted-academic-merit binary surface unfolds to the two-school
@@ -1507,8 +1388,7 @@ theorem paper_interface_weightedAcademicMeritBinaryPolicySurface_policyPairIsEqu
             admittedAcademicMerit diversity policyPair Psub Pfull J1 J2
             groupA groupB populationShare)
           policyPair J2 groupA groupB populationShare)
-        Psub Pfull P1 P2 :=
-  glm20WeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff
+        Psub Pfull P1 P2 := glm20WeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff
 
 /-- The Proposition 6 diversity-only surface unfolds to the two diversity objectives. -/
 theorem paper_interface_diversityBinaryPolicySurface_policyPairIsEquilibrium_iff
@@ -1524,8 +1404,7 @@ theorem paper_interface_diversityBinaryPolicySurface_policyPairIsEquilibrium_iff
       paperTwoSchoolBinaryPolicyEquilibrium
         (fun P1 P2 => diversity J1 (policyPair P1 P2))
         (fun P1 P2 => diversity J2 (policyPair P1 P2))
-        Psub Pfull P1 P2 :=
-  glm20DiversityBinaryPolicySurface_policyPairIsEquilibrium_iff
+        Psub Pfull P1 P2 := glm20DiversityBinaryPolicySurface_policyPairIsEquilibrium_iff
 
 /-- Diversity-only surface characterization for `(P_sub,P_full)`. -/
 theorem paper_interface_diversityBinaryPolicySurface_subFull_iff
@@ -1541,8 +1420,7 @@ theorem paper_interface_diversityBinaryPolicySurface_subFull_iff
       diversity J1 (policyPair Pfull Pfull) ≤
         diversity J1 (policyPair Psub Pfull) ∧
       diversity J2 (policyPair Psub Psub) ≤
-        diversity J2 (policyPair Psub Pfull) :=
-  glm20DiversityBinaryPolicySurface_subFull_iff
+        diversity J2 (policyPair Psub Pfull) := glm20DiversityBinaryPolicySurface_subFull_iff
 
 /--
 If school `J1` strictly improves diversity by dropping the test and school
@@ -1585,8 +1463,7 @@ theorem paper_interface_weightedAcademicMeritBinaryPolicySurface_equilibriumPred
         groupB populationShare).equilibriumPredicate (P1, P2) ↔
       (paperWeightedAcademicMeritBinaryPolicySurface massTestTaking
         admittedAcademicMerit diversity policyPair Psub Pfull J1 J2 groupA
-        groupB populationShare).policyPairIsEquilibrium P1 P2 :=
-  glm20WeightedAcademicMeritBinaryPolicySurface_equilibriumPredicate_iff
+        groupB populationShare).policyPairIsEquilibrium P1 P2 := glm20WeightedAcademicMeritBinaryPolicySurface_equilibriumPredicate_iff
 
 /--
 Paper surface characterization for `(P_sub,P_full)`: school `J1` has no
@@ -1623,8 +1500,7 @@ theorem paper_interface_weightedAcademicMeritBinaryPolicySurface_subFull_iff
           (paperWeightedAcademicMeritBinaryPolicySurface massTestTaking
             admittedAcademicMerit diversity policyPair Psub Pfull J1 J2
             groupA groupB populationShare)
-          policyPair J2 groupA groupB populationShare Psub Pfull :=
-  glm20WeightedAcademicMeritBinaryPolicySurface_subFull_iff
+          policyPair J2 groupA groupB populationShare Psub Pfull := glm20WeightedAcademicMeritBinaryPolicySurface_subFull_iff
 
 /--
 Paper surface characterization for `(P_full,P_sub)`: school `J1` has no
@@ -1661,8 +1537,7 @@ theorem paper_interface_weightedAcademicMeritBinaryPolicySurface_fullSub_iff
           (paperWeightedAcademicMeritBinaryPolicySurface massTestTaking
             admittedAcademicMerit diversity policyPair Psub Pfull J1 J2
             groupA groupB populationShare)
-          policyPair J2 groupA groupB populationShare Pfull Psub :=
-  glm20WeightedAcademicMeritBinaryPolicySurface_fullSub_iff
+          policyPair J2 groupA groupB populationShare Pfull Psub := glm20WeightedAcademicMeritBinaryPolicySurface_fullSub_iff
 
 /--
 Paper surface characterization for `(P_full,P_full)`: neither school weakly
@@ -1698,8 +1573,7 @@ theorem paper_interface_weightedAcademicMeritBinaryPolicySurface_fullFull_iff
           (paperWeightedAcademicMeritBinaryPolicySurface massTestTaking
             admittedAcademicMerit diversity policyPair Psub Pfull J1 J2
             groupA groupB populationShare)
-          policyPair J2 groupA groupB populationShare Pfull Pfull :=
-  glm20WeightedAcademicMeritBinaryPolicySurface_fullFull_iff
+          policyPair J2 groupA groupB populationShare Pfull Pfull := glm20WeightedAcademicMeritBinaryPolicySurface_fullFull_iff
 
 /--
 Section 5 weighted-objective bookkeeping: if group `A` contributes zero under
@@ -1959,8 +1833,7 @@ theorem paper_interface_policy_pair_objective_le_iff_of_value_eq
     {Policy : Type*} (objective : Policy → Policy → ℝ)
     {P1 P2 P1' P2' : Policy} {lhs rhs : ℝ}
     (hlhs : objective P1 P2 = lhs) (hrhs : objective P1' P2' = rhs) :
-    objective P1 P2 ≤ objective P1' P2' ↔ lhs ≤ rhs :=
-  glm20_policy_pair_objective_le_iff_of_value_eq objective hlhs hrhs
+    objective P1 P2 ≤ objective P1' P2' ↔ lhs ≤ rhs := glm20_policy_pair_objective_le_iff_of_value_eq objective hlhs hrhs
 
 /--
 Theorem 3 / Proposition 5 support: condition (12)'s strict weighted merit
@@ -2021,8 +1894,7 @@ theorem paper_interface_lemma1_estimated_skill_gaussian
         (M.posteriorMeanLaw).variance =
           M.priorVar *
               (∑ k : Feature, M.centeredFamily.signalPrecision k) /
-            M.centeredFamily.posteriorPrecision :=
-  paper_lemma1_estimated_skill_gaussian M theta
+            M.centeredFamily.posteriorPrecision := paper_lemma1_estimated_skill_gaussian M theta
 
 /--
 Paper Lemma 1, source-surface endpoint.
@@ -2051,8 +1923,7 @@ theorem paper_interface_lemma1_estimated_skill_source_surface
           S.estimatedSkillVariance g P =
             (M g P).priorVar *
                 (∑ k : Feature, (M g P).centeredFamily.signalPrecision k) /
-              (M g P).centeredFamily.posteriorPrecision :=
-  paper_lemma1_estimated_skill_source_surface M populationShareB capacity g P theta
+              (M g P).centeredFamily.posteriorPrecision := paper_lemma1_estimated_skill_source_surface M populationShareB capacity g P theta
 
 /--
 Paper Lemma 1 monotonicity support: fixing all other features, estimated skill
@@ -2062,8 +1933,7 @@ theorem paper_interface_lemma1_estimated_skill_strictMono_feature
     {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
     (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature) :
     StrictMono (fun value : ℝ =>
-      M.posteriorMean (Function.update theta k value)) :=
-  paper_lemma1_estimated_skill_strictMono_feature M theta k
+      M.posteriorMean (Function.update theta k value)) := paper_lemma1_estimated_skill_strictMono_feature M theta k
 
 /--
 Fixed-policy threshold support: a positive-slope affine estimated-skill score
@@ -2072,8 +1942,7 @@ clears the paper's threshold exactly above the induced cutoff.
 theorem paper_interface_fixed_policy_affine_score_threshold_iff_cutoff
     {intercept slope threshold score : ℝ} (hslope : 0 < slope) :
     threshold ≤ intercept + slope * score ↔
-      EconCSLib.affineCutoff intercept slope threshold ≤ score :=
-  paper_fixed_policy_affine_score_threshold_iff_cutoff hslope
+      EconCSLib.affineCutoff intercept slope threshold ≤ score := paper_fixed_policy_affine_score_threshold_iff_cutoff hslope
 
 /--
 Gaussian fixed-feature threshold support: with all other features fixed,
@@ -2097,8 +1966,7 @@ unequal group score laws.
 -/
 theorem paper_interface_proposition1_gaussian_laws_differ_of_variance_lt
     {Llow Lhigh : GaussianVarianceLaw} (hvar : Llow.variance < Lhigh.variance) :
-    Llow ≠ Lhigh :=
-  paper_proposition1_gaussian_laws_differ_of_variance_lt hvar
+    Llow ≠ Lhigh := paper_proposition1_gaussian_laws_differ_of_variance_lt hvar
 
 /--
 Proposition 1 equal-precision support: equal Gaussian estimated-skill mean and
@@ -2107,8 +1975,7 @@ variance give identical laws.
 theorem paper_interface_proposition1_gaussian_laws_equal_of_mean_eq_variance_eq
     {L₁ L₂ : GaussianVarianceLaw}
     (hmean : L₁.mean = L₂.mean) (hvar : L₁.variance = L₂.variance) :
-    L₁ = L₂ :=
-  paper_proposition1_gaussian_laws_equal_of_mean_eq_variance_eq hmean hvar
+    L₁ = L₂ := paper_proposition1_gaussian_laws_equal_of_mean_eq_variance_eq hmean hvar
 
 /--
 Proposition 1 precision support: a strict total-precision gap gives a strict
@@ -2196,8 +2063,7 @@ theorem paper_interface_proposition1_tail_gap_pos_iff_standardized_threshold_lt
     {L_A L_B : GaussianScaleLaw} {threshold : ℝ} :
     0 < api.thresholdPassProb L_A threshold -
         api.thresholdPassProb L_B threshold ↔
-      L_A.standardize threshold < L_B.standardize threshold :=
-  paper_proposition1_tail_gap_pos_iff_standardized_threshold_lt api
+      L_A.standardize threshold < L_B.standardize threshold := paper_proposition1_tail_gap_pos_iff_standardized_threshold_lt api
 
 /--
 Proposition 1 individual-fairness algebra: the standardized-threshold
@@ -2636,24 +2502,21 @@ theorem paper_interface_proposition1_not_group_fair_of_diversity_ne
     {Group Policy : Type*}
     {S : GLM20SourcePolicySurface Group Policy} {P : Policy}
     (hne : S.diversity P ≠ S.populationShareB) :
-    ¬ glm20GroupFair S P :=
-  paper_proposition1_not_group_fair_of_diversity_ne hne
+    ¬ glm20GroupFair S P := paper_proposition1_not_group_fair_of_diversity_ne hne
 
 /-- Proposition 1 logical support: under-representation proves group fairness fails. -/
 theorem paper_interface_proposition1_not_group_fair_of_diversity_lt
     {Group Policy : Type*}
     {S : GLM20SourcePolicySurface Group Policy} {P : Policy}
     (hlt : S.diversity P < S.populationShareB) :
-    ¬ glm20GroupFair S P :=
-  paper_proposition1_not_group_fair_of_diversity_lt hlt
+    ¬ glm20GroupFair S P := paper_proposition1_not_group_fair_of_diversity_lt hlt
 
 /-- Proposition 1 logical support: one nonzero gap proves individual fairness fails. -/
 theorem paper_interface_proposition1_not_individual_fair_of_gap_ne
     {Group Policy : Type*}
     {S : GLM20SourcePolicySurface Group Policy} {P : Policy}
     (q : ℝ) (hne : S.individualFairnessGap P q ≠ 0) :
-    ¬ glm20IndividualFair S P :=
-  paper_proposition1_not_individual_fair_of_gap_ne q hne
+    ¬ glm20IndividualFair S P := paper_proposition1_not_individual_fair_of_gap_ne q hne
 
 /--
 Proposition 1 diversity algebra: if group B's admission tail is below total
@@ -3093,8 +2956,7 @@ certificate wrapper remains for the source policy-surface instantiation.
 theorem paper_interface_lemma1_estimated_skill
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20EstimatedSkillCertificate S) :
-    C.posteriorMeanFormula ∧ C.estimatedSkillDistribution :=
-  paper_lemma1_estimated_skill_of_certificate C
+    C.posteriorMeanFormula ∧ C.estimatedSkillDistribution := paper_lemma1_estimated_skill_of_certificate C
 
 /--
 Paper Proposition 1: fixed-policy metric comparisons.
@@ -3108,8 +2970,7 @@ theorem paper_interface_proposition1_fixed_policy_metrics
       C.diversityDecreasesWithInformativenessGap ∧
         C.individualFairnessGapCharacterization ∧
           C.individualFairnessGapIncreasesHighSkill ∧
-            C.admittedGroupBLowerAcademicMerit :=
-  paper_proposition1_metrics_fixed_policy_of_certificate C
+            C.admittedGroupBLowerAcademicMerit := paper_proposition1_metrics_fixed_policy_of_certificate C
 
 /--
 Paper Lemma 2 calculus support: a strictly negative derivative of the
@@ -4097,8 +3958,7 @@ Paper Theorem 3 fixed-pool branch comparisons from Theorem 2 tail-mean data,
 bundled for the four Proposition 5 fixed-pool branches.
 -/
 abbrev
-    paper_interface_theorem3_fixed_pool_merit_comparisons_of_theorem2_tail_mean_branches :=
-  @paper_theorem3_fixed_pool_merit_comparisons_of_theorem2_tail_mean_branches
+    paper_interface_theorem3_fixed_pool_merit_comparisons_of_theorem2_tail_mean_branches := @paper_theorem3_fixed_pool_merit_comparisons_of_theorem2_tail_mean_branches
 
 /--
 Paper Theorem 3 fixed-pool branch comparisons from concrete Gaussian source
@@ -4107,8 +3967,7 @@ the drop-test family to the keep-test family imply the four fixed-pool merit
 comparisons used by Proposition 5.
 -/
 abbrev
-    paper_interface_theorem3_fixed_pool_merit_comparisons_of_source_families_theorem2_tail_mean_branches :=
-  @paper_theorem3_fixed_pool_merit_comparisons_of_source_families_theorem2_tail_mean_branches
+    paper_interface_theorem3_fixed_pool_merit_comparisons_of_source_families_theorem2_tail_mean_branches := @paper_theorem3_fixed_pool_merit_comparisons_of_source_families_theorem2_tail_mean_branches
 
 /--
 Paper Theorem 2(ii) affine crossing support: full-policy admission exceeds
@@ -5178,8 +5037,7 @@ theorem paper_interface_theorem1_beta_groupA_continuousOn
         2 * capacity < ownShare * γ + otherEligibleMass) :
     ContinuousOn
       (theorem1BetaGroupA Q capacity ownShare otherEligibleMass rho)
-      (Set.Icc (0 : ℝ) 1) :=
-  paper_theorem1_beta_groupA_continuousOn Q hcapacity_pos hselective
+      (Set.Icc (0 : ℝ) 1) := paper_theorem1_beta_groupA_continuousOn Q hcapacity_pos hselective
 
 /--
 Paper Theorem 1(ii), source proof Step 2 for group B: the full displayed
@@ -5216,16 +5074,14 @@ theorem paper_interface_theorem1_beta_groupB_continuousOn
         2 * capacity < ownShare * γ + otherEligibleMass) :
     ContinuousOn
       (theorem1BetaGroupB Q capacity ownShare otherEligibleMass rho)
-      (Set.Icc (0 : ℝ) 1) :=
-  paper_theorem1_beta_groupB_continuousOn Q hcapacity_pos hselective
+      (Set.Icc (0 : ℝ) 1) := paper_theorem1_beta_groupB_continuousOn Q hcapacity_pos hselective
 
 /--
 Paper Theorem 1(ii) notation: appendix constant
 `Δ_g = HR⁻¹(ξ_g * HR(benchmark_g))`.
 -/
 abbrev paperTheorem1AcademicMeritDelta
-    (H : GaussianHazardInverseCertificate) (xi benchmark : ℝ) : ℝ :=
-  theorem1AcademicMeritDelta H xi benchmark
+    (H : GaussianHazardInverseCertificate) (xi benchmark : ℝ) : ℝ := theorem1AcademicMeritDelta H xi benchmark
 
 /--
 Paper Theorem 1(ii), hazard-inverse bridge: a hazard inequality is equivalent
@@ -6995,8 +6851,7 @@ Current Lean status: conditional on the normal tail/hazard-rate certificate.
 theorem paper_interface_lemma2_individual_fairness_gap_decreases
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20IndividualFairnessTailCertificate S) :
-    C.individualFairnessGapEventuallyDecreases :=
-  paper_lemma2_individual_fairness_gap_decreases_of_certificate C
+    C.individualFairnessGapEventuallyDecreases := paper_lemma2_individual_fairness_gap_decreases_of_certificate C
 
 /--
 Paper Theorem 1: dropping tests with access barriers trades off diversity and
@@ -7011,8 +6866,7 @@ theorem paper_interface_theorem1_dropping_tests_with_barriers
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20DroppingTestsWithBarriersCertificate S) :
     C.diversityThresholdCharacterization ∧
-      C.academicMeritThresholdCharacterization :=
-  paper_theorem1_dropping_tests_with_barriers_of_certificate C
+      C.academicMeritThresholdCharacterization := paper_theorem1_dropping_tests_with_barriers_of_certificate C
 
 /--
 Paper Theorem 2: dropping tests without access barriers changes diversity,
@@ -7025,8 +6879,7 @@ theorem paper_interface_theorem2_dropping_tests_without_barriers
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20DroppingTestsWithoutBarriersCertificate S) :
     C.diversityComparison ∧ C.individualFairnessThresholds ∧
-      C.academicMeritDecreasesForBothGroups :=
-  paper_theorem2_dropping_tests_without_barriers_of_certificate C
+      C.academicMeritDecreasesForBothGroups := paper_theorem2_dropping_tests_without_barriers_of_certificate C
 
 /--
 Paper Lemma 3: school cutoff capacity support.
@@ -7380,32 +7233,25 @@ theorem paper_interface_lemma3_precision_unique_threshold_strategy_standardGauss
     Q hprior_pos hsub_pos htest_pos hvalue hcostRatio
 
 /-- Paper Lemma 3 cost-domain bridge: `0 < c < v` implies `c / v ∈ (0,1)`. -/
-abbrev paper_interface_lemma3_cost_ratio_mem_Ioo_of_cost_bounds :=
-  @paper_lemma3_cost_ratio_mem_Ioo_of_cost_bounds
+abbrev paper_interface_lemma3_cost_ratio_mem_Ioo_of_cost_bounds := @paper_lemma3_cost_ratio_mem_Ioo_of_cost_bounds
 
 /-- Paper Lemma 3 threshold formula with source-style cost bounds. -/
-abbrev paper_interface_lemma3_full_policy_threshold_form_standardGaussian_of_cost_bounds :=
-  @paper_lemma3_full_policy_threshold_form_standardGaussian_of_cost_bounds
+abbrev paper_interface_lemma3_full_policy_threshold_form_standardGaussian_of_cost_bounds := @paper_lemma3_full_policy_threshold_form_standardGaussian_of_cost_bounds
 
 /-- Paper Lemma 3 precision-scale threshold formula with source-style cost bounds. -/
-abbrev paper_interface_lemma3_full_policy_threshold_form_precision_standardGaussian_of_cost_bounds :=
-  @paper_lemma3_full_policy_threshold_form_precision_standardGaussian_of_cost_bounds
+abbrev paper_interface_lemma3_full_policy_threshold_form_precision_standardGaussian_of_cost_bounds := @paper_lemma3_full_policy_threshold_form_precision_standardGaussian_of_cost_bounds
 
 /-- Paper Lemma 3 best-response cutoff rule with source-style cost bounds. -/
-abbrev paper_interface_lemma3_precision_cutoff_apply_bestResponse_standardGaussian_of_cost_bounds :=
-  @paper_lemma3_precision_cutoff_apply_bestResponse_standardGaussian_of_cost_bounds
+abbrev paper_interface_lemma3_precision_cutoff_apply_bestResponse_standardGaussian_of_cost_bounds := @paper_lemma3_precision_cutoff_apply_bestResponse_standardGaussian_of_cost_bounds
 
 /-- Paper Lemma 3 strict payoff order with source-style cost bounds. -/
-abbrev paper_interface_lemma3_precision_cutoff_apply_strict_payoff_order_standardGaussian_of_cost_bounds :=
-  @paper_lemma3_precision_cutoff_apply_strict_payoff_order_standardGaussian_of_cost_bounds
+abbrev paper_interface_lemma3_precision_cutoff_apply_strict_payoff_order_standardGaussian_of_cost_bounds := @paper_lemma3_precision_cutoff_apply_strict_payoff_order_standardGaussian_of_cost_bounds
 
 /-- Paper Lemma 3 pointwise threshold-form support with source-style cost bounds. -/
-abbrev paper_interface_lemma3_precision_pointwise_bestResponse_threshold_form_standardGaussian_of_cost_bounds :=
-  @paper_lemma3_precision_pointwise_bestResponse_threshold_form_standardGaussian_of_cost_bounds
+abbrev paper_interface_lemma3_precision_pointwise_bestResponse_threshold_form_standardGaussian_of_cost_bounds := @paper_lemma3_precision_pointwise_bestResponse_threshold_form_standardGaussian_of_cost_bounds
 
 /-- Paper Lemma 3 unique tie-broken threshold strategy with source-style cost bounds. -/
-abbrev paper_interface_lemma3_precision_unique_threshold_strategy_standardGaussian_of_cost_bounds :=
-  @paper_lemma3_precision_unique_threshold_strategy_standardGaussian_of_cost_bounds
+abbrev paper_interface_lemma3_precision_unique_threshold_strategy_standardGaussian_of_cost_bounds := @paper_lemma3_precision_unique_threshold_strategy_standardGaussian_of_cost_bounds
 
 /--
 Paper Lemma 3 equilibrium object: school cutoff, group-specific application
@@ -7529,15 +7375,13 @@ theorem paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_st
 Paper Lemma 3: source-shaped unique full-policy equilibrium with source-style
 cost bounds.
 -/
-abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_standardGaussian_of_cost_bounds :=
-  @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_standardGaussian_of_cost_bounds
+abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_standardGaussian_of_cost_bounds := @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_standardGaussian_of_cost_bounds
 
 /--
 Paper Lemma 3: finite standard-Gaussian applicant-mixture source surface with
 source-style cost bounds.
 -/
-abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_standardGaussian_mixture_of_cost_bounds :=
-  @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_standardGaussian_mixture_of_cost_bounds
+abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_standardGaussian_mixture_of_cost_bounds := @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_standardGaussian_mixture_of_cost_bounds
 
 /--
 Paper Lemma 3: source-shaped unique equilibrium for the strategic
@@ -7658,15 +7502,13 @@ theorem paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_of
 Paper Lemma 3: Equation (35) strategic applicant-mass endpoint with
 source-style cost bounds.
 -/
-abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_of_strategic_applicant_mass_of_cost_bounds :=
-  @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_of_strategic_applicant_mass_of_cost_bounds
+abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_of_strategic_applicant_mass_of_cost_bounds := @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_of_strategic_applicant_mass_of_cost_bounds
 
 /--
 Paper Lemma 3: Equation (35) component-regularity endpoint with source-style
 cost bounds.
 -/
-abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_of_strategic_applicant_components_of_cost_bounds :=
-  @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_of_strategic_applicant_components_of_cost_bounds
+abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_of_strategic_applicant_components_of_cost_bounds := @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_of_strategic_applicant_components_of_cost_bounds
 
 /--
 Paper Lemma 3: unique equilibrium under the full test-based policy.
@@ -7695,8 +7537,7 @@ theorem paper_interface_lemma3_unique_equilibrium_full_policy
     {Student Action SchoolPolicy : Type*}
     {E : GLM20StrategicEquilibriumData Student Action SchoolPolicy}
     (C : GLM20UniqueFullPolicyEquilibriumCertificate E) :
-    C.uniqueEquilibriumUnderFullPolicy ∧ C.thresholdForm :=
-  paper_lemma3_unique_equilibrium_full_policy_of_certificate C
+    C.uniqueEquilibriumUnderFullPolicy ∧ C.thresholdForm := paper_lemma3_unique_equilibrium_full_policy_of_certificate C
 
 /--
 Paper Proposition 2 application region.
@@ -7987,8 +7828,7 @@ theorem paper_interface_proposition2_cost_ratio_low_of_high
 Paper Proposition 2 domain support: `0 < c_g < v1 - v2` gives the inverse-CDF
 domain for the high application cutoff.
 -/
-abbrev paper_interface_proposition2_cost_ratio_high_of_cost_bounds :=
-  @paper_proposition2_cost_ratio_high_of_cost_bounds
+abbrev paper_interface_proposition2_cost_ratio_high_of_cost_bounds := @paper_proposition2_cost_ratio_high_of_cost_bounds
 
 /--
 Paper Proposition 2: unique two-school equilibrium.
@@ -8352,88 +8192,76 @@ Paper Proposition 2 a.e. uniqueness support: for continuous student laws, the
 application-region strategy is unique almost everywhere once the two cutoff
 singletons have zero mass.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian :=
-  @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian
+abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian := @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian
 
 /--
 Paper Proposition 2 base a.e. uniqueness support with paper-readable cost
 bounds.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_cost_bounds :=
-  @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_cost_bounds := @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_cost_bounds
 
 /--
 Paper Proposition 2 a.e. uniqueness support with best response stated via the
 reusable `NoProfitableBinaryChoiceDeviationAE` library predicate.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_binary_choice :=
-  @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_binary_choiceAE
+abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_binary_choice := @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_binary_choiceAE
 
 /--
 Paper Proposition 2 a.e. uniqueness support with reusable binary-choice
 best-response vocabulary and paper-readable cost bounds.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_binary_choice_of_cost_bounds :=
-  @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_binary_choiceAE_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_binary_choice_of_cost_bounds := @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_binary_choiceAE_of_cost_bounds
 
 /--
 Paper Proposition 2 support: the canonical application-region strategy is a
 reusable a.e. binary no-profitable-deviation strategy under any student law.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_noProfitableBinaryChoiceDeviationAE_standardGaussian :=
-  @paper_proposition2_two_school_application_region_noProfitableBinaryChoiceDeviationAE_standardGaussian
+abbrev paper_interface_proposition2_two_school_application_region_noProfitableBinaryChoiceDeviationAE_standardGaussian := @paper_proposition2_two_school_application_region_noProfitableBinaryChoiceDeviationAE_standardGaussian
 
 /--
 Paper Proposition 2 support: the canonical application-region strategy is a
 reusable a.e. binary no-profitable-deviation strategy under paper-readable
 cost bounds.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_noProfitableBinaryChoiceDeviationAE_standardGaussian_of_cost_bounds :=
-  @paper_proposition2_two_school_application_region_noProfitableBinaryChoiceDeviationAE_standardGaussian_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_application_region_noProfitableBinaryChoiceDeviationAE_standardGaussian_of_cost_bounds := @paper_proposition2_two_school_application_region_noProfitableBinaryChoiceDeviationAE_standardGaussian_of_cost_bounds
 
 /--
 Paper Proposition 2 a.e. uniqueness support under a Gaussian student law:
 singleton cutoff-boundary nullness is discharged internally.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_binary_choice_gaussian_student_law :=
-  @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_binary_choiceAE_gaussian_student_law
+abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_binary_choice_gaussian_student_law := @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_binary_choiceAE_gaussian_student_law
 
 /--
 Paper Proposition 2 a.e. uniqueness support under a Gaussian student law and
 paper-readable cost bounds.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_binary_choice_gaussian_student_law_of_cost_bounds :=
-  @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_binary_choiceAE_gaussian_student_law_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_binary_choice_gaussian_student_law_of_cost_bounds := @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_binary_choiceAE_gaussian_student_law_of_cost_bounds
 
 /--
 Paper Proposition 2 a.e. uniqueness support with best response supplied by the
 student side of a GLM20 a.e. strategic equilibrium.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_strategic_equilibrium :=
-  @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_strategic_equilibriumAE
+abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_strategic_equilibrium := @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_strategic_equilibriumAE
 
 /--
 Paper Proposition 2 a.e. uniqueness support with best response supplied by the
 student side of a GLM20 a.e. strategic equilibrium under paper-readable cost
 bounds.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_strategic_equilibrium_of_cost_bounds :=
-  @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_strategic_equilibriumAE_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_strategic_equilibrium_of_cost_bounds := @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_strategic_equilibriumAE_of_cost_bounds
 
 /--
 Paper Proposition 2 a.e. uniqueness support under a Gaussian student law, with
 best response supplied by a GLM20 a.e. strategic equilibrium.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_strategic_equilibrium_gaussian_student_law :=
-  @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_strategic_equilibriumAE_gaussian_student_law
+abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_strategic_equilibrium_gaussian_student_law := @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_strategic_equilibriumAE_gaussian_student_law
 
 /--
 Paper Proposition 2 a.e. uniqueness support under a Gaussian student law, with
 best response supplied by a GLM20 a.e. strategic equilibrium and paper-readable
 cost bounds.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_strategic_equilibrium_gaussian_student_law_of_cost_bounds :=
-  @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_strategic_equilibriumAE_gaussian_student_law_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_strategic_equilibrium_gaussian_student_law_of_cost_bounds := @paper_proposition2_two_school_application_region_unique_strategy_ae_standardGaussian_of_strategic_equilibriumAE_gaussian_student_law_of_cost_bounds
 
 /--
 Paper Proposition 2 / Lemma 3 applicant-pool component row: the strategic
@@ -8441,8 +8269,7 @@ applicant component is the corrected source admitted-mass formula at the
 Eq. (7) induced application cutoff.
 -/
 abbrev
-    paper_interface_proposition2_strategic_applicant_component_eq_corrected_source_row :=
-  @paper_proposition2_strategic_applicant_component_eq_corrected_source_row
+    paper_interface_proposition2_strategic_applicant_component_eq_corrected_source_row := @paper_proposition2_strategic_applicant_component_eq_corrected_source_row
 
 /--
 Paper Proposition 2 / Lemma 3 applicant-pool aggregate row: Eq. (35)'s
@@ -8450,8 +8277,7 @@ strategic applicant mass is the finite sum of corrected source admitted-mass
 rows.
 -/
 abbrev
-    paper_interface_proposition2_strategic_applicant_pool_masses_to_corrected_source_rows :=
-  @paper_proposition2_strategic_applicant_pool_masses_to_corrected_source_rows
+    paper_interface_proposition2_strategic_applicant_pool_masses_to_corrected_source_rows := @paper_proposition2_strategic_applicant_pool_masses_to_corrected_source_rows
 
 /--
 Paper Proposition 2 / Lemma 3 applicant-pool aggregate row, specialized to
@@ -8459,8 +8285,7 @@ the paper's two named groups: Eq. (35)'s strategic applicant mass is the
 group-A corrected source admitted-mass row plus the group-B row.
 -/
 abbrev
-    paper_interface_proposition2_strategic_applicant_pool_masses_to_corrected_source_rows_paper_groups :=
-  @paper_proposition2_strategic_applicant_pool_masses_to_corrected_source_rows_paper_groups
+    paper_interface_proposition2_strategic_applicant_pool_masses_to_corrected_source_rows_paper_groups := @paper_proposition2_strategic_applicant_pool_masses_to_corrected_source_rows_paper_groups
 
 /--
 Paper Proposition 2 / Lemma 3 applicant-pool aggregate plus lower-left
@@ -8469,8 +8294,7 @@ applicant mass plus groupwise residual masses equals the sum of affine total
 masses.
 -/
 abbrev
-    paper_interface_proposition2_strategic_applicant_pool_mass_add_lowerLeft_eq_affineTotal :=
-  @paper_proposition2_strategic_applicant_pool_mass_add_lowerLeft_eq_affineTotal
+    paper_interface_proposition2_strategic_applicant_pool_mass_add_lowerLeft_eq_affineTotal := @paper_proposition2_strategic_applicant_pool_mass_add_lowerLeft_eq_affineTotal
 
 /--
 Paper Proposition 2: tie-broken uniqueness of the two-school application
@@ -8549,64 +8373,55 @@ theorem paper_interface_proposition2_two_school_application_region_unique_strate
 Paper Proposition 2 low/high cutoff order with paper-readable cost bounds
 `0 < c_g < v1 - v2`.
 -/
-abbrev paper_interface_proposition2_low_cutoff_lt_high_cutoff_standardGaussian_of_cost_bounds :=
-  @paper_proposition2_low_cutoff_lt_high_cutoff_standardGaussian_of_cost_bounds
+abbrev paper_interface_proposition2_low_cutoff_lt_high_cutoff_standardGaussian_of_cost_bounds := @paper_proposition2_low_cutoff_lt_high_cutoff_standardGaussian_of_cost_bounds
 
 /--
 Paper Proposition 2 application region with paper-readable cost bounds
 `0 < c_g < v1 - v2`.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_standardGaussian_of_cost_bounds :=
-  @paper_proposition2_two_school_application_region_standardGaussian_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_application_region_standardGaussian_of_cost_bounds := @paper_proposition2_two_school_application_region_standardGaussian_of_cost_bounds
 
 /--
 Paper Proposition 2 displayed-precision application region with paper-readable
 cost bounds `0 < c_g < v1 - v2`.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_precision_standardGaussian_of_cost_bounds :=
-  @paper_proposition2_two_school_application_region_precision_standardGaussian_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_application_region_precision_standardGaussian_of_cost_bounds := @paper_proposition2_two_school_application_region_precision_standardGaussian_of_cost_bounds
 
 /--
 Paper Proposition 2 displayed-precision best-response region with
 paper-readable cost bounds `0 < c_g < v1 - v2`.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_bestResponse_precision_standardGaussian_of_cost_bounds :=
-  @paper_proposition2_two_school_application_region_bestResponse_precision_standardGaussian_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_application_region_bestResponse_precision_standardGaussian_of_cost_bounds := @paper_proposition2_two_school_application_region_bestResponse_precision_standardGaussian_of_cost_bounds
 
 /--
 Paper Proposition 2 displayed-precision uniqueness of the low/high application
 strategy with paper-readable cost bounds `0 < c_g < v1 - v2`.
 -/
-abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_precision_standardGaussian_of_cost_bounds :=
-  @paper_proposition2_two_school_application_region_unique_strategy_precision_standardGaussian_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_application_region_unique_strategy_precision_standardGaussian_of_cost_bounds := @paper_proposition2_two_school_application_region_unique_strategy_precision_standardGaussian_of_cost_bounds
 
 /--
 Paper Proposition 2 source-shaped threshold-equilibrium endpoint with
 paper-readable cost bounds `0 < c_g < v1 - v2`.
 -/
-abbrev paper_interface_proposition2_two_school_threshold_equilibrium_existsUnique_standardGaussian_of_cost_bounds :=
-  @paper_proposition2_two_school_threshold_equilibrium_existsUnique_standardGaussian_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_threshold_equilibrium_existsUnique_standardGaussian_of_cost_bounds := @paper_proposition2_two_school_threshold_equilibrium_existsUnique_standardGaussian_of_cost_bounds
 
 /--
 Paper Proposition 2 finite standard-Gaussian mixture threshold-equilibrium
 endpoint with displayed precision scale and paper-readable cost bounds.
 -/
-abbrev paper_interface_proposition2_standardGaussian_mixture_threshold_equilibrium_existsUnique_precision_of_cost_bounds :=
-  @paper_proposition2_standardGaussian_mixture_threshold_equilibrium_existsUnique_precision_of_cost_bounds
+abbrev paper_interface_proposition2_standardGaussian_mixture_threshold_equilibrium_existsUnique_precision_of_cost_bounds := @paper_proposition2_standardGaussian_mixture_threshold_equilibrium_existsUnique_precision_of_cost_bounds
 
 /--
 Paper Proposition 2 group-indexed threshold-equilibrium endpoint with
 displayed precision scale and paper-readable group cost bounds.
 -/
-abbrev paper_interface_proposition2_two_school_group_threshold_equilibrium_existsUnique_precision_of_cost_bounds :=
-  @paper_proposition2_two_school_group_threshold_equilibrium_existsUnique_precision_of_cost_bounds
+abbrev paper_interface_proposition2_two_school_group_threshold_equilibrium_existsUnique_precision_of_cost_bounds := @paper_proposition2_two_school_group_threshold_equilibrium_existsUnique_precision_of_cost_bounds
 
 /--
 Paper Proposition 2 group-indexed finite standard-Gaussian mixture endpoint
 with displayed precision scale and paper-readable group cost bounds.
 -/
-abbrev paper_interface_proposition2_standardGaussian_mixture_group_threshold_equilibrium_existsUnique_precision_of_cost_bounds :=
-  @paper_proposition2_standardGaussian_mixture_group_threshold_equilibrium_existsUnique_precision_of_cost_bounds
+abbrev paper_interface_proposition2_standardGaussian_mixture_group_threshold_equilibrium_existsUnique_precision_of_cost_bounds := @paper_proposition2_standardGaussian_mixture_group_threshold_equilibrium_existsUnique_precision_of_cost_bounds
 
 /--
 Paper Proposition 2: unique two-school equilibrium.
@@ -8623,8 +8438,7 @@ theorem paper_interface_proposition2_unique_two_school_equilibrium
     {Group Policy School Equilibrium : Type*}
     {S : GLM20StrategicPolicySurface Group Policy School Equilibrium}
     (C : GLM20TwoSchoolEquilibriumCertificate S) :
-    C.uniqueTwoSchoolEquilibrium ∧ C.equilibriumProperties :=
-  paper_proposition2_unique_two_school_equilibrium_of_certificate C
+    C.uniqueTwoSchoolEquilibrium ∧ C.equilibriumProperties := paper_proposition2_unique_two_school_equilibrium_of_certificate C
 
 /--
 Paper Proposition 2(iii) admitted group mass `D_g(a_hat_g(q_a))`.
@@ -8654,8 +8468,7 @@ theorem paper_interface_proposition2_admitted_mass_formula_eq_correlatedStandard
             (-(sigmaTilde * b) /
               Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)))
           ((aHat + b * mu) / Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2))
-          ((q1Full - mu) / sigmaTilde) :=
-  glm20Proposition2AdmittedMassFormula_eq_correlatedStandardGaussian_verticalUpperStripMass
+          ((q1Full - mu) / sigmaTilde) := glm20Proposition2AdmittedMassFormula_eq_correlatedStandardGaussian_verticalUpperStripMass
 
 /--
 Paper Proposition 2(iii) admitted group mass formula from the source affine
@@ -8668,16 +8481,14 @@ theorem paper_interface_proposition2_admitted_mass_formula_eq_owenAffineSelectio
         q1Full =
       populationShare * sigmaTilde *
         glm20Proposition3OwenAffineSelectionMass sigmaTilde aHat b mu
-          q1Full :=
-  glm20Proposition2AdmittedMassFormula_eq_owenAffineSelectionMass
+          q1Full := glm20Proposition2AdmittedMassFormula_eq_owenAffineSelectionMass
 
 /--
 Paper Proposition 2(iv) lower affine source-selection mass for the `J2`
 academic-merit calculation.
 -/
 abbrev paperProposition2OwenAffineLowerSelectionMass
-    (sigmaTilde a b mu qFull : ℝ) : ℝ :=
-  glm20Proposition2OwenAffineLowerSelectionMass sigmaTilde a b mu qFull
+    (sigmaTilde a b mu qFull : ℝ) : ℝ := glm20Proposition2OwenAffineLowerSelectionMass sigmaTilde a b mu qFull
 
 /--
 Paper-facing lower affine source-selection mass equals the lower-left
@@ -8727,8 +8538,7 @@ after substituting `\tilde\sigma_g`, `\hat a_g(q)`, and `b_g`, `D_g` plus the
 lower-left residual mass is `pi_g sigma_tilde_g Phi(A_g)`.
 -/
 abbrev
-    paper_interface_proposition2_admittedMass_add_lowerLeftRectangle_eq_affineTotalMass_sourceParameters :=
-  @glm20Proposition2AdmittedMassFormula_add_lowerLeftRectangle_eq_affineTotalMass_sourceParameters
+    paper_interface_proposition2_admittedMass_add_lowerLeftRectangle_eq_affineTotalMass_sourceParameters := @glm20Proposition2AdmittedMassFormula_add_lowerLeftRectangle_eq_affineTotalMass_sourceParameters
 
 /--
 Paper-facing conditional-source total-mass partition for Proposition 2(iii)/(iv):
@@ -8736,8 +8546,7 @@ same as the source-parameter partition, but using the conditional
 `\hat a_g(q)` row consumed by the Lemma 3 applicant-pool substitution.
 -/
 abbrev
-    paper_interface_proposition2_admittedMass_add_lowerLeftRectangle_eq_affineTotalMass_conditionalSourceParameters :=
-  @glm20Proposition2AdmittedMassFormula_add_lowerLeftRectangle_eq_affineTotalMass_conditionalSourceParameters
+    paper_interface_proposition2_admittedMass_add_lowerLeftRectangle_eq_affineTotalMass_conditionalSourceParameters := @glm20Proposition2AdmittedMassFormula_add_lowerLeftRectangle_eq_affineTotalMass_conditionalSourceParameters
 
 /--
 Paper-facing positivity of the concrete correlated-Gaussian lower-left
@@ -8798,8 +8607,7 @@ theorem paper_interface_proposition3_sigmaTildeSource_pos
     (hfull : 0 < fullPrecisionSum) :
     0 <
       paperProposition3SigmaTildeSource
-        priorSigma priorPrecision fullPrecisionSum :=
-  glm20Proposition3SigmaTildeSource_pos hsigma hprior hfull
+        priorSigma priorPrecision fullPrecisionSum := glm20Proposition3SigmaTildeSource_pos hsigma hprior hfull
 
 /-- The displayed `b_g` is positive under positive precisions. -/
 theorem paper_interface_proposition3_bSource_pos
@@ -8808,8 +8616,7 @@ theorem paper_interface_proposition3_bSource_pos
     (hfull : 0 < fullPrecisionSum) :
     0 <
       paperProposition3BSource
-        priorPrecision subPrecisionSum fullPrecisionSum :=
-  glm20Proposition3BSource_pos hprior hsub hfull
+        priorPrecision subPrecisionSum fullPrecisionSum := glm20Proposition3BSource_pos hprior hsub hfull
 
 /-- Square simplification for the source `\tilde\sigma_g`. -/
 theorem paper_interface_proposition3_sigmaTildeSource_sq
@@ -8818,8 +8625,7 @@ theorem paper_interface_proposition3_sigmaTildeSource_sq
     paperProposition3SigmaTildeSource
         priorSigma priorPrecision fullPrecisionSum ^ 2 =
       priorSigma ^ 2 *
-        (fullPrecisionSum / (priorPrecision + fullPrecisionSum)) :=
-  glm20Proposition3SigmaTildeSource_sq hprior hfull
+        (fullPrecisionSum / (priorPrecision + fullPrecisionSum)) := glm20Proposition3SigmaTildeSource_sq hprior hfull
 
 /-- Square simplification for the source `b_g`. -/
 theorem paper_interface_proposition3_bSource_sq
@@ -8829,8 +8635,7 @@ theorem paper_interface_proposition3_bSource_sq
     paperProposition3BSource
         priorPrecision subPrecisionSum fullPrecisionSum ^ 2 =
       subPrecisionSum * (priorPrecision + fullPrecisionSum) /
-        (priorPrecision + subPrecisionSum + fullPrecisionSum) :=
-  glm20Proposition3BSource_sq hprior hsub hfull
+        (priorPrecision + subPrecisionSum + fullPrecisionSum) := glm20Proposition3BSource_sq hprior hsub hfull
 
 /--
 Source precision algebra for the denominator
@@ -8869,8 +8674,7 @@ theorem paper_interface_proposition3_source_rho_sq_lt_one
                 priorSigma priorPrecision fullPrecisionSum ^ 2 *
               paperProposition3BSource
                 priorPrecision subPrecisionSum fullPrecisionSum ^ 2)) ^ 2 <
-      1 :=
-  glm20Proposition3_source_rho_sq_lt_one
+      1 := glm20Proposition3_source_rho_sq_lt_one
 
 /--
 Paper Proposition 2(iii) source denominator for `\hat a_g(q_a)`, copied from
@@ -8888,8 +8692,7 @@ theorem paper_interface_proposition2_aHatSourceDenominator_pos
     (hfull : 0 < fullPrecisionSum) :
     0 <
       paperProposition2AHatSourceDenominator
-        priorPrecision subPrecisionSum fullPrecisionSum :=
-  glm20Proposition2AHatSourceDenominator_pos hprior hsub hfull
+        priorPrecision subPrecisionSum fullPrecisionSum := glm20Proposition2AHatSourceDenominator_pos hprior hsub hfull
 
 /--
 Paper Proposition 2(iii) source definition of `\hat a_g(q_a)` from
@@ -8922,8 +8725,7 @@ abbrev paperProposition2AHatConditionalSource
 
 /-- Paper Proposition 2(iii) `A_g(q)` argument inside the univariate `Phi` terms. -/
 abbrev paperProposition2AArgument
-    (sigmaTilde aHat b mu : ℝ) : ℝ :=
-  glm20Proposition2AArgument sigmaTilde aHat b mu
+    (sigmaTilde aHat b mu : ℝ) : ℝ := glm20Proposition2AArgument sigmaTilde aHat b mu
 
 /--
 Paper Proposition 2(iii) corrected test-free eligible mass in the unnormalized
@@ -9000,8 +8802,7 @@ Corrected-source eligible mass equals the unnormalized test-free applicant-pool
 upper tail.
 -/
 abbrev
-    paper_interface_proposition2_subEligibleUnnormalizedMassFormula_eq_scaled_testFreeTail :=
-  @glm20Proposition2SubEligibleUnnormalizedMassFormula_eq_scaled_testFreeTail
+    paper_interface_proposition2_subEligibleUnnormalizedMassFormula_eq_scaled_testFreeTail := @glm20Proposition2SubEligibleUnnormalizedMassFormula_eq_scaled_testFreeTail
 
 /--
 Paper Proposition 2(iii) source affine argument monotonicity: the cutoff order
@@ -9034,8 +8835,7 @@ theorem paper_interface_proposition2_aArgument_source_le_of_q_le
             paperProposition3SigmaTildeSource
                 priorSigma priorPrecision fullPrecisionSum ^ 2 *
               paperProposition3BSource
-                priorPrecision subPrecisionSum fullPrecisionSum ^ 2) :=
-  glm20Proposition2AArgument_source_le_of_q_le hprior hsub hfull hq
+                priorPrecision subPrecisionSum fullPrecisionSum ^ 2) := glm20Proposition2AArgument_source_le_of_q_le hprior hsub hfull hq
 
 /-- Proposition 2(iii), `q_{2,sub}^* > q_h^B`: `J1` group-B mass. -/
 abbrev paperProposition2J1MassAboveHighCutoff
@@ -9168,20 +8968,16 @@ abbrev paperProposition2J2MassBetweenCutoffsCorrectedSource
     fullPrecisionSum qHigh q2Sub q1Full
 
 abbrev
-    paper_interface_proposition2_j2MassAboveHighCutoffCorrectedSource_eq_lowerLeftRectangle :=
-  @glm20Proposition2J2MassAboveHighCutoffCorrectedSource_eq_lowerLeftRectangle
+    paper_interface_proposition2_j2MassAboveHighCutoffCorrectedSource_eq_lowerLeftRectangle := @glm20Proposition2J2MassAboveHighCutoffCorrectedSource_eq_lowerLeftRectangle
 
 abbrev
-    paper_interface_proposition2_j2MassBetweenCutoffsCorrectedSource_eq_lowerLeftRectangle_add_cdfGap :=
-  @glm20Proposition2J2MassBetweenCutoffsCorrectedSource_eq_lowerLeftRectangle_add_cdfGap
+    paper_interface_proposition2_j2MassBetweenCutoffsCorrectedSource_eq_lowerLeftRectangle_add_cdfGap := @glm20Proposition2J2MassBetweenCutoffsCorrectedSource_eq_lowerLeftRectangle_add_cdfGap
 
 abbrev
-    paper_interface_proposition2_j2MassAboveHighCutoffCorrectedSource_pos :=
-  @glm20Proposition2J2MassAboveHighCutoffCorrectedSource_pos
+    paper_interface_proposition2_j2MassAboveHighCutoffCorrectedSource_pos := @glm20Proposition2J2MassAboveHighCutoffCorrectedSource_pos
 
 abbrev
-    paper_interface_proposition2_j2MassBetweenCutoffsCorrectedSource_pos :=
-  @glm20Proposition2J2MassBetweenCutoffsCorrectedSource_pos
+    paper_interface_proposition2_j2MassBetweenCutoffsCorrectedSource_pos := @glm20Proposition2J2MassBetweenCutoffsCorrectedSource_pos
 
 /--
 Paper-facing complementary-case residual mass decomposition:
@@ -9387,8 +9183,7 @@ masses.  This removes the row-identification premises from the formula-level
 wrapper.
 -/
 abbrev
-    paper_interface_proposition2_part_iii_diversity_criterion_above_high_cutoff_corrected_source_rows :=
-  @paper_proposition2_part_iii_diversity_criterion_above_high_cutoff_corrected_source_rows
+    paper_interface_proposition2_part_iii_diversity_criterion_above_high_cutoff_corrected_source_rows := @paper_proposition2_part_iii_diversity_criterion_above_high_cutoff_corrected_source_rows
 
 /--
 Paper Proposition 2(iii), case `q_h^B >= q_{2,sub}^* > q_l^B`.
@@ -9534,8 +9329,7 @@ with the diversity rows defined directly from the corrected source masses.
 This removes the row-identification premises from the formula-level wrapper.
 -/
 abbrev
-    paper_interface_proposition2_part_iii_diversity_criterion_between_cutoffs_corrected_source_rows :=
-  @paper_proposition2_part_iii_diversity_criterion_between_cutoffs_corrected_source_rows
+    paper_interface_proposition2_part_iii_diversity_criterion_between_cutoffs_corrected_source_rows := @paper_proposition2_part_iii_diversity_criterion_between_cutoffs_corrected_source_rows
 
 /--
 Paper Proposition 2(iii), above-high-cutoff diversity criterion with the
@@ -9612,12 +9406,10 @@ theorem paper_interface_proposition2_part_iii_diversity_criterion_above_high_cut
     api bivariateCDF hmore hj1 hj2 hcapacity1 hcapacity2 hj2Mass
 
 abbrev
-    paper_interface_proposition2_part_iii_diversity_criterion_above_high_cutoff_source_parameters_of_subEligibleMass :=
-  @paper_proposition2_part_iii_diversity_criterion_above_high_cutoff_source_parameters_of_subEligibleMass
+    paper_interface_proposition2_part_iii_diversity_criterion_above_high_cutoff_source_parameters_of_subEligibleMass := @paper_proposition2_part_iii_diversity_criterion_above_high_cutoff_source_parameters_of_subEligibleMass
 
 abbrev
-    paper_interface_proposition2_part_iii_diversity_criterion_above_high_cutoff_source_parameters_of_positive_precisions_and_subEligibleMass :=
-  @paper_proposition2_part_iii_diversity_criterion_above_high_cutoff_source_parameters_of_positive_precisions_and_subEligibleMass
+    paper_interface_proposition2_part_iii_diversity_criterion_above_high_cutoff_source_parameters_of_positive_precisions_and_subEligibleMass := @paper_proposition2_part_iii_diversity_criterion_above_high_cutoff_source_parameters_of_positive_precisions_and_subEligibleMass
 
 /--
 Paper Proposition 2(iii), between-cutoffs diversity criterion with the source
@@ -9702,28 +9494,24 @@ theorem paper_interface_proposition2_part_iii_diversity_criterion_between_cutoff
     api bivariateCDF hmore hj1 hj2 hcapacity1 hcapacity2 hj2Mass
 
 abbrev
-    paper_interface_proposition2_part_iii_diversity_criterion_between_cutoffs_source_parameters_of_subEligibleMass :=
-  @paper_proposition2_part_iii_diversity_criterion_between_cutoffs_source_parameters_of_subEligibleMass
+    paper_interface_proposition2_part_iii_diversity_criterion_between_cutoffs_source_parameters_of_subEligibleMass := @paper_proposition2_part_iii_diversity_criterion_between_cutoffs_source_parameters_of_subEligibleMass
 
 abbrev
-    paper_interface_proposition2_part_iii_diversity_criterion_between_cutoffs_source_parameters_of_positive_precisions_ordered_cutoffs_and_subEligibleMass :=
-  @paper_proposition2_part_iii_diversity_criterion_between_cutoffs_source_parameters_of_positive_precisions_ordered_cutoffs_and_subEligibleMass
+    paper_interface_proposition2_part_iii_diversity_criterion_between_cutoffs_source_parameters_of_positive_precisions_ordered_cutoffs_and_subEligibleMass := @paper_proposition2_part_iii_diversity_criterion_between_cutoffs_source_parameters_of_positive_precisions_ordered_cutoffs_and_subEligibleMass
 
 /--
 Paper Proposition 2(iv) source definition of `a'_g(q)` in the displayed
 `kappa` formula.
 -/
 abbrev paperProposition2KappaAPrime
-    (priorPrecision subPrecisionSum mu q : ℝ) : ℝ :=
-  glm20Proposition2KappaAPrime priorPrecision subPrecisionSum mu q
+    (priorPrecision subPrecisionSum mu q : ℝ) : ℝ := glm20Proposition2KappaAPrime priorPrecision subPrecisionSum mu q
 
 /--
 Paper Proposition 2(iv) source definition of `b'_g` in the displayed `kappa`
 formula.
 -/
 abbrev paperProposition2KappaBPrime
-    (subPrecisionSum : ℝ) : ℝ :=
-  glm20Proposition2KappaBPrime subPrecisionSum
+    (subPrecisionSum : ℝ) : ℝ := glm20Proposition2KappaBPrime subPrecisionSum
 
 /--
 Paper Proposition 2(iv) source-prime algebra: the displayed `b'_g` squared is
@@ -9732,8 +9520,7 @@ the sub-test precision sum.
 theorem paper_interface_proposition2_kappaBPrime_sq
     {subPrecisionSum : ℝ} (hsub : 0 ≤ subPrecisionSum) :
     paperProposition2KappaBPrime subPrecisionSum ^ 2 =
-      subPrecisionSum :=
-  glm20Proposition2KappaBPrime_sq hsub
+      subPrecisionSum := glm20Proposition2KappaBPrime_sq hsub
 
 /--
 Paper Proposition 2(iv) source-prime denominator algebra:
@@ -9745,8 +9532,7 @@ theorem paper_interface_proposition2_kappaSourceDenom_eq
         (1 +
           (sigmaTilde *
             paperProposition2KappaBPrime subPrecisionSum) ^ 2) =
-      Real.sqrt (1 + sigmaTilde ^ 2 * subPrecisionSum) :=
-  glm20Proposition2KappaSourceDenom_eq hsub
+      Real.sqrt (1 + sigmaTilde ^ 2 * subPrecisionSum) := glm20Proposition2KappaSourceDenom_eq hsub
 
 /--
 Paper Proposition 2(iv) source-prime numerator algebra:
@@ -9759,8 +9545,7 @@ theorem paper_interface_proposition2_kappaAPrime_add_BPrime_mul_mu
     paperProposition2KappaAPrime priorPrecision subPrecisionSum mu q +
         paperProposition2KappaBPrime subPrecisionSum * mu =
       (priorPrecision + subPrecisionSum) * (mu - q) /
-        Real.sqrt subPrecisionSum :=
-  glm20Proposition2KappaAPrime_add_BPrime_mul_mu hsub
+        Real.sqrt subPrecisionSum := glm20Proposition2KappaAPrime_add_BPrime_mul_mu hsub
 
 /--
 Paper Proposition 2(iv) source-prime lower-left mass in raw precision-sum
@@ -9804,8 +9589,7 @@ theorem paper_interface_proposition2_kappaSourceLowerLeftMass_eq_sourcePrimes
             (1 +
               (sigmaTilde *
                 paperProposition2KappaBPrime subPrecisionSum) ^ 2))
-        ((qFull - mu) / sigmaTilde) :=
-  glm20Proposition2KappaSourceLowerLeftMass_eq_sourcePrimes hsub
+        ((qFull - mu) / sigmaTilde) := glm20Proposition2KappaSourceLowerLeftMass_eq_sourcePrimes hsub
 
 /--
 Paper Proposition 2(iv) source-prime tau normalization equals the displayed
@@ -9832,8 +9616,7 @@ theorem paper_interface_proposition2_kappaSourceTau_eq_sourcePrimes
               (1 +
                 (sigmaTilde *
                   paperProposition2KappaBPrime subPrecisionSum) ^ 2))
-          ((qFull - mu) / sigmaTilde) :=
-  glm20Proposition2KappaSourceTau_eq_sourcePrimes hsub
+          ((qFull - mu) / sigmaTilde) := glm20Proposition2KappaSourceTau_eq_sourcePrimes hsub
 
 /--
 Paper Proposition 2(iv) reuses the full-policy admitted academic-merit formula
@@ -9841,8 +9624,7 @@ Paper Proposition 2(iv) reuses the full-policy admitted academic-merit formula
 -/
 abbrev paperProposition2FullPolicyLambdaFormula
     (api : StandardGaussianCDFAPI)
-    (a b sigmaTilde tau mu qFull : ℝ) : ℝ :=
-  glm20Proposition3LambdaFormula api a b sigmaTilde tau mu qFull
+    (a b sigmaTilde tau mu qFull : ℝ) : ℝ := glm20Proposition3LambdaFormula api a b sigmaTilde tau mu qFull
 
 /--
 Paper Proposition 2(iv) / Proposition 3 first-moment formula obtained from
@@ -10179,7 +9961,8 @@ theorem paper_interface_proposition2_boundaryDensityScaling_of_normalDensity
     standardGaussianDensity upper =
       sigmaTilde *
         standardGaussianCDFAPI.normalDensity
-          { mean := mu, scale := sigmaTilde, scale_pos := hsigma } raw :=
+          { mean :=
+            mu, scale := sigmaTilde, scale_pos := hsigma } raw :=
   glm20Proposition2_boundaryDensityScaling_of_normalDensity hsigma hupper
 
 /--
@@ -10358,8 +10141,7 @@ displayed `tau_g` normalization inlined and `\tilde\sigma_g > 0` discharged
 from positive source precisions.
 -/
 abbrev
-    paper_interface_proposition2_j2MeritSourceParameters_eq_kappaBoundaryDensityFormula_sourceTau_normalDensity :=
-  @glm20Proposition2J2MeritSourceParameters_eq_kappaBoundaryDensityFormula_sourceTau_normalDensity
+    paper_interface_proposition2_j2MeritSourceParameters_eq_kappaBoundaryDensityFormula_sourceTau_normalDensity := @glm20Proposition2J2MeritSourceParameters_eq_kappaBoundaryDensityFormula_sourceTau_normalDensity
 
 /--
 Paper Proposition 2(iv): if `q_{2,sub}^* > q_h^g`, then `J1` has lower
@@ -10394,8 +10176,7 @@ Paper Proposition 2(iv), formula-level academic-merit comparison using the
 verified source-density `kappa` expression.
 -/
 abbrev
-    paper_interface_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity :=
-  @paper_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity
+    paper_interface_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity := @paper_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity
 
 /--
 Paper Proposition 2(iv), formula-level academic-merit comparison with source
@@ -10472,8 +10253,7 @@ Paper Proposition 2(iv), source-parameter academic-merit comparison using the
 verified boundary-density `kappa` expression.
 -/
 abbrev
-    paper_interface_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_source_parameters :=
-  @paper_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_source_parameters
+    paper_interface_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_source_parameters := @paper_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_source_parameters
 
 /--
 Paper Proposition 2(iv), source-parameter academic-merit comparison with the
@@ -10482,24 +10262,21 @@ expression.  The standardized cutoff in `lambda`/`kappa` is kept separate
 from the raw cutoff used in `tau_g` and the normal-density boundary term.
 -/
 abbrev
-    paper_interface_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_of_j2_lower_tail :=
-  @paper_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_of_j2_lower_tail
+    paper_interface_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_of_j2_lower_tail := @paper_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_of_j2_lower_tail
 
 /--
 Paper Proposition 2(iv), source-parameter comparison with the standardized
 full-test cutoff already specialized to `(qFull - mu) / sigma_tilde`.
 -/
 abbrev
-    paper_interface_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_of_j2_lower_tail_source_cutoff :=
-  @paper_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_of_j2_lower_tail_source_cutoff
+    paper_interface_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_of_j2_lower_tail_source_cutoff := @paper_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_of_j2_lower_tail_source_cutoff
 
 /--
 Paper Proposition 2(iv), source-row comparison with school `J1`'s `lambda`
 merit and school `J2`'s lower-tail merit specialized internally.
 -/
 abbrev
-    paper_interface_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_source_rows :=
-  @paper_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_source_rows
+    paper_interface_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_source_rows := @paper_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_source_rows
 
 /--
 Paper Proposition 3 common bracket
@@ -10507,8 +10284,7 @@ Paper Proposition 3 common bracket
 -/
 abbrev paperProposition3SelectionCore
     (api : StandardGaussianCDFAPI) (bivariateCDF : ℝ → ℝ → ℝ → ℝ)
-    (sigmaTilde a b mu qFull : ℝ) : ℝ :=
-  glm20Proposition3SelectionCore api bivariateCDF sigmaTilde a b mu qFull
+    (sigmaTilde a b mu qFull : ℝ) : ℝ := glm20Proposition3SelectionCore api bivariateCDF sigmaTilde a b mu qFull
 
 /--
 Paper Proposition 3 / Appendix D CDF bookkeeping.
@@ -10578,8 +10354,7 @@ inside the nondegenerate domain `rho_g^2 < 1`.
 -/
 theorem paper_interface_proposition3_rho_sq_lt_one (sigmaTilde b : ℝ) :
     (-(sigmaTilde * b) /
-        Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)) ^ 2 < 1 :=
-  paper_proposition3_rho_sq_lt_one sigmaTilde b
+        Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)) ^ 2 < 1 := paper_proposition3_rho_sq_lt_one sigmaTilde b
 
 /--
 Paper Proposition 3 source-event identity for the concrete bivariate Gaussian
@@ -10596,8 +10371,7 @@ theorem paper_interface_proposition3_selection_core_eq_correlatedStandardGaussia
           (-(sigmaTilde * b) /
             Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)))
         ((a + b * mu) / Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2))
-        ((qFull - mu) / sigmaTilde) :=
-  paper_proposition3_selection_core_eq_correlatedStandardGaussian_verticalUpperStripMass
+        ((qFull - mu) / sigmaTilde) := paper_proposition3_selection_core_eq_correlatedStandardGaussian_verticalUpperStripMass
 
 /--
 Paper Proposition 3 / Appendix D source affine selection mass.
@@ -10608,8 +10382,7 @@ Owen's formula applies to the event
 and `B_g <= Z`, with independent standard normals `(X,Z)`.
 -/
 abbrev paperProposition3OwenAffineSelectionMass
-    (sigmaTilde a b mu qFull : ℝ) : ℝ :=
-  glm20Proposition3OwenAffineSelectionMass sigmaTilde a b mu qFull
+    (sigmaTilde a b mu qFull : ℝ) : ℝ := glm20Proposition3OwenAffineSelectionMass sigmaTilde a b mu qFull
 
 /--
 Paper Proposition 3 / Appendix D Owen identity, mass form.
@@ -10624,8 +10397,7 @@ theorem paper_interface_proposition3_selection_core_eq_owenAffineSelectionMass
     paperProposition3SelectionCore standardGaussianCDFAPI
         paperStandardBivariateGaussianCDF sigmaTilde a b mu qFull =
       paperProposition3OwenAffineSelectionMass
-        sigmaTilde a b mu qFull :=
-  paper_proposition3_selection_core_eq_owenAffineSelectionMass
+        sigmaTilde a b mu qFull := paper_proposition3_selection_core_eq_owenAffineSelectionMass
 
 /--
 Paper Proposition 3 support: the concrete displayed selection core is positive.
@@ -10666,8 +10438,7 @@ theorem paper_interface_bivariate_apply_admit_mass_eq_correlatedStandardGaussian
               Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)))
           (((aOfApply qApply) + b * mu) /
             Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2))
-          ((qAdmit - mu) / sigmaTilde) :=
-  glm20BivariateApplyAdmitMass_eq_correlatedStandardGaussian_verticalUpperStripMass
+          ((qAdmit - mu) / sigmaTilde) := glm20BivariateApplyAdmitMass_eq_correlatedStandardGaussian_verticalUpperStripMass
 
 /--
 Paper Lemma 3 / Proposition 3 bivariate application-and-admission mass from
@@ -10681,8 +10452,7 @@ theorem paper_interface_bivariate_apply_admit_mass_eq_owenAffineSelectionMass
         b mu qApply qAdmit =
       populationShare * sigmaTilde *
         paperProposition3OwenAffineSelectionMass sigmaTilde
-          (aOfApply qApply) b mu qAdmit :=
-  glm20BivariateApplyAdmitMass_eq_owenAffineSelectionMass
+          (aOfApply qApply) b mu qAdmit := glm20BivariateApplyAdmitMass_eq_owenAffineSelectionMass
 
 /--
 Paper Lemma 3 source event mass:
@@ -10690,8 +10460,7 @@ Paper Lemma 3 source event mass:
 -/
 abbrev paperMeasureApplyAdmitMass
     (populationShare : ℝ) (jointLaw : Measure (ℝ × ℝ))
-    (qApply qAdmit : ℝ) : ℝ :=
-  glm20MeasureApplyAdmitMass populationShare jointLaw qApply qAdmit
+    (qApply qAdmit : ℝ) : ℝ := glm20MeasureApplyAdmitMass populationShare jointLaw qApply qAdmit
 
 /--
 Paper Lemma 3 support: the measure-backed application/admission mass is
@@ -11262,8 +11031,7 @@ theorem paper_interface_proposition3_tau_formula_eq_correlatedStandardGaussian_v
             (-(sigmaTilde * b) /
               Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)))
           ((a + b * mu) / Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2))
-          ((qFull - mu) / sigmaTilde) :=
-  paper_proposition3_tau_formula_eq_correlatedStandardGaussian_verticalUpperStripMass
+          ((qFull - mu) / sigmaTilde) := paper_proposition3_tau_formula_eq_correlatedStandardGaussian_verticalUpperStripMass
 
 /--
 Paper Proposition 3 `tau_g` formula from the source affine Owen mass.
@@ -11279,8 +11047,7 @@ theorem paper_interface_proposition3_tau_formula_eq_owenAffineSelectionMass
         a b mu qFull =
       populationShare * sigmaTilde / capacity *
         paperProposition3OwenAffineSelectionMass
-          sigmaTilde a b mu qFull :=
-  paper_proposition3_tau_formula_eq_owenAffineSelectionMass
+          sigmaTilde a b mu qFull := paper_proposition3_tau_formula_eq_owenAffineSelectionMass
 
 /--
 Paper Lemma 3: unique full-policy equilibrium using the displayed bivariate
@@ -11518,8 +11285,7 @@ Paper Lemma 3: concrete standard-Gaussian bivariate selection-mass endpoint
 with continuity, strict decrease, and endpoint limits discharged from
 cutoff-shape assumptions on the transformed application cutoff `A_g(q)`.
 -/
-abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_selection_components_regular :=
-  @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_selection_components_regular
+abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_selection_components_regular := @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_selection_components_regular
 
 /--
 Paper Lemma 3: concrete standard-Gaussian bivariate selection-mass endpoint
@@ -11530,15 +11296,13 @@ This is the closed source-parameter route for the displayed
 conditional-source `a_g(q)`, the paper's `sigma_tilde_g`, and the paper's
 `b_g` provide the needed continuity, strict decrease, and endpoint limits.
 -/
-abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_conditional_source_components :=
-  @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_conditional_source_components
+abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_conditional_source_components := @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_conditional_source_components
 
 /--
 Paper Lemma 3 / Proposition 2 source endpoint specialized to the paper's two
 named groups and population-share row.
 -/
-abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_conditional_source_paper_groups :=
-  @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_conditional_source_paper_groups
+abbrev paper_interface_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_conditional_source_paper_groups := @paper_lemma3_full_policy_threshold_equilibrium_existsUnique_of_standardBivariate_conditional_source_paper_groups
 
 /--
 Paper Proposition 3(i): algebraic form of Equation (37).
@@ -11624,8 +11388,7 @@ merit under `P_full`.
 -/
 abbrev paperProposition3LambdaFormula
     (api : StandardGaussianCDFAPI)
-    (a b sigmaTilde tau mu qFull : ℝ) : ℝ :=
-  glm20Proposition3LambdaFormula api a b sigmaTilde tau mu qFull
+    (a b sigmaTilde tau mu qFull : ℝ) : ℝ := glm20Proposition3LambdaFormula api a b sigmaTilde tau mu qFull
 
 /--
 Paper Proposition 3 upper-tail first-moment/Owen formula for admitted academic
@@ -12553,8 +12316,7 @@ Paper Proposition 3 source-row endpoint with the displayed capacity,
 admitted-share rows, and `lambda` rows specialized internally.
 -/
 abbrev
-    paper_interface_proposition3_full_policy_diversity_ratio_and_academic_merit_formulas_source_rows :=
-  @paper_proposition3_full_policy_diversity_ratio_and_academic_merit_formulas_source_rows
+    paper_interface_proposition3_full_policy_diversity_ratio_and_academic_merit_formulas_source_rows := @paper_proposition3_full_policy_diversity_ratio_and_academic_merit_formulas_source_rows
 
 /--
 Paper Proposition 3: equilibrium consequences under the full policy.
@@ -12566,8 +12328,7 @@ theorem paper_interface_proposition3_equilibrium_under_full_policy
     {S : GLM20StrategicPolicySurface Group Policy School Equilibrium}
     (C : GLM20FullPolicyEquilibriumConsequencesCertificate S) :
     C.equilibriumUnderFullPolicyCharacterization ∧
-      C.academicMeritAndDiversityConsequences :=
-  paper_proposition3_equilibrium_under_full_policy_of_certificate C
+      C.academicMeritAndDiversityConsequences := paper_proposition3_equilibrium_under_full_policy_of_certificate C
 
 /--
 Paper Theorem 3 definition: `K_g(q)`, the mass of group-`g` students whose
@@ -12580,16 +12341,14 @@ Paper formula:
 -/
 abbrev paperTheorem3K
     (api : StandardGaussianCDFAPI) (subEstimateLaw : GaussianScaleLaw)
-    (q : ℝ) : ℝ :=
-  glm20StrategicSubEstimateMassAbove api subEstimateLaw q
+    (q : ℝ) : ℝ := glm20StrategicSubEstimateMassAbove api subEstimateLaw q
 
 /-- Paper Theorem 3 support: expanded normal-tail formula for `K_g(q)`. -/
 theorem paper_interface_theorem3_Kg_eq_normal_tail_formula
     (api : StandardGaussianCDFAPI) (subEstimateLaw : GaussianScaleLaw)
     (q : ℝ) :
     paperTheorem3K api subEstimateLaw q =
-      1 - api.cdf ((q - subEstimateLaw.mean) / subEstimateLaw.scale) :=
-  paper_theorem3_Kg_eq_normal_tail_formula api subEstimateLaw q
+      1 - api.cdf ((q - subEstimateLaw.mean) / subEstimateLaw.scale) := paper_theorem3_Kg_eq_normal_tail_formula api subEstimateLaw q
 
 /--
 Paper Theorem 3 support: the `K_g(q)` formula specialized to the canonical
@@ -12601,8 +12360,7 @@ theorem paper_interface_theorem3_Kg_eq_offset_posterior_mean_tail
     (q : ℝ) :
     paperTheorem3K api M.posteriorMeanScaleLaw q =
       1 - api.cdf
-        ((q - M.priorMean) / Real.sqrt M.posteriorMeanVariance) :=
-  paper_theorem3_Kg_eq_offset_posterior_mean_tail api M q
+        ((q - M.priorMean) / Real.sqrt M.posteriorMeanVariance) := paper_theorem3_Kg_eq_offset_posterior_mean_tail api M q
 
 /--
 Paper Theorem 3 definition: the source-precision law used by `K_g(q)`.
@@ -12750,8 +12508,7 @@ theorem paper_interface_proposition5_both_fullFull_cutoff_cases_impossible_of_we
         populationShare groupA * massFullFull groupA +
           populationShare groupB * massFullFull groupB)
     (hcutoffA : qSub < fullFullCutoff groupA)
-    (hcutoffB : qSub < fullFullCutoff groupB) : False := by
-  exact
+    (hcutoffB : qSub < fullFullCutoff groupB) : False :=
     paper_proposition5_both_fullFull_cutoff_cases_impossible_of_weighted_capacity
       (K := fun g q => paperTheorem3K api (subEstimateLaw g) q)
       hshareA hshareB
@@ -12980,8 +12737,7 @@ theorem paper_interface_proposition5_twoFull_apply_expected_payoff_eq_equation46
       v2 * (api.cdf ((q1Full - q) / scale) -
         api.cdf ((q2Full - q) / scale)) - cost) =
       paperProposition5TwoFullPolicyApplyPayoffValue api q1Full q2Full
-        scale v1 v2 cost q :=
-  paper_proposition5_twoFull_apply_expected_payoff_eq_equation46 api hscale
+        scale v1 v2 cost q := paper_proposition5_twoFull_apply_expected_payoff_eq_equation46 api hscale
 
 /--
 Paper Proposition 5 support: equation (47), the inverse-CDF formula for a
@@ -13031,8 +12787,7 @@ Paper Proposition 5 support: `0 < c < v` puts the normalized cost ratio
 -/
 theorem paper_interface_proposition5_cost_ratio_mem_Ioo_of_pos_lt
     {cost value : ℝ} (hcost_pos : 0 < cost) (hcost_lt_value : cost < value) :
-    cost / value ∈ Set.Ioo (0 : ℝ) 1 :=
-  paper_proposition5_cost_ratio_mem_Ioo_of_pos_lt hcost_pos hcost_lt_value
+    cost / value ∈ Set.Ioo (0 : ℝ) 1 := paper_proposition5_cost_ratio_mem_Ioo_of_pos_lt hcost_pos hcost_lt_value
 
 /--
 Paper Proposition 5 support: equation (50), stated with the source-style
@@ -14109,8 +13864,7 @@ equation-(46) zero-payoff cutoff functions and carries the groupwise
 cost-threshold construction as a reusable conditional.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_twoFull_cost_thresholds_of_merit_crossing_interval_of_global_regular_cost_bounds :=
-  @paper_proposition5_standardGaussian_twoFull_cost_thresholds_of_merit_crossing_interval_of_global_regular_cost_bounds
+    paper_interface_proposition5_standardGaussian_twoFull_cost_thresholds_of_merit_crossing_interval_of_global_regular_cost_bounds := @paper_proposition5_standardGaussian_twoFull_cost_thresholds_of_merit_crossing_interval_of_global_regular_cost_bounds
 
 /--
 Paper Theorem 3(i), condition (10), for a candidate expanding group.
@@ -14471,8 +14225,7 @@ values are reduced to the paper's weighted admitted-merit expressions and
 ties are ruled out.
 -/
 abbrev
-    paper_interface_theorem3_school2_objective_iff_single_group_merit_gt_of_no_tie :=
-  @paper_theorem3_school2_objective_iff_single_group_merit_gt_of_no_tie
+    paper_interface_theorem3_school2_objective_iff_single_group_merit_gt_of_no_tie := @paper_theorem3_school2_objective_iff_single_group_merit_gt_of_no_tie
 
 /--
 Theorem 3 / Proposition 5 support: once the school-`J2` objective values are
@@ -14999,8 +14752,7 @@ theorem paper_interface_theorem3_subFull_condition_iff_groupA_or_groupB
         ¬ paperTheorem3SubFullGroupExpandsByDropping S policyPair Psub
           Pfull testCost costThreshold q1Sub K groupA ∧
         paperTheorem3SubFullOtherGroupKeepsTest S policyPair Psub Pfull
-          J2 groupA groupB populationShare capacity2 groupA) :=
-  glm20Theorem3SubFullCondition_iff_groupA_or_groupB
+          J2 groupA groupB populationShare capacity2 groupA) := glm20Theorem3SubFullCondition_iff_groupA_or_groupB
 
 /--
 Proposition 5(i) / Theorem 3(i) objective bridge.
@@ -15051,8 +14803,7 @@ strategic policy surface whose equilibrium predicate explicitly includes
 capacity feasibility.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_mass_pair_iff_theorem3_subFull_condition :=
-  @paper_proposition5_part_i_objective_mass_pair_iff_theorem3_subFull_condition
+    paper_interface_proposition5_part_i_objective_mass_pair_iff_theorem3_subFull_condition := @paper_proposition5_part_i_objective_mass_pair_iff_theorem3_subFull_condition
 
 /--
 Paper Theorem 3(i), feasibility-aware weighted-surface bridge.
@@ -15062,16 +14813,14 @@ This is the paper-facing route for a concrete strategic model where condition
 school-`J2` merit objective comparison.
 -/
 abbrev
-    paper_interface_theorem3_subFull_condition_of_feasible_weighted_surface_objective_mass_bridges :=
-  @paper_theorem3_subFull_condition_of_feasible_weighted_surface_objective_mass_bridges
+    paper_interface_theorem3_subFull_condition_of_feasible_weighted_surface_objective_mass_bridges := @paper_theorem3_subFull_condition_of_feasible_weighted_surface_objective_mass_bridges
 
 /--
 Paper Theorem 3(i), feasible weighted-surface bridge from an already assembled
 objective-pair equivalence.
 -/
 abbrev
-    paper_interface_theorem3_subFull_condition_of_feasible_weighted_surface_objective_pair_bridge :=
-  @paper_theorem3_subFull_condition_of_feasible_weighted_surface_objective_pair_bridge
+    paper_interface_theorem3_subFull_condition_of_feasible_weighted_surface_objective_pair_bridge := @paper_theorem3_subFull_condition_of_feasible_weighted_surface_objective_pair_bridge
 
 /--
 Paper Theorem 3(i), feasibility-aware cost-threshold endpoint.
@@ -15081,8 +14830,7 @@ merit crossing and uses a capacity-aware weighted surface so condition (11) is
 encoded as school-`J2` feasibility at `(P_sub,P_full)`.
 -/
 abbrev
-    paper_interface_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_group_merit_formulas :=
-  @paper_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_group_merit_formulas
+    paper_interface_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_group_merit_formulas := @paper_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_group_merit_formulas
 
 /--
 Paper Theorem 3(i), feasibility-aware positive-interval cost-threshold
@@ -15090,8 +14838,7 @@ endpoint.  This is the source-Gaussian-friendly version of the previous
 wrapper, using `[leftCost_g,rightCost_g]` as the merit-crossing domain.
 -/
 abbrev
-    paper_interface_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas :=
-  @paper_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas
+    paper_interface_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas := @paper_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas
 
 /--
 Proposition 5(i) / Theorem 3(i) objective bridge from merit crossings and
@@ -15362,8 +15109,7 @@ school-`J1` merit crossing is derived after substituting the displayed
 Gaussian cutoff formula.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval
 
 /--
 Paper Proposition 5(i) / Theorem 3(i), equation-(50) source form with the
@@ -15371,8 +15117,7 @@ full/full capacity-fill contradiction deriving the impossible both-groups
 branch.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_and_capacity :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_and_capacity
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_and_capacity := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_and_capacity
 
 /--
 Proposition 5(i) / Theorem 3(i) positive-interval objective bridge, using the
@@ -15756,8 +15501,7 @@ Paper Proposition 5(i) / Theorem 3(i) positive-interval objective bridge with
 capacity fill and strict condition-(12) academic-merit comparisons.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_and_capacity_strict_merit :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_and_capacity_strict_merit
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_and_capacity_strict_merit := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_and_capacity_strict_merit
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) interval objective bridge with capacity
@@ -15765,16 +15509,14 @@ fill and fixed-pool academic-merit comparison.  This is the
 source-Gaussian-friendly analogue of the closed-interval fixed-pool wrapper.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_capacity_and_fixed_pool_merit :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_capacity_and_fixed_pool_merit
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_capacity_and_fixed_pool_merit := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_capacity_and_fixed_pool_merit
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) interval objective bridge with capacity,
 fixed-pool merit, and source-level group admitted-merit formulas.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) interval bridge with capacity,
@@ -15782,8 +15524,7 @@ fixed-pool merit, group-level admitted-merit formulas, and the equation-(50)
 Gaussian cutoff formula substituted.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) interval bridge with capacity,
@@ -15792,8 +15533,7 @@ Gaussian cutoff formula substituted, and condition-(12) exposed as raw
 source-row survivor objective/mass/strict-merit premises.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) interval bridge with capacity,
@@ -15802,8 +15542,7 @@ condition-(12) premises.  The fixed-pool merit comparisons are derived
 internally from Theorem 2 Gaussian upper-tail-mean data.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_tail_mean_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_tail_mean_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_tail_mean_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_merit_crossings_interval_capacity_tail_mean_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) source-family bridge with capacity,
@@ -15812,8 +15551,7 @@ condition-(12) premises.  The fixed-pool merit comparisons are generated from
 concrete Gaussian source families.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_raw_survivor_conditions
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) source-family bridge with capacity,
@@ -15821,16 +15559,14 @@ equation-(50), group-level admitted-merit formulas, and school-`J2`
 condition-(11)--(12) stated as named keep-test predicates.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_keeps_test :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_keeps_test
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_keeps_test := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_keeps_test
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) source-family keep-test bridge with the
 standard-Gaussian quantile API and hazard certificate specialized internally.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_keeps_test :=
-  @paper_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_keeps_test
+    paper_interface_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_keeps_test := @paper_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_keeps_test
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) source-family bridge specialized to the
@@ -15838,8 +15574,7 @@ generated source-family table, with school-`J2` condition-(11)--(12) survivor
 premises exposed as displayed source rows.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_source_family_survivor_components :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_source_family_survivor_components
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_source_family_survivor_components := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_source_family_survivor_components
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) source-family bridge specialized to the
@@ -15848,8 +15583,7 @@ as the same bundled source-row predicate used by the strongest Theorem 3
 surface.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) generated source-family bridge with the
@@ -15857,8 +15591,7 @@ standard-Gaussian hazard certificate specialized internally and
 condition-(11)--(12) supplied as bundled source rows.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows :=
-  @paper_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows
+    paper_interface_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows := @paper_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) preferred generated source-family bridge:
@@ -15867,8 +15600,7 @@ condition-(11)--(12) supplied as bundled source rows, and the paper's named
 groups, named schools, and population-share row fixed internally.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows_paper_groups_schools_with_population_share :=
-  @paper_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows_paper_groups_schools_with_population_share
+    paper_interface_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows_paper_groups_schools_with_population_share := @paper_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_j2_survivor_rows_paper_groups_schools_with_population_share
 
 /--
 Paper Proposition 5(i) / Theorem 3(i) generated source-family bridge with the
@@ -15876,8 +15608,7 @@ standard-Gaussian hazard certificate specialized internally and survivor
 premises exposed as displayed source rows.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_source_family_survivor_components :=
-  @paper_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_source_family_survivor_components
+    paper_interface_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_source_family_survivor_components := @paper_proposition5_standardGaussian_part_i_objective_pair_iff_theorem3_subFull_condition_of_equation50_source_family_fixed_pool_and_group_merit_formulas_of_source_family_survivor_components
 
 /--
 Paper Proposition 5 / Theorem 3 support: on the generated source-family
@@ -15885,8 +15616,7 @@ policy-state table, the exactly-one weighted-objective branches follow from
 the twelve visible admitted-merit row identifications.
 -/
 abbrev
-    paper_interface_proposition5_exactly_one_weighted_objective_iff_of_source_family_policy_state_table_rows :=
-  @paper_proposition5_exactly_one_weighted_objective_iff_of_source_family_policy_state_table_rows
+    paper_interface_proposition5_exactly_one_weighted_objective_iff_of_source_family_policy_state_table_rows := @paper_proposition5_exactly_one_weighted_objective_iff_of_source_family_policy_state_table_rows
 
 /--
 Paper Proposition 5 / Theorem 3 support: packaged version of the generated
@@ -15895,8 +15625,7 @@ layer supplies the twelve admitted-merit row identifications as a single
 certificate.
 -/
 abbrev
-    paper_interface_proposition5_exactly_one_weighted_objective_iff_of_source_family_policy_state_table_row_package :=
-  @paper_proposition5_exactly_one_weighted_objective_iff_of_source_family_policy_state_table_row_package
+    paper_interface_proposition5_exactly_one_weighted_objective_iff_of_source_family_policy_state_table_row_package := @paper_proposition5_exactly_one_weighted_objective_iff_of_source_family_policy_state_table_row_package
 
 /--
 Paper Proposition 5(i) school-`J2` zero-fallback bridge: base survivor
@@ -15904,8 +15633,7 @@ component rows imply the two branch-conditioned weighted-objective iff
 statements on the generated zero-fallback source table.
 -/
 abbrev
-    paper_interface_proposition5_source_family_j2_zero_fallback_school2_objective_bridge_of_base_survivor_components :=
-  @paper_proposition5_source_family_j2_zero_fallback_school2_objective_bridge_of_base_survivor_components
+    paper_interface_proposition5_source_family_j2_zero_fallback_school2_objective_bridge_of_base_survivor_components := @paper_proposition5_source_family_j2_zero_fallback_school2_objective_bridge_of_base_survivor_components
 
 /--
 Paper Proposition 5(i) school-`J2` zero-fallback bridge: same generated
@@ -15913,8 +15641,7 @@ zero-fallback source-table objective bridge, with condition (11)--(12) supplied
 as the bundled source rows used by the strongest Theorem 3 surface.
 -/
 abbrev
-    paper_interface_proposition5_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows :=
-  @paper_proposition5_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows
+    paper_interface_proposition5_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows := @paper_proposition5_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows
 
 /--
 Paper Proposition 5(i) school-`J2` zero-fallback bridge with the
@@ -15922,8 +15649,7 @@ standard-Gaussian CDF API and hazard certificate specialized internally, and
 condition (11)--(12) supplied as bundled source rows.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows :=
-  @paper_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows
+    paper_interface_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows := @paper_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows
 
 /--
 Paper Proposition 5(i) preferred school-`J2` zero-fallback bridge: the
@@ -15932,16 +15658,14 @@ condition (11)--(12) is supplied as bundled source rows, and the paper's named
 groups, named schools, and population-share row are fixed internally.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows_paper_groups_schools_with_population_share :=
-  @paper_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows_paper_groups_schools_with_population_share
+    paper_interface_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows_paper_groups_schools_with_population_share := @paper_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_j2_survivor_rows_paper_groups_schools_with_population_share
 
 /--
 Paper Proposition 5(i) school-`J2` zero-fallback bridge with the
 standard-Gaussian CDF API and hazard certificate specialized internally.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_base_survivor_components :=
-  @paper_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_base_survivor_components
+    paper_interface_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_base_survivor_components := @paper_proposition5_standardGaussian_source_family_j2_zero_fallback_school2_objective_bridge_of_base_survivor_components
 
 /--
 Proposition 5(i) / Theorem 3(i) objective bridge from merit crossings and the
@@ -16379,8 +16103,7 @@ The full theorem statement is inherited from
 `paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_capacity_fixed_pool_and_group_merit_formulas`.
 -/
 abbrev
-    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_capacity_fixed_pool_and_group_merit_formulas :=
-  @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_capacity_fixed_pool_and_group_merit_formulas
+    paper_interface_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_capacity_fixed_pool_and_group_merit_formulas := @paper_proposition5_part_i_objective_pair_iff_theorem3_subFull_condition_of_merit_crossings_capacity_fixed_pool_and_group_merit_formulas
 
 /--
 Paper Theorem 3(ii), conditions (13)--(14), for a candidate group.
@@ -16555,8 +16278,7 @@ the low benchmark and the high test-based merit weakly dominates the low
 test-based merit at the candidate cost.
 -/
 abbrev
-    paper_interface_proposition5_high_merit_at_low_root_of_test_free_lt_and_test_based_le :=
-  @paper_proposition5_high_merit_at_low_root_of_test_free_lt_and_test_based_le
+    paper_interface_proposition5_high_merit_at_low_root_of_test_free_lt_and_test_based_le := @paper_proposition5_high_merit_at_low_root_of_test_free_lt_and_test_based_le
 
 /--
 Paper Proposition 5(ii) Gaussian source support: concrete Gaussian
@@ -16564,8 +16286,7 @@ upper-tail-mean formulas, together with scale and threshold ordering, imply
 the direct full-sub low/high merit-order premises.
 -/
 abbrev
-    paper_interface_proposition5_fullSub_ordered_merits_of_gaussian_tail_mean_formulas :=
-  @paper_proposition5_fullSub_ordered_merits_of_gaussian_tail_mean_formulas
+    paper_interface_proposition5_fullSub_ordered_merits_of_gaussian_tail_mean_formulas := @paper_proposition5_fullSub_ordered_merits_of_gaussian_tail_mean_formulas
 
 /--
 Paper Proposition 5(ii) source-family support: the full-sub low/high
@@ -16573,8 +16294,7 @@ ordered-merit premises follow from posterior-mean source families, upper-tail
 mean formula identities, and prior/precision/threshold comparisons.
 -/
 abbrev
-    paper_interface_proposition5_fullSub_ordered_merits_of_posterior_mean_scale_families :=
-  @paper_proposition5_fullSub_ordered_merits_of_posterior_mean_scale_families
+    paper_interface_proposition5_fullSub_ordered_merits_of_posterior_mean_scale_families := @paper_proposition5_fullSub_ordered_merits_of_posterior_mean_scale_families
 
 /--
 Paper Proposition 5(ii) source-family support: same ordered-merit bridge, but
@@ -16582,8 +16302,7 @@ with low/high test-free merit rows generated directly from the posterior-mean
 source families.
 -/
 abbrev
-    paper_interface_proposition5_fullSub_ordered_merits_of_posterior_mean_source_free_families :=
-  @paper_proposition5_fullSub_ordered_merits_of_posterior_mean_source_free_families
+    paper_interface_proposition5_fullSub_ordered_merits_of_posterior_mean_source_free_families := @paper_proposition5_fullSub_ordered_merits_of_posterior_mean_source_free_families
 
 /--
 Paper Proposition 5(ii) source-family support: same ordered-merit bridge, but
@@ -16591,16 +16310,14 @@ with both low/high test-free rows and cost-indexed based rows generated
 directly from posterior-mean source families.
 -/
 abbrev
-    paper_interface_proposition5_fullSub_ordered_merits_of_posterior_mean_source_free_cost_rows :=
-  @paper_proposition5_fullSub_ordered_merits_of_posterior_mean_source_free_cost_rows
+    paper_interface_proposition5_fullSub_ordered_merits_of_posterior_mean_source_free_cost_rows := @paper_proposition5_fullSub_ordered_merits_of_posterior_mean_source_free_cost_rows
 
 /--
 Paper Proposition 5(ii) source-family support: posterior cost-row ordered
 merits with the standard-Gaussian hazard certificate specialized internally.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_fullSub_ordered_merits_of_posterior_mean_source_free_cost_rows :=
-  @paper_proposition5_standardGaussian_fullSub_ordered_merits_of_posterior_mean_source_free_cost_rows
+    paper_interface_proposition5_standardGaussian_fullSub_ordered_merits_of_posterior_mean_source_free_cost_rows := @paper_proposition5_standardGaussian_fullSub_ordered_merits_of_posterior_mean_source_free_cost_rows
 
 /--
 Paper Proposition 5(ii) source-family support: posterior-mean source families
@@ -16608,8 +16325,7 @@ imply the high-at-low-root premise required by the full-sub threshold and
 objective bridges.
 -/
 abbrev
-    paper_interface_proposition5_high_merit_at_low_root_of_posterior_mean_scale_families :=
-  @paper_proposition5_high_merit_at_low_root_of_posterior_mean_scale_families
+    paper_interface_proposition5_high_merit_at_low_root_of_posterior_mean_scale_families := @paper_proposition5_high_merit_at_low_root_of_posterior_mean_scale_families
 
 /--
 Paper Proposition 5(ii) source-family support: same high-at-low-root bridge,
@@ -16617,8 +16333,7 @@ but with low/high test-free merit rows generated directly from the
 posterior-mean source families.
 -/
 abbrev
-    paper_interface_proposition5_high_merit_at_low_root_of_posterior_mean_source_free_families :=
-  @paper_proposition5_high_merit_at_low_root_of_posterior_mean_source_free_families
+    paper_interface_proposition5_high_merit_at_low_root_of_posterior_mean_source_free_families := @paper_proposition5_high_merit_at_low_root_of_posterior_mean_source_free_families
 
 /--
 Paper Proposition 5(ii) source-family support: same high-at-low-root bridge,
@@ -16626,8 +16341,7 @@ but with both low/high test-free rows and cost-indexed based rows generated
 directly from posterior-mean source families.
 -/
 abbrev
-    paper_interface_proposition5_high_merit_at_low_root_of_posterior_mean_source_free_cost_rows :=
-  @paper_proposition5_high_merit_at_low_root_of_posterior_mean_source_free_cost_rows
+    paper_interface_proposition5_high_merit_at_low_root_of_posterior_mean_source_free_cost_rows := @paper_proposition5_high_merit_at_low_root_of_posterior_mean_source_free_cost_rows
 
 /--
 Paper Proposition 5(ii) source-family support: posterior cost-row
@@ -16635,8 +16349,7 @@ high-at-low-root bridge with the standard-Gaussian hazard certificate
 specialized internally.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_high_merit_at_low_root_of_posterior_mean_source_free_cost_rows :=
-  @paper_proposition5_standardGaussian_high_merit_at_low_root_of_posterior_mean_source_free_cost_rows
+    paper_interface_proposition5_standardGaussian_high_merit_at_low_root_of_posterior_mean_source_free_cost_rows := @paper_proposition5_standardGaussian_high_merit_at_low_root_of_posterior_mean_source_free_cost_rows
 
 /--
 Paper Proposition 5(ii) Gaussian source support: concrete Gaussian
@@ -16644,8 +16357,7 @@ upper-tail-mean formulas imply the high-at-low-root premise required by the
 full-sub threshold construction.
 -/
 abbrev
-    paper_interface_proposition5_high_merit_at_low_root_of_gaussian_tail_mean_formulas :=
-  @paper_proposition5_high_merit_at_low_root_of_gaussian_tail_mean_formulas
+    paper_interface_proposition5_high_merit_at_low_root_of_gaussian_tail_mean_formulas := @paper_proposition5_high_merit_at_low_root_of_gaussian_tail_mean_formulas
 
 /--
 Paper Proposition 5(ii) threshold-ordering support: if the high-threshold
@@ -16739,8 +16451,7 @@ interior cost interval.  This is the source-Gaussian-friendly version of the
 threshold construction, avoiding a fake quantile-domain endpoint at `c = 0`.
 -/
 abbrev
-    paper_interface_proposition5_low_and_high_cost_thresholds_of_merit_crossings_interval :=
-  @paper_proposition5_low_and_high_cost_thresholds_of_merit_crossings_interval
+    paper_interface_proposition5_low_and_high_cost_thresholds_of_merit_crossings_interval := @paper_proposition5_low_and_high_cost_thresholds_of_merit_crossings_interval
 
 /--
 Paper Proposition 5(ii) selected equation-(46) version: derives the low/high
@@ -16748,8 +16459,7 @@ threshold construction after substituting selected full/full zero-payoff
 cutoff functions into the admitted-merit formulas.
 -/
 abbrev
-    paper_interface_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval :=
-  @paper_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval
+    paper_interface_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval := @paper_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval
 
 /--
 Paper Proposition 5(ii) selected equation-(46) threshold construction from
@@ -16757,8 +16467,7 @@ direct high-vs-low merit ordering, avoiding a standalone high-at-low-root
 premise.
 -/
 abbrev
-    paper_interface_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval_of_ordered_merits :=
-  @paper_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval_of_ordered_merits
+    paper_interface_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval_of_ordered_merits := @paper_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval_of_ordered_merits
 
 /--
 Paper Proposition 5(ii) selected equation-(46) threshold construction from
@@ -16766,8 +16475,7 @@ Gaussian upper-tail-mean source formulas, avoiding both raw ordered-merit
 premises and a standalone high-at-low-root premise.
 -/
 abbrev
-    paper_interface_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval_of_gaussian_tail_mean_formulas :=
-  @paper_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval_of_gaussian_tail_mean_formulas
+    paper_interface_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval_of_gaussian_tail_mean_formulas := @paper_proposition5_low_and_high_cost_thresholds_of_selected_twoFull_merit_crossings_interval_of_gaussian_tail_mean_formulas
 
 /--
 Paper Proposition 5(ii), standard-Gaussian equation-(46) version: constructs
@@ -16775,8 +16483,7 @@ the selected full/full zero-payoff cutoff functions and then obtains the
 low/high threshold construction from the source endpoint-crossing hypotheses.
 -/
 abbrev
-    paper_interface_proposition5_low_and_high_cost_thresholds_of_standardGaussian_twoFull_merit_crossings_interval :=
-  @paper_proposition5_low_and_high_cost_thresholds_of_standardGaussian_twoFull_merit_crossings_interval
+    paper_interface_proposition5_low_and_high_cost_thresholds_of_standardGaussian_twoFull_merit_crossings_interval := @paper_proposition5_low_and_high_cost_thresholds_of_standardGaussian_twoFull_merit_crossings_interval
 
 /--
 Paper Proposition 5(ii), school-`J2`: condition (13)'s two cost thresholds
@@ -17374,38 +17081,27 @@ theorem paper_interface_proposition5_condition14_iff_source_fullSub_cutoff_case_
     S policyPair Psub Pfull api priorSigma priorPrecision subPrecisionSum mu
     hpriorSigma_pos hpriorPrecision_pos hsubPrecisionSum_pos hmass
 
-abbrev paper_interface_proposition5_policyState_condition10_iff_cost_and_fullFull_cutoff_case :=
-  @paper_proposition5_policyState_condition10_iff_cost_and_fullFull_cutoff_case
+abbrev paper_interface_proposition5_policyState_condition10_iff_cost_and_fullFull_cutoff_case := @paper_proposition5_policyState_condition10_iff_cost_and_fullFull_cutoff_case
 
-abbrev paper_interface_proposition5_policyStateTable_condition10_iff_cost_and_fullFull_cutoff_case :=
-  @paper_proposition5_policyStateTable_condition10_iff_cost_and_fullFull_cutoff_case
+abbrev paper_interface_proposition5_policyStateTable_condition10_iff_cost_and_fullFull_cutoff_case := @paper_proposition5_policyStateTable_condition10_iff_cost_and_fullFull_cutoff_case
 
-abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_condition10_iff_cost_and_fullFull_cutoff_case :=
-  @paper_proposition5_sourceFamilyPolicyStateTable_condition10_iff_cost_and_fullFull_cutoff_case
+abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_condition10_iff_cost_and_fullFull_cutoff_case := @paper_proposition5_sourceFamilyPolicyStateTable_condition10_iff_cost_and_fullFull_cutoff_case
 
-abbrev paper_interface_proposition5_policyStateTable_subFullCondition_iff_cutoff_component_cases :=
-  @paper_proposition5_policyStateTable_subFullCondition_iff_cutoff_component_cases
+abbrev paper_interface_proposition5_policyStateTable_subFullCondition_iff_cutoff_component_cases := @paper_proposition5_policyStateTable_subFullCondition_iff_cutoff_component_cases
 
-abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_subFullCondition_iff_cutoff_component_cases :=
-  @paper_proposition5_sourceFamilyPolicyStateTable_subFullCondition_iff_cutoff_component_cases
+abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_subFullCondition_iff_cutoff_component_cases := @paper_proposition5_sourceFamilyPolicyStateTable_subFullCondition_iff_cutoff_component_cases
 
-abbrev paper_interface_proposition5_policyState_condition13_iff_cost_and_fullFull_cutoff_case :=
-  @paper_proposition5_policyState_condition13_iff_cost_and_fullFull_cutoff_case
+abbrev paper_interface_proposition5_policyState_condition13_iff_cost_and_fullFull_cutoff_case := @paper_proposition5_policyState_condition13_iff_cost_and_fullFull_cutoff_case
 
-abbrev paper_interface_proposition5_policyStateTable_condition13_iff_cost_and_fullFull_cutoff_case :=
-  @paper_proposition5_policyStateTable_condition13_iff_cost_and_fullFull_cutoff_case
+abbrev paper_interface_proposition5_policyStateTable_condition13_iff_cost_and_fullFull_cutoff_case := @paper_proposition5_policyStateTable_condition13_iff_cost_and_fullFull_cutoff_case
 
-abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_condition13_iff_cost_and_fullFull_cutoff_case :=
-  @paper_proposition5_sourceFamilyPolicyStateTable_condition13_iff_cost_and_fullFull_cutoff_case
+abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_condition13_iff_cost_and_fullFull_cutoff_case := @paper_proposition5_sourceFamilyPolicyStateTable_condition13_iff_cost_and_fullFull_cutoff_case
 
-abbrev paper_interface_proposition5_policyState_condition14_iff_fullSub_cutoff_case_or_low_cost :=
-  @paper_proposition5_policyState_condition14_iff_fullSub_cutoff_case_or_low_cost
+abbrev paper_interface_proposition5_policyState_condition14_iff_fullSub_cutoff_case_or_low_cost := @paper_proposition5_policyState_condition14_iff_fullSub_cutoff_case_or_low_cost
 
-abbrev paper_interface_proposition5_policyStateTable_condition14_iff_fullSub_cutoff_case_or_low_cost :=
-  @paper_proposition5_policyStateTable_condition14_iff_fullSub_cutoff_case_or_low_cost
+abbrev paper_interface_proposition5_policyStateTable_condition14_iff_fullSub_cutoff_case_or_low_cost := @paper_proposition5_policyStateTable_condition14_iff_fullSub_cutoff_case_or_low_cost
 
-abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_condition14_iff_fullSub_cutoff_case_or_low_cost :=
-  @paper_proposition5_sourceFamilyPolicyStateTable_condition14_iff_fullSub_cutoff_case_or_low_cost
+abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_condition14_iff_fullSub_cutoff_case_or_low_cost := @paper_proposition5_sourceFamilyPolicyStateTable_condition14_iff_fullSub_cutoff_case_or_low_cost
 
 /--
 Paper Proposition 5(ii) support: a school-`J1` cutoff-case/low-cost objective
@@ -17551,8 +17247,7 @@ threshold.  This is the reusable bridge used when the same high threshold must
 be shared with the condition-(13) lower/high-threshold construction.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas_at_threshold :=
-  @paper_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas_at_threshold
+    paper_interface_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas_at_threshold := @paper_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas_at_threshold
 
 /--
 Paper Proposition 5(ii), condition (14), with school-`J1`'s weighted objective
@@ -17562,8 +17257,7 @@ The full inferred statement is
 `paper_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas`.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas :=
-  @paper_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas
+    paper_interface_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas := @paper_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas
 
 /-- Paper Theorem 3(ii), combined conditions (13)--(14), for a candidate group. -/
 abbrev paperTheorem3FullSubGroupCondition
@@ -17576,20 +17270,15 @@ abbrev paperTheorem3FullSubGroupCondition
   glm20Theorem3FullSubGroupCondition S policyPair Psub Pfull testCost
     lowCostThreshold highCostThreshold q1Sub q2Sub K g
 
-abbrev paper_interface_proposition5_policyState_fullSubGroupCondition_iff_cutoff_cases :=
-  @paper_proposition5_policyState_fullSubGroupCondition_iff_cutoff_cases
+abbrev paper_interface_proposition5_policyState_fullSubGroupCondition_iff_cutoff_cases := @paper_proposition5_policyState_fullSubGroupCondition_iff_cutoff_cases
 
-abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_fullSubGroupCondition_iff_cutoff_cases :=
-  @paper_proposition5_sourceFamilyPolicyStateTable_fullSubGroupCondition_iff_cutoff_cases
+abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_fullSubGroupCondition_iff_cutoff_cases := @paper_proposition5_sourceFamilyPolicyStateTable_fullSubGroupCondition_iff_cutoff_cases
 
-abbrev paper_interface_proposition5_policyState_fullSubCondition_iff_cutoff_cases :=
-  @paper_proposition5_policyState_fullSubCondition_iff_cutoff_cases
+abbrev paper_interface_proposition5_policyState_fullSubCondition_iff_cutoff_cases := @paper_proposition5_policyState_fullSubCondition_iff_cutoff_cases
 
-abbrev paper_interface_proposition5_policyStateTable_fullSubCondition_iff_cutoff_component_cases :=
-  @paper_proposition5_policyStateTable_fullSubCondition_iff_cutoff_component_cases
+abbrev paper_interface_proposition5_policyStateTable_fullSubCondition_iff_cutoff_component_cases := @paper_proposition5_policyStateTable_fullSubCondition_iff_cutoff_component_cases
 
-abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_fullSubCondition_iff_cutoff_component_cases :=
-  @paper_proposition5_sourceFamilyPolicyStateTable_fullSubCondition_iff_cutoff_component_cases
+abbrev paper_interface_proposition5_sourceFamilyPolicyStateTable_fullSubCondition_iff_cutoff_component_cases := @paper_proposition5_sourceFamilyPolicyStateTable_fullSubCondition_iff_cutoff_component_cases
 
 /--
 Paper Theorem 3(ii) condition for `(P_full, P_sub)`, matching inequalities
@@ -17627,8 +17316,7 @@ theorem paper_interface_theorem3_fullSub_condition_iff_groupA_or_groupB
       (paperTheorem3FullSubGroupCondition S policyPair Psub Pfull testCost
           lowCostThreshold highCostThreshold q1Sub q2Sub K groupB ∧
         ¬ paperTheorem3FullSubGroupCondition S policyPair Psub Pfull
-          testCost lowCostThreshold highCostThreshold q1Sub q2Sub K groupA) :=
-  glm20Theorem3FullSubCondition_iff_groupA_or_groupB
+          testCost lowCostThreshold highCostThreshold q1Sub q2Sub K groupA) := glm20Theorem3FullSubCondition_iff_groupA_or_groupB
 
 /--
 Proposition 5(ii) / Theorem 3(ii) objective bridge.
@@ -17679,8 +17367,7 @@ equilibrium predicate explicitly includes feasibility of `(P_full,P_sub)` and
 of the two unilateral deviations used by the full-sub equilibrium check.
 -/
 abbrev
-    paper_interface_theorem3_fullSub_condition_of_feasible_weighted_surface_objective_bridge :=
-  @paper_theorem3_fullSub_condition_of_feasible_weighted_surface_objective_bridge
+    paper_interface_theorem3_fullSub_condition_of_feasible_weighted_surface_objective_bridge := @paper_theorem3_fullSub_condition_of_feasible_weighted_surface_objective_bridge
 
 /--
 Paper Theorem 3(ii), feasibility-aware cost-threshold endpoint.
@@ -17690,8 +17377,7 @@ weighted binary surface, so the final statement is an equilibrium iff the
 paper's condition (13)--(14) holds.
 -/
 abbrev
-    paper_interface_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_weighted_group_merit_formulas :=
-  @paper_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_weighted_group_merit_formulas
+    paper_interface_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_weighted_group_merit_formulas := @paper_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_weighted_group_merit_formulas
 
 /--
 Paper Theorem 3(ii), feasibility-aware positive-interval cost endpoint.
@@ -17701,8 +17387,7 @@ cost-threshold theorem, where the merit-crossing and continuity hypotheses
 live on `Set.Icc (leftCost g) (rightCost g)` with `0 < leftCost g`.
 -/
 abbrev
-    paper_interface_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas :=
-  @paper_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
+    paper_interface_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas := @paper_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
 
 /--
 Proposition 5(ii) / Theorem 3(ii) objective bridge from merit crossings.
@@ -17828,8 +17513,7 @@ the closed-interval wrapper, but with endpoint assumptions suitable for the
 source Gaussian inverse-CDF formulas.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii), selected equation-(46) source form:
@@ -17837,8 +17521,7 @@ the low/high full-sub merit crossings are proved after substituting selected
 full/full zero-payoff cutoff functions.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii), selected equation-(46) source form
@@ -17846,8 +17529,7 @@ with the capacity-fill contradiction deriving the impossible both-groups
 condition-(13) branch.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_and_capacity :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_and_capacity
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_and_capacity := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_and_capacity
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii), standard-Gaussian equation-(46)
@@ -17855,16 +17537,14 @@ source form with capacity fill: constructs the low/high full/full zero-payoff
 cutoffs before deriving the full-sub objective condition.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_standardGaussian_twoFull_merit_crossings_interval_and_capacity :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_standardGaussian_twoFull_merit_crossings_interval_and_capacity
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_standardGaussian_twoFull_merit_crossings_interval_and_capacity := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_standardGaussian_twoFull_merit_crossings_interval_and_capacity
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) interval objective bridge with the
 capacity-fill contradiction discharging the both-groups branch.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_and_capacity :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_and_capacity
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_and_capacity := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_and_capacity
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) interval objective bridge with
@@ -17872,16 +17552,14 @@ capacity fill and fixed-pool academic-merit comparison.  This is the
 source-Gaussian-friendly analogue of the closed-interval fixed-pool wrapper.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_and_fixed_pool_merit :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_and_fixed_pool_merit
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_and_fixed_pool_merit := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_and_fixed_pool_merit
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) interval objective bridge with
 capacity, fixed-pool merit, and group-level admitted-merit formulas.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) interval bridge with capacity,
@@ -17889,8 +17567,7 @@ fixed-pool merit, weighted group formulas, and selected equation-(46)
 full/full zero-payoff cutoff functions.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) selected equation-(46) interval bridge
@@ -17898,8 +17575,7 @@ with capacity, fixed-pool merit, weighted group formulas, and Gaussian
 tail-mean derivation of the full-sub high-at-low-root premise.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_gaussian_tail_mean_formulas :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_gaussian_tail_mean_formulas
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_gaussian_tail_mean_formulas := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_gaussian_tail_mean_formulas
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) selected equation-(46) interval bridge
@@ -17907,8 +17583,7 @@ with capacity, fixed-pool merit, weighted group formulas, and posterior-mean
 source-family derivation of the full-sub high-at-low-root premise.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_scale_families :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_scale_families
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_scale_families := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_scale_families
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) selected equation-(46) interval bridge
@@ -17916,8 +17591,7 @@ with capacity, fixed-pool merit, weighted group formulas, and posterior-mean
 source-family full-sub rows, generating the low/high test-free rows internally.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_families :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_families
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_families := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_selected_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_families
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) interval bridge with capacity,
@@ -17926,8 +17600,7 @@ generated directly from source families for both test-free and cost-indexed
 based rows.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_cost_rows :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_cost_rows
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_cost_rows := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_cost_rows
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) posterior cost-row interval bridge
@@ -17935,8 +17608,7 @@ with the standard-Gaussian CDF API and hazard certificate specialized
 internally.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_cost_rows :=
-  @paper_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_cost_rows
+    paper_interface_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_cost_rows := @paper_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_posterior_mean_source_free_cost_rows
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) posterior cost-row interval bridge
@@ -17944,8 +17616,7 @@ with standard-Gaussian internals and fixed-law low/high cost-row regularity
 discharged from continuous, strictly antitone threshold maps.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows :=
-  @paper_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows
+    paper_interface_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows := @paper_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) posterior cost-row interval bridge
@@ -17954,8 +17625,7 @@ endpoint merit crossings all discharged from fixed posterior laws plus
 threshold-order comparisons.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_threshold_order_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows :=
-  @paper_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_threshold_order_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows
+    paper_interface_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_threshold_order_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows := @paper_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_threshold_order_interval_capacity_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) posterior cost-row interval bridge
@@ -17963,8 +17633,7 @@ with fixed-law regularity, threshold-order endpoint crossings, and the
 full/full capacity/fill side bundled as `GLM20Theorem3CapacityCutoffRows`.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_threshold_order_interval_capacity_cutoff_rows_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows :=
-  @paper_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_threshold_order_interval_capacity_cutoff_rows_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows
+    paper_interface_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_threshold_order_interval_capacity_cutoff_rows_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows := @paper_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_threshold_order_interval_capacity_cutoff_rows_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) compact posterior cost-row interval
@@ -17972,8 +17641,7 @@ bridge with fixed-law regularity, full/sub affine threshold rows, and the
 full/full capacity/fill side bundled as `GLM20Theorem3CapacityCutoffRows`.
 -/
 abbrev
-    paper_interface_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_affine_threshold_rows_interval_capacity_cutoff_rows_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows :=
-  @paper_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_affine_threshold_rows_interval_capacity_cutoff_rows_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows
+    paper_interface_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_affine_threshold_rows_interval_capacity_cutoff_rows_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows := @paper_proposition5_standardGaussian_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_affine_threshold_rows_interval_capacity_cutoff_rows_fixed_pool_and_weighted_group_merit_formulas_of_fixed_law_posterior_mean_source_free_cost_rows
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) interval bridge with capacity,
@@ -17981,8 +17649,7 @@ fixed-pool merit, weighted group formulas, and standard-Gaussian construction
 of the equation-(46) full/full zero-payoff cutoff functions.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_standardGaussian_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_standardGaussian_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_standardGaussian_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_standardGaussian_twoFull_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
 
 /--
 Paper Theorem 3 / Proposition 5 source-merit regularity package: equation-(50)
@@ -17990,32 +17657,28 @@ sub-full merit and selected equation-(46) low/high full-sub merit are
 continuous and strictly decreasing in cost on their source intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_cost_merit_regularities_of_equation50_and_selected_twoFull :=
-  @paper_theorem3_source_cost_merit_regularities_of_equation50_and_selected_twoFull
+    paper_interface_theorem3_source_cost_merit_regularities_of_equation50_and_selected_twoFull := @paper_theorem3_source_cost_merit_regularities_of_equation50_and_selected_twoFull
 
 /--
 Paper Theorem 3 / Proposition 5 source-merit regularity package with the
 standard-Gaussian equation-(46) full/full cutoffs constructed internally.
 -/
 abbrev
-    paper_interface_theorem3_source_cost_merit_regularities_of_equation50_and_standardGaussian_twoFull :=
-  @paper_theorem3_source_cost_merit_regularities_of_equation50_and_standardGaussian_twoFull
+    paper_interface_theorem3_source_cost_merit_regularities_of_equation50_and_standardGaussian_twoFull := @paper_theorem3_source_cost_merit_regularities_of_equation50_and_standardGaussian_twoFull
 
 /--
 Paper Proposition 5(ii), school-`J1`: interval version of the weighted
 condition-(14) cutoff bridge at an already constructed high threshold.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas_at_threshold_interval :=
-  @paper_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas_at_threshold_interval
+    paper_interface_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas_at_threshold_interval := @paper_proposition5_part_ii_school1_weighted_objective_cutoff_bridges_of_group_merit_formulas_at_threshold_interval
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) interval objective bridge with both
 schools' weighted objectives and group-level admitted-merit formulas.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
 
 /--
 Proposition 5(ii) / Theorem 3(ii) objective bridge from merit crossings and
@@ -18302,8 +17965,7 @@ The full theorem statement is inherited from
 `paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_capacity_fixed_pool_and_group_merit_formulas`.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_capacity_fixed_pool_and_group_merit_formulas :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_capacity_fixed_pool_and_group_merit_formulas
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_capacity_fixed_pool_and_group_merit_formulas := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_capacity_fixed_pool_and_group_merit_formulas
 
 /--
 Paper Proposition 5(ii) / Theorem 3(ii) objective bridge with both schools'
@@ -18314,8 +17976,7 @@ The full inferred statement is
 `paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_capacity_fixed_pool_and_weighted_group_merit_formulas`.
 -/
 abbrev
-    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_capacity_fixed_pool_and_weighted_group_merit_formulas :=
-  @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_capacity_fixed_pool_and_weighted_group_merit_formulas
+    paper_interface_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_capacity_fixed_pool_and_weighted_group_merit_formulas := @paper_proposition5_part_ii_objective_pair_iff_theorem3_fullSub_condition_of_merit_crossings_capacity_fixed_pool_and_weighted_group_merit_formulas
 
 /--
 Paper Theorem 3 source-shaped endpoint from Proposition 5's monotone
@@ -19439,8 +19100,7 @@ on the paper-facing surface.  It removes the four abstract weighted-objective
 iff premises from the preceding endpoint.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_group_merit_formulas :=
-  @paper_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_group_merit_formulas
+    paper_interface_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_group_merit_formulas := @paper_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_group_merit_formulas
 
 /--
 Paper Theorem 3 weighted-objective endpoint with fixed-pool branches proved
@@ -19454,8 +19114,7 @@ the school-`J1` condition-(14) high-branch whole-objective equality premises and
 keeps condition (12) as the paper's strict merit comparison.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_weighted_group_merit_formulas :=
-  @paper_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_weighted_group_merit_formulas
+    paper_interface_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_weighted_group_merit_formulas := @paper_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_weighted_group_merit_formulas
 
 /--
 Paper Theorem 3 weighted-objective source endpoint with Theorem 2 fixed-pool
@@ -19463,8 +19122,7 @@ comparisons discharged and both Proposition 5 threshold constructions stated
 on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_proposition5_merit_crossings_weighted_objectives_capacity_and_theorem2_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 strongest current weighted-binary-surface endpoint.
@@ -19475,16 +19133,14 @@ paper-facing statement no longer asks the reviewer to assume the binary
 best-response interpretation of `policyPairIsEquilibrium`.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_theorem2_fixed_pool_weighted_group_merit_formulas :=
-  @paper_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_theorem2_fixed_pool_weighted_group_merit_formulas
+    paper_interface_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_theorem2_fixed_pool_weighted_group_merit_formulas := @paper_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_theorem2_fixed_pool_weighted_group_merit_formulas
 
 /--
 Paper Theorem 3 weighted-binary-surface endpoint with both Proposition 5
 threshold constructions stated on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_theorem2_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_theorem2_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_theorem2_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_theorem2_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 strongest current weighted-binary-surface endpoint from
@@ -19496,8 +19152,7 @@ means/variances and the strict total-precision increase from the dropped-test
 feature set to the full feature set.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_source_families_fixed_pool_weighted_group_merit_formulas :=
-  @paper_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_source_families_fixed_pool_weighted_group_merit_formulas
+    paper_interface_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_source_families_fixed_pool_weighted_group_merit_formulas := @paper_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_source_families_fixed_pool_weighted_group_merit_formulas
 
 /--
 Paper Theorem 3 weighted-binary-surface source-family endpoint with Theorem 2
@@ -19505,8 +19160,7 @@ fixed-pool comparisons discharged and both Proposition 5 threshold
 constructions stated on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_proposition5_weighted_binary_surface_capacity_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 source-family endpoint on the concrete two-school policy-state
@@ -19515,8 +19169,7 @@ best-response surface, the source `P_sub/P_full` pair-state map, and the
 full/full and full/sub `K_g` mass formulas are all discharged by construction.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas :=
-  @paper_theorem3_source_conditions_of_proposition5_policy_state_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas
+    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas := @paper_theorem3_source_conditions_of_proposition5_policy_state_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas
 
 /--
 Paper Theorem 3 source-family endpoint on the concrete policy-state surface,
@@ -19524,8 +19177,7 @@ with cutoff masses wired to the displayed `K_g` formulas and both Proposition
 5 threshold constructions stated on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_proposition5_policy_state_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_proposition5_policy_state_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 source-family endpoint on the concrete policy-state table
@@ -19535,8 +19187,7 @@ mass is the paper's `M_g(P)` policy-state table, admitted merit is the four
 directly on those table entries.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas :=
-  @paper_theorem3_source_conditions_of_proposition5_policy_state_table_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas
+    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas := @paper_theorem3_source_conditions_of_proposition5_policy_state_table_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas
 
 /--
 Paper Theorem 3 source-family endpoint on the concrete policy-state table
@@ -19544,8 +19195,7 @@ surface, with cutoff masses wired to `K_g` and both Proposition 5 threshold
 constructions stated on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_proposition5_policy_state_table_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_proposition5_policy_state_table_cutoff_mass_source_families_fixed_pool_weighted_group_merit_formulas_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 source-family endpoint on a concrete policy-state table whose
@@ -19554,8 +19204,7 @@ families.  This is the same route as the preceding endpoint, but the four
 fixed-pool merit-identification premises are discharged by construction.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits :=
-  @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits
+    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits := @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits
 
 /--
 Paper Theorem 3 policy-state-table endpoint with generated fixed-pool merit
@@ -19563,8 +19212,7 @@ rows and both Proposition 5 threshold constructions stated on positive
 interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 source-family policy-state-table endpoint with fixed-pool
@@ -19572,8 +19220,7 @@ merit rows generated from source Gaussian families and full/full fill
 assumptions stated in `K_g(q)` notation.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill :=
-  @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill
+    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill := @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill
 
 /--
 Paper Theorem 3 source-family policy-state-table endpoint with school-`J2`
@@ -19582,8 +19229,7 @@ condition (12) stated on the paper component tables: zero expanding-group
 strict surviving-group weighted-merit comparison.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill :=
-  @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill
+    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill := @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill
 
 /--
 Paper Theorem 3 Proposition-5 policy-state-table interval endpoint with
@@ -19591,8 +19237,7 @@ school-`J2` condition (12) stated on source component tables and full/full
 fill assumptions stated in `K_g(q)` notation.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 Proposition-5 policy-state-table interval endpoint with the
@@ -19601,8 +19246,7 @@ remaining condition-(12) premises are survivor mass and strict survivor merit,
 stated on the paper's base component row.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian policy-state-table endpoint with fixed-pool
@@ -19612,8 +19256,7 @@ source-family endpoint to the mathlib-backed standard-normal CDF and hazard
 certificate.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill :=
-  @paper_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill
+    paper_interface_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill := @paper_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill
 
 /--
 Paper Theorem 3 standard-Gaussian policy-state-table endpoint with school-`J2`
@@ -19623,8 +19266,7 @@ fixed-pool merit rows are discharged by construction, while the condition-(12)
 survival test is visible in the paper's `L_2` and `M` table notation.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill :=
-  @paper_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill
+    paper_interface_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill := @paper_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill
 
 /--
 Paper Theorem 3 source-shaped endpoint over the paper's weighted
@@ -19915,8 +19557,7 @@ abbrev paperTheorem3FullFullCondition
     {Group Policy School Equilibrium : Type*}
     (S : GLM20StrategicPolicySurface Group Policy School Equilibrium)
     (Pfull : Policy) (groupA groupB : Group)
-    (testCost : Group → ℝ) : Prop :=
-  glm20Theorem3FullFullCondition S Pfull groupA groupB testCost
+    (testCost : Group → ℝ) : Prop := glm20Theorem3FullFullCondition S Pfull groupA groupB testCost
 
 /--
 Paper Theorem 3(iii), cost-family version: the boundary functions characterize
@@ -19924,8 +19565,7 @@ the full/full equilibrium region for every positive pair of group costs.
 -/
 abbrev paperTheorem3FullFullCostFamilyCondition
     {Group : Type*} (groupA groupB : Group)
-    (equilibriumAtCost : (Group → ℝ) → Prop) : Prop :=
-  glm20Theorem3FullFullCostFamilyCondition groupA groupB equilibriumAtCost
+    (equilibriumAtCost : (Group → ℝ) → Prop) : Prop := glm20Theorem3FullFullCostFamilyCondition groupA groupB equilibriumAtCost
 
 /--
 Paper Theorem 3(iii) source-proof composition: if each school has a two-sided
@@ -20225,8 +19865,7 @@ theorem
     paperProposition5StrategicAcademicMeritSourceConditions S policyPair Psub
       Pfull J2 groupA groupB populationShare testCost subFullCostThreshold
       fullSubLowCostThreshold fullSubHighCostThreshold capacity2 q1Sub q2Sub K
-      objective1 objective2 := by
-  exact ⟨hsubFullObjective, hfullSubObjective, hfullFull⟩
+      objective1 objective2 :=  ⟨hsubFullObjective, hfullSubObjective, hfullFull⟩
 
 /--
 Existential Proposition 5 source surface from already-verified objective
@@ -20297,8 +19936,7 @@ theorem
     (hcostA : 0 < testCost groupA) (hcostB : 0 < testCost groupB) :
     paperProposition5StrategicAcademicMeritSourceConditionsExists S
       policyPair Psub Pfull J2 groupA groupB populationShare testCost
-      capacity2 q1Sub q2Sub K objective1 objective2 := by
-  exact
+      capacity2 q1Sub q2Sub K objective1 objective2 :=
     paper_interface_proposition5_strategic_academic_merit_source_conditions_exists_of_objective_bridges
       hsubFullObjective hfullSubObjective
       (paper_theorem3_fullFull_condition_exists_boundary_functions_of_positive_costs
@@ -20523,8 +20161,7 @@ theorem
     (hcostA : 0 < testCost groupA) (hcostB : 0 < testCost groupB) :
     paperProposition5StrategicAcademicMeritSourceConditionsExists S
       policyPair Psub Pfull J2 groupA groupB populationShare testCost
-      capacity2 q1Sub q2Sub K objective1 objective2 := by
-  exact
+      capacity2 q1Sub q2Sub K objective1 objective2 :=
     paper_interface_proposition5_strategic_academic_merit_source_conditions_exists_of_objective_bridges
       hsubFullObjective hfullSubObjective
       (paper_theorem3_fullFull_condition_of_cost_family_condition hfamily
@@ -20756,8 +20393,7 @@ theorem
     paperProposition5StrategicAcademicMeritSourceConditions S policyPair Psub
       Pfull J2 groupA groupB populationShare testCost subFullCostThreshold
       fullSubLowCostThreshold fullSubHighCostThreshold capacity2 q1Sub q2Sub K
-      objective1 objective2 := by
-  exact
+      objective1 objective2 :=
     ⟨hsubFullObjective, hfullSubObjective,
       paper_theorem3_fullFull_condition_exists_boundary_functions_of_positive_costs
         S Pfull groupA groupB testCost hcostA hcostB⟩
@@ -20799,8 +20435,7 @@ theorem
     paperProposition5StrategicAcademicMeritSourceConditions S policyPair Psub
       Pfull J2 groupA groupB populationShare testCost subFullCostThreshold
       fullSubLowCostThreshold fullSubHighCostThreshold capacity2 q1Sub q2Sub K
-      objective1 objective2 := by
-  exact
+      objective1 objective2 :=
     ⟨hsubFullObjective, hfullSubObjective,
       paper_theorem3_fullFull_condition_of_cost_family_condition hfamily
         hfixed hcostA hcostB⟩
@@ -21577,8 +21212,7 @@ theorem
     paperTheorem3PolicyStateSubFullJ2MassFeasible subFullMass groupA groupB
       testCost costThreshold fullFullCutoff capacity2 q1Sub
       GLM20StrategicPolicyState.singleSub
-      GLM20StrategicPolicyState.singleFull := by
-  exact ⟨fun _ => hrows.1, fun _ => hrows.2.2.1⟩
+      GLM20StrategicPolicyState.singleFull :=  ⟨fun _ => hrows.1, fun _ => hrows.2.2.1⟩
 
 /--
 The base policy-state school-`J2` keep-test pair supplies the concrete
@@ -22324,8 +21958,7 @@ theorem paper_interface_theorem3_two_school_academic_merit_source_conditions
         paperTheorem3FullSubCondition S policyPair Psub Pfull groupA groupB
           testCost fullSubLowCostThreshold fullSubHighCostThreshold
           q1Sub q2Sub K) ∧
-        paperTheorem3FullFullCondition S Pfull groupA groupB testCost :=
-  paper_theorem3_two_school_academic_merit_source_conditions C
+        paperTheorem3FullFullCondition S Pfull groupA groupB testCost := paper_theorem3_two_school_academic_merit_source_conditions C
 
 /--
 Paper Theorem 3 source-shaped endpoint with part (iii) supplied by positive
@@ -22372,24 +22005,21 @@ parts (i) and (ii).
 This wrapper packages the generated sub-full and full-sub thresholds into the
 paper-facing combined Theorem 3 statement.
 -/
-abbrev paper_interface_theorem3_source_conditions_of_threshold_equilibrium_endpoints :=
-  @paper_theorem3_source_conditions_of_threshold_equilibrium_endpoints
+abbrev paper_interface_theorem3_source_conditions_of_threshold_equilibrium_endpoints := @paper_theorem3_source_conditions_of_threshold_equilibrium_endpoints
 
 /--
 Paper Theorem 3 combined source endpoint with the full-sub thresholds stated
 on a positive interior cost interval.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_threshold_equilibrium_endpoints_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_threshold_equilibrium_endpoints_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_threshold_equilibrium_endpoints_fullSub_interval := @paper_theorem3_source_conditions_of_threshold_equilibrium_endpoints_fullSub_interval
 
 /--
 Paper Theorem 3 combined source endpoint with both the sub-full and full-sub
 thresholds stated on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_threshold_equilibrium_endpoints_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_threshold_equilibrium_endpoints_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_threshold_equilibrium_endpoints_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_threshold_equilibrium_endpoints_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 source-shaped endpoint from completed threshold endpoints,
@@ -22397,24 +22027,21 @@ with part (iii) supplied by the source proof's full/full cost-family boundary
 condition.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_threshold_equilibrium_endpoints_of_fullFull_cost_family :=
-  @paper_theorem3_source_conditions_of_threshold_equilibrium_endpoints_of_fullFull_cost_family
+    paper_interface_theorem3_source_conditions_of_threshold_equilibrium_endpoints_of_fullFull_cost_family := @paper_theorem3_source_conditions_of_threshold_equilibrium_endpoints_of_fullFull_cost_family
 
 /--
 Paper Theorem 3 source-shaped endpoint over the feasibility-aware weighted
 binary surface, with fixed-pool merit comparisons supplied as premises.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas := @paper_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas
 
 /--
 Paper Theorem 3 source endpoint over the feasibility-aware weighted surface,
 with the full-sub branch stated on a positive interior cost interval.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas_fullSub_interval
 
 /--
 Paper Theorem 3 source endpoint over the feasibility-aware weighted surface,
@@ -22422,24 +22049,21 @@ with both the sub-full and full-sub branches on positive interior cost
 intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_merit_formulas_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 source-shaped endpoint over the concrete feasibility-aware
 weighted binary surface.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas := @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas
 
 /--
 Paper Theorem 3 source endpoint over the concrete feasibility-aware weighted
 binary surface, with the full-sub branch on a positive interior cost interval.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas_fullSub_interval
 
 /--
 Paper Theorem 3 source endpoint over the concrete feasibility-aware weighted
@@ -22447,8 +22071,7 @@ binary surface, with both the sub-full and full-sub branches on positive
 interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_fixed_pool_merit_formulas_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 source-shaped endpoint over the feasibility-aware weighted
@@ -22456,8 +22079,7 @@ binary surface, with fixed-pool comparisons proved from Theorem 2 Gaussian
 tail-mean data.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas := @paper_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas
 
 /--
 Paper Theorem 3 source endpoint over the feasibility-aware weighted surface,
@@ -22465,8 +22087,7 @@ with fixed-pool comparisons proved from Theorem 2 Gaussian tail-mean data and
 the full-sub branch on a positive interior cost interval.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_weighted_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas_fullSub_interval
 
 /--
 Paper Theorem 3 source-shaped endpoint over the concrete feasibility-aware
@@ -22474,8 +22095,7 @@ weighted binary surface, with fixed-pool comparisons proved from Theorem 2
 Gaussian tail-mean data.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas := @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas
 
 /--
 Paper Theorem 3 source endpoint over the concrete feasibility-aware weighted
@@ -22483,8 +22103,7 @@ binary surface, with fixed-pool comparisons proved from Theorem 2 Gaussian
 tail-mean data and the full-sub branch on a positive interior cost interval.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_and_theorem2_fixed_pool_merit_formulas_fullSub_interval
 
 /--
 Paper Theorem 3 source-family endpoint over the concrete feasibility-aware
@@ -22493,8 +22112,7 @@ Gaussian source families and the full-sub branch on a positive interior cost
 interval.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_source_families_fixed_pool_merit_formulas_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_source_families_fixed_pool_merit_formulas_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_source_families_fixed_pool_merit_formulas_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_source_families_fixed_pool_merit_formulas_fullSub_interval
 
 /--
 Paper Theorem 3 source-family endpoint over the concrete feasibility-aware
@@ -22502,8 +22120,7 @@ weighted binary surface, with fixed-pool comparisons discharged from Gaussian
 source families and both branches on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_weighted_binary_surface_merit_crossings_capacity_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 source-family endpoint on the concrete policy-state surface,
@@ -22511,8 +22128,7 @@ with cutoff masses wired to the displayed `K_g` formulas and the full-sub
 branch on a positive interior cost interval.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_cutoff_mass_source_families_fixed_pool_merit_formulas_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_cutoff_mass_source_families_fixed_pool_merit_formulas_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_cutoff_mass_source_families_fixed_pool_merit_formulas_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_policy_state_cutoff_mass_source_families_fixed_pool_merit_formulas_fullSub_interval
 
 /--
 Paper Theorem 3 source-family endpoint on the concrete feasibility-aware
@@ -22520,8 +22136,7 @@ policy-state surface, with cutoff masses wired to the displayed `K_g` formulas
 and both branches on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_cutoff_mass_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_cutoff_mass_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_cutoff_mass_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_policy_state_cutoff_mass_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 source-family endpoint on a concrete policy-state merit table,
@@ -22529,8 +22144,7 @@ with cutoff masses wired to the displayed `K_g` formulas and the full-sub
 branch on a positive interior cost interval.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_cutoff_mass_source_families_fixed_pool_merit_formulas_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_cutoff_mass_source_families_fixed_pool_merit_formulas_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_cutoff_mass_source_families_fixed_pool_merit_formulas_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_policy_state_table_cutoff_mass_source_families_fixed_pool_merit_formulas_fullSub_interval
 
 /--
 Paper Theorem 3 source-family endpoint on a concrete feasibility-aware
@@ -22538,8 +22152,7 @@ policy-state merit table, with cutoff masses wired to `K_g` and both branches
 on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_cutoff_mass_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_cutoff_mass_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_cutoff_mass_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_policy_state_table_cutoff_mass_source_families_fixed_pool_merit_formulas_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 policy-state-table endpoint with fixed-pool admitted-merit
@@ -22547,16 +22160,14 @@ rows generated directly from Gaussian source families and the full-sub branch
 on a positive interior cost interval.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_fullSub_interval
 
 /--
 Paper Theorem 3 policy-state-table endpoint with generated fixed-pool merit
 rows and both branches on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 feasibility-aware policy-state-table endpoint with generated
@@ -22565,8 +22176,7 @@ fixed-pool merit rows, full/full capacity fill stated in the displayed
 interval.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_fullSub_interval
 
 /--
 Paper Theorem 3 feasibility-aware policy-state-table endpoint with generated
@@ -22574,8 +22184,7 @@ fixed-pool merit rows, full/full capacity fill stated in the displayed
 `K_g(q_i^*)` notation, and both branches on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian specialization of the feasibility-aware
@@ -22583,8 +22192,7 @@ policy-state-table endpoint with generated fixed-pool merit rows and the
 full-sub branch on a positive interior cost interval.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_fullSub_interval :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_fullSub_interval
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_fullSub_interval := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian specialization of the feasibility-aware
@@ -22592,8 +22200,7 @@ policy-state-table endpoint with generated fixed-pool merit rows and both
 branches on positive interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian specialization of the feasibility-aware
@@ -22602,8 +22209,7 @@ capacity fill stated in `K_g(q_i^*)` notation, and the full-sub branch on a
 positive interior cost interval.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_fullSub_interval :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_fullSub_interval
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_fullSub_interval := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian specialization of the feasibility-aware
@@ -22612,8 +22218,7 @@ capacity fill stated in `K_g(q_i^*)` notation, and both branches on positive
 interior cost intervals.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian feasibility-aware policy-state-table endpoint
@@ -22621,8 +22226,7 @@ with cost-merit regularity discharged from equation (50) and the selected
 equation (46) full/full cutoff functions.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_of_equation50_and_selected_twoFull_subFull_fullSub_interval :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_of_equation50_and_selected_twoFull_subFull_fullSub_interval
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_of_equation50_and_selected_twoFull_subFull_fullSub_interval := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_of_equation50_and_selected_twoFull_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian feasibility-aware endpoint with
@@ -22630,8 +22234,7 @@ equation-(50) sub-full regularity and equation-(46) low/high full/full cutoffs
 constructed internally before invoking the selected-cutoff endpoint.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 feasibility-aware interval endpoint with the school-`J2`
@@ -22639,8 +22242,7 @@ zero and strict-survival conditions stated on the source component tables.
 The source mass-fill side is carried by the `feasible2` hypothesis.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_fullSub_interval
 
 /--
 Paper Theorem 3 feasibility-aware interval endpoint with school-`J2` zero
@@ -22648,8 +22250,7 @@ and strict-survival conditions stated on the source component tables, using
 positive interior intervals for both threshold constructions.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 feasibility-aware interval endpoint with the school-`J2`
@@ -22659,16 +22260,14 @@ premises are the two strict survivor-merit comparisons on the paper's base
 component row.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian feasibility-aware interval endpoint with
 school-`J2` condition-(12) premises stated on source component tables.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian feasibility-aware component-table endpoint
@@ -22676,8 +22275,7 @@ with equation-(50) sub-full regularity and equation-(46) low/high full/full
 cutoffs constructed internally before invoking the component-table endpoint.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian feasibility-aware endpoint with
@@ -22687,8 +22285,7 @@ into the source table.  The visible condition-(12) premises are only the two
 strict survivor-merit comparisons on the paper's base component row.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian feasibility-aware endpoint with the same
@@ -22697,8 +22294,7 @@ exposed as unconditional paper-row inequalities rather than branch-conditioned
 premises.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_raw_survivor_merits :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_raw_survivor_merits
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_raw_survivor_merits := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_raw_survivor_merits
 
 /--
 Paper Theorem 3 standard-Gaussian feasibility-aware endpoint with condition
@@ -22706,8 +22302,7 @@ Paper Theorem 3 standard-Gaussian feasibility-aware endpoint with condition
 survivor side exposed as the named school-`J2` keep-test predicate.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_j2_keeps_test :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_j2_keeps_test
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_j2_keeps_test := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_j2_keeps_test
 
 /--
 Paper Theorem 3 standard-Gaussian Proposition-5 component-table endpoint with
@@ -22716,8 +22311,7 @@ constructed internally.  This is the paper-facing strategic-route analogue of
 the preceding feasibility-aware constructed endpoint.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval :=
-  @paper_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval
+    paper_interface_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval := @paper_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian Proposition-5 endpoint with equation-(50)
@@ -22727,8 +22321,7 @@ source table.  The visible condition-(12) premises are only the survivor mass
 and strict survivor-merit comparisons on the paper's base component row.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval :=
-  @paper_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval
+    paper_interface_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval := @paper_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval
 
 /--
 Paper Theorem 3 standard-Gaussian Proposition-5 endpoint with equation-(50)
@@ -22738,8 +22331,7 @@ source table.  This paper-facing form exposes condition-(12)'s survivor mass
 and survivor-merit premises as unconditional source-row inequalities.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_raw_survivor_conditions :=
-  @paper_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_raw_survivor_conditions
+    paper_interface_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_raw_survivor_conditions := @paper_theorem3_standardGaussian_source_conditions_of_proposition5_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_of_equation50_and_standardGaussian_twoFull_subFull_fullSub_interval_of_raw_survivor_conditions
 
 /--
 Paper Theorem 3 ordered-merit route: the high-at-low-root premise is derived
@@ -22747,8 +22339,7 @@ from direct high-vs-low full-sub merit ordering, while condition-(12)'s
 survivor mass and survivor-merit premises stay as raw source-row inequalities.
 -/
 abbrev
-    paper_interface_theorem3_raw_survivor_conditions_of_ordered_fullSub_merits :=
-  @paper_theorem3_raw_survivor_conditions_of_ordered_fullSub_merits
+    paper_interface_theorem3_raw_survivor_conditions_of_ordered_fullSub_merits := @paper_theorem3_raw_survivor_conditions_of_ordered_fullSub_merits
 
 /--
 Paper Theorem 3 Gaussian full-sub route: the raw survivor mass and
@@ -22756,8 +22347,7 @@ survivor-merit premises stay visible, while direct full-sub merit-order
 assumptions are derived from Gaussian upper-tail-mean formulas.
 -/
 abbrev
-    paper_interface_theorem3_raw_survivor_conditions_of_gaussian_fullSub_merits :=
-  @paper_theorem3_raw_survivor_conditions_of_gaussian_fullSub_merits
+    paper_interface_theorem3_raw_survivor_conditions_of_gaussian_fullSub_merits := @paper_theorem3_raw_survivor_conditions_of_gaussian_fullSub_merits
 
 /--
 Paper Theorem 3 posterior-family full-sub route: the raw survivor mass and
@@ -22765,32 +22355,28 @@ survivor-merit premises stay visible, while direct full-sub merit-order
 assumptions are derived from source-family posterior-mean laws.
 -/
 abbrev
-    paper_interface_theorem3_raw_survivor_conditions_of_posterior_mean_fullSub_merits :=
-  @paper_theorem3_raw_survivor_conditions_of_posterior_mean_fullSub_merits
+    paper_interface_theorem3_raw_survivor_conditions_of_posterior_mean_fullSub_merits := @paper_theorem3_raw_survivor_conditions_of_posterior_mean_fullSub_merits
 
 /--
 Paper Theorem 3 ordered-merit route with school `J2` survivor requirements
 expressed as the named condition-(11)--(12) keep-test predicate.
 -/
 abbrev
-    paper_interface_theorem3_ordered_fullSub_merits_of_j2_keeps_test :=
-  @paper_theorem3_ordered_fullSub_merits_of_j2_keeps_test
+    paper_interface_theorem3_ordered_fullSub_merits_of_j2_keeps_test := @paper_theorem3_ordered_fullSub_merits_of_j2_keeps_test
 
 /--
 Paper Theorem 3 Gaussian full-sub route with school `J2` survivor requirements
 expressed as named condition-(11)--(12) keep-test predicates.
 -/
 abbrev
-    paper_interface_theorem3_gaussian_fullSub_merits_of_j2_keeps_test :=
-  @paper_theorem3_gaussian_fullSub_merits_of_j2_keeps_test
+    paper_interface_theorem3_gaussian_fullSub_merits_of_j2_keeps_test := @paper_theorem3_gaussian_fullSub_merits_of_j2_keeps_test
 
 /--
 Paper Theorem 3 posterior-family full-sub route with school `J2` survivor
 requirements expressed as named condition-(11)--(12) keep-test predicates.
 -/
 abbrev
-    paper_interface_theorem3_posterior_mean_fullSub_merits_of_j2_keeps_test :=
-  @paper_theorem3_posterior_mean_fullSub_merits_of_j2_keeps_test
+    paper_interface_theorem3_posterior_mean_fullSub_merits_of_j2_keeps_test := @paper_theorem3_posterior_mean_fullSub_merits_of_j2_keeps_test
 
 /--
 Paper Theorem 3 posterior-family full-sub route with school `J2` keep-test
@@ -22798,48 +22384,42 @@ predicates and low/high test-free full-sub merit rows generated directly from
 posterior-mean source families.
 -/
 abbrev
-    paper_interface_theorem3_posterior_mean_fullSub_source_free_merits_of_j2_keeps_test :=
-  @paper_theorem3_posterior_mean_fullSub_source_free_merits_of_j2_keeps_test
+    paper_interface_theorem3_posterior_mean_fullSub_source_free_merits_of_j2_keeps_test := @paper_theorem3_posterior_mean_fullSub_source_free_merits_of_j2_keeps_test
 
 /--
 Paper Theorem 3 standard-Gaussian base component-table keep-test route with the
 Gaussian hazard certificate specialized internally.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_j2_keeps_test :=
-  @paper_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_j2_keeps_test
+    paper_interface_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_j2_keeps_test := @paper_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_j2_keeps_test
 
 /--
 Paper Theorem 3 posterior-family source-free route with school `J2` keep-test
 predicates stated on the generated source-family policy-state table.
 -/
 abbrev
-    paper_interface_theorem3_posterior_mean_fullSub_source_free_merits_of_source_family_j2_keeps_test :=
-  @paper_theorem3_posterior_mean_fullSub_source_free_merits_of_source_family_j2_keeps_test
+    paper_interface_theorem3_posterior_mean_fullSub_source_free_merits_of_source_family_j2_keeps_test := @paper_theorem3_posterior_mean_fullSub_source_free_merits_of_source_family_j2_keeps_test
 
 /--
 Paper Theorem 3 standard-Gaussian generated-table keep-test route with the
 Gaussian hazard certificate specialized internally.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_source_family_j2_keeps_test :=
-  @paper_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_source_family_j2_keeps_test
+    paper_interface_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_source_family_j2_keeps_test := @paper_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_source_family_j2_keeps_test
 
 /--
 Paper Theorem 3 posterior-family source-free route with school `J2` survivor
 requirements stated as displayed source-row component inequalities.
 -/
 abbrev
-    paper_interface_theorem3_posterior_mean_fullSub_source_free_merits_of_source_family_survivor_components :=
-  @paper_theorem3_posterior_mean_fullSub_source_free_merits_of_source_family_survivor_components
+    paper_interface_theorem3_posterior_mean_fullSub_source_free_merits_of_source_family_survivor_components := @paper_theorem3_posterior_mean_fullSub_source_free_merits_of_source_family_survivor_components
 
 /--
 Paper Theorem 3 standard-Gaussian source-family survivor-row route with the
 Gaussian hazard certificate specialized internally.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_source_family_survivor_components :=
-  @paper_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_source_family_survivor_components
+    paper_interface_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_source_family_survivor_components := @paper_theorem3_standardGaussian_posterior_mean_fullSub_source_free_merits_of_source_family_survivor_components
 
 /--
 Paper Theorem 3 support: standard-Gaussian posterior cost-row regularity when
@@ -22847,8 +22427,7 @@ cost only moves a continuous, strictly antitone threshold over a fixed
 posterior law.
 -/
 abbrev
-    paper_interface_standardGaussian_posterior_cost_row_regularity_of_fixed_law_threshold_strictAntiOn :=
-  @paper_standardGaussian_posterior_cost_row_regularity_of_fixed_law_threshold_strictAntiOn
+    paper_interface_standardGaussian_posterior_cost_row_regularity_of_fixed_law_threshold_strictAntiOn := @paper_standardGaussian_posterior_cost_row_regularity_of_fixed_law_threshold_strictAntiOn
 
 /--
 Paper Theorem 3 support: paired low/high standard-Gaussian posterior cost-row
@@ -22856,8 +22435,7 @@ regularity for fixed posterior laws and continuous, strictly antitone
 threshold maps.
 -/
 abbrev
-    paper_interface_standardGaussian_posterior_low_high_cost_row_regularities_of_fixed_law_threshold_strictAntiOn :=
-  @paper_standardGaussian_posterior_low_high_cost_row_regularities_of_fixed_law_threshold_strictAntiOn
+    paper_interface_standardGaussian_posterior_low_high_cost_row_regularities_of_fixed_law_threshold_strictAntiOn := @paper_standardGaussian_posterior_low_high_cost_row_regularities_of_fixed_law_threshold_strictAntiOn
 
 /--
 Paper Theorem 3 / Proposition 5 support: fixed posterior laws turn endpoint
@@ -22865,16 +22443,14 @@ threshold-order comparisons into the four full-sub low/high merit-crossing
 inequalities.
 -/
 abbrev
-    paper_interface_standardGaussian_posterior_low_high_cost_row_endpoint_crossings_of_fixed_law_threshold_order :=
-  @paper_standardGaussian_posterior_low_high_cost_row_endpoint_crossings_of_fixed_law_threshold_order
+    paper_interface_standardGaussian_posterior_low_high_cost_row_endpoint_crossings_of_fixed_law_threshold_order := @paper_standardGaussian_posterior_low_high_cost_row_endpoint_crossings_of_fixed_law_threshold_order
 
 /--
 Paper Theorem 3 posterior-family source route with the full-sub low/high
 cost-indexed rows generated directly from posterior-mean source families.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval_of_posterior_mean_fullSub_cost_rows :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval_of_posterior_mean_fullSub_cost_rows
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval_of_posterior_mean_fullSub_cost_rows := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_and_cutoff_fill_subFull_fullSub_interval_of_posterior_mean_fullSub_cost_rows
 
 /--
 Paper Theorem 3 posterior-family source route with full-sub posterior cost
@@ -22882,8 +22458,7 @@ rows and the school-`J2` survivor requirements stated on source component
 rows.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval_of_posterior_mean_fullSub_cost_rows :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval_of_posterior_mean_fullSub_cost_rows
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval_of_posterior_mean_fullSub_cost_rows := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval_of_posterior_mean_fullSub_cost_rows
 
 /--
 Paper Theorem 3 posterior-family source route with full-sub posterior cost
@@ -22891,8 +22466,7 @@ rows, source component-row survivor requirements, and low/high row regularity
 discharged from fixed posterior laws plus regular threshold maps.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_subfull_components_and_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows
 
 /--
 Paper Theorem 3 posterior-family source route with full-sub posterior cost
@@ -22900,8 +22474,7 @@ rows, fixed-law low/high row regularity, and the school-`J2` zero expanding
 group row built into the source table.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows
 
 /--
 Paper Theorem 3 posterior-family source route with equation-(50) sub-full
@@ -22909,8 +22482,7 @@ regularity, fixed-law full-sub posterior cost rows, and the school-`J2`
 zero expanding-group row built into the source table.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows :=
-  @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows
+    paper_interface_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows := @paper_theorem3_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_standardGaussian_fixed_law_posterior_mean_fullSub_cost_rows
 
 /--
 Paper Theorem 3 posterior-family source route with the standard-Gaussian
@@ -22918,8 +22490,7 @@ CDF API, hazard certificate, and certificate-equality premise specialized
 internally.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows
 
 /--
 Paper Theorem 3 posterior-family source route with standard-Gaussian internals
@@ -22927,8 +22498,7 @@ specialized and survivor-merit assumptions exposed as unconditional source
 rows.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_raw_survivor_merits :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_raw_survivor_merits
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_raw_survivor_merits := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_raw_survivor_merits
 
 /--
 Paper Theorem 3 posterior-family source route with standard-Gaussian internals
@@ -22936,8 +22506,7 @@ specialized and the final school-`J2` survivor side supplied as named
 keep-test predicates on the base policy-state table.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_j2_keeps_test :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_j2_keeps_test
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_j2_keeps_test := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_j2_keeps_test
 
 /--
 Paper Theorem 3 posterior-family source route with standard-Gaussian internals
@@ -22945,8 +22514,7 @@ specialized and the final school-`J2` survivor side supplied as named
 keep-test predicates on the generated source-family policy-state table.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test
 
 /--
 Paper Theorem 3 posterior-family source route with standard-Gaussian internals,
@@ -22954,8 +22522,7 @@ source-family school-`J2` keep-test predicates, and full-sub endpoint merit
 crossings generated from fixed-law threshold-order comparisons.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_fill_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test
 
 /--
 Paper Theorem 3 posterior-family source route with standard-Gaussian internals,
@@ -22964,8 +22531,7 @@ crossings generated from fixed-law threshold-order comparisons, and full/full
 capacity fill generated from cutoff-order assumptions.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_source_family_j2_keeps_test
 /--
 Paper Theorem 3 posterior-family source route with standard-Gaussian internals,
 source-family school-`J2` keep-test predicates, endpoint crossings generated
@@ -22974,8 +22540,7 @@ from cutoff order, and full-sub based-threshold regularity generated from
 positive affine slopes.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test
 
 /--
 Paper Theorem 3 posterior-family source route with standard-Gaussian internals,
@@ -22984,16 +22549,14 @@ affine-decreasing full-sub based thresholds, and the final school-`J2`
 survivor side exposed as raw condition-(11)--(12) source rows.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components
 
 /--
 Paper Theorem 3 endpoint specialized to the named schools `J1`, `J2`, named
 groups `A`, `B`, and population-share row `(1 - pi, pi)`.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools
 
 /--
 Paper Theorem 3 endpoint specialized to named groups/schools/population shares,
@@ -23001,8 +22564,7 @@ with test-keeping source families generated by adding one positive-variance
 Gaussian signal to each test-dropping source family.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_signals :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_signals
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_signals := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_signals
 
 /--
 Paper Theorem 3 endpoint specialized to named groups/schools/population shares,
@@ -23010,8 +22572,7 @@ with all paper-directed precision-improvement family comparisons generated by
 adding positive-variance Gaussian signals.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals
 
 /--
 Paper Theorem 3 endpoint specialized to named groups/schools/population shares,
@@ -23019,8 +22580,7 @@ with positive-variance extra-signal constructors and canonical fixed posterior
 laws for the full-sub rows.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws
 
 /--
 Paper Theorem 3 endpoint specialized to named groups/schools/population shares,
@@ -23028,8 +22588,7 @@ with extra-signal constructors, canonical full-sub fixed laws, and the sub/full
 merit row generated by a Gaussian upper-tail mean with affine threshold.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_raw_survivor_components_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean
 
 /--
 Paper Theorem 3 endpoint specialized to named groups/schools/population shares,
@@ -23039,8 +22598,7 @@ merit row generated by an affine Gaussian upper-tail mean, and condition
 pair rather than raw survivor component rows.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean
 
 /--
 Preferred current Paper Theorem 3 endpoint: same named group/school,
@@ -23055,8 +22613,7 @@ posterior-law equalities are generated from the primitive source rows bundled
 as `GLM20Theorem3FullSubFixedLawRows`.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keeps_test_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
 
 /--
 Preferred paper-facing Theorem 3 endpoint: same compact cost-bound,
@@ -23065,24 +22622,21 @@ capacity-row, affine-tail, and affine-threshold surface, but condition
 generated keep-test predicate.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
 
 /--
 Preferred paper-facing Theorem 3 endpoint with the full/sub generated-row
 premises bundled as `GLM20Theorem3FullSubGeneratedRows`.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_generated_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_generated_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_generated_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_generated_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
 
 /--
 Preferred paper-facing Theorem 3 endpoint with full/sub generated rows built
 from primitive prior-mean, prior-variance, and precision rows.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_prior_precision_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_prior_precision_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_prior_precision_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_extra_keep_and_fullSub_prior_precision_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
 
 /--
 Feasibility-aware Paper Theorem 3 endpoint with the full/sub generated-row
@@ -23090,24 +22644,21 @@ premises bundled and the school-`J2` survivor side reduced to strict
 condition-(12) merit rows.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_generated_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_generated_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_generated_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_generated_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
 
 /--
 Feasibility-aware Paper Theorem 3 endpoint with full/sub generated rows built
 from primitive prior-mean, prior-variance, and precision rows.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_prior_precision_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_prior_precision_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_prior_precision_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_prior_precision_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
 
 /--
 Preferred paper-facing Theorem 3 endpoint with all public source-row premises
 bundled as `GLM20Theorem3AcademicMeritPublicRows`.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_public_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_public_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_public_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_survivor_rows_paper_groups_schools_public_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
 
 /--
 Preferred feasibility-aware Paper Theorem 3 endpoint with all public
@@ -23115,16 +22666,14 @@ source-row premises bundled as
 `GLM20Theorem3AcademicMeritStrictSurvivorPublicRows`.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_public_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_public_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_public_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_public_rows_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
 
 /--
 Preferred Paper Theorem 3 endpoint with all public source-row premises and
 the population-share domain bundled in one package.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_public_rows_with_population_share_canonical_laws_subFull_affine_tail_mean_of_cost_bounds :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_public_rows_with_population_share_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_public_rows_with_population_share_canonical_laws_subFull_affine_tail_mean_of_cost_bounds := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_public_rows_with_population_share_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
 
 /--
 Paper Theorem 3 endpoint with the compact public-row package constructed
@@ -23132,8 +22681,7 @@ internally from a generated source-family school-`J2` keep-test pair and raw
 full/sub prior-precision source rows.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keep_test_pair_and_fullSub_prior_precision_rows_paper_groups_schools_public_rows_with_population_share_canonical_laws_subFull_affine_tail_mean_of_cost_bounds :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keep_test_pair_and_fullSub_prior_precision_rows_paper_groups_schools_public_rows_with_population_share_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keep_test_pair_and_fullSub_prior_precision_rows_paper_groups_schools_public_rows_with_population_share_canonical_laws_subFull_affine_tail_mean_of_cost_bounds := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_j2_keep_test_pair_and_fullSub_prior_precision_rows_paper_groups_schools_public_rows_with_population_share_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
 
 /--
 Feasibility-aware Paper Theorem 3 endpoint: same compact cost-bound,
@@ -23142,8 +22690,7 @@ capacity-row, affine-tail, and affine-threshold surface, but condition
 school-`J2` survivor input is only the strict condition-(12) merit rows.
 -/
 abbrev
-    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds :=
-  @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
+    paper_interface_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds := @paper_theorem3_standardGaussian_source_conditions_of_feasible_policy_state_table_source_family_fixed_pool_merits_j2_zero_fallback_and_equation50_subFull_cutoff_order_subFull_fullSub_interval_of_threshold_order_fixed_law_posterior_mean_fullSub_cost_rows_of_affine_based_thresholds_source_family_strict_survivor_merits_paper_groups_schools_extra_keep_and_fullSub_signals_canonical_laws_subFull_affine_tail_mean_of_cost_bounds
 
 /--
 Theorem 3 support: derive the low-based/full-sub fixed posterior-law equality
@@ -23331,84 +22878,72 @@ theorem paper_interface_theorem3_fullSub_based_laws_of_prior_precision_rows
         hhighPrecision
 
 /-- Theorem 3 support: bundled primitive full/sub fixed-law source rows. -/
-abbrev paper_interface_theorem3_fullSub_fixed_law_rows :=
-  @GLM20Theorem3FullSubFixedLawRows
+abbrev paper_interface_theorem3_fullSub_fixed_law_rows := @GLM20Theorem3FullSubFixedLawRows
 
 /--
 Theorem 3 support: primitive full/sub fixed-law source rows imply the two
 posterior-law equalities consumed by the compact fixed-law cost-row route.
 -/
-abbrev paper_interface_theorem3_fullSub_fixed_law_rows_components :=
-  @paper_theorem3_fullSub_fixed_law_rows_components
+abbrev paper_interface_theorem3_fullSub_fixed_law_rows_components := @paper_theorem3_fullSub_fixed_law_rows_components
 
 /--
 Theorem 3 support: bundled generated full/sub source rows, including
 extra-noise positivity, fixed posterior-law rows, affine threshold rows, and
 full/sub cost bounds.
 -/
-abbrev paper_interface_theorem3_fullSub_generated_rows :=
-  @GLM20Theorem3FullSubGeneratedRows
+abbrev paper_interface_theorem3_fullSub_generated_rows := @GLM20Theorem3FullSubGeneratedRows
 
 /--
 Theorem 3 support: build the generated full/sub source-row package directly
 from primitive Gaussian prior mean, prior variance, and precision rows,
 together with affine threshold rows and cost bounds.
 -/
-abbrev paper_interface_theorem3_fullSub_generated_rows_of_prior_precision_rows :=
-  @paper_theorem3_fullSub_generated_rows_of_prior_precision_rows
+abbrev paper_interface_theorem3_fullSub_generated_rows_of_prior_precision_rows := @paper_theorem3_fullSub_generated_rows_of_prior_precision_rows
 
 /--
 Theorem 3 support: bundled public source rows for the compact academic-merit
 route.
 -/
-abbrev paper_interface_theorem3_academic_merit_public_rows :=
-  @GLM20Theorem3AcademicMeritPublicRows
+abbrev paper_interface_theorem3_academic_merit_public_rows := @GLM20Theorem3AcademicMeritPublicRows
 
 /--
 Theorem 3 support: bundled public source rows for the feasibility-aware
 academic-merit route with strict school-`J2` survivor merit rows.
 -/
-abbrev paper_interface_theorem3_academic_merit_strict_survivor_public_rows :=
-  @GLM20Theorem3AcademicMeritStrictSurvivorPublicRows
+abbrev paper_interface_theorem3_academic_merit_strict_survivor_public_rows := @GLM20Theorem3AcademicMeritStrictSurvivorPublicRows
 
 /--
 Theorem 3 support: bundled public source rows plus the population-share domain
 for the current compact academic-merit route.
 -/
-abbrev paper_interface_theorem3_academic_merit_strict_survivor_public_rows_with_population_share :=
-  @GLM20Theorem3AcademicMeritStrictSurvivorPublicRowsWithPopulationShare
+abbrev paper_interface_theorem3_academic_merit_strict_survivor_public_rows_with_population_share := @GLM20Theorem3AcademicMeritStrictSurvivorPublicRowsWithPopulationShare
 
 /--
 Theorem 3 support: package strict-survivor public rows with the
 population-share domain.
 -/
-abbrev paper_interface_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_rows :=
-  @paper_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_rows
+abbrev paper_interface_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_rows := @paper_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_rows
 
 /--
 Theorem 3 support: package the older four-row public source bundle and the
 population-share domain into the current single public-row bundle.
 -/
-abbrev paper_interface_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_public_rows :=
-  @paper_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_public_rows
+abbrev paper_interface_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_public_rows := @paper_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_public_rows
 
 /--
 Theorem 3 support: the older four-row public source bundle implies the
 strict-survivor public bundle used by the current feasibility-aware surface.
 -/
-abbrev paper_interface_theorem3_academic_merit_strict_survivor_public_rows_of_public_rows :=
-  @paper_theorem3_academic_merit_strict_survivor_public_rows_of_public_rows
+abbrev paper_interface_theorem3_academic_merit_strict_survivor_public_rows_of_public_rows := @paper_theorem3_academic_merit_strict_survivor_public_rows_of_public_rows
 
 /-- Theorem 3 support: bundled generated keep-test signal source rows. -/
-abbrev paper_interface_theorem3_keep_signal_rows :=
-  @GLM20Theorem3KeepSignalRows
+abbrev paper_interface_theorem3_keep_signal_rows := @GLM20Theorem3KeepSignalRows
 
 /--
 Theorem 3 support: unpack the bundled generated keep-test signal source rows
 into the positive-variance and threshold-order premises used by lower routes.
 -/
-abbrev paper_interface_theorem3_keep_signal_rows_components :=
-  @paper_theorem3_keep_signal_rows_components
+abbrev paper_interface_theorem3_keep_signal_rows_components := @paper_theorem3_keep_signal_rows_components
 
 /--
 Paper Theorem 3 support: the pair of named school-`J2` keep-test predicates
@@ -23417,8 +22952,7 @@ condition-(11)--(12) survivor component rows on the concrete policy-state
 table.
 -/
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_j2_keep_test_pair_iff_components :=
-  @paper_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_j2_keep_test_pair_iff_components
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_j2_keep_test_pair_iff_components := @paper_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_j2_keep_test_pair_iff_components
 
 /--
 Paper Theorem 3 support: the bundled named school-`J2` keep-test predicates
@@ -23426,16 +22960,14 @@ imply the bundled raw survivor component rows on the concrete policy-state
 table.
 -/
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_components_of_j2_keep_test_pair :=
-  @paper_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_components_of_j2_keep_test_pair
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_components_of_j2_keep_test_pair := @paper_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_components_of_j2_keep_test_pair
 
 /--
 Paper Theorem 3 support: a base table school-`J2` keep-test pair implies the
 strict-merit-only survivor row bundle used by feasibility-aware routes.
 -/
 abbrev
-    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_j2_strict_survivor_merit_rows_of_keep_test_pair :=
-  @paper_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_j2_strict_survivor_merit_rows_of_keep_test_pair
+    paper_interface_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_j2_strict_survivor_merit_rows_of_keep_test_pair := @paper_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_j2_strict_survivor_merit_rows_of_keep_test_pair
 
 /--
 Paper Theorem 3 support: the pair of named school-`J2` keep-test predicates
@@ -23443,30 +22975,26 @@ for the generated source-family policy-state table is equivalent to the pair
 of raw source condition-(11)--(12) component rows.
 -/
 abbrev
-    paper_interface_theorem3_source_family_policy_state_table_subFull_j2_keep_test_pair_iff_components :=
-  @paper_theorem3_source_family_policy_state_table_subFull_j2_keep_test_pair_iff_components
+    paper_interface_theorem3_source_family_policy_state_table_subFull_j2_keep_test_pair_iff_components := @paper_theorem3_source_family_policy_state_table_subFull_j2_keep_test_pair_iff_components
 
 /--
 Paper Theorem 3 support: unpack the bundled school-`J2` condition-(11)--(12)
 survivor source rows into their four scalar assumptions.
 -/
-abbrev paper_interface_theorem3_j2_survivor_rows_components :=
-  @paper_theorem3_j2_survivor_rows_components
+abbrev paper_interface_theorem3_j2_survivor_rows_components := @paper_theorem3_j2_survivor_rows_components
 
 /--
 Paper Theorem 3 support: unpack the strict-merit-only school-`J2`
 condition-(12) survivor rows used by feasibility-aware routes.
 -/
-abbrev paper_interface_theorem3_j2_strict_survivor_merit_rows_components :=
-  @paper_theorem3_j2_strict_survivor_merit_rows_components
+abbrev paper_interface_theorem3_j2_strict_survivor_merit_rows_components := @paper_theorem3_j2_strict_survivor_merit_rows_components
 
 /--
 Paper Theorem 3 support: the full condition-(11)--(12) school-`J2` survivor
 bundle implies the strict-merit-only bundle used by feasibility-aware routes.
 -/
 abbrev
-    paper_interface_theorem3_j2_strict_survivor_merit_rows_of_survivor_rows :=
-  @paper_theorem3_j2_strict_survivor_merit_rows_of_survivor_rows
+    paper_interface_theorem3_j2_strict_survivor_merit_rows_of_survivor_rows := @paper_theorem3_j2_strict_survivor_merit_rows_of_survivor_rows
 
 /--
 Paper Theorem 3 support: feed a feasibility-aware endpoint's two strict
@@ -23474,8 +23002,7 @@ school-`J2` survivor-merit premises from the bundled strict-merit row
 predicate.
 -/
 abbrev
-    paper_interface_theorem3_feasible_endpoint_of_j2_strict_survivor_merit_rows :=
-  @paper_theorem3_feasible_endpoint_of_j2_strict_survivor_merit_rows
+    paper_interface_theorem3_feasible_endpoint_of_j2_strict_survivor_merit_rows := @paper_theorem3_feasible_endpoint_of_j2_strict_survivor_merit_rows
 
 /--
 Paper Theorem 3 support: the four substantive source-row facts for condition
@@ -23483,8 +23010,7 @@ Paper Theorem 3 support: the four substantive source-row facts for condition
 pair used by the compact theorem route.
 -/
 abbrev
-    paper_interface_theorem3_source_family_j2_keep_test_pair_of_base_survivor_rows :=
-  @paper_theorem3_source_family_j2_keep_test_pair_of_base_survivor_rows
+    paper_interface_theorem3_source_family_j2_keep_test_pair_of_base_survivor_rows := @paper_theorem3_source_family_j2_keep_test_pair_of_base_survivor_rows
 
 /--
 Paper Theorem 3 support: a generated source-family school-`J2` keep-test pair
@@ -23492,8 +23018,7 @@ implies the strict-merit-only survivor row bundle used by feasibility-aware
 Theorem 3 routes.
 -/
 abbrev
-    paper_interface_theorem3_source_family_j2_strict_survivor_merit_rows_of_keep_test_pair :=
-  @paper_theorem3_source_family_j2_strict_survivor_merit_rows_of_keep_test_pair
+    paper_interface_theorem3_source_family_j2_strict_survivor_merit_rows_of_keep_test_pair := @paper_theorem3_source_family_j2_strict_survivor_merit_rows_of_keep_test_pair
 
 /--
 Paper Theorem 3 support: a generated source-family school-`J2` keep-test pair,
@@ -23501,8 +23026,7 @@ together with the named public row bundles, packages the current compact
 public-row premise including the population-share domain.
 -/
 abbrev
-    paper_interface_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_source_family_j2_keep_test_pair :=
-  @paper_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_source_family_j2_keep_test_pair
+    paper_interface_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_source_family_j2_keep_test_pair := @paper_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_source_family_j2_keep_test_pair
 
 /--
 Paper Theorem 3 support: build the compact public-row package from a
@@ -23511,8 +23035,7 @@ prior-precision rows, without requiring callers to prepackage
 `GLM20Theorem3FullSubGeneratedRows`.
 -/
 abbrev
-    paper_interface_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_source_family_j2_keep_test_pair_and_fullSub_prior_precision_rows :=
-  @paper_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_source_family_j2_keep_test_pair_and_fullSub_prior_precision_rows
+    paper_interface_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_source_family_j2_keep_test_pair_and_fullSub_prior_precision_rows := @paper_theorem3_academic_merit_strict_survivor_public_rows_with_population_share_of_source_family_j2_keep_test_pair_and_fullSub_prior_precision_rows
 
 /--
 Paper Theorem 3 support: the pair of named school-`J2` keep-test predicates
@@ -23520,16 +23043,14 @@ on the generated source-family table is equivalent to the same pair on the
 base component table.
 -/
 abbrev
-    paper_interface_theorem3_source_family_policy_state_table_subFull_j2_keep_test_pair_iff_base_table_keep_test_pair :=
-  @paper_theorem3_source_family_policy_state_table_subFull_j2_keep_test_pair_iff_base_table_keep_test_pair
+    paper_interface_theorem3_source_family_policy_state_table_subFull_j2_keep_test_pair_iff_base_table_keep_test_pair := @paper_theorem3_source_family_policy_state_table_subFull_j2_keep_test_pair_iff_base_table_keep_test_pair
 
 /--
 Paper Theorem 3 source-family policy-state table rows: exposes the generated
 mass rows, base admitted-merit rows, and fixed-pool admitted-merit rows as one
 auditable bundle.
 -/
-abbrev paper_interface_theorem3_source_family_policy_state_table_surface_rows :=
-  @paper_theorem3_source_family_policy_state_table_surface_rows
+abbrev paper_interface_theorem3_source_family_policy_state_table_surface_rows := @paper_theorem3_source_family_policy_state_table_surface_rows
 
 /--
 Paper Theorem 3 source-shaped endpoint with part (iii) supplied directly by a
@@ -23665,8 +23186,7 @@ facts returned by a packaged full-sub Proposition 5 bridge and feed its
 objective iff into the source-condition theorem.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_binary_policy_objective_conditions_of_subFull_objective_and_fullSub_objective_bridge :=
-  @paper_theorem3_source_conditions_of_binary_policy_objective_conditions_of_subFull_objective_and_fullSub_objective_bridge
+    paper_interface_theorem3_source_conditions_of_binary_policy_objective_conditions_of_subFull_objective_and_fullSub_objective_bridge := @paper_theorem3_source_conditions_of_binary_policy_objective_conditions_of_subFull_objective_and_fullSub_objective_bridge
 
 /--
 Paper Theorem 3 binary-objective adapter: preserve the threshold/root/order
@@ -23674,8 +23194,7 @@ facts returned by packaged sub-full and full-sub Proposition 5 bridges and
 feed both objective iff statements into the source-condition theorem.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_binary_policy_objective_conditions_of_subFull_objective_bridge_and_fullSub_objective_bridge :=
-  @paper_theorem3_source_conditions_of_binary_policy_objective_conditions_of_subFull_objective_bridge_and_fullSub_objective_bridge
+    paper_interface_theorem3_source_conditions_of_binary_policy_objective_conditions_of_subFull_objective_bridge_and_fullSub_objective_bridge := @paper_theorem3_source_conditions_of_binary_policy_objective_conditions_of_subFull_objective_bridge_and_fullSub_objective_bridge
 
 /--
 Paper Theorem 3 weighted binary-objective adapter: on the concrete weighted
@@ -23684,8 +23203,7 @@ Proposition 5(ii) threshold/objective bridges imply the Theorem 3 source
 conditions.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_subFull_objective_bridge_and_fullSub_objective_bridge :=
-  @paper_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_subFull_objective_bridge_and_fullSub_objective_bridge
+    paper_interface_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_subFull_objective_bridge_and_fullSub_objective_bridge := @paper_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_subFull_objective_bridge_and_fullSub_objective_bridge
 
 /--
 Paper Theorem 3 weighted binary-objective adapter with Proposition 5(i)'s
@@ -23693,8 +23211,7 @@ standard-Gaussian keep-test bridge generated internally and Proposition 5(ii)
 supplied as a packaged full-sub bridge.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_bridge_and_fullSub_objective_bridge :=
-  @paper_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_bridge_and_fullSub_objective_bridge
+    paper_interface_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_bridge_and_fullSub_objective_bridge := @paper_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_bridge_and_fullSub_objective_bridge
 
 /--
 Paper Theorem 3 weighted binary-objective adapter with Proposition 5(i)'s
@@ -23702,8 +23219,7 @@ standard-Gaussian keep-test bridge and Proposition 5(ii)'s fixed-law posterior
 cost-row bridge both generated internally.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_and_fixed_law_fullSub_cost_rows :=
-  @paper_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_and_fixed_law_fullSub_cost_rows
+    paper_interface_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_and_fixed_law_fullSub_cost_rows := @paper_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_and_fixed_law_fullSub_cost_rows
 
 /--
 Paper Theorem 3 weighted binary-objective adapter with Proposition 5(i)'s
@@ -23712,8 +23228,7 @@ fixed-law posterior cost-row bridge generated from endpoint threshold-order
 comparisons.
 -/
 abbrev
-    paper_interface_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_threshold_order_and_fixed_law_fullSub_cost_rows :=
-  @paper_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_threshold_order_and_fixed_law_fullSub_cost_rows
+    paper_interface_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_threshold_order_and_fixed_law_fullSub_cost_rows := @paper_theorem3_source_conditions_of_weighted_binary_policy_objective_conditions_of_standardGaussian_subFull_keep_test_threshold_order_and_fixed_law_fullSub_cost_rows
 
 /--
 Paper Theorem 3 source-shaped endpoint from binary school-objective comparisons
@@ -24883,8 +24398,7 @@ theorem paper_interface_theorem3_two_school_academic_merit
     {S : GLM20StrategicPolicySurface Group Policy School Equilibrium}
     (C : GLM20TwoSchoolAcademicMeritCertificate S) :
     C.subFullEquilibriumIff ∧ C.fullSubEquilibriumIff ∧
-      C.fullFullEquilibriumSufficientConditions :=
-  paper_theorem3_two_school_academic_merit_of_certificate C
+      C.fullFullEquilibriumSufficientConditions := paper_theorem3_two_school_academic_merit_of_certificate C
 
 /--
 Paper Propositions 5--6: strategic academic-merit and diversity comparisons.
@@ -24895,8 +24409,7 @@ theorem paper_interface_proposition5_strategic_academic_merit
     {Group Policy School Equilibrium : Type*}
     {S : GLM20StrategicPolicySurface Group Policy School Equilibrium}
     (C : GLM20StrategicAcademicMeritCertificate S) :
-    C.strategicAcademicMeritComparisons :=
-  paper_proposition5_strategic_academic_merit_of_certificate C
+    C.strategicAcademicMeritComparisons := paper_proposition5_strategic_academic_merit_of_certificate C
 
 /--
 Paper Proposition 6 full-policy diversity formula for school `J1`.
@@ -24918,8 +24431,7 @@ theorem paper_interface_proposition6_full_diversity_formula_eq_owenAffineSelecti
         sigmaTildeB aB bB mu q1Full =
       groupBPopulationShare * sigmaTildeB / capacity1 *
         paperProposition3OwenAffineSelectionMass sigmaTildeB aB bB mu
-          q1Full :=
-  glm20Proposition6FullDiversityFormula_eq_owenAffineSelectionMass
+          q1Full := glm20Proposition6FullDiversityFormula_eq_owenAffineSelectionMass
 
 /--
 Paper Proposition 6 full-policy diversity formula for the concrete
@@ -24936,8 +24448,7 @@ theorem paper_interface_proposition6_full_diversity_formula_eq_correlatedStandar
             (-(sigmaTildeB * bB) /
               Real.sqrt (1 + sigmaTildeB ^ 2 * bB ^ 2)))
           ((aB + bB * mu) / Real.sqrt (1 + sigmaTildeB ^ 2 * bB ^ 2))
-          ((q1Full - mu) / sigmaTildeB) :=
-  glm20Proposition6FullDiversityFormula_eq_correlatedStandardGaussian_verticalUpperStripMass
+          ((q1Full - mu) / sigmaTildeB) := glm20Proposition6FullDiversityFormula_eq_correlatedStandardGaussian_verticalUpperStripMass
 
 /--
 Paper Proposition 6 full-policy diversity formula with group B's raw source
@@ -25021,8 +24532,7 @@ theorem paper_interface_proposition6_subSigmaTildeSource_pos
     (hsub : 0 < subPrecisionSum) :
     0 <
       paperProposition6SubSigmaTildeSource
-        priorSigma priorPrecision subPrecisionSum :=
-  glm20Proposition6SubSigmaTildeSource_pos hsigma hprior hsub
+        priorSigma priorPrecision subPrecisionSum := glm20Proposition6SubSigmaTildeSource_pos hsigma hprior hsub
 
 /--
 Paper Proposition 6 source test-free scale ratio
@@ -25066,8 +24576,7 @@ theorem paper_interface_proposition6_sub_diversity_formula_eq_testFreeGroupBTail
       { mean := mu, scale := sigmaTildeBSub, scale_pos := hsigmaB_pos }
     Q.cdfAPI.thresholdPassProb groupBLaw threshold =
       paperProposition6SubDiversityFormula Q capacity1 groupBPopulationShare
-        sigmaTildeASub sigmaTildeBSub :=
-  glm20Proposition6SubDiversityFormula_eq_testFreeGroupBTail Q hsigmaB_pos
+        sigmaTildeASub sigmaTildeBSub := glm20Proposition6SubDiversityFormula_eq_testFreeGroupBTail Q hsigmaB_pos
 
 /--
 Paper Proposition 6: displayed diversity-optimization criterion.
@@ -25140,8 +24649,7 @@ abbrev paperProposition6J1DropsTestForDiversity
     {Group Policy School Equilibrium : Type*}
     (S : GLM20StrategicPolicySurface Group Policy School Equilibrium)
     (policyPair : Policy → Policy → Policy)
-    (J1 : School) (Psub Pfull : Policy) : Prop :=
-  glm20Proposition6J1DropsTestForDiversity S policyPair J1 Psub Pfull
+    (J1 : School) (Psub Pfull : Policy) : Prop := glm20Proposition6J1DropsTestForDiversity S policyPair J1 Psub Pfull
 
 /--
 Paper Proposition 6 source-surface predicate: when school `J1` optimizes only
@@ -25416,66 +24924,54 @@ theorem
     api Q bivariateCDF S policyPair J1 hfull hsub
 
 /-- Proposition 6 source-parameter full-policy diversity value. -/
-abbrev paperProposition6SourceParameterFullDiversityValue :=
-  @glm20Proposition6SourceParameterFullDiversityValue
+abbrev paperProposition6SourceParameterFullDiversityValue := @glm20Proposition6SourceParameterFullDiversityValue
 
 /-- Proposition 6 source-parameter test-free diversity value. -/
-abbrev paperProposition6SourceParameterSubDiversityValue :=
-  @glm20Proposition6SourceParameterSubDiversityValue
+abbrev paperProposition6SourceParameterSubDiversityValue := @glm20Proposition6SourceParameterSubDiversityValue
 
 /-- Proposition 6 source-parameter full/full diversity row for school `J1`. -/
-abbrev paperProposition6SourceParameterFullFullDiversityRow :=
-  @glm20Proposition6SourceParameterFullFullDiversityRow
+abbrev paperProposition6SourceParameterFullFullDiversityRow := @glm20Proposition6SourceParameterFullFullDiversityRow
 
 /-- Proposition 6 source-parameter sub/full diversity row for school `J1`. -/
-abbrev paperProposition6SourceParameterSubFullDiversityRow :=
-  @glm20Proposition6SourceParameterSubFullDiversityRow
+abbrev paperProposition6SourceParameterSubFullDiversityRow := @glm20Proposition6SourceParameterSubFullDiversityRow
 
 /-- Proposition 6 generated sub/full row value at school `J1`. -/
 abbrev
-    paper_interface_proposition6_source_parameter_subFullDiversityRow_eq_source_value_at_j1 :=
-  @paper_proposition6_source_parameter_subFullDiversityRow_eq_source_value_at_j1
+    paper_interface_proposition6_source_parameter_subFullDiversityRow_eq_source_value_at_j1 := @paper_proposition6_source_parameter_subFullDiversityRow_eq_source_value_at_j1
 
 /-- Proposition 6 generated full/full row value at school `J1`. -/
 abbrev
-    paper_interface_proposition6_source_parameter_fullFullDiversityRow_eq_source_value_at_j1 :=
-  @paper_proposition6_source_parameter_fullFullDiversityRow_eq_source_value_at_j1
+    paper_interface_proposition6_source_parameter_fullFullDiversityRow_eq_source_value_at_j1 := @paper_proposition6_source_parameter_fullFullDiversityRow_eq_source_value_at_j1
 
 /-- Proposition 6 sub/full row identity when the fallback row already has the source formula. -/
 abbrev
-    paper_interface_proposition6_source_parameter_subFullDiversityRow_eq_of_j1_formula :=
-  @paper_proposition6_source_parameter_subFullDiversityRow_eq_of_j1_formula
+    paper_interface_proposition6_source_parameter_subFullDiversityRow_eq_of_j1_formula := @paper_proposition6_source_parameter_subFullDiversityRow_eq_of_j1_formula
 
 /-- Proposition 6 full/full row identity when the fallback row already has the source formula. -/
 abbrev
-    paper_interface_proposition6_source_parameter_fullFullDiversityRow_eq_of_j1_formula :=
-  @paper_proposition6_source_parameter_fullFullDiversityRow_eq_of_j1_formula
+    paper_interface_proposition6_source_parameter_fullFullDiversityRow_eq_of_j1_formula := @paper_proposition6_source_parameter_fullFullDiversityRow_eq_of_j1_formula
 
 /-- Proposition 6 generated sub/full row equals its fallback away from school `J1`. -/
 abbrev
-    paper_interface_proposition6_source_parameter_subFullDiversityRow_eq_fallback_of_ne :=
-  @paper_proposition6_source_parameter_subFullDiversityRow_eq_fallback_of_ne
+    paper_interface_proposition6_source_parameter_subFullDiversityRow_eq_fallback_of_ne := @paper_proposition6_source_parameter_subFullDiversityRow_eq_fallback_of_ne
 
 /-- Proposition 6 generated full/full row equals its fallback away from school `J1`. -/
 abbrev
-    paper_interface_proposition6_source_parameter_fullFullDiversityRow_eq_fallback_of_ne :=
-  @paper_proposition6_source_parameter_fullFullDiversityRow_eq_fallback_of_ne
+    paper_interface_proposition6_source_parameter_fullFullDiversityRow_eq_fallback_of_ne := @paper_proposition6_source_parameter_fullFullDiversityRow_eq_fallback_of_ne
 
 /--
 Paper Proposition 6 on a source-parameter diversity table whose `J1`
 full/full and sub/full entries are generated by the displayed source formulas.
 -/
 abbrev
-    paper_interface_proposition6_policyState_j1_strict_diversity_best_response_iff_source_parameter_diversity_rows :=
-  @paper_proposition6_policyState_j1_strict_diversity_best_response_iff_source_parameter_diversity_rows
+    paper_interface_proposition6_policyState_j1_strict_diversity_best_response_iff_source_parameter_diversity_rows := @paper_proposition6_policyState_j1_strict_diversity_best_response_iff_source_parameter_diversity_rows
 
 /--
 Paper Proposition 6 source-parameter generated-row drop-test iff, matching the
 paper's "school `J1` drops the test iff" wording.
 -/
 abbrev
-    paper_interface_proposition6_policyState_j1_drops_test_iff_source_parameter_diversity_rows :=
-  @paper_proposition6_policyState_j1_drops_test_iff_source_parameter_diversity_rows
+    paper_interface_proposition6_policyState_j1_drops_test_iff_source_parameter_diversity_rows := @paper_proposition6_policyState_j1_drops_test_iff_source_parameter_diversity_rows
 
 /--
 Paper Proposition 6 source-parameter diversity-table equilibrium consequence:
@@ -25483,8 +24979,7 @@ the displayed strict inequality plus the `J2` weak no-deviation condition
 implies `(P_sub,P_full)`.
 -/
 abbrev
-    paper_interface_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium :=
-  @paper_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium
+    paper_interface_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium := @paper_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium
 
 /--
 Paper Proposition 6 source-parameter equilibrium consequence with the `J2`
@@ -25492,8 +24987,7 @@ weak no-deviation premise stated on the ordinary fallback diversity row
 (`J1 ≠ J2` makes the generated row reduce to that fallback row).
 -/
 abbrev
-    paper_interface_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback :=
-  @paper_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback
+    paper_interface_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback := @paper_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback
 
 /--
 Paper Proposition 6 source-parameter equilibrium consequence when the ordinary
@@ -25501,8 +24995,7 @@ fallback sub/full diversity row for school `J2` is the same as its sub/sub row,
 so the `J2` weak no-deviation condition is discharged internally.
 -/
 abbrev
-    paper_interface_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_same_fallback :=
-  @paper_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_same_fallback
+    paper_interface_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_same_fallback := @paper_proposition6_policyState_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_same_fallback
 
 /--
 Paper Proposition 6 source-parameter diversity-table equilibrium iff:
@@ -25510,16 +25003,14 @@ the displayed weak `J1` comparison plus the `J2` weak no-deviation condition
 is exactly `(P_sub,P_full)` on the generated policy-state table.
 -/
 abbrev
-    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows :=
-  @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows
+    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows := @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows
 
 /--
 Paper Proposition 6 source-parameter diversity-table equilibrium iff with
 school `J2`'s weak no-deviation premise stated on the ordinary fallback row.
 -/
 abbrev
-    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows_of_J2_fallback :=
-  @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows_of_J2_fallback
+    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows_of_J2_fallback := @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows_of_J2_fallback
 
 /--
 Paper Proposition 6 source-parameter diversity-table equilibrium iff when
@@ -25528,48 +25019,42 @@ so the equilibrium condition reduces to school `J1`'s weak displayed
 comparison.
 -/
 abbrev
-    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows_of_J2_same_fallback :=
-  @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows_of_J2_same_fallback
+    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows_of_J2_same_fallback := @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_diversity_rows_of_J2_same_fallback
 
 /--
 Paper Proposition 6 standard-Gaussian generated-row strict best-response
 statement, with no separate formula-identification hypotheses.
 -/
 abbrev
-    paper_interface_proposition6_policyState_j1_strict_diversity_best_response_iff_standardGaussian_source_parameter_diversity_rows :=
-  @paper_proposition6_policyState_j1_strict_diversity_best_response_iff_standardGaussian_source_parameter_diversity_rows
+    paper_interface_proposition6_policyState_j1_strict_diversity_best_response_iff_standardGaussian_source_parameter_diversity_rows := @paper_proposition6_policyState_j1_strict_diversity_best_response_iff_standardGaussian_source_parameter_diversity_rows
 
 /--
 Paper Proposition 6 standard-Gaussian generated-row drop-test iff, matching the
 paper's "school `J1` drops the test iff" wording.
 -/
 abbrev
-    paper_interface_proposition6_policyState_j1_drops_test_iff_standardGaussian_source_parameter_diversity_rows :=
-  @paper_proposition6_policyState_j1_drops_test_iff_standardGaussian_source_parameter_diversity_rows
+    paper_interface_proposition6_policyState_j1_drops_test_iff_standardGaussian_source_parameter_diversity_rows := @paper_proposition6_policyState_j1_drops_test_iff_standardGaussian_source_parameter_diversity_rows
 
 /--
 Paper Proposition 6 standard-Gaussian generated-row equilibrium iff, with no
 separate formula-identification hypotheses.
 -/
 abbrev
-    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows :=
-  @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows
+    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows := @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows
 
 /--
 Paper Proposition 6 standard-Gaussian generated-row equilibrium iff with the
 `J2` weak no-deviation premise stated on the ordinary fallback row.
 -/
 abbrev
-    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_fallback :=
-  @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_fallback
+    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_fallback := @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_fallback
 
 /--
 Paper Proposition 6 standard-Gaussian generated-row equilibrium iff when only
 school `J2`'s ordinary fallback sub/full entry equals its sub/sub entry.
 -/
 abbrev
-    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_fallback_eq :=
-  @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_fallback_eq
+    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_fallback_eq := @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_fallback_eq
 
 /--
 Paper Proposition 6 standard-Gaussian generated-row equilibrium iff when
@@ -25578,8 +25063,7 @@ so the equilibrium condition reduces to school `J1`'s weak displayed
 comparison.
 -/
 abbrev
-    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_same_fallback :=
-  @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_same_fallback
+    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_same_fallback := @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_diversity_rows_of_J2_same_fallback
 
 /--
 Paper Proposition 6 standard-Gaussian generated-row equilibrium consequence:
@@ -25587,24 +25071,21 @@ the displayed strict inequality plus the `J2` weak no-deviation condition
 implies `(P_sub,P_full)`.
 -/
 abbrev
-    paper_interface_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium :=
-  @paper_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium
+    paper_interface_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium := @paper_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium
 
 /--
 Paper Proposition 6 standard-Gaussian generated-row equilibrium consequence
 with the `J2` weak no-deviation premise stated on the ordinary fallback row.
 -/
 abbrev
-    paper_interface_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback :=
-  @paper_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback
+    paper_interface_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback := @paper_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback
 
 /--
 Paper Proposition 6 standard-Gaussian equilibrium consequence when only
 school `J2`'s ordinary fallback sub/full entry equals its sub/sub entry.
 -/
 abbrev
-    paper_interface_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback_eq :=
-  @paper_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback_eq
+    paper_interface_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback_eq := @paper_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_fallback_eq
 
 /--
 Paper Proposition 6 standard-Gaussian equilibrium consequence when the
@@ -25612,8 +25093,7 @@ ordinary fallback sub/full diversity row for school `J2` is the same as its
 sub/sub row, so the `J2` weak no-deviation condition is discharged internally.
 -/
 abbrev
-    paper_interface_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_same_fallback :=
-  @paper_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_same_fallback
+    paper_interface_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_same_fallback := @paper_proposition6_policyState_standardGaussian_source_parameter_diversity_rows_inequality_implies_subFull_equilibrium_of_J2_same_fallback
 
 /--
 Paper Proposition 6 standard-Gaussian generated-row bundle: on the same
@@ -25621,16 +25101,14 @@ diversity table, `J1`'s strict drop-test iff and the weak `(P_sub,P_full)`
 equilibrium iff.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_drop_iff_and_subFull_equilibrium_of_J2_fallback_eq :=
-  @paper_proposition6_standardGaussian_drop_iff_and_subFull_equilibrium_of_J2_fallback_eq
+    paper_interface_proposition6_standardGaussian_drop_iff_and_subFull_equilibrium_of_J2_fallback_eq := @paper_proposition6_standardGaussian_drop_iff_and_subFull_equilibrium_of_J2_fallback_eq
 
 /--
 Paper Proposition 6 standard-Gaussian generated-row bundle for the common
 same-fallback table shape.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_drop_iff_and_subFull_equilibrium_of_J2_same_fallback :=
-  @paper_proposition6_standardGaussian_drop_iff_and_subFull_equilibrium_of_J2_same_fallback
+    paper_interface_proposition6_standardGaussian_drop_iff_and_subFull_equilibrium_of_J2_same_fallback := @paper_proposition6_standardGaussian_drop_iff_and_subFull_equilibrium_of_J2_same_fallback
 
 /--
 Paper Proposition 6 preferred generated-row bundle: both the sub/full row and
@@ -25639,8 +25117,7 @@ and the same-fallback table shape discharges school `J2`'s weak no-deviation
 premise.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_generated_rows_drop_iff_and_subFull_equilibrium_same_fallback :=
-  @paper_proposition6_standardGaussian_drop_iff_and_subFull_equilibrium_of_J2_same_fallback
+    paper_interface_proposition6_standardGaussian_generated_rows_drop_iff_and_subFull_equilibrium_same_fallback := @paper_proposition6_standardGaussian_drop_iff_and_subFull_equilibrium_of_J2_same_fallback
 
 /--
 Paper Proposition 6 preferred generated-row bundle, specialized to the
@@ -25709,16 +25186,14 @@ displayed inequality implies both the drop-test decision and the weak
 `(P_sub,P_full)` equilibrium.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_strict_inequality_implies_drop_and_subFull_equilibrium_of_J2_fallback_eq :=
-  @paper_proposition6_standardGaussian_strict_inequality_implies_drop_and_subFull_equilibrium_of_J2_fallback_eq
+    paper_interface_proposition6_standardGaussian_strict_inequality_implies_drop_and_subFull_equilibrium_of_J2_fallback_eq := @paper_proposition6_standardGaussian_strict_inequality_implies_drop_and_subFull_equilibrium_of_J2_fallback_eq
 
 /--
 Paper Proposition 6 standard-Gaussian generated-row consequence for the
 same-fallback table shape.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_strict_inequality_implies_drop_and_subFull_equilibrium_of_J2_same_fallback :=
-  @paper_proposition6_standardGaussian_strict_inequality_implies_drop_and_subFull_equilibrium_of_J2_same_fallback
+    paper_interface_proposition6_standardGaussian_strict_inequality_implies_drop_and_subFull_equilibrium_of_J2_same_fallback := @paper_proposition6_standardGaussian_strict_inequality_implies_drop_and_subFull_equilibrium_of_J2_same_fallback
 
 /--
 Paper Proposition 6 preferred generated-row consequence: the strict displayed
@@ -25726,8 +25201,7 @@ source-parameter inequality gives both conclusions on the generated-row,
 same-fallback surface.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_generated_rows_strict_inequality_implies_drop_and_subFull_equilibrium_same_fallback :=
-  @paper_proposition6_standardGaussian_strict_inequality_implies_drop_and_subFull_equilibrium_of_J2_same_fallback
+    paper_interface_proposition6_standardGaussian_generated_rows_strict_inequality_implies_drop_and_subFull_equilibrium_same_fallback := @paper_proposition6_standardGaussian_strict_inequality_implies_drop_and_subFull_equilibrium_of_J2_same_fallback
 
 /--
 Paper Proposition 6 preferred generated-row consequence, specialized to the
@@ -25814,8 +25288,7 @@ four-row diversity table, `J1`'s drop-test iff and the weak `(P_sub,P_full)`
 equilibrium iff reduce to the displayed source-parameter comparisons.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_iff :=
-  @paper_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_iff
+    paper_interface_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_iff := @paper_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_iff
 
 /--
 Paper Proposition 6 standard-Gaussian concrete-row bundle, specialized to the
@@ -25865,8 +25338,7 @@ same-fallback table shape: the school-`J2` weak no-deviation condition is
 discharged by row equality.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_same_fallback :=
-  @paper_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_same_fallback
+    paper_interface_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_same_fallback := @paper_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_same_fallback
 
 /--
 Paper Proposition 6 standard-Gaussian concrete-row same-fallback bundle,
@@ -25918,8 +25390,7 @@ sub/full row: the school-`J1` sub-row identity and school-`J2` same-fallback
 condition are discharged by the generated row.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_generated_subFull_same_fallback :=
-  @paper_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_generated_subFull_same_fallback
+    paper_interface_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_generated_subFull_same_fallback := @paper_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_generated_subFull_same_fallback
 
 /--
 Paper Proposition 6 standard-Gaussian concrete-row bundle with generated
@@ -25997,8 +25468,7 @@ Paper Proposition 6 standard-Gaussian concrete-row bundle with generated
 sub/full and full/full source-parameter rows.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_generated_rows_same_fallback :=
-  @paper_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_generated_rows_same_fallback
+    paper_interface_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_generated_rows_same_fallback := @paper_proposition6_standardGaussian_source_rows_drop_iff_and_subFull_equilibrium_generated_rows_same_fallback
 
 /--
 Paper Proposition 6 standard-Gaussian concrete-row bundle with generated
@@ -26067,8 +25537,7 @@ Paper Proposition 6 standard-Gaussian concrete-row consequence with generated
 sub/full row.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_generated_subFull_same_fallback :=
-  @paper_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_generated_subFull_same_fallback
+    paper_interface_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_generated_subFull_same_fallback := @paper_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_generated_subFull_same_fallback
 
 /--
 Paper Proposition 6 standard-Gaussian concrete-row consequence with generated
@@ -26164,8 +25633,7 @@ Paper Proposition 6 standard-Gaussian concrete-row consequence with generated
 sub/full and full/full source-parameter rows.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_generated_rows_same_fallback :=
-  @paper_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_generated_rows_same_fallback
+    paper_interface_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_generated_rows_same_fallback := @paper_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_generated_rows_same_fallback
 
 /--
 Paper Proposition 6 standard-Gaussian concrete-row consequence with generated
@@ -26253,8 +25721,7 @@ displayed inequality implies both school `J1`'s drop-test decision and the
 weak `(P_sub,P_full)` equilibrium on an actual four-row diversity table.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium :=
-  @paper_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium
+    paper_interface_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium := @paper_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium
 
 /--
 Paper Proposition 6 standard-Gaussian concrete-row consequence, specialized
@@ -26313,8 +25780,7 @@ Paper Proposition 6 standard-Gaussian concrete-row consequence for the common
 same-fallback table shape.
 -/
 abbrev
-    paper_interface_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_same_fallback :=
-  @paper_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_same_fallback
+    paper_interface_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_same_fallback := @paper_proposition6_standardGaussian_source_rows_strict_inequality_implies_drop_and_subFull_equilibrium_same_fallback
 
 /--
 Paper Proposition 6 standard-Gaussian concrete-row same-fallback consequence,
@@ -26522,24 +25988,19 @@ theorem
     api Q bivariateCDF hJ2 hfull hsub hineq
 
 abbrev
-    paper_interface_proposition6_policyState_j1_strict_diversity_best_response_iff_paper_formulas :=
-  @paper_proposition6_policyState_j1_strict_diversity_best_response_iff_paper_formulas
+    paper_interface_proposition6_policyState_j1_strict_diversity_best_response_iff_paper_formulas := @paper_proposition6_policyState_j1_strict_diversity_best_response_iff_paper_formulas
 
 abbrev
-    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_paper_formulas :=
-  @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_paper_formulas
+    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_paper_formulas := @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_paper_formulas
 
 abbrev
-    paper_interface_proposition6_policyState_j1_strict_diversity_best_response_iff_source_parameter_formulas :=
-  @paper_proposition6_policyState_j1_strict_diversity_best_response_iff_source_parameter_formulas
+    paper_interface_proposition6_policyState_j1_strict_diversity_best_response_iff_source_parameter_formulas := @paper_proposition6_policyState_j1_strict_diversity_best_response_iff_source_parameter_formulas
 
 abbrev
-    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_formulas :=
-  @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_formulas
+    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_formulas := @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_source_parameter_formulas
 
 abbrev
-    paper_interface_proposition6_policyState_j1_strict_diversity_best_response_iff_standardGaussian_source_parameter_formulas :=
-  @paper_proposition6_policyState_j1_strict_diversity_best_response_iff_standardGaussian_source_parameter_formulas
+    paper_interface_proposition6_policyState_j1_strict_diversity_best_response_iff_standardGaussian_source_parameter_formulas := @paper_proposition6_policyState_j1_strict_diversity_best_response_iff_standardGaussian_source_parameter_formulas
 
 /--
 Paper Proposition 6 concrete policy-state drop-test iff, specialized to the
@@ -26589,8 +26050,7 @@ abbrev
     (q1Full := q1Full) hfull hsub
 
 abbrev
-    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_formulas :=
-  @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_formulas
+    paper_interface_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_formulas := @paper_proposition6_policyState_diversity_surface_subFull_equilibrium_iff_standardGaussian_source_parameter_formulas
 
 /--
 Paper Proposition 6 concrete policy-state `(P_sub,P_full)` equilibrium iff,
@@ -26640,8 +26100,7 @@ abbrev
     (q1Full := q1Full) hfull hsub
 
 abbrev
-    paper_interface_proposition6_policyState_standardGaussian_source_parameter_formula_inequality_implies_diversity_surface_subFull_equilibrium :=
-  @paper_proposition6_policyState_standardGaussian_source_parameter_formula_inequality_implies_diversity_surface_subFull_equilibrium
+    paper_interface_proposition6_policyState_standardGaussian_source_parameter_formula_inequality_implies_diversity_surface_subFull_equilibrium := @paper_proposition6_policyState_standardGaussian_source_parameter_formula_inequality_implies_diversity_surface_subFull_equilibrium
 
 /--
 Paper Proposition 6 concrete policy-state equilibrium consequence, specialized
@@ -26708,16 +26167,14 @@ abbrev
     (q1Full := q1Full) hJ2 hfull hsub hineq
 
 abbrev
-    paper_interface_proposition6_policyState_source_parameter_formula_inequality_implies_diversity_surface_subFull_equilibrium :=
-  @paper_proposition6_policyState_source_parameter_formula_inequality_implies_diversity_surface_subFull_equilibrium
+    paper_interface_proposition6_policyState_source_parameter_formula_inequality_implies_diversity_surface_subFull_equilibrium := @paper_proposition6_policyState_source_parameter_formula_inequality_implies_diversity_surface_subFull_equilibrium
 
 /-- Paper Proposition 6: strategic diversity comparisons. -/
 theorem paper_interface_proposition6_strategic_diversity
     {Group Policy School Equilibrium : Type*}
     {S : GLM20StrategicPolicySurface Group Policy School Equilibrium}
     (C : GLM20StrategicDiversityCertificate S) :
-    C.strategicDiversityComparisons :=
-  paper_proposition6_strategic_diversity_of_certificate C
+    C.strategicDiversityComparisons := paper_proposition6_strategic_diversity_of_certificate C
 
 /--
 Appendix D support: Gaussian closure, truncated-normal expectation,
@@ -26727,23 +26184,20 @@ theorem paper_interface_appendixD_gaussian_support
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20GaussianAnalyticSupportCertificate S) :
     C.normalClosure ∧ C.truncatedNormalExpectation ∧
-      C.hazardRateMonotonicity ∧ C.thresholdComparisons :=
-  paper_appendixD_gaussian_support_of_certificate C
+      C.hazardRateMonotonicity ∧ C.thresholdComparisons := paper_appendixD_gaussian_support_of_certificate C
 
 /-- Appendix F support: Blackwell sufficiency, SSD, convex order, and crossing. -/
 theorem paper_interface_appendixF_blackwell_ssd_support
     (C : GLM20BlackwellSupportCertificate) :
     C.sufficiencyEquivalentToSecondOrderDominance ∧
-      C.convexOrderMeanPreservation ∧ C.crossingLemma :=
-  paper_appendixF_blackwell_ssd_support_of_certificate C
+      C.convexOrderMeanPreservation ∧ C.crossingLemma := paper_appendixF_blackwell_ssd_support_of_certificate C
 
 /-- Propositions 7--9: generalization and affirmative-action extensions. -/
 theorem paper_interface_propositions7_9_generalization_affirmative_action
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20GeneralizationAndAffirmativeActionCertificate S) :
     C.generalizedFixedPolicyMetrics ∧ C.affirmativeActionFixedPolicy ∧
-      C.droppingTestsAffirmativeActionWithBarriers :=
-  paper_propositions7_9_generalization_affirmative_action_of_certificate C
+      C.droppingTestsAffirmativeActionWithBarriers := paper_propositions7_9_generalization_affirmative_action_of_certificate C
 
 end
 

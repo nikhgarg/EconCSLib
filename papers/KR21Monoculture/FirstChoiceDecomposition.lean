@@ -29,8 +29,8 @@ noncomputable def firstChoiceCollisionDiff {n : ℕ}
 theorem sum_firstChoiceGapMass_eq_expectedGap {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
     (∑ c : Candidate n, firstChoiceGapMass μ value c) =
-      pmfExp μ (fun π => valueGap value π) := by
-  exact EconCSLib.SocialChoice.Ranking.sum_firstChoiceGapMass_eq_expectedGap
+      pmfExp μ (fun π => valueGap value π) :=
+   EconCSLib.SocialChoice.Ranking.sum_firstChoiceGapMass_eq_expectedGap
     μ value
 
 /--
@@ -40,8 +40,8 @@ then the corresponding first-choice gap mass is nonnegative.
 theorem firstChoiceGapMass_nonneg_of_gap_nonneg_onFiber {n : ℕ}
     (μ : PMF (Ranking n)) (value : Candidate n → ℝ) (c : Candidate n)
     (hgap : ∀ π : Ranking n, c = firstChoice π → 0 ≤ valueGap value π) :
-    0 ≤ firstChoiceGapMass μ value c := by
-  exact EconCSLib.SocialChoice.Ranking.firstChoiceGapMass_nonneg_of_gap_nonneg_onFiber
+    0 ≤ firstChoiceGapMass μ value c :=
+   EconCSLib.SocialChoice.Ranking.firstChoiceGapMass_nonneg_of_gap_nonneg_onFiber
     μ value c hgap
 
 /--

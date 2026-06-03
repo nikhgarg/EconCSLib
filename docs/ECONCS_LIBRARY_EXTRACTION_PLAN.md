@@ -23,6 +23,8 @@ show up repeatedly in EconCS papers.
     `measure_eq_zero_of_ae_lt_of_le`,
     `ae_imp_le_contradicts_positive_selected_lt_mass`, and
     `positive_selected_lt_mass_of_positive_lower_lt_mass`;
+  - positive affine cancellation under a.e. implications:
+    `ae_imp_le_of_affine_div_le_affine_div`;
   - null symmetric-difference cleanup:
     `measure_set_congr_of_symmDiff_null`,
     `measure_symmDiff_union_left_eq_zero`,
@@ -45,7 +47,15 @@ show up repeatedly in EconCS papers.
     `expectedSampleOrderStatisticMean`, `expectedOrderStatisticMeanSeq`,
     `orderStatisticTopKSumFromSample_eq_sampleTopKSum`,
     `expectedOrderStatisticMeanSeq_topKSum_eq_expectedSampleTopKSum`, and
-    `expectedOrderStatisticMeanSeq_topKEndpointLoss_eq_expectedReflectedBottomKSum`.
+    `expectedOrderStatisticMeanSeq_topKEndpointLoss_eq_expectedReflectedBottomKSum`;
+  - distribution-neutral marginal asymptotic packaging:
+    `TopKExpectationOracle.orderStatisticTopKExpectationOracle`,
+    `OrderStatisticScaledMarginalCertificate`,
+    `OrderStatisticScaledMarginalCertificate.ofMarginalAsymptoticEquivalent`,
+    `OrderStatisticScaledMarginalCertificate.ofConstMulScaleAsymptoticEquivalent`,
+    `OrderStatisticScaledMarginalCertificate.ofFiniteRankMarginalSumAsymptoticEquivalent`,
+    `OrderStatisticScaledMarginalCertificate.ofFiniteRankScaledLimits`, and
+    `OrderStatisticScaledMarginalCertificate.toTopKExpectationScaledMarginalLimitCertificate`.
 - `EconCSLib.Foundations.Probability.FiniteExpectation`
   - finite event helpers:
     `pmfExp_le_const_mul_pmfProb_of_forall_le_indicator` and
@@ -55,7 +65,22 @@ show up repeatedly in EconCS papers.
     `finite_sum_asymptoticEquivalent_common_scale` and
     `asymptoticEquivalent_add_negligible_common_scale`;
   - finite-prefix cleanup for zero-convergent schedules:
-    `tendsToZero_if_lt_const`.
+    `tendsToZero_if_lt_const`;
+  - finite-discrete logarithmic/geometric tail estimates:
+    `log_geometric_tail_ratio`, `tendsto_log_nat_div_nat_nhds_zero`,
+    `tendsto_nat_sqrt_atTop`, `tendsto_nat_succ_cast_atTop`,
+    `tendsto_nat_succ_cast_add_const_atTop`,
+    `tendsto_nat_succ_cast_rpow_atTop`,
+    `tendsto_nat_succ_cast_rpow_neg_nhds_zero`,
+    `tendsto_nat_succ_cast_add_const_rpow_neg_nhds_zero`,
+    `tendsto_sqrt_nat_succ_cast_atTop`,
+    `nat_sqrt_gap_error_tendsToZero`,
+    `nat_sqrt_gap_polynomial_geometric_tends_to_zero`,
+    `rpow_mul_geometric_tendsto_zero`,
+    `log_polynomial_geometric_tail_ratio`, and
+    `log_tail_ratio_of_geometric_bounds`;
+  - positive-scale divergence:
+    `tendsto_const_div_atTop_of_pos_tendsto_zero`.
 - `EconCSLib.Foundations.Math.ConvexCombination`
   - two-point weighted-average algebra for pooled estimates:
     `twoPointWeightedAverage`,
@@ -64,20 +89,58 @@ show up repeatedly in EconCS papers.
     `twoPointWeightedAverage_lt_of_components_lt`,
     `lt_twoPointWeightedAverage_of_weighted_gap_pos`,
     `twoPointWeightedAverage_lt_of_weighted_gap_neg`, and
-    `continuous_twoPointWeightedAverage`.
+    `continuous_twoPointWeightedAverage`;
+  - gated two-point averages with weights `(1 - share)` and `share * gate`:
+    `gatedTwoPointWeightedAverage`,
+    `gatedTwoPointWeightedAverage_denominator_pos`,
+    `lt_gatedTwoPointWeightedAverage_of_lt_components`,
+    `lt_gatedTwoPointWeightedAverage_of_weighted_gap_pos`,
+    `gatedTwoPointWeightedAverage_lt_of_components_lt`,
+    `gatedTwoPointWeightedAverage_lt_of_weighted_gap_neg`, and
+    `continuous_gatedTwoPointWeightedAverage`;
+  - two-state weight-sum-one comparisons:
+    `weightedAverage_lt_right_of_left_lt_right` and
+    `left_lt_weightedAverage_of_left_lt_right`.
 - `EconCSLib.Foundations.Math.ThresholdCharacterization`
   - unbounded continuous monotone cutoff existence and threshold-region
     packages:
     `existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop` and
     `existsUnique_eq_and_upper_region_of_continuous_strictAnti_tendsto_atBot_atTop`.
+- `EconCSLib.Foundations.Math.AffineThreshold`
+  - positive-slope affine threshold algebra:
+    `threshold_le_affine_iff_cutoff_le`,
+    `affine_le_threshold_iff_le_cutoff`,
+    `lowerCutoffStrategy_of_affine_threshold`, and
+    `indexed_affineDecreasing_regularities_Icc`.
 - `EconCSLib.Foundations.Probability.Gaussian` and `GaussianMathlib`
+  - precision-standardized cutoff algebra:
+    `precisionStandardizedThreshold_lt_iff_cutoff_lt_skill` and
+    `precisionStandardizedSameThreshold_lt_iff_cutoff_lt_skill`;
+  - upper-tail pass-probability comparisons:
+    `StandardGaussianCDFAPI.thresholdPassProb_sub_pos_iff_standardize_lt`
+    and
+    `StandardGaussianCDFAPI.thresholdPassProb_sub_pos_iff_standardize_lt_of_thresholds`;
+  - one-coordinate Gaussian posterior-threshold lower-cutoff rules:
+    `GaussianSignalFamily.lowerCutoffStrategy_posteriorMean_update_threshold`
+    and
+    `GaussianOffsetSignalFamily.lowerCutoffStrategy_posteriorMean_update_threshold`;
   - hazard/truncated-normal seam:
     `GaussianHazardCertificate.hazard_gt_arg_of_pos`,
     `GaussianHazardCertificate.normalUpperTailMean_gt_threshold`, and
     `standardGaussian_normalUpperTailMean_gt_threshold`;
   - positive Gaussian interval mass between a threshold and its upper-tail
     conditional mean:
-    `standardGaussian_toMeasure_Ico_threshold_normalUpperTailMean_pos`.
+    `standardGaussian_toMeasure_Ico_threshold_normalUpperTailMean_pos`;
+  - same-side affine upper-tail asymptotic comparison for two Gaussian
+    threshold rules:
+    `standardGaussian_affineUpperTail_delta_lt_eventually_of_same_side_slope_order`.
+- `EconCSLib.Foundations.Probability.InformationOrder`
+  - finite Blackwell-sufficiency/garbling primitives:
+    `BlackwellSufficient`,
+    `BlackwellSufficient.bind`,
+    `BlackwellSufficient.map`,
+    `BlackwellSufficient.refl`, and
+    `BlackwellSufficient.trans`.
 - `EconCSLib.Foundations.Probability.BivariateGaussian`
   - independent two-coordinate Gaussian product scaffolding and canonical
     variance scaling:
@@ -145,13 +208,33 @@ show up repeatedly in EconCS papers.
     `expectedFirstMover_sub_secondMoverIndependent_eq_sum_firstChoiceProb_mul_firstChoiceGapMass`,
     `expectedCollisionLossDiff_eq_sum_collisionDiff_mul_firstChoiceGapMass`,
     `secondMoverFirstLawSwitchGain_eq_expected_collision_loss_diff`, and
-    `expectedSecondMoverIndependent_le_of_collisionProb_le_and_gap_nonneg`.
+    `expectedSecondMoverIndependent_le_of_collisionProb_le_and_gap_nonneg`;
+  - first-choice fiber and sign helpers:
+    `center_valueGap_pos_of_strictlyOrderedBy`,
+    `center_valueGap_nonneg_of_weaklyOrderedBy`,
+    `valueGap_nonneg_on_firstFiber_of_weaklyOrderedBy`,
+    `valueGap_pos_on_firstFiber_of_strictlyOrderedBy`,
+    `firstChoiceGapMass_nonneg_of_referenceTop_weaklyOrdered`,
+    `firstChoiceGapMass_pos_of_reference_mass_pos_and_strictlyOrderedBy`,
+    `firstChoiceMissProb_pos_iff_firstChoiceProb_lt_one`,
+    `firstChoiceMissProb_nonneg_iff_firstChoiceProb_le_one`,
+    `firstChoiceCollisionDiff_pos_iff`, and
+    `firstChoiceCollisionDiff_nonneg_iff`.
 - `EconCSLib.Foundations.Math.FiniteSum`
   - ordered-pair regrouping and MLR-weighted averages:
     `pair_sum_eq_ordered_swap_sum_of_injective_key`,
     `pair_sum_eq_ordered_swap_sum`,
     `weighted_average_cross_nonneg_of_pairwise`, and
     `weighted_average_cross_pos_of_pairwise`.
+- `EconCSLib.Foundations.Math.FiniteRounding`
+  - finite no-crossing integer-rounding certificates:
+    `FiniteRounding.NoRoundingCrossing`,
+    `FiniteRounding.NoRoundingCrossingBetween`,
+    `NoRoundingCrossing.count_lt_anchor_add_card`,
+    `NoRoundingCrossing.anchor_lt_count_add_card`,
+    `NoRoundingCrossingBetween.count_lt_upper_add_card`,
+    `NoRoundingCrossingBetween.lower_lt_count_add_card`, and
+    `NoRoundingCrossingBetween.count_close`.
 - `EconCSLib.Applications.RecommenderSystems.Allocation`
   - finite count-allocation helpers, including
     `Allocation.exists_count_gt_of_card_mul_lt_total` and
@@ -171,7 +254,10 @@ show up repeatedly in EconCS papers.
     `Allocation.objective_le_objective_moveOne_of_exchangeCondition`,
     `Allocation.objective_moveOne_le_of_isOptimalAtTotal`,
     `Allocation.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum`,
-    and the diminishing-returns marginal monotonicity lemmas;
+    `Allocation.count_le_succ_of_cross_strict_antitone_forwardMarginal`,
+    the diminishing-returns marginal monotonicity lemmas,
+    `Allocation.StrictRoundingExchangeCertificateBetween`, and
+    `Allocation.noRoundingCrossingBetween_of_strictExchangeCertificate`;
   - scaled-count asymptotic bridges:
     `Allocation.pairwise_scaled_abs_le_of_total_lt`,
     `Allocation.pairwise_scaled_abs_le_of_large_gap_backward_lt_forward`,
@@ -188,14 +274,17 @@ show up repeatedly in EconCS papers.
     `Allocation.OptimalSequence`, and
     `Allocation.OptimalSequence.convergesToProfile_of_asymptoticProfile`;
   - reusable profile-convergence endpoints from scaled-count control:
+    `Allocation.asymptoticProfileTarget_of_pairwise_scaled_bounded`,
     `Allocation.asymptoticProfile_of_pairwise_scaled_sublinear` and
     `Allocation.asymptoticProfile_of_large_gap_backward_lt_forward`, plus the
     floor-aware/eventual variant
     `Allocation.asymptoticProfile_of_eventual_large_gap_backward_lt_forward`;
   - certificate packages for those same endpoints:
+    `Allocation.PairwiseScaledBoundedProfileCertificate`,
     `Allocation.PairwiseScaledSublinearProfileCertificate`,
     `Allocation.PairwiseScaledSublinearFOCCertificate`, and
     `Allocation.PairwiseScaledEventualSublinearFOCCertificate`, with
+    `.asymptoticProfileTarget`,
     `.toPairwiseScaledSublinearProfileCertificate`,
     `.toPairwiseScaledSublinearFOCCertificate`, and `.asymptoticProfile`
     methods.
@@ -206,8 +295,10 @@ show up repeatedly in EconCS papers.
     lemmas.
 - `EconCSLib.SocialChoice.Ranking.Kendall`
   - inversion finsets, Kendall tau distance, first/second-choice deletion
-    formulas, `cycleRange`/`cycleIcc` relabeling bridges, center-transposition
-    invariance, and center-order predicates/value-gap consequences.
+  formulas, `cycleRange`/`cycleIcc` relabeling bridges, center-transposition
+  invariance, center-order predicates/value-gap consequences,
+  `weaklyOrderedBy_of_strictlyOrderedBy`, and
+  `rankOf_firstChoice_lt_rankOf_of_ne`.
 - `EconCSLib.SocialChoice.Ranking.Mallows`
   - reusable finite Mallows law/weight primitives: `mallowsWeight`,
     `mallowsPartition`, ranking-law `firstChoiceProb`, `MallowsSpec`,
@@ -285,6 +376,24 @@ show up repeatedly in EconCS papers.
 
 ## Paper Cleanup Recipes
 
+### Compatibility Wrapper Style
+
+When a paper-facing theorem is only a renamed or lightly-instantiated shared
+lemma, keep the paper theorem name but write the body as a direct proof term
+instead of a tactic shell:
+
+- prefer `:= shared_lemma ...` or `:= by simpa [...] using shared_lemma ...`
+  over `:= by exact shared_lemma ...`;
+- keep short aliases as `abbrev` where definitional equality is the intended
+  compatibility layer;
+- avoid blank lines immediately after `:=`, because Lean's style linter treats
+  those as empty lines within commands;
+- use tactic blocks only when coercions, `exact_mod_cast`, local rewrites, or
+  multi-step proof search are genuinely doing work.
+
+This style preserves paper-facing theorem names and user-facing interfaces
+while making extraction visibly reduce paper-folder proof code.
+
 ### GN21 Driver Surge Pricing
 
 Current cleanup already done in `papers/GN21DriverSurgePricing/MainTheorems.lean`:
@@ -328,9 +437,21 @@ Current reusable entry points:
 
 - `ChoiceEquilibriumAE` and `BinaryChoiceAE` for off-null best-response and
   null-tie threshold identification.
+- `InformationOrder.BlackwellSufficient` for Appendix-F finite garbling and
+  Blackwell-sufficiency wrappers.
+- `precisionStandardizedThreshold_lt_iff_cutoff_lt_skill` and
+  `precisionStandardizedSameThreshold_lt_iff_cutoff_lt_skill` for the
+  Proposition 1/8 standardized Gaussian threshold algebra.
+- `StandardGaussianCDFAPI.thresholdPassProb_sub_pos_iff_standardize_lt` for
+  Gaussian upper-tail probability gaps.
 - `GaussianHazardCertificate.normalUpperTailMean_gt_threshold` and
   `standardGaussian_normalUpperTailMean_gt_threshold` for upper-tail
   conditional means above positive thresholds.
+- `standardGaussian_affineUpperTail_delta_lt_eventually_of_same_side_slope_order`
+  for Theorem 2's same-side affine upper-tail delta comparison; the
+  paper-facing
+  `paper_theorem2_affineUpperTail_delta_lt_eventually_of_same_side_slope_order`
+  is now a direct wrapper around this library theorem.
 - `StandardGaussianCDFAPI`, `StandardGaussianQuantileAPI`,
   `GaussianHazardInverseCertificate`, and finite-mixture tail/capacity
   certificates for admissions cutoffs.
@@ -353,16 +474,25 @@ Cleanup target:
   should call
   `existsUnique_mixtureTailMass_eq_and_region_of_capacity_mem_Ioo`, which now
   delegates to the same shared threshold theorem.
+- For group-indexed affine decreasing cost thresholds of the form
+  `intercept g - slope g * c`, use
+  `indexed_affineDecreasing_regularities_Icc`; GLM's
+  `paper_theorem3_based_threshold_regularities_of_affine_decreasing` is now a
+  paper-facing wrapper around that shared continuity/strict-antitone fact.
 
 ### LG21 Test-Optional Policies
 
 Current reusable entry points:
 
 - Same Gaussian CDF/quantile/hazard layer as GLM.
+- `lowerCutoffStrategy_of_affine_threshold` and
+  `GaussianOffsetSignalFamily.lowerCutoffStrategy_posteriorMean_update_threshold`
+  for reporting/taking threshold rules.
 - `FiniteMixture` event-share and positive-share cancellation wrappers.
 - `Admissions` wrappers around finite posterior expectations.
-- `ConvexCombination.twoPointWeightedAverage` and its component/gap/
-  continuity lemmas for optional no-report pooled estimates.
+- `ConvexCombination.gatedTwoPointWeightedAverage` and its component/gap/
+  continuity lemmas for optional no-report pooled estimates with weights
+  `(1 - C)` and `C * F(c)`.
 - `MeasureInequalities.ae_imp_le_contradicts_positive_selected_lt_mass` and
   `positive_selected_lt_mass_of_positive_lower_lt_mass` for a.e. equilibrium
   contradictions over positive-mass below-reference intervals.
@@ -371,14 +501,14 @@ Cleanup target:
 
 - For no-report pooled estimates such as
   `lg21OptionalNoReportMixtureEstimate`, define paper notation locally but
-  prove comparisons via `lt_twoPointWeightedAverage_of_lt_components`,
-  `twoPointWeightedAverage_lt_of_components_lt`,
-  `lt_twoPointWeightedAverage_of_weighted_gap_pos`, and
-  `twoPointWeightedAverage_lt_of_weighted_gap_neg` after setting
-  `w0 = 1 - accessFraction` and `w1 = accessFraction * normalCDF ...`.
+  prove comparisons via `lt_gatedTwoPointWeightedAverage_of_lt_components`,
+  `gatedTwoPointWeightedAverage_lt_of_components_lt`,
+  `lt_gatedTwoPointWeightedAverage_of_weighted_gap_pos`, and
+  `gatedTwoPointWeightedAverage_lt_of_weighted_gap_neg`, with the gate
+  nonnegativity supplied by `normalCDF_nonneg`.
 - For continuity of those pooled estimates, use
-  `continuous_twoPointWeightedAverage`; the only paper-specific side condition
-  is the positive denominator from `1 - C + C * F(c)`.
+  `continuous_gatedTwoPointWeightedAverage`; the only paper-specific side
+  conditions are `C < 1` and nonnegative gate values.
 - For a.e. source-equilibrium contradictions, first derive the a.e. implication
   (`selected info -> actorMean <= value`) from `BinaryChoiceAE` or the
   paper's equilibrium projection, then call
@@ -386,6 +516,11 @@ Cleanup target:
   cutoff interval rather than selected points directly, use
   `positive_selected_lt_mass_of_positive_lower_lt_mass` to transfer positive
   mass through the cutoff rule.
+- For affine payoff comparisons of the form
+  `(base + weight * actorMean) / denom <= (base + weight * value) / denom`,
+  use `ae_imp_le_of_affine_div_le_affine_div` after proving `0 < weight` and
+  `0 < denom`; keep the equilibrium-record projection that supplies the a.e.
+  payoff inequality in LG.
 - Move any LG-local finite-mixture event-share algebra into wrappers around
   `EconCSLib.Foundations.Probability.FiniteMixture`.
 - Use `GaussianHazardCertificate.normalUpperTailMean_gt_threshold` for
@@ -407,6 +542,19 @@ Current cleanup already done:
   to `OrderStatistics`.
 - `FiniteDiscreteOrderStats.lean` keeps paper names but delegates finite-PMF
   indicator estimates to `FiniteExpectation`.
+- `FiniteDiscreteOrderStats.lean` now also keeps paper-facing finite top-k and
+  success-count names while delegating their reusable proofs to
+  `OrderStatistics`, `FiniteExpectation`, and `FiniteSum`: at-most-`k`
+  top-sum maximization, top-value count witnesses, coordinate-dependent product
+  event factorization, two-valued finite products, option-extension product
+  decompositions, finite-product reindexing, binomial success-count formulas,
+  finite iid expected top-k wrappers, and option-step top-k marginal identities
+  are shared library APIs.
+- `FiniteDiscreteOrderStats.lean` also delegates pointwise incremental top-k
+  sample-extension lemmas to `OrderStatistics`: adding one value cannot reduce
+  the at-most-`k` sum, small samples gain at least the new value, existing
+  `k` top values make the marginal zero, and the exact `k-1` top-count
+  promoting event gives the lower marginal gap `xTop - xSecond`.
 - `Bounded.lean` keeps paper names but delegates fixed finite-sum asymptotic
   assembly to `EconCSLib.Math`.
 - `Representation.lean` keeps the paper-facing
@@ -424,16 +572,29 @@ Current cleanup already done:
   `EconCSLib.Allocation.count_abs_sub_uniform_average_le_one_of_pairwise_balanced`.
 - `Optimization.lean` keeps `ConsumptionModel.exists_isOptimalAtTotal` as a
   paper-facing name but delegates fixed-total finite search to
-  `EconCSLib.Allocation.exists_isOptimalAtTotal`.
+  `EconCSLib.Allocation.exists_isOptimalAtTotal`; its finite feasible-code
+  helpers are now compatibility wrappers around
+  `EconCSLib.Allocation.FeasibleCode`.
 - `Exchange.lean` keeps the paper-facing weighted marginal, one-step exchange,
   and FOC names but delegates the generic total-preservation, objective
   accounting, no-profitable-exchange, FOC, and diminishing-returns monotonicity
   proofs to `EconCSLib.Applications.RecommenderSystems.Allocation`.
+  Its strict lower/upper exchange certificate now delegates the no-crossing
+  conclusion to
+  `EconCSLib.Allocation.noRoundingCrossingBetween_of_strictExchangeCertificate`.
+- `BernoulliExchange.lean` keeps the paper-facing symmetric Bernoulli
+  count-balance theorem, but delegates the generic optimum/count-gap
+  contradiction to
+  `EconCSLib.Allocation.count_le_succ_of_cross_strict_antitone_forwardMarginal`;
+  the paper file only supplies Bernoulli-specific marginal decay.
 - `SeparableAsymptotic.lean` keeps paper-facing asymptotic certificate names,
   but its finite-prefix error schedule wrapper delegates to
   `EconCSLib.Math.tendsToZero_if_lt_const`, and its sublinear FOC certificate
   delegates the "large scaled gap contradicts finite FOC" step to
   `EconCSLib.Allocation.pairwise_scaled_abs_le_of_large_gap_backward_lt_forward`.
+  Its fixed bounded pairwise-scaled profile certificate delegates the exact
+  `C / N` target to
+  `EconCSLib.Allocation.PairwiseScaledBoundedProfileCertificate`.
   Its pairwise sublinear homogeneity certificate now delegates the generic
   target-profile conclusion to
   `EconCSLib.Allocation.asymptoticProfile_of_pairwise_scaled_sublinear`.
@@ -443,6 +604,31 @@ Current cleanup already done:
 - `TailHomogeneity.lean` keeps Theorem 3's Bernoulli log-share wrapper but
   delegates the finite-prefix scaled-count bound to
   `EconCSLib.Allocation.pairwise_scaled_abs_le_of_total_lt`.
+- `SeparableAsymptotic.lean` keeps its finite-discrete theorem names, but the
+  pure logarithmic/geometric tail and square-root-gap asymptotic lemmas now
+  delegate to `EconCSLib.Math` names such as
+  `log_tail_ratio_of_geometric_bounds` and
+  `nat_sqrt_gap_polynomial_geometric_tends_to_zero`.
+- `Bounded.lean` keeps paper-facing bounded-tail scale lemmas, but delegates
+  generic positive-scale divergence to
+  `EconCSLib.Math.tendsto_const_div_atTop_of_pos_tendsto_zero` and generic
+  real-power-polynomial/geometric decay to
+  `EconCSLib.Math.rpow_mul_geometric_tendsto_zero`.
+- `Bounded.lean` and `Pareto.lean` keep their family-specific
+  `*OrderStatisticScaledMarginalCertificate` types and source parameters, but
+  delegate source-to-top-k marginal packaging through
+  `EconCSLib.Probability.OrderStatisticScaledMarginalCertificate`.
+- `DecayingBernoulli.lean` keeps the paper's shifted-index error schedules,
+  but delegates repeated `((N + 1 : ℕ) : ℝ)` atTop/rpow/sqrt limits to
+  `EconCSLib.Math.tendsto_nat_succ_cast_*` helpers.
+- `Uniform.lean` keeps the paper-facing
+  `UniformRounding.count_close_of_no_rounding_crossing_between`, but delegates
+  the two-sided integer-anchor closeness conclusion to
+  `EconCSLib.FiniteRounding.NoRoundingCrossingBetween.count_close`.
+  Its uniform-top-one no-crossing wrapper now converts the explicit rational
+  marginal certificate into the generic
+  `ConsumptionModel.StrictRoundingExchangeCertificateBetween` and delegates
+  through `ConsumptionModel.noRoundingCrossingBetween_of_strictExchangeCertificate`.
 
 Next reusable extraction:
 
@@ -474,11 +660,15 @@ Current cleanup already done:
 - `EconCSLib/SocialChoice/Ranking/Basic.lean` now owns `Ranking`,
   `firstChoice`, `secondChoice`, `rankOf`, `swapTopTwo`,
   `bestRemainingAfter`, and the top-two simp/rank lemmas. The old
-  `KR21Monoculture/Basic.lean` is a compatibility layer preserving paper names.
+  `KR21Monoculture/Basic.lean` is an `export` compatibility facade preserving
+  paper names.
 - `EconCSLib/SocialChoice/Ranking/Kendall.lean` now owns inversion finsets,
   Kendall tau, deletion/relabeling formulas, and center-order predicates. The
-  old `KR21Monoculture/Kendall.lean` is a compatibility layer preserving paper
-  names and the KR-specific `valueGap` wrappers.
+  old `KR21Monoculture/Kendall.lean` is an `export` compatibility facade
+  preserving paper names plus the KR-specific `valueGap` wrappers. Do not
+  export extra names already reintroduced by later KR files, such as
+  `rankOf_firstChoice_lt_rankOf_of_ne`, because that creates ambiguous
+  downstream resolution.
 - `EconCSLib/SocialChoice/Ranking/Mallows.lean` now owns the reusable finite
   Mallows law/weight layer. The KR file still keeps its local `MallowsSpec`
   structure stable for downstream field-rewrite scripts and owns the
@@ -533,7 +723,16 @@ Current cleanup already done:
   mover utility, Equation (3), reranking gains, and weaker competition, but
   the generic probability, miss-probability, value-gap, candidate-fiber,
   collision-loss, pair-lifted, and first-mover-law switch identities delegate
-  to `EconCSLib.SocialChoice.Ranking.Payoff`.
+  to `EconCSLib.SocialChoice.Ranking.Payoff`. Use `export` for pure aliases
+  such as `Expectation.lean`; keep thin local definitions and local theorem
+  wrappers for names that later KR proofs unfold or rewrite through, such as
+  `firstChoiceProb`, `firstChoiceMissProb`, `expectedRerankingGain`, and the
+  Equation (3) miss-gap identities.
+- `KR21Monoculture/FiberSigns.lean` keeps its paper-facing sign theorem names,
+  but now delegates reference-top fiber value-gap signs, gap-mass positivity,
+  miss-probability signs, and collision-difference signs to
+  `EconCSLib.SocialChoice.Ranking.Kendall` and
+  `EconCSLib.SocialChoice.Ranking.Payoff`.
 
 Next reusable extraction:
 

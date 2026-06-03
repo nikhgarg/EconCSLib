@@ -20,8 +20,7 @@ If the upper-tail density behaves like `(M - x)^(beta - 1)`, the paper's
 bounded branch has `h(q + 1) - h(q)` proportional to
 `q^-((beta + 1) / beta)`.
 -/
-noncomputable def boundedMarginalExponent (beta : ℝ) : ℝ :=
-  (beta + 1) / beta
+noncomputable def boundedMarginalExponent (beta : ℝ) : ℝ := (beta + 1) / beta
 
 theorem boundedMarginalExponent_pos {beta : ℝ} (hbeta_pos : 0 < beta) :
     0 < boundedMarginalExponent beta := by
@@ -48,8 +47,7 @@ noncomputable def boundedPowerMarginalValue (beta : ℝ) (q : ℕ) : ℝ :=
 
 /-- Common top-one oracle with exact bounded-branch power-law marginals. -/
 noncomputable def boundedPowerMarginalOracle (T : ℕ) (beta : ℝ) :
-    TopKValueOracle T :=
-  TopKValueOracle.common T (boundedPowerMarginalValue beta)
+    TopKValueOracle T := TopKValueOracle.common T (boundedPowerMarginalValue beta)
 
 theorem boundedPowerMarginalValue_zero (beta : ℝ) :
     boundedPowerMarginalValue beta 0 = 0 := by
@@ -63,8 +61,7 @@ theorem boundedPowerMarginalValue_forward_marginal
   simp [boundedPowerMarginalValue, Finset.sum_range_succ]
 
 /-- Exact scaled marginal used by the bounded power-marginal oracle. -/
-noncomputable def boundedPowerMarginalScale (beta : ℝ) (q : ℕ) : ℝ :=
-  (((q + 1 : ℕ) : ℝ) ^ (-(boundedMarginalExponent beta)))
+noncomputable def boundedPowerMarginalScale (beta : ℝ) (q : ℕ) : ℝ := (((q + 1 : ℕ) : ℝ) ^ (-(boundedMarginalExponent beta)))
 
 theorem boundedPowerMarginalScale_pos (beta : ℝ) (q : ℕ) :
     0 < boundedPowerMarginalScale beta q := by
@@ -181,8 +178,7 @@ theorem asymptoticEquivalent_add_negligible_common_scale
     main remainder scale coeff hcoeff_ne hscale_ne hmain hremainder
 
 /-- The bounded branch's common scale, `a^(-1 / beta)`. -/
-noncomputable def boundedTailScale (beta : ℝ) (a : ℕ) : ℝ :=
-  (a : ℝ) ^ (-(1 / beta))
+noncomputable def boundedTailScale (beta : ℝ) (a : ℕ) : ℝ := (a : ℝ) ^ (-(1 / beta))
 
 theorem boundedTailScale_eventually_ne_zero (beta : ℝ) :
     ∀ᶠ a in atTop, boundedTailScale beta a ≠ 0 := by
@@ -366,6 +362,18 @@ structure BoundedOrderStatisticScaledMarginalCertificate
 
 namespace BoundedOrderStatisticScaledMarginalCertificate
 
+def toOrderStatisticScaledMarginalCertificate
+    {μ : ℕ → ℕ → ℝ} {k : ℕ} {beta limitCoeff : ℝ}
+    (C : BoundedOrderStatisticScaledMarginalCertificate μ k beta limitCoeff) :
+    EconCSLib.Probability.OrderStatisticScaledMarginalCertificate μ k
+      (boundedPowerMarginalScale beta) limitCoeff where
+  k_pos := C.k_pos
+  coeff_pos := C.coeff_pos
+  scale_pos_eventually := by
+    filter_upwards with q
+    exact boundedPowerMarginalScale_pos beta q
+  marginal_ratio_tendsto := C.marginal_ratio_tendsto
+
 theorem marginal_asymptoticEquivalent
     {μ : ℕ → ℕ → ℝ} {k : ℕ} {beta limitCoeff : ℝ}
     (C : BoundedOrderStatisticScaledMarginalCertificate μ k beta limitCoeff) :
@@ -374,7 +382,7 @@ theorem marginal_asymptoticEquivalent
         orderStatisticTopKSumFromMean μ k (q + 1) -
           orderStatisticTopKSumFromMean μ k q)
       (fun q : ℕ => boundedPowerMarginalScale beta q * limitCoeff) :=
-  C.marginal_ratio_tendsto
+  C.toOrderStatisticScaledMarginalCertificate.marginal_asymptoticEquivalent
 
 def ofMarginalAsymptoticEquivalent
     {μ : ℕ → ℕ → ℝ} {k : ℕ} {beta limitCoeff : ℝ}
@@ -433,68 +441,28 @@ noncomputable def toTopKScaledMarginalLimitCertificate
     TopKScaledMarginalLimitCertificate
       (TopKValueOracle.ofOrderStatisticMean T μ) k
       (boundedPowerMarginalScale beta)
-      (fun _ : ItemType T => limitCoeff) where
-  scale_pos_eventually := by
-    filter_upwards with q
-    exact boundedPowerMarginalScale_pos beta q
-  weight_pos := by
-    intro _t
-    exact C.coeff_pos
-  marginal_ratio_tendsto := by
-    intro t
-    simpa [EconCSLib.Probability.TopKExpectationOracle.marginalTopK,
-      topKExpectationOracleOfTopKValueOracle] using C.marginal_ratio_tendsto
+      (fun _ : ItemType T => limitCoeff) := by
+  simpa [topKExpectationOracleOfTopKValueOracle,
+      EconCSLib.Probability.TopKExpectationOracle.orderStatisticTopKExpectationOracle,
+      TopKValueOracle.ofOrderStatisticMean]
+    using
+      C.toOrderStatisticScaledMarginalCertificate
+        |>.toTopKExpectationScaledMarginalLimitCertificate (ItemType T)
 
 end BoundedOrderStatisticScaledMarginalCertificate
 
 /-- The paper's rescaled split threshold `delta / a^(-1/beta)` diverges. -/
 theorem boundedTailScale_delta_div_tendsto_atTop
     {beta delta : ℝ} (hbeta_pos : 0 < beta) (hdelta_pos : 0 < delta) :
-    Tendsto (fun a : ℕ => delta / boundedTailScale beta a) atTop atTop := by
-  have hscale_nhdsGT :
-      Tendsto (boundedTailScale beta) atTop (𝓝[>] (0 : ℝ)) := by
-    refine tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
-      (boundedTailScale beta)
-      (boundedTailScale_tendsto_zero hbeta_pos) ?_
-    exact boundedTailScale_eventually_pos beta
-  have hinv :
-      Tendsto (fun a : ℕ => (boundedTailScale beta a)⁻¹) atTop atTop :=
-    hscale_nhdsGT.inv_tendsto_nhdsGT_zero
-  simpa [div_eq_mul_inv] using
-    (tendsto_const_mul_atTop_of_pos hdelta_pos).mpr hinv
+    Tendsto (fun a : ℕ => delta / boundedTailScale beta a) atTop atTop :=
+  EconCSLib.Math.tendsto_const_div_atTop_of_pos_tendsto_zero
+    hdelta_pos (boundedTailScale_tendsto_zero hbeta_pos)
+    (boundedTailScale_eventually_pos beta)
 
 theorem boundedTailScale_const_mul_tendsto_zero
     {beta y : ℝ} (hbeta_pos : 0 < beta) :
     Tendsto (fun a => y * boundedTailScale beta a) atTop (nhds 0) := by
   simpa using (boundedTailScale_tendsto_zero hbeta_pos).const_mul y
-
-/--
-Any fixed real-power polynomial factor is killed by a geometric term along
-natural-number indices.
--/
-theorem bounded_rpow_mul_geometric_tendsto_zero
-    (s : ℝ) {rho : ℝ} (hrho_pos : 0 < rho) (hrho_lt_one : rho < 1) :
-    Tendsto (fun a : ℕ => (a : ℝ) ^ s * rho ^ a)
-      atTop (nhds 0) := by
-  have hlog_neg : Real.log rho < 0 := Real.log_neg hrho_pos hrho_lt_one
-  have hreal :
-      Tendsto (fun x : ℝ => x ^ s * Real.exp (Real.log rho * x))
-        atTop (nhds 0) := by
-    simpa [neg_mul, neg_neg, mul_comm, mul_left_comm, mul_assoc] using
-      tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero
-        s (-Real.log rho) (neg_pos.mpr hlog_neg)
-  refine Tendsto.congr' ?_ (hreal.comp tendsto_natCast_atTop_atTop)
-  filter_upwards with a
-  have hexp :
-      Real.exp (Real.log rho * (a : ℝ)) = rho ^ a := by
-    calc
-      Real.exp (Real.log rho * (a : ℝ))
-        = Real.exp ((a : ℝ) * Real.log rho) := by rw [mul_comm]
-      _ = (Real.exp (Real.log rho)) ^ a := Real.exp_nat_mul (Real.log rho) a
-      _ = rho ^ a := by rw [Real.exp_log hrho_pos]
-  change (a : ℝ) ^ s * Real.exp (Real.log rho * (a : ℝ)) =
-    (a : ℝ) ^ s * rho ^ a
-  rw [hexp]
 
 /--
 A geometric tail beats the bounded-branch scale `a^(-1 / beta)`, even after a
@@ -514,7 +482,7 @@ theorem boundedTailScale_polynomial_geometric_ratio_tendsto_zero
           C * ((a : ℝ) ^ ((degree : ℝ) + 1 / beta) * rho ^ a))
         atTop (nhds 0) := by
     simpa [mul_assoc] using
-      (bounded_rpow_mul_geometric_tendsto_zero
+      (EconCSLib.Math.rpow_mul_geometric_tendsto_zero
         ((degree : ℝ) + 1 / beta) hrho_pos hrho_lt_one).const_mul C
   refine Tendsto.congr' ?_ hbase
   filter_upwards [eventually_gt_atTop 0] with a ha
@@ -575,8 +543,8 @@ theorem boundedLemmaD2_eventually_rescaled_local_cdf_power_bounds
       a ha hscale_pos y hy_pos hy_lt
   have hx_pos : 0 < y * boundedTailScale beta a :=
     mul_pos hy_pos hscale_pos
-  have hx_lt_delta : y * boundedTailScale beta a < delta := by
-    exact (lt_div_iff₀ hscale_pos).mp hy_lt
+  have hx_lt_delta : y * boundedTailScale beta a < delta :=
+    (lt_div_iff₀ hscale_pos).mp hy_lt
   have hpow :
       (y * boundedTailScale beta a) ^ beta =
         y ^ beta * (a : ℝ) ^ (-1 : ℝ) :=
@@ -679,8 +647,8 @@ theorem boundedLemmaD2_binomial_kernel_norm_le_power_exp_of_rescaled_bounds
   have hbase_le_exp :
       1 - g ≤ Real.exp (-(A * (y ^ beta * (a : ℝ) ^ (-1 : ℝ)))) := by
     calc
-      1 - g ≤ 1 - A * (y ^ beta * (a : ℝ) ^ (-1 : ℝ)) := by
-        exact sub_le_sub_left hg_lower 1
+      1 - g ≤ 1 - A * (y ^ beta * (a : ℝ) ^ (-1 : ℝ)) :=
+        sub_le_sub_left hg_lower 1
       _ ≤ Real.exp (-(A * (y ^ beta * (a : ℝ) ^ (-1 : ℝ)))) :=
         Real.one_sub_le_exp_neg
           (A * (y ^ beta * (a : ℝ) ^ (-1 : ℝ)))
@@ -743,8 +711,8 @@ theorem integrableOn_rpow_mul_exp_neg_mul_rpow_of_pos
       (fun x : ℝ => x ^ q * Real.exp (-b * x ^ p))
       (Set.Ioi (0 : ℝ)) := by
   let s : ℝ := (q + 1) / p
-  have hs_pos : 0 < s := by
-    exact div_pos (by linarith) hp
+  have hs_pos : 0 < s :=
+    div_pos (by linarith) hp
   have hgamma :
       MeasureTheory.IntegrableOn
         (fun u : ℝ => Real.exp (-u) * u ^ (s - 1))
@@ -787,9 +755,8 @@ theorem integrableOn_rpow_mul_exp_neg_mul_rpow_of_pos
         (fun x : ℝ =>
           x ^ (p - 1) •
             ((fun u : ℝ => Real.exp (-b * u) * u ^ (s - 1)) (x ^ p)))
-        (Set.Ioi (0 : ℝ)) := by
-    exact
-      (MeasureTheory.integrableOn_Ioi_comp_rpow_iff'
+        (Set.Ioi (0 : ℝ)) :=
+          (MeasureTheory.integrableOn_Ioi_comp_rpow_iff'
         (fun u : ℝ => Real.exp (-b * u) * u ^ (s - 1))
         (ne_of_gt hp)).mpr hscaled
   refine hcomp.congr_fun ?_ measurableSet_Ioi
@@ -1168,14 +1135,14 @@ theorem rescaled_cdf_nat_mul_tendsto
       (fun a : ℕ => (a : ℝ) * G (y * boundedTailScale beta a))
       atTop (nhds ((c / beta) * y ^ beta)) := by
   let z : ℝ := (c / beta) * y ^ beta
-  have hz_pos : 0 < z := by
-    exact mul_pos (div_pos C.c_pos C.beta_pos)
+  have hz_pos : 0 < z :=
+    mul_pos (div_pos C.c_pos C.beta_pos)
       (Real.rpow_pos_of_pos hy_pos beta)
   refine Metric.tendsto_nhds.mpr ?_
   intro δ hδ
   let ε : ℝ := δ / (2 * z)
-  have hε : 0 < ε := by
-    exact div_pos hδ (mul_pos two_pos hz_pos)
+  have hε : 0 < ε :=
+    div_pos hδ (mul_pos two_pos hz_pos)
   filter_upwards [C.eventually_rescaled_cdf_nat_mul_sandwich hε hy_pos] with a hsand
   have hleft :
       (1 - ε) * z ≤ (a : ℝ) * G (y * boundedTailScale beta a) := by
@@ -1253,8 +1220,7 @@ The source uses `i = 1, ..., k` and `j = 0, ..., i - 1`; here `i : Fin k`
 stores the zero-based value `i_source - 1`, and `j : Fin (i.val + 1)` stores
 the inner summation index.
 -/
-abbrev BoundedLemmaD2Index (k : ℕ) :=
-  Sigma (fun i : Fin k => Fin (i.val + 1))
+abbrev BoundedLemmaD2Index (k : ℕ) := Sigma (fun i : Fin k => Fin (i.val + 1))
 
 /--
 The limiting integrand in Lemma D.2 after the substitution
@@ -1407,8 +1373,7 @@ theorem boundedLemmaD2RescaledKernel_aestronglyMeasurable
 
 /-- The Lemma D.2 limiting coefficient for one fixed inner index `j`. -/
 noncomputable def boundedLemmaD2LimitCoeff
-    (beta c : ℝ) (j : ℕ) : ℝ :=
-  ∫ y in Set.Ioi (0 : ℝ), boundedLemmaD2LimitKernel beta c j y
+    (beta c : ℝ) (j : ℕ) : ℝ := ∫ y in Set.Ioi (0 : ℝ), boundedLemmaD2LimitKernel beta c j y
 
 /--
 Gamma-integral evaluation of the fixed-`j` Lemma D.2 limiting coefficient.
@@ -1480,16 +1445,15 @@ theorem boundedLemmaD2LimitCoeff_sum_pos
     (hbeta_pos : 0 < beta) (hc_pos : 0 < c) (k_pos : 0 < k) :
     0 < ∑ p : BoundedLemmaD2Index k,
       boundedLemmaD2LimitCoeff beta c p.2.val := by
-  haveI : Nonempty (BoundedLemmaD2Index k) := by
-    exact ⟨⟨⟨0, k_pos⟩, ⟨0, by simp⟩⟩⟩
+  haveI : Nonempty (BoundedLemmaD2Index k) :=
+    ⟨⟨⟨0, k_pos⟩, ⟨0, by simp⟩⟩⟩
   exact Finset.sum_pos
     (fun p _ => boundedLemmaD2LimitCoeff_pos hbeta_pos hc_pos p.2.val)
     Finset.univ_nonempty
 
 /-- Finite-`a` source integrand in Lemma D.2. -/
 noncomputable def boundedLemmaD2IntegralKernel
-    (G : ℝ → ℝ) (j a : ℕ) (x : ℝ) : ℝ :=
-  (Nat.choose a j : ℝ) * (G x) ^ j * (1 - G x) ^ (a - j)
+    (G : ℝ → ℝ) (j a : ℕ) (x : ℝ) : ℝ := (Nat.choose a j : ℝ) * (G x) ^ j * (1 - G x) ^ (a - j)
 
 /-- Measurability of the finite-`a` source integrand in Lemma D.2. -/
 theorem boundedLemmaD2IntegralKernel_measurable
@@ -1595,8 +1559,7 @@ theorem boundedLemmaD2IntegralKernel_le_geometric_tail_of_cdf_range
     (Nat.choose a j : ℝ) * (G x) ^ j * (1 - G x) ^ (a - j)
         = (Nat.choose a j : ℝ) *
             ((G x) ^ j * (1 - G x) ^ (a - j)) := by ring
-    _ ≤ (Nat.choose a j : ℝ) * (1 - p) ^ (a - j) :=
-        mul_le_mul_of_nonneg_left hprod_le hchoose_nonneg
+    _ ≤ (Nat.choose a j : ℝ) * (1 - p) ^ (a - j) :=       mul_le_mul_of_nonneg_left hprod_le hchoose_nonneg
 
 /-- A finite-interval constant envelope is integrable on `(0,∞)`. -/
 theorem boundedConstantIndicator_integrable_Ioi (M C : ℝ) :
@@ -1737,18 +1700,15 @@ analytic proof is to show this is asymptotic to a positive constant times
 `a^(-1/β)` for each fixed `j`.
 -/
 noncomputable def boundedLemmaD2IntegralTerm
-    (G : ℝ → ℝ) (j a : ℕ) : ℝ :=
-  ∫ x in Set.Ioi (0 : ℝ), boundedLemmaD2IntegralKernel G j a x
+    (G : ℝ → ℝ) (j a : ℕ) : ℝ := ∫ x in Set.Ioi (0 : ℝ), boundedLemmaD2IntegralKernel G j a x
 
 /-- The near-zero part of the Lemma D.2 integral, split at `delta`. -/
 noncomputable def boundedLemmaD2IntegralTermBelow
-    (G : ℝ → ℝ) (j a : ℕ) (delta : ℝ) : ℝ :=
-  ∫ x in Set.Ioo (0 : ℝ) delta, boundedLemmaD2IntegralKernel G j a x
+    (G : ℝ → ℝ) (j a : ℕ) (delta : ℝ) : ℝ := ∫ x in Set.Ioo (0 : ℝ) delta, boundedLemmaD2IntegralKernel G j a x
 
 /-- The tail part of the Lemma D.2 integral, split at `delta`. -/
 noncomputable def boundedLemmaD2IntegralTermAbove
-    (G : ℝ → ℝ) (j a : ℕ) (delta : ℝ) : ℝ :=
-  ∫ x in Set.Ioi delta, boundedLemmaD2IntegralKernel G j a x
+    (G : ℝ → ℝ) (j a : ℕ) (delta : ℝ) : ℝ := ∫ x in Set.Ioi delta, boundedLemmaD2IntegralKernel G j a x
 
 /-- The above-`delta` source integral is nonnegative for CDF-valued `G`. -/
 theorem boundedLemmaD2IntegralTermAbove_nonneg_of_cdf_range
@@ -1790,8 +1750,8 @@ theorem boundedLemmaD2IntegralTermAbove_le_geometric_support_bound
         hG_measurable M hG_nonneg hG_le_one hG_eq_one_of_support hja
     exact hbase.mono_set (fun x hx => hdelta_nonneg.trans_lt hx)
   have hright :
-      MeasureTheory.IntegrableOn envelope (Set.Ioi delta) := by
-    exact boundedConstantIndicator_integrable_Ioi_from delta M
+      MeasureTheory.IntegrableOn envelope (Set.Ioi delta) :=
+    boundedConstantIndicator_integrable_Ioi_from delta M
       ((Nat.choose a j : ℝ) * (1 - p) ^ (a - j))
   have hmono :
       boundedLemmaD2IntegralTermAbove G j a delta ≤
@@ -1813,8 +1773,8 @@ theorem boundedLemmaD2IntegralTermAbove_le_geometric_support_bound
   have henv_integral :
       ∫ x in Set.Ioi delta, envelope x =
         ((Nat.choose a j : ℝ) * (1 - p) ^ (a - j)) *
-          (M - delta) := by
-    exact boundedConstantIndicator_integral_Ioi_from hdeltaM
+          (M - delta) :=
+    boundedConstantIndicator_integral_Ioi_from hdeltaM
   exact hmono.trans_eq henv_integral
 
 /--
@@ -1848,11 +1808,11 @@ theorem boundedTailScale_choose_geometric_tail_ratio_tendsto_zero
       hbeta_pos hrho_pos hrho_lt_one j (C * (rho ^ j)⁻¹)
   refine squeeze_zero' ?_ ?_ hupper_tendsto
   · filter_upwards [boundedTailScale_eventually_pos beta] with a hscale_pos
-    have htail_nonneg : 0 ≤ (1 - p) ^ (a - j) := by
-      exact pow_nonneg (by linarith : 0 ≤ 1 - p) (a - j)
+    have htail_nonneg : 0 ≤ (1 - p) ^ (a - j) :=
+      pow_nonneg (by linarith : 0 ≤ 1 - p) (a - j)
     have hnum_nonneg :
-        0 ≤ ((Nat.choose a j : ℝ) * (1 - p) ^ (a - j)) * C := by
-      exact mul_nonneg (mul_nonneg (by positivity) htail_nonneg) hC_nonneg
+        0 ≤ ((Nat.choose a j : ℝ) * (1 - p) ^ (a - j)) * C :=
+      mul_nonneg (mul_nonneg (by positivity) htail_nonneg) hC_nonneg
     exact div_nonneg hnum_nonneg hscale_pos.le
   · filter_upwards
       [eventually_gt_atTop j, boundedTailScale_eventually_pos beta] with
@@ -2502,16 +2462,14 @@ theorem boundedLemmaD2GrowingRescaledIntegral_tendsto_of_full_and_source_tail
 /-- The source integral term indexed by the paper's `(i,j)` finite sum. -/
 noncomputable def boundedLemmaD2IndexedIntegralTerm
     (G : ℝ → ℝ) {k : ℕ}
-    (p : BoundedLemmaD2Index k) (a : ℕ) : ℝ :=
-  boundedLemmaD2IntegralTerm G p.2.val a
+    (p : BoundedLemmaD2Index k) (a : ℕ) : ℝ := boundedLemmaD2IntegralTerm G p.2.val a
 
 /--
 The finite double sum of Lemma D.2-style rank terms that gives the bounded
 top-`k` loss `M k - h(a)` after the reflection identity.
 -/
 noncomputable def boundedLemmaD2TopKLoss
-    (k : ℕ) (term : BoundedLemmaD2Index k → ℕ → ℝ) (a : ℕ) : ℝ :=
-  ∑ p : BoundedLemmaD2Index k, term p a
+    (k : ℕ) (term : BoundedLemmaD2Index k → ℕ → ℝ) (a : ℕ) : ℝ := ∑ p : BoundedLemmaD2Index k, term p a
 
 /-- The `Sigma` index is exactly the paper's nested `i`/`j` finite sum. -/
 theorem boundedLemmaD2TopKLoss_eq_nested_sum
@@ -3578,8 +3536,7 @@ theorem boundedLemmaD2IntegralAsymptoticCertificate_eventually_integral_sandwich
         (1 - ε) * (C.coeff p * boundedTailScale beta a) ≤
             boundedLemmaD2IndexedIntegralTerm G p a ∧
           boundedLemmaD2IndexedIntegralTerm G p a ≤
-            (1 + ε) * (C.coeff p * boundedTailScale beta a) :=
-  C.eventually_all_term_sandwich hε
+            (1 + ε) * (C.coeff p * boundedTailScale beta a) := C.eventually_all_term_sandwich hε
 
 /--
 Formalized finite-sum conclusion after Lemma D.2: once every fixed rank/index
@@ -3593,8 +3550,8 @@ theorem boundedLemmaD2TopKLoss_asymptoticEquivalent
     EconCSLib.Math.AsymptoticEquivalent
       (boundedLemmaD2TopKLoss k term)
       (fun a => (∑ p : BoundedLemmaD2Index k, C.coeff p) *
-        boundedTailScale beta a) := by
-  exact finite_sum_asymptoticEquivalent_common_scale
+        boundedTailScale beta a) :=
+   finite_sum_asymptoticEquivalent_common_scale
     term C.coeff (boundedTailScale beta)
     (fun p => ne_of_gt (C.coeff_pos p))
     (ne_of_gt C.totalCoeff_pos)
@@ -3685,8 +3642,8 @@ theorem boundedLemmaD2_reflected_integral_source_loss_asymptoticEquivalent
     EconCSLib.Math.AsymptoticEquivalent
       (fun a => (k : ℝ) * M - ∑ i : Fin k, sourceMean i a)
       (fun a => (∑ p : BoundedLemmaD2Index k, C.coeff p) *
-        boundedTailScale beta a) := by
-  exact boundedLemmaD2_reflected_source_loss_asymptoticEquivalent
+        boundedTailScale beta a) :=
+   boundedLemmaD2_reflected_source_loss_asymptoticEquivalent
     sourceMean (boundedLemmaD2IndexedIntegralTerm G)
     (fun a i => by
       simpa [boundedLemmaD2IndexedIntegralTerm] using hsource a i)
@@ -3835,8 +3792,8 @@ theorem boundedPowerMarginalError_nonneg {T : ℕ}
   by_cases hN : N = 0
   · simp [boundedPowerMarginalError, hN]
   · have hS_nonneg :
-        0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (beta / (beta + 1))) := by
-      exact Finset.sum_nonneg
+        0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (beta / (beta + 1))) :=
+      Finset.sum_nonneg
         (fun t _ => div_nonneg zero_le_one
           (le_of_lt (Real.rpow_pos_of_pos (hlike_pos t) (beta / (beta + 1)))))
     have hN_pos : 0 < (N : ℝ) := by
@@ -3854,8 +3811,8 @@ theorem boundedPowerMarginalError_tends_to_zero {T : ℕ}
       (boundedPowerMarginalError likelihood beta) := by
   let S : ℝ := (∑ t : ItemType T, 1 / (likelihood t ^ (beta / (beta + 1)))) + 1
   have hsum_nonneg :
-      0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (beta / (beta + 1))) := by
-    exact Finset.sum_nonneg
+      0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (beta / (beta + 1))) :=
+    Finset.sum_nonneg
       (fun t _ => div_nonneg zero_le_one
         (le_of_lt (Real.rpow_pos_of_pos (hlike_pos t) (beta / (beta + 1)))))
   have hS_pos : 0 < S := by
@@ -3892,8 +3849,8 @@ noncomputable def boundedPowerMarginalSublinearFOCCertificate
   targetShare_eq := by
     intro t
     have hnorm_pos :
-        0 < ∑ i : ItemType T, likelihood i ^ (beta / (beta + 1)) := by
-      exact Finset.sum_pos
+        0 < ∑ i : ItemType T, likelihood i ^ (beta / (beta + 1)) :=
+      Finset.sum_pos
         (fun i _ => Real.rpow_pos_of_pos (hlike_pos i) (beta / (beta + 1)))
         Finset.univ_nonempty
     exact gammaLikelihoodProfile_targetShare_eq likelihood (beta / (beta + 1)) t
@@ -3921,8 +3878,8 @@ noncomputable def boundedPowerMarginalSublinearFOCCertificate
     have hS_pos : 0 < S := by
       dsimp [S]
       have hsum_nonneg :
-          0 ≤ ∑ t : ItemType T, 1 / weight t := by
-        exact Finset.sum_nonneg
+          0 ≤ ∑ t : ItemType T, 1 / weight t :=
+        Finset.sum_nonneg
           (fun t _ => div_nonneg zero_le_one (le_of_lt (hweight_pos t)))
       linarith
     have hN_ne : N ≠ 0 := Nat.ne_of_gt hN
@@ -3948,8 +3905,8 @@ noncomputable def boundedPowerMarginalSublinearFOCCertificate
       simp at hsrc_div_pos
     have hinv_dst_lt_S : 1 / weight dst < S := by
       have hinv_le_sum :
-          1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t := by
-        exact Finset.single_le_sum
+          1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t :=
+        Finset.single_le_sum
           (fun t _ => div_nonneg zero_le_one (le_of_lt (hweight_pos t)))
           (Finset.mem_univ dst)
       dsimp [S]
@@ -3982,8 +3939,8 @@ noncomputable def boundedPowerMarginalSublinearFOCCertificate
     have hmarginal_core :
         likelihood src * (1 * (a.count src : ℝ) ^ (-eta)) <
           likelihood dst *
-            (1 * (((a.count dst + 1 : ℕ) : ℝ) ^ (-eta))) := by
-      exact EconCSLib.Math.rpow_neg_marginal_lt_of_scaled_lt
+            (1 * (((a.count dst + 1 : ℕ) : ℝ) ^ (-eta))) :=
+      EconCSLib.Math.rpow_neg_marginal_lt_of_scaled_lt
         (c := 1) (eta := eta)
         (hlike_pos src) (hlike_pos dst) zero_lt_one heta_pos
         hqsrc_real_pos hqdst_succ_pos hscaled_for_power

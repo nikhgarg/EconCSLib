@@ -3,19 +3,16 @@ import KR21Monoculture.Family
 namespace KR21Monoculture
 
 /-- A deterministic identity ranking on two candidates. -/
-def twoCandidateIdentity : Ranking 0 :=
-  Equiv.refl _
+def twoCandidateIdentity : Ranking 0 := Equiv.refl _
 
 /-- The unique nontrivial ranking on two candidates. -/
-def twoCandidateSwap : Ranking 0 :=
-  Equiv.swap 0 1
+def twoCandidateSwap : Ranking 0 := Equiv.swap 0 1
 
 /--
 A toy value function on two candidates:
 candidate `0` is worth `10`, candidate `1` is worth `0`.
 -/
-def twoCandidateValue : Candidate 0 → ℝ :=
-  fun i => if i = 0 then 10 else 0
+def twoCandidateValue : Candidate 0 → ℝ := fun i => if i = 0 then 10 else 0
 
 /--
 A minimal deterministic model useful for smoke-testing notation.

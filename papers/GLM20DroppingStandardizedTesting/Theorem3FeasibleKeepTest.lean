@@ -41,8 +41,7 @@ theorem
     subFullMass survivingGroup ≥ capacity2 ∧
       populationShare survivingGroup * subFullMerit J2 survivingGroup >
         populationShare groupA * subSubMerit J2 groupA +
-          populationShare groupB * subSubMerit J2 groupB := by
-  exact
+          populationShare groupB * subSubMerit J2 groupB :=
     (glm20Theorem3PolicyStateTableWeightedAcademicMeritSurface_subFull_otherGroupKeepsTest_iff_components
       api subEstimateLaw subSubMass subFullMass fullFullCutoff
       fullSubCutoff subSubMerit subFullMerit fullSubMerit fullFullMerit

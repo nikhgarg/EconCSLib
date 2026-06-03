@@ -13,16 +13,14 @@ Unnormalised real Mallows weight.  This file uses the inverse of the paper
 parameter: if the paper writes mass proportional to `Φ^{-d}` with `Φ > 1`,
 then this file writes the same mass as `q^d` with `q = Φ⁻¹` and `0 < q < 1`.
 -/
-noncomputable def mallowsWeight {n : ℕ} (q : ℝ) (ρ π : Ranking n) : ℝ :=
-  q ^ kendallTau ρ π
+noncomputable def mallowsWeight {n : ℕ} (q : ℝ) (ρ π : Ranking n) : ℝ := q ^ kendallTau ρ π
 
 @[simp] theorem mallowsWeight_center {n : ℕ} (q : ℝ) (ρ : Ranking n) :
     mallowsWeight q ρ ρ = 1 := by
   simp [mallowsWeight]
 
 /-- The finite partition function for the real-weight Mallows kernel. -/
-noncomputable def mallowsPartition {n : ℕ} (q : ℝ) (ρ : Ranking n) : ℝ :=
-  ∑ π : Ranking n, mallowsWeight q ρ π
+noncomputable def mallowsPartition {n : ℕ} (q : ℝ) (ρ : Ranking n) : ℝ := ∑ π : Ranking n, mallowsWeight q ρ π
 
 /--
 A Mallows distribution packaged as an actual `PMF` plus the real finite-sum facts
@@ -54,8 +52,7 @@ def centerFirst : Candidate n := firstChoice M.center
 /-- The true/central second candidate. -/
 def centerSecond : Candidate n := secondChoice M.center
 
-@[simp] theorem partition_ne_zero : M.partition ≠ 0 := by
-  exact ne_of_gt M.partition_pos
+@[simp] theorem partition_ne_zero : M.partition ≠ 0 :=  ne_of_gt M.partition_pos
 
 /--
 Shared-library view of the KR-local Mallows specification.
@@ -101,8 +98,7 @@ theorem firstChoiceProb_eq_firstWeight_div_partition (c : Candidate n) :
     using (M.toShared).firstChoiceProb_eq_firstWeight_div_partition c
 
 /-- Probability that a Mallows draw begins with the ordered pair `(c,d)`. -/
-noncomputable def firstSecondChoiceProb (c d : Candidate n) : ℝ :=
-  pmfProb M.law (fun π => c = firstChoice π ∧ d = secondChoice π)
+noncomputable def firstSecondChoiceProb (c d : Candidate n) : ℝ := pmfProb M.law (fun π => c = firstChoice π ∧ d = secondChoice π)
 
 /-- Unnormalised mass of rankings that correctly order the center-ordered pair
 `(c,d)`.  The guard `rankOf M.center c < rankOf M.center d` keeps the definition
@@ -245,8 +241,7 @@ noncomputable def toModel (value : Candidate n → ℝ) : Model n where
 Algorithm is the lower-`q` / more concentrated law, as a data-level predicate.
 Here `q` is the inverse of the paper's `Φ`, so lower means more accurate.
 -/
-def AlgorithmNoiselessOrMoreConcentrated : Prop :=
-  C.algorithm.q ≤ C.human.q
+def AlgorithmNoiselessOrMoreConcentrated : Prop := C.algorithm.q ≤ C.human.q
 
 /--
 The finite Mallows lemmas needed by the existing algebraic core.
@@ -269,24 +264,24 @@ structure FiniteLemmaCertificate (value : Candidate n → ℝ) : Prop where
 /-- The certificate gives Definition 2 for the algorithm/Mallows law. -/
 theorem algorithm_prefersIndependentReranking_of_certificate
     {value : Candidate n → ℝ} (cert : C.FiniteLemmaCertificate value) :
-    Model.PrefersIndependentReranking C.algorithm.law value := by
-  exact (prefersIndependentReranking_iff_expectedRerankingGain_pos
+    Model.PrefersIndependentReranking C.algorithm.law value :=
+   (prefersIndependentReranking_iff_expectedRerankingGain_pos
     (μ := C.algorithm.law) (value := value)).2
       cert.independent_reranking_gain_pos_algorithm
 
 /-- The certificate also records Definition 2 for the human/Mallows law. -/
 theorem human_prefersIndependentReranking_of_certificate
     {value : Candidate n → ℝ} (cert : C.FiniteLemmaCertificate value) :
-    Model.PrefersIndependentReranking C.human.law value := by
-  exact (prefersIndependentReranking_iff_expectedRerankingGain_pos
+    Model.PrefersIndependentReranking C.human.law value :=
+   (prefersIndependentReranking_iff_expectedRerankingGain_pos
     (μ := C.human.law) (value := value)).2
       cert.independent_reranking_gain_pos_human
 
 /-- The certificate gives Definition 3 for algorithmic-vs-human Mallows laws. -/
 theorem prefersWeakerCompetition_of_certificate
     {value : Candidate n → ℝ} (cert : C.FiniteLemmaCertificate value) :
-    Model.PrefersWeakerCompetition C.algorithm.law C.human.law value := by
-  exact (prefersWeakerCompetition_iff_expected_collision_loss_diff_pos
+    Model.PrefersWeakerCompetition C.algorithm.law C.human.law value :=
+   (prefersWeakerCompetition_iff_expected_collision_loss_diff_pos
     (μBetter := C.algorithm.law) (μWorse := C.human.law) (value := value)).2
       cert.weaker_competition_collision_sum_pos
 

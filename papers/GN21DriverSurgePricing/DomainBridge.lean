@@ -1,3 +1,4 @@
+import EconCSLib.Foundations.Math.ConvexCombination
 import GN21DriverSurgePricing.MainTheorems
 
 /-!
@@ -517,8 +518,7 @@ theorem gn21MeasuredDynamicReward_eq_right_rewardRate_of_left_empty_acceptAll
               (∅ : TripPolicy) ≠ 0) :
     gn21MeasuredDynamicReward μI μJ arrivalI arrivalJ switchIJ switchJI
       wI wJ (∅ : TripPolicy) acceptAllPolicy =
-      gn21MeasuredStateRewardRate μJ arrivalJ wJ acceptAllPolicy := by
-  exact
+      gn21MeasuredStateRewardRate μJ arrivalJ wJ acceptAllPolicy :=
     gn21MeasuredDynamicReward_eq_right_rewardRate_of_left_zero_mass_time_payment
       μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ
       (∅ : TripPolicy) acceptAllPolicy
@@ -587,26 +587,8 @@ theorem gn21MeasuredDynamicReward_acceptAll_lt_right_rewardRate_of_state_rates
       gn21MeasuredStateRewardRate μJ arrivalJ wJ acceptAllPolicy := by
   rw [paper_lemma1_measured_dynamic_reward_decomposition, hleft_rate,
     hright_rate]
-  set a :=
-    gn21MeasuredTimeFraction μI μJ arrivalI arrivalJ switchIJ switchJI
-      acceptAllPolicy acceptAllPolicy
-  set b :=
-    gn21MeasuredTimeFraction μJ μI arrivalJ arrivalI switchJI switchIJ
-      acceptAllPolicy acceptAllPolicy
-  have ha_pos : 0 < a := by
-    simpa [a] using hleft_fraction_pos
-  have hsum_ab : a + b = 1 := by
-    simpa [a, b] using hfractions_sum
-  have hb_eq : b = 1 - a := by
-    linarith
-  rw [hb_eq]
-  have havg :
-      a * R1 + (1 - a) * R2 = R2 - a * (R2 - R1) := by
-    ring
-  rw [havg]
-  have hdiff_pos : 0 < R2 - R1 := sub_pos.mpr hR1_lt_R2
-  have hprod_pos : 0 < a * (R2 - R1) := mul_pos ha_pos hdiff_pos
-  linarith
+  exact weightedAverage_lt_right_of_left_lt_right hleft_fraction_pos
+    hfractions_sum hR1_lt_R2
 
 /--
 Sharper zero-mass obstruction for the Theorem 3 accept-all accounting shape:
@@ -651,8 +633,7 @@ theorem gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_state_rat
 
 /-- A feasible measurable dynamic policy has zero accepted mass in some state. -/
 def dynamicHasZeroAcceptedMass
-    (μ : Fin 2 → Measure TripLength) (σ : Fin 2 → TripPolicy) : Prop :=
-  ∃ i : Fin 2, singleStateTripMass (μ i) (σ i) = 0
+    (μ : Fin 2 → Measure TripLength) (σ : Fin 2 → TripPolicy) : Prop := ∃ i : Fin 2, singleStateTripMass (μ i) (σ i) = 0
 
 /--
 If no state has zero accepted mass, feasible measurability upgrades to the
@@ -816,8 +797,7 @@ noncomputable def DynamicDefinedReward.value?
       none
 
 /-- Order an optional reward value against a real benchmark. -/
-def optionRewardLe (x : Option ℝ) (y : ℝ) : Prop :=
-  ∀ r : ℝ, x = some r → r ≤ y
+def optionRewardLe (x : Option ℝ) (y : ℝ) : Prop := ∀ r : ℝ, x = some r → r ≤ y
 
 /--
 Defined-reward measurable optimality: the target is positive-mass feasible, and
@@ -840,8 +820,7 @@ reward surface.
 -/
 def dynamicDefinedMeasurableIncentiveCompatible
     {μ : Fin 2 → Measure TripLength}
-    (R : DynamicDefinedReward μ) : Prop :=
-  dynamicDefinedMeasurableOptimal R acceptAllDynamicPolicy
+    (R : DynamicDefinedReward μ) : Prop := dynamicDefinedMeasurableOptimal R acceptAllDynamicPolicy
 
 /-- View an ordinary total dynamic reward as a reward defined on positive-mass policies. -/
 def DynamicDefinedReward.of_total
@@ -901,8 +880,7 @@ theorem dynamicDefinedMeasurableIncentiveCompatible_of_positiveMass_agree
     (hposIC : dynamicPositiveMassMeasurableIncentiveCompatible μ Rtot)
     (hagree :
       ∀ σ hσ, Rdef.value σ hσ = Rtot σ) :
-    dynamicDefinedMeasurableIncentiveCompatible Rdef :=
-  dynamicDefinedMeasurableOptimal_of_positiveMass_agree hposIC hagree
+    dynamicDefinedMeasurableIncentiveCompatible Rdef := dynamicDefinedMeasurableOptimal_of_positiveMass_agree hposIC hagree
 
 /--
 Positive-mass measurable IC immediately gives defined-reward IC for the
@@ -1681,8 +1659,8 @@ noncomputable def theorem3AcceptAllPositiveMassSequentialPositiveResponseAEAccep
           gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy *
               switch12 +
             gn21ExitWeightIntegral (μ 1) (arrival 1) switch21 switch12
-              acceptAllPolicy := by
-      exact add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
+              acceptAllPolicy :=
+      add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
         hfixed_exit_pos
     have hfixed_reward_rate :
         gn21ScaledStateEarning (μ 1) (arrival 1)

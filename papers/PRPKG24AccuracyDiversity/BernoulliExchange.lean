@@ -66,41 +66,44 @@ theorem pairwise_count_le_succ_of_symmetric_optimum {T : ℕ}
     (hprob_pos : ∀ i : ItemType T, 0 < B.successProb i)
     (hprob_lt_one : ∀ i : ItemType T, B.successProb i < 1) :
     ∀ src dst : ItemType T, a.count src ≤ a.count dst + 1 := by
-  intro src dst
-  by_cases hne : src = dst
-  · subst dst
-    exact Nat.le_succ _
-  · by_contra hle
-    have hdst_succ_lt : a.count dst + 1 < a.count src :=
-      Nat.lt_of_not_ge hle
-    have hdst_lt_pred : a.count dst < a.count src - 1 :=
-      (Nat.lt_sub_iff_add_lt).mpr hdst_succ_lt
-    have hcan : EconCSLib.Allocation.CanMoveOne a src :=
-      (Nat.succ_pos (a.count dst)).trans hdst_succ_lt
-    have hfirst :=
-      B.forwardMarginal_le_backwardMarginal_of_optimum
-        (N := N) (a := a) (src := src) (dst := dst) hopt hne hcan
-    have hfirst' :
-        (B.likelihood src * B.successProb src) *
-            (1 - B.successProb src) ^ (a.count dst) ≤
-          (B.likelihood src * B.successProb src) *
-            (1 - B.successProb src) ^ (a.count src - 1) := by
-      simpa [hlike dst src, hprob dst src, mul_assoc] using hfirst
-    have hcoef_pos : 0 < B.likelihood src * B.successProb src :=
-      mul_pos (hlike_pos src) (hprob_pos src)
-    have hpow_le :
-        (1 - B.successProb src) ^ (a.count dst) ≤
-          (1 - B.successProb src) ^ (a.count src - 1) :=
-      le_of_mul_le_mul_left hfirst' hcoef_pos
-    have hbase_pos : 0 < 1 - B.successProb src := by
-      linarith [hprob_lt_one src]
-    have hbase_lt_one : 1 - B.successProb src < 1 := by
-      linarith [hprob_pos src]
-    have hpow_lt :
-        (1 - B.successProb src) ^ (a.count src - 1) <
-          (1 - B.successProb src) ^ (a.count dst) :=
-      pow_lt_pow_right_of_lt_one₀ hbase_pos hbase_lt_one hdst_lt_pred
-    exact (not_lt_of_ge hpow_le) hpow_lt
+  have hopt' :
+      EconCSLib.Allocation.IsOptimalAtTotal
+        B.likelihood B.toConsumptionModel.valueOfCount N a := by
+    simpa [EconCSLib.Allocation.IsOptimalAtTotal, ConsumptionModel.IsOptimalAtTotal,
+      ConsumptionModel.FeasibleAtTotal, ConsumptionModel.objective, toConsumptionModel] using hopt
+  refine
+    EconCSLib.Allocation.count_le_succ_of_cross_strict_antitone_forwardMarginal
+      (a := a) (weight := B.likelihood)
+      (valueOfCount := B.toConsumptionModel.valueOfCount) (N := N) hopt' ?_
+  intro src dst q r hqr
+  have hcoef_pos : 0 < B.likelihood dst * B.successProb dst :=
+    mul_pos (hlike_pos dst) (hprob_pos dst)
+  have hbase_pos : 0 < 1 - B.successProb dst := by
+    linarith [hprob_lt_one dst]
+  have hbase_lt_one : 1 - B.successProb dst < 1 := by
+    linarith [hprob_pos dst]
+  have hpow_lt :
+      (1 - B.successProb dst) ^ r < (1 - B.successProb dst) ^ q :=
+    pow_lt_pow_right_of_lt_one₀ hbase_pos hbase_lt_one hqr
+  calc
+    EconCSLib.Allocation.weightedForwardMarginal
+        B.likelihood B.toConsumptionModel.valueOfCount src r
+        = B.likelihood src * B.successProb src *
+            (1 - B.successProb src) ^ r := by
+          unfold EconCSLib.Allocation.weightedForwardMarginal
+            EconCSLib.Allocation.marginal toConsumptionModel
+          rw [bernoulliAtLeastOneValue_succ_sub]
+          ring
+    _ = B.likelihood dst * B.successProb dst * (1 - B.successProb dst) ^ r := by
+          simp [hlike src dst, hprob src dst]
+    _ < B.likelihood dst * B.successProb dst * (1 - B.successProb dst) ^ q :=
+          mul_lt_mul_of_pos_left hpow_lt hcoef_pos
+    _ = EconCSLib.Allocation.weightedForwardMarginal
+        B.likelihood B.toConsumptionModel.valueOfCount dst q := by
+          unfold EconCSLib.Allocation.weightedForwardMarginal
+            EconCSLib.Allocation.marginal toConsumptionModel
+          rw [bernoulliAtLeastOneValue_succ_sub]
+          ring
 
 end BernoulliSatisfactionModel
 end PRPKG24AccuracyDiversity

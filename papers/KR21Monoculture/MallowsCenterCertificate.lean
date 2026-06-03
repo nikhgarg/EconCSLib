@@ -48,8 +48,7 @@ center-ordered value vector.
 theorem algorithm_centerGapMass_pos_of_strictlyCenterOrdered
     {value : Candidate n → ℝ}
     (hvalue : C.StrictlyCenterOrdered value) :
-    0 < firstChoiceGapMass C.algorithm.law value C.algorithm.centerFirst := by
-  exact C.algorithm.centerFirstGapMass_pos_of_strictlyOrderedCenter hvalue
+    0 < firstChoiceGapMass C.algorithm.law value C.algorithm.centerFirst :=  C.algorithm.centerFirstGapMass_pos_of_strictlyOrderedCenter hvalue
 
 /--
 The human law has the same positive center-top gap mass conclusion because both
@@ -332,8 +331,8 @@ directly; Mallows support closes the below-one probability fields.
 -/
 theorem centerPositiveCertificate_of_centerMallowsCertificate
     {value : Candidate n → ℝ} (cert : C.CenterMallowsCertificate value) :
-    C.CenterPositiveCertificate value := by
-  exact C.centerPositiveCertificate_of_centerProbabilityCertificate
+    C.CenterPositiveCertificate value :=
+   C.centerPositiveCertificate_of_centerProbabilityCertificate
     (C.centerProbabilityCertificate_of_centerMallowsCertificate cert)
 
 /--
@@ -377,8 +376,8 @@ The center-positive certificate closes the current fixed-parameter Mallows targe
 -/
 theorem paperHypotheses_of_centerPositiveCertificate
     {value : Candidate n → ℝ} (cert : C.CenterPositiveCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.paperHypotheses_of_candidateSumCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.paperHypotheses_of_candidateSumCertificate
     (C.candidateSumCertificate_of_centerPositiveCertificate cert)
 
 /--
@@ -386,8 +385,8 @@ A probability-comparison certificate also yields the candidate-sum certificate.
 -/
 theorem candidateSumCertificate_of_centerProbabilityCertificate
     {value : Candidate n → ℝ} (cert : C.CenterProbabilityCertificate value) :
-    C.CandidateSumCertificate value := by
-  exact C.candidateSumCertificate_of_centerPositiveCertificate
+    C.CandidateSumCertificate value :=
+   C.candidateSumCertificate_of_centerPositiveCertificate
     (C.centerPositiveCertificate_of_centerProbabilityCertificate cert)
 
 /--
@@ -396,8 +395,8 @@ the current Theorem-3 formalization path.
 -/
 theorem candidateSumCertificate_of_centerMallowsCertificate
     {value : Candidate n → ℝ} (cert : C.CenterMallowsCertificate value) :
-    C.CandidateSumCertificate value := by
-  exact C.candidateSumCertificate_of_centerPositiveCertificate
+    C.CandidateSumCertificate value :=
+   C.candidateSumCertificate_of_centerPositiveCertificate
     (C.centerPositiveCertificate_of_centerMallowsCertificate cert)
 
 /--
@@ -406,8 +405,8 @@ Mallows target as well.
 -/
 theorem paperHypotheses_of_centerProbabilityCertificate
     {value : Candidate n → ℝ} (cert : C.CenterProbabilityCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.paperHypotheses_of_centerPositiveCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.paperHypotheses_of_centerPositiveCertificate
     (C.centerPositiveCertificate_of_centerProbabilityCertificate cert)
 
 /--
@@ -417,8 +416,8 @@ satisfies the paper hypotheses.
 -/
 theorem paperHypotheses_of_centerMallowsCertificate
     {value : Candidate n → ℝ} (cert : C.CenterMallowsCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.paperHypotheses_of_centerPositiveCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.paperHypotheses_of_centerPositiveCertificate
     (C.centerPositiveCertificate_of_centerMallowsCertificate cert)
 
 end MallowsComparison

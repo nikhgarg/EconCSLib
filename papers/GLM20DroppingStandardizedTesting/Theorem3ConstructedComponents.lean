@@ -3401,10 +3401,10 @@ theorem
     glm20Theorem3FullFullCondition S GLM20StrategicPolicyState.singleFull
       groupA groupB testCost := by
   intro S
-  have hcostA : 0 < testCost groupA := by
-    exact lt_of_lt_of_le (hleftPos groupA) (hcostMem groupA).1
-  have hcostB : 0 < testCost groupB := by
-    exact lt_of_lt_of_le (hleftPos groupB) (hcostMem groupB).1
+  have hcostA : 0 < testCost groupA :=
+    lt_of_lt_of_le (hleftPos groupA) (hcostMem groupA).1
+  have hcostB : 0 < testCost groupB :=
+    lt_of_lt_of_le (hleftPos groupB) (hcostMem groupB).1
   exact
     paper_theorem3_fullFull_condition_exists_boundary_functions_of_positive_costs
       S GLM20StrategicPolicyState.singleFull groupA groupB testCost hcostA
@@ -3489,10 +3489,10 @@ theorem
         glm20Theorem3FullFullCondition S
           GLM20StrategicPolicyState.singleFull groupA groupB testCost := by
   intro S
-  have hcostA : 0 < testCost groupA := by
-    exact lt_of_lt_of_le (hleftPos groupA) (hcostMem groupA).1
-  have hcostB : 0 < testCost groupB := by
-    exact lt_of_lt_of_le (hleftPos groupB) (hcostMem groupB).1
+  have hcostA : 0 < testCost groupA :=
+    lt_of_lt_of_le (hleftPos groupA) (hcostMem groupA).1
+  have hcostB : 0 < testCost groupB :=
+    lt_of_lt_of_le (hleftPos groupB) (hcostMem groupB).1
   exact
     paper_theorem3_two_school_academic_merit_source_conditions_of_i_ii_and_positive_costs
       (S := S) (policyPair := glm20StrategicPolicyStatePair)

@@ -12,14 +12,12 @@ open scoped BigOperators
 Expected maximum of `q` draws from a distribution with tail index α.
 Instead of calculating the integral, we define the target marginal behavior.
 -/
-def HasTailIndex (f : ℕ → ℝ) (index : ℝ) : Prop :=
-  ∃ C > 0, ∀ q, 0 < q → f (q + 1) - f q = C * (q : ℝ) ^ (index - 1)
+def HasTailIndex (f : ℕ → ℝ) (index : ℝ) : Prop := ∃ C > 0, ∀ q, 0 < q → f (q + 1) - f q = C * (q : ℝ) ^ (index - 1)
 
 /--
 A model where every type has conditional item values with the same tail index.
 -/
-def HasTypeTailIndex (M : ConsumptionModel T) (index : ℝ) : Prop :=
-  ∀ t, HasTailIndex (M.valueOfCount t) index
+def HasTypeTailIndex (M : ConsumptionModel T) (index : ℝ) : Prop := ∀ t, HasTailIndex (M.valueOfCount t) index
 
 /--
 The γ-homogeneity profile for a Pareto distribution with tail index α.
@@ -38,8 +36,7 @@ noncomputable def ParetoTopKOracle {T : ℕ} (α : ℝ) : TopKValueOracle T wher
   expectedTopSum _ _ q := (q : ℝ) ^ (1/α)
 
 /-- Marginal decay exponent for the Pareto branch's power-law oracle. -/
-noncomputable def paretoMarginalExponent (α : ℝ) : ℝ :=
-  (α - 1) / α
+noncomputable def paretoMarginalExponent (α : ℝ) : ℝ := (α - 1) / α
 
 theorem paretoMarginalExponent_pos {α : ℝ} (hα_gt_one : 1 < α) :
     0 < paretoMarginalExponent α := by
@@ -69,8 +66,7 @@ noncomputable def paretoPowerMarginalValue (α : ℝ) (q : ℕ) : ℝ :=
 
 /-- Common top-one oracle with exact Pareto power-law marginals. -/
 noncomputable def paretoPowerMarginalOracle (T : ℕ) (α : ℝ) :
-    TopKValueOracle T :=
-  TopKValueOracle.common T (paretoPowerMarginalValue α)
+    TopKValueOracle T := TopKValueOracle.common T (paretoPowerMarginalValue α)
 
 theorem paretoPowerMarginalValue_zero (α : ℝ) :
     paretoPowerMarginalValue α 0 = 0 := by
@@ -84,8 +80,7 @@ theorem paretoPowerMarginalValue_forward_marginal
   simp [paretoPowerMarginalValue, Finset.sum_range_succ]
 
 /-- Exact scaled marginal used by the Pareto power-marginal oracle. -/
-noncomputable def paretoPowerMarginalScale (α : ℝ) (q : ℕ) : ℝ :=
-  (((q + 1 : ℕ) : ℝ) ^ (-(paretoMarginalExponent α)))
+noncomputable def paretoPowerMarginalScale (α : ℝ) (q : ℕ) : ℝ := (((q + 1 : ℕ) : ℝ) ^ (-(paretoMarginalExponent α)))
 
 theorem paretoPowerMarginalScale_pos (α : ℝ) (q : ℕ) :
     0 < paretoPowerMarginalScale α q := by
@@ -95,8 +90,7 @@ theorem paretoPowerMarginalScale_pos (α : ℝ) (q : ℕ) :
 /-- A number in `(0,1)` is not an integer pole of `Gamma` after negation. -/
 private theorem gamma_neg_delta_ne_zero_of_pos_lt_one
     {δ : ℝ} (hδ_pos : 0 < δ) (hδ_lt_one : δ < 1) :
-    Real.Gamma (-δ) ≠ 0 :=
-  EconCSLib.Math.gamma_neg_delta_ne_zero_of_pos_lt_one hδ_pos hδ_lt_one
+    Real.Gamma (-δ) ≠ 0 := EconCSLib.Math.gamma_neg_delta_ne_zero_of_pos_lt_one hδ_pos hδ_lt_one
 
 /--
 Finite gamma recurrence product for a shift `-δ` with `0 < δ < 1`.
@@ -107,8 +101,7 @@ gamma-ratio form needed for Pareto order-statistic tails.
 theorem gamma_neg_delta_prod_range_eq_gamma_div
     {δ : ℝ} (hδ_pos : 0 < δ) (hδ_lt_one : δ < 1) (q : ℕ) :
     (∏ j ∈ Finset.range (q + 1), (-δ + (j : ℝ))) =
-      Real.Gamma ((q : ℝ) + 1 - δ) / Real.Gamma (-δ) :=
-  EconCSLib.Math.gamma_neg_delta_prod_range_eq_gamma_div hδ_pos hδ_lt_one q
+      Real.Gamma ((q : ℝ) + 1 - δ) / Real.Gamma (-δ) := EconCSLib.Math.gamma_neg_delta_prod_range_eq_gamma_div hδ_pos hδ_lt_one q
 
 /--
 Gamma-ratio asymptotic for the Pareto rank calculation:
@@ -119,8 +112,7 @@ theorem gamma_ratio_nat_add_one_sub_asymptoticEquivalent
     EconCSLib.Math.AsymptoticEquivalent
       (fun q : ℕ =>
         Real.Gamma ((q : ℝ) + 1) / Real.Gamma ((q : ℝ) + 1 - δ))
-      (fun q : ℕ => (q : ℝ) ^ δ) :=
-  EconCSLib.Math.gamma_ratio_nat_add_one_sub_asymptoticEquivalent hδ_pos hδ_lt_one
+      (fun q : ℕ => (q : ℝ) ^ δ) := EconCSLib.Math.gamma_ratio_nat_add_one_sub_asymptoticEquivalent hδ_pos hδ_lt_one
 
 /--
 Finite-difference bridge for the Pareto order-statistic rank calculation.
@@ -200,8 +192,7 @@ theorem paretoRankMarginalCoeff_pos {α : ℝ} (hα : 1 < α) (r : ℕ) :
     hα_pos
 
 /-- Fixed-rank value coefficient before taking the marginal finite difference. -/
-noncomputable def paretoRankValueCoeff (α : ℝ) (r : ℕ) : ℝ :=
-  Real.Gamma ((r : ℝ) + 1 - 1 / α) / Real.Gamma ((r : ℝ) + 1)
+noncomputable def paretoRankValueCoeff (α : ℝ) (r : ℕ) : ℝ := Real.Gamma ((r : ℝ) + 1 - 1 / α) / Real.Gamma ((r : ℝ) + 1)
 
 theorem paretoRankValueCoeff_pos {α : ℝ} (hα : 1 < α) (r : ℕ) :
     0 < paretoRankValueCoeff α r := by
@@ -288,8 +279,8 @@ theorem paretoRankGammaRatioMean_succ_div_self
     (Real.Gamma_pos_of_pos harg_succ_pos).ne'
   have hgamma_num_succ :
       Real.Gamma (((q + 1 : ℕ) : ℝ) + 1) =
-        (((q + 1 : ℕ) : ℝ) * Real.Gamma (((q + 1 : ℕ) : ℝ))) := by
-    exact Real.Gamma_add_one (by positivity : (((q + 1 : ℕ) : ℝ)) ≠ 0)
+        (((q + 1 : ℕ) : ℝ) * Real.Gamma (((q + 1 : ℕ) : ℝ))) :=
+    Real.Gamma_add_one (by positivity : (((q + 1 : ℕ) : ℝ)) ≠ 0)
   have hgamma_den_succ :
       Real.Gamma (((q + 1 : ℕ) : ℝ) + 1 - 1 / α) =
         (((q : ℝ) + 1 - 1 / α) *
@@ -530,6 +521,18 @@ structure ParetoOrderStatisticScaledMarginalCertificate
 
 namespace ParetoOrderStatisticScaledMarginalCertificate
 
+def toOrderStatisticScaledMarginalCertificate
+    {μ : ℕ → ℕ → ℝ} {k : ℕ} {α limitCoeff : ℝ}
+    (C : ParetoOrderStatisticScaledMarginalCertificate μ k α limitCoeff) :
+    EconCSLib.Probability.OrderStatisticScaledMarginalCertificate μ k
+      (paretoPowerMarginalScale α) limitCoeff where
+  k_pos := C.k_pos
+  coeff_pos := C.coeff_pos
+  scale_pos_eventually := by
+    filter_upwards with q
+    exact paretoPowerMarginalScale_pos α q
+  marginal_ratio_tendsto := C.marginal_ratio_tendsto
+
 /--
 Restate the source-side marginal field in the repository's standard
 `AsymptoticEquivalent` vocabulary.  This is the exact form expected from the
@@ -543,7 +546,7 @@ theorem marginal_asymptoticEquivalent
         orderStatisticTopKSumFromMean μ k (q + 1) -
           orderStatisticTopKSumFromMean μ k q)
       (fun q : ℕ => paretoPowerMarginalScale α q * limitCoeff) :=
-  C.marginal_ratio_tendsto
+  C.toOrderStatisticScaledMarginalCertificate.marginal_asymptoticEquivalent
 
 /--
 Constructor from the source-style asymptotic-equivalence statement for the
@@ -577,12 +580,20 @@ def ofConstMulScaleAsymptoticEquivalent
           orderStatisticTopKSumFromMean μ k (q + 1) -
             orderStatisticTopKSumFromMean μ k q)
         (fun q : ℕ => limitCoeff * paretoPowerMarginalScale α q)) :
-    ParetoOrderStatisticScaledMarginalCertificate μ k α limitCoeff :=
-  ofMarginalAsymptoticEquivalent hα hk hcoeff <| by
-    rw [EconCSLib.Math.AsymptoticEquivalent] at hmargin ⊢
-    refine Filter.Tendsto.congr' ?_ hmargin
-    filter_upwards with q
-    rw [mul_comm]
+    ParetoOrderStatisticScaledMarginalCertificate μ k α limitCoeff := by
+  let G : EconCSLib.Probability.OrderStatisticScaledMarginalCertificate μ k
+      (paretoPowerMarginalScale α) limitCoeff :=
+    EconCSLib.Probability.OrderStatisticScaledMarginalCertificate.ofConstMulScaleAsymptoticEquivalent
+        hk hcoeff
+        (by
+          filter_upwards with q
+          exact paretoPowerMarginalScale_pos α q)
+        hmargin
+  exact
+    { alpha_gt_one := hα
+      k_pos := G.k_pos
+      coeff_pos := G.coeff_pos
+      marginal_ratio_tendsto := G.marginal_ratio_tendsto }
 
 /--
 Constructor from the paper's fixed-`k`, per-rank marginal sum.
@@ -601,14 +612,20 @@ def ofFiniteRankMarginalSumAsymptoticEquivalent
           ∑ i : Fin k,
             (μ (q + 1 - i.val) (q + 1) - μ (q - i.val) q))
         (fun q : ℕ => limitCoeff * paretoPowerMarginalScale α q)) :
-    ParetoOrderStatisticScaledMarginalCertificate μ k α limitCoeff :=
-  ofConstMulScaleAsymptoticEquivalent hα hk hcoeff <| by
-    refine EconCSLib.Math.AsymptoticEquivalent.congr_left_eventually ?_ hmargin
-    filter_upwards [Filter.eventually_atTop.2 ⟨k, fun q hq => hq⟩] with q hkq
-    have hkq_succ : k ≤ q + 1 := Nat.le_trans hkq (Nat.le_succ q)
-    rw [orderStatisticTopKSumFromMean_eq_fin_sum_of_le μ hkq_succ,
-      orderStatisticTopKSumFromMean_eq_fin_sum_of_le μ hkq]
-    rw [← Finset.sum_sub_distrib]
+    ParetoOrderStatisticScaledMarginalCertificate μ k α limitCoeff := by
+  let G : EconCSLib.Probability.OrderStatisticScaledMarginalCertificate μ k
+      (paretoPowerMarginalScale α) limitCoeff :=
+    EconCSLib.Probability.OrderStatisticScaledMarginalCertificate.ofFiniteRankMarginalSumAsymptoticEquivalent
+        hk hcoeff
+        (by
+          filter_upwards with q
+          exact paretoPowerMarginalScale_pos α q)
+        hmargin
+  exact
+    { alpha_gt_one := hα
+      k_pos := G.k_pos
+      coeff_pos := G.coeff_pos
+      marginal_ratio_tendsto := G.marginal_ratio_tendsto }
 
 /--
 Constructor from fixed-rank scaled marginal limits.
@@ -630,43 +647,20 @@ def ofFiniteRankScaledLimits
             (μ (q + 1 - i.val) (q + 1) - μ (q - i.val) q) /
               paretoPowerMarginalScale α q)
           Filter.atTop (nhds (rankCoeff i))) :
-    ParetoOrderStatisticScaledMarginalCertificate μ k α limitCoeff :=
-  ofFiniteRankMarginalSumAsymptoticEquivalent hα hk hcoeff <| by
-    rw [EconCSLib.Math.AsymptoticEquivalent]
-    have hsum_scaled :
-        Filter.Tendsto
-          (fun q : ℕ =>
-            ∑ i : Fin k,
-              (μ (q + 1 - i.val) (q + 1) - μ (q - i.val) q) /
-                paretoPowerMarginalScale α q)
-          Filter.atTop (nhds (∑ i : Fin k, rankCoeff i)) := by
-      exact tendsto_finset_sum Finset.univ (fun i _ => hrank i)
-    have hratio_scaled :
-        Filter.Tendsto
-          (fun q : ℕ =>
-            (∑ i : Fin k,
-              (μ (q + 1 - i.val) (q + 1) - μ (q - i.val) q) /
-                paretoPowerMarginalScale α q) /
-              limitCoeff)
-          Filter.atTop (nhds 1) := by
-      have hdiv := hsum_scaled.div_const limitCoeff
-      simpa [hcoeff_sum, hcoeff.ne'] using hdiv
-    refine Filter.Tendsto.congr' ?_ hratio_scaled
-    filter_upwards with q
-    have hscale_ne : paretoPowerMarginalScale α q ≠ 0 :=
-      (paretoPowerMarginalScale_pos α q).ne'
-    have hcoeff_ne : limitCoeff ≠ 0 := hcoeff.ne'
-    have hsum_div :
-        (∑ i : Fin k,
-          (μ (q + 1 - i.val) (q + 1) - μ (q - i.val) q) /
-            paretoPowerMarginalScale α q) =
-          (∑ i : Fin k,
-            (μ (q + 1 - i.val) (q + 1) - μ (q - i.val) q)) /
-            paretoPowerMarginalScale α q := by
-      simp_rw [div_eq_mul_inv]
-      rw [Finset.sum_mul]
-    rw [hsum_div]
-    field_simp [hcoeff_ne, hscale_ne]
+    ParetoOrderStatisticScaledMarginalCertificate μ k α limitCoeff := by
+  let G : EconCSLib.Probability.OrderStatisticScaledMarginalCertificate μ k
+      (paretoPowerMarginalScale α) limitCoeff :=
+    EconCSLib.Probability.OrderStatisticScaledMarginalCertificate.ofFiniteRankScaledLimits
+        rankCoeff hk hcoeff
+        (by
+          filter_upwards with q
+          exact paretoPowerMarginalScale_pos α q)
+        hcoeff_sum hrank
+  exact
+    { alpha_gt_one := hα
+      k_pos := G.k_pos
+      coeff_pos := G.coeff_pos
+      marginal_ratio_tendsto := G.marginal_ratio_tendsto }
 
 /--
 Pareto-specialized fixed-rank constructor.  The gamma-ratio calculation only
@@ -699,17 +693,13 @@ noncomputable def toTopKScaledMarginalLimitCertificate
     TopKScaledMarginalLimitCertificate
       (TopKValueOracle.ofOrderStatisticMean T μ) k
       (paretoPowerMarginalScale α)
-      (fun _ : ItemType T => limitCoeff) where
-  scale_pos_eventually := by
-    filter_upwards with q
-    exact paretoPowerMarginalScale_pos α q
-  weight_pos := by
-    intro _t
-    exact C.coeff_pos
-  marginal_ratio_tendsto := by
-    intro t
-    simpa [EconCSLib.Probability.TopKExpectationOracle.marginalTopK,
-      topKExpectationOracleOfTopKValueOracle] using C.marginal_ratio_tendsto
+      (fun _ : ItemType T => limitCoeff) := by
+  simpa [topKExpectationOracleOfTopKValueOracle,
+      EconCSLib.Probability.TopKExpectationOracle.orderStatisticTopKExpectationOracle,
+      TopKValueOracle.ofOrderStatisticMean]
+    using
+      C.toOrderStatisticScaledMarginalCertificate
+        |>.toTopKExpectationScaledMarginalLimitCertificate (ItemType T)
 
 end ParetoOrderStatisticScaledMarginalCertificate
 
@@ -773,8 +763,8 @@ theorem paretoPowerMarginalError_nonneg {T : ℕ}
   by_cases hN : N = 0
   · simp [paretoPowerMarginalError, hN]
   · have hS_nonneg :
-        0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (α / (α - 1))) := by
-      exact Finset.sum_nonneg
+        0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (α / (α - 1))) :=
+      Finset.sum_nonneg
         (fun t _ => div_nonneg zero_le_one
           (le_of_lt (Real.rpow_pos_of_pos (hlike_pos t) (α / (α - 1)))))
     have hN_pos : 0 < (N : ℝ) := by
@@ -792,8 +782,8 @@ theorem paretoPowerMarginalError_tends_to_zero {T : ℕ}
       (paretoPowerMarginalError likelihood α) := by
   let S : ℝ := (∑ t : ItemType T, 1 / (likelihood t ^ (α / (α - 1)))) + 1
   have hsum_nonneg :
-      0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (α / (α - 1))) := by
-    exact Finset.sum_nonneg
+      0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (α / (α - 1))) :=
+    Finset.sum_nonneg
       (fun t _ => div_nonneg zero_le_one
         (le_of_lt (Real.rpow_pos_of_pos (hlike_pos t) (α / (α - 1)))))
   have hS_pos : 0 < S := by
@@ -830,8 +820,8 @@ noncomputable def paretoPowerMarginalSublinearFOCCertificate
   targetShare_eq := by
     intro t
     have hnorm_pos :
-        0 < ∑ i : ItemType T, likelihood i ^ (α / (α - 1)) := by
-      exact Finset.sum_pos
+        0 < ∑ i : ItemType T, likelihood i ^ (α / (α - 1)) :=
+      Finset.sum_pos
         (fun i _ => Real.rpow_pos_of_pos (hlike_pos i) (α / (α - 1)))
         Finset.univ_nonempty
     exact gammaLikelihoodProfile_targetShare_eq likelihood (α / (α - 1)) t
@@ -859,8 +849,8 @@ noncomputable def paretoPowerMarginalSublinearFOCCertificate
     have hS_pos : 0 < S := by
       dsimp [S]
       have hsum_nonneg :
-          0 ≤ ∑ t : ItemType T, 1 / weight t := by
-        exact Finset.sum_nonneg
+          0 ≤ ∑ t : ItemType T, 1 / weight t :=
+        Finset.sum_nonneg
           (fun t _ => div_nonneg zero_le_one (le_of_lt (hweight_pos t)))
       linarith
     have hN_ne : N ≠ 0 := Nat.ne_of_gt hN
@@ -886,8 +876,8 @@ noncomputable def paretoPowerMarginalSublinearFOCCertificate
       simp at hsrc_div_pos
     have hinv_dst_lt_S : 1 / weight dst < S := by
       have hinv_le_sum :
-          1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t := by
-        exact Finset.single_le_sum
+          1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t :=
+        Finset.single_le_sum
           (fun t _ => div_nonneg zero_le_one (le_of_lt (hweight_pos t)))
           (Finset.mem_univ dst)
       dsimp [S]
@@ -920,8 +910,8 @@ noncomputable def paretoPowerMarginalSublinearFOCCertificate
     have hmarginal_core :
         likelihood src * (1 * (a.count src : ℝ) ^ (-η)) <
           likelihood dst *
-            (1 * (((a.count dst + 1 : ℕ) : ℝ) ^ (-η))) := by
-      exact EconCSLib.Math.rpow_neg_marginal_lt_of_scaled_lt
+            (1 * (((a.count dst + 1 : ℕ) : ℝ) ^ (-η))) :=
+      EconCSLib.Math.rpow_neg_marginal_lt_of_scaled_lt
         (c := 1) (eta := η)
         (hlike_pos src) (hlike_pos dst) zero_lt_one hη_pos
         hqsrc_real_pos hqdst_succ_pos hscaled_for_power
@@ -964,8 +954,7 @@ theorem homogeneity_of_tail_index
     {T : ℕ} [NeZero T] (M : ConsumptionModel T) (α : ℝ)
     (hcert : TailIndexHomogeneityCertificate M α) :
     ConsumptionModel.AsymptoticHomogeneityTarget
-      (fun _ => M) (paretoProfile M.likelihood α) EconCSLib.Math.ExactInvRate :=
-  hcert.asymptotic_homogeneity
+      (fun _ => M) (paretoProfile M.likelihood α) EconCSLib.Math.ExactInvRate := hcert.asymptotic_homogeneity
 
 /--
 Finite pairwise difference bound for Pareto types.
@@ -1003,7 +992,6 @@ theorem pareto_optimum_pairwise_bound
     ∀ t₁ t₂,
       0 < a.count t₁ → t₁ ≠ t₂ →
       ((a.count t₁ : ℝ) - 1) ^ (index - 1) ≤
-        (M.likelihood t₂ / M.likelihood t₁) * (a.count t₂ + 1 : ℝ) ^ (index - 1) := by
-  exact hcert.pairwise_bound N hopt
+        (M.likelihood t₂ / M.likelihood t₁) * (a.count t₂ + 1 : ℝ) ^ (index - 1) :=  hcert.pairwise_bound N hopt
 
 end PRPKG24AccuracyDiversity

@@ -17,24 +17,20 @@ Paper Definition 3 interface: `μ rank sampleSize` is the expected value of the
 `rank`-th smallest order statistic among `sampleSize` i.i.d. draws.
 -/
 noncomputable abbrev orderStatisticTopKSumFromMean :
-    (ℕ → ℕ → ℝ) → ℕ → ℕ → ℝ :=
-  EconCSLib.Probability.orderStatisticTopKSumFromMean
+    (ℕ → ℕ → ℝ) → ℕ → ℕ → ℝ := EconCSLib.Probability.orderStatisticTopKSumFromMean
 
 @[simp] theorem orderStatisticTopKSumFromMean_zero_samples
     (μ : ℕ → ℕ → ℝ) (k : ℕ) :
-    orderStatisticTopKSumFromMean μ k 0 = 0 := by
-  exact EconCSLib.Probability.orderStatisticTopKSumFromMean_zero_samples μ k
+    orderStatisticTopKSumFromMean μ k 0 = 0 :=  EconCSLib.Probability.orderStatisticTopKSumFromMean_zero_samples μ k
 
 @[simp] theorem orderStatisticTopKSumFromMean_zero_k
     (μ : ℕ → ℕ → ℝ) (a : ℕ) :
-    orderStatisticTopKSumFromMean μ 0 a = 0 := by
-  exact EconCSLib.Probability.orderStatisticTopKSumFromMean_zero_k μ a
+    orderStatisticTopKSumFromMean μ 0 a = 0 :=  EconCSLib.Probability.orderStatisticTopKSumFromMean_zero_k μ a
 
 theorem orderStatisticTopKSumFromMean_eq_source_sum
     (μ : ℕ → ℕ → ℝ) (k a : ℕ) :
     orderStatisticTopKSumFromMean μ k a =
-      ∑ i ∈ Finset.range (min k a), μ (a - i) a :=
-  EconCSLib.Probability.orderStatisticTopKSumFromMean_eq_source_sum μ k a
+      ∑ i ∈ Finset.range (min k a), μ (a - i) a := EconCSLib.Probability.orderStatisticTopKSumFromMean_eq_source_sum μ k a
 
 /--
 When the sample count is at least `k`, the paper's `min k a` top-`k`
@@ -43,8 +39,8 @@ order-statistic sum is the `Fin k` sum over the upper order-statistic means.
 theorem orderStatisticTopKSumFromMean_eq_fin_sum_of_le
     (μ : ℕ → ℕ → ℝ) {k a : ℕ} (hka : k ≤ a) :
     orderStatisticTopKSumFromMean μ k a =
-      ∑ i : Fin k, μ (a - i.val) a := by
-  exact EconCSLib.Probability.orderStatisticTopKSumFromMean_eq_fin_sum_of_le
+      ∑ i : Fin k, μ (a - i.val) a :=
+   EconCSLib.Probability.orderStatisticTopKSumFromMean_eq_fin_sum_of_le
     μ hka
 
 /--
@@ -54,8 +50,8 @@ Fixed-`k` endpoint loss form of
 theorem orderStatisticTopKLossFromMean_eq_fin_loss_of_le
     (M : ℝ) (μ : ℕ → ℕ → ℝ) {k a : ℕ} (hka : k ≤ a) :
     (k : ℝ) * M - orderStatisticTopKSumFromMean μ k a =
-      (k : ℝ) * M - ∑ i : Fin k, μ (a - i.val) a := by
-  exact EconCSLib.Probability.orderStatisticTopKLossFromMean_eq_fin_loss_of_le
+      (k : ℝ) * M - ∑ i : Fin k, μ (a - i.val) a :=
+   EconCSLib.Probability.orderStatisticTopKLossFromMean_eq_fin_loss_of_le
     M μ hka
 
 /-!
@@ -73,13 +69,11 @@ one-based rank convention.  Out-of-range ranks are set to zero; the top-`k`
 sum theorem below only evaluates valid ranks.
 -/
 noncomputable abbrev sampleOrderStatisticValue {a : ℕ}
-    (sample : Fin a → ℝ) (rank : ℕ) : ℝ :=
-  EconCSLib.Probability.sampleOrderStatisticValue sample rank
+    (sample : Fin a → ℝ) (rank : ℕ) : ℝ := EconCSLib.Probability.sampleOrderStatisticValue sample rank
 
 theorem sampleOrderStatisticValue_measurable {a : ℕ} (rank : ℕ) :
     Measurable
-      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) := by
-  exact EconCSLib.Probability.sampleOrderStatisticValue_measurable rank
+      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) :=  EconCSLib.Probability.sampleOrderStatisticValue_measurable rank
 
 theorem sampleOrderStatisticValue_integrable_of_ae_bounds
     (L U : ℝ) {a : ℕ} (μ : MeasureTheory.Measure (Fin a → ℝ))
@@ -87,8 +81,8 @@ theorem sampleOrderStatisticValue_integrable_of_ae_bounds
     (h_bounds :
       ∀ᵐ sample ∂μ, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ U) :
     MeasureTheory.Integrable
-      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) μ := by
-  exact EconCSLib.Probability.sampleOrderStatisticValue_integrable_of_ae_bounds
+      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) μ :=
+   EconCSLib.Probability.sampleOrderStatisticValue_integrable_of_ae_bounds
     L U μ rank h_bounds
 
 theorem sampleOrderStatisticValue_topKRange_integrable_of_ae_bounds
@@ -98,8 +92,7 @@ theorem sampleOrderStatisticValue_topKRange_integrable_of_ae_bounds
       ∀ᵐ sample ∂μ, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ U) :
     ∀ i ∈ Finset.range (min k a),
       MeasureTheory.Integrable
-        (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample (a - i)) μ := by
-  exact
+        (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample (a - i)) μ :=
     EconCSLib.Probability.sampleOrderStatisticValue_topKRange_integrable_of_ae_bounds
       L U μ k h_bounds
 
@@ -113,8 +106,8 @@ theorem orderStatisticTopKSumFromSample_eq_sampleTopKSum
         (fun rank sampleSize =>
           if sampleSize = a then sampleOrderStatisticValue sample rank else 0)
         k a =
-      EconCSLib.Probability.sampleTopKSum sample k := by
-  exact EconCSLib.Probability.orderStatisticTopKSumFromSample_eq_sampleTopKSum
+      EconCSLib.Probability.sampleTopKSum sample k :=
+   EconCSLib.Probability.orderStatisticTopKSumFromSample_eq_sampleTopKSum
     sample k
 
 /--
@@ -139,8 +132,7 @@ theorem expectedSampleOrderStatisticTopKSum_eq_expectedSampleTopKSum
           (fun sample => sampleOrderStatisticValue sample (a - i)) μ) :
     orderStatisticTopKSumFromMean
         (expectedSampleOrderStatisticMean μ) k a =
-      EconCSLib.Probability.expectedSampleTopKSum μ k := by
-  exact
+      EconCSLib.Probability.expectedSampleTopKSum μ k :=
     EconCSLib.Probability.expectedSampleOrderStatisticTopKSum_eq_expectedSampleTopKSum
       μ k h_integrable
 
@@ -163,8 +155,7 @@ theorem expectedSampleOrderStatisticTopKEndpointLoss_eq_expectedReflectedBottomK
     (min k a : ℝ) * M -
         orderStatisticTopKSumFromMean
           (expectedSampleOrderStatisticMean μ) k a =
-      EconCSLib.Probability.expectedReflectedBottomKSum M μ k := by
-  exact
+      EconCSLib.Probability.expectedReflectedBottomKSum M μ k :=
     EconCSLib.Probability.expectedSampleOrderStatisticTopKEndpointLoss_eq_expectedReflectedBottomKSum
       M μ k h_order_integrable h_top_integrable
 
@@ -174,8 +165,7 @@ laws, one law for each sample size.
 -/
 noncomputable abbrev expectedOrderStatisticMeanSeq
     (sampleMeasure : (a : ℕ) → MeasureTheory.Measure (Fin a → ℝ))
-    (rank sampleSize : ℕ) : ℝ :=
-  EconCSLib.Probability.expectedOrderStatisticMeanSeq sampleMeasure rank sampleSize
+    (rank sampleSize : ℕ) : ℝ := EconCSLib.Probability.expectedOrderStatisticMeanSeq sampleMeasure rank sampleSize
 
 /--
 Varying-sample-size version of
@@ -192,8 +182,7 @@ theorem expectedOrderStatisticMeanSeq_topKSum_eq_expectedSampleTopKSum
           (sampleMeasure a)) :
     orderStatisticTopKSumFromMean
         (expectedOrderStatisticMeanSeq sampleMeasure) k a =
-      EconCSLib.Probability.expectedSampleTopKSum (sampleMeasure a) k := by
-  exact
+      EconCSLib.Probability.expectedSampleTopKSum (sampleMeasure a) k :=
     EconCSLib.Probability.expectedOrderStatisticMeanSeq_topKSum_eq_expectedSampleTopKSum
       sampleMeasure k a h_integrable
 
@@ -218,8 +207,7 @@ theorem expectedOrderStatisticMeanSeq_topKEndpointLoss_eq_expectedReflectedBotto
         orderStatisticTopKSumFromMean
           (expectedOrderStatisticMeanSeq sampleMeasure) k a =
       EconCSLib.Probability.expectedReflectedBottomKSum
-        M (sampleMeasure a) k := by
-  exact
+        M (sampleMeasure a) k :=
     EconCSLib.Probability.expectedOrderStatisticMeanSeq_topKEndpointLoss_eq_expectedReflectedBottomKSum
       M sampleMeasure k h_order_integrable h_top_integrable
 
@@ -271,18 +259,15 @@ def toConsumptionModel {T : ℕ}
 
 /-- Marginal top-`ℓ` value from adding one more recommendation of type `t`. -/
 noncomputable def marginalTopK {T : ℕ}
-    (O : TopKValueOracle T) (ℓ : ℕ) (t : ItemType T) (q : ℕ) : ℝ :=
-  O.expectedTopSum ℓ t (q + 1) - O.expectedTopSum ℓ t q
+    (O : TopKValueOracle T) (ℓ : ℕ) (t : ItemType T) (q : ℕ) : ℝ := O.expectedTopSum ℓ t (q + 1) - O.expectedTopSum ℓ t q
 
 /-- Diminishing returns for a fixed consumption level `ℓ`. -/
 def HasDiminishingReturnsAt {T : ℕ}
-    (O : TopKValueOracle T) (ℓ : ℕ) : Prop :=
-  ∀ t q, marginalTopK O ℓ t (q + 1) ≤ marginalTopK O ℓ t q
+    (O : TopKValueOracle T) (ℓ : ℕ) : Prop := ∀ t q, marginalTopK O ℓ t (q + 1) ≤ marginalTopK O ℓ t q
 
 /-- Nonnegative marginal top-`ℓ` value for every type and count. -/
 def HasNonnegativeMarginalsAt {T : ℕ}
-    (O : TopKValueOracle T) (ℓ : ℕ) : Prop :=
-  ∀ t q, 0 ≤ marginalTopK O ℓ t q
+    (O : TopKValueOracle T) (ℓ : ℕ) : Prop := ∀ t q, 0 ≤ marginalTopK O ℓ t q
 
 @[simp] theorem toConsumptionModel_objective {T : ℕ}
     (O : TopKValueOracle T) (likelihood : ItemType T → ℝ) (ℓ : ℕ)

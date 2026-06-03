@@ -1,6 +1,6 @@
 # EconCSLib Current Status
 
-Current as of 2026-05-24.
+Current as of 2026-06-03.
 
 This file is the short repository status front door. Detailed theorem ledgers
 live in each `papers/[Paper]/README.md`; historical roadmaps and old orientation
@@ -10,6 +10,12 @@ notes are under `docs/archive/`.
 
 Recent checks:
 
+- `lake build EconCSLib KR21Monoculture PRPKG24AccuracyDiversity
+  GLM20DroppingStandardizedTesting LG21TestOptionalPolicies
+  GN21DriverSurgePricing` passed after extracting shared continuous-probability,
+  finite-expectation/order-statistic, ranking/payoff, and recommender-allocation
+  infrastructure from the five-paper cleanup pass. Generated paper status
+  tables were refreshed from paper-local `status.json` files.
 - `lake build EconCSLib` passed after adding the shared asymptotics lemma.
 - `lake build MSVV07AdWords` passed after replacing the AdWords paper-facing
   ledger with declaration-level formulas and theorem wrappers.

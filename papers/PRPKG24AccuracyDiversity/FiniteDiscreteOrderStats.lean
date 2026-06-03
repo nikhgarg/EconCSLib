@@ -1,4 +1,5 @@
 import EconCSLib.Foundations.Probability.FiniteExpectation
+import EconCSLib.Foundations.Probability.OrderStatistics
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Fintype.BigOperators
@@ -17,15 +18,14 @@ Theorem 1(i), this agrees with the paper's top-`k` sum and gives a cleaner
 finite maximization interface.
 -/
 def topKCandidateSets (ι : Type*) [Fintype ι] [DecidableEq ι] (k : ℕ) :
-    Finset (Finset ι) :=
-  (Finset.univ : Finset ι).powerset.filter (fun s => s.card ≤ k)
+    Finset (Finset ι) := (Finset.univ : Finset ι).powerset.filter (fun s => s.card ≤ k)
 
 theorem topKCandidateSets_nonempty
     (ι : Type*) [Fintype ι] [DecidableEq ι] (k : ℕ) :
     (topKCandidateSets ι k).Nonempty := by
   classical
-  refine ⟨∅, ?_⟩
-  simp [topKCandidateSets]
+  simpa [topKCandidateSets, EconCSLib.Probability.topKCandidateSets] using
+    EconCSLib.Probability.topKCandidateSets_nonempty ι k
 
 /-- Sum of the best at-most-`k` values over a finite sample. -/
 def topKSumOn {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -38,16 +38,18 @@ theorem sum_le_topKSumOn {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ℕ) (v : ι → ℝ) (s : Finset ι) (hs_card : s.card ≤ k) :
     (∑ i ∈ s, v i) ≤ topKSumOn k v := by
   classical
-  unfold topKSumOn
-  refine Finset.le_sup' (fun s => ∑ i ∈ s, v i) ?_
-  simp [topKCandidateSets, hs_card]
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets] using
+    EconCSLib.Probability.sum_le_topKSumOn (ι := ι) k v s hs_card
 
 /-- The empty candidate makes the at-most-`k` top value nonnegative. -/
 theorem topKSumOn_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ℕ) (v : ι → ℝ) :
     0 ≤ topKSumOn k v := by
   classical
-  simpa using sum_le_topKSumOn (ι := ι) k v ∅ (Nat.zero_le k)
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets] using
+    EconCSLib.Probability.topKSumOn_nonneg (ι := ι) k v
 
 /-- Reindexing the finite sample does not change its top-`k` sum. -/
 theorem topKSumOn_comp_equiv {ι κ : Type*}
@@ -55,62 +57,15 @@ theorem topKSumOn_comp_equiv {ι κ : Type*}
     (e : ι ≃ κ) (k : ℕ) (v : κ → ℝ) :
     topKSumOn k (fun i : ι => v (e i)) = topKSumOn k v := by
   classical
-  have hle :
-      topKSumOn k (fun i : ι => v (e i)) ≤ topKSumOn k v := by
-    unfold topKSumOn
-    refine Finset.sup'_le (topKCandidateSets_nonempty ι k)
-      (fun s => ∑ i ∈ s, v (e i)) ?_
-    intro s hs
-    have hs_card : s.card ≤ k := by
-      simpa [topKCandidateSets] using hs
-    let t : Finset κ := s.map e.toEmbedding
-    have ht_card : t.card ≤ k := by
-      have hcard : t.card = s.card := by
-        simp [t]
-      simpa [hcard] using hs_card
-    have hsum :
-        (∑ i ∈ s, v (e i)) = ∑ x ∈ t, v x := by
-      dsimp [t]
-      symm
-      simpa using
-        (Finset.sum_map (s := s) (f := e.toEmbedding) (g := v))
-    change (∑ i ∈ s, v (e i)) ≤ topKSumOn k v
-    simpa [hsum] using sum_le_topKSumOn (ι := κ) k v t ht_card
-  have hge :
-      topKSumOn k v ≤ topKSumOn k (fun i : ι => v (e i)) := by
-    unfold topKSumOn
-    refine Finset.sup'_le (topKCandidateSets_nonempty κ k)
-      (fun s => ∑ i ∈ s, v i) ?_
-    intro s hs
-    have hs_card : s.card ≤ k := by
-      simpa [topKCandidateSets] using hs
-    let t : Finset ι := s.map e.symm.toEmbedding
-    have ht_card : t.card ≤ k := by
-      have hcard : t.card = s.card := by
-        simp [t]
-      simpa [hcard] using hs_card
-    have hsum :
-        (∑ x ∈ s, v x) = ∑ i ∈ t, v (e i) := by
-      dsimp [t]
-      symm
-      simpa using
-        (Finset.sum_map (s := s) (f := e.symm.toEmbedding)
-          (g := fun i : ι => v (e i)))
-    change (∑ x ∈ s, v x) ≤ topKSumOn k (fun i : ι => v (e i))
-    simpa [hsum] using
-      sum_le_topKSumOn (ι := ι) k (fun i : ι => v (e i)) t ht_card
-  exact le_antisymm hle hge
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets] using
+    EconCSLib.Probability.topKSumOn_comp_equiv (e := e) (k := k) (v := v)
 
 theorem finset_sum_le_card_mul_of_forall_le {ι : Type*}
     (s : Finset ι) (v : ι → ℝ) (C : ℝ)
     (h : ∀ i ∈ s, v i ≤ C) :
     (∑ i ∈ s, v i) ≤ (s.card : ℝ) * C := by
-  classical
-  calc
-    (∑ i ∈ s, v i) ≤ ∑ i ∈ s, C := by
-      exact Finset.sum_le_sum h
-    _ = (s.card : ℝ) * C := by
-      simp
+  exact EconCSLib.FiniteSum.finset_sum_le_card_mul_of_forall_le s v C h
 
 /-- If every sample value is at most `C`, then the top-`k` sum is at most `k*C`. -/
 theorem topKSumOn_le_card_mul_of_forall_le {ι : Type*}
@@ -119,17 +74,10 @@ theorem topKSumOn_le_card_mul_of_forall_le {ι : Type*}
     (hC_nonneg : 0 ≤ C) (h_le : ∀ i, v i ≤ C) :
     topKSumOn k v ≤ (k : ℝ) * C := by
   classical
-  unfold topKSumOn
-  refine Finset.sup'_le (topKCandidateSets_nonempty ι k)
-    (fun s => ∑ i ∈ s, v i) ?_
-  intro s hs
-  have hs_card : s.card ≤ k := by
-    simpa [topKCandidateSets] using hs
-  have hsum_le : (∑ i ∈ s, v i) ≤ (s.card : ℝ) * C :=
-    finset_sum_le_card_mul_of_forall_le s v C (fun i _ => h_le i)
-  have hcard_le : (s.card : ℝ) * C ≤ (k : ℝ) * C := by
-    exact mul_le_mul_of_nonneg_right (by exact_mod_cast hs_card) hC_nonneg
-  exact le_trans hsum_le hcard_le
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets] using
+    EconCSLib.Probability.topKSumOn_le_card_mul_of_forall_le
+      (ι := ι) k v hC_nonneg h_le
 
 /-- A witnessed set of `k` top values pins the top-`k` sum to `k * xTop`. -/
 theorem topKSumOn_eq_card_mul_of_top_witness {ι : Type*}
@@ -140,69 +88,34 @@ theorem topKSumOn_eq_card_mul_of_top_witness {ι : Type*}
     (hsTop_value : ∀ i ∈ sTop, v i = xTop) :
     topKSumOn k v = (k : ℝ) * xTop := by
   classical
-  apply le_antisymm
-  · exact topKSumOn_le_card_mul_of_forall_le k v hxTop_nonneg h_le
-  · have hsum :
-        (∑ i ∈ sTop, v i) = (k : ℝ) * xTop := by
-      calc
-        (∑ i ∈ sTop, v i) = ∑ i ∈ sTop, xTop := by
-          refine Finset.sum_congr rfl ?_
-          intro i hi
-          exact hsTop_value i hi
-        _ = (k : ℝ) * xTop := by
-          simp [hsTop_card]
-    simpa [hsum] using
-      sum_le_topKSumOn (ι := ι) k v sTop (by rw [hsTop_card])
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets] using
+    EconCSLib.Probability.topKSumOn_eq_card_mul_of_top_witness
+      (ι := ι) k v hxTop_nonneg h_le sTop hsTop_card hsTop_value
 
 /-- The sample has at least `k` entries equal to the top support value. -/
 def hasKTopValues {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (k : ℕ) (xTop : ℝ) (v : ι → ℝ) : Prop :=
-  ∃ s : Finset ι, s.card = k ∧ ∀ i ∈ s, v i = xTop
+    (k : ℕ) (xTop : ℝ) (v : ι → ℝ) : Prop := ∃ s : Finset ι, s.card = k ∧ ∀ i ∈ s, v i = xTop
 
 /-- Number of entries equal to the top support value. -/
 def topValueCount {ι : Type*} [Fintype ι]
-    (xTop : ℝ) (v : ι → ℝ) : ℕ :=
-  ((Finset.univ : Finset ι).filter (fun i => v i = xTop)).card
+    (xTop : ℝ) (v : ι → ℝ) : ℕ := ((Finset.univ : Finset ι).filter (fun i => v i = xTop)).card
 
 /-- The set of coordinates where a sample satisfies a predicate. -/
 def successIndexSet {ι α : Type*} [Fintype ι]
-    (p : α → Prop) [DecidablePred p] (sample : ι → α) : Finset ι :=
-  (Finset.univ : Finset ι).filter (fun i => p (sample i))
+    (p : α → Prop) [DecidablePred p] (sample : ι → α) : Finset ι := (Finset.univ : Finset ι).filter (fun i => p (sample i))
 
 /-- Add one independent draw to a sample indexed by `ι`. -/
-def extendDraw {ι α : Type*} (sample : ι → α) (newItem : α) : Option ι → α
-  | none => newItem
-  | some i => sample i
+abbrev extendDraw {ι α : Type*} (sample : ι → α) (newItem : α) : Option ι → α :=
+  EconCSLib.extendDraw sample newItem
 
 /-- Functions on `Option ι` are equivalent to a distinguished new draw and an old sample. -/
-def optionFunEquivProd (ι α : Type*) : (Option ι → α) ≃ α × (ι → α) where
-  toFun sample := (sample none, fun i => sample (some i))
-  invFun pair := extendDraw pair.2 pair.1
-  left_inv sample := by
-    funext x
-    cases x <;> rfl
-  right_inv pair := by
-    ext
-    · rfl
-    · rfl
+abbrev optionFunEquivProd (ι α : Type*) : (Option ι → α) ≃ α × (ι → α) :=
+  EconCSLib.optionFunEquivProd ι α
 
 /-- `Option (Fin a)` is a canonical one-point extension of `Fin a`. -/
-def optionFinEquivFinSucc (a : ℕ) : Option (Fin a) ≃ Fin (a + 1) where
-  toFun
-    | none => Fin.last a
-    | some i => Fin.castSucc i
-  invFun j :=
-    if h : j = Fin.last a then none else some (j.castPred h)
-  left_inv x := by
-    cases x with
-    | none => simp
-    | some i =>
-        simp [Fin.castSucc_ne_last]
-  right_inv j := by
-    by_cases h : j = Fin.last a
-    · subst h
-      simp
-    · simp [h, Fin.castSucc_castPred]
+abbrev optionFinEquivFinSucc (a : ℕ) : Option (Fin a) ≃ Fin (a + 1) :=
+  EconCSLib.optionFinEquivFinSucc a
 
 /-- Having `k` top values is the same as the top-value count being at least `k`. -/
 theorem hasKTopValues_iff_le_topValueCount {ι : Type*}
@@ -210,34 +123,18 @@ theorem hasKTopValues_iff_le_topValueCount {ι : Type*}
     (k : ℕ) (xTop : ℝ) (v : ι → ℝ) :
     hasKTopValues k xTop v ↔ k ≤ topValueCount xTop v := by
   classical
-  unfold hasKTopValues topValueCount
-  constructor
-  · rintro ⟨s, hs_card, hs_value⟩
-    have hsub : s ⊆ (Finset.univ : Finset ι).filter (fun i => v i = xTop) := by
-      intro i hi
-      simp [hs_value i hi]
-    have hcard := Finset.card_le_card hsub
-    simpa [hs_card] using hcard
-  · intro hcount
-    obtain ⟨s, hs_sub, hs_card⟩ :=
-      Finset.exists_subset_card_eq
-        (s := (Finset.univ : Finset ι).filter (fun i => v i = xTop))
-        hcount
-    refine ⟨s, hs_card, ?_⟩
-    intro i hi
-    have hi_filter := hs_sub hi
-    simpa using hi_filter
+  simpa [hasKTopValues, EconCSLib.Probability.hasKTopValues,
+    topValueCount, EconCSLib.Probability.topValueCount] using
+    EconCSLib.Probability.hasKTopValues_iff_le_topValueCount
+      (ι := ι) k xTop v
 
 /--
 The old sample has exactly `k-1` top-support values and every other value is
 at most the second support value.
 -/
-def hasPredTopValuesWithSecondBound {ι : Type*} [Fintype ι] [DecidableEq ι]
+abbrev hasPredTopValuesWithSecondBound {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ℕ) (xTop xSecond : ℝ) (v : ι → ℝ) : Prop :=
-  ∃ topSet : Finset ι,
-    topSet.card = k - 1 ∧
-      (∀ i ∈ topSet, v i = xTop) ∧
-        (∀ i, i ∉ topSet → v i ≤ xSecond)
+  EconCSLib.Probability.hasPredTopValuesWithSecondBound k xTop xSecond v
 
 /--
 When every value is either the top value or at most the second support value,
@@ -252,72 +149,24 @@ theorem hasPredTopValuesWithSecondBound_iff_topValueCount_eq {ι : Type*}
     hasPredTopValuesWithSecondBound k xTop xSecond v ↔
       topValueCount xTop v = k - 1 := by
   classical
-  unfold hasPredTopValuesWithSecondBound topValueCount
-  constructor
-  · rintro ⟨topSet, htop_card, htop_value, hnontop_le⟩
-    have hfilter_eq :
-        (Finset.univ : Finset ι).filter (fun i => v i = xTop) = topSet := by
-      apply Finset.ext
-      intro i
-      constructor
-      · intro hi
-        by_contra hnot
-        have hv_eq : v i = xTop := by simpa using hi
-        have hv_le : v i ≤ xSecond := hnontop_le i hnot
-        linarith
-      · intro hi
-        simp [htop_value i hi]
-    simpa [hfilter_eq, htop_card]
-  · intro hcount
-    let topSet : Finset ι := (Finset.univ : Finset ι).filter (fun i => v i = xTop)
-    refine ⟨topSet, hcount, ?_, ?_⟩
-    · intro i hi
-      simpa [topSet] using hi
-    · intro i hi
-      rcases hvalue_split i with hv_eq | hv_le
-      · have hi_top : i ∈ topSet := by
-          simp [topSet, hv_eq]
-        exact False.elim (hi hi_top)
-      · exact hv_le
+  simpa [topValueCount, EconCSLib.Probability.topValueCount,
+    hasPredTopValuesWithSecondBound] using
+    EconCSLib.Probability.hasPredTopValuesWithSecondBound_iff_topValueCount_eq
+      (ι := ι) k (v := v) hsecond_lt_top hvalue_split
 
 /-- Add one new value to a finite sample. -/
-def extendSample {ι : Type*} (v : ι → ℝ) (newValue : ℝ) : Option ι → ℝ
-  | none => newValue
-  | some i => v i
+abbrev extendSample {ι : Type*} (v : ι → ℝ) (newValue : ℝ) : Option ι → ℝ :=
+  EconCSLib.Probability.extendSample v newValue
 
 /-- Adding one more value cannot reduce the at-most-`k` top value. -/
 theorem topKSumOn_le_extend {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ℕ) (v : ι → ℝ) (newValue : ℝ) :
     topKSumOn k v ≤ topKSumOn k (extendSample v newValue) := by
   classical
-  unfold topKSumOn
-  refine Finset.sup'_le (topKCandidateSets_nonempty ι k)
-    (fun s => ∑ i ∈ s, v i) ?_
-  intro s hs
-  have hs_card : s.card ≤ k := by
-    simpa [topKCandidateSets] using hs
-  let sExt : Finset (Option ι) := s.image (fun i => some i)
-  have hsExt_card : sExt.card ≤ k := by
-    have hcard :
-        sExt.card = s.card := by
-      simpa [sExt] using
-        (Finset.card_image_of_injective s
-          (fun _ _ h => Option.some.inj h))
-    simpa [hcard] using hs_card
-  have hsum :
-      (∑ x ∈ sExt, extendSample v newValue x) = ∑ i ∈ s, v i := by
-    dsimp [sExt]
-    rw [Finset.sum_image (by
-      intro a _ b _ h
-      exact Option.some.inj h)]
-    simp [extendSample]
-  have hcandidate :=
-    sum_le_topKSumOn (ι := Option ι) k (extendSample v newValue)
-      sExt hsExt_card
-  have hcandidate' :
-      (∑ i ∈ s, v i) ≤ topKSumOn k (extendSample v newValue) := by
-    simpa [hsum] using hcandidate
-  simpa [topKSumOn] using hcandidate'
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets,
+    extendSample] using
+    EconCSLib.Probability.topKSumOn_le_extend (ι := ι) k v newValue
 
 /--
 If the old sample has fewer than `k` coordinates, a maximizing old candidate
@@ -331,46 +180,11 @@ theorem topKSumOn_add_newValue_le_extend_of_card_lt {ι : Type*}
     topKSumOn k v + newValue ≤
       topKSumOn k (extendSample v newValue) := by
   classical
-  obtain ⟨s, hs_mem, hs_eq⟩ :=
-    Finset.exists_mem_eq_sup'
-      (s := topKCandidateSets ι k)
-      (H := topKCandidateSets_nonempty ι k)
-      (f := fun s => ∑ i ∈ s, v i)
-  have hs_card_lt : s.card < k := by
-    exact lt_of_le_of_lt (Finset.card_le_univ s) hcard_lt
-  let sExt : Finset (Option ι) := insert none (s.image (fun i => some i))
-  have hnone_not_mem : none ∉ s.image (fun i : ι => some i) := by
-    simp
-  have hcard_image :
-      (s.image (fun i : ι => some i)).card = s.card :=
-    Finset.card_image_of_injective s (fun _ _ h => Option.some.inj h)
-  have hsExt_card : sExt.card ≤ k := by
-    have hcard : sExt.card = s.card + 1 := by
-      simp [sExt, hnone_not_mem, hcard_image]
-    omega
-  have hold_eq : topKSumOn k v = ∑ i ∈ s, v i := by
-    unfold topKSumOn
-    exact hs_eq
-  have hsum_image :
-      (∑ x ∈ s.image (fun i : ι => some i),
-          extendSample v newValue x) =
-        ∑ i ∈ s, v i := by
-    rw [Finset.sum_image]
-    · simp [extendSample]
-    · intro a _ b _ h
-      exact Option.some.inj h
-  have hsum_ext :
-      (∑ x ∈ sExt, extendSample v newValue x) =
-        (∑ i ∈ s, v i) + newValue := by
-    simp [sExt, hnone_not_mem, extendSample, add_comm]
-  calc
-    topKSumOn k v + newValue =
-        (∑ i ∈ s, v i) + newValue := by
-          rw [hold_eq]
-    _ = ∑ x ∈ sExt, extendSample v newValue x := hsum_ext.symm
-    _ ≤ topKSumOn k (extendSample v newValue) :=
-        sum_le_topKSumOn (ι := Option ι) k
-          (extendSample v newValue) sExt hsExt_card
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets,
+    extendSample] using
+    EconCSLib.Probability.topKSumOn_add_newValue_le_extend_of_card_lt
+      (ι := ι) k v newValue hcard_lt
 
 /--
 When the old sample has fewer than `k` coordinates, the marginal gain from
@@ -381,10 +195,11 @@ theorem newValue_le_topKSumOn_extend_sub_of_card_lt {ι : Type*}
     (k : ℕ) (v : ι → ℝ) (newValue : ℝ)
     (hcard_lt : Fintype.card ι < k) :
     newValue ≤ topKSumOn k (extendSample v newValue) - topKSumOn k v := by
-  have h :=
-    topKSumOn_add_newValue_le_extend_of_card_lt
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets,
+    extendSample] using
+    EconCSLib.Probability.newValue_le_topKSumOn_extend_sub_of_card_lt
       (ι := ι) k v newValue hcard_lt
-  linarith
 
 theorem hasKTopValues_extend_of_hasKTopValues {ι : Type*}
     [Fintype ι] [DecidableEq ι]
@@ -392,14 +207,12 @@ theorem hasKTopValues_extend_of_hasKTopValues {ι : Type*}
     (h : hasKTopValues k xTop v) :
     hasKTopValues k xTop (extendSample v newValue) := by
   classical
-  rcases h with ⟨s, hs_card, hs_value⟩
-  refine ⟨s.image (fun i => some i), ?_, ?_⟩
-  · simpa [hs_card] using
-      (Finset.card_image_of_injective s
-        (fun _ _ h => Option.some.inj h))
-  · intro x hx
-    rcases Finset.mem_image.mp hx with ⟨i, hi, rfl⟩
-    exact hs_value i hi
+  simpa [hasKTopValues, EconCSLib.Probability.hasKTopValues,
+    extendSample] using
+    EconCSLib.Probability.hasKTopValues_extend_of_hasKTopValues
+      (v := v) (newValue := newValue)
+      (by
+        simpa [hasKTopValues, EconCSLib.Probability.hasKTopValues] using h)
 
 /--
 If a sample already has `k` top-support values, adding one more bounded item
@@ -413,26 +226,13 @@ theorem topKSumOn_extend_eq_of_hasKTopValues {ι : Type*}
     (hTop : hasKTopValues k xTop v) :
     topKSumOn k (extendSample v newValue) = topKSumOn k v := by
   classical
-  rcases hTop with ⟨s, hs_card, hs_value⟩
-  have hold :
-      topKSumOn k v = (k : ℝ) * xTop :=
-    topKSumOn_eq_card_mul_of_top_witness k v hxTop_nonneg h_le
-      s hs_card hs_value
-  have hext_le : ∀ x : Option ι, extendSample v newValue x ≤ xTop := by
-    intro x
-    cases x with
-    | none => exact hnew_le
-    | some i => exact h_le i
-  have hextTop :
-      hasKTopValues k xTop (extendSample v newValue) :=
-    hasKTopValues_extend_of_hasKTopValues
-      (v := v) (newValue := newValue) ⟨s, hs_card, hs_value⟩
-  rcases hextTop with ⟨sExt, hsExt_card, hsExt_value⟩
-  have hnew :
-      topKSumOn k (extendSample v newValue) = (k : ℝ) * xTop :=
-    topKSumOn_eq_card_mul_of_top_witness k (extendSample v newValue)
-      hxTop_nonneg hext_le sExt hsExt_card hsExt_value
-  rw [hnew, hold]
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets,
+    extendSample, hasKTopValues, EconCSLib.Probability.hasKTopValues] using
+    EconCSLib.Probability.topKSumOn_extend_eq_of_hasKTopValues
+      (ι := ι) k v hxTop_nonneg h_le hnew_le
+      (by
+        simpa [hasKTopValues, EconCSLib.Probability.hasKTopValues] using hTop)
 
 /--
 Pointwise upper marginal bound for the finite-discrete top-mass failure event:
@@ -448,25 +248,11 @@ theorem topKSumOn_extend_sub_le_top_failure_indicator {ι : Type*}
       (k : ℝ) * xTop *
         (if hasKTopValues k xTop v then (0 : ℝ) else 1) := by
   classical
-  by_cases hTop : hasKTopValues k xTop v
-  · have heq :=
-      topKSumOn_extend_eq_of_hasKTopValues k v hxTop_nonneg h_le
-        hnew_le hTop
-    simp [hTop, heq]
-  · have hext_le : ∀ x : Option ι, extendSample v newValue x ≤ xTop := by
-      intro x
-      cases x with
-      | none => exact hnew_le
-      | some i => exact h_le i
-    have hupper :
-        topKSumOn k (extendSample v newValue) ≤ (k : ℝ) * xTop :=
-      topKSumOn_le_card_mul_of_forall_le k (extendSample v newValue)
-        hxTop_nonneg hext_le
-    have hold_nonneg : 0 ≤ topKSumOn k v := topKSumOn_nonneg k v
-    have hmul_nonneg : 0 ≤ (k : ℝ) * xTop :=
-      mul_nonneg (Nat.cast_nonneg k) hxTop_nonneg
-    simp [hTop]
-    linarith
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets,
+    extendSample, hasKTopValues, EconCSLib.Probability.hasKTopValues] using
+    EconCSLib.Probability.topKSumOn_extend_sub_le_top_failure_indicator
+      (ι := ι) k v hxTop_nonneg h_le hnew_le
 
 /-- Expectation upper bound from a pointwise event-indicator upper bound. -/
 theorem pmfExp_le_const_mul_pmfProb_of_forall_le_indicator {Ω : Type*}
@@ -537,36 +323,7 @@ theorem pmfProduct_prob_forall_dependent
         (fun f : ι → α => ∀ i : ι, P i (f i)) =
       ∏ i : ι, EconCSLib.pmfProb μ (P i) := by
   classical
-  have hpoint : ∀ f : ι → α,
-      (EconCSLib.pmfProduct ι α μ f).toReal *
-          (if ∀ i : ι, P i (f i) then (1 : ℝ) else 0) =
-        ∏ i : ι, ((μ (f i)).toReal *
-          (if P i (f i) then (1 : ℝ) else 0)) := by
-    intro f
-    by_cases hall : ∀ i : ι, P i (f i)
-    · simp [hall]
-    · have hnotall : ¬ ∀ i : ι, P i (f i) := hall
-      rcases not_forall.mp hnotall with ⟨i, hi⟩
-      have hprod_zero :
-          ∏ j : ι, (if P j (f j) then (μ (f j)).toReal else 0) = 0 := by
-        rw [Finset.prod_eq_zero (Finset.mem_univ i)]
-        simp [hi]
-      simp [hnotall, hprod_zero]
-  unfold EconCSLib.pmfProb EconCSLib.pmfExp
-  calc
-    ∑ f : ι → α, (EconCSLib.pmfProduct ι α μ f).toReal *
-        (if ∀ i : ι, P i (f i) then (1 : ℝ) else 0)
-        = ∑ f : ι → α, ∏ i : ι, ((μ (f i)).toReal *
-            (if P i (f i) then (1 : ℝ) else 0)) := by
-          exact Finset.sum_congr rfl (fun f _ => hpoint f)
-    _ = ∏ i : ι, ∑ a : α,
-          ((μ a).toReal * (if P i a then (1 : ℝ) else 0)) := by
-          symm
-          simpa using
-            (Finset.prod_univ_sum
-              (t := fun _i : ι => (Finset.univ : Finset α))
-              (f := fun i a => (μ a).toReal *
-                (if P i a then (1 : ℝ) else 0)))
+  exact EconCSLib.pmfProduct_prob_forall_dependent μ P
 
 /-- Product of a two-valued coordinate weight over a finite type. -/
 theorem prod_ite_mem_eq_pow_mul_pow {ι : Type*}
@@ -574,28 +331,7 @@ theorem prod_ite_mem_eq_pow_mul_pow {ι : Type*}
     (∏ i : ι, if i ∈ s then q else rho) =
       q ^ s.card * rho ^ (Fintype.card ι - s.card) := by
   classical
-  have hfilter :
-      (Finset.univ : Finset ι).filter (fun i => i ∈ s) = s := by
-    ext i
-    simp
-  have hfilter_not_card :
-      ((Finset.univ : Finset ι).filter (fun i => ¬ i ∈ s)).card =
-        Fintype.card ι - s.card := by
-    have hsum :=
-      Finset.card_filter_add_card_filter_not
-        (s := (Finset.univ : Finset ι)) (p := fun i => i ∈ s)
-    rw [hfilter, Finset.card_univ] at hsum
-    omega
-  calc
-    (∏ i : ι, if i ∈ s then q else rho)
-        = (∏ i ∈ (Finset.univ : Finset ι),
-            if i ∈ s then q else rho) := by
-          simp
-    _ = (∏ i ∈ (Finset.univ : Finset ι) with i ∈ s, q) *
-          ∏ i ∈ (Finset.univ : Finset ι) with ¬ i ∈ s, rho := by
-          rw [Finset.prod_ite]
-    _ = q ^ s.card * rho ^ (Fintype.card ι - s.card) := by
-          simp [hfilter, hfilter_not_card]
+  exact EconCSLib.FiniteSum.prod_ite_mem_eq_pow_mul_pow s q rho
 
 /-- The success-index set equals `s` iff each coordinate has the prescribed status. -/
 theorem successIndexSet_eq_iff {ι α : Type*}
@@ -605,13 +341,8 @@ theorem successIndexSet_eq_iff {ι α : Type*}
     successIndexSet p sample = s ↔
       ∀ i : ι, p (sample i) ↔ i ∈ s := by
   classical
-  constructor
-  · intro h i
-    have hi := congrArg (fun t : Finset ι => i ∈ t) h
-    simpa [successIndexSet] using hi
-  · intro h
-    ext i
-    simp [successIndexSet, h i]
+  simpa [successIndexSet, EconCSLib.successIndexSet] using
+    EconCSLib.successIndexSet_eq_iff (sample := sample) (s := s)
 
 /--
 For an independent finite product PMF, the probability of a fixed success-index
@@ -628,36 +359,8 @@ theorem pmfProduct_prob_successIndexSet_eq
         (EconCSLib.pmfProb μ (fun a => ¬ p a)) ^
           (Fintype.card ι - s.card) := by
   classical
-  calc
-    EconCSLib.pmfProb (EconCSLib.pmfProduct ι α μ)
-        (fun sample : ι → α => successIndexSet p sample = s)
-        =
-        EconCSLib.pmfProb (EconCSLib.pmfProduct ι α μ)
-          (fun sample : ι → α => ∀ i : ι, p (sample i) ↔ i ∈ s) := by
-          refine EconCSLib.pmfProb_congr _ ?_
-          intro sample
-          exact successIndexSet_eq_iff sample s
-    _ = ∏ i : ι,
-          EconCSLib.pmfProb μ (fun a : α => p a ↔ i ∈ s) := by
-          exact pmfProduct_prob_forall_dependent μ
-            (fun i a => p a ↔ i ∈ s)
-    _ = ∏ i : ι,
-          if i ∈ s then
-            EconCSLib.pmfProb μ p
-          else
-            EconCSLib.pmfProb μ (fun a : α => ¬ p a) := by
-          refine Finset.prod_congr rfl ?_
-          intro i _hi
-          by_cases his : i ∈ s
-          · simp [his]
-          · simp [his]
-    _ =
-        (EconCSLib.pmfProb μ p) ^ s.card *
-          (EconCSLib.pmfProb μ (fun a : α => ¬ p a)) ^
-            (Fintype.card ι - s.card) := by
-          exact prod_ite_mem_eq_pow_mul_pow s
-            (EconCSLib.pmfProb μ p)
-            (EconCSLib.pmfProb μ (fun a : α => ¬ p a))
+  simpa [successIndexSet, EconCSLib.successIndexSet] using
+    EconCSLib.pmfProduct_prob_successIndexSet_eq (ι := ι) μ p s
 
 /--
 The number of successes in an independent finite product has the usual binomial
@@ -675,77 +378,8 @@ theorem pmfProduct_prob_successIndexSet_card_eq
           (EconCSLib.pmfProb μ (fun a : α => ¬ p a)) ^
             (Fintype.card ι - j) := by
   classical
-  let exactSets : Finset (Finset ι) :=
-    (Finset.univ : Finset ι).powersetCard j
-  have hindicator :
-      ∀ sample : ι → α,
-        (if (successIndexSet p sample).card = j then (1 : ℝ) else 0) =
-          ∑ s ∈ exactSets,
-            if successIndexSet p sample = s then (1 : ℝ) else 0 := by
-    intro sample
-    by_cases hcard : (successIndexSet p sample).card = j
-    · have hmem : successIndexSet p sample ∈ exactSets := by
-        simp [exactSets, hcard]
-      simp [hcard, hmem]
-    · have hne :
-        ∀ s ∈ exactSets, successIndexSet p sample ≠ s := by
-        intro s hs heq
-        have hs_card : s.card = j := by
-          simpa [exactSets] using (Finset.mem_powersetCard.mp hs).2
-        exact hcard (by simpa [heq, hs_card])
-      have hnotmem : successIndexSet p sample ∉ exactSets := by
-        intro hmem
-        exact hne (successIndexSet p sample) hmem rfl
-      simp [hcard, hnotmem]
-  unfold EconCSLib.pmfProb EconCSLib.pmfExp
-  calc
-    ∑ sample : ι → α,
-        (EconCSLib.pmfProduct ι α μ sample).toReal *
-          (if (successIndexSet p sample).card = j then (1 : ℝ) else 0)
-        =
-        ∑ sample : ι → α,
-          (EconCSLib.pmfProduct ι α μ sample).toReal *
-            (∑ s ∈ exactSets,
-              if successIndexSet p sample = s then (1 : ℝ) else 0) := by
-          refine Finset.sum_congr rfl ?_
-          intro sample _
-          rw [hindicator sample]
-    _ =
-        ∑ sample : ι → α, ∑ s ∈ exactSets,
-          (EconCSLib.pmfProduct ι α μ sample).toReal *
-            (if successIndexSet p sample = s then (1 : ℝ) else 0) := by
-          refine Finset.sum_congr rfl ?_
-          intro sample _
-          rw [Finset.mul_sum]
-    _ =
-        ∑ s ∈ exactSets, ∑ sample : ι → α,
-          (EconCSLib.pmfProduct ι α μ sample).toReal *
-            (if successIndexSet p sample = s then (1 : ℝ) else 0) := by
-          exact Finset.sum_comm
-    _ =
-        ∑ s ∈ exactSets,
-          (EconCSLib.pmfProb μ p) ^ s.card *
-            (EconCSLib.pmfProb μ (fun a : α => ¬ p a)) ^
-              (Fintype.card ι - s.card) := by
-          refine Finset.sum_congr rfl ?_
-          intro s _hs
-          exact pmfProduct_prob_successIndexSet_eq μ p s
-    _ =
-        ∑ s ∈ exactSets,
-          (EconCSLib.pmfProb μ p) ^ j *
-            (EconCSLib.pmfProb μ (fun a : α => ¬ p a)) ^
-              (Fintype.card ι - j) := by
-          refine Finset.sum_congr rfl ?_
-          intro s hs
-          have hs_card : s.card = j := by
-            simpa [exactSets] using (Finset.mem_powersetCard.mp hs).2
-          simp [hs_card]
-    _ =
-        (Nat.choose (Fintype.card ι) j : ℝ) *
-          (EconCSLib.pmfProb μ p) ^ j *
-            (EconCSLib.pmfProb μ (fun a : α => ¬ p a)) ^
-              (Fintype.card ι - j) := by
-          simp [exactSets, Finset.card_powersetCard, Finset.card_univ, mul_assoc]
+  simpa [successIndexSet, EconCSLib.successIndexSet] using
+    EconCSLib.pmfProduct_prob_successIndexSet_card_eq (ι := ι) μ p j
 
 /--
 The lower-tail probability for the number of successes in an independent
@@ -763,51 +397,8 @@ theorem pmfProduct_prob_successIndexSet_card_lt_eq_sum
             (EconCSLib.pmfProb μ (fun a : α => ¬ p a)) ^
               (Fintype.card ι - j) := by
   classical
-  have hindicator :
-      ∀ sample : ι → α,
-        (if (successIndexSet p sample).card < k then (1 : ℝ) else 0) =
-          ∑ j ∈ Finset.range k,
-            if (successIndexSet p sample).card = j then (1 : ℝ) else 0 := by
-    intro sample
-    by_cases hlt : (successIndexSet p sample).card < k
-    · have hmem : (successIndexSet p sample).card ∈ Finset.range k := by
-        simpa using hlt
-      simp [hlt, hmem]
-    · simp [hlt]
-  unfold EconCSLib.pmfProb EconCSLib.pmfExp
-  calc
-    ∑ sample : ι → α,
-        (EconCSLib.pmfProduct ι α μ sample).toReal *
-          (if (successIndexSet p sample).card < k then (1 : ℝ) else 0)
-        =
-        ∑ sample : ι → α,
-          (EconCSLib.pmfProduct ι α μ sample).toReal *
-            (∑ j ∈ Finset.range k,
-              if (successIndexSet p sample).card = j then (1 : ℝ) else 0) := by
-          refine Finset.sum_congr rfl ?_
-          intro sample _
-          rw [hindicator sample]
-    _ =
-        ∑ sample : ι → α, ∑ j ∈ Finset.range k,
-          (EconCSLib.pmfProduct ι α μ sample).toReal *
-            (if (successIndexSet p sample).card = j then (1 : ℝ) else 0) := by
-          refine Finset.sum_congr rfl ?_
-          intro sample _
-          rw [Finset.mul_sum]
-    _ =
-        ∑ j ∈ Finset.range k, ∑ sample : ι → α,
-          (EconCSLib.pmfProduct ι α μ sample).toReal *
-            (if (successIndexSet p sample).card = j then (1 : ℝ) else 0) := by
-          exact Finset.sum_comm
-    _ =
-        ∑ j ∈ Finset.range k,
-          (Nat.choose (Fintype.card ι) j : ℝ) *
-            (EconCSLib.pmfProb μ p) ^ j *
-              (EconCSLib.pmfProb μ (fun a : α => ¬ p a)) ^
-                (Fintype.card ι - j) := by
-          refine Finset.sum_congr rfl ?_
-          intro j _hj
-          exact pmfProduct_prob_successIndexSet_card_eq μ p j
+  simpa [successIndexSet, EconCSLib.successIndexSet] using
+    EconCSLib.pmfProduct_prob_successIndexSet_card_lt_eq_sum (ι := ι) μ p k
 
 /--
 For independent finite PMFs, the pair expectation of an event indicator
@@ -821,8 +412,7 @@ theorem pmfPairExp_indicator_and_eq_mul_pmfProb
     [DecidablePred p] [DecidablePred q] :
     EconCSLib.pmfPairExp μ ν
         (fun a b => if p a ∧ q b then (1 : ℝ) else 0) =
-      EconCSLib.pmfProb μ p * EconCSLib.pmfProb ν q :=
-  EconCSLib.pmfPairExp_indicator_and_eq_mul_pmfProb μ ν p q
+      EconCSLib.pmfProb μ p * EconCSLib.pmfProb ν q := EconCSLib.pmfPairExp_indicator_and_eq_mul_pmfProb μ ν p q
 
 /-- Subtractive linearity for finite pair expectations. -/
 theorem pmfPairExp_sub
@@ -844,8 +434,8 @@ theorem pmfPairExp_sub
           exact EconCSLib.pmfExp_sub ν (f a) (g a)
     _ =
         EconCSLib.pmfExp μ (fun a => EconCSLib.pmfExp ν (f a)) -
-          EconCSLib.pmfExp μ (fun a => EconCSLib.pmfExp ν (g a)) := by
-          exact EconCSLib.pmfExp_sub μ
+          EconCSLib.pmfExp μ (fun a => EconCSLib.pmfExp ν (g a)) :=
+          EconCSLib.pmfExp_sub μ
             (fun a => EconCSLib.pmfExp ν (f a))
             (fun a => EconCSLib.pmfExp ν (g a))
 
@@ -861,64 +451,8 @@ theorem pmfExp_pmfProduct_option_eq_pairExp
       EconCSLib.pmfPairExp (EconCSLib.pmfProduct ι α μ) μ
         (fun sample newItem => F (extendDraw sample newItem)) := by
   classical
-  unfold EconCSLib.pmfPairExp EconCSLib.pmfExp
-  let e := optionFunEquivProd ι α
-  calc
-    ∑ sample : Option ι → α,
-        (EconCSLib.pmfProduct (Option ι) α μ sample).toReal * F sample
-        =
-        ∑ pair : α × (ι → α),
-          (EconCSLib.pmfProduct (Option ι) α μ (e.symm pair)).toReal *
-            F (e.symm pair) := by
-          simpa [e] using
-            (Equiv.sum_comp (optionFunEquivProd ι α).symm
-              (fun sample : Option ι → α =>
-                (EconCSLib.pmfProduct (Option ι) α μ sample).toReal *
-                  F sample)).symm
-    _ =
-        ∑ pair : α × (ι → α),
-          ((μ pair.1).toReal * ∏ i : ι, (μ (pair.2 i)).toReal) *
-            F (extendDraw pair.2 pair.1) := by
-          refine Finset.sum_congr rfl ?_
-          intro pair _
-          simp [e, optionFunEquivProd, extendDraw,
-            Fintype.prod_option]
-    _ =
-        ∑ newItem : α, ∑ sample : ι → α,
-          ((μ newItem).toReal * ∏ i : ι, (μ (sample i)).toReal) *
-            F (extendDraw sample newItem) := by
-          simpa [Finset.univ_product_univ] using
-            (Finset.sum_product'
-              (s := (Finset.univ : Finset α))
-              (t := (Finset.univ : Finset (ι → α)))
-              (f := fun newItem sample =>
-                ((μ newItem).toReal *
-                    ∏ i : ι, (μ (sample i)).toReal) *
-                  F (extendDraw sample newItem)))
-    _ =
-        ∑ sample : ι → α, ∑ newItem : α,
-          ((μ newItem).toReal * ∏ i : ι, (μ (sample i)).toReal) *
-            F (extendDraw sample newItem) := by
-          exact Finset.sum_comm
-    _ =
-        ∑ sample : ι → α,
-          (∏ i : ι, (μ (sample i)).toReal) *
-            (∑ newItem : α,
-              (μ newItem).toReal * F (extendDraw sample newItem)) := by
-          refine Finset.sum_congr rfl ?_
-          intro sample _
-          rw [Finset.mul_sum]
-          refine Finset.sum_congr rfl ?_
-          intro newItem _
-          ring
-    _ =
-        ∑ sample : ι → α,
-          (EconCSLib.pmfProduct ι α μ sample).toReal *
-            (∑ newItem : α,
-              (μ newItem).toReal * F (extendDraw sample newItem)) := by
-          refine Finset.sum_congr rfl ?_
-          intro sample _
-          rw [EconCSLib.pmfProduct_apply_toReal]
+  simpa [extendDraw] using
+    EconCSLib.pmfExp_pmfProduct_option_eq_pairExp (ι := ι) μ F
 
 /-- Expected top-`k` value for an iid finite sample indexed by `ι`. -/
 def iidTopKExpectedOn (ι Ω : Type*) [Fintype ι] [DecidableEq ι]
@@ -929,8 +463,7 @@ def iidTopKExpectedOn (ι Ω : Type*) [Fintype ι] [DecidableEq ι]
 
 /-- Expected top-`k` value for an iid finite sample of natural size `a`. -/
 def finiteDiscreteIidTopKExpected (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
-    (itemLaw : PMF Ω) (k : ℕ) (value : Ω → ℝ) (a : ℕ) : ℝ :=
-  iidTopKExpectedOn (Fin a) Ω itemLaw k value
+    (itemLaw : PMF Ω) (k : ℕ) (value : Ω → ℝ) (a : ℕ) : ℝ := iidTopKExpectedOn (Fin a) Ω itemLaw k value
 
 /--
 Pair-expectation form of the one-draw iid marginal equals the difference
@@ -948,51 +481,12 @@ theorem pmfPairExp_topK_extend_sub_eq_iidTopKExpectedOn_option_sub
       iidTopKExpectedOn (Option ι) Ω itemLaw k value -
         iidTopKExpectedOn ι Ω itemLaw k value := by
   classical
-  rw [pmfPairExp_sub]
-  have hext :
-      EconCSLib.pmfPairExp (EconCSLib.pmfProduct ι Ω itemLaw) itemLaw
-          (fun sample newItem =>
-            topKSumOn k
-              (extendSample (fun i => value (sample i)) (value newItem))) =
-        iidTopKExpectedOn (Option ι) Ω itemLaw k value := by
-    have hcongr :
-        EconCSLib.pmfPairExp (EconCSLib.pmfProduct ι Ω itemLaw) itemLaw
-            (fun sample newItem =>
-              topKSumOn k
-                (extendSample (fun i => value (sample i)) (value newItem))) =
-          EconCSLib.pmfPairExp (EconCSLib.pmfProduct ι Ω itemLaw) itemLaw
-            (fun sample newItem =>
-              topKSumOn k (fun x => value (extendDraw sample newItem x))) := by
-      unfold EconCSLib.pmfPairExp
-      refine EconCSLib.pmfExp_congr (EconCSLib.pmfProduct ι Ω itemLaw) ?_
-      intro sample
-      refine EconCSLib.pmfExp_congr itemLaw ?_
-      intro newItem
-      change
-        topKSumOn k
-            (extendSample (fun i => value (sample i)) (value newItem)) =
-          topKSumOn k (fun x => value (extendDraw sample newItem x))
-      apply congrArg (topKSumOn k)
-      funext x
-      cases x <;> rfl
-    have hpair :
-        EconCSLib.pmfPairExp (EconCSLib.pmfProduct ι Ω itemLaw) itemLaw
-            (fun sample newItem =>
-              topKSumOn k (fun x => value (extendDraw sample newItem x))) =
-          iidTopKExpectedOn (Option ι) Ω itemLaw k value := by
-      unfold iidTopKExpectedOn
-      exact
-        (pmfExp_pmfProduct_option_eq_pairExp itemLaw
-          (fun sample : Option ι → Ω =>
-            topKSumOn k (fun x => value (sample x)))).symm
-    exact hcongr.trans hpair
-  have hold :
-      EconCSLib.pmfPairExp (EconCSLib.pmfProduct ι Ω itemLaw) itemLaw
-          (fun sample _newItem =>
-            topKSumOn k (fun i => value (sample i))) =
-        iidTopKExpectedOn ι Ω itemLaw k value := by
-    simp [iidTopKExpectedOn]
-  rw [hext, hold]
+  simpa [iidTopKExpectedOn, EconCSLib.Probability.iidTopKExpectedOn,
+    topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets,
+    extendSample, EconCSLib.Probability.extendSample] using
+    EconCSLib.Probability.pmfPairExp_topK_extend_sub_eq_iidTopKExpectedOn_option_sub
+      (ι := ι) itemLaw k value
 
 /-- Reindexing an iid finite sample does not change the expected top-`k` value. -/
 theorem iidTopKExpectedOn_equiv {ι κ Ω : Type*}
@@ -1002,52 +496,11 @@ theorem iidTopKExpectedOn_equiv {ι κ Ω : Type*}
     iidTopKExpectedOn ι Ω itemLaw k value =
       iidTopKExpectedOn κ Ω itemLaw k value := by
   classical
-  unfold iidTopKExpectedOn EconCSLib.pmfExp
-  let sampleEquiv : (ι → Ω) ≃ (κ → Ω) :=
-    { toFun := fun sample j => sample (e.symm j)
-      invFun := fun sample i => sample (e i)
-      left_inv := by
-        intro sample
-        funext i
-        simp
-      right_inv := by
-        intro sample
-        funext j
-        simp }
-  calc
-    ∑ sample : ι → Ω,
-        (EconCSLib.pmfProduct ι Ω itemLaw sample).toReal *
-          topKSumOn k (fun i => value (sample i))
-        =
-        ∑ sample : κ → Ω,
-          (EconCSLib.pmfProduct ι Ω itemLaw (sampleEquiv.symm sample)).toReal *
-            topKSumOn k (fun i => value ((sampleEquiv.symm sample) i)) := by
-          simpa [sampleEquiv] using
-            (Equiv.sum_comp sampleEquiv.symm
-              (fun sample : ι → Ω =>
-                (EconCSLib.pmfProduct ι Ω itemLaw sample).toReal *
-                  topKSumOn k (fun i => value (sample i)))).symm
-    _ =
-        ∑ sample : κ → Ω,
-          (EconCSLib.pmfProduct κ Ω itemLaw sample).toReal *
-            topKSumOn k (fun j => value (sample j)) := by
-          refine Finset.sum_congr rfl ?_
-          intro sample _
-          have hprod :
-              (EconCSLib.pmfProduct ι Ω itemLaw (sampleEquiv.symm sample)).toReal =
-                (EconCSLib.pmfProduct κ Ω itemLaw sample).toReal := by
-            rw [EconCSLib.pmfProduct_apply_toReal,
-              EconCSLib.pmfProduct_apply_toReal]
-            simpa [sampleEquiv] using
-              (Equiv.prod_comp e
-                (fun j : κ => (itemLaw (sample j)).toReal))
-          have htop :
-              topKSumOn k (fun i => value ((sampleEquiv.symm sample) i)) =
-                topKSumOn k (fun j => value (sample j)) := by
-            simpa [sampleEquiv] using
-              topKSumOn_comp_equiv (e := e) (k := k)
-                (v := fun j : κ => value (sample j))
-          rw [hprod, htop]
+  simpa [iidTopKExpectedOn, EconCSLib.Probability.iidTopKExpectedOn,
+    topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets] using
+    EconCSLib.Probability.iidTopKExpectedOn_equiv
+      (e := e) itemLaw k value
 
 /-- The option-step expectation for `Fin a` is the natural-size expectation at `a+1`. -/
 theorem iidTopKExpectedOn_option_fin_eq_succ
@@ -1055,9 +508,12 @@ theorem iidTopKExpectedOn_option_fin_eq_succ
     (itemLaw : PMF Ω) (k a : ℕ) (value : Ω → ℝ) :
     iidTopKExpectedOn (Option (Fin a)) Ω itemLaw k value =
       finiteDiscreteIidTopKExpected Ω itemLaw k value (a + 1) := by
-  unfold finiteDiscreteIidTopKExpected
-  exact iidTopKExpectedOn_equiv
-    (optionFinEquivFinSucc a) itemLaw k value
+  simpa [finiteDiscreteIidTopKExpected, EconCSLib.Probability.finiteIidTopKExpected,
+    iidTopKExpectedOn, EconCSLib.Probability.iidTopKExpectedOn,
+    topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets] using
+    EconCSLib.Probability.iidTopKExpectedOn_option_fin_eq_succ
+      (itemLaw := itemLaw) (k := k) (a := a) (value := value)
 
 /-- Arithmetic bound behind the `k-1`-top promoting event. -/
 theorem top_second_count_bound
@@ -1068,31 +524,8 @@ theorem top_second_count_bound
     (hsecond_le_top : xSecond ≤ xTop) :
     (b : ℝ) * xTop + (c : ℝ) * xSecond ≤
       ((k - 1 : ℕ) : ℝ) * xTop + xSecond := by
-  have hk_pred_cast : ((k - 1 : ℕ) : ℝ) = (k : ℝ) - 1 := by
-    norm_num [Nat.cast_sub (Nat.succ_le_of_lt hk_pos)]
-  have hbR : (b : ℝ) ≤ ((k - 1 : ℕ) : ℝ) := by
-    exact_mod_cast hb
-  have hbcR : (b : ℝ) + (c : ℝ) ≤ (k : ℝ) := by
-    exact_mod_cast hbc
-  have hcR : (c : ℝ) ≤ (k : ℝ) - (b : ℝ) := by
-    linarith
-  have hfirst :
-      (b : ℝ) * xTop + (c : ℝ) * xSecond ≤
-        (b : ℝ) * xTop + ((k : ℝ) - (b : ℝ)) * xSecond := by
-    simpa [add_comm, add_left_comm, add_assoc] using
-      add_le_add_left
-        (mul_le_mul_of_nonneg_right hcR hxSecond_nonneg)
-        ((b : ℝ) * xTop)
-  have hprod_nonneg :
-      0 ≤ (((k - 1 : ℕ) : ℝ) - (b : ℝ)) * (xTop - xSecond) :=
-    mul_nonneg (sub_nonneg.mpr hbR) (sub_nonneg.mpr hsecond_le_top)
-  have halg :
-      (b : ℝ) * xTop + ((k : ℝ) - (b : ℝ)) * xSecond +
-          (((k - 1 : ℕ) : ℝ) - (b : ℝ)) * (xTop - xSecond) =
-        ((k - 1 : ℕ) : ℝ) * xTop + xSecond := by
-    rw [hk_pred_cast]
-    ring
-  linarith
+  exact EconCSLib.Probability.top_second_count_bound
+    hk_pos hb hbc hxSecond_nonneg hsecond_le_top
 
 /--
 If a candidate set contains at most `k` indices, while the whole sample has
@@ -1112,52 +545,9 @@ theorem finset_sum_le_pred_top_add_second {ι : Type*}
     (hnontop_le : ∀ i, i ∉ topSet → v i ≤ xSecond) :
     (∑ i ∈ s, v i) ≤ ((k - 1 : ℕ) : ℝ) * xTop + xSecond := by
   classical
-  let sTop := s.filter (fun i => i ∈ topSet)
-  let sNonTop := s.filter (fun i => i ∉ topSet)
-  have hsplit :
-      (∑ i ∈ s, v i) =
-        (∑ i ∈ sTop, v i) + (∑ i ∈ sNonTop, v i) := by
-    simp [sTop, sNonTop, Finset.sum_filter_add_sum_filter_not]
-  have htop_sum :
-      (∑ i ∈ sTop, v i) ≤ (sTop.card : ℝ) * xTop :=
-    finset_sum_le_card_mul_of_forall_le sTop v xTop (by
-      intro i hi
-      have hitop : i ∈ topSet := by
-        have hi' : i ∈ s ∧ i ∈ topSet := by
-          simpa [sTop] using hi
-        exact hi'.2
-      exact (htop_value i hitop).le)
-  have hnontop_sum :
-      (∑ i ∈ sNonTop, v i) ≤ (sNonTop.card : ℝ) * xSecond :=
-    finset_sum_le_card_mul_of_forall_le sNonTop v xSecond (by
-      intro i hi
-      have hinot : i ∉ topSet := by
-        have hi' : i ∈ s ∧ i ∉ topSet := by
-          simpa [sNonTop] using hi
-        exact hi'.2
-      exact hnontop_le i hinot)
-  have htop_subset : sTop ⊆ topSet := by
-    intro i hi
-    have hi' : i ∈ s ∧ i ∈ topSet := by
-      simpa [sTop] using hi
-    exact hi'.2
-  have htop_card_le : sTop.card ≤ k - 1 := by
-    rw [← htop_card]
-    exact Finset.card_le_card htop_subset
-  have hcard_split : sTop.card + sNonTop.card = s.card := by
-    simpa [sTop, sNonTop] using
-      (Finset.card_filter_add_card_filter_not
-        (s := s) (p := fun i => i ∈ topSet))
-  have hsum_card_le : sTop.card + sNonTop.card ≤ k := by
-    simpa [hcard_split] using hs_card
-  calc
-    (∑ i ∈ s, v i)
-        = (∑ i ∈ sTop, v i) + (∑ i ∈ sNonTop, v i) := hsplit
-    _ ≤ (sTop.card : ℝ) * xTop + (sNonTop.card : ℝ) * xSecond :=
-          add_le_add htop_sum hnontop_sum
-    _ ≤ ((k - 1 : ℕ) : ℝ) * xTop + xSecond :=
-          top_second_count_bound hk_pos htop_card_le hsum_card_le
-            hxSecond_nonneg hsecond_le_top
+  exact EconCSLib.Probability.finset_sum_le_pred_top_add_second
+    hk_pos hxSecond_nonneg hsecond_le_top topSet s htop_card hs_card
+    htop_value hnontop_le
 
 /--
 Under the exact `k-1` top-count event, the old top-`k` value is at most
@@ -1175,14 +565,11 @@ theorem topKSumOn_le_pred_top_add_second {ι : Type*}
     (hnontop_le : ∀ i, i ∉ topSet → v i ≤ xSecond) :
     topKSumOn k v ≤ ((k - 1 : ℕ) : ℝ) * xTop + xSecond := by
   classical
-  unfold topKSumOn
-  refine Finset.sup'_le (topKCandidateSets_nonempty ι k)
-    (fun s => ∑ i ∈ s, v i) ?_
-  intro s hs
-  have hs_card : s.card ≤ k := by
-    simpa [topKCandidateSets] using hs
-  exact finset_sum_le_pred_top_add_second hk_pos hxSecond_nonneg
-    hsecond_le_top topSet s htop_card hs_card htop_value hnontop_le
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets] using
+    EconCSLib.Probability.topKSumOn_le_pred_top_add_second
+      (ι := ι) k v hk_pos hxSecond_nonneg hsecond_le_top
+      topSet htop_card htop_value hnontop_le
 
 /--
 Deterministic promoting-event lower bound.  If the old sample has exactly
@@ -1205,56 +592,12 @@ theorem topKSumOn_extend_sub_ge_top_gap_of_pred_top_witness {ι : Type*}
     xTop - xSecond ≤
       topKSumOn k (extendSample v newValue) - topKSumOn k v := by
   classical
-  let sExt : Finset (Option ι) := insert none (topSet.image (fun i => some i))
-  have hnone_not_mem : none ∉ topSet.image (fun i => some i) := by
-    intro hmem
-    rcases Finset.mem_image.mp hmem with ⟨i, _hi, hnone⟩
-    cases hnone
-  have hcard_image :
-      (topSet.image (fun i => some i)).card = topSet.card :=
-    Finset.card_image_of_injective topSet (fun _ _ h => Option.some.inj h)
-  have hsExt_card : sExt.card = k := by
-    simp [sExt, hnone_not_mem, hcard_image, htop_card,
-      Nat.sub_add_cancel (Nat.succ_le_of_lt hk_pos)]
-  have hext_le : ∀ x : Option ι, extendSample v newValue x ≤ xTop := by
-    intro x
-    cases x with
-    | none =>
-        simp [extendSample, hnew_eq]
-    | some i =>
-        by_cases hi : i ∈ topSet
-        · exact (htop_value i hi).le
-        · exact le_trans (hnontop_le i hi) hsecond_le_top
-  have hsExt_value : ∀ x ∈ sExt, extendSample v newValue x = xTop := by
-    intro x hx
-    simp [sExt] at hx
-    rcases hx with hx_none | hx_image
-    · subst hx_none
-      simp [extendSample, hnew_eq]
-    · rcases hx_image with ⟨i, hi, rfl⟩
-      exact htop_value i hi
-  have hext_eq :
-      topKSumOn k (extendSample v newValue) = (k : ℝ) * xTop :=
-    topKSumOn_eq_card_mul_of_top_witness k (extendSample v newValue)
-      hxTop_nonneg hext_le sExt hsExt_card hsExt_value
-  have hold_upper :
-      topKSumOn k v ≤ ((k - 1 : ℕ) : ℝ) * xTop + xSecond :=
-    topKSumOn_le_pred_top_add_second k v hk_pos hxSecond_nonneg
-      hsecond_le_top topSet htop_card htop_value hnontop_le
-  have hk_pred_cast : ((k - 1 : ℕ) : ℝ) = (k : ℝ) - 1 := by
-    norm_num [Nat.cast_sub (Nat.succ_le_of_lt hk_pos)]
-  rw [hext_eq]
-  have hgap_eq :
-      (k : ℝ) * xTop - (((k - 1 : ℕ) : ℝ) * xTop + xSecond) =
-        xTop - xSecond := by
-    rw [hk_pred_cast]
-    ring
-  calc
-    xTop - xSecond =
-        (k : ℝ) * xTop - (((k - 1 : ℕ) : ℝ) * xTop + xSecond) :=
-          hgap_eq.symm
-    _ ≤ (k : ℝ) * xTop - topKSumOn k v := by
-          linarith
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets,
+    extendSample] using
+    EconCSLib.Probability.topKSumOn_extend_sub_ge_top_gap_of_pred_top_witness
+      (ι := ι) k v hk_pos hxTop_nonneg hxSecond_nonneg hsecond_le_top
+      topSet htop_card htop_value hnontop_le hnew_eq
 
 /--
 Pointwise lower marginal bound for the finite-discrete promoting event.
@@ -1276,27 +619,11 @@ theorem topKSumOn_extend_sub_ge_top_gap_promoting_indicator {ι : Type*}
             newValue = xTop then (1 : ℝ) else 0) ≤
       topKSumOn k (extendSample v newValue) - topKSumOn k v := by
   classical
-  by_cases hprom :
-      hasPredTopValuesWithSecondBound k xTop xSecond v ∧
-        newValue = xTop
-  · rcases hprom with ⟨⟨topSet, htop_card, htop_value, hnontop_le⟩,
-      hnew_eq⟩
-    have hprom_true :
-        hasPredTopValuesWithSecondBound k xTop xSecond v ∧
-          newValue = xTop := by
-      exact ⟨⟨topSet, htop_card, htop_value, hnontop_le⟩, hnew_eq⟩
-    have hlower :
-        xTop - xSecond ≤
-          topKSumOn k (extendSample v newValue) - topKSumOn k v :=
-      topKSumOn_extend_sub_ge_top_gap_of_pred_top_witness
-        k v hk_pos hxTop_nonneg hxSecond_nonneg hsecond_le_top topSet
-        htop_card htop_value hnontop_le hnew_eq
-    simpa [hprom_true] using hlower
-  · have hmono := topKSumOn_le_extend k v newValue
-    have hdiff_nonneg :
-        0 ≤ topKSumOn k (extendSample v newValue) - topKSumOn k v := by
-      linarith
-    simpa [hprom] using hdiff_nonneg
+  simpa [topKSumOn, EconCSLib.Probability.topKSumOn,
+    topKCandidateSets, EconCSLib.Probability.topKCandidateSets,
+    extendSample, hasPredTopValuesWithSecondBound] using
+    EconCSLib.Probability.topKSumOn_extend_sub_ge_top_gap_promoting_indicator
+      (ι := ι) k v hk_pos hxTop_nonneg hxSecond_nonneg hsecond_le_top
 
 /--
 Finite-PMF lift of the promoting-event lower marginal bound, using the pair

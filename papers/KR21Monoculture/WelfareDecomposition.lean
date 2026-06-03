@@ -9,8 +9,7 @@ Expected welfare when both firms are forced to use the same realized ranking dra
 This is the shared-ranking welfare counterpart to the independent ordered welfare.
 -/
 noncomputable def expectedWelfareShared {n : ℕ}
-    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
-  pmfExp μ (fun π => welfareOrdered value π π)
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ := pmfExp μ (fun π => welfareOrdered value π π)
 
 /-- Shared-ranking welfare is first-position utility plus second-position utility. -/
 theorem expectedWelfareShared_eq_firstMover_add_secondMoverShared {n : ℕ}

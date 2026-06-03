@@ -18,12 +18,10 @@ namespace PaperInterface
 /-! ## Paper Definitions -/
 
 /-- Paper Mallows family parameterization used by the compact review surface. -/
-noncomputable abbrev mallowsSpec {n : ℕ} (center : Ranking n) (theta : ℝ) :=
-  concreteMallowsSpec center theta
+noncomputable abbrev mallowsSpec {n : ℕ} (center : Ranking n) (theta : ℝ) := concreteMallowsSpec center theta
 
 /-- Paper Appendix C strict well-ordered noise predicate. -/
-abbrev strictlyWellOrderedNoise (f : ℝ → ℝ) : Prop :=
-  StrictlyWellOrderedNoise f
+abbrev strictlyWellOrderedNoise (f : ℝ → ℝ) : Prop := StrictlyWellOrderedNoise f
 
 /-! ## Definitions and Appendix C Noise Statements -/
 
@@ -36,8 +34,7 @@ theorem definition1_concreteMallowsSpec_atom_continuity
     {n : ℕ} (center : Ranking n) {theta : ℝ} (htheta : 0 < theta)
     (pi : Ranking n) :
     EconCSLib.EpsilonContinuousAt
-      (fun theta' => (((concreteMallowsSpec center theta').law) pi).toReal) theta := by
-  exact
+      (fun theta' => (((concreteMallowsSpec center theta').law) pi).toReal) theta :=
     KR21Monoculture.paper_definition1_concreteMallowsSpec_atom_continuity
       center htheta pi
 
@@ -58,16 +55,14 @@ theorem definition1_concreteMallowsSpec_asymptotic_first_dominance
           AccuracyFamily.theorem1_f
             ({ dist := fun theta => (concreteMallowsSpec center theta).law,
                 value := value } : AccuracyFamily n)
-            hi thetaH := by
-  exact
+            hi thetaH :=
     KR21Monoculture.paper_definition1_concreteMallowsSpec_asymptotic_first_dominance
       center value hvalue
 
 /-- Appendix C Lemma 1, Gaussian noise is strictly well-ordered. -/
 theorem lemma1_gaussian_strictlyWellOrdered
     {kappa : ℝ} (hkappa : 0 < kappa) :
-    StrictlyWellOrderedNoise (gaussianNoiseKernel kappa) := by
-  exact KR21Monoculture.paper_lemma1_gaussian_strictlyWellOrdered hkappa
+    StrictlyWellOrderedNoise (gaussianNoiseKernel kappa) :=  KR21Monoculture.paper_lemma1_gaussian_strictlyWellOrdered hkappa
 
 /--
 Appendix C Lemma 1, Laplacian weak form: the Laplacian density kernel satisfies
@@ -75,8 +70,7 @@ the globally valid weak well-ordering inequality.
 -/
 theorem lemma1_laplacian_weaklyWellOrdered
     {lam : ℝ} (hlam : 0 ≤ lam) :
-    WeaklyWellOrderedNoise (laplacianNoiseKernel lam) := by
-  exact KR21Monoculture.paper_lemma1_laplacian_weaklyWellOrdered hlam
+    WeaklyWellOrderedNoise (laplacianNoiseKernel lam) :=  KR21Monoculture.paper_lemma1_laplacian_weaklyWellOrdered hlam
 
 end PaperInterface
 end KR21Monoculture

@@ -1,4 +1,5 @@
 import EconCSLib.Applications.RecommenderSystems.Policy
+import EconCSLib.Foundations.Math.FiniteRounding
 import EconCSLib.Foundations.Math.FiniteSum
 import Mathlib.Algebra.BigOperators.Field
 
@@ -459,6 +460,41 @@ theorem weightedBackwardMarginal_eq_weightedForwardMarginal_pred
   simp [hq_ne, hq_cancel]
 
 /--
+If every one-count gap would make the high coordinate's last forward marginal
+strictly smaller than the low coordinate's next forward marginal, then an
+optimum has pairwise counts differing by at most one.
+-/
+theorem count_le_succ_of_cross_strict_antitone_forwardMarginal
+    (a : Allocation κ) (weight : κ → ℝ) (valueOfCount : κ → ℕ → ℝ) (N : ℕ)
+    (hopt : IsOptimalAtTotal weight valueOfCount N a)
+    (hstrict :
+      ∀ src dst q r,
+        q < r →
+          weightedForwardMarginal weight valueOfCount src r <
+            weightedForwardMarginal weight valueOfCount dst q) :
+    ∀ src dst : κ, a.count src ≤ a.count dst + 1 := by
+  intro src dst
+  by_contra hnot
+  have hdst_succ_lt : a.count dst + 1 < a.count src :=
+    Nat.lt_of_not_ge hnot
+  have hdst_lt_pred : a.count dst < a.count src - 1 :=
+    (Nat.lt_sub_iff_add_lt).mpr hdst_succ_lt
+  have hcan : CanMoveOne a src :=
+    (Nat.succ_pos (a.count dst)).trans hdst_succ_lt
+  have hne : src ≠ dst := by
+    intro hsame
+    subst dst
+    exact hnot (Nat.le_succ _)
+  have hfoc :=
+    weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
+      (a := a) (weight := weight) (valueOfCount := valueOfCount)
+      (N := N) hopt hne hcan
+  rw [weightedBackwardMarginal_eq_weightedForwardMarginal_pred
+    (weight := weight) (valueOfCount := valueOfCount) src hcan] at hfoc
+  exact (not_lt_of_ge hfoc)
+    (hstrict src dst (a.count dst) (a.count src - 1) hdst_lt_pred)
+
+/--
 Under diminishing returns, a later backward marginal is bounded by any earlier
 forward marginal when the earlier count is at least one step below it.
 -/
@@ -474,6 +510,66 @@ theorem weightedBackwardMarginal_le_weightedForwardMarginal_of_diminishing
   have hr_pred : r ≤ q - 1 := by omega
   exact weightedForwardMarginal_antitone_of_diminishing
     weight valueOfCount hDR hweight_nonneg k hr_pred
+
+/--
+A strict exchange certificate between integer lower/upper anchors.
+
+If adding to any high coordinate at the upper anchor is still strictly worse
+than removing from any positive low coordinate at the lower anchor, finite
+optimality and diminishing returns rule out a high/low rounding crossing.
+-/
+def StrictRoundingExchangeCertificateBetween
+    (weight : κ → ℝ) (valueOfCount : κ → ℕ → ℝ)
+    (lower upper : Allocation κ) : Prop :=
+  ∀ high low,
+    0 < lower.count low →
+      weightedForwardMarginal weight valueOfCount high (upper.count high) <
+        weightedBackwardMarginal weight valueOfCount low (lower.count low)
+
+/--
+Strict exchange dominance between lower/upper anchors yields the generic
+no-crossing condition needed by finite rounding arguments.
+-/
+theorem noRoundingCrossingBetween_of_strictExchangeCertificate
+    (a lower upper : Allocation κ) (weight : κ → ℝ)
+    (valueOfCount : κ → ℕ → ℝ) (N : ℕ)
+    (hopt : IsOptimalAtTotal weight valueOfCount N a)
+    (hDR : HasDiminishingReturns valueOfCount)
+    (hweight_nonneg : ∀ k, 0 ≤ weight k)
+    (horder : ∀ k, lower.count k ≤ upper.count k)
+    (hcert : StrictRoundingExchangeCertificateBetween weight valueOfCount lower upper) :
+    EconCSLib.FiniteRounding.NoRoundingCrossingBetween
+      (fun k : κ => a.count k)
+      (fun k : κ => lower.count k)
+      (fun k : κ => upper.count k) := by
+  intro high low
+  rintro ⟨h_high, h_low⟩
+  have h_low_pos : 0 < lower.count low :=
+    lt_of_le_of_lt (Nat.zero_le _) h_low
+  have h_can : CanMoveOne a high :=
+    lt_of_lt_of_le (Nat.succ_pos _) h_high
+  have hne : high ≠ low := by
+    rintro rfl
+    have hle : upper.count high + 1 ≤ upper.count high :=
+      le_trans h_high
+        (le_trans (Nat.le_of_succ_le h_low) (horder high))
+    exact (Nat.not_succ_le_self (upper.count high)) hle
+  have h_foc :=
+    weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
+      (a := a) (weight := weight) (valueOfCount := valueOfCount)
+      (N := N) hopt hne h_can
+  have h_high_bound :
+      weightedBackwardMarginal weight valueOfCount high (a.count high) ≤
+        weightedForwardMarginal weight valueOfCount high (upper.count high) :=
+    weightedBackwardMarginal_le_weightedForwardMarginal_of_diminishing
+      weight valueOfCount hDR hweight_nonneg high h_high
+  have h_low_bound :
+      weightedBackwardMarginal weight valueOfCount low (lower.count low) ≤
+        weightedForwardMarginal weight valueOfCount low (a.count low) :=
+    weightedBackwardMarginal_le_weightedForwardMarginal_of_diminishing
+      weight valueOfCount hDR hweight_nonneg low h_low
+  have h_cert_eval := hcert high low h_low_pos
+  linarith
 
 end Allocation
 end EconCSLib

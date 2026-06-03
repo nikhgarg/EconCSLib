@@ -739,9 +739,8 @@ def Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.of_positiveResponse_marg
     intro seed hseed_form
     have hmarg :
         lemma5MarginalSetReward μ response seed.policy ≤
-          lemma5MarginalSetReward μ response P := by
-      exact
-        lemma5MarginalSetReward_le_positiveResponsePolicy
+          lemma5MarginalSetReward μ response P :=
+              lemma5MarginalSetReward_le_positiveResponsePolicy
           μ response seed.policy hresponse_measurable
           hresponse_integrable_acceptAll seed.measurableSet_policy
           seed.subset_acceptAll
@@ -761,9 +760,8 @@ def Lemma5FeasiblePolicyCanonicalDominanceMaximizerData.of_positiveResponse_marg
     refine ⟨P, hP_subset, hpositive_form, ?_⟩
     have hmarg :
         lemma5MarginalSetReward μ response seed.policy ≤
-          lemma5MarginalSetReward μ response P := by
-      exact
-        lemma5MarginalSetReward_le_positiveResponsePolicy
+          lemma5MarginalSetReward μ response P :=
+              lemma5MarginalSetReward_le_positiveResponsePolicy
           μ response seed.policy hresponse_measurable
           hresponse_integrable_acceptAll seed.measurableSet_policy
           seed.subset_acceptAll

@@ -138,8 +138,7 @@ theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_light_ae_feasi
           (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
             (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
           ρ →
-          dynamicAcceptAllAlmostEverywhere μ ρ := by
-  exact
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
     paper_theorem4_measurable_accept_all_ae_unique_optimal_of_middle_reroute_light_ae_eq_source_existence
       μ arrival m z R1 R2 switch12 switch21 P hR1_pos hR1_lt_R2 hR2_pos
       hmeasure_nonsurge_acceptAll_pos hmeasure_surge_acceptAll_pos
@@ -358,8 +357,7 @@ theorem theorem3_measurable_ic_ae_unique_of_feasible_policy_canonical_representa
           GN21Theorem3FeasibleCanonicalRepresentativeEndpointData
             μ arrival switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_ae_representative_ratio_source_assumptions
       μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -414,8 +412,7 @@ theorem theorem3_measurable_ic_of_feasible_policy_canonical_representative_norma
           GN21Theorem3FeasibleCanonicalRepresentativeEndpointData
             μ arrival switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
       (theorem3_measurable_ic_ae_unique_of_feasible_policy_canonical_representative_normalized_mass_ratio_source
         μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
@@ -473,8 +470,7 @@ theorem theorem3_measurable_ic_ae_unique_of_light_ae_feasible_canonical_normaliz
           GN21Theorem3LightAEFeasibleCanonicalEndpointData
             μ arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_normalized_mass_ratio_source_assumptions
       μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -530,8 +526,7 @@ theorem theorem3_measurable_ic_of_light_ae_feasible_canonical_normalized_mass_ra
           GN21Theorem3LightAEFeasibleCanonicalEndpointData
             μ arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
       (theorem3_measurable_ic_ae_unique_of_light_ae_feasible_canonical_normalized_mass_ratio_source
         μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
@@ -587,8 +582,7 @@ theorem theorem3_measurable_ic_ae_unique_of_bracket_light_ae_normalized_mass_rat
           GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData
             μ arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_reroute_existence_ratio_source_assumptions
       μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -641,8 +635,7 @@ theorem theorem3_measurable_ic_of_bracket_light_ae_normalized_mass_ratio_source
           GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData
             μ arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
       (theorem3_measurable_ic_ae_unique_of_bracket_light_ae_normalized_mass_ratio_source
         μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
@@ -1805,8 +1798,7 @@ theorem theorem3_measurable_ic_ae_unique_of_bracket_surge_cross_middle_cutoff_no
         hq2_integrable := hq2_integrable
         hmeasure1_pos := hmeasure1_pos
         hmeasure2_pos := hmeasure2_pos
-        fixed_response_one_threshold_bracket_surge_cross_by_policy_form_middle_cutoff_reroute_existence_selection :=
-          fixed_response_selection }
+        fixed_response_one_threshold_bracket_surge_cross_by_policy_form_middle_cutoff_reroute_existence_selection :=         fixed_response_selection }
 
 /-- IC projection of the normalized bracket aggregate-cross middle-cutoff route. -/
 theorem theorem3_measurable_ic_of_bracket_surge_cross_middle_cutoff_normalized_mass_ratio_source
@@ -1850,8 +1842,7 @@ theorem theorem3_measurable_ic_of_bracket_surge_cross_middle_cutoff_normalized_m
           GN21Theorem3FixedResponseOneThresholdBracketSurgeCrossByPolicyFormMiddleCutoffRerouteSourceExistenceData
             μ arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
       (theorem3_measurable_ic_ae_unique_of_bracket_surge_cross_middle_cutoff_normalized_mass_ratio_source
         μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
@@ -2581,8 +2572,7 @@ theorem theorem3_measurable_ic_ae_unique_of_finite_or_infinite_surge_cross_named
             GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossNamedRateSourceExistenceData
               μ arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_named_rate_normalized_mass_ratio_source_assumptions
       μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2630,8 +2620,7 @@ theorem theorem3_measurable_ic_of_finite_or_infinite_surge_cross_named_rate
             GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossNamedRateSourceExistenceData
               μ arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     theorem3MeasuredStructuredMeasurableICConclusion_of_ae_unique
       (theorem3_measurable_ic_ae_unique_of_finite_or_infinite_surge_cross_named_rate
         μ arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos
@@ -2944,8 +2933,7 @@ theorem theorem3_positive_mass_measurable_ic_of_small_surge_final_sign
       Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackFinalSignDataAssumptions
         μ arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_final_sign_data_assumptions
       μ arrival rho R1 R2 switch12 switch21 A
 
@@ -2962,8 +2950,7 @@ theorem theorem3_positive_mass_measurable_ic_of_small_surge_interval_final_sign
       Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeCurrentIntervalSlackFinalSignDataAssumptions
         μ arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_current_interval_slack_final_sign_data_assumptions
       μ arrival rho R1 R2 switch12 switch21 A
 
@@ -2980,8 +2967,7 @@ theorem theorem3_positive_mass_measurable_ic_of_small_surge_mass_affine_interval
       Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineCurrentIntervalSlackFinalSignDataAssumptions
         μ arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
-      μ arrival R1 R2 switch12 switch21 := by
-  exact
+      μ arrival R1 R2 switch12 switch21 :=
     paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_interval_slack_final_sign_data_assumptions
       μ arrival rho R1 R2 switch12 switch21 A
 

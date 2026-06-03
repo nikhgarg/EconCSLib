@@ -185,6 +185,138 @@ theorem standardize_affineImage_threshold (L : GaussianScaleLaw)
 
 end GaussianScaleLaw
 
+/-!
+## Precision-Standardized Cutoff Algebra
+
+Admissions/testing papers often rewrite Gaussian standardized thresholds in
+precision form.  The next lemmas isolate the real algebra converting those
+standardized-threshold comparisons into lower-cutoff rules for skill.
+-/
+
+/--
+Two-threshold precision-standardized comparison.
+
+When group `A` has larger square-root precision than group `B`, comparing the
+two displayed standardized-threshold expressions is equivalent to requiring
+skill `q` to exceed the induced lower cutoff.
+-/
+theorem precisionStandardizedThreshold_lt_iff_cutoff_lt_skill
+    {priorPrecision sqrtPrecB sqrtPrecA thresholdA thresholdB mean q : ℝ}
+    (hsqrtB_pos : 0 < sqrtPrecB) (hsqrtA_pos : 0 < sqrtPrecA)
+    (hgap : sqrtPrecB < sqrtPrecA) :
+    priorPrecision * (thresholdA - mean) / sqrtPrecA +
+        sqrtPrecA * (thresholdA - q) <
+      priorPrecision * (thresholdB - mean) / sqrtPrecB +
+        sqrtPrecB * (thresholdB - q) ↔
+      ((priorPrecision + sqrtPrecA ^ 2) / sqrtPrecA * thresholdA -
+            (priorPrecision + sqrtPrecB ^ 2) / sqrtPrecB * thresholdB) /
+          (sqrtPrecA - sqrtPrecB) +
+        mean * priorPrecision / (sqrtPrecA * sqrtPrecB) <
+        q := by
+  have hfactor_pos : 0 < sqrtPrecA - sqrtPrecB := sub_pos.mpr hgap
+  let cutoff :=
+    ((priorPrecision + sqrtPrecA ^ 2) / sqrtPrecA * thresholdA -
+          (priorPrecision + sqrtPrecB ^ 2) / sqrtPrecB * thresholdB) /
+        (sqrtPrecA - sqrtPrecB) +
+      mean * priorPrecision / (sqrtPrecA * sqrtPrecB)
+  have hdiff :
+      (priorPrecision * (thresholdA - mean) / sqrtPrecA +
+          sqrtPrecA * (thresholdA - q)) -
+        (priorPrecision * (thresholdB - mean) / sqrtPrecB +
+          sqrtPrecB * (thresholdB - q)) =
+        (sqrtPrecA - sqrtPrecB) * (cutoff - q) := by
+    dsimp [cutoff]
+    field_simp [ne_of_gt hsqrtA_pos, ne_of_gt hsqrtB_pos,
+      ne_of_gt hfactor_pos]
+    ring
+  constructor
+  · intro hstd
+    have hneg :
+        (sqrtPrecA - sqrtPrecB) * (cutoff - q) < 0 := by
+      rw [← hdiff]
+      linarith
+    have hinner : cutoff - q < 0 := by
+      have hneg' :
+          (sqrtPrecA - sqrtPrecB) * (cutoff - q) <
+            (sqrtPrecA - sqrtPrecB) * 0 := by
+        simpa using hneg
+      exact lt_of_mul_lt_mul_left hneg' hfactor_pos.le
+    dsimp [cutoff] at hinner
+    linarith
+  · intro hq
+    have hinner : cutoff - q < 0 := by
+      dsimp [cutoff]
+      linarith
+    have hneg :
+        (sqrtPrecA - sqrtPrecB) * (cutoff - q) < 0 := by
+      simpa using mul_neg_of_pos_of_neg hfactor_pos hinner
+    rw [← hdiff] at hneg
+    linarith
+
+/--
+Same-threshold specialization of
+`precisionStandardizedThreshold_lt_iff_cutoff_lt_skill`.
+-/
+theorem precisionStandardizedSameThreshold_lt_iff_cutoff_lt_skill
+    {priorPrecision sqrtPrecB sqrtPrecA threshold mean q : ℝ}
+    (hsqrtB_pos : 0 < sqrtPrecB) (hsqrtA_pos : 0 < sqrtPrecA)
+    (hgap : sqrtPrecB < sqrtPrecA) :
+    priorPrecision * (threshold - mean) / sqrtPrecA +
+        sqrtPrecA * (threshold - q) <
+      priorPrecision * (threshold - mean) / sqrtPrecB +
+        sqrtPrecB * (threshold - q) ↔
+      threshold -
+          priorPrecision * (threshold - mean) / (sqrtPrecB * sqrtPrecA) <
+        q := by
+  have hfactor_pos : 0 < sqrtPrecA - sqrtPrecB := sub_pos.mpr hgap
+  have hdiff :
+      (priorPrecision * (threshold - mean) / sqrtPrecA +
+          sqrtPrecA * (threshold - q)) -
+        (priorPrecision * (threshold - mean) / sqrtPrecB +
+          sqrtPrecB * (threshold - q)) =
+        (sqrtPrecA - sqrtPrecB) *
+          ((threshold - q) -
+            priorPrecision * (threshold - mean) /
+              (sqrtPrecB * sqrtPrecA)) := by
+    field_simp [ne_of_gt hsqrtA_pos, ne_of_gt hsqrtB_pos]
+    ring
+  constructor
+  · intro hstd
+    have hneg :
+        (sqrtPrecA - sqrtPrecB) *
+          ((threshold - q) -
+            priorPrecision * (threshold - mean) /
+              (sqrtPrecB * sqrtPrecA)) < 0 := by
+      rw [← hdiff]
+      linarith
+    have hinner :
+        (threshold - q) -
+            priorPrecision * (threshold - mean) /
+              (sqrtPrecB * sqrtPrecA) < 0 := by
+      have hneg' :
+          (sqrtPrecA - sqrtPrecB) *
+            ((threshold - q) -
+              priorPrecision * (threshold - mean) /
+                (sqrtPrecB * sqrtPrecA)) <
+          (sqrtPrecA - sqrtPrecB) * 0 := by
+        simpa using hneg
+      exact lt_of_mul_lt_mul_left hneg' hfactor_pos.le
+    linarith
+  · intro hq
+    have hinner :
+        (threshold - q) -
+            priorPrecision * (threshold - mean) /
+              (sqrtPrecB * sqrtPrecA) < 0 := by
+      linarith
+    have hneg :
+        (sqrtPrecA - sqrtPrecB) *
+          ((threshold - q) -
+            priorPrecision * (threshold - mean) /
+              (sqrtPrecB * sqrtPrecA)) < 0 := by
+      simpa using mul_neg_of_pos_of_neg hfactor_pos hinner
+    rw [← hdiff] at hneg
+    linarith
+
 /--
 Abstract standard-normal CDF/density API.
 
@@ -415,6 +547,19 @@ theorem thresholdPassProb_gt_iff_standardize_lt
       L₁.standardize threshold < L₂.standardize threshold :=
   api.normalTail_gt_iff_standardize_lt
 
+/--
+The difference of two upper-tail pass probabilities is positive exactly when
+the first law has the lower standardized threshold.
+-/
+theorem thresholdPassProb_sub_pos_iff_standardize_lt
+    (api : StandardGaussianCDFAPI)
+    {L₁ L₂ : GaussianScaleLaw} {threshold : ℝ} :
+    0 < api.thresholdPassProb L₁ threshold -
+        api.thresholdPassProb L₂ threshold ↔
+      L₁.standardize threshold < L₂.standardize threshold := by
+  rw [sub_pos]
+  exact api.thresholdPassProb_gt_iff_standardize_lt
+
 theorem thresholdPassProb_gt_iff_standardize_lt_of_thresholds
     (api : StandardGaussianCDFAPI)
     {L₁ L₂ : GaussianScaleLaw} {threshold₁ threshold₂ : ℝ} :
@@ -422,6 +567,20 @@ theorem thresholdPassProb_gt_iff_standardize_lt_of_thresholds
         api.thresholdPassProb L₂ threshold₂ ↔
       L₁.standardize threshold₁ < L₂.standardize threshold₂ :=
   api.normalTail_gt_iff_standardize_lt_of_thresholds
+
+/--
+Two possibly different thresholds: the difference of upper-tail pass
+probabilities is positive exactly when the first standardized threshold is
+lower.
+-/
+theorem thresholdPassProb_sub_pos_iff_standardize_lt_of_thresholds
+    (api : StandardGaussianCDFAPI)
+    {L₁ L₂ : GaussianScaleLaw} {threshold₁ threshold₂ : ℝ} :
+    0 < api.thresholdPassProb L₁ threshold₁ -
+        api.thresholdPassProb L₂ threshold₂ ↔
+      L₁.standardize threshold₁ < L₂.standardize threshold₂ := by
+  rw [sub_pos]
+  exact api.thresholdPassProb_gt_iff_standardize_lt_of_thresholds
 
 theorem thresholdPassProb_le_of_mean_le_same_scale
     (api : StandardGaussianCDFAPI)
@@ -1482,6 +1641,21 @@ theorem threshold_le_posteriorMean_update_iff_cutoff_le [DecidableEq ι]
   exact EconCSLib.threshold_le_affine_iff_cutoff_le
     (M.signalWeight_pos j)
 
+/--
+Holding all other signals fixed, a posterior-mean threshold in one Gaussian
+signal coordinate is a lower-cutoff rule.
+-/
+theorem lowerCutoffStrategy_posteriorMean_update_threshold [DecidableEq ι]
+    (M : GaussianSignalFamily ι) (x : ι → ℝ) (j : ι)
+    (base threshold : ℝ) :
+    EconCSLib.LowerCutoffStrategy
+      (fun z : ℝ => threshold ≤ M.posteriorMean (Function.update x j z)) := by
+  refine ⟨EconCSLib.affineCutoff
+    (M.posteriorMean (Function.update x j base) - M.signalWeight j * base)
+    (M.signalWeight j) threshold, ?_⟩
+  intro z
+  exact M.threshold_le_posteriorMean_update_iff_cutoff_le x j base threshold z
+
 end GaussianSignalFamily
 
 /--
@@ -1827,6 +2001,22 @@ theorem threshold_le_posteriorMean_update_iff_cutoff_le [DecidableEq ι]
   rw [hscore]
   exact EconCSLib.threshold_le_affine_iff_cutoff_le
     (M.centeredFamily.signalWeight_pos j)
+
+/--
+Holding all other offset signals fixed, a posterior-mean threshold in one
+Gaussian signal coordinate is a lower-cutoff rule.
+-/
+theorem lowerCutoffStrategy_posteriorMean_update_threshold [DecidableEq ι]
+    (M : GaussianOffsetSignalFamily ι) (x : ι → ℝ) (j : ι)
+    (base threshold : ℝ) :
+    EconCSLib.LowerCutoffStrategy
+      (fun z : ℝ => threshold ≤ M.posteriorMean (Function.update x j z)) := by
+  refine ⟨EconCSLib.affineCutoff
+    (M.posteriorMean (Function.update x j base) -
+      M.centeredFamily.signalWeight j * base)
+    (M.centeredFamily.signalWeight j) threshold, ?_⟩
+  intro z
+  exact M.threshold_le_posteriorMean_update_iff_cutoff_le x j base threshold z
 
 /--
 Mean of the conditional posterior-score law in precision notation.

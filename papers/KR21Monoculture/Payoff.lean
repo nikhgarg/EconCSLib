@@ -9,8 +9,7 @@ when the order of play is uniformly random.  The factor `1 / 2` is irrelevant fo
 best-response comparisons, but it is the natural payoff normalization.
 -/
 noncomputable def payoffAgainst {n : ℕ} (M : Model n)
-    (self other : Strategy) : ℝ :=
-  (firstMoverEU M self + secondMoverEU M other self) / 2
+    (self other : Strategy) : ℝ := (firstMoverEU M self + secondMoverEU M other self) / 2
 
 /-- Removing the common factor `1 / 2` from payoff comparisons. -/
 theorem payoffAgainst_gt_iff_sum_gt_sum {n : ℕ} (M : Model n)

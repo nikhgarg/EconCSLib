@@ -2,6 +2,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import EconCSLib.Foundations.Math.ThresholdCharacterization
 
 /-!
 # Affine Thresholds
@@ -13,10 +14,12 @@ Reusable one-dimensional threshold algebra for positive-slope affine scores.
 - `affineCutoff`
 - `threshold_le_affine_iff_cutoff_le`
 - `affine_le_threshold_iff_le_cutoff`
+- `lowerCutoffStrategy_of_affine_threshold`
 - `affine_strictMono`
 - `lowerThresholdCutoff_unique`
 - `affine_div_le_affine_div_of_le`
 - `affine_div_lt_affine_div_of_lt`
+- `indexed_affineDecreasing_regularities_Icc`
 - `exists_affine_lt`
 - `exists_lt_affine`
 - `exists_affine_lt_before`
@@ -53,6 +56,18 @@ theorem threshold_le_affine_iff_cutoff_le
     linarith
 
 /--
+A positive-slope affine threshold comparison is a lower-cutoff rule in the
+input variable.
+-/
+theorem lowerCutoffStrategy_of_affine_threshold
+    {intercept slope threshold : ℝ} (hslope : 0 < slope) :
+    LowerCutoffStrategy
+      (fun value : ℝ => threshold ≤ intercept + slope * value) := by
+  refine ⟨affineCutoff intercept slope threshold, ?_⟩
+  intro value
+  exact threshold_le_affine_iff_cutoff_le hslope
+
+/--
 A positive-slope affine score is below a threshold exactly below the induced
 cutoff.
 -/
@@ -80,6 +95,27 @@ theorem affine_strictMono (intercept : ℝ) {slope : ℝ}
   intro x y hxy
   simpa [add_comm, add_left_comm, add_assoc] using
     add_lt_add_left (mul_lt_mul_of_pos_left hxy hslope) intercept
+
+/--
+An indexed positive-slope decreasing affine family is continuous and strictly
+antitone on each indexed closed interval.
+-/
+theorem indexed_affineDecreasing_regularities_Icc
+    {ι : Type*} {left right : ι → ℝ}
+    (intercept slope : ι → ℝ) (hslope : ∀ i, 0 < slope i) :
+    (∀ i,
+      ContinuousOn (fun c => intercept i - slope i * c)
+        (Set.Icc (left i) (right i))) ∧
+      (∀ i,
+        StrictAntiOn (fun c => intercept i - slope i * c)
+          (Set.Icc (left i) (right i))) := by
+  constructor
+  · intro i
+    exact (continuous_const.sub (continuous_const.mul continuous_id)).continuousOn
+  · intro i x _hx y _hy hxy
+    have hmul : slope i * x < slope i * y :=
+      mul_lt_mul_of_pos_left hxy (hslope i)
+    nlinarith
 
 /--
 A positive-slope affine score divided by a positive denominator is weakly

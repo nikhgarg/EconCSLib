@@ -142,8 +142,8 @@ theorem firstChoice_miss_gap_sum_pos_iff_weight_sum_pos
         (∑ c : Candidate n,
           (M.partition - M.firstWeight c) *
             M.firstChoiceGapWeight value c) /
-          (M.partition * M.partition) ≤ 0 := by
-      exact div_nonpos_of_nonpos_of_nonneg hsum_nonpos hden_nonneg
+          (M.partition * M.partition) ≤ 0 :=
+      div_nonpos_of_nonpos_of_nonneg hsum_nonpos hden_nonneg
     linarith
   · intro h
     exact div_pos h (mul_pos M.partition_pos M.partition_pos)
@@ -166,8 +166,8 @@ theorem firstWeight_div_le_of_cross_mul_le
       C.human.firstWeight c * C.algorithm.partition ≤
         C.algorithm.firstWeight c * C.human.partition) :
     C.human.firstWeight c / C.human.partition ≤
-      C.algorithm.firstWeight c / C.algorithm.partition := by
-  exact EconCSLib.PositiveDenominator.div_le_div_of_cross_mul_le
+      C.algorithm.firstWeight c / C.algorithm.partition :=
+   EconCSLib.PositiveDenominator.div_le_div_of_cross_mul_le
     C.human.partition_pos C.algorithm.partition_pos hcross
 
 /--
@@ -179,8 +179,8 @@ theorem centerFirstWeight_div_lt_of_cross_mul_lt
       C.human.firstWeight C.human.centerFirst * C.algorithm.partition <
         C.algorithm.firstWeight C.algorithm.centerFirst * C.human.partition) :
     C.human.firstWeight C.human.centerFirst / C.human.partition <
-      C.algorithm.firstWeight C.algorithm.centerFirst / C.algorithm.partition := by
-  exact EconCSLib.PositiveDenominator.div_lt_div_of_cross_mul_lt
+      C.algorithm.firstWeight C.algorithm.centerFirst / C.algorithm.partition :=
+   EconCSLib.PositiveDenominator.div_lt_div_of_cross_mul_lt
     C.human.partition_pos C.algorithm.partition_pos hcross
 
 /--
@@ -312,8 +312,8 @@ theorem firstChoice_collision_gap_sum_pos_iff_cross_weight_sum_pos
               C.human.firstWeight c * C.algorithm.partition) *
             C.human.firstChoiceGapWeight value c) /
           (C.algorithm.partition * C.human.partition *
-            C.human.partition) ≤ 0 := by
-      exact div_nonpos_of_nonpos_of_nonneg hsum_nonpos hden_nonneg
+            C.human.partition) ≤ 0 :=
+      div_nonpos_of_nonpos_of_nonneg hsum_nonpos hden_nonneg
     linarith
   · intro h
     exact div_pos h
@@ -389,8 +389,8 @@ the two independent-reranking preferences and the weaker-competition preference.
 theorem theorem3_pointwise_of_centerMallowsFiniteSumCertificate
     {value : Candidate n → ℝ}
     (cert : C.CenterMallowsFiniteSumCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.paperHypotheses_of_candidateSumCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.paperHypotheses_of_candidateSumCertificate
     (C.candidateSumCertificate_of_centerMallowsFiniteSumCertificate cert)
 
 /--
@@ -437,24 +437,24 @@ theorem centerMallowsWeightCertificate_of_crossWeightCertificate
 theorem centerMallowsCertificate_of_crossWeightCertificate
     {value : Candidate n → ℝ}
     (cert : C.CenterMallowsCrossWeightCertificate value) :
-    C.CenterMallowsCertificate value := by
-  exact C.centerMallowsCertificate_of_weightCertificate
+    C.CenterMallowsCertificate value :=
+   C.centerMallowsCertificate_of_weightCertificate
     (C.centerMallowsWeightCertificate_of_crossWeightCertificate cert)
 
 /-- Normalized weight-level Mallows inequalities imply the paper hypotheses. -/
 theorem paperHypotheses_of_centerMallowsWeightCertificate
     {value : Candidate n → ℝ}
     (cert : C.CenterMallowsWeightCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.paperHypotheses_of_centerMallowsCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.paperHypotheses_of_centerMallowsCertificate
     (C.centerMallowsCertificate_of_weightCertificate cert)
 
 /-- Cleared-denominator finite Mallows inequalities imply the paper hypotheses. -/
 theorem paperHypotheses_of_centerMallowsCrossWeightCertificate
     {value : Candidate n → ℝ}
     (cert : C.CenterMallowsCrossWeightCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.paperHypotheses_of_centerMallowsWeightCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.paperHypotheses_of_centerMallowsWeightCertificate
     (C.centerMallowsWeightCertificate_of_crossWeightCertificate cert)
 
 /-- The algorithm law's center first-choice summand is strictly positive. -/
@@ -462,8 +462,8 @@ theorem algorithm_center_summand_pos_of_strictlyCenterOrdered
     {value : Candidate n → ℝ}
     (hvalue : C.StrictlyCenterOrdered value) :
     0 < firstChoiceMissProb C.algorithm.law C.algorithm.centerFirst *
-      firstChoiceGapMass C.algorithm.law value C.algorithm.centerFirst := by
-  exact mul_pos C.algorithm.centerFirstMissProb_pos
+      firstChoiceGapMass C.algorithm.law value C.algorithm.centerFirst :=
+   mul_pos C.algorithm.centerFirstMissProb_pos
     (C.algorithm_centerGapMass_pos_of_strictlyCenterOrdered hvalue)
 
 /-- The human law's center first-choice summand is strictly positive. -/
@@ -471,8 +471,8 @@ theorem human_center_summand_pos_of_strictlyCenterOrdered
     {value : Candidate n → ℝ}
     (hvalue : C.StrictlyCenterOrdered value) :
     0 < firstChoiceMissProb C.human.law C.human.centerFirst *
-      firstChoiceGapMass C.human.law value C.human.centerFirst := by
-  exact mul_pos C.human.centerFirstMissProb_pos
+      firstChoiceGapMass C.human.law value C.human.centerFirst :=
+   mul_pos C.human.centerFirstMissProb_pos
     (C.human_centerGapMass_pos_of_strictlyCenterOrdered hvalue)
 
 /--
@@ -607,8 +607,8 @@ pointwise-value monoculture model.
 theorem paperHypotheses_of_centerMallowsProductCrossWeightCertificate
     {value : Candidate n → ℝ}
     (cert : C.CenterMallowsProductCrossWeightCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.paperHypotheses_of_centerMallowsCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.paperHypotheses_of_centerMallowsCertificate
     (C.centerMallowsCertificate_of_productCrossWeightCertificate cert)
 
 /--
@@ -618,8 +618,8 @@ the pointwise-value monoculture model.
 theorem paperHypotheses_of_centerMallowsReducedProductCrossWeightCertificate
     {value : Candidate n → ℝ}
     (cert : C.CenterMallowsReducedProductCrossWeightCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.paperHypotheses_of_centerMallowsProductCrossWeightCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.paperHypotheses_of_centerMallowsProductCrossWeightCertificate
     (C.centerMallowsProductCrossWeightCertificate_of_reduced cert)
 
 /--
@@ -630,8 +630,7 @@ inequalities plus strict center first-choice improvement.
 theorem theorem3_pointwise_of_centerMallowsReducedProductCrossWeightCertificate
     {value : Candidate n → ℝ}
     (cert : C.CenterMallowsReducedProductCrossWeightCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.paperHypotheses_of_centerMallowsReducedProductCrossWeightCertificate cert
+    Model.PaperHypotheses (C.toModel value) :=  C.paperHypotheses_of_centerMallowsReducedProductCrossWeightCertificate cert
 
 end MallowsComparison
 end KR21Monoculture

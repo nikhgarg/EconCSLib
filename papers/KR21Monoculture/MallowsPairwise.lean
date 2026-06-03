@@ -12,17 +12,14 @@ open EconCSLib
 namespace KR21Monoculture
 
 /-- The geometric rank-power sum over the candidate positions. -/
-noncomputable def candidateRankPowerSum (n : ℕ) (q : ℝ) : ℝ :=
-  ∑ i : Candidate n, q ^ (i : ℕ)
+noncomputable def candidateRankPowerSum (n : ℕ) (q : ℝ) : ℝ := ∑ i : Candidate n, q ^ (i : ℕ)
 
 /-- The same geometric rank-power sum, indexed from the worst rank downward. -/
-noncomputable def candidateRankReversePowerSum (n : ℕ) (q : ℝ) : ℝ :=
-  ∑ i : Candidate n, q ^ (n + 1 - (i : ℕ))
+noncomputable def candidateRankReversePowerSum (n : ℕ) (q : ℝ) : ℝ := ∑ i : Candidate n, q ^ (n + 1 - (i : ℕ))
 
 /-- The geometric rank-power sum over the prefix of ranks up to `k`. -/
 noncomputable def candidateRankPrefixPowerSum
-    (n : ℕ) (q : ℝ) (k : Fin (n + 1)) : ℝ :=
-  ∑ i : Candidate n, if (i : ℕ) ≤ k.val then q ^ (i : ℕ) else 0
+    (n : ℕ) (q : ℝ) (k : Fin (n + 1)) : ℝ := ∑ i : Candidate n, if (i : ℕ) ≤ k.val then q ^ (i : ℕ) else 0
 
 noncomputable def candidateRankCrossDelta
     (n : ℕ) (qA qH : ℝ) (r : Candidate n) : ℝ :=
@@ -56,12 +53,10 @@ noncomputable def candidateRankWeightedSuffixCrossDeltaSum
       0
 
 noncomputable def candidateRankPrefixWeightSum
-    (n : ℕ) (q : ℝ) (k : ℕ) : ℝ :=
-  ∑ r : Candidate n, if (r : ℕ) ≤ k then q ^ (r : ℕ) else 0
+    (n : ℕ) (q : ℝ) (k : ℕ) : ℝ := ∑ r : Candidate n, if (r : ℕ) ≤ k then q ^ (r : ℕ) else 0
 
 noncomputable def candidateRankShiftedSuffixWeightSum
-    (n : ℕ) (q : ℝ) (k : ℕ) : ℝ :=
-  ∑ s : Candidate n, if k < (s : ℕ) then q ^ ((s : ℕ) - 1) else 0
+    (n : ℕ) (q : ℝ) (k : ℕ) : ℝ := ∑ s : Candidate n, if k < (s : ℕ) then q ^ ((s : ℕ) - 1) else 0
 
 /-- Rank-power sum over all candidates except the removed rank, with lower
 ranks unchanged and higher ranks shifted down by one. -/
@@ -176,8 +171,7 @@ noncomputable def candidateRankConditionalGapTerm
 
 /-- Rank-only conditional first-minus-second gap for a fixed first rank. -/
 noncomputable def candidateRankConditionalGap
-    (n : ℕ) (q : ℝ) (value : Candidate n → ℝ) (r : Candidate n) : ℝ :=
-  ∑ s : Candidate n, candidateRankConditionalGapTerm q value r s
+    (n : ℕ) (q : ℝ) (value : Candidate n → ℝ) (r : Candidate n) : ℝ := ∑ s : Candidate n, candidateRankConditionalGapTerm q value r s
 
 theorem candidateRankPowerSum_pos (n : ℕ) {q : ℝ} (hq_pos : 0 < q) :
     0 < candidateRankPowerSum n q := by
@@ -202,8 +196,8 @@ theorem candidateRankPowerSum_strict_mono
 theorem natPower_mul_lt_mul_natPower
     {q₁ q₂ : ℝ} (hq₁_pos : 0 < q₁) (hq_lt : q₁ < q₂)
     {i j : ℕ} (hij : i < j) :
-    q₁ ^ j * q₂ ^ i < q₁ ^ i * q₂ ^ j := by
-  exact EconCSLib.SocialChoice.Ranking.natPower_mul_lt_mul_natPower
+    q₁ ^ j * q₂ ^ i < q₁ ^ i * q₂ ^ j :=
+   EconCSLib.SocialChoice.Ranking.natPower_mul_lt_mul_natPower
     hq₁_pos hq_lt hij
 
 theorem candidateRankRemovalBoundaryFactor_cross_nonneg
@@ -218,10 +212,10 @@ theorem candidateRankRemovalBoundaryFactor_cross_nonneg
   let S₁ : ℝ := candidateRankRemovalPowerSum n q₁ k
   let S₂ : ℝ := candidateRankRemovalPowerSum n q₂ k
   have hq₂_pos : 0 < q₂ := lt_trans hq₁_pos hq_lt
-  have hS₁_nonneg : 0 ≤ S₁ := by
-    exact candidateRankRemovalPowerSum_nonneg n hq₁_pos k
-  have hS₂_nonneg : 0 ≤ S₂ := by
-    exact candidateRankRemovalPowerSum_nonneg n hq₂_pos k
+  have hS₁_nonneg : 0 ≤ S₁ :=
+    candidateRankRemovalPowerSum_nonneg n hq₁_pos k
+  have hS₂_nonneg : 0 ≤ S₂ :=
+    candidateRankRemovalPowerSum_nonneg n hq₂_pos k
   have hgeom₁ : S₁ * (1 - q₁) = 1 - q₁ ^ (n + 1) := by
     simpa [S₁] using candidateRankRemovalPowerSum_mul_one_sub n q₁ k
   have hgeom₂ : S₂ * (1 - q₂) = 1 - q₂ ^ (n + 1) := by
@@ -244,8 +238,8 @@ theorem candidateRankRemovalBoundaryFactor_cross_nonneg
     have hgap :
         1 - q₂ ^ (n + 1) ≤ 1 - q₁ ^ (n + 1) := by
       linarith
-    have hgap_nonneg : 0 ≤ 1 - q₂ ^ (n + 1) := by
-      exact sub_nonneg.mpr
+    have hgap_nonneg : 0 ≤ 1 - q₂ ^ (n + 1) :=
+      sub_nonneg.mpr
         (pow_le_one₀ (le_of_lt hq₂_pos) (le_of_lt hq₂_lt_one))
     exact mul_le_mul hpow_k hgap hgap_nonneg
       (pow_nonneg (le_of_lt hq₂_pos) (k : ℕ))
@@ -282,18 +276,18 @@ theorem candidateRankBestAfterRemovalWeight_pairwise_cross_nonneg
         candidateRankBestAfterRemovalWeight_of_lt n q₂ hik]
       have hpow :
           0 ≤ q₁ ^ (i : ℕ) * q₂ ^ (j : ℕ) -
-              q₁ ^ (j : ℕ) * q₂ ^ (i : ℕ) := by
-        exact sub_nonneg.mpr (le_of_lt (by
+              q₁ ^ (j : ℕ) * q₂ ^ (i : ℕ) :=
+        sub_nonneg.mpr (le_of_lt (by
           have h := natPower_mul_lt_mul_natPower hq₁_pos hq_lt
             (show (i : ℕ) < (j : ℕ) by exact hij)
           simpa [mul_comm, mul_left_comm, mul_assoc] using h))
       have hleft_nonneg :
-          0 ≤ candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ) := by
-        exact add_nonneg (candidateRankRemovalPowerSum_nonneg n hq₁_pos k)
+          0 ≤ candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ) :=
+        add_nonneg (candidateRankRemovalPowerSum_nonneg n hq₁_pos k)
           (pow_nonneg (le_of_lt hq₁_pos) (k : ℕ))
       have hright_nonneg :
-          0 ≤ candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ) := by
-        exact add_nonneg (candidateRankRemovalPowerSum_nonneg n hq₂_pos k)
+          0 ≤ candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ) :=
+        add_nonneg (candidateRankRemovalPowerSum_nonneg n hq₂_pos k)
           (pow_nonneg (le_of_lt hq₂_pos) (k : ℕ))
       have heq :
           q₁ ^ (i : ℕ) *
@@ -322,8 +316,8 @@ theorem candidateRankBestAfterRemovalWeight_pairwise_cross_nonneg
         let T₂ : ℝ := q₂ * candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ)
         have hcoeff :
             q₁ ^ ((j : ℕ) - 1) * q₂ ^ (i : ℕ) ≤
-              q₁ ^ (i : ℕ) * q₂ ^ ((j : ℕ) - 1) := by
-          exact le_of_lt (by
+              q₁ ^ (i : ℕ) * q₂ ^ ((j : ℕ) - 1) :=
+          le_of_lt (by
             have hik_nat : (i : ℕ) < (k : ℕ) := by exact hik
             have hkj_nat : (k : ℕ) < (j : ℕ) := by exact hkj
             have hij_pred : (i : ℕ) < (j : ℕ) - 1 := by omega
@@ -350,8 +344,8 @@ theorem candidateRankBestAfterRemovalWeight_pairwise_cross_nonneg
             (pow_nonneg (le_of_lt hq₂_pos) ((j : ℕ) - 1))
         have hprod :
             q₁ ^ ((j : ℕ) - 1) * q₂ ^ (i : ℕ) * (T₁ * P₂) ≤
-              q₁ ^ (i : ℕ) * q₂ ^ ((j : ℕ) - 1) * (P₁ * T₂) := by
-          exact mul_le_mul hcoeff hboundary
+              q₁ ^ (i : ℕ) * q₂ ^ ((j : ℕ) - 1) * (P₁ * T₂) :=
+          mul_le_mul hcoeff hboundary
             (mul_nonneg hT₁_nonneg hP₂_nonneg) hcoeff_rhs_nonneg
         have heq :
             q₁ ^ (i : ℕ) * P₁ * (q₂ ^ ((j : ℕ) - 1) * T₂) -
@@ -380,8 +374,8 @@ theorem candidateRankBestAfterRemovalWeight_pairwise_cross_nonneg
         candidateRankBestAfterRemovalWeight_of_gt n q₂ hki]
       have hpow :
           0 ≤ q₁ ^ ((i : ℕ) - 1) * q₂ ^ ((j : ℕ) - 1) -
-              q₁ ^ ((j : ℕ) - 1) * q₂ ^ ((i : ℕ) - 1) := by
-        exact sub_nonneg.mpr (le_of_lt (by
+              q₁ ^ ((j : ℕ) - 1) * q₂ ^ ((i : ℕ) - 1) :=
+        sub_nonneg.mpr (le_of_lt (by
           have hij_nat : (i : ℕ) < (j : ℕ) := by exact hij
           have hi_pos : 0 < (i : ℕ) :=
             lt_of_le_of_lt (Nat.zero_le (k : ℕ)) hki
@@ -389,14 +383,14 @@ theorem candidateRankBestAfterRemovalWeight_pairwise_cross_nonneg
           have h := natPower_mul_lt_mul_natPower hq₁_pos hq_lt hij_pred
           simpa [mul_comm, mul_left_comm, mul_assoc] using h))
       have hleft_nonneg :
-          0 ≤ q₁ * candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ) := by
-        exact add_nonneg
+          0 ≤ q₁ * candidateRankRemovalPowerSum n q₁ k + q₁ ^ (k : ℕ) :=
+        add_nonneg
           (mul_nonneg (le_of_lt hq₁_pos)
             (candidateRankRemovalPowerSum_nonneg n hq₁_pos k))
           (pow_nonneg (le_of_lt hq₁_pos) (k : ℕ))
       have hright_nonneg :
-          0 ≤ q₂ * candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ) := by
-        exact add_nonneg
+          0 ≤ q₂ * candidateRankRemovalPowerSum n q₂ k + q₂ ^ (k : ℕ) :=
+        add_nonneg
           (mul_nonneg (le_of_lt hq₂_pos)
             (candidateRankRemovalPowerSum_nonneg n hq₂_pos k))
           (pow_nonneg (le_of_lt hq₂_pos) (k : ℕ))
@@ -439,8 +433,8 @@ theorem rankPower_mul_lt_mul_rankPower
       ∃ d : ℕ, 0 < d ∧ (j : ℕ) = (i : ℕ) + d := by
     refine ⟨(j : ℕ) - (i : ℕ), Nat.sub_pos_of_lt hij, ?_⟩
     exact (Nat.add_sub_of_le (le_of_lt hij)).symm
-  have hpow : q₁ ^ d < q₂ ^ d := by
-    exact pow_lt_pow_left₀ hq_lt (le_of_lt hq₁_pos) (Nat.ne_of_gt hd_pos)
+  have hpow : q₁ ^ d < q₂ ^ d :=
+    pow_lt_pow_left₀ hq_lt (le_of_lt hq₁_pos) (Nat.ne_of_gt hd_pos)
   have hscale : 0 < q₁ ^ (i : ℕ) * q₂ ^ (i : ℕ) :=
     mul_pos (pow_pos hq₁_pos (i : ℕ)) (pow_pos hq₂_pos (i : ℕ))
   have hmul := mul_lt_mul_of_pos_left hpow hscale
@@ -451,33 +445,27 @@ theorem rankPower_mul_lt_mul_rankPower
 Mallows pair calculation from Appendix F.1.  The type `Candidate m` represents
 the interval of candidates from the better endpoint to the worse endpoint,
 including both endpoints. -/
-def pairPositionCorrectExp (m : ℕ) (betterPos worsePos : Candidate m) : ℕ :=
-  betterPos.val + (m + 1 - worsePos.val)
+def pairPositionCorrectExp (m : ℕ) (betterPos worsePos : Candidate m) : ℕ := betterPos.val + (m + 1 - worsePos.val)
 
 /-- Endpoint-position exponent for an incorrectly ordered pair in the reduced
 Mallows pair calculation from Appendix F.1. -/
-def pairPositionWrongExp (m : ℕ) (betterPos worsePos : Candidate m) : ℕ :=
-  betterPos.val + (m + 1 - worsePos.val) - 1
+def pairPositionWrongExp (m : ℕ) (betterPos worsePos : Candidate m) : ℕ := betterPos.val + (m + 1 - worsePos.val) - 1
 
 /-- Rank-only contribution of one endpoint placement to the correctly ordered
 side of Lemma 8's pairwise Mallows odds. -/
 noncomputable def pairPositionCorrectTerm
-    (m : ℕ) (q : ℝ) (p : Candidate m × Candidate m) : ℝ :=
-  if p.1 < p.2 then q ^ pairPositionCorrectExp m p.1 p.2 else 0
+    (m : ℕ) (q : ℝ) (p : Candidate m × Candidate m) : ℝ := if p.1 < p.2 then q ^ pairPositionCorrectExp m p.1 p.2 else 0
 
 /-- Rank-only contribution of one endpoint placement to the incorrectly ordered
 side of Lemma 8's pairwise Mallows odds. -/
 noncomputable def pairPositionWrongTerm
-    (m : ℕ) (q : ℝ) (p : Candidate m × Candidate m) : ℝ :=
-  if p.2 < p.1 then q ^ pairPositionWrongExp m p.1 p.2 else 0
+    (m : ℕ) (q : ℝ) (p : Candidate m × Candidate m) : ℝ := if p.2 < p.1 then q ^ pairPositionWrongExp m p.1 p.2 else 0
 
 /-- Reduced rank-only weight of correctly ordering a fixed pair. -/
-noncomputable def pairPositionCorrectWeight (m : ℕ) (q : ℝ) : ℝ :=
-  ∑ p : Candidate m × Candidate m, pairPositionCorrectTerm m q p
+noncomputable def pairPositionCorrectWeight (m : ℕ) (q : ℝ) : ℝ := ∑ p : Candidate m × Candidate m, pairPositionCorrectTerm m q p
 
 /-- Reduced rank-only weight of incorrectly ordering a fixed pair. -/
-noncomputable def pairPositionWrongWeight (m : ℕ) (q : ℝ) : ℝ :=
-  ∑ p : Candidate m × Candidate m, pairPositionWrongTerm m q p
+noncomputable def pairPositionWrongWeight (m : ℕ) (q : ℝ) : ℝ := ∑ p : Candidate m × Candidate m, pairPositionWrongTerm m q p
 
 theorem pairPositionCorrectExp_le
     (m : ℕ) {betterPos worsePos : Candidate m} (hpos : betterPos < worsePos) :
@@ -500,8 +488,8 @@ theorem pairPositionCorrectExp_lt_wrongExp
     (m : ℕ) {correct wrong : Candidate m × Candidate m}
     (hcorrect : correct.1 < correct.2) (hwrong : wrong.2 < wrong.1) :
     pairPositionCorrectExp m correct.1 correct.2 <
-      pairPositionWrongExp m wrong.1 wrong.2 := by
-  exact lt_of_le_of_lt
+      pairPositionWrongExp m wrong.1 wrong.2 :=
+   lt_of_le_of_lt
     (pairPositionCorrectExp_le m hcorrect)
     (pairPositionWrongExp_gt m hwrong)
 
@@ -795,8 +783,8 @@ theorem pairCorrectProb_lt_of_pairPositionReduction
     (red_more : PairPositionReduction Mmore c d m)
     (red_less : PairPositionReduction Mless c d m)
     (hq_lt : Mmore.q < Mless.q) :
-    Mless.pairCorrectProb c d < Mmore.pairCorrectProb c d := by
-  exact pairCorrectProb_lt_of_pairWeight_cross hcd_more hcd_less
+    Mless.pairCorrectProb c d < Mmore.pairCorrectProb c d :=
+   pairCorrectProb_lt_of_pairWeight_cross hcd_more hcd_less
     (pairWeight_cross_pos_of_pairPositionReduction red_more red_less hq_lt)
 
 theorem weightedRankPower_pair_add_pos
@@ -846,8 +834,7 @@ theorem weightedRankPower_pair_add_nonneg
             q₂ ^ (i : ℕ) * q₁ ^ (j : ℕ)) +
         q₂ ^ (j : ℕ) *
           (q₁ ^ (j : ℕ) * q₂ ^ (i : ℕ) -
-            q₂ ^ (j : ℕ) * q₁ ^ (i : ℕ)) :=
-  le_of_lt (weightedRankPower_pair_add_pos hq₁_pos hq_lt hq₂_lt_one hij)
+            q₂ ^ (j : ℕ) * q₁ ^ (i : ℕ)) := le_of_lt (weightedRankPower_pair_add_pos hq₁_pos hq_lt hq₂_lt_one hij)
 
 /-- Adjacent value gap between center positions `k` and `k+1`. -/
 noncomputable def centerAdjacentGapAt {n : ℕ}
@@ -1017,8 +1004,8 @@ theorem candidateRankConditionalGap_succ_lt
 theorem candidateRankConditionalGap_strictAnti
     (n : ℕ) {q : ℝ} (hq_pos : 0 < q) {value : Candidate n → ℝ}
     (hvalue : ∀ i j : Candidate n, i < j → value j < value i) :
-    StrictAnti (candidateRankConditionalGap n q value) := by
-  exact Fin.strictAnti_iff_succ_lt.mpr
+    StrictAnti (candidateRankConditionalGap n q value) :=
+   Fin.strictAnti_iff_succ_lt.mpr
     (candidateRankConditionalGap_succ_lt n hq_pos hvalue)
 
 theorem candidateRankPowerSum_mul_one_sub (n : ℕ) (q : ℝ) :
@@ -1073,8 +1060,8 @@ theorem reflFirstWeight_eq_rank_mul_zero
           refine Finset.sum_bij
             (i := fun τ _ => τ.trans E) ?hi ?hinj ?hsurj ?hweight
           · intro τ hτ
-            have hfirst : firstChoice τ = r := by
-              exact (Finset.mem_filter.mp hτ).2.symm
+            have hfirst : firstChoice τ = r :=
+              (Finset.mem_filter.mp hτ).2.symm
             unfold reflFirstChoiceFiber
             simp only [Finset.mem_filter, Finset.mem_univ, true_and]
             rw [firstChoice_trans, hfirst]
@@ -1085,8 +1072,8 @@ theorem reflFirstWeight_eq_rank_mul_zero
             exact E.injective (Equiv.ext_iff.mp h x)
           · intro σ hσ
             refine ⟨σ.trans E.symm, ?_, ?_⟩
-            · have hfirst : firstChoice σ = 0 := by
-                exact (Finset.mem_filter.mp hσ).2.symm
+            · have hfirst : firstChoice σ = 0 :=
+                (Finset.mem_filter.mp hσ).2.symm
               have hcycle : E.symm 0 = r := by
                 change (Fin.cycleRange r).symm 0 = r
                 exact Fin.cycleRange_symm_zero r
@@ -1096,8 +1083,8 @@ theorem reflFirstWeight_eq_rank_mul_zero
             · ext x
               simp [E]
           · intro τ hτ
-            have hfirst : firstChoice τ = r := by
-              exact (Finset.mem_filter.mp hτ).2.symm
+            have hfirst : firstChoice τ = r :=
+              (Finset.mem_filter.mp hτ).2.symm
             have hfirst_apply : τ 0 = r := by
               simpa [firstChoice] using hfirst
             have hkend :
@@ -1145,8 +1132,7 @@ noncomputable def reflPairWrongWeight
       0
 
 /-- Last candidate in the identity-center interval. -/
-def reflLastCandidate (n : ℕ) : Candidate n :=
-  ⟨n + 1, by omega⟩
+def reflLastCandidate (n : ℕ) : Candidate n := ⟨n + 1, by omega⟩
 
 /-- The middle candidates between identity-center endpoints `0` and `last`,
 indexed in their center order. -/
@@ -1217,8 +1203,7 @@ theorem reflMiddleCandidateEquiv_symm_lt_iff
 
 /-- Positions other than the two fixed endpoint positions. -/
 noncomputable def reflEndpointPositionComplement
-    (n : ℕ) (betterPos worsePos : Candidate n) : Finset (Candidate n) :=
-  ((Finset.univ : Finset (Candidate n)).erase betterPos).erase worsePos
+    (n : ℕ) (betterPos worsePos : Candidate n) : Finset (Candidate n) := ((Finset.univ : Finset (Candidate n)).erase betterPos).erase worsePos
 
 theorem mem_reflEndpointPositionComplement
     (n : ℕ) (betterPos worsePos x : Candidate n) :
@@ -1259,8 +1244,8 @@ theorem reflEndpointPositionOrderEmb_mem
     (n : ℕ) {betterPos worsePos : Candidate n}
     (hne : betterPos ≠ worsePos) (i : Fin n) :
     reflEndpointPositionOrderEmb n hne i ∈
-      reflEndpointPositionComplement n betterPos worsePos := by
-  exact Finset.orderEmbOfFin_mem
+      reflEndpointPositionComplement n betterPos worsePos :=
+   Finset.orderEmbOfFin_mem
     (reflEndpointPositionComplement n betterPos worsePos)
     (reflEndpointPositionComplement_card_of_ne n hne) i
 
@@ -1373,8 +1358,8 @@ theorem reflEndpointMiddleOrderFun_injective
                 apply τ.injective
                 simp [rankOf, hlast]
               exact hpos_rank.trans hworse
-            exact reflEndpointPositionOrderEmb_ne_worse n hne j hpos_eq⟩ := by
-    exact (reflMiddleCandidateEquiv n).symm.injective hij
+            exact reflEndpointPositionOrderEmb_ne_worse n hne j hpos_eq⟩ :=
+    (reflMiddleCandidateEquiv n).symm.injective hij
   have hτ :
       τ (reflEndpointPositionOrderEmb n hne i) =
         τ (reflEndpointPositionOrderEmb n hne j) :=
@@ -1406,8 +1391,7 @@ theorem reflEndpointMiddleOrder_candidate
     (i : Fin n) :
     (reflMiddleCandidateEquiv n
         (reflEndpointMiddleOrder n hne τ hbetter hworse i)).1 =
-      τ (reflEndpointPositionOrderEmb n hne i) := by
-  exact reflEndpointMiddleOrderFun_candidate n hne τ hbetter hworse i
+      τ (reflEndpointPositionOrderEmb n hne i) :=  reflEndpointMiddleOrderFun_candidate n hne τ hbetter hworse i
 
 theorem rankOf_reflEndpointMiddleOrder_candidate
     (n : ℕ) {betterPos worsePos : Candidate n} (hne : betterPos ≠ worsePos)
@@ -1446,12 +1430,10 @@ noncomputable def finInversionFinset {n : ℕ} (σ : Equiv.Perm (Fin n)) :
     (fun ab => ab.1 < ab.2 ∧ σ.symm ab.2 < σ.symm ab.1)
 
 /-- Kendall-tau inversion count for a permutation of `Fin n`. -/
-noncomputable def finKendallTau {n : ℕ} (σ : Equiv.Perm (Fin n)) : ℕ :=
-  (finInversionFinset σ).card
+noncomputable def finKendallTau {n : ℕ} (σ : Equiv.Perm (Fin n)) : ℕ := (finInversionFinset σ).card
 
 /-- Mallows partition of the middle block. -/
-noncomputable def finMallowsPartition (n : ℕ) (q : ℝ) : ℝ :=
-  ∑ σ : Equiv.Perm (Fin n), q ^ finKendallTau σ
+noncomputable def finMallowsPartition (n : ℕ) (q : ℝ) : ℝ := ∑ σ : Equiv.Perm (Fin n), q ^ finKendallTau σ
 
 /-- Decompose a ranking on `n+3` candidates by removing the best identity-center
 candidate `0`.  The first component is the position of `0`; the second is the
@@ -1659,8 +1641,8 @@ noncomputable def rankingPeelWorstRemovedRanking
         intro i j hij
         have hfull :
             τ ((rankOf τ (reflLastCandidate (n + 1))).succAbove i) =
-              τ ((rankOf τ (reflLastCandidate (n + 1))).succAbove j) := by
-          exact Fin.castPred_inj.mp hij
+              τ ((rankOf τ (reflLastCandidate (n + 1))).succAbove j) :=
+          Fin.castPred_inj.mp hij
         exact (rankOf τ (reflLastCandidate (n + 1))).succAbove_right_injective
           (τ.injective hfull)
       exact ⟨hinj, Finite.surjective_of_injective hinj⟩)
@@ -1875,8 +1857,8 @@ theorem reflMiddleInversionToFinPair_mem_finInversionFinset
           ((reflMiddleCandidateEquiv n).symm
             ⟨ab.2,
               ⟨reflMiddleInversions_mem_right_ne_zero hab,
-                reflMiddleInversions_mem_right_ne_last hab⟩⟩) := by
-      exact (reflMiddleCandidateEquiv_symm_lt_iff n _ _).mpr
+                reflMiddleInversions_mem_right_ne_last hab⟩⟩) :=
+      (reflMiddleCandidateEquiv_symm_lt_iff n _ _).mpr
         hcenter_candidates
     simpa [ij, reflMiddleInversionToFinPair] using hsub
   have hrank_candidates : rankOf τ ab.2 < rankOf τ ab.1 := hinv.2
@@ -1887,8 +1869,8 @@ theorem reflMiddleInversionToFinPair_mem_finInversionFinset
       reflMiddleInversionToFinPair_right_candidate hab] using hrank_candidates
   have hrank_idx :
       (reflEndpointMiddleOrder n hne τ hbetter hworse).symm ij.2 <
-        (reflEndpointMiddleOrder n hne τ hbetter hworse).symm ij.1 := by
-    exact (rankOf_reflMiddleCandidate_lt_iff_middleOrder_symm_lt
+        (reflEndpointMiddleOrder n hne τ hbetter hworse).symm ij.1 :=
+    (rankOf_reflMiddleCandidate_lt_iff_middleOrder_symm_lt
       n hne τ hbetter hworse ij.2 ij.1).mp hrank_rewritten
   simp [finInversionFinset, ij, hcenter_idx, hrank_idx]
 
@@ -1941,8 +1923,8 @@ theorem reflMiddleInversions_card_eq_finKendallTau_middleOrder
         (rankOf_reflMiddleCandidate_lt_iff_middleOrder_symm_lt
           n hne τ hbetter hworse ij.2 ij.1).mpr hij_props.2
       simpa [ab] using hraw
-    have hinv : invertedPair (Equiv.refl (Candidate n)) τ ab := by
-      exact ⟨by simpa [rankOf, ab] using hcenter_candidates,
+    have hinv : invertedPair (Equiv.refl (Candidate n)) τ ab :=
+      ⟨by simpa [rankOf, ab] using hcenter_candidates,
         hrank_candidates⟩
     have hab : ab ∈ reflMiddleInversions n τ := by
       have hleft_ne_zero : ab.1 ≠ (0 : Candidate n) := by
@@ -2322,8 +2304,8 @@ theorem reflEndpointPositionMiddleWeight_pos
   have hle :
       q ^ (reflMiddleInversions n τ).card ≤
         ∑ σ ∈ reflEndpointPositionFiber n betterPos worsePos,
-          q ^ (reflMiddleInversions n σ).card := by
-    exact Finset.single_le_sum hnonneg
+          q ^ (reflMiddleInversions n σ).card :=
+    Finset.single_le_sum hnonneg
       (by
         dsimp [τ]
         exact reflEndpointPositionWitness_mem_fiber n hne)
@@ -2586,13 +2568,13 @@ theorem inversionFinsetNotInvolving_zero_card_rankingPeelBestOrderEquiv
         have hlt : (ab.1 : ℕ) < (ab.2 : ℕ) := hinv.1
         omega
       have hrank :
-          rankOf τ ab.2.succ < rankOf τ ab.1.succ := by
-        exact (rankOf_rankingPeelBestOrderEquiv_succ_lt_iff
+          rankOf τ ab.2.succ < rankOf τ ab.1.succ :=
+        (rankOf_rankingPeelBestOrderEquiv_succ_lt_iff
           n p σ ab.2 ab.1).mpr hinv.2
       have hinv_full :
           invertedPair (Equiv.refl (Candidate (n + 1))) τ
-            (ab.1.succ, ab.2.succ) := by
-        exact ⟨by simpa [rankOf] using hcenter, hrank⟩
+            (ab.1.succ, ab.2.succ) :=
+        ⟨by simpa [rankOf] using hcenter, hrank⟩
       simp [inversionFinsetNotInvolving, inversionFinset, hinv_full]
     · intro ab₁ _ ab₂ _ h
       exact Prod.ext
@@ -2667,13 +2649,13 @@ theorem inversionFinsetNotInvolving_last_card_rankingPeelWorstOrderEquiv
         change (ab.1 : ℕ) < (ab.2 : ℕ)
         simpa [rankOf] using hinv.1
       have hrank :
-          rankOf τ ab.2.castSucc < rankOf τ ab.1.castSucc := by
-        exact (rankOf_rankingPeelWorstOrderEquiv_castSucc_lt_iff
+          rankOf τ ab.2.castSucc < rankOf τ ab.1.castSucc :=
+        (rankOf_rankingPeelWorstOrderEquiv_castSucc_lt_iff
           n p σ ab.2 ab.1).mpr hinv.2
       have hinv_full :
           invertedPair (Equiv.refl (Candidate (n + 1))) τ
-            (ab.1.castSucc, ab.2.castSucc) := by
-        exact ⟨by simpa [rankOf] using hcenter, hrank⟩
+            (ab.1.castSucc, ab.2.castSucc) :=
+        ⟨by simpa [rankOf] using hcenter, hrank⟩
       have hleft_ne :
           ab.1.castSucc ≠ reflLastCandidate (n + 1) := by
         intro hlast
@@ -2863,8 +2845,8 @@ theorem reflPairCorrectWeight_succ_succ
           by_cases hcond : r < s ∧ rankOf σ r < rankOf σ s
           · have hcond_full :
                 r.succ < s.succ ∧
-                  rankOf (e (p, σ)) r.succ < rankOf (e (p, σ)) s.succ := by
-              exact ⟨hcenter_iff.mpr hcond.1, hrank_iff.mpr hcond.2⟩
+                  rankOf (e (p, σ)) r.succ < rankOf (e (p, σ)) s.succ :=
+              ⟨hcenter_iff.mpr hcond.1, hrank_iff.mpr hcond.2⟩
             rw [if_pos hcond_full, if_pos hcond, hkend, pow_add]
           · have hcond_full :
                 ¬(r.succ < s.succ ∧
@@ -2970,8 +2952,8 @@ theorem reflPairWrongWeight_succ_succ
           by_cases hcond : r < s ∧ rankOf σ s < rankOf σ r
           · have hcond_full :
                 r.succ < s.succ ∧
-                  rankOf (e (p, σ)) s.succ < rankOf (e (p, σ)) r.succ := by
-              exact ⟨hcenter_iff.mpr hcond.1, hrank_iff.mpr hcond.2⟩
+                  rankOf (e (p, σ)) s.succ < rankOf (e (p, σ)) r.succ :=
+              ⟨hcenter_iff.mpr hcond.1, hrank_iff.mpr hcond.2⟩
             rw [if_pos hcond_full, if_pos hcond, hkend, pow_add]
           · have hcond_full :
                 ¬(r.succ < s.succ ∧
@@ -3075,8 +3057,8 @@ theorem reflPairCorrectWeight_castSucc_castSucc
           by_cases hcond : r < s ∧ rankOf σ r < rankOf σ s
           · have hcond_full :
                 r.castSucc < s.castSucc ∧
-                  rankOf (e (p, σ)) r.castSucc < rankOf (e (p, σ)) s.castSucc := by
-              exact ⟨hcenter_iff.mpr hcond.1, hrank_iff.mpr hcond.2⟩
+                  rankOf (e (p, σ)) r.castSucc < rankOf (e (p, σ)) s.castSucc :=
+              ⟨hcenter_iff.mpr hcond.1, hrank_iff.mpr hcond.2⟩
             rw [if_pos hcond_full, if_pos hcond, hkend, pow_add]
           · have hcond_full :
                 ¬(r.castSucc < s.castSucc ∧
@@ -3180,8 +3162,8 @@ theorem reflPairWrongWeight_castSucc_castSucc
           by_cases hcond : r < s ∧ rankOf σ s < rankOf σ r
           · have hcond_full :
                 r.castSucc < s.castSucc ∧
-                  rankOf (e (p, σ)) s.castSucc < rankOf (e (p, σ)) r.castSucc := by
-              exact ⟨hcenter_iff.mpr hcond.1, hrank_iff.mpr hcond.2⟩
+                  rankOf (e (p, σ)) s.castSucc < rankOf (e (p, σ)) r.castSucc :=
+              ⟨hcenter_iff.mpr hcond.1, hrank_iff.mpr hcond.2⟩
             rw [if_pos hcond_full, if_pos hcond, hkend, pow_add]
           · have hcond_full :
                 ¬(r.castSucc < s.castSucc ∧
@@ -3278,8 +3260,8 @@ theorem reflEndpointInversions_inter_eq_singleton_of_wrong
       omega
     have hinv :
         invertedPair (Equiv.refl (Candidate n)) τ
-          ((0 : Candidate n), reflLastCandidate n) := by
-      exact ⟨by simpa [rankOf] using hcenter, hwrong⟩
+          ((0 : Candidate n), reflLastCandidate n) :=
+      ⟨by simpa [rankOf] using hcenter, hwrong⟩
     simp [reflEndpointZeroInversions, reflEndpointLastInversions,
       inversionFinset, hinv]
 
@@ -3655,8 +3637,7 @@ def reflPairPositionReduction_zero_last_of_middleCancellation
   scale_pos := cancel.scale_pos
   correct_eq :=
     reflPairCorrectWeight_zero_last_eq_reduced_of_middleCancellation n q cancel
-  wrong_eq :=
-    reflPairWrongWeight_zero_last_eq_reduced_of_middleCancellation n q cancel
+  wrong_eq :=   reflPairWrongWeight_zero_last_eq_reduced_of_middleCancellation n q cancel
 
 noncomputable def reflPairPositionReduction_zero_last
     (n : ℕ) {q : ℝ} (hq : 0 < q) :
@@ -4441,8 +4422,8 @@ theorem independentPairBracket_nonneg_of_rankFactorization
   have hinner :
       0 ≤ (candidateRankPowerSum n M.q - M.q ^ (rankOf M.center c : ℕ)) -
         M.q * (candidateRankPowerSum n M.q -
-          M.q ^ (rankOf M.center d : ℕ)) := by
-    exact candidateRankPowerSum_inner_nonneg
+          M.q ^ (rankOf M.center d : ℕ)) :=
+    candidateRankPowerSum_inner_nonneg
       (le_of_lt M.q_pos) hq_le_one hlt
   have hqk_nonneg : 0 ≤ M.q ^ k := pow_nonneg (le_of_lt M.q_pos) k
   have heq :
@@ -4662,8 +4643,8 @@ theorem firstChoiceGapWeight_eq_rankConditionalGap
               rw [← mul_assoc M.q (M.q ^ ((s : ℕ) + (r : ℕ) - 1)) fac.firstSecondTail]
               rw [← pow_succ', hsucc, pow_add]
               ring
-            · have hsr_eq : s = r := by
-                exact le_antisymm (le_of_not_gt hrs) (le_of_not_gt hsr)
+            · have hsr_eq : s = r :=
+                le_antisymm (le_of_not_gt hrs) (le_of_not_gt hsr)
               subst s
               simp [candidateRankConditionalGapTerm, hc_center]
     _ = M.q ^ (rankOf M.center c : ℕ) * fac.firstSecondTail *
@@ -4713,8 +4694,7 @@ theorem pair_sum_eq_ordered_swap_sum
     (hdiag : ∀ c : Candidate n, t c c = 0) :
     (∑ c : Candidate n, ∑ d : Candidate n, t c d) =
       ∑ c : Candidate n, ∑ d : Candidate n,
-        if rankOf ρ c < rankOf ρ d then t c d + t d c else 0 := by
-  exact
+        if rankOf ρ c < rankOf ρ d then t c d + t d c else 0 :=
     EconCSLib.FiniteSum.pair_sum_eq_ordered_swap_sum_of_injective_key
       (fun c : Candidate n => rankOf ρ c)
       (by
@@ -4901,8 +4881,8 @@ theorem candidateRankWeightedAverage_strictAnti
         exact sub_pos.mpr (by
           simpa [mul_comm, mul_left_comm, mul_assoc] using hpow)
       have hgap :
-          0 < B (0 : Candidate n) - B (1 : Candidate n) := by
-        exact sub_pos.mpr (hB (show (0 : Candidate n) < (1 : Candidate n) by
+          0 < B (0 : Candidate n) - B (1 : Candidate n) :=
+        sub_pos.mpr (hB (show (0 : Candidate n) < (1 : Candidate n) by
           change (0 : ℕ) < 1
           omega))
       have hterm :
@@ -4986,8 +4966,7 @@ theorem candidateWeightedAverage_cross_nonneg_of_pairwise
       (∑ j : Candidate n, wH j) *
           (∑ i : Candidate n, wA i * B i) -
         (∑ j : Candidate n, wA j) *
-          (∑ i : Candidate n, wH i * B i) := by
-  exact
+          (∑ i : Candidate n, wH i * B i) :=
     EconCSLib.FiniteSum.weighted_average_cross_nonneg_of_pairwise
       (α := Candidate n) hpair hB
 
@@ -5010,8 +4989,7 @@ theorem candidateWeightedAverage_cross_pos_of_pairwise
       (∑ j : Candidate n, wH j) *
           (∑ i : Candidate n, wA i * B i) -
         (∑ j : Candidate n, wA j) *
-          (∑ i : Candidate n, wH i * B i) := by
-  exact
+          (∑ i : Candidate n, wH i * B i) :=
     EconCSLib.FiniteSum.weighted_average_cross_pos_of_pairwise
       (α := Candidate n) hpair_nonneg hpair_pos hB
 
@@ -5109,8 +5087,8 @@ theorem candidateRankSquareWeightedConditionalGap_pos
             (q * q) ^ ((0 : Candidate n) : ℕ) *
                 q ^ (((1 : Candidate n) : ℕ)) <
               (q * q) ^ ((0 : Candidate n) : ℕ) *
-                q ^ (((1 : Candidate n) : ℕ) - 1) := by
-          exact mul_lt_mul_of_pos_left hpred
+                q ^ (((1 : Candidate n) : ℕ) - 1) :=
+          mul_lt_mul_of_pos_left hpred
             (pow_pos hq_sq_pos ((0 : Candidate n) : ℕ))
         exact sub_pos.mpr (lt_trans (by
           simpa [mul_comm, mul_left_comm, mul_assoc] using hpow₁) hpow₂)
@@ -5154,8 +5132,8 @@ theorem candidateRankSquareWeightedConditionalGap_pos
           have hpow₂ :
               (q * q) ^ ((0 : Candidate n) : ℕ) * q ^ (s : ℕ) <
                 (q * q) ^ ((0 : Candidate n) : ℕ) *
-                  q ^ ((s : ℕ) - 1) := by
-            exact mul_lt_mul_of_pos_left hpred
+                  q ^ ((s : ℕ) - 1) :=
+            mul_lt_mul_of_pos_left hpred
               (pow_pos hq_sq_pos ((0 : Candidate n) : ℕ))
           exact le_of_lt (sub_pos.mpr (lt_trans (by
             simpa [mul_comm, mul_left_comm, mul_assoc] using hpow₁) hpow₂))
@@ -5186,14 +5164,14 @@ theorem candidateRankSquareWeightedConditionalGap_pos
         have hpow₁ := rankPower_mul_lt_mul_rankPower
           hq_sq_pos hq_sq_lt_q hrs
         have hpred : q ^ (s : ℕ) < q ^ ((s : ℕ) - 1) := by
-          have hs_pos : 0 < (s : ℕ) := by
-            exact lt_of_le_of_lt (Nat.zero_le (r : ℕ)) hrs
+          have hs_pos : 0 < (s : ℕ) :=
+            lt_of_le_of_lt (Nat.zero_le (r : ℕ)) hrs
           have hpred_exp : (s : ℕ) - 1 < (s : ℕ) := by omega
           exact pow_lt_pow_right_of_lt_one₀ hq_pos hq_lt_one hpred_exp
         have hpow₂ :
             (q * q) ^ (r : ℕ) * q ^ (s : ℕ) <
-              (q * q) ^ (r : ℕ) * q ^ ((s : ℕ) - 1) := by
-          exact mul_lt_mul_of_pos_left hpred (pow_pos hq_sq_pos (r : ℕ))
+              (q * q) ^ (r : ℕ) * q ^ ((s : ℕ) - 1) :=
+          mul_lt_mul_of_pos_left hpred (pow_pos hq_sq_pos (r : ℕ))
         exact le_of_lt (sub_pos.mpr (lt_trans (by
           simpa [mul_comm, mul_left_comm, mul_assoc] using hpow₁) hpow₂))
       have hgap : 0 ≤ value r - value s :=
@@ -5230,10 +5208,10 @@ theorem candidateRankCrossConditionalGapSum_pos
   have hqHH_pos : 0 < qH * qH := mul_pos hqH_pos hqH_pos
   have hqAH_lt_qHH : qA * qH < qH * qH :=
     mul_lt_mul_of_pos_right hq_lt hqH_pos
-  have hQ_pos : 0 < Q := by
-    exact candidateRankPowerSum_pos n hqHH_pos
-  have hSH_pos : 0 < SH := by
-    exact candidateRankPowerSum_pos n hqH_pos
+  have hQ_pos : 0 < Q :=
+    candidateRankPowerSum_pos n hqHH_pos
+  have hSH_pos : 0 < SH :=
+    candidateRankPowerSum_pos n hqH_pos
   have hE : 0 < Q * A - P * H := by
     simpa [A, H, P, Q] using
       candidateRankWeightedAverage_strictAnti n hqAH_pos hqAH_lt_qHH hB
@@ -5251,8 +5229,8 @@ theorem candidateRankCrossConditionalGapSum_pos
       mul_lt_mul_of_pos_right hcoll_lt hH'
     have h1' : SH * P * H < SH * (Q * A) := by
       nlinarith [h1]
-    have hchain : SA * Q * H < SH * (Q * A) := by
-      exact lt_trans h2 h1'
+    have hchain : SA * Q * H < SH * (Q * A) :=
+      lt_trans h2 h1'
     have hQtarget : 0 < Q * (SH * A - SA * H) := by
       have heq : Q * (SH * A - SA * H) = SH * (Q * A) - SA * Q * H := by
         ring
@@ -5349,8 +5327,8 @@ theorem candidateRankPrefix_cross_pos
         exact Nat.not_succ_le_self k.val h
       have hterm :
           0 < t (0 : Candidate n) j₀ + t j₀ (0 : Candidate n) := by
-        have hpow : q₁ ^ (j₀ : ℕ) < q₂ ^ (j₀ : ℕ) := by
-          exact pow_lt_pow_left₀ hq_lt (le_of_lt hq₁_pos)
+        have hpow : q₁ ^ (j₀ : ℕ) < q₂ ^ (j₀ : ℕ) :=
+          pow_lt_pow_left₀ hq_lt (le_of_lt hq₁_pos)
             (by simp [j₀])
         simp [t, hj₀_not_prefix]
         exact hpow
@@ -5518,8 +5496,8 @@ theorem candidateRankWeightedPrefix_cross_pos
               rankPower_mul_lt_mul_rankPower hq₁_pos hq_lt hij
             have hinner :
                 0 ≤ q₁ ^ (i : ℕ) * q₂ ^ (j : ℕ) -
-                    q₂ ^ (i : ℕ) * q₁ ^ (j : ℕ) := by
-              exact sub_nonneg.mpr (le_of_lt (by
+                    q₂ ^ (i : ℕ) * q₁ ^ (j : ℕ) :=
+              sub_nonneg.mpr (le_of_lt (by
                 simpa [mul_comm, mul_left_comm, mul_assoc] using hpow))
             have hscale : 0 ≤ q₂ ^ (i : ℕ) :=
               pow_nonneg (le_of_lt hq₂_pos) (i : ℕ)
@@ -5779,8 +5757,8 @@ theorem centerFirstWeight_cross_lt_of_rankFactorization
         = halg_rank.firstTail * hhuman_rank.firstTail *
             candidateRankPowerSum n C.algorithm.q := by ring
     _ < halg_rank.firstTail * hhuman_rank.firstTail *
-            candidateRankPowerSum n C.human.q := by
-          exact mul_lt_mul_of_pos_left hsum_lt
+            candidateRankPowerSum n C.human.q :=
+          mul_lt_mul_of_pos_left hsum_lt
             (mul_pos halg_rank.firstTail_pos hhuman_rank.firstTail_pos)
     _ = halg_rank.firstTail *
           (candidateRankPowerSum n C.human.q * hhuman_rank.firstTail) := by ring
@@ -5790,8 +5768,8 @@ theorem centerFirstProb_lt_of_rankFactorization
     (hhuman_rank : C.human.RankFactorization)
     (hq_lt : C.algorithm.q < C.human.q) :
     firstChoiceProb C.human.law C.human.centerFirst <
-      firstChoiceProb C.algorithm.law C.human.centerFirst := by
-  exact C.centerFirstProb_lt_of_centerFirstWeight_div_lt
+      firstChoiceProb C.algorithm.law C.human.centerFirst :=
+   C.centerFirstProb_lt_of_centerFirstWeight_div_lt
     (C.centerFirstWeight_div_lt_of_cross_mul_lt
       (C.centerFirstWeight_cross_lt_of_rankFactorization
         halg_rank hhuman_rank hq_lt))
@@ -5813,8 +5791,8 @@ theorem firstWeightPrefix_cross_lt_of_rankFactorization
       candidateRankPrefixPowerSum n C.human.q k *
           candidateRankPowerSum n C.algorithm.q <
         candidateRankPrefixPowerSum n C.algorithm.q k *
-          candidateRankPowerSum n C.human.q := by
-    exact sub_pos.mp hprefix
+          candidateRankPowerSum n C.human.q :=
+    sub_pos.mp hprefix
   rw [C.algorithm.firstWeightPrefix_eq_rankPrefixPowerSum_mul halg_rank k,
     C.human.firstWeightPrefix_eq_rankPrefixPowerSum_mul hhuman_rank k,
     halg_rank.partition_eq, hhuman_rank.partition_eq]
@@ -5826,8 +5804,8 @@ theorem firstWeightPrefix_cross_lt_of_rankFactorization
               candidateRankPowerSum n C.algorithm.q) := by ring
     _ < halg_rank.firstTail * hhuman_rank.firstTail *
             (candidateRankPrefixPowerSum n C.algorithm.q k *
-              candidateRankPowerSum n C.human.q) := by
-          exact mul_lt_mul_of_pos_left hprefix_lt
+              candidateRankPowerSum n C.human.q) :=
+          mul_lt_mul_of_pos_left hprefix_lt
             (mul_pos halg_rank.firstTail_pos hhuman_rank.firstTail_pos)
     _ = (candidateRankPrefixPowerSum n C.algorithm.q k * halg_rank.firstTail) *
           (candidateRankPowerSum n C.human.q * hhuman_rank.firstTail) := by ring
@@ -5840,8 +5818,8 @@ theorem weaker_center_cross_product_pos_of_rankFactorization
     (hq_lt : C.algorithm.q < C.human.q) :
     0 < (C.algorithm.firstWeight C.human.centerFirst * C.human.partition -
         C.human.firstWeight C.human.centerFirst * C.algorithm.partition) *
-      firstChoiceGapMass C.human.law value C.human.centerFirst := by
-  exact C.weaker_center_cross_product_pos_of_strictlyCenterOrdered hvalue
+      firstChoiceGapMass C.human.law value C.human.centerFirst :=
+   C.weaker_center_cross_product_pos_of_strictlyCenterOrdered hvalue
     (C.centerFirstWeight_cross_lt_of_rankFactorization
       halg_rank hhuman_rank hq_lt)
 
@@ -6349,8 +6327,8 @@ theorem cross_weight_sum_pos_of_rankFactorization_and_suffix_nonpos
     0 < ∑ c : Candidate n,
       (C.algorithm.firstWeight c * C.human.partition -
           C.human.firstWeight c * C.algorithm.partition) *
-        C.human.firstChoiceGapWeight value c := by
-  exact C.cross_weight_sum_pos_of_adjacent_coeff_pos hvalue
+        C.human.firstChoiceGapWeight value c :=
+   C.cross_weight_sum_pos_of_adjacent_coeff_pos hvalue
     (fun k hk =>
       C.crossAdjacentCoeff_pos_of_rankFactorization_and_suffix_nonpos
         halg_rank hhuman_rank hq_lt hhuman_q_lt_one hk (hsuffix k hk))
@@ -6387,8 +6365,8 @@ theorem cross_weight_sum_pos_of_rankFactorization
   have hpure :
       0 < ∑ r : Candidate n,
         C.human.q ^ (r : ℕ) *
-          candidateRankCrossDelta n C.algorithm.q C.human.q r * B r := by
-    exact candidateRankCrossConditionalGapSum_pos n
+          candidateRankCrossDelta n C.algorithm.q C.human.q r * B r :=
+    candidateRankCrossConditionalGapSum_pos n
       C.algorithm.q_pos hq_lt hhuman_q_lt_one hB hH
   let scale : ℝ :=
     halg_rank.firstTail * hhuman_rank.firstTail * hhuman_rank.firstSecondTail
@@ -6559,8 +6537,8 @@ Pair-bracket signs imply the pointwise Mallows paper hypotheses.
 theorem theorem3_pointwise_of_centerMallowsPairBracketCertificate
     {value : Candidate n → ℝ}
     (cert : C.CenterMallowsPairBracketCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate
     (C.centerMallowsFiniteSumCertificate_of_pairBracketCertificate cert)
 
 /--
@@ -6633,8 +6611,8 @@ theorem theorem3_pointwise_of_rankFactorization_and_crossWeight
       (C.algorithm.firstWeight c * C.human.partition -
           C.human.firstWeight c * C.algorithm.partition) *
         C.human.firstChoiceGapWeight value c) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate
     (C.centerMallowsFiniteSumCertificate_of_rankFactorization_and_crossWeight
       hstrict hn halg_rank hhuman_rank halg_q_lt_one hhuman_q_lt_one hweaker)
 
@@ -6651,8 +6629,8 @@ theorem theorem3_pointwise_of_rankFactorization
     (halg_q_lt_one : C.algorithm.q < 1)
     (hhuman_q_lt_one : C.human.q < 1)
     (hq_lt : C.algorithm.q < C.human.q) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate
     (C.centerMallowsFiniteSumCertificate_of_rankFactorization
       hstrict hn halg_rank hhuman_rank halg_q_lt_one hhuman_q_lt_one hq_lt)
 

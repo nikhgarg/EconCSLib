@@ -7,13 +7,11 @@ namespace ConsumptionModel
 
 /-- Move one recommendation from type `src` to type `dst`. -/
 def moveOne {T : ℕ}
-    (a : CountAllocation T) (src dst : ItemType T) : CountAllocation T :=
-  EconCSLib.Allocation.moveOne a src dst
+    (a : CountAllocation T) (src dst : ItemType T) : CountAllocation T := EconCSLib.Allocation.moveOne a src dst
 
 /-- Weighted forward marginal gain from adding one more item of type `t`. -/
 noncomputable def weightedForwardMarginal {T : ℕ}
-    (M : ConsumptionModel T) (t : ItemType T) (q : ℕ) : ℝ :=
-  M.likelihood t * M.marginalValue t q
+    (M : ConsumptionModel T) (t : ItemType T) (q : ℕ) : ℝ := M.likelihood t * M.marginalValue t q
 
 /--
 Weighted value lost by removing the `q`-th item of type `t`.
@@ -206,33 +204,26 @@ theorem noRoundingCrossingBetween_of_strictExchangeCertificate {T : ℕ}
       (fun t : ItemType T => a.count t)
       (fun t : ItemType T => lower.count t)
       (fun t : ItemType T => upper.count t) := by
-  intro high low
-  rintro ⟨h_high, h_low⟩
-  have h_low_pos : 0 < lower.count low := by
-    exact lt_of_le_of_lt (Nat.zero_le _) h_low
-  have h_can : EconCSLib.Allocation.CanMoveOne a high := by
-    exact lt_of_lt_of_le (Nat.succ_pos _) h_high
-  have hne : high ≠ low := by
-    rintro rfl
-    have hle : upper.count high + 1 ≤ upper.count high := by
-      exact le_trans h_high
-        (le_trans (Nat.le_of_succ_le h_low) (horder high))
-    exact (Nat.not_succ_le_self (upper.count high)) hle
-  have h_foc :=
-    M.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
-      N hopt hne h_can
-  have h_high_bound :
-      M.weightedBackwardMarginal high (a.count high) ≤
-        M.weightedForwardMarginal high (upper.count high) :=
-    M.weightedBackwardMarginal_le_weightedForwardMarginal_of_diminishing
-      hDR hlike_nonneg high h_high
-  have h_low_bound :
-      M.weightedBackwardMarginal low (lower.count low) ≤
-        M.weightedForwardMarginal low (a.count low) :=
-    M.weightedBackwardMarginal_le_weightedForwardMarginal_of_diminishing
-      hDR hlike_nonneg low h_low
-  have h_cert_eval := hcert high low h_low_pos
-  linarith
+  have hopt' :
+      EconCSLib.Allocation.IsOptimalAtTotal
+        M.likelihood M.valueOfCount N a := by
+    simpa [EconCSLib.Allocation.IsOptimalAtTotal, IsOptimalAtTotal,
+      FeasibleAtTotal, objective] using hopt
+  have hcert' :
+      EconCSLib.Allocation.StrictRoundingExchangeCertificateBetween
+        M.likelihood M.valueOfCount lower upper := by
+    intro high low hlow
+    simpa [StrictRoundingExchangeCertificateBetween, weightedForwardMarginal,
+      weightedBackwardMarginal, marginalValue,
+      EconCSLib.Allocation.StrictRoundingExchangeCertificateBetween,
+      EconCSLib.Allocation.weightedForwardMarginal,
+      EconCSLib.Allocation.weightedBackwardMarginal,
+      EconCSLib.Allocation.marginal] using hcert high low hlow
+  exact
+    EconCSLib.Allocation.noRoundingCrossingBetween_of_strictExchangeCertificate
+      (a := a) (lower := lower) (upper := upper)
+      (weight := M.likelihood) (valueOfCount := M.valueOfCount)
+      (N := N) hopt' hDR hlike_nonneg horder hcert'
 
 end ConsumptionModel
 end PRPKG24AccuracyDiversity

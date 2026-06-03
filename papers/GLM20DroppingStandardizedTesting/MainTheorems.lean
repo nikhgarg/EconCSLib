@@ -6,6 +6,7 @@ import EconCSLib.Foundations.Probability.GaussianDerivatives
 import EconCSLib.Foundations.Probability.GaussianHazardInverse
 import EconCSLib.Foundations.Probability.GaussianMathlib
 import EconCSLib.Foundations.Probability.GaussianQuantile
+import EconCSLib.Foundations.Probability.InformationOrder
 import EconCSLib.Foundations.Probability.MeasureInequalities
 import EconCSLib.Foundations.Math.AffineThreshold
 import EconCSLib.Foundations.Math.ConvexCombination
@@ -75,12 +76,10 @@ inductive GLM20Policy where
 deriving DecidableEq, Repr
 
 /-- Paper notation for the test-based policy `P_full`. -/
-def glm20PFull : GLM20Policy :=
-  GLM20Policy.full
+def glm20PFull : GLM20Policy := GLM20Policy.full
 
 /-- Paper notation for the test-free policy `P_sub`. -/
-def glm20PSub : GLM20Policy :=
-  GLM20Policy.sub
+def glm20PSub : GLM20Policy := GLM20Policy.sub
 
 /--
 Source-facing metric surface for Sections 3--4.
@@ -105,13 +104,11 @@ structure GLM20SourcePolicySurface (Group Policy : Type*) where
 
 /-- Group fairness from the source: admitted group-B share matches population share. -/
 def glm20GroupFair {Group Policy : Type*}
-    (S : GLM20SourcePolicySurface Group Policy) (P : Policy) : Prop :=
-  S.diversity P = S.populationShareB
+    (S : GLM20SourcePolicySurface Group Policy) (P : Policy) : Prop := S.diversity P = S.populationShareB
 
 /-- Individual fairness from the source: no skill-level admission-probability gap. -/
 def glm20IndividualFair {Group Policy : Type*}
-    (S : GLM20SourcePolicySurface Group Policy) (P : Policy) : Prop :=
-  ∀ q : ℝ, S.individualFairnessGap P q = 0
+    (S : GLM20SourcePolicySurface Group Policy) (P : Policy) : Prop := ∀ q : ℝ, S.individualFairnessGap P q = 0
 
 theorem glm20_not_groupFair_of_diversity_ne
     {Group Policy : Type*}
@@ -125,8 +122,7 @@ theorem glm20_not_groupFair_of_diversity_lt
     {Group Policy : Type*}
     {S : GLM20SourcePolicySurface Group Policy} {P : Policy}
     (hlt : S.diversity P < S.populationShareB) :
-    ¬ glm20GroupFair S P :=
-  glm20_not_groupFair_of_diversity_ne (ne_of_lt hlt)
+    ¬ glm20GroupFair S P := glm20_not_groupFair_of_diversity_ne (ne_of_lt hlt)
 
 theorem glm20_not_individualFair_of_gap_ne
     {Group Policy : Type*}
@@ -139,13 +135,11 @@ theorem glm20_not_individualFair_of_gap_ne
 /-- Academic merit for a group weakly improves when moving from one policy to another. -/
 def glm20GroupAcademicMeritWeaklyImproves {Group Policy : Type*}
     (S : GLM20SourcePolicySurface Group Policy) (g : Group) (fromPolicy toPolicy : Policy) :
-    Prop :=
-  S.academicMerit g fromPolicy ≤ S.academicMerit g toPolicy
+    Prop := S.academicMerit g fromPolicy ≤ S.academicMerit g toPolicy
 
 /-- Diversity weakly improves when moving from one policy to another. -/
 def glm20DiversityWeaklyImproves {Group Policy : Type*}
-    (S : GLM20SourcePolicySurface Group Policy) (fromPolicy toPolicy : Policy) : Prop :=
-  S.diversity fromPolicy ≤ S.diversity toPolicy
+    (S : GLM20SourcePolicySurface Group Policy) (fromPolicy toPolicy : Policy) : Prop := S.diversity fromPolicy ≤ S.diversity toPolicy
 
 /--
 Lemma 1, concrete Gaussian algebra.
@@ -255,8 +249,7 @@ theorem paper_lemma1_estimated_skill_strictMono_feature
     {Feature : Type*} [Fintype Feature] [DecidableEq Feature]
     (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature) :
     StrictMono (fun value : ℝ =>
-      M.posteriorMean (Function.update theta k value)) :=
-  M.posteriorMean_update_strictMono theta k
+      M.posteriorMean (Function.update theta k value)) := M.posteriorMean_update_strictMono theta k
 
 /--
 Threshold support for fixed-policy admissions: a positive-slope affine
@@ -265,8 +258,7 @@ estimated-skill score clears an admissions threshold exactly above its cutoff.
 theorem paper_fixed_policy_affine_score_threshold_iff_cutoff
     {intercept slope threshold score : ℝ} (hslope : 0 < slope) :
     threshold ≤ intercept + slope * score ↔
-      affineCutoff intercept slope threshold ≤ score :=
-  threshold_le_affine_iff_cutoff_le hslope
+      affineCutoff intercept slope threshold ≤ score := threshold_le_affine_iff_cutoff_le hslope
 
 /--
 Gaussian fixed-feature threshold support: with all other features fixed,
@@ -290,8 +282,7 @@ variance, they are unequal laws.
 -/
 theorem paper_proposition1_gaussian_laws_differ_of_variance_lt
     {Llow Lhigh : GaussianVarianceLaw} (hvar : Llow.variance < Lhigh.variance) :
-    Llow ≠ Lhigh :=
-  GaussianVarianceLaw.ne_of_variance_lt hvar
+    Llow ≠ Lhigh := GaussianVarianceLaw.ne_of_variance_lt hvar
 
 /--
 Proposition 1 equal-precision support: equal estimated-skill mean and variance
@@ -300,8 +291,7 @@ give identical Gaussian score laws.
 theorem paper_proposition1_gaussian_laws_equal_of_mean_eq_variance_eq
     {L₁ L₂ : GaussianVarianceLaw}
     (hmean : L₁.mean = L₂.mean) (hvar : L₁.variance = L₂.variance) :
-    L₁ = L₂ :=
-  GaussianVarianceLaw.eq_of_mean_eq_variance hmean hvar
+    L₁ = L₂ := GaussianVarianceLaw.eq_of_mean_eq_variance hmean hvar
 
 /--
 Proposition 1 precision support: with the same prior variance, a strictly
@@ -392,9 +382,7 @@ theorem paper_proposition1_tail_gap_pos_iff_standardized_threshold_lt
     {L_A L_B : GaussianScaleLaw} {threshold : ℝ} :
     0 < api.thresholdPassProb L_A threshold -
         api.thresholdPassProb L_B threshold ↔
-      L_A.standardize threshold < L_B.standardize threshold := by
-  rw [sub_pos]
-  exact api.thresholdPassProb_gt_iff_standardize_lt
+      L_A.standardize threshold < L_B.standardize threshold :=  api.thresholdPassProb_sub_pos_iff_standardize_lt
 
 /--
 Proposition 1 individual-fairness algebra: when group A has the larger
@@ -411,55 +399,9 @@ theorem paper_proposition1_standardized_threshold_lt_iff_skill_above_cutoff
         sqrtPrecB * (threshold - q) ↔
       threshold -
           priorPrecision * (threshold - mean) / (sqrtPrecB * sqrtPrecA) <
-        q := by
-  have hfactor_pos : 0 < sqrtPrecA - sqrtPrecB := sub_pos.mpr hgap
-  have hdiff :
-      (priorPrecision * (threshold - mean) / sqrtPrecA +
-          sqrtPrecA * (threshold - q)) -
-        (priorPrecision * (threshold - mean) / sqrtPrecB +
-          sqrtPrecB * (threshold - q)) =
-        (sqrtPrecA - sqrtPrecB) *
-          ((threshold - q) -
-            priorPrecision * (threshold - mean) /
-              (sqrtPrecB * sqrtPrecA)) := by
-    field_simp [ne_of_gt hsqrtA_pos, ne_of_gt hsqrtB_pos]
-    ring
-  constructor
-  · intro hstd
-    have hneg :
-        (sqrtPrecA - sqrtPrecB) *
-          ((threshold - q) -
-            priorPrecision * (threshold - mean) /
-              (sqrtPrecB * sqrtPrecA)) < 0 := by
-      rw [← hdiff]
-      linarith
-    have hinner :
-        (threshold - q) -
-            priorPrecision * (threshold - mean) /
-              (sqrtPrecB * sqrtPrecA) < 0 := by
-      have hneg' :
-          (sqrtPrecA - sqrtPrecB) *
-            ((threshold - q) -
-              priorPrecision * (threshold - mean) /
-                (sqrtPrecB * sqrtPrecA)) <
-          (sqrtPrecA - sqrtPrecB) * 0 := by
-        simpa using hneg
-      exact lt_of_mul_lt_mul_left hneg' hfactor_pos.le
-    linarith
-  · intro hq
-    have hinner :
-        (threshold - q) -
-            priorPrecision * (threshold - mean) /
-              (sqrtPrecB * sqrtPrecA) < 0 := by
-      linarith
-    have hneg :
-        (sqrtPrecA - sqrtPrecB) *
-          ((threshold - q) -
-            priorPrecision * (threshold - mean) /
-              (sqrtPrecB * sqrtPrecA)) < 0 := by
-      simpa using mul_neg_of_pos_of_neg hfactor_pos hinner
-    rw [← hdiff] at hneg
-    linarith
+        q :=
+  precisionStandardizedSameThreshold_lt_iff_cutoff_lt_skill
+    hsqrtB_pos hsqrtA_pos hgap
 
 /--
 Proposition 1 individual-fairness-gap core: after rewriting the two groups'
@@ -618,8 +560,7 @@ theorem paper_proposition1_groupB_admission_probability_decreases_of_threshold_i
     {L_B : GaussianScaleLaw} {thresholdLow thresholdHigh : ℝ}
     (hthreshold : thresholdLow < thresholdHigh) :
     api.thresholdPassProb L_B thresholdHigh <
-      api.thresholdPassProb L_B thresholdLow :=
-  api.thresholdPassProb_strictAnti_threshold L_B hthreshold
+      api.thresholdPassProb L_B thresholdLow := api.thresholdPassProb_strictAnti_threshold L_B hthreshold
 
 /--
 Proposition 1 group-A comparative-statics support: if a larger
@@ -634,8 +575,7 @@ theorem paper_proposition1_groupA_admission_probability_increases_of_standardize
       L_A_high.standardize thresholdHigh <
         L_A_low.standardize thresholdLow) :
     api.thresholdPassProb L_A_low thresholdLow <
-      api.thresholdPassProb L_A_high thresholdHigh := by
-  exact (api.thresholdPassProb_gt_iff_standardize_lt_of_thresholds).mpr hstd
+      api.thresholdPassProb L_A_high thresholdHigh :=  (api.thresholdPassProb_gt_iff_standardize_lt_of_thresholds).mpr hstd
 
 /--
 Proposition 1 individual-fairness comparative statics: comparing two
@@ -864,8 +804,8 @@ theorem paper_proposition1_threshold_gt_common_mean_of_capacity_lt_half
           (1 - pi) * (1 / 2 : ℝ) + pi * (1 / 2 : ℝ) := by
         ring
       _ ≤ (1 - pi) * api.thresholdPassProb L_A threshold +
-            pi * api.thresholdPassProb L_B threshold := by
-        exact add_le_add
+            pi * api.thresholdPassProb L_B threshold :=
+        add_le_add
           (mul_le_mul_of_nonneg_left htail_A hleft_weight_nonneg)
           (mul_le_mul_of_nonneg_left htail_B hpi_nonneg)
   have hcapacity_ge_half : (1 / 2 : ℝ) ≤ capacity := by
@@ -878,24 +818,21 @@ theorem paper_proposition1_not_group_fair_of_diversity_ne
     {Group Policy : Type*}
     {S : GLM20SourcePolicySurface Group Policy} {P : Policy}
     (hne : S.diversity P ≠ S.populationShareB) :
-    ¬ glm20GroupFair S P :=
-  glm20_not_groupFair_of_diversity_ne hne
+    ¬ glm20GroupFair S P := glm20_not_groupFair_of_diversity_ne hne
 
 /-- Proposition 1 logical support: under-representation proves group fairness fails. -/
 theorem paper_proposition1_not_group_fair_of_diversity_lt
     {Group Policy : Type*}
     {S : GLM20SourcePolicySurface Group Policy} {P : Policy}
     (hlt : S.diversity P < S.populationShareB) :
-    ¬ glm20GroupFair S P :=
-  glm20_not_groupFair_of_diversity_lt hlt
+    ¬ glm20GroupFair S P := glm20_not_groupFair_of_diversity_lt hlt
 
 /-- Proposition 1 logical support: one nonzero skill-level gap proves individual fairness fails. -/
 theorem paper_proposition1_not_individual_fair_of_gap_ne
     {Group Policy : Type*}
     {S : GLM20SourcePolicySurface Group Policy} {P : Policy}
     (q : ℝ) (hne : S.individualFairnessGap P q ≠ 0) :
-    ¬ glm20IndividualFair S P :=
-  glm20_not_individualFair_of_gap_ne q hne
+    ¬ glm20IndividualFair S P := glm20_not_individualFair_of_gap_ne q hne
 
 /--
 Proposition 1 diversity algebra: if group B's admitted tail mass is below the
@@ -905,8 +842,7 @@ overall capacity, then the admitted group-B share is below the population share
 theorem paper_proposition1_diversity_share_lt_population_share_of_tail_lt_capacity
     {pi tailB capacity : ℝ} (hpi : 0 < pi) (hcap : 0 < capacity)
     (htail : tailB < capacity) :
-    pi * tailB / capacity < pi := by
-  exact weighted_share_lt_weight_of_value_lt_total hpi hcap htail
+    pi * tailB / capacity < pi :=  weighted_share_lt_weight_of_value_lt_total hpi hcap htail
 
 /--
 Proposition 1 capacity algebra: if group A has a strictly larger admission
@@ -1051,8 +987,8 @@ theorem paper_proposition1_threshold_variance_term_lt_of_precision_gap_lt
       (fixedPrecision + delta) /
           (priorPrecision + (fixedPrecision + delta)) <
         (fixedPrecision + delta') /
-          (priorPrecision + (fixedPrecision + delta')) := by
-    exact div_const_add_lt_div_const_add
+          (priorPrecision + (fixedPrecision + delta')) :=
+    div_const_add_lt_div_const_add
       hpriorPrecision_pos hbase_nonneg (by linarith)
   have hweight_pos : 0 < (1 - pi) * sigmaSq :=
     mul_pos hleftWeight_pos hsigmaSq_pos
@@ -1666,8 +1602,7 @@ theorem paper_proposition1_fixed_policy_static_core_source_surface_standardGauss
         pi capacity threshold L_A L_B lawA lawB
     ¬ glm20GroupFair S P ∧
       ¬ glm20IndividualFair S P ∧
-        S.academicMerit groupB P < S.academicMerit groupA P := by
-  exact
+        S.academicMerit groupB P < S.academicMerit groupA P :=
     paper_proposition1_fixed_policy_static_core_source_surface
       standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
       groupA groupB P hgroups hpi_pos hpi_lt_one hcapacity_pos hmean hscale hcapacity
@@ -1678,35 +1613,26 @@ Definition 1 from Appendix F in finite-kernel form: one experiment is sufficient
 for another when the less-informative posterior experiment is obtained by a
 garbling of the more-informative one.
 -/
-def glm20BlackwellSufficient {Q RichSignal CoarseSignal : Type*}
-    (rich : Q → PMF RichSignal) (coarse : Q → PMF CoarseSignal) : Prop :=
-  ∃ garbling : RichSignal → PMF CoarseSignal, ∀ q, (rich q).bind garbling = coarse q
+abbrev glm20BlackwellSufficient {Q RichSignal CoarseSignal : Type*}
+    (rich : Q → PMF RichSignal) (coarse : Q → PMF CoarseSignal) : Prop := BlackwellSufficient rich coarse
 
 /-- Appendix F Blackwell sufficiency from an explicit garbling kernel. -/
 theorem glm20BlackwellSufficient_bind
     {Q RichSignal CoarseSignal : Type*}
     (rich : Q → PMF RichSignal)
     (garbling : RichSignal → PMF CoarseSignal) :
-    glm20BlackwellSufficient rich (fun q => (rich q).bind garbling) := by
-  exact ⟨garbling, fun _ => rfl⟩
+    glm20BlackwellSufficient rich (fun q => (rich q).bind garbling) :=  BlackwellSufficient.bind rich garbling
 
 /-- Deterministic post-processing is a Blackwell garbling. -/
 theorem glm20BlackwellSufficient_map
     {Q RichSignal CoarseSignal : Type*}
     (rich : Q → PMF RichSignal) (f : RichSignal → CoarseSignal) :
-    glm20BlackwellSufficient rich (fun q => (rich q).map f) := by
-  refine ⟨fun signal => PMF.pure (f signal), ?_⟩
-  intro q
-  simpa [Function.comp_def] using
-    (PMF.bind_pure_comp (p := rich q) (f := f))
+    glm20BlackwellSufficient rich (fun q => (rich q).map f) :=  BlackwellSufficient.map rich f
 
 /-- Appendix F Blackwell sufficiency is reflexive. -/
 theorem glm20BlackwellSufficient_refl
     {Q Signal : Type*} (experiment : Q → PMF Signal) :
-    glm20BlackwellSufficient experiment experiment := by
-  refine ⟨fun signal => PMF.pure signal, ?_⟩
-  intro q
-  simp
+    glm20BlackwellSufficient experiment experiment :=  BlackwellSufficient.refl experiment
 
 /-- Appendix F Blackwell sufficiency is transitive under composition of garblings. -/
 theorem glm20BlackwellSufficient_trans
@@ -1716,12 +1642,7 @@ theorem glm20BlackwellSufficient_trans
     {coarse : Q → PMF CoarseSignal}
     (hrich_mid : glm20BlackwellSufficient rich middle)
     (hmid_coarse : glm20BlackwellSufficient middle coarse) :
-    glm20BlackwellSufficient rich coarse := by
-  rcases hrich_mid with ⟨garbleMiddle, hgarbleMiddle⟩
-  rcases hmid_coarse with ⟨garbleCoarse, hgarbleCoarse⟩
-  refine ⟨fun signal => (garbleMiddle signal).bind garbleCoarse, ?_⟩
-  intro q
-  rw [← PMF.bind_bind, hgarbleMiddle q, hgarbleCoarse q]
+    glm20BlackwellSufficient rich coarse :=  BlackwellSufficient.trans hrich_mid hmid_coarse
 
 /--
 Appendix F / Proposition 7 crossing-point diversity support.
@@ -1935,46 +1856,9 @@ theorem paper_proposition8_standardized_threshold_lt_iff_skill_above_cutoff
             (priorPrecision + sqrtPrecB ^ 2) / sqrtPrecB * thresholdB) /
           (sqrtPrecA - sqrtPrecB) +
         mean * priorPrecision / (sqrtPrecA * sqrtPrecB) <
-        q := by
-  have hfactor_pos : 0 < sqrtPrecA - sqrtPrecB := sub_pos.mpr hgap
-  let cutoff :=
-    ((priorPrecision + sqrtPrecA ^ 2) / sqrtPrecA * thresholdA -
-          (priorPrecision + sqrtPrecB ^ 2) / sqrtPrecB * thresholdB) /
-        (sqrtPrecA - sqrtPrecB) +
-      mean * priorPrecision / (sqrtPrecA * sqrtPrecB)
-  have hdiff :
-      (priorPrecision * (thresholdA - mean) / sqrtPrecA +
-          sqrtPrecA * (thresholdA - q)) -
-        (priorPrecision * (thresholdB - mean) / sqrtPrecB +
-          sqrtPrecB * (thresholdB - q)) =
-        (sqrtPrecA - sqrtPrecB) * (cutoff - q) := by
-    dsimp [cutoff]
-    field_simp [ne_of_gt hsqrtA_pos, ne_of_gt hsqrtB_pos,
-      ne_of_gt hfactor_pos]
-    ring
-  constructor
-  · intro hstd
-    have hneg :
-        (sqrtPrecA - sqrtPrecB) * (cutoff - q) < 0 := by
-      rw [← hdiff]
-      linarith
-    have hinner : cutoff - q < 0 := by
-      have hneg' :
-          (sqrtPrecA - sqrtPrecB) * (cutoff - q) <
-            (sqrtPrecA - sqrtPrecB) * 0 := by
-        simpa using hneg
-      exact lt_of_mul_lt_mul_left hneg' hfactor_pos.le
-    dsimp [cutoff] at hinner
-    linarith
-  · intro hq
-    have hinner : cutoff - q < 0 := by
-      dsimp [cutoff]
-      linarith
-    have hneg :
-        (sqrtPrecA - sqrtPrecB) * (cutoff - q) < 0 := by
-      simpa using mul_neg_of_pos_of_neg hfactor_pos hinner
-    rw [← hdiff] at hneg
-    linarith
+        q :=
+  precisionStandardizedThreshold_lt_iff_cutoff_lt_skill
+    hsqrtB_pos hsqrtA_pos hgap
 
 /--
 Affirmative-action fixed-policy support: a two-threshold Gaussian
@@ -2070,8 +1954,7 @@ theorem paper_standardGaussian_normalUpperTailMean_continuous_threshold
     (L : GaussianScaleLaw) :
     Continuous
       (GaussianHazardCertificate.normalUpperTailMean
-        standardGaussianHazardInverseCertificate.toGaussianHazardCertificate L) :=
-  standardGaussian_normalUpperTailMean_continuous L
+        standardGaussianHazardInverseCertificate.toGaussianHazardCertificate L) := standardGaussian_normalUpperTailMean_continuous L
 
 /--
 Proposition 8(ii) support: for the concrete standard Gaussian, admitted
@@ -2287,8 +2170,8 @@ theorem paper_proposition9_quantile_le_iff_gamma_le_threshold
           (populationShare * (1 - standardGaussianCDF z)) := by
   let p := 1 - groupCapacity / (populationShare * gamma)
   have hquantile_cdf :
-      standardGaussianCDF (standardGaussianQuantile p) = p := by
-    exact standardGaussianCDF_standardGaussianQuantile harg
+      standardGaussianCDF (standardGaussianQuantile p) = p :=
+    standardGaussianCDF_standardGaussianQuantile harg
   have hquantile_le :
       standardGaussianQuantile p ≤ z ↔ p ≤ standardGaussianCDF z := by
     constructor
@@ -2376,8 +2259,8 @@ theorem paper_proposition9_hazard_condition_iff_gamma_le_hatGamma
             (1 - groupCapacity / (populationShare * gamma))) ≤ y ↔
         standardGaussianQuantile
             (1 - groupCapacity / (populationShare * gamma)) ≤
-          standardGaussianHazardInv y := by
-    exact standardGaussianHazard_le_iff_le_inv hy_pos
+          standardGaussianHazardInv y :=
+    standardGaussianHazard_le_iff_le_inv hy_pos
   rw [hhaz_iff]
   have htail_pos :
       0 < 1 - standardGaussianCDF (standardGaussianHazardInv y) :=
@@ -2854,8 +2737,7 @@ theorem glm20StrategicEquilibriumAE_student_feasible_ae
     {μ : Measure Student}
     {E : GLM20StrategicEquilibriumData Student Action SchoolPolicy}
     (hEq : glm20StrategicEquilibriumAE μ E) :
-    ∀ᵐ s ∂μ, E.studentActionFeasible s (E.chosenStudentAction s) :=
-  hEq.1
+    ∀ᵐ s ∂μ, E.studentActionFeasible s (E.chosenStudentAction s) := hEq.1
 
 theorem glm20StrategicEquilibriumAE_student_best_response_ae
     {Student Action SchoolPolicy : Type*} [MeasurableSpace Student]
@@ -2863,16 +2745,14 @@ theorem glm20StrategicEquilibriumAE_student_best_response_ae
     {E : GLM20StrategicEquilibriumData Student Action SchoolPolicy}
     (hEq : glm20StrategicEquilibriumAE μ E) :
     ∀ᵐ s ∂μ, ∀ a, E.studentActionFeasible s a →
-      E.studentPayoff s a ≤ E.studentPayoff s (E.chosenStudentAction s) :=
-  hEq.2.1
+      E.studentPayoff s a ≤ E.studentPayoff s (E.chosenStudentAction s) := hEq.2.1
 
 theorem glm20StrategicEquilibriumAE_school_policy_feasible
     {Student Action SchoolPolicy : Type*} [MeasurableSpace Student]
     {μ : Measure Student}
     {E : GLM20StrategicEquilibriumData Student Action SchoolPolicy}
     (hEq : glm20StrategicEquilibriumAE μ E) :
-    E.schoolPolicyFeasible E.chosenSchoolPolicy :=
-  hEq.2.2.1
+    E.schoolPolicyFeasible E.chosenSchoolPolicy := hEq.2.2.1
 
 theorem glm20StrategicEquilibriumAE_school_policy_best_response
     {Student Action SchoolPolicy : Type*} [MeasurableSpace Student]
@@ -2880,16 +2760,14 @@ theorem glm20StrategicEquilibriumAE_school_policy_best_response
     {E : GLM20StrategicEquilibriumData Student Action SchoolPolicy}
     (hEq : glm20StrategicEquilibriumAE μ E) :
     ∀ P, E.schoolPolicyFeasible P →
-      E.schoolObjective P ≤ E.schoolObjective E.chosenSchoolPolicy :=
-  hEq.2.2.2.1
+      E.schoolObjective P ≤ E.schoolObjective E.chosenSchoolPolicy := hEq.2.2.2.1
 
 theorem glm20StrategicEquilibriumAE_assignmentConsistent
     {Student Action SchoolPolicy : Type*} [MeasurableSpace Student]
     {μ : Measure Student}
     {E : GLM20StrategicEquilibriumData Student Action SchoolPolicy}
     (hEq : glm20StrategicEquilibriumAE μ E) :
-    E.assignmentConsistent :=
-  hEq.2.2.2.2
+    E.assignmentConsistent := hEq.2.2.2.2
 
 theorem glm20StrategicEquilibriumAE_of_strategicEquilibrium
     {Student Action SchoolPolicy : Type*} [MeasurableSpace Student]
@@ -3106,8 +2984,7 @@ fallback table.
 -/
 def glm20OverrideSchoolValue
     {School : Type*} [DecidableEq School]
-    (target : School) (value : ℝ) (fallback : School → ℝ) : School → ℝ :=
-  fun J => if J = target then value else fallback J
+    (target : School) (value : ℝ) (fallback : School → ℝ) : School → ℝ := fun J => if J = target then value else fallback J
 
 @[simp] theorem glm20OverrideSchoolValue_self
     {School : Type*} [DecidableEq School]
@@ -3130,8 +3007,7 @@ school's row has already been identified with a Gaussian upper-tail mean.
 def glm20OverrideSchoolMeritRow
     {Group School : Type*} [DecidableEq School]
     (target : School) (value : Group → ℝ)
-    (fallback : School → Group → ℝ) : School → Group → ℝ :=
-  fun J g => if J = target then value g else fallback J g
+    (fallback : School → Group → ℝ) : School → Group → ℝ := fun J g => if J = target then value g else fallback J g
 
 @[simp] theorem glm20OverrideSchoolMeritRow_self
     {Group School : Type*} [DecidableEq School]
@@ -3997,8 +3873,7 @@ theorem glm20Theorem3PolicyStateWeightedAcademicMeritSurface_policyPairIsEquilib
             groupB populationShare)
           glm20StrategicPolicyStatePair J2 groupA groupB populationShare)
         GLM20StrategicPolicyState.singleSub
-        GLM20StrategicPolicyState.singleFull P1 P2 := by
-  exact
+        GLM20StrategicPolicyState.singleFull P1 P2 :=
     glm20WeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff
 
 theorem
@@ -4758,8 +4633,7 @@ theorem glm20TwoGroupWeightedAcademicMeritObjective_eq_groupB_of_groupA_merit_ze
     glm20TwoGroupWeightedAcademicMeritObjective S policyPair J
         groupA groupB populationShare P1 P2 =
       populationShare groupB *
-        S.admittedAcademicMerit J groupB (policyPair P1 P2) := by
-  exact
+        S.admittedAcademicMerit J groupB (policyPair P1 P2) :=
     glm20TwoGroupWeightedAcademicMeritObjective_eq_groupB_of_groupA_zero
       S policyPair J groupA groupB populationShare P1 P2 (by simp [hzeroA])
 
@@ -4799,8 +4673,7 @@ theorem glm20TwoGroupWeightedAcademicMeritObjective_eq_groupA_of_groupB_merit_ze
     glm20TwoGroupWeightedAcademicMeritObjective S policyPair J
         groupA groupB populationShare P1 P2 =
       populationShare groupA *
-        S.admittedAcademicMerit J groupA (policyPair P1 P2) := by
-  exact
+        S.admittedAcademicMerit J groupA (policyPair P1 P2) :=
     glm20TwoGroupWeightedAcademicMeritObjective_eq_groupA_of_groupB_zero
       S policyPair J groupA groupB populationShare P1 P2 (by simp [hzeroB])
 
@@ -5082,13 +4955,11 @@ the indifferent projected-skill cutoff is
 -/
 def glm20StrategicApplyCutoff
     (Q : StandardGaussianQuantileAPI)
-    (admissionThreshold scale costRatio : ℝ) : ℝ :=
-  admissionThreshold - scale * Q.quantile (1 - costRatio)
+    (admissionThreshold scale costRatio : ℝ) : ℝ := admissionThreshold - scale * Q.quantile (1 - costRatio)
 
 /-- Student payoff for the binary apply/not-apply decision. -/
 def glm20StrategicApplyPayoff
-    (value cost admissionProbability : ℝ) (apply : Bool) : ℝ :=
-  if apply then value * admissionProbability - cost else 0
+    (value cost admissionProbability : ℝ) (apply : Bool) : ℝ := if apply then value * admissionProbability - cost else 0
 
 /--
 Incremental payoff for the two-school application decision in Proposition 2.
@@ -5270,8 +5141,8 @@ theorem paper_proposition5_equation47_cutoff_formula_of_twoFull_payoff_zero
     linarith
   have hquantile : Q.cdfAPI.cdf (Q.quantile p) = p :=
     Q.cdf_quantile hprob
-  have hz_eq : (q1Full - q) / scale = Q.quantile p := by
-    exact Q.cdfAPI.cdf_strictMono.injective (by rw [hcdf_eq, hquantile])
+  have hz_eq : (q1Full - q) / scale = Q.quantile p :=
+    Q.cdfAPI.cdf_strictMono.injective (by rw [hcdf_eq, hquantile])
   have hmul : q1Full - q = scale * Q.quantile p := by
     have hz := hz_eq
     field_simp [ne_of_gt hscale] at hz
@@ -5768,8 +5639,7 @@ theorem paper_proposition5_standardGaussian_twoFull_apply_payoff_cutoff_function
                   standardGaussianCDFAPI q1Full q2Full scale v1 v2 cost q ↔
               cutoffOfCost cost ≤ q) ∧
         ContinuousOn cutoffOfCost (Set.Icc left right) ∧
-          StrictMonoOn cutoffOfCost (Set.Icc left right) := by
-  exact
+          StrictMonoOn cutoffOfCost (Set.Icc left right) :=
     paper_proposition5_standardGaussian_twoFull_apply_payoff_cutoff_function_regular_cost
       (q1Full := q1Full) (q2Full := q2Full) (scale := scale)
       (v1 := v1) (v2 := v2) (costDomain := Set.Icc left right)
@@ -6182,8 +6052,7 @@ theorem
                             (∀ cost ∈ Set.Icc left right,
                               meritOfCutoff (cutoffOfCost cost) ≤
                                   testFreeMerit ↔
-                                costThreshold ≤ cost)) := by
-  exact
+                                costThreshold ≤ cost)) :=
     paper_proposition5_standardGaussian_twoFull_cost_threshold_of_merit_crossing_interval_of_global_regular
       (q1Full := q1Full) (q2Full := q2Full) (scale := scale)
       (v1 := v1) (v2 := v2) (left := left) (right := right)
@@ -6515,8 +6384,7 @@ theorem paper_lemma3_school_cutoff_existsUnique_and_capacity_region_of_strictAnt
     ∃! admissionThreshold : ℝ,
       applicantMass admissionThreshold = capacity ∧
         ∀ z : ℝ,
-          applicantMass z ≤ capacity ↔ admissionThreshold ≤ z := by
-  exact
+          applicantMass z ≤ capacity ↔ admissionThreshold ≤ z :=
     existsUnique_eq_and_upper_region_of_continuous_strictAnti_tendsto_atBot_atTop
       hcont hanti hatBot hatTop hcapacity
 
@@ -6553,8 +6421,7 @@ theorem paper_proposition2_two_school_selection_thresholds_existUnique_and_capac
       (∃! admissionThreshold2 : ℝ,
         applicantMass2 admissionThreshold2 = capacity2 ∧
           ∀ z : ℝ,
-            applicantMass2 z ≤ capacity2 ↔ admissionThreshold2 ≤ z) := by
-  exact
+            applicantMass2 z ≤ capacity2 ↔ admissionThreshold2 ≤ z) :=
     ⟨paper_lemma3_school_cutoff_existsUnique_and_capacity_region_of_strictAnti_applicant_mass
         hcont1 hanti1 hatBot1 hatTop1 hcapacity1,
       paper_lemma3_school_cutoff_existsUnique_and_capacity_region_of_strictAnti_applicant_mass
@@ -6688,8 +6555,7 @@ theorem paper_proposition5_standardGaussian_twoFull_apply_payoff_cutoff_existsUn
               (glm20StrategicProjectedScale
                 priorPrecision subPrecision testPrecision)
               v1 v2 cost q ↔
-            cutoff ≤ q := by
-  exact
+            cutoff ≤ q :=
     paper_proposition5_standardGaussian_twoFull_apply_payoff_cutoff_existsUnique
       (q1Full := q1Full) (q2Full := q2Full)
       (scale :=
@@ -6794,8 +6660,8 @@ theorem paper_lemma3_gaussian_admission_probability_ge_cost_ratio_iff_cutoff_le
   · intro hprob
     have hstd :
         (admissionThreshold - q) / scale ≤
-          Q.quantile (1 - costRatio) := by
-      exact htail.mp (by
+          Q.quantile (1 - costRatio) :=
+      htail.mp (by
         simpa [StandardGaussianCDFAPI.thresholdPassProb,
           StandardGaussianCDFAPI.normalTail, StandardGaussianCDFAPI.normalCDF,
           GaussianScaleLaw.standardize] using hprob)
@@ -6951,8 +6817,7 @@ Lemma 3 probability-domain support: the source-style cost bound
 -/
 theorem paper_lemma3_cost_ratio_mem_Ioo_of_cost_bounds
     {cost value : ℝ} (hcost_pos : 0 < cost) (hcost_lt_value : cost < value) :
-    cost / value ∈ Set.Ioo (0 : ℝ) 1 :=
-  paper_proposition5_cost_ratio_mem_Ioo_of_pos_lt hcost_pos hcost_lt_value
+    cost / value ∈ Set.Ioo (0 : ℝ) 1 := paper_proposition5_cost_ratio_mem_Ioo_of_pos_lt hcost_pos hcost_lt_value
 
 /--
 Proposition 5 / equation (50) with the paper's cost bound.
@@ -6975,8 +6840,7 @@ theorem paper_proposition5_equation50_subFull_apply_cutoff_formula_standardGauss
               Q.cdfAPI.thresholdPassProb
                 { mean := q, scale := scale, scale_pos := hscale }
                 q2Full - cost ↔
-            subFullCutoff ≤ q) := by
-  exact
+            subFullCutoff ≤ q) :=
     paper_proposition5_equation50_subFull_apply_cutoff_formula_standardGaussian
       Q hscale (lt_trans hcost_pos hcost_lt_v2)
       (paper_proposition5_cost_ratio_mem_Ioo_of_pos_lt
@@ -7063,8 +6927,7 @@ theorem paper_proposition5_equation50_subFull_apply_cutoff_strictMonoOn_cost_Ioo
     StrictMonoOn
       (fun cost : ℝ =>
         q2Full - scale * Q.quantile (1 - cost / v2))
-      (Set.Ioo (0 : ℝ) v2) := by
-  exact
+      (Set.Ioo (0 : ℝ) v2) :=
     paper_proposition5_equation50_subFull_apply_cutoff_strictMonoOn_cost
       Q hscale hv2 (by
         intro cost hcost
@@ -7085,8 +6948,7 @@ theorem paper_proposition5_equation50_subFull_apply_cutoff_strictMonoOn_cost_int
     StrictMonoOn
       (fun cost : ℝ =>
         q2Full - scale * Q.quantile (1 - cost / v2))
-      (Set.Icc left right) := by
-  exact
+      (Set.Icc left right) :=
     paper_proposition5_equation50_subFull_apply_cutoff_strictMonoOn_cost
       Q hscale hv2 (by
         intro cost hcost
@@ -7633,8 +7495,8 @@ theorem paper_lemma3_apply_payoff_positive_iff_above_gaussian_cutoff
           hvalue).mp hpayoff
     have hstd :
         (admissionThreshold - q) / scale <
-          Q.quantile (1 - cost / value) := by
-      exact htail.mp (by
+          Q.quantile (1 - cost / value) :=
+      htail.mp (by
         simpa [StandardGaussianCDFAPI.thresholdPassProb,
           StandardGaussianCDFAPI.normalTail, StandardGaussianCDFAPI.normalCDF,
           GaussianScaleLaw.standardize] using hprob)
@@ -7705,8 +7567,8 @@ theorem paper_lemma3_apply_payoff_negative_iff_below_gaussian_cutoff
           hvalue).mp hpayoff
     have hstd :
         Q.quantile (1 - cost / value) <
-          (admissionThreshold - q) / scale := by
-      exact htail.mp (by
+          (admissionThreshold - q) / scale :=
+      htail.mp (by
         simpa [StandardGaussianCDFAPI.thresholdPassProb,
           StandardGaussianCDFAPI.normalTail, StandardGaussianCDFAPI.normalCDF,
           GaussianScaleLaw.standardize] using hprob)
@@ -9066,8 +8928,7 @@ is exactly the high-cutoff inverse-CDF domain `c / (v1 - v2) ∈ (0,1)`.
 theorem paper_proposition2_cost_ratio_high_of_cost_bounds
     {cost v1 v2 : ℝ}
     (hcost : 0 < cost) (hcost_lt_diff : cost < v1 - v2) :
-    cost / (v1 - v2) ∈ Set.Ioo (0 : ℝ) 1 :=
-  paper_proposition5_cost_ratio_mem_Ioo_of_pos_lt hcost hcost_lt_diff
+    cost / (v1 - v2) ∈ Set.Ioo (0 : ℝ) 1 := paper_proposition5_cost_ratio_mem_Ioo_of_pos_lt hcost hcost_lt_diff
 
 /--
 Proposition 2 support with the nonredundant cost-ratio assumption.
@@ -9144,18 +9005,16 @@ theorem paper_proposition2_two_school_application_region_standardGaussian
             Q.cdfAPI.thresholdPassProb
               { mean := q, scale := scale, scale_pos := hscale }
               admissionThreshold - cost ↔
-          lowCutoff ≤ q := by
-      exact
-        paper_lemma3_apply_payoff_nonnegative_iff_above_gaussian_cutoff
+          lowCutoff ≤ q :=
+              paper_lemma3_apply_payoff_nonnegative_iff_above_gaussian_cutoff
           Q hscale hv1 hcostRatioLow
     have hhigh :
         0 ≤ (v1 - v2) *
             Q.cdfAPI.thresholdPassProb
               { mean := q, scale := scale, scale_pos := hscale }
               admissionThreshold - cost ↔
-          highCutoff ≤ q := by
-      exact
-        paper_lemma3_apply_payoff_nonnegative_iff_above_gaussian_cutoff
+          highCutoff ≤ q :=
+              paper_lemma3_apply_payoff_nonnegative_iff_above_gaussian_cutoff
           Q hscale hdiff_pos hcostRatioHigh
     constructor
     · intro hregion
@@ -10382,8 +10241,7 @@ theorem paper_proposition2_standardGaussian_mixture_threshold_equilibrium_exists
       glm20Proposition2TwoSchoolThresholdEquilibrium standardGaussianQuantileAPI
         (standardGaussianCDFAPI.mixtureTailMass weight1 law1)
         (standardGaussianCDFAPI.mixtureTailMass weight2 law2)
-        capacity1 capacity2 scale cost v1 v2 hscale equilibrium := by
-  exact
+        capacity1 capacity2 scale cost v1 v2 hscale equilibrium :=
     paper_proposition2_two_school_threshold_equilibrium_existsUnique_standardGaussian_of_high_cost_ratio
       standardGaussianQuantileAPI
       (applicantMass1 := standardGaussianCDFAPI.mixtureTailMass weight1 law1)
@@ -11458,8 +11316,8 @@ theorem glm20Proposition2OwenAffineLowerSelectionMass_eq_correlatedStandardGauss
       constructor
       · have hle : (p.1 - c * p.2) / denom ≤ A := by
           simpa [denom] using hp.1
-        have hle' : p.1 - c * p.2 ≤ A * denom := by
-          exact (div_le_iff₀ hdenom_pos).mp hle
+        have hle' : p.1 - c * p.2 ≤ A * denom :=
+          (div_le_iff₀ hdenom_pos).mp hle
         linarith
       · simpa using hp.2
     · intro hp
@@ -11604,14 +11462,13 @@ theorem glm20Proposition2OwenAffineLowerSelectionMass_eq_standardGaussianIntegra
   let B : ℝ := (qFull - mu) / sigmaTilde
   let s : Set (ℝ × ℝ) :=
     {p : ℝ × ℝ | p.1 ≤ A * denom + c * p.2 ∧ p.2 ≤ B}
-  have hs : MeasurableSet s := by
-    exact
-      (isClosed_le continuous_fst (by fun_prop)).measurableSet.inter
+  have hs : MeasurableSet s :=
+          (isClosed_le continuous_fst (by fun_prop)).measurableSet.inter
         (isClosed_le continuous_snd continuous_const).measurableSet
   have hfinite :
       ∀ᵐ z ∂standardGaussianMeasure,
-        standardGaussianMeasure ((fun x : ℝ => (x, z)) ⁻¹' s) < ∞ := by
-    exact Filter.Eventually.of_forall fun z =>
+        standardGaussianMeasure ((fun x : ℝ => (x, z)) ⁻¹' s) < ∞ :=
+    Filter.Eventually.of_forall fun z =>
       lt_of_le_of_lt (measure_mono (Set.subset_univ _))
         IsFiniteMeasure.measure_univ_lt_top
   have hsection :
@@ -11658,8 +11515,8 @@ theorem glm20Proposition2OwenAffineLowerSelectionMass_eq_standardGaussianIntegra
           ∫ z,
             (Set.Iic B).indicator
               (fun z => standardGaussianCDF (A * denom + c * z)) z
-              ∂standardGaussianMeasure := by
-          exact MeasureTheory.integral_congr_ae
+              ∂standardGaussianMeasure :=
+          MeasureTheory.integral_congr_ae
             (Filter.Eventually.of_forall hsection)
     _ =
           ∫ z in Set.Iic B,
@@ -11806,11 +11663,11 @@ theorem glm20Proposition3_source_denominator_sq_eq_precision_ratio
           (priorPrecision + fullPrecisionSum) /
         (priorPrecision *
           (priorPrecision + subPrecisionSum + fullPrecisionSum)) := by
-  have hden_full : priorPrecision + fullPrecisionSum ≠ 0 := by
-    exact ne_of_gt (by linarith)
+  have hden_full : priorPrecision + fullPrecisionSum ≠ 0 :=
+    ne_of_gt (by linarith)
   have hden_total :
-      priorPrecision + subPrecisionSum + fullPrecisionSum ≠ 0 := by
-    exact ne_of_gt (by linarith)
+      priorPrecision + subPrecisionSum + fullPrecisionSum ≠ 0 :=
+    ne_of_gt (by linarith)
   have hprior_ne : priorPrecision ≠ 0 := ne_of_gt hprior
   rw [glm20Proposition3SigmaTildeSource_sq hprior hfull,
     glm20Proposition3BSource_sq hprior hsub hfull, hsigma_sq]
@@ -11916,8 +11773,7 @@ def glm20Proposition2AHatConditionalSource
 
 /-- Proposition 2(iii) `A_g(q) = (a_hat_g(q)+b_g mu)/sqrt(1+sigma_tilde_g^2 b_g^2)`. -/
 def glm20Proposition2AArgument
-    (sigmaTilde aHat b mu : ℝ) : ℝ :=
-  (aHat + b * mu) / Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)
+    (sigmaTilde aHat b mu : ℝ) : ℝ := (aHat + b * mu) / Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)
 
 /--
 Proposition 2(iii)/(iv) source-parameter total-mass partition.
@@ -12121,8 +11977,8 @@ theorem glm20Proposition2AHatConditionalSourceDenominator_mul_selectionDenom_eq
   have hdenA_nonneg :
       0 ≤
         glm20Proposition2AHatConditionalSourceDenominator
-          priorPrecision subPrecisionSum fullPrecisionSum := by
-    exact mul_nonneg (Real.sqrt_nonneg _)
+          priorPrecision subPrecisionSum fullPrecisionSum :=
+    mul_nonneg (Real.sqrt_nonneg _)
       (Real.sqrt_nonneg _)
   have hsel_nonneg :
       0 ≤
@@ -12137,8 +11993,8 @@ theorem glm20Proposition2AHatConditionalSourceDenominator_mul_selectionDenom_eq
       0 ≤
         (priorPrecision + subPrecisionSum) * priorSigma *
           Real.sqrt
-            (subPrecisionSum / (priorPrecision + subPrecisionSum)) := by
-    exact mul_nonneg (mul_nonneg hprior_sub.le hsigma.le)
+            (subPrecisionSum / (priorPrecision + subPrecisionSum)) :=
+    mul_nonneg (mul_nonneg hprior_sub.le hsigma.le)
       (Real.sqrt_nonneg _)
   apply (sq_eq_sq₀ (mul_nonneg hdenA_nonneg hsel_nonneg) hrhs_nonneg).mp
   have hdenA_sq :
@@ -12322,8 +12178,8 @@ theorem glm20Proposition2AArgument_conditional_source_eq_subEligibleStandardizat
               priorPrecision subPrecisionSum fullPrecisionSum ^ 2 :=
       mul_nonneg (sq_nonneg _) (sq_nonneg _)
     exact Real.sqrt_pos.2 (by linarith)
-  have hscale_pos : 0 < scale := by
-    exact mul_pos hsigma (Real.sqrt_pos.2 hratio_sub_pos)
+  have hscale_pos : 0 < scale :=
+    mul_pos hsigma (Real.sqrt_pos.2 hratio_sub_pos)
   have hbden : denA * b = subPrecisionSum := by
     simpa [denA, b] using
       glm20Proposition2AHatConditionalSourceDenominator_mul_b_eq
@@ -12451,8 +12307,8 @@ theorem glm20Proposition2SubEligibleUnnormalizedMassFormula_eq_scaled_testFreeTa
               priorSigma *
                 Real.sqrt
                   (subPrecisionSum / (priorPrecision + subPrecisionSum))
-            scale_pos := by
-              exact mul_pos hsigma
+            scale_pos :=
+              mul_pos hsigma
                 (Real.sqrt_pos.2 (div_pos hsub (by linarith))) }
           q2Sub := by
   let scale :=
@@ -12517,9 +12373,8 @@ theorem glm20Proposition2AArgument_conditional_source_le_of_q_le
       0 ≤
         priorSigma *
           Real.sqrt
-            (subPrecisionSum / (priorPrecision + subPrecisionSum)) := by
-    exact
-      (mul_pos hsigma
+            (subPrecisionSum / (priorPrecision + subPrecisionSum)) :=
+          (mul_pos hsigma
         (Real.sqrt_pos.2 (div_pos hsub hprior_sub))).le
   rw [
     glm20Proposition2AArgument_conditional_source_eq_subEligibleStandardization
@@ -12692,8 +12547,8 @@ theorem glm20Proposition2AArgument_source_le_of_q_le
       glm20Proposition2AHatSource
           priorPrecision subPrecisionSum fullPrecisionSum mu qHigh ≤
         glm20Proposition2AHatSource
-          priorPrecision subPrecisionSum fullPrecisionSum mu q2Sub := by
-    exact div_le_div_of_nonneg_right hnum hAden_pos.le
+          priorPrecision subPrecisionSum fullPrecisionSum mu q2Sub :=
+    div_le_div_of_nonneg_right hnum hAden_pos.le
   have hnum_arg :
       glm20Proposition2AHatSource
             priorPrecision subPrecisionSum fullPrecisionSum mu qHigh +
@@ -13146,8 +13001,8 @@ theorem glm20Proposition2J2MassBetweenCutoffsCorrectedSource_pos
                 priorPrecision subPrecisionSum fullPrecisionSum mu qHigh)
               (glm20Proposition3BSource
                 priorPrecision subPrecisionSum fullPrecisionSum)
-              mu) := by
-    exact sub_nonneg.mpr (standardGaussianCDF_mono hA)
+              mu) :=
+    sub_nonneg.mpr (standardGaussianCDF_mono hA)
   exact
     mul_pos
       (mul_pos hpopulation
@@ -13238,8 +13093,8 @@ theorem glm20Proposition2J2MassBetweenCutoffs_pos_of_subEligibleMass
               Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)) -
           standardGaussianCDF
             ((aHatHigh + b * mu) /
-              Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)) := by
-    exact sub_nonneg.mpr (standardGaussianCDF_mono hA)
+              Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)) :=
+    sub_nonneg.mpr (standardGaussianCDF_mono hA)
   exact
     mul_pos (mul_pos hpopulation hsigma)
       (add_pos_of_pos_of_nonneg hrect hgap_nonneg)
@@ -14237,8 +14092,7 @@ Paper statement:
 `b'_g = sqrt(sum_{k in sub} sigma_gk^{-2})`.
 -/
 def glm20Proposition2KappaBPrime
-    (subPrecisionSum : ℝ) : ℝ :=
-  Real.sqrt subPrecisionSum
+    (subPrecisionSum : ℝ) : ℝ := Real.sqrt subPrecisionSum
 
 /--
 Source-prime algebra for Proposition 2(iv): the paper's `b'_g` squared is
@@ -14468,8 +14322,7 @@ population share.
 -/
 def glm20MeasureApplyAdmitMass
     (populationShare : ℝ) (jointLaw : Measure (ℝ × ℝ))
-    (qApply qAdmit : ℝ) : ℝ :=
-  populationShare * upperOrthantMass jointLaw qApply qAdmit
+    (qApply qAdmit : ℝ) : ℝ := populationShare * upperOrthantMass jointLaw qApply qAdmit
 
 /--
 If the joint source law is finite and positive on nonempty open sets, then the
@@ -15328,8 +15181,8 @@ theorem glm20BivariateApplyAdmitMass_standardBivariate_continuous_along
         (qApply z) (qAdmit z) := by
   let rho : ℝ :=
     -(sigmaTilde * b) / Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)
-  have hrho : rho ^ 2 ≤ 1 := by
-    exact le_of_lt (by
+  have hrho : rho ^ 2 ≤ 1 :=
+    le_of_lt (by
       simpa [rho] using paper_proposition3_rho_sq_lt_one sigmaTilde b)
   have hbivar :
       Continuous fun p : ℝ × ℝ =>
@@ -16617,12 +16470,12 @@ theorem glm20Proposition3LambdaFormula_ne_owenFirstMomentFormula_of_nonzero_slop
     have hnonneg : 0 ≤ sigmaTilde ^ 2 * b ^ 2 := mul_nonneg (sq_nonneg _) (sq_nonneg _)
     exact Real.sqrt_pos.2 (by linarith)
   have hdenom_ne : denom ≠ 0 := ne_of_gt hdenom_pos
-  have hdensity_ne : standardGaussianCDFAPI.density A ≠ 0 := by
-    exact ne_of_gt (standardGaussianDensity_pos A)
+  have hdensity_ne : standardGaussianCDFAPI.density A ≠ 0 :=
+    ne_of_gt (standardGaussianDensity_pos A)
   have hboundary_ne :
       sigmaTilde ^ 2 * b / (tau * denom) *
-          standardGaussianCDFAPI.density A ≠ 0 := by
-    exact mul_ne_zero
+          standardGaussianCDFAPI.density A ≠ 0 :=
+    mul_ne_zero
       (div_ne_zero (mul_ne_zero (pow_ne_zero 2 hsigma) hb)
         (mul_ne_zero htau hdenom_ne))
       hdensity_ne
@@ -16828,8 +16681,8 @@ theorem
   let c : ℝ := sigmaTilde * b
   let denom : ℝ := Real.sqrt (1 + sigmaTilde ^ 2 * b ^ 2)
   let A : ℝ := (a + b * mu) / denom
-  have hdenom_pos : 0 < denom := by
-    exact Real.sqrt_pos.2
+  have hdenom_pos : 0 < denom :=
+    Real.sqrt_pos.2
       (by nlinarith [mul_nonneg (sq_nonneg sigmaTilde) (sq_nonneg b)])
   have hdenom_ne : denom ≠ 0 := ne_of_gt hdenom_pos
   have hAdenom : A * denom = a + b * mu := by
@@ -17039,9 +16892,8 @@ theorem glm20Proposition2OwenSelectionLowerTail_eq_standardGaussianIntegral
         ∫ z,
           ProbabilityTheory.gaussianPDFReal (0 : ℝ) (1 : ℝ≥0) z •
             (Set.Iic upper).indicator
-              (fun z : ℝ => standardGaussianCDF (A * denom + c * z)) z := by
-    exact
-      ProbabilityTheory.integral_gaussianReal_eq_integral_smul
+              (fun z : ℝ => standardGaussianCDF (A * denom + c * z)) z :=
+          ProbabilityTheory.integral_gaussianReal_eq_integral_smul
         (E := ℝ) (μ := (0 : ℝ)) (v := (1 : ℝ≥0))
         (f := Set.indicator (Set.Iic upper)
           (fun z : ℝ => standardGaussianCDF (A * denom + c * z)))
@@ -17439,8 +17291,7 @@ theorem glm20Proposition2J2MeritStandardizedLowerTailFormula_eq_kappaBoundaryDen
       glm20Proposition2KappaBoundaryDensityFormula standardGaussianCDFAPI
         a b sigmaTilde tau mu upper
         (standardGaussianCDFAPI.normalDensity
-          { mean := mu, scale := sigmaTilde, scale_pos := hsigma } qFull) := by
-  exact
+          { mean := mu, scale := sigmaTilde, scale_pos := hsigma } qFull) :=
     glm20Proposition2J2MeritStandardizedLowerTailFormula_eq_kappaBoundaryDensityFormula_of_tau_lowerLeftRectangle
       hupper htau
       (glm20Proposition2_boundaryDensityScaling_of_normalDensity hsigma hupper)
@@ -17483,8 +17334,7 @@ theorem glm20Proposition2J2MeritSourcePrimes_eq_kappaBoundaryDensityFormula_of_t
         (glm20Proposition2KappaBPrime subPrecisionSum)
         sigmaTilde tau mu upper
         (standardGaussianCDFAPI.normalDensity
-          { mean := mu, scale := sigmaTilde, scale_pos := hsigma } qFull) := by
-  exact
+          { mean := mu, scale := sigmaTilde, scale_pos := hsigma } qFull) :=
     glm20Proposition2J2MeritStandardizedLowerTailFormula_eq_kappaBoundaryDensityFormula_of_tau_lowerLeftRectangle_normalDensity
       (a := glm20Proposition2KappaAPrime
         priorPrecision subPrecisionSum mu q2Sub)
@@ -17519,8 +17369,7 @@ theorem glm20Proposition2J2MeritSourcePrimes_eq_kappaBoundaryDensityFormula_of_t
         (glm20Proposition2KappaBPrime subPrecisionSum)
         sigmaTilde tau mu upper
         (standardGaussianCDFAPI.normalDensity
-          { mean := mu, scale := sigmaTilde, scale_pos := hsigma } qFull) := by
-  exact
+          { mean := mu, scale := sigmaTilde, scale_pos := hsigma } qFull) :=
     glm20Proposition2J2MeritSourcePrimes_eq_kappaBoundaryDensityFormula_of_tau_lowerLeftRectangle_normalDensity
       hsigma hupper
       (by
@@ -17558,8 +17407,7 @@ theorem glm20Proposition2J2MeritSourcePrimes_eq_kappaBoundaryDensityFormula_sour
           priorPrecision subPrecisionSum sigmaTilde mu q2Sub qFull)
         mu upper
         (standardGaussianCDFAPI.normalDensity
-          { mean := mu, scale := sigmaTilde, scale_pos := hsigma } qFull) := by
-  exact
+          { mean := mu, scale := sigmaTilde, scale_pos := hsigma } qFull) :=
     glm20Proposition2J2MeritSourcePrimes_eq_kappaBoundaryDensityFormula_of_tau_sourceLowerLeft_normalDensity
       (priorPrecision := priorPrecision) (subPrecisionSum := subPrecisionSum)
       (sigmaTilde := sigmaTilde)
@@ -17622,8 +17470,7 @@ theorem glm20Proposition2J2MeritSourceParameters_eq_kappaBoundaryDensityFormula_
                 priorSigma priorPrecision fullPrecisionSum,
             scale_pos :=
               glm20Proposition3SigmaTildeSource_pos
-                hpriorSigma hpriorPrecision hfullPrecision } qFull) := by
-  exact
+                hpriorSigma hpriorPrecision hfullPrecision } qFull) :=
     glm20Proposition2J2MeritSourcePrimes_eq_kappaBoundaryDensityFormula_sourceTau_normalDensity
       (priorPrecision := priorPrecision)
       (subPrecisionSum := subPrecisionSum)
@@ -18069,8 +17916,7 @@ theorem
                   priorSigma priorPrecision fullPrecisionSum,
               scale_pos :=
                 glm20Proposition3SigmaTildeSource_pos
-                  hpriorSigma hpriorPrecision hfullPrecision } qFull) := by
-  exact
+                  hpriorSigma hpriorPrecision hfullPrecision } qFull) :=
     paper_proposition2_part_iv_lower_academic_merit_iff_lambda_lt_kappaBoundaryDensity_sourceTau_normalDensity_of_j2_lower_tail
       (hsub := hsub) (hpriorSigma := hpriorSigma)
       (hpriorPrecision := hpriorPrecision)
@@ -18596,8 +18442,7 @@ theorem
             priorPrecisionA subPrecisionSumA fullPrecisionSumA)
           (glm20Proposition3SigmaTildeSource
             priorSigmaA priorPrecisionA fullPrecisionSumA)
-          tauA mu qFull) := by
-  exact
+          tauA mu qFull) :=
     paper_proposition3_full_policy_selectionMassShare_ratio_and_standardizedAdmittedAcademicMerit_formulas_standardBivariate
       hpopulation_pos hpopulation_lt_one
       (glm20Proposition3SigmaTildeSource_pos
@@ -18871,8 +18716,7 @@ theorem
             priorPrecisionA subPrecisionSumA fullPrecisionSumA)
           (glm20Proposition3SigmaTildeSource
             priorSigmaA priorPrecisionA fullPrecisionSumA)
-          tauA mu qFull) := by
-  exact
+          tauA mu qFull) :=
     paper_proposition3_full_policy_diversity_ratio_and_academic_merit_owenFirstMoment_formulas_standardBivariate
       hpopulation_pos hpopulation_lt_one
       (glm20Proposition3SigmaTildeSource_pos
@@ -18991,8 +18835,7 @@ theorem
             priorPrecisionA subPrecisionSumA fullPrecisionSumA)
           (glm20Proposition3SigmaTildeSource
             priorSigmaA priorPrecisionA fullPrecisionSumA)
-          tauA mu qFull) := by
-  exact
+          tauA mu qFull) :=
     paper_proposition3_full_policy_diversity_ratio_and_academic_merit_formulas_standardBivariate
       hpopulation_pos hpopulation_lt_one
       (glm20Proposition3SigmaTildeSource_pos
@@ -19214,8 +19057,7 @@ Paper source:
     {\sigma^{-2}+\sum_{k\in\sub}\sigma_{gk}^{-2}}`.
 -/
 def glm20Proposition6SubSigmaTildeSource
-    (priorSigma priorPrecision subPrecisionSum : ℝ) : ℝ :=
-  priorSigma * (subPrecisionSum / (priorPrecision + subPrecisionSum))
+    (priorSigma priorPrecision subPrecisionSum : ℝ) : ℝ := priorSigma * (subPrecisionSum / (priorPrecision + subPrecisionSum))
 
 /-- The Proposition 6 source test-free scale is positive under positive precisions. -/
 theorem glm20Proposition6SubSigmaTildeSource_pos
@@ -19251,8 +19093,7 @@ theorem glm20Proposition6SubSigmaTildeSourceRatio_pos
     0 <
       glm20Proposition6SubSigmaTildeSourceRatio
         priorSigmaA priorPrecisionA subPrecisionSumA
-        priorSigmaB priorPrecisionB subPrecisionSumB := by
-  exact
+        priorSigmaB priorPrecisionB subPrecisionSumB :=
     div_pos
       (glm20Proposition6SubSigmaTildeSource_pos hsigmaA hpriorA hsubA)
       (glm20Proposition6SubSigmaTildeSource_pos hsigmaB hpriorB hsubB)
@@ -19610,8 +19451,7 @@ theorem
             ((aB + bB * mu) / Real.sqrt (1 + sigmaTildeB ^ 2 * bB ^ 2))
             ((q1Full - mu) / sigmaTildeB) <
         glm20Proposition6SubDiversityFormula Q
-          capacity1 groupBPopulationShare sigmaTildeASub sigmaTildeBSub := by
-  exact
+          capacity1 groupBPopulationShare sigmaTildeASub sigmaTildeBSub :=
     (glm20Proposition6J1StrictDiversityBestResponseDropsTest_iff S
       policyPair J1).trans
       (paper_proposition6_j1_drops_test_iff_source_verticalStrip_lt_testFreeFormula
@@ -21630,20 +21470,17 @@ law as a `GaussianScaleLaw`; in the paper this law has mean `μ` and scale
 -/
 def glm20StrategicSubEstimateMassAbove
     (api : StandardGaussianCDFAPI) (subEstimateLaw : GaussianScaleLaw)
-    (q : ℝ) : ℝ :=
-  api.thresholdPassProb subEstimateLaw q
+    (q : ℝ) : ℝ := api.thresholdPassProb subEstimateLaw q
 
 /-- Theorem 3 support: `K_g(q)` is a continuous function of the threshold. -/
 theorem glm20StrategicSubEstimateMassAbove_continuous
     (api : StandardGaussianCDFAPI) (subEstimateLaw : GaussianScaleLaw) :
-    Continuous (glm20StrategicSubEstimateMassAbove api subEstimateLaw) :=
-  api.thresholdPassProb_continuous subEstimateLaw
+    Continuous (glm20StrategicSubEstimateMassAbove api subEstimateLaw) := api.thresholdPassProb_continuous subEstimateLaw
 
 /-- Theorem 3 support: `K_g(q)` is strictly decreasing in the threshold. -/
 theorem glm20StrategicSubEstimateMassAbove_strictAnti
     (api : StandardGaussianCDFAPI) (subEstimateLaw : GaussianScaleLaw) :
-    StrictAnti (glm20StrategicSubEstimateMassAbove api subEstimateLaw) :=
-  api.thresholdPassProb_strictAnti_threshold subEstimateLaw
+    StrictAnti (glm20StrategicSubEstimateMassAbove api subEstimateLaw) := api.thresholdPassProb_strictAnti_threshold subEstimateLaw
 
 /--
 Theorem 3 support: expanded normal-tail formula for `K_g(q)`.
@@ -22244,8 +22081,7 @@ theorem paper_proposition5_cost_threshold_of_continuous_strictAntiOn_cost_interv
 Two-group exact-one helper for paper statements that say a condition holds
 for exactly one group in `{A,B}`.
 -/
-def glm20ExactlyOneOfTwo {α : Type*} (a b : α) (condition : α → Prop) : Prop :=
-  (condition a ∧ ¬ condition b) ∨ (condition b ∧ ¬ condition a)
+def glm20ExactlyOneOfTwo {α : Type*} (a b : α) (condition : α → Prop) : Prop := (condition a ∧ ¬ condition b) ∨ (condition b ∧ ¬ condition a)
 
 /-- Congruence for the two-group exact-one helper. -/
 theorem glm20ExactlyOneOfTwo_congr
@@ -36311,8 +36147,7 @@ theorem paper_theorem3_fullFull_cost_family_condition_of_binary_objective_keep_r
     glm20Theorem3FullFullCostFamilyCondition groupA groupB
       (fun testCost =>
         glm20TwoSchoolBinaryPolicyEquilibrium (objective1 testCost)
-          (objective2 testCost) Psub Pfull Pfull Pfull) := by
-  exact
+          (objective2 testCost) Psub Pfull Pfull Pfull) :=
     paper_theorem3_fullFull_cost_family_condition_of_two_school_keep_regions
       (boundary1A := boundary1A) (boundary1B := boundary1B)
       (boundary2A := boundary2A) (boundary2B := boundary2B)
@@ -36578,8 +36413,8 @@ theorem paper_theorem3_two_school_academic_merit_source_conditions
         glm20Theorem3FullSubCondition S policyPair Psub Pfull groupA groupB
           testCost fullSubLowCostThreshold fullSubHighCostThreshold
           q1Sub q2Sub K) ∧
-        glm20Theorem3FullFullCondition S Pfull groupA groupB testCost := by
-  exact ⟨C.subFullEquilibrium_iff, C.fullSubEquilibrium_iff,
+        glm20Theorem3FullFullCondition S Pfull groupA groupB testCost :=
+   ⟨C.subFullEquilibrium_iff, C.fullSubEquilibrium_iff,
     C.fullFullEquilibrium_conditions⟩
 
 /--
@@ -36616,8 +36451,8 @@ theorem paper_theorem3_two_school_academic_merit_source_conditions_of_i_ii_and_p
         glm20Theorem3FullSubCondition S policyPair Psub Pfull groupA groupB
           testCost fullSubLowCostThreshold fullSubHighCostThreshold
           q1Sub q2Sub K) ∧
-        glm20Theorem3FullFullCondition S Pfull groupA groupB testCost := by
-  exact ⟨hsubFull, hfullSub,
+        glm20Theorem3FullFullCondition S Pfull groupA groupB testCost :=
+   ⟨hsubFull, hfullSub,
     paper_theorem3_fullFull_condition_exists_boundary_functions_of_positive_costs
       S Pfull groupA groupB testCost hcostA hcostB⟩
 
@@ -37422,9 +37257,8 @@ theorem
               (S.policyPairIsEquilibrium Psub Pfull ↔
                 glm20Theorem3SubFullCondition S policyPair Psub Pfull J2
                   groupA groupB populationShare testCost subFullCostThreshold
-                  capacity2 q1Sub K) := by
-    exact
-      paper_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_group_merit_formulas
+                  capacity2 q1Sub K) :=
+          paper_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_group_merit_formulas
         (S := S) (massTestTaking := massTestTaking)
         (admittedAcademicMerit := admittedAcademicMerit)
         (diversity := diversity) (policyPair := policyPair)
@@ -37460,9 +37294,8 @@ theorem
                   (S.policyPairIsEquilibrium Pfull Psub ↔
                     glm20Theorem3FullSubCondition S policyPair Psub Pfull
                       groupA groupB testCost fullSubLowCostThreshold
-                      fullSubHighCostThreshold q1Sub q2Sub K) := by
-    exact
-      paper_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_weighted_group_merit_formulas
+                      fullSubHighCostThreshold q1Sub q2Sub K) :=
+          paper_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_weighted_group_merit_formulas
         (S := S) (massTestTaking := massTestTaking)
         (admittedAcademicMerit := admittedAcademicMerit)
         (diversity := diversity) (policyPair := policyPair)
@@ -37867,9 +37700,8 @@ theorem
               (S.policyPairIsEquilibrium Psub Pfull ↔
                 glm20Theorem3SubFullCondition S policyPair Psub Pfull J2
                   groupA groupB populationShare testCost subFullCostThreshold
-                  capacity2 q1Sub K) := by
-    exact
-      paper_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_group_merit_formulas
+                  capacity2 q1Sub K) :=
+          paper_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_capacity_fixed_pool_and_group_merit_formulas
         (S := S) (massTestTaking := massTestTaking)
         (admittedAcademicMerit := admittedAcademicMerit)
         (diversity := diversity) (policyPair := policyPair)
@@ -37907,9 +37739,8 @@ theorem
                     (S.policyPairIsEquilibrium Pfull Psub ↔
                       glm20Theorem3FullSubCondition S policyPair Psub Pfull
                         groupA groupB testCost fullSubLowCostThreshold
-                        fullSubHighCostThreshold q1Sub q2Sub K) := by
-    exact
-      paper_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
+                        fullSubHighCostThreshold q1Sub q2Sub K) :=
+          paper_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
         (S := S) (massTestTaking := massTestTaking)
         (admittedAcademicMerit := admittedAcademicMerit)
         (diversity := diversity) (policyPair := policyPair)
@@ -38330,9 +38161,8 @@ theorem
               (S.policyPairIsEquilibrium Psub Pfull ↔
                 glm20Theorem3SubFullCondition S policyPair Psub Pfull J2
                   groupA groupB populationShare testCost subFullCostThreshold
-                  capacity2 q1Sub K) := by
-    exact
-      paper_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas
+                  capacity2 q1Sub K) :=
+          paper_theorem3_subFull_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_group_merit_formulas
         (S := S) (massTestTaking := massTestTaking)
         (admittedAcademicMerit := admittedAcademicMerit)
         (diversity := diversity) (policyPair := policyPair)
@@ -38371,9 +38201,8 @@ theorem
                     (S.policyPairIsEquilibrium Pfull Psub ↔
                       glm20Theorem3FullSubCondition S policyPair Psub Pfull
                         groupA groupB testCost fullSubLowCostThreshold
-                        fullSubHighCostThreshold q1Sub q2Sub K) := by
-    exact
-      paper_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
+                        fullSubHighCostThreshold q1Sub q2Sub K) :=
+          paper_theorem3_fullSub_condition_of_feasible_weighted_surface_merit_crossings_interval_capacity_fixed_pool_and_weighted_group_merit_formulas
         (S := S) (massTestTaking := massTestTaking)
         (admittedAcademicMerit := admittedAcademicMerit)
         (diversity := diversity) (policyPair := policyPair)
@@ -38559,8 +38388,7 @@ theorem paper_theorem3_two_school_academic_merit_source_conditions_of_i_ii_and_f
         glm20Theorem3FullSubCondition S policyPair Psub Pfull groupA groupB
           testCost fullSubLowCostThreshold fullSubHighCostThreshold
           q1Sub q2Sub K) ∧
-        glm20Theorem3FullFullCondition S Pfull groupA groupB testCost := by
-  exact ⟨hsubFull, hfullSub, hfullFull⟩
+        glm20Theorem3FullFullCondition S Pfull groupA groupB testCost :=  ⟨hsubFull, hfullSub, hfullFull⟩
 
 /--
 Paper Theorem 3 source-shaped endpoint with part (iii) supplied by a
@@ -41823,8 +41651,7 @@ structure GLM20EstimatedSkillCertificate
 theorem paper_lemma1_estimated_skill_of_certificate
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20EstimatedSkillCertificate S) :
-    C.posteriorMeanFormula ∧ C.estimatedSkillDistribution := by
-  exact ⟨C.posteriorMeanFormula_holds, C.estimatedSkillDistribution_holds⟩
+    C.posteriorMeanFormula ∧ C.estimatedSkillDistribution :=  ⟨C.posteriorMeanFormula_holds, C.estimatedSkillDistribution_holds⟩
 
 /-- Certificate for Proposition 1's fixed-policy metrics. -/
 structure GLM20FixedPolicyMetricsCertificate
@@ -41853,8 +41680,8 @@ theorem paper_proposition1_metrics_fixed_policy_of_certificate
       C.diversityDecreasesWithInformativenessGap ∧
         C.individualFairnessGapCharacterization ∧
           C.individualFairnessGapIncreasesHighSkill ∧
-            C.admittedGroupBLowerAcademicMerit := by
-  exact ⟨C.groupFairnessFailureExceptEqualPrecision_holds,
+            C.admittedGroupBLowerAcademicMerit :=
+   ⟨C.groupFairnessFailureExceptEqualPrecision_holds,
     C.diversityDecreasesWithInformativenessGap_holds,
     C.individualFairnessGapCharacterization_holds,
     C.individualFairnessGapIncreasesHighSkill_holds,
@@ -41873,8 +41700,7 @@ theorem paper_lemma2_individual_fairness_gap_strictAntiOn_of_deriv_neg
     (hderiv_neg :
       ∀ q ∈ interior (Set.Ioi q_e),
         deriv (fun x : ℝ => S.individualFairnessGap P x) q < 0) :
-    StrictAntiOn (fun q : ℝ => S.individualFairnessGap P q) (Set.Ioi q_e) :=
-  strictAntiOn_of_deriv_neg (convex_Ioi q_e) hcont hderiv_neg
+    StrictAntiOn (fun q : ℝ => S.individualFairnessGap P q) (Set.Ioi q_e) := strictAntiOn_of_deriv_neg (convex_Ioi q_e) hcont hderiv_neg
 
 /--
 Lemma 2 tail comparison: a strictly antitone individual-fairness gap on
@@ -42911,8 +42737,7 @@ theorem paper_lemma2_conditional_posterior_laws_source_surface_standardGaussian
         standardGaussianCDFAPI P M_A M_B threshold populationShareB capacity
     StrictAntiOn (fun q : ℝ => S.individualFairnessGap P q) (Set.Ioi q_e) ∧
       Filter.Tendsto (fun q : ℝ => S.individualFairnessGap P q)
-        Filter.atTop (nhds 0) := by
-  exact
+        Filter.atTop (nhds 0) :=
     paper_lemma2_conditional_posterior_laws_source_surface
       (Feature := Feature) (Group := Group) (Policy := Policy)
       standardGaussianAnalyticAPI
@@ -43025,8 +42850,8 @@ theorem paper_theorem2_diversity_tail_formula_gt_iff_ratio_lt
           Real.sqrt (leftWeight * ratioFull + pi) :=
       by nlinarith
     have hterm :
-        leftWeight * ratioSub + pi < leftWeight * ratioFull + pi := by
-      exact (Real.sqrt_lt_sqrt_iff htermSub_nonneg).mp hsqrt
+        leftWeight * ratioSub + pi < leftWeight * ratioFull + pi :=
+      (Real.sqrt_lt_sqrt_iff htermSub_nonneg).mp hsqrt
     nlinarith
   · intro hratio
     rw [hdiversitySub, hdiversityFull]
@@ -43035,8 +42860,8 @@ theorem paper_theorem2_diversity_tail_formula_gt_iff_ratio_lt
       nlinarith
     have hsqrt :
         Real.sqrt (leftWeight * ratioSub + pi) <
-          Real.sqrt (leftWeight * ratioFull + pi) := by
-      exact (Real.sqrt_lt_sqrt_iff htermSub_nonneg).mpr hterm
+          Real.sqrt (leftWeight * ratioFull + pi) :=
+      (Real.sqrt_lt_sqrt_iff htermSub_nonneg).mpr hterm
     have harg :
         quantile * Real.sqrt (leftWeight * ratioSub + pi) <
           quantile * Real.sqrt (leftWeight * ratioFull + pi) :=
@@ -46573,10 +46398,10 @@ abbrev
     (maxCost := maxCost) (capacity1 := capacity1) (capacity2 := capacity2)
     (q1Sub := q1Sub) (q2Sub := q2Sub)
     (fullFullCutoff := fullFullCutoff) (fullSubCutoff := fullSubCutoff)
-    (hpolicySubFull := by
-      exact glm20WeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff)
-    (hpolicyFullSub := by
-      exact glm20WeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff)
+    (hpolicySubFull :=
+      glm20WeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff)
+    (hpolicyFullSub :=
+      glm20WeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff)
 
 /--
 Paper Theorem 3 weighted-binary-surface endpoint with both Proposition 5
@@ -46614,10 +46439,10 @@ abbrev
     (fullSubRightCost := fullSubRightCost) (capacity1 := capacity1)
     (capacity2 := capacity2) (q1Sub := q1Sub) (q2Sub := q2Sub)
     (fullFullCutoff := fullFullCutoff) (fullSubCutoff := fullSubCutoff)
-    (hpolicySubFull := by
-      exact glm20WeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff)
-    (hpolicyFullSub := by
-      exact glm20WeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff)
+    (hpolicySubFull :=
+      glm20WeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff)
+    (hpolicyFullSub :=
+      glm20WeightedAcademicMeritBinaryPolicySurface_policyPairIsEquilibrium_iff)
 
 /--
 Paper Theorem 3 strongest current weighted-surface endpoint with the
@@ -51419,8 +51244,7 @@ theorem paper_theorem2_affine_admission_probability_full_gt_sub_iff_cutoff_lt
     (hslope : slopeSub < slopeFull) :
     A.affineUpperTail interceptFull slopeFull q >
         A.affineUpperTail interceptSub slopeSub q ↔
-      (interceptFull - interceptSub) / (slopeFull - slopeSub) < q :=
-  A.affineUpperTail_gt_iff_cutoff_lt_of_slope_lt hslope
+      (interceptFull - interceptSub) / (slopeFull - slopeSub) < q := A.affineUpperTail_gt_iff_cutoff_lt_of_slope_lt hslope
 
 /--
 Theorem 2(ii) source-surface support: if a group's full-policy and test-free
@@ -51726,47 +51550,9 @@ theorem paper_theorem2_affineUpperTail_delta_lt_eventually_of_same_side_slope_or
       standardGaussianDerivativeAPI.affineUpperTail interceptAFull slopeAFull q -
           standardGaussianDerivativeAPI.affineUpperTail interceptASub slopeASub q <
         standardGaussianDerivativeAPI.affineUpperTail interceptBFull slopeBFull q -
-          standardGaussianDerivativeAPI.affineUpperTail interceptBSub slopeBSub q := by
-  have heps : 0 < (1 / 3 : ℝ) := by norm_num
-  have hASub_ev : ∀ᶠ q in Filter.atTop,
-      standardGaussianCDF (interceptASub - slopeASub * q) <
-        (1 / 3 : ℝ) * standardGaussianCDF (interceptBSub - slopeBSub * q) :=
-    standardGaussianCDF_affine_leftTail_lt_mul_eventually_of_slope_lt
-      hslopeBSub_pos hsubSlope heps
-  have hBFull_ev : ∀ᶠ q in Filter.atTop,
-      standardGaussianCDF (interceptBFull - slopeBFull * q) <
-        (1 / 3 : ℝ) * standardGaussianCDF (interceptBSub - slopeBSub * q) :=
-    standardGaussianCDF_affine_leftTail_lt_mul_eventually_of_slope_lt
-      hslopeBSub_pos hBPolicySlope heps
-  have hdelta_ev : ∀ᶠ q in Filter.atTop,
-      standardGaussianDerivativeAPI.affineUpperTail interceptAFull slopeAFull q -
-          standardGaussianDerivativeAPI.affineUpperTail interceptASub slopeASub q <
-        standardGaussianDerivativeAPI.affineUpperTail interceptBFull slopeBFull q -
-          standardGaussianDerivativeAPI.affineUpperTail interceptBSub slopeBSub q := by
-    filter_upwards [hASub_ev, hBFull_ev] with q hASub hBFull
-    let cdfAFull := standardGaussianCDF (interceptAFull - slopeAFull * q)
-    let cdfASub := standardGaussianCDF (interceptASub - slopeASub * q)
-    let cdfBFull := standardGaussianCDF (interceptBFull - slopeBFull * q)
-    let cdfBSub := standardGaussianCDF (interceptBSub - slopeBSub * q)
-    have hBSub_pos : 0 < cdfBSub := by
-      dsimp [cdfBSub]
-      exact standardGaussianCDF_pos _
-    have hAF_pos : 0 < cdfAFull := by
-      dsimp [cdfAFull]
-      exact standardGaussianCDF_pos _
-    have hASub' : cdfASub < (1 / 3 : ℝ) * cdfBSub := by
-      simpa [cdfASub, cdfBSub] using hASub
-    have hBFull' : cdfBFull < (1 / 3 : ℝ) * cdfBSub := by
-      simpa [cdfBFull, cdfBSub] using hBFull
-    have hsum : cdfASub + cdfBFull < cdfBSub := by
-      nlinarith
-    dsimp [StandardGaussianDerivativeAPI.affineUpperTail]
-    dsimp [standardGaussianDerivativeAPI]
-    change (1 - cdfAFull) - (1 - cdfASub) <
-      (1 - cdfBFull) - (1 - cdfBSub)
-    nlinarith
-  obtain ⟨qDelta, hqDelta⟩ := Filter.eventually_atTop.1 hdelta_ev
-  exact ⟨qDelta, fun q hq => hqDelta q (le_of_lt hq)⟩
+          standardGaussianDerivativeAPI.affineUpperTail interceptBSub slopeBSub q :=
+  standardGaussian_affineUpperTail_delta_lt_eventually_of_same_side_slope_order
+    hslopeBSub_pos hsubSlope hBPolicySlope
 
 /--
 Theorem 2(ii), high-skill individual-fairness statement in the main-text
@@ -53827,8 +53613,7 @@ abbrev GLM20Theorem2NoBarrierCanonicalSourceModelAppendixDirection
     [Fintype FullFeature] [Nonempty FullFeature]
     [DecidableEq Group] [DecidableEq Policy]
     (M : GLM20Theorem2NoBarrierCanonicalSourceModel
-      SubFeature FullFeature Group Policy) : Prop :=
-  GLM20Theorem2NoBarrierCanonicalSourceModelConclusion M
+      SubFeature FullFeature Group Policy) : Prop := GLM20Theorem2NoBarrierCanonicalSourceModelConclusion M
 
 /--
 Theorem 2, raw Gaussian source model with constructed capacity thresholds.
@@ -53847,8 +53632,7 @@ theorem paper_theorem2_dropping_tests_without_barriers_standardGaussian_source_m
     [DecidableEq Group] [DecidableEq Policy]
     (M : GLM20Theorem2NoBarrierCanonicalSourceModel
       SubFeature FullFeature Group Policy) :
-    GLM20Theorem2NoBarrierCanonicalSourceModelConclusion M := by
-  exact
+    GLM20Theorem2NoBarrierCanonicalSourceModelConclusion M :=
     paper_theorem2_dropping_tests_without_barriers_standardGaussian_source_families_of_precision_order_population_weights_capacity_thresholds_main_text_direction
       (groupA := M.groupA) (groupB := M.groupB)
       (Psub := M.Psub) (Pfull := M.Pfull)
@@ -53922,8 +53706,7 @@ Lean keeps it as the scalar `benchmark` so the paper-facing theorem can expose
 the exact remaining Gaussian substitution separately.
 -/
 def theorem1AcademicMeritDelta
-    (H : GaussianHazardInverseCertificate) (xi benchmark : ℝ) : ℝ :=
-  H.hazardInv (xi * H.hazard benchmark)
+    (H : GaussianHazardInverseCertificate) (xi benchmark : ℝ) : ℝ := H.hazardInv (xi * H.hazard benchmark)
 
 /--
 Theorem 1 academic-merit Step 1 hazard-inverse bridge: once the truncated
@@ -54063,8 +53846,8 @@ theorem paper_theorem1_beta_groupA_continuousOn
     fun_prop
   have htail_arg :
       ContinuousOn
-        (fun γ : ℝ => 1 - capacity / (ownShare * γ + otherEligibleMass)) s := by
-    exact continuousOn_const.sub (continuousOn_const.div hlinear hden)
+        (fun γ : ℝ => 1 - capacity / (ownShare * γ + otherEligibleMass)) s :=
+    continuousOn_const.sub (continuousOn_const.div hlinear hden)
   have hquantile :
       ContinuousOn
         (fun γ : ℝ =>
@@ -54110,8 +53893,8 @@ theorem paper_theorem1_beta_groupB_continuousOn
     fun_prop
   have htail_arg :
       ContinuousOn
-        (fun γ : ℝ => 1 - capacity / (ownShare * γ + otherEligibleMass)) s := by
-    exact continuousOn_const.sub (continuousOn_const.div hlinear hden)
+        (fun γ : ℝ => 1 - capacity / (ownShare * γ + otherEligibleMass)) s :=
+    continuousOn_const.sub (continuousOn_const.div hlinear hden)
   have hquantile :
       ContinuousOn
         (fun γ : ℝ =>
@@ -54507,8 +54290,8 @@ theorem paper_theorem1_barrier_threshold_strictMonoOn_of_capacity_equations
       groupBShare * γ *
           C.api.thresholdPassProb L_B (threshold γ') <
         groupBShare * γ' *
-          C.api.thresholdPassProb L_B (threshold γ') := by
-    exact mul_lt_mul_of_pos_right
+          C.api.thresholdPassProb L_B (threshold γ') :=
+    mul_lt_mul_of_pos_right
       (mul_lt_mul_of_pos_left hγ hgroupB_pos) htailB_pos
   have hBterm_lt :
       groupBShare * γ *
@@ -54894,8 +54677,8 @@ theorem paper_theorem1_diversity_access_threshold_of_capacity_share_main
       fullDiversity γB = b / capacity := by
         simpa [b] using hdiversity_share γB hγB
       _ = 1 - a / capacity := by
-        have hsum_ne : a + b ≠ 0 := by
-          exact ne_of_gt (by rw [← hcap]; exact hcapacity_pos)
+        have hsum_ne : a + b ≠ 0 :=
+          ne_of_gt (by rw [← hcap]; exact hcapacity_pos)
         rw [hcap]
         field_simp [hsum_ne]
         ring
@@ -55844,8 +55627,7 @@ theorem paper_theorem1_dropping_tests_with_barriers_normal_laws_main_thresholds
 def theorem1FullDiversityShare
     (api : StandardGaussianCDFAPI)
     (capacity groupBShare : ℝ) (L_B : GaussianScaleLaw)
-    (threshold : ℝ → ℝ) (γB : ℝ) : ℝ :=
-  groupBShare * γB * api.thresholdPassProb L_B (threshold γB) / capacity
+    (threshold : ℝ → ℝ) (γB : ℝ) : ℝ := groupBShare * γB * api.thresholdPassProb L_B (threshold γB) / capacity
 
 theorem theorem1FullDiversityShare_continuousOn
     (api : StandardGaussianCDFAPI)
@@ -55868,8 +55650,7 @@ theorem theorem1FullDiversityShare_continuousOn
 
 /-- Theorem 1 source comparison: diversity improves after dropping the test. -/
 def theorem1DiversityImproves
-    (fullDiversity : ℝ → ℝ) (diversitySub γB : ℝ) : Prop :=
-  fullDiversity γB < diversitySub
+    (fullDiversity : ℝ → ℝ) (diversitySub γB : ℝ) : Prop := fullDiversity γB < diversitySub
 
 /-- Location-scale Gaussian law used in Theorem 1 normal-tail formulas. -/
 def theorem1GaussianLaw (base scale : ℝ) (hscale : 0 < scale) :
@@ -55880,8 +55661,7 @@ def theorem1GaussianLaw (base scale : ℝ) (hscale : 0 < scale) :
 
 /-- Threshold with a prescribed standardized score. -/
 def theorem1ThresholdFromStandardizedScore
-    (base scale score : ℝ) : ℝ :=
-  base + scale * score
+    (base scale score : ℝ) : ℝ := base + scale * score
 
 @[simp] theorem theorem1GaussianLaw_mean
     (base scale : ℝ) (hscale : 0 < scale) :
@@ -55919,8 +55699,7 @@ def theorem1SubMeritFromBenchmark
 
 /-- Theorem 1 source comparison: group academic merit improves after dropping the test. -/
 def theorem1AcademicMeritImproves
-    (fullMerit : ℝ → ℝ) (subMerit γ : ℝ) : Prop :=
-  fullMerit γ ≤ subMerit
+    (fullMerit : ℝ → ℝ) (subMerit γ : ℝ) : Prop := fullMerit γ ≤ subMerit
 
 /--
 Theorem 1, paper-facing metric-definition endpoint.
@@ -56140,14 +55919,12 @@ theorem paper_theorem1_dropping_tests_with_barriers_explicit_metrics
 /-- Theorem 1 source-surface comparison: diversity improves after dropping the test. -/
 def theorem1SourceDiversityImproves {Group Policy : Type*}
     (S : ℝ → GLM20SourcePolicySurface Group Policy)
-    (Pfull Psub : Policy) (γB : ℝ) : Prop :=
-  (S γB).diversity Pfull < (S γB).diversity Psub
+    (Pfull Psub : Policy) (γB : ℝ) : Prop := (S γB).diversity Pfull < (S γB).diversity Psub
 
 /-- Theorem 1 source-surface comparison: group academic merit improves. -/
 def theorem1SourceAcademicMeritImproves {Group Policy : Type*}
     (S : ℝ → GLM20SourcePolicySurface Group Policy)
-    (group : Group) (Pfull Psub : Policy) (γ : ℝ) : Prop :=
-  (S γ).academicMerit group Pfull ≤ (S γ).academicMerit group Psub
+    (group : Group) (Pfull Psub : Policy) (γ : ℝ) : Prop := (S γ).academicMerit group Pfull ≤ (S γ).academicMerit group Psub
 
 /--
 Theorem 1 canonical source surface for the diversity comparison.
@@ -56360,15 +56137,15 @@ theorem theorem1_low_capacity_domain_nonempty
   have hgroupBEligible_pos : 0 < pi * gammaB :=
     mul_pos hpi_pos hgammaB_pos
   let m := min (pi * gammaB) ((1 - pi) * gammaA)
-  have hm_pos : 0 < m := by
-    exact lt_min hgroupBEligible_pos hgroupAEligible_pos
+  have hm_pos : 0 < m :=
+    lt_min hgroupBEligible_pos hgroupAEligible_pos
   refine ⟨m / 4, ?_, ?_, ?_⟩
   · nlinarith
-  · have hm_le : m ≤ pi * gammaB := by
-      exact min_le_left _ _
+  · have hm_le : m ≤ pi * gammaB :=
+      min_le_left _ _
     nlinarith
-  · have hm_le : m ≤ (1 - pi) * gammaA := by
-      exact min_le_right _ _
+  · have hm_le : m ≤ (1 - pi) * gammaA :=
+      min_le_right _ _
     nlinarith
 
 /--
@@ -57044,8 +56821,7 @@ theorem paper_theorem1_dropping_tests_with_barriers_canonical_standardGaussian_o
       (∃ γbarB : ℝ,
         ∀ γB ∈ Set.Icc (0 : ℝ) 1,
           theorem1SourceAcademicMeritImproves SB groupB Pfull Psub γB ↔
-            γB ≤ γbarB) := by
-  exact
+            γB ≤ γbarB) :=
     paper_theorem1_dropping_tests_with_barriers_canonical_of_capacity_range
       standardGaussianHazardInverseCertificate standardGaussianQuantileAPI
       standardGaussianCDF_tendsto_atBot standardGaussianCDF_tendsto_atTop
@@ -57117,8 +56893,7 @@ theorem paper_theorem1_dropping_tests_with_barriers_canonical_standardGaussian_o
       (∃ γbarB : ℝ,
         ∀ γB ∈ Set.Icc (0 : ℝ) 1,
           theorem1SourceAcademicMeritImproves SB groupB Pfull Psub γB ↔
-            γB ≤ γbarB) := by
-  exact
+            γB ≤ γbarB) :=
     paper_theorem1_dropping_tests_with_barriers_canonical_standardGaussian_of_capacity_range
       hP_ne hcapacity_pos (lt_trans hcapacity_pos hcapacity_lt_groupA)
       hgroupB_pos
@@ -57327,8 +57102,7 @@ sweep.
 theorem paper_theorem1_dropping_tests_with_barriers_canonical_standardGaussian_source_model
     {Group Policy : Type*} [DecidableEq Group] [DecidableEq Policy]
     (M : GLM20Theorem1BarrierCanonicalSourceModel Group Policy) :
-    GLM20Theorem1BarrierCanonicalSourceModelConclusion M := by
-  exact
+    GLM20Theorem1BarrierCanonicalSourceModelConclusion M :=
     paper_theorem1_dropping_tests_with_barriers_canonical_standardGaussian_of_population_access_bounds
       (Pfull := M.Pfull) (Psub := M.Psub) (groupA := M.groupA)
       (groupB := M.groupB) (diversitySub := M.diversitySub)
@@ -57355,8 +57129,7 @@ structure GLM20IndividualFairnessTailCertificate
 theorem paper_lemma2_individual_fairness_gap_decreases_of_certificate
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20IndividualFairnessTailCertificate S) :
-    C.individualFairnessGapEventuallyDecreases := by
-  exact C.individualFairnessGapEventuallyDecreases_holds
+    C.individualFairnessGapEventuallyDecreases :=  C.individualFairnessGapEventuallyDecreases_holds
 
 /-- Certificate for Theorem 1's access-barrier threshold characterizations. -/
 structure GLM20DroppingTestsWithBarriersCertificate
@@ -57373,8 +57146,8 @@ theorem paper_theorem1_dropping_tests_with_barriers_of_certificate
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20DroppingTestsWithBarriersCertificate S) :
     C.diversityThresholdCharacterization ∧
-      C.academicMeritThresholdCharacterization := by
-  exact ⟨C.diversityThresholdCharacterization_holds,
+      C.academicMeritThresholdCharacterization :=
+   ⟨C.diversityThresholdCharacterization_holds,
     C.academicMeritThresholdCharacterization_holds⟩
 
 /-- Certificate for Theorem 2's no-barrier comparison. -/
@@ -57393,8 +57166,8 @@ theorem paper_theorem2_dropping_tests_without_barriers_of_certificate
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20DroppingTestsWithoutBarriersCertificate S) :
     C.diversityComparison ∧ C.individualFairnessThresholds ∧
-      C.academicMeritDecreasesForBothGroups := by
-  exact ⟨C.diversityComparison_holds, C.individualFairnessThresholds_holds,
+      C.academicMeritDecreasesForBothGroups :=
+   ⟨C.diversityComparison_holds, C.individualFairnessThresholds_holds,
     C.academicMeritDecreasesForBothGroups_holds⟩
 
 /-- Certificate for Lemma 3's unique test-based strategic equilibrium. -/
@@ -57411,8 +57184,7 @@ theorem paper_lemma3_unique_equilibrium_full_policy_of_certificate
     {Student Action SchoolPolicy : Type*}
     {E : GLM20StrategicEquilibriumData Student Action SchoolPolicy}
     (C : GLM20UniqueFullPolicyEquilibriumCertificate E) :
-    C.uniqueEquilibriumUnderFullPolicy ∧ C.thresholdForm := by
-  exact ⟨C.uniqueEquilibriumUnderFullPolicy_holds, C.thresholdForm_holds⟩
+    C.uniqueEquilibriumUnderFullPolicy ∧ C.thresholdForm :=  ⟨C.uniqueEquilibriumUnderFullPolicy_holds, C.thresholdForm_holds⟩
 
 /-- Certificate for Proposition 2's two-school equilibrium characterization. -/
 structure GLM20TwoSchoolEquilibriumCertificate
@@ -57428,8 +57200,7 @@ theorem paper_proposition2_unique_two_school_equilibrium_of_certificate
     {Group Policy School Equilibrium : Type*}
     {S : GLM20StrategicPolicySurface Group Policy School Equilibrium}
     (C : GLM20TwoSchoolEquilibriumCertificate S) :
-    C.uniqueTwoSchoolEquilibrium ∧ C.equilibriumProperties := by
-  exact ⟨C.uniqueTwoSchoolEquilibrium_holds, C.equilibriumProperties_holds⟩
+    C.uniqueTwoSchoolEquilibrium ∧ C.equilibriumProperties :=  ⟨C.uniqueTwoSchoolEquilibrium_holds, C.equilibriumProperties_holds⟩
 
 /-- Certificate for Proposition 3's full-policy equilibrium consequences. -/
 structure GLM20FullPolicyEquilibriumConsequencesCertificate
@@ -57448,8 +57219,8 @@ theorem paper_proposition3_equilibrium_under_full_policy_of_certificate
     {S : GLM20StrategicPolicySurface Group Policy School Equilibrium}
     (C : GLM20FullPolicyEquilibriumConsequencesCertificate S) :
     C.equilibriumUnderFullPolicyCharacterization ∧
-      C.academicMeritAndDiversityConsequences := by
-  exact ⟨C.equilibriumUnderFullPolicyCharacterization_holds,
+      C.academicMeritAndDiversityConsequences :=
+   ⟨C.equilibriumUnderFullPolicyCharacterization_holds,
     C.academicMeritAndDiversityConsequences_holds⟩
 
 /-- Certificate for Theorem 3's strategic two-school policy-pair conditions. -/
@@ -57470,8 +57241,8 @@ theorem paper_theorem3_two_school_academic_merit_of_certificate
     {S : GLM20StrategicPolicySurface Group Policy School Equilibrium}
     (C : GLM20TwoSchoolAcademicMeritCertificate S) :
     C.subFullEquilibriumIff ∧ C.fullSubEquilibriumIff ∧
-      C.fullFullEquilibriumSufficientConditions := by
-  exact ⟨C.subFullEquilibriumIff_holds, C.fullSubEquilibriumIff_holds,
+      C.fullFullEquilibriumSufficientConditions :=
+   ⟨C.subFullEquilibriumIff_holds, C.fullSubEquilibriumIff_holds,
     C.fullFullEquilibriumSufficientConditions_holds⟩
 
 /-- Certificate for Proposition 5's strategic academic-merit comparisons. -/
@@ -57486,8 +57257,7 @@ theorem paper_proposition5_strategic_academic_merit_of_certificate
     {Group Policy School Equilibrium : Type*}
     {S : GLM20StrategicPolicySurface Group Policy School Equilibrium}
     (C : GLM20StrategicAcademicMeritCertificate S) :
-    C.strategicAcademicMeritComparisons := by
-  exact C.strategicAcademicMeritComparisons_holds
+    C.strategicAcademicMeritComparisons :=  C.strategicAcademicMeritComparisons_holds
 
 /-- Certificate for Proposition 6's strategic diversity comparisons. -/
 structure GLM20StrategicDiversityCertificate
@@ -57501,8 +57271,7 @@ theorem paper_proposition6_strategic_diversity_of_certificate
     {Group Policy School Equilibrium : Type*}
     {S : GLM20StrategicPolicySurface Group Policy School Equilibrium}
     (C : GLM20StrategicDiversityCertificate S) :
-    C.strategicDiversityComparisons := by
-  exact C.strategicDiversityComparisons_holds
+    C.strategicDiversityComparisons :=  C.strategicDiversityComparisons_holds
 
 /-- Certificate for Appendix D's Gaussian analytic and equilibrium support lemmas. -/
 structure GLM20GaussianAnalyticSupportCertificate
@@ -57521,8 +57290,8 @@ theorem paper_appendixD_gaussian_support_of_certificate
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20GaussianAnalyticSupportCertificate S) :
     C.normalClosure ∧ C.truncatedNormalExpectation ∧
-      C.hazardRateMonotonicity ∧ C.thresholdComparisons := by
-  exact ⟨C.normalClosure_holds, C.truncatedNormalExpectation_holds,
+      C.hazardRateMonotonicity ∧ C.thresholdComparisons :=
+   ⟨C.normalClosure_holds, C.truncatedNormalExpectation_holds,
     C.hazardRateMonotonicity_holds, C.thresholdComparisons_holds⟩
 
 /-- Certificate for Appendix F's Blackwell/SSD support lemmas. -/
@@ -57539,8 +57308,8 @@ structure GLM20BlackwellSupportCertificate where
 theorem paper_appendixF_blackwell_ssd_support_of_certificate
     (C : GLM20BlackwellSupportCertificate) :
     C.sufficiencyEquivalentToSecondOrderDominance ∧
-      C.convexOrderMeanPreservation ∧ C.crossingLemma := by
-  exact ⟨C.sufficiencyEquivalentToSecondOrderDominance_holds,
+      C.convexOrderMeanPreservation ∧ C.crossingLemma :=
+   ⟨C.sufficiencyEquivalentToSecondOrderDominance_holds,
     C.convexOrderMeanPreservation_holds, C.crossingLemma_holds⟩
 
 /-- Certificate for Propositions 7--9's generalization and affirmative-action extensions. -/
@@ -57559,8 +57328,8 @@ theorem paper_propositions7_9_generalization_affirmative_action_of_certificate
     {Group Policy : Type*} {S : GLM20SourcePolicySurface Group Policy}
     (C : GLM20GeneralizationAndAffirmativeActionCertificate S) :
     C.generalizedFixedPolicyMetrics ∧ C.affirmativeActionFixedPolicy ∧
-      C.droppingTestsAffirmativeActionWithBarriers := by
-  exact ⟨C.generalizedFixedPolicyMetrics_holds,
+      C.droppingTestsAffirmativeActionWithBarriers :=
+   ⟨C.generalizedFixedPolicyMetrics_holds,
     C.affirmativeActionFixedPolicy_holds,
     C.droppingTestsAffirmativeActionWithBarriers_holds⟩
 
@@ -57576,13 +57345,11 @@ def glm20TwoSignalAdmissionsModel
 
 def glm20WithTestModel {Θ ΩTest ΩNo : Type*} [Fintype Θ] [DecidableEq Θ]
     [Fintype ΩTest] [DecidableEq ΩTest] [Fintype ΩNo] [DecidableEq ΩNo]
-    (m : GLM20Model Θ ΩTest ΩNo) : AdmissionsModel Θ ΩTest :=
-  {prior := m.prior, signalKernel := m.withTest}
+    (m : GLM20Model Θ ΩTest ΩNo) : AdmissionsModel Θ ΩTest := {prior := m.prior, signalKernel := m.withTest}
 
 def glm20WithoutTestModel {Θ ΩTest ΩNo : Type*} [Fintype Θ] [DecidableEq Θ]
     [Fintype ΩTest] [DecidableEq ΩTest] [Fintype ΩNo] [DecidableEq ΩNo]
-    (m : GLM20Model Θ ΩTest ΩNo) : AdmissionsModel Θ ΩNo :=
-  {prior := m.prior, signalKernel := m.withoutTest}
+    (m : GLM20Model Θ ΩTest ΩNo) : AdmissionsModel Θ ΩNo := {prior := m.prior, signalKernel := m.withoutTest}
 
 def glm20TestMass {Θ ΩTest ΩNo : Type*} [Fintype Θ] [DecidableEq Θ]
     [Fintype ΩTest] [DecidableEq ΩTest] [Fintype ΩNo] [DecidableEq ΩNo]
@@ -57596,8 +57363,7 @@ def glm20TestConditionalMass {Θ ΩTest ΩNo : Type*} [Fintype Θ] [DecidableEq 
 
 def glm20TestSelectionProb {Θ ΩTest ΩNo : Type*} [Fintype Θ] [DecidableEq Θ]
     [Fintype ΩTest] [DecidableEq ΩTest] [Fintype ΩNo] [DecidableEq ΩNo]
-    (m : GLM20Model Θ ΩTest ΩNo) (p : ΩTest → Prop) [DecidablePred p] : ℝ :=
-  admissionsSelectionProb (glm20WithTestModel m) p
+    (m : GLM20Model Θ ΩTest ΩNo) (p : ΩTest → Prop) [DecidablePred p] : ℝ := admissionsSelectionProb (glm20WithTestModel m) p
 
 def glm20NoTestMass {Θ ΩTest ΩNo : Type*} [Fintype Θ] [DecidableEq Θ]
     [Fintype ΩTest] [DecidableEq ΩTest] [Fintype ΩNo] [DecidableEq ΩNo]
@@ -57611,8 +57377,7 @@ def glm20NoTestConditionalMass {Θ ΩTest ΩNo : Type*} [Fintype Θ] [DecidableE
 
 def glm20NoTestSelectionProb {Θ ΩTest ΩNo : Type*} [Fintype Θ] [DecidableEq Θ]
     [Fintype ΩTest] [DecidableEq ΩTest] [Fintype ΩNo] [DecidableEq ΩNo]
-    (m : GLM20Model Θ ΩTest ΩNo) (p : ΩNo → Prop) [DecidablePred p] : ℝ :=
-  admissionsSelectionProb (glm20WithoutTestModel m) p
+    (m : GLM20Model Θ ΩTest ΩNo) (p : ΩNo → Prop) [DecidablePred p] : ℝ := admissionsSelectionProb (glm20WithoutTestModel m) p
 
 theorem glm20_with_test_universal_accept
     {Θ ΩTest ΩNo : Type*} [Fintype Θ] [DecidableEq Θ]
@@ -57642,8 +57407,8 @@ theorem glm20_with_test_mass_le_total_of_quality_nonneg
     [Fintype ΩTest] [DecidableEq ΩTest] [Fintype ΩNo] [DecidableEq ΩNo]
     (m : GLM20Model Θ ΩTest ΩNo) (p : ΩTest → Prop) [DecidablePred p]
     (hvalue : ∀ θ, 0 ≤ m.quality θ) :
-    glm20TestMass m p ≤ pmfExp m.prior m.quality := by
-  exact admissionsSelectedWelfareMass_le_total_of_value_nonneg (m := glm20WithTestModel m)
+    glm20TestMass m p ≤ pmfExp m.prior m.quality :=
+   admissionsSelectedWelfareMass_le_total_of_value_nonneg (m := glm20WithTestModel m)
     (p := p) (value := m.quality) hvalue
 
 theorem glm20_with_test_conditional_of_zero_selection
@@ -57747,8 +57512,8 @@ theorem glm20_no_test_mass_le_total_of_quality_nonneg
     [Fintype ΩTest] [DecidableEq ΩTest] [Fintype ΩNo] [DecidableEq ΩNo]
     (m : GLM20Model Θ ΩTest ΩNo) (p : ΩNo → Prop) [DecidablePred p]
     (hvalue : ∀ θ, 0 ≤ m.quality θ) :
-    glm20NoTestMass m p ≤ pmfExp m.prior m.quality := by
-  exact admissionsSelectedWelfareMass_le_total_of_value_nonneg (m := glm20WithoutTestModel m)
+    glm20NoTestMass m p ≤ pmfExp m.prior m.quality :=
+   admissionsSelectedWelfareMass_le_total_of_value_nonneg (m := glm20WithoutTestModel m)
     (p := p) (value := m.quality) hvalue
 
 theorem glm20_no_test_conditional_of_zero_selection

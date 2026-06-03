@@ -33,8 +33,7 @@ theorem paper_definition1_concreteMallowsSpec_atom_continuity
     {n : ℕ} (center : Ranking n) {θ : ℝ} (hθ : 0 < θ)
     (π : Ranking n) :
     EconCSLib.EpsilonContinuousAt
-      (fun θ' => (((concreteMallowsSpec center θ').law) π).toReal) θ :=
-  concreteMallowsSpec_atom_continuity center hθ π
+      (fun θ' => (((concreteMallowsSpec center θ').law) π).toReal) θ := concreteMallowsSpec_atom_continuity center hθ π
 
 /--
 Definition 1 / Mallows asymptotic first dominance.
@@ -55,8 +54,7 @@ theorem paper_definition1_concreteMallowsSpec_asymptotic_first_dominance
           AccuracyFamily.theorem1_f
             ({ dist := fun θ => (concreteMallowsSpec center θ).law,
                 value := value } : AccuracyFamily n)
-            hi θH :=
-  concreteMallowsSpec_asymptotic_first_dominance center value hvalue
+            hi θH := concreteMallowsSpec_asymptotic_first_dominance center value hvalue
 
 /--
 Appendix C / Definition 4, strict well-ordered noise.
@@ -66,8 +64,7 @@ Paper statement: a noise density `f` is well-ordered when for any `a > b` and
 -/
 theorem paper_definition4_strictlyWellOrderedNoise
     (f : ℝ → ℝ) (h : StrictlyWellOrderedNoise f) :
-    StrictlyWellOrderedNoise f :=
-  h
+    StrictlyWellOrderedNoise f := h
 
 /--
 Appendix C / Lemma 1, Gaussian part.
@@ -78,13 +75,11 @@ positive normalizing constant does not change the product inequality.
 -/
 theorem paper_lemma1_gaussian_strictlyWellOrdered
     {κ : ℝ} (hκ : 0 < κ) :
-    StrictlyWellOrderedNoise (gaussianNoiseKernel κ) :=
-  gaussianNoiseKernel_strictlyWellOrdered hκ
+    StrictlyWellOrderedNoise (gaussianNoiseKernel κ) := gaussianNoiseKernel_strictlyWellOrdered hκ
 
 /-- Gaussian kernel positivity, used by density-product mass comparisons. -/
 theorem paper_lemma1_gaussianNoiseKernel_pos (κ x : ℝ) :
-    0 < gaussianNoiseKernel κ x :=
-  gaussianNoiseKernel_pos κ x
+    0 < gaussianNoiseKernel κ x := gaussianNoiseKernel_pos κ x
 
 /--
 Appendix C / Lemma 1, Laplacian weak form.
@@ -95,13 +90,11 @@ the strict paper inequality can be equality for separated ordered pairs.
 -/
 theorem paper_lemma1_laplacian_weaklyWellOrdered
     {lam : ℝ} (hlam : 0 ≤ lam) :
-    WeaklyWellOrderedNoise (laplacianNoiseKernel lam) :=
-  laplacianNoiseKernel_weaklyWellOrdered hlam
+    WeaklyWellOrderedNoise (laplacianNoiseKernel lam) := laplacianNoiseKernel_weaklyWellOrdered hlam
 
 /-- Laplacian kernel positivity, used by density-product mass comparisons. -/
 theorem paper_lemma1_laplacianNoiseKernel_pos (lam x : ℝ) :
-    0 < laplacianNoiseKernel lam x :=
-  laplacianNoiseKernel_pos lam x
+    0 < laplacianNoiseKernel lam x := laplacianNoiseKernel_pos lam x
 
 /--
 Appendix C / Lemma 1, Laplacian strict-form check.
@@ -111,8 +104,7 @@ the stated pointwise condition: `a=10, b=9, c=1, d=0` gives equal products.
 -/
 theorem paper_lemma1_laplacian_not_strictlyWellOrdered
     (lam : ℝ) :
-    ¬ StrictlyWellOrderedNoise (laplacianNoiseKernel lam) :=
-  laplacianNoiseKernel_not_strictlyWellOrdered lam
+    ¬ StrictlyWellOrderedNoise (laplacianNoiseKernel lam) := laplacianNoiseKernel_not_strictlyWellOrdered lam
 
 /--
 Appendix C / Lemma 1, Laplacian strict overlap case.
@@ -136,8 +128,7 @@ Paper formula:
 `1 - (1/2 + λ(a - x_j)) / (2 exp(λ(a - x_j)) - 1)`.
 -/
 noncomputable abbrev paper_theorem7_laplacian_case2_closedForm
-    (lam xj a : ℝ) : ℝ :=
-  1 - theorem7LaplacianCase2TailRatio lam xj a
+    (lam xj a : ℝ) : ℝ := 1 - theorem7LaplacianCase2TailRatio lam xj a
 
 /--
 Appendix C / Theorem 7, case 3 closed form.
@@ -152,8 +143,7 @@ Lean writes this as the same expression under
 `z = λ(x_i-x_j)` and `r = exp(-λ(a-x_i))`.
 -/
 noncomputable abbrev paper_theorem7_laplacian_case3_closedForm
-    (lam xi xj a : ℝ) : ℝ :=
-  theorem7LaplacianCase3ConditionalProb lam xi xj a
+    (lam xi xj a : ℝ) : ℝ := theorem7LaplacianCase3ConditionalProb lam xi xj a
 
 /--
 Appendix C / Theorem 7, Laplacian conditional pairwise derivative.
@@ -226,38 +216,33 @@ Appendix C / Theorem 8, the C.9 bracket after defining
 `g(t) = (1 + erf(t)) / exp(-t^2)`.
 -/
 noncomputable abbrev paper_theorem8_gaussian_c9_bracket (g : ℝ → ℝ)
-    (δ t : ℝ) : ℝ :=
-  theorem8GaussianC9Bracket g δ t
+    (δ t : ℝ) : ℝ := theorem8GaussianC9Bracket g δ t
 
 /--
 Appendix C / Theorem 8, paper definition
 `g(t) = (1 + erf(t)) / exp(-t^2)`.
 -/
-noncomputable abbrev paper_theorem8_gaussian_g (erf : ℝ → ℝ) (t : ℝ) : ℝ :=
-  theorem8GaussianG erf t
+noncomputable abbrev paper_theorem8_gaussian_g (erf : ℝ → ℝ) (t : ℝ) : ℝ := theorem8GaussianG erf t
 
 /--
 Appendix C / Theorem 8, paper's concrete error-function normalization
 `erf(t) = (2 / sqrt(pi)) * ∫_0^t exp(-x^2) dx`.
 -/
-noncomputable abbrev paper_theorem8_erf (t : ℝ) : ℝ :=
-  theorem8Erf t
+noncomputable abbrev paper_theorem8_erf (t : ℝ) : ℝ := theorem8Erf t
 
 /--
 Appendix C / Theorem 8, derivative of the concrete `erf` interval integral.
 -/
 theorem paper_theorem8_erf_hasDerivAt (t : ℝ) :
     HasDerivAt paper_theorem8_erf
-      ((2 / Real.sqrt Real.pi) * Real.exp (-(t ^ 2))) t :=
-  theorem8Erf_hasDerivAt t
+      ((2 / Real.sqrt Real.pi) * Real.exp (-(t ^ 2))) t := theorem8Erf_hasDerivAt t
 
 /--
 Appendix C / Theorem 8, left Gaussian tail in terms of the concrete `erf`.
 -/
 theorem paper_theorem8_gaussian_integral_Iic_eq_erf (t : ℝ) :
     (∫ x : ℝ in Set.Iic t, Real.exp (-(x ^ 2))) =
-      Real.sqrt Real.pi / 2 * (1 + paper_theorem8_erf t) :=
-  theorem8Gaussian_integral_Iic_eq_erf t
+      Real.sqrt Real.pi / 2 * (1 + paper_theorem8_erf t) := theorem8Gaussian_integral_Iic_eq_erf t
 
 /--
 Appendix C / Theorem 8, left-tail limit of the concrete `erf`:
@@ -265,21 +250,18 @@ Appendix C / Theorem 8, left-tail limit of the concrete `erf`:
 -/
 theorem paper_theorem8_erf_tendsto_one_add_atBot_zero :
     Filter.Tendsto (fun t => 1 + paper_theorem8_erf t)
-      Filter.atBot (nhds 0) :=
-  theorem8Erf_tendsto_one_add_atBot_zero
+      Filter.atBot (nhds 0) := theorem8Erf_tendsto_one_add_atBot_zero
 
 /--
 Appendix C / Theorem 8, positivity of `1 + erf(t)` for the concrete `erf`.
 -/
 theorem paper_theorem8_erf_one_add_pos (t : ℝ) :
-    0 < 1 + paper_theorem8_erf t :=
-  theorem8Erf_one_add_pos t
+    0 < 1 + paper_theorem8_erf t := theorem8Erf_one_add_pos t
 
 /--
 Appendix C / Theorem 8, monotonicity of the concrete `erf` interval integral.
 -/
-theorem paper_theorem8_erf_strictMono : StrictMono paper_theorem8_erf :=
-  theorem8Erf_strictMono
+theorem paper_theorem8_erf_strictMono : StrictMono paper_theorem8_erf := theorem8Erf_strictMono
 
 /--
 Appendix C / Theorem 8, boundedness of the shifted concrete `erf` factor on
@@ -287,24 +269,21 @@ the left half-line used by `J(t)`.
 -/
 theorem paper_theorem8_erf_boundedOn_left_shift (δ : ℝ) :
     ∀ x ∈ Set.Iic (0 : ℝ),
-      ‖paper_theorem8_erf (x + δ)‖ ≤ max 1 ‖paper_theorem8_erf δ‖ :=
-  theorem8Erf_boundedOn_left_shift δ
+      ‖paper_theorem8_erf (x + δ)‖ ≤ max 1 ‖paper_theorem8_erf δ‖ := theorem8Erf_boundedOn_left_shift δ
 
 /--
 Appendix C / Theorem 8, shifted left-tail limit of the concrete `erf`.
 -/
 theorem paper_theorem8_erf_tendsto_one_add_atBot_zero_shift (δ : ℝ) :
     Filter.Tendsto (fun t => 1 + paper_theorem8_erf (t + δ))
-      Filter.atBot (nhds 0) :=
-  theorem8Erf_tendsto_one_add_atBot_zero_shift δ
+      Filter.atBot (nhds 0) := theorem8Erf_tendsto_one_add_atBot_zero_shift δ
 
 /--
 Appendix C / Theorem 8, rational term in equation (C.6), before subtracting
 `1 + erf(t)` and the integral term.
 -/
 noncomputable abbrev paper_theorem8_gaussian_c6_rational_term
-    (erf : ℝ → ℝ) (δ t : ℝ) : ℝ :=
-  theorem8GaussianC6RationalTerm erf δ t
+    (erf : ℝ → ℝ) (δ t : ℝ) : ℝ := theorem8GaussianC6RationalTerm erf δ t
 
 /--
 Appendix C / Theorem 8, equation (C.7): for the concrete `erf`, the C.6
@@ -314,16 +293,14 @@ theorem paper_theorem8_gaussian_c6_rational_term_tendsto_atBot_zero
     (δ : ℝ) :
     Filter.Tendsto
       (fun t => paper_theorem8_gaussian_c6_rational_term paper_theorem8_erf δ t)
-      Filter.atBot (nhds 0) :=
-  theorem8GaussianC6RationalTerm_tendsto_atBot_zero_concrete δ
+      Filter.atBot (nhds 0) := theorem8GaussianC6RationalTerm_tendsto_atBot_zero_concrete δ
 
 /--
 Appendix C / Theorem 8, paper integral
 `J(t)=∫_{-∞}^t exp(-x^2) erf(x+δ) dx`.
 -/
 noncomputable abbrev paper_theorem8_gaussian_j
-    (erf : ℝ → ℝ) (δ t : ℝ) : ℝ :=
-  theorem8GaussianJ erf δ t
+    (erf : ℝ → ℝ) (δ t : ℝ) : ℝ := theorem8GaussianJ erf δ t
 
 /--
 Appendix C / Theorem 8, the `J(t)` tail limit from integrability of its
@@ -336,8 +313,7 @@ theorem paper_theorem8_gaussian_j_tendsto_atBot_zero_of_integrable
         (fun x : ℝ => Real.exp (-(x ^ 2)) * erf (x + δ))
         (Set.Iic (0 : ℝ))) :
     Filter.Tendsto (paper_theorem8_gaussian_j erf δ)
-      Filter.atBot (nhds 0) :=
-  theorem8GaussianJ_tendsto_atBot_zero_of_integrableOn hJ_integrable
+      Filter.atBot (nhds 0) := theorem8GaussianJ_tendsto_atBot_zero_of_integrableOn hJ_integrable
 
 /--
 Appendix C / Theorem 8, integrability of the concrete `J` integrand on the
@@ -346,8 +322,7 @@ left half-line.
 theorem paper_theorem8_gaussian_j_integrableOn_concrete (δ : ℝ) :
     IntegrableOn
       (fun x : ℝ => Real.exp (-(x ^ 2)) * paper_theorem8_erf (x + δ))
-      (Set.Iic (0 : ℝ)) :=
-  theorem8GaussianJ_integrableOn_concrete δ
+      (Set.Iic (0 : ℝ)) := theorem8GaussianJ_integrableOn_concrete δ
 
 /--
 Appendix C / Theorem 8, integrability of the concrete `J` integrand on any
@@ -356,16 +331,14 @@ left half-line.
 theorem paper_theorem8_gaussian_j_integrableOn_Iic_concrete (δ a : ℝ) :
     IntegrableOn
       (fun x : ℝ => Real.exp (-(x ^ 2)) * paper_theorem8_erf (x + δ))
-      (Set.Iic a) :=
-  theorem8GaussianJ_integrableOn_Iic_concrete δ a
+      (Set.Iic a) := theorem8GaussianJ_integrableOn_Iic_concrete δ a
 
 /--
 Appendix C / Theorem 8, derivative of the concrete `J(t)` integral.
 -/
 theorem paper_theorem8_gaussian_j_hasDerivAt_concrete (δ t : ℝ) :
     HasDerivAt (paper_theorem8_gaussian_j paper_theorem8_erf δ)
-      (Real.exp (-(t ^ 2)) * paper_theorem8_erf (t + δ)) t :=
-  theorem8GaussianJ_hasDerivAt_concrete δ t
+      (Real.exp (-(t ^ 2)) * paper_theorem8_erf (t + δ)) t := theorem8GaussianJ_hasDerivAt_concrete δ t
 
 /--
 Appendix C / Theorem 8, left-hand side of equation (C.6).
@@ -374,24 +347,21 @@ The argument `J` is the paper's integral
 `J(t) = ∫_{-∞}^t exp(-x^2) erf(x + δ) dx`.
 -/
 noncomputable abbrev paper_theorem8_gaussian_c6_lhs
-    (erf J : ℝ → ℝ) (δ t : ℝ) : ℝ :=
-  theorem8GaussianC6LHS erf J δ t
+    (erf J : ℝ → ℝ) (δ t : ℝ) : ℝ := theorem8GaussianC6LHS erf J δ t
 
 /--
 Appendix C / Theorem 8, positive prefactor factored out of the derivative in
 equation (C.8).
 -/
 noncomputable abbrev paper_theorem8_gaussian_c8_positive_factor
-    (erf : ℝ → ℝ) (δ t : ℝ) : ℝ :=
-  theorem8GaussianC8PositiveFactor erf δ t
+    (erf : ℝ → ℝ) (δ t : ℝ) : ℝ := theorem8GaussianC8PositiveFactor erf δ t
 
 /--
 Appendix C / Theorem 8, derivative from equation (C.8), after differentiating
 the explicit C.6 formula and before factoring into the C.8 prefactor and C.9
 bracket.
 -/
-noncomputable abbrev paper_theorem8_gaussian_c8_derivative (δ t : ℝ) : ℝ :=
-  theorem8GaussianC8Derivative δ t
+noncomputable abbrev paper_theorem8_gaussian_c8_derivative (δ t : ℝ) : ℝ := theorem8GaussianC8Derivative δ t
 
 /--
 Appendix C / Theorem 8, concrete C.6 left-hand side has the derivative shown
@@ -403,8 +373,7 @@ theorem paper_theorem8_gaussian_c6_lhs_hasDerivAt_concrete_c8
       (fun u =>
         paper_theorem8_gaussian_c6_lhs paper_theorem8_erf
           (paper_theorem8_gaussian_j paper_theorem8_erf δ) δ u)
-      (paper_theorem8_gaussian_c8_derivative δ t) t :=
-  theorem8GaussianC6LHS_hasDerivAt_concrete_C8 δ t
+      (paper_theorem8_gaussian_c8_derivative δ t) t := theorem8GaussianC6LHS_hasDerivAt_concrete_C8 δ t
 
 /--
 Appendix C / Theorem 8, equation (C.8) factors as the positive C.8 prefactor
@@ -416,31 +385,26 @@ theorem paper_theorem8_gaussian_c8_derivative_factorization
     paper_theorem8_gaussian_c8_derivative δ t =
       paper_theorem8_gaussian_c8_positive_factor paper_theorem8_erf δ t *
         paper_theorem8_gaussian_c9_bracket
-          (paper_theorem8_gaussian_g paper_theorem8_erf) δ t :=
-  theorem8GaussianC8Derivative_factorization δ t
+          (paper_theorem8_gaussian_g paper_theorem8_erf) δ t := theorem8GaussianC8Derivative_factorization δ t
 
 /--
 Appendix C / Theorem 8, Mills ratio as used in the paper:
 `R(t)=exp(t^2/2)∫_t^∞ exp(-x^2/2)dx`.
 -/
-noncomputable abbrev paper_theorem8_mills_ratio (t : ℝ) : ℝ :=
-  theorem8MillsRatio t
+noncomputable abbrev paper_theorem8_mills_ratio (t : ℝ) : ℝ := theorem8MillsRatio t
 
 /-- Appendix C / Theorem 8, Gaussian tail integral inside Mills ratio. -/
-noncomputable abbrev paper_theorem8_mills_tail (t : ℝ) : ℝ :=
-  theorem8MillsTail t
+noncomputable abbrev paper_theorem8_mills_tail (t : ℝ) : ℝ := theorem8MillsTail t
 
 /-- Appendix C / Theorem 8, derivative of the Mills-ratio Gaussian tail. -/
 theorem paper_theorem8_mills_tail_hasDerivAt (t : ℝ) :
     HasDerivAt paper_theorem8_mills_tail
-      (-(Real.exp (-(t ^ 2) / 2))) t :=
-  theorem8MillsTail_hasDerivAt t
+      (-(Real.exp (-(t ^ 2) / 2))) t := theorem8MillsTail_hasDerivAt t
 
 /-- Appendix C / Theorem 8, derivative of the concrete Mills ratio. -/
 theorem paper_theorem8_mills_ratio_hasDerivAt (t : ℝ) :
     HasDerivAt paper_theorem8_mills_ratio
-      (t * paper_theorem8_mills_ratio t - 1) t :=
-  theorem8MillsRatio_hasDerivAt t
+      (t * paper_theorem8_mills_ratio t - 1) t := theorem8MillsRatio_hasDerivAt t
 
 /--
 Appendix C / Theorem 8, derivative of the Mills-ratio derivative expression:
@@ -449,8 +413,7 @@ Appendix C / Theorem 8, derivative of the Mills-ratio derivative expression:
 theorem paper_theorem8_mills_ratio_derivExpr_hasDerivAt (t : ℝ) :
     HasDerivAt
       (fun u => u * paper_theorem8_mills_ratio u - 1)
-      (((t ^ 2 + 1) * paper_theorem8_mills_ratio t) - t) t :=
-  theorem8MillsRatio_derivExpr_hasDerivAt t
+      (((t ^ 2 + 1) * paper_theorem8_mills_ratio t) - t) t := theorem8MillsRatio_derivExpr_hasDerivAt t
 
 /--
 Appendix C / Theorem 8, the paper's concrete value relation between Mills ratio
@@ -459,8 +422,7 @@ and `g(t)`.
 theorem paper_theorem8_mills_ratio_value_relation (t : ℝ) :
     paper_theorem8_mills_ratio (-(Real.sqrt 2 * t)) =
       Real.sqrt (Real.pi / 2) *
-        paper_theorem8_gaussian_g paper_theorem8_erf t :=
-  theorem8MillsRatio_value_relation t
+        paper_theorem8_gaussian_g paper_theorem8_erf t := theorem8MillsRatio_value_relation t
 
 /--
 Appendix C / Theorem 8, change of variables in the Mills-ratio tail integral.
@@ -468,39 +430,33 @@ Appendix C / Theorem 8, change of variables in the Mills-ratio tail integral.
 theorem paper_theorem8_mills_ratio_tail_changeOfVariables (t : ℝ) :
     (∫ x : ℝ in Set.Ioi (-(Real.sqrt 2 * t)),
         Real.exp (-(x ^ 2) / 2)) =
-      Real.sqrt 2 * ∫ x : ℝ in Set.Iic t, Real.exp (-(x ^ 2)) :=
-  theorem8MillsRatio_tail_changeOfVariables t
+      Real.sqrt 2 * ∫ x : ℝ in Set.Iic t, Real.exp (-(x ^ 2)) := theorem8MillsRatio_tail_changeOfVariables t
 
 /-- Appendix C / Theorem 8, positivity of the concrete Mills ratio. -/
 theorem paper_theorem8_mills_ratio_pos (t : ℝ) :
-    0 < paper_theorem8_mills_ratio t :=
-  theorem8MillsRatio_pos t
+    0 < paper_theorem8_mills_ratio t := theorem8MillsRatio_pos t
 
 /--
 Appendix C / Theorem 8, external Mills-ratio input cited from Sampford:
 `d/dt (1 / R(t)) < 1`.
 -/
-abbrev paper_theorem8_sampford_mills_bound (R : ℝ → ℝ) : Prop :=
-  theorem8SampfordMillsBound R
+abbrev paper_theorem8_sampford_mills_bound (R : ℝ → ℝ) : Prop := theorem8SampfordMillsBound R
 
 /--
 Appendix C / Theorem 8, scalar Mills inequality equivalent to Sampford's
 derivative bound once `R' = tR - 1` is known.
 -/
-abbrev paper_theorem8_mills_quadratic_bound (R : ℝ → ℝ) : Prop :=
-  theorem8MillsQuadraticBound R
+abbrev paper_theorem8_mills_quadratic_bound (R : ℝ → ℝ) : Prop := theorem8MillsQuadraticBound R
 
 /--
 Appendix C / Theorem 8, Sampford's explicit lower comparison function
 `(sqrt(t^2+4)-t)/2`.
 -/
-noncomputable abbrev paper_theorem8_sampford_lower_comparison (t : ℝ) : ℝ :=
-  theorem8SampfordLowerComparison t
+noncomputable abbrev paper_theorem8_sampford_lower_comparison (t : ℝ) : ℝ := theorem8SampfordLowerComparison t
 
 /-- Appendix C / Theorem 8, positivity of Sampford's lower comparison. -/
 theorem paper_theorem8_sampford_lower_comparison_pos (t : ℝ) :
-    0 < paper_theorem8_sampford_lower_comparison t :=
-  theorem8SampfordLowerComparison_pos t
+    0 < paper_theorem8_sampford_lower_comparison t := theorem8SampfordLowerComparison_pos t
 
 /--
 Appendix C / Theorem 8, for nonnegative arguments Sampford's lower comparison
@@ -508,8 +464,7 @@ is bounded by `1`.
 -/
 theorem paper_theorem8_sampford_lower_comparison_le_one_of_nonneg
     {t : ℝ} (ht : 0 ≤ t) :
-    paper_theorem8_sampford_lower_comparison t ≤ 1 :=
-  theorem8SampfordLowerComparison_le_one_of_nonneg ht
+    paper_theorem8_sampford_lower_comparison t ≤ 1 := theorem8SampfordLowerComparison_le_one_of_nonneg ht
 
 /--
 Appendix C / Theorem 8, the comparison function solves
@@ -517,15 +472,13 @@ Appendix C / Theorem 8, the comparison function solves
 -/
 theorem paper_theorem8_sampford_lower_comparison_quadratic_eq (t : ℝ) :
     (paper_theorem8_sampford_lower_comparison t) ^ 2 +
-        t * paper_theorem8_sampford_lower_comparison t - 1 = 0 :=
-  theorem8SampfordLowerComparison_quadratic_eq t
+        t * paper_theorem8_sampford_lower_comparison t - 1 = 0 := theorem8SampfordLowerComparison_quadratic_eq t
 
 /--
 Appendix C / Theorem 8, the Sampford gap tends to zero at `+∞`.
 -/
 theorem paper_theorem8_sampford_gap_tendsto_atTop_zero :
-    Filter.Tendsto theorem8SampfordGap Filter.atTop (nhds 0) :=
-  theorem8SampfordGap_tendsto_atTop_zero
+    Filter.Tendsto theorem8SampfordGap Filter.atTop (nhds 0) := theorem8SampfordGap_tendsto_atTop_zero
 
 /--
 Appendix C / Theorem 8, Sampford's explicit lower comparison holds for the
@@ -534,8 +487,7 @@ concrete Gaussian Mills ratio.
 theorem paper_theorem8_sampford_lower_bound_for_concrete_mills_ratio :
     ∀ t,
       paper_theorem8_sampford_lower_comparison t <
-        paper_theorem8_mills_ratio t :=
-  theorem8SampfordLowerComparison_lt_millsRatio
+        paper_theorem8_mills_ratio t := theorem8SampfordLowerComparison_lt_millsRatio
 
 /--
 Appendix C / Theorem 8, Sampford's explicit lower bound implies the scalar
@@ -545,8 +497,7 @@ theorem paper_theorem8_mills_quadratic_bound_of_sampford_lower
     {R : ℝ → ℝ}
     (hRpos : ∀ t, 0 < R t)
     (hlower : ∀ t, paper_theorem8_sampford_lower_comparison t < R t) :
-    paper_theorem8_mills_quadratic_bound R :=
-  theorem8MillsQuadraticBound_of_sampford_lower hRpos hlower
+    paper_theorem8_mills_quadratic_bound R := theorem8MillsQuadraticBound_of_sampford_lower hRpos hlower
 
 /--
 Appendix C / Theorem 8, concrete Sampford-lower-bound reduction for the Mills
@@ -556,22 +507,19 @@ theorem paper_theorem8_mills_quadratic_bound_of_sampford_lower_concrete
     (hlower :
       ∀ t, paper_theorem8_sampford_lower_comparison t <
         paper_theorem8_mills_ratio t) :
-    paper_theorem8_mills_quadratic_bound paper_theorem8_mills_ratio :=
-  theorem8MillsQuadraticBound_of_sampford_lower_concrete hlower
+    paper_theorem8_mills_quadratic_bound paper_theorem8_mills_ratio := theorem8MillsQuadraticBound_of_sampford_lower_concrete hlower
 
 /--
 Appendix C / Theorem 8, concrete scalar Mills quadratic inequality.
 -/
 theorem paper_theorem8_mills_quadratic_bound_concrete :
-    paper_theorem8_mills_quadratic_bound paper_theorem8_mills_ratio :=
-  theorem8MillsQuadraticBound_concrete
+    paper_theorem8_mills_quadratic_bound paper_theorem8_mills_ratio := theorem8MillsQuadraticBound_concrete
 
 /--
 Appendix C / Theorem 8, log-convexity/determinant form of the remaining
 Mills-ratio inequality, `R R'' - (R')^2 > 0`.
 -/
-abbrev paper_theorem8_mills_determinant_bound (R : ℝ → ℝ) : Prop :=
-  theorem8MillsDeterminantBound R
+abbrev paper_theorem8_mills_determinant_bound (R : ℝ → ℝ) : Prop := theorem8MillsDeterminantBound R
 
 /--
 Appendix C / Theorem 8, the concrete determinant/log-convexity bound implies
@@ -580,8 +528,7 @@ the scalar quadratic Mills inequality used for Sampford.
 theorem paper_theorem8_mills_quadratic_bound_of_determinant
     (hdet :
       paper_theorem8_mills_determinant_bound paper_theorem8_mills_ratio) :
-    paper_theorem8_mills_quadratic_bound paper_theorem8_mills_ratio :=
-  theorem8MillsQuadraticBound_of_determinant hdet
+    paper_theorem8_mills_quadratic_bound paper_theorem8_mills_ratio := theorem8MillsQuadraticBound_of_determinant hdet
 
 /--
 Appendix C / Theorem 8, concrete Sampford reduction: after the Mills-ratio
@@ -590,15 +537,13 @@ the scalar quadratic Mills inequality.
 -/
 theorem paper_theorem8_sampford_mills_bound_of_quadratic
     (hquad : paper_theorem8_mills_quadratic_bound paper_theorem8_mills_ratio) :
-    paper_theorem8_sampford_mills_bound paper_theorem8_mills_ratio :=
-  theorem8SampfordMillsBound_of_quadratic hquad
+    paper_theorem8_sampford_mills_bound paper_theorem8_mills_ratio := theorem8SampfordMillsBound_of_quadratic hquad
 
 /--
 Appendix C / Theorem 8, concrete Sampford Mills-ratio derivative bound.
 -/
 theorem paper_theorem8_sampford_mills_bound_concrete :
-    paper_theorem8_sampford_mills_bound paper_theorem8_mills_ratio :=
-  theorem8SampfordMillsBound_concrete
+    paper_theorem8_sampford_mills_bound paper_theorem8_mills_ratio := theorem8SampfordMillsBound_concrete
 
 /--
 Appendix C / Theorem 8, concrete Sampford reduction from the
@@ -607,15 +552,13 @@ determinant/log-convexity form.
 theorem paper_theorem8_sampford_mills_bound_of_determinant
     (hdet :
       paper_theorem8_mills_determinant_bound paper_theorem8_mills_ratio) :
-    paper_theorem8_sampford_mills_bound paper_theorem8_mills_ratio :=
-  theorem8SampfordMillsBound_of_determinant hdet
+    paper_theorem8_sampford_mills_bound paper_theorem8_mills_ratio := theorem8SampfordMillsBound_of_determinant hdet
 
 /--
 Appendix C / Theorem 8, Mills-to-`g` relation used after the change of
 variables: `1 / g(t) = c * 1 / R(-q t)`.
 -/
-abbrev paper_theorem8_mills_to_g_relation (R g : ℝ → ℝ) (c q : ℝ) : Prop :=
-  theorem8MillsToGRelation R g c q
+abbrev paper_theorem8_mills_to_g_relation (R g : ℝ → ℝ) (c q : ℝ) : Prop := theorem8MillsToGRelation R g c q
 
 /--
 Appendix C / Theorem 8, Gaussian conditional pairwise derivative at the C.6
@@ -1048,8 +991,7 @@ after the paper's density/CDF integral calculation and the substitution
 `t = a - x_i`, `δ = x_i - x_j`.
 -/
 noncomputable abbrev paper_theorem8_gaussian_conditional_integral_ratio
-    (erf J : ℝ → ℝ) (δ t : ℝ) : ℝ :=
-  theorem8GaussianConditionalIntegralRatio erf J δ t
+    (erf J : ℝ → ℝ) (δ t : ℝ) : ℝ := theorem8GaussianConditionalIntegralRatio erf J δ t
 
 /--
 Appendix C / Theorem 8, the derivative of the concrete Gaussian conditional
@@ -1063,16 +1005,14 @@ theorem paper_theorem8_gaussian_conditional_integral_ratio_hasDerivAt_pos
         (fun u =>
           paper_theorem8_gaussian_conditional_integral_ratio paper_theorem8_erf
             (paper_theorem8_gaussian_j paper_theorem8_erf δ) δ u) d t ∧
-        0 < d :=
-  theorem8GaussianConditionalIntegralRatio_hasDerivAt_pos hδ t
+        0 < d := theorem8GaussianConditionalIntegralRatio_hasDerivAt_pos hδ t
 
 /--
 Appendix C / Theorem 8, Gaussian conditional integral ratio in the paper's
 original cutoff coordinate `a`.
 -/
 noncomputable abbrev paper_theorem8_gaussian_conditional_integral_ratio_at
-    (xi xj a : ℝ) : ℝ :=
-  theorem8GaussianConditionalIntegralRatioAt xi xj a
+    (xi xj a : ℝ) : ℝ := theorem8GaussianConditionalIntegralRatioAt xi xj a
 
 /--
 Appendix C / Theorem 8 at the Gaussian integral-ratio layer, in the paper's
@@ -1084,15 +1024,13 @@ theorem paper_theorem8_gaussian_conditional_integral_ratio_at_hasDerivAt_pos
       HasDerivAt
         (fun u => paper_theorem8_gaussian_conditional_integral_ratio_at xi xj u)
         d a ∧
-        0 < d :=
-  theorem8GaussianConditionalIntegralRatioAt_hasDerivAt_pos hx
+        0 < d := theorem8GaussianConditionalIntegralRatioAt_hasDerivAt_pos hx
 
 /--
 Appendix C / Theorem 8, Gaussian density in the paper's `σ = 1/sqrt 2`
 normalization.
 -/
-noncomputable abbrev paper_theorem8_gaussian_pdf (μ x : ℝ) : ℝ :=
-  theorem8GaussianPDF μ x
+noncomputable abbrev paper_theorem8_gaussian_pdf (μ x : ℝ) : ℝ := theorem8GaussianPDF μ x
 
 /--
 Appendix C / Theorem 8, the paper Gaussian density is Mathlib's real Gaussian
@@ -1100,14 +1038,12 @@ PDF with variance `1/2`.
 -/
 theorem paper_theorem8_gaussian_pdf_eq_gaussianPDFReal_half (μ x : ℝ) :
     paper_theorem8_gaussian_pdf μ x =
-      ProbabilityTheory.gaussianPDFReal μ (1 / 2 : ℝ≥0) x :=
-  theorem8GaussianPDF_eq_gaussianPDFReal_half μ x
+      ProbabilityTheory.gaussianPDFReal μ (1 / 2 : ℝ≥0) x := theorem8GaussianPDF_eq_gaussianPDFReal_half μ x
 
 /--
 Appendix C / Theorem 8, Gaussian CDF in the paper's normalization.
 -/
-noncomputable abbrev paper_theorem8_gaussian_cdf (μ a : ℝ) : ℝ :=
-  theorem8GaussianCDF μ a
+noncomputable abbrev paper_theorem8_gaussian_cdf (μ a : ℝ) : ℝ := theorem8GaussianCDF μ a
 
 /--
 Appendix C / Theorem 8, the paper CDF is the left integral of the paper
@@ -1115,8 +1051,7 @@ Gaussian density.
 -/
 theorem paper_theorem8_gaussian_pdf_integral_Iic_eq_cdf (μ a : ℝ) :
     (∫ x : ℝ in Set.Iic a, paper_theorem8_gaussian_pdf μ x) =
-      paper_theorem8_gaussian_cdf μ a :=
-  theorem8GaussianPDF_integral_Iic_eq_CDF μ a
+      paper_theorem8_gaussian_cdf μ a := theorem8GaussianPDF_integral_Iic_eq_CDF μ a
 
 /--
 Appendix C / Theorem 8, Mathlib's Gaussian measure at variance `1/2` has the
@@ -1124,8 +1059,7 @@ paper CDF as its left-half-line mass.
 -/
 theorem paper_theorem8_gaussianReal_Iic_eq_cdf (μ a : ℝ) :
     ProbabilityTheory.gaussianReal μ (1 / 2 : ℝ≥0) (Set.Iic a) =
-      ENNReal.ofReal (paper_theorem8_gaussian_cdf μ a) :=
-  theorem8GaussianReal_Iic_eq_CDF μ a
+      ENNReal.ofReal (paper_theorem8_gaussian_cdf μ a) := theorem8GaussianReal_Iic_eq_CDF μ a
 
 /--
 Appendix C / Theorem 8, the paper numerator integral after shifting to centered
@@ -1135,23 +1069,20 @@ theorem paper_theorem8_gaussian_integral_shift_split (xi xj a : ℝ) :
     (∫ x : ℝ in Set.Iic a,
         Real.exp (-((x - xi) ^ 2)) * (1 + paper_theorem8_erf (x - xj))) =
       Real.sqrt Real.pi / 2 * (1 + paper_theorem8_erf (a - xi)) +
-        paper_theorem8_gaussian_j paper_theorem8_erf (xi - xj) (a - xi) :=
-  theorem8Gaussian_integral_shift_split xi xj a
+        paper_theorem8_gaussian_j paper_theorem8_erf (xi - xj) (a - xi) := theorem8Gaussian_integral_shift_split xi xj a
 
 /--
 Appendix C / Theorem 8, the paper density/CDF conditional probability integral
 ratio before clearing constants.
 -/
 noncomputable abbrev paper_theorem8_gaussian_pdf_cdf_ratio_at
-    (xi xj a : ℝ) : ℝ :=
-  theorem8GaussianPDFCDFRatioAt xi xj a
+    (xi xj a : ℝ) : ℝ := theorem8GaussianPDFCDFRatioAt xi xj a
 
 /--
 Appendix C / Theorem 8, the same ratio after clearing the Gaussian constants.
 -/
 noncomputable abbrev paper_theorem8_gaussian_density_cdf_integral_ratio_at
-    (xi xj a : ℝ) : ℝ :=
-  theorem8GaussianDensityCDFIntegralRatioAt xi xj a
+    (xi xj a : ℝ) : ℝ := theorem8GaussianDensityCDFIntegralRatioAt xi xj a
 
 /--
 Appendix C / Theorem 8, clearing the Gaussian density/CDF constants in the
@@ -1160,8 +1091,7 @@ paper's integral ratio.
 theorem paper_theorem8_gaussian_pdf_cdf_ratio_at_eq_density_cdf
     (xi xj a : ℝ) :
     paper_theorem8_gaussian_pdf_cdf_ratio_at xi xj a =
-      paper_theorem8_gaussian_density_cdf_integral_ratio_at xi xj a :=
-  theorem8GaussianPDFCDFRatioAt_eq_densityCDF xi xj a
+      paper_theorem8_gaussian_density_cdf_integral_ratio_at xi xj a := theorem8GaussianPDFCDFRatioAt_eq_densityCDF xi xj a
 
 /--
 Appendix C / Theorem 8, the density/CDF integral ratio equals the `erf/J`
@@ -1170,8 +1100,7 @@ conditional integral ratio used for the C.5--C.6 derivative proof.
 theorem paper_theorem8_gaussian_density_cdf_integral_ratio_at_eq_conditional
     (xi xj a : ℝ) :
     paper_theorem8_gaussian_density_cdf_integral_ratio_at xi xj a =
-      paper_theorem8_gaussian_conditional_integral_ratio_at xi xj a :=
-  theorem8GaussianDensityCDFIntegralRatioAt_eq_conditional xi xj a
+      paper_theorem8_gaussian_conditional_integral_ratio_at xi xj a := theorem8GaussianDensityCDFIntegralRatioAt_eq_conditional xi xj a
 
 /--
 Appendix C / Theorem 8, the paper density/CDF integral ratio has strictly
@@ -1182,46 +1111,40 @@ theorem paper_theorem8_gaussian_pdf_cdf_ratio_at_hasDerivAt_pos
     ∃ d,
       HasDerivAt
         (fun u => paper_theorem8_gaussian_pdf_cdf_ratio_at xi xj u) d a ∧
-        0 < d :=
-  theorem8GaussianPDFCDFRatioAt_hasDerivAt_pos hx
+        0 < d := theorem8GaussianPDFCDFRatioAt_hasDerivAt_pos hx
 
 /--
 Appendix C / Theorem 8, canonical product measure for independent Gaussian
 scores with means `x_i`, `x_j` and variance `1/2`.
 -/
 noncomputable abbrev paper_theorem8_gaussian_pair_measure
-    (xi xj : ℝ) : Measure (ℝ × ℝ) :=
-  theorem8GaussianPairMeasure xi xj
+    (xi xj : ℝ) : Measure (ℝ × ℝ) := theorem8GaussianPairMeasure xi xj
 
 /--
 Appendix C / Theorem 8, product numerator event, stated with weak inequalities
 on null Gaussian boundaries.
 -/
-abbrev paper_theorem8_gaussian_pair_numerator_event (a : ℝ) : Set (ℝ × ℝ) :=
-  theorem8GaussianPairNumeratorEvent a
+abbrev paper_theorem8_gaussian_pair_numerator_event (a : ℝ) : Set (ℝ × ℝ) := theorem8GaussianPairNumeratorEvent a
 
 /--
 Appendix C / Theorem 8, product conditioning event, stated with weak
 inequalities on null Gaussian boundaries.
 -/
-abbrev paper_theorem8_gaussian_pair_denominator_event (a : ℝ) : Set (ℝ × ℝ) :=
-  theorem8GaussianPairDenominatorEvent a
+abbrev paper_theorem8_gaussian_pair_denominator_event (a : ℝ) : Set (ℝ × ℝ) := theorem8GaussianPairDenominatorEvent a
 
 /--
 Appendix C / Theorem 8, product numerator event in the paper's strict syntax:
 `X_i < a`, `X_j < X_i`.
 -/
 abbrev paper_theorem8_gaussian_pair_strict_numerator_event
-    (a : ℝ) : Set (ℝ × ℝ) :=
-  theorem8GaussianPairStrictNumeratorEvent a
+    (a : ℝ) : Set (ℝ × ℝ) := theorem8GaussianPairStrictNumeratorEvent a
 
 /--
 Appendix C / Theorem 8, product conditioning event in the paper's strict
 syntax: `X_i < a`, `X_j < a`.
 -/
 abbrev paper_theorem8_gaussian_pair_strict_denominator_event
-    (a : ℝ) : Set (ℝ × ℝ) :=
-  theorem8GaussianPairStrictDenominatorEvent a
+    (a : ℝ) : Set (ℝ × ℝ) := theorem8GaussianPairStrictDenominatorEvent a
 
 /--
 Appendix C / Theorem 8, no-atom erasure for a one-dimensional Gaussian cutoff:
@@ -1229,8 +1152,7 @@ strict and weak lower intervals have the same mass.
 -/
 theorem paper_theorem8_gaussianReal_Iio_eq_Iic (μ a : ℝ) :
     ProbabilityTheory.gaussianReal μ (1 / 2 : ℝ≥0) (Set.Iio a) =
-      ProbabilityTheory.gaussianReal μ (1 / 2 : ℝ≥0) (Set.Iic a) :=
-  theorem8GaussianReal_Iio_eq_Iic μ a
+      ProbabilityTheory.gaussianReal μ (1 / 2 : ℝ≥0) (Set.Iic a) := theorem8GaussianReal_Iio_eq_Iic μ a
 
 /--
 Appendix C / Theorem 8, Fubini/density bridge for the product numerator event.
@@ -1242,8 +1164,7 @@ theorem paper_theorem8_gaussian_pair_numerator_measure_eq_integral
       ENNReal.ofReal
         (∫ x : ℝ in Set.Iic a,
           paper_theorem8_gaussian_pdf xi x *
-          paper_theorem8_gaussian_cdf xj x) :=
-  theorem8GaussianPairNumerator_measure_eq_integral xi xj a
+          paper_theorem8_gaussian_cdf xj x) := theorem8GaussianPairNumerator_measure_eq_integral xi xj a
 
 /--
 Appendix C / Theorem 8, Fubini/density bridge for the strict paper-syntax
@@ -1256,8 +1177,7 @@ theorem paper_theorem8_gaussian_pair_strict_numerator_measure_eq_integral
       ENNReal.ofReal
         (∫ x : ℝ in Set.Iic a,
           paper_theorem8_gaussian_pdf xi x *
-            paper_theorem8_gaussian_cdf xj x) :=
-  theorem8GaussianPairStrictNumerator_measure_eq_integral xi xj a
+            paper_theorem8_gaussian_cdf xj x) := theorem8GaussianPairStrictNumerator_measure_eq_integral xi xj a
 
 /--
 Appendix C / Theorem 8, product-measure mass of the conditioning event.
@@ -1268,8 +1188,7 @@ theorem paper_theorem8_gaussian_pair_denominator_measure_eq
         (paper_theorem8_gaussian_pair_denominator_event a) =
       ENNReal.ofReal
         (paper_theorem8_gaussian_cdf xi a *
-          paper_theorem8_gaussian_cdf xj a) :=
-  theorem8GaussianPairDenominator_measure_eq xi xj a
+          paper_theorem8_gaussian_cdf xj a) := theorem8GaussianPairDenominator_measure_eq xi xj a
 
 /--
 Appendix C / Theorem 8, product-measure mass of the strict paper-syntax
@@ -1281,24 +1200,21 @@ theorem paper_theorem8_gaussian_pair_strict_denominator_measure_eq
         (paper_theorem8_gaussian_pair_strict_denominator_event a) =
       ENNReal.ofReal
         (paper_theorem8_gaussian_cdf xi a *
-          paper_theorem8_gaussian_cdf xj a) :=
-  theorem8GaussianPairStrictDenominator_measure_eq xi xj a
+          paper_theorem8_gaussian_cdf xj a) := theorem8GaussianPairStrictDenominator_measure_eq xi xj a
 
 /--
 Appendix C / Theorem 8, canonical product-probability conditional ratio for
 the Gaussian pair.
 -/
 noncomputable abbrev paper_theorem8_gaussian_product_conditional_ratio_at
-    (xi xj a : ℝ) : ℝ :=
-  theorem8GaussianProductConditionalRatioAt xi xj a
+    (xi xj a : ℝ) : ℝ := theorem8GaussianProductConditionalRatioAt xi xj a
 
 /--
 Appendix C / Theorem 8, canonical product-probability conditional ratio in the
 paper's strict event syntax.
 -/
 noncomputable abbrev paper_theorem8_gaussian_product_strict_conditional_ratio_at
-    (xi xj a : ℝ) : ℝ :=
-  theorem8GaussianProductStrictConditionalRatioAt xi xj a
+    (xi xj a : ℝ) : ℝ := theorem8GaussianProductStrictConditionalRatioAt xi xj a
 
 /--
 Appendix C / Theorem 8, the product-probability ratio equals the paper's
@@ -1307,8 +1223,7 @@ density/CDF ratio.
 theorem paper_theorem8_gaussian_product_conditional_ratio_at_eq_pdf_cdf
     (xi xj a : ℝ) :
     paper_theorem8_gaussian_product_conditional_ratio_at xi xj a =
-      paper_theorem8_gaussian_pdf_cdf_ratio_at xi xj a :=
-  theorem8GaussianProductConditionalRatioAt_eq_pdf_cdf xi xj a
+      paper_theorem8_gaussian_pdf_cdf_ratio_at xi xj a := theorem8GaussianProductConditionalRatioAt_eq_pdf_cdf xi xj a
 
 /--
 Appendix C / Theorem 8, the strict product-probability ratio equals the paper's
@@ -1317,8 +1232,7 @@ density/CDF ratio.
 theorem paper_theorem8_gaussian_product_strict_conditional_ratio_at_eq_pdf_cdf
     (xi xj a : ℝ) :
     paper_theorem8_gaussian_product_strict_conditional_ratio_at xi xj a =
-      paper_theorem8_gaussian_pdf_cdf_ratio_at xi xj a :=
-  theorem8GaussianProductStrictConditionalRatioAt_eq_pdf_cdf xi xj a
+      paper_theorem8_gaussian_pdf_cdf_ratio_at xi xj a := theorem8GaussianProductStrictConditionalRatioAt_eq_pdf_cdf xi xj a
 
 /--
 Appendix C / Theorem 8, canonical product-probability version of the Gaussian
@@ -1330,8 +1244,7 @@ theorem paper_theorem8_gaussian_product_conditional_ratio_at_hasDerivAt_pos
       HasDerivAt
         (fun u => paper_theorem8_gaussian_product_conditional_ratio_at xi xj u)
         d a ∧
-        0 < d :=
-  theorem8GaussianProductConditionalRatioAt_hasDerivAt_pos hx
+        0 < d := theorem8GaussianProductConditionalRatioAt_hasDerivAt_pos hx
 
 /--
 Appendix C / Theorem 8, strict paper-syntax product-probability version of the
@@ -1344,22 +1257,19 @@ theorem paper_theorem8_gaussian_product_strict_conditional_ratio_at_hasDerivAt_p
         (fun u =>
           paper_theorem8_gaussian_product_strict_conditional_ratio_at xi xj u)
         d a ∧
-        0 < d :=
-  theorem8GaussianProductStrictConditionalRatioAt_hasDerivAt_pos hx
+        0 < d := theorem8GaussianProductStrictConditionalRatioAt_hasDerivAt_pos hx
 
 /--
 Appendix C / Theorem 8, variance parameter corresponding to Gaussian standard
 deviation `σ`.
 -/
-abbrev paper_theorem8_gaussian_variance_from_std (σ : ℝ) : ℝ≥0 :=
-  theorem8GaussianVarianceFromStd σ
+abbrev paper_theorem8_gaussian_variance_from_std (σ : ℝ) : ℝ≥0 := theorem8GaussianVarianceFromStd σ
 
 /--
 Appendix C / Theorem 8, positive scale used by the source proof's WLOG
 normalization from arbitrary standard deviation `σ` to `1 / sqrt 2`.
 -/
-noncomputable abbrev paper_theorem8_gaussian_canonical_scale (σ : ℝ) : ℝ :=
-  theorem8GaussianCanonicalScale σ
+noncomputable abbrev paper_theorem8_gaussian_canonical_scale (σ : ℝ) : ℝ := theorem8GaussianCanonicalScale σ
 
 /--
 Appendix C / Theorem 8, Mathlib Gaussian scaling theorem specialized to the
@@ -1371,16 +1281,14 @@ theorem paper_theorem8_gaussianReal_map_canonical_scale
         (paper_theorem8_gaussian_variance_from_std σ)).map
         (fun x => paper_theorem8_gaussian_canonical_scale σ * x) =
       ProbabilityTheory.gaussianReal
-        (paper_theorem8_gaussian_canonical_scale σ * μ) (1 / 2 : ℝ≥0) :=
-  theorem8GaussianReal_map_canonicalScale hσ
+        (paper_theorem8_gaussian_canonical_scale σ * μ) (1 / 2 : ℝ≥0) := theorem8GaussianReal_map_canonicalScale hσ
 
 /--
 Appendix C / Theorem 8, product measure for independent Gaussian scores with
 arbitrary positive standard deviation `σ`.
 -/
 noncomputable abbrev paper_theorem8_gaussian_pair_measure_std
-    (σ xi xj : ℝ) : Measure (ℝ × ℝ) :=
-  theorem8GaussianPairMeasureStd σ xi xj
+    (σ xi xj : ℝ) : Measure (ℝ × ℝ) := theorem8GaussianPairMeasureStd σ xi xj
 
 /--
 Appendix C / Theorem 8, arbitrary-`σ` strict numerator mass equals the
@@ -1394,8 +1302,7 @@ theorem paper_theorem8_gaussian_pair_measure_std_strict_numerator_eq_scaled
         (paper_theorem8_gaussian_canonical_scale σ * xi)
         (paper_theorem8_gaussian_canonical_scale σ * xj)
         (paper_theorem8_gaussian_pair_strict_numerator_event
-          (paper_theorem8_gaussian_canonical_scale σ * a)) :=
-  theorem8GaussianPairMeasureStd_strict_numerator_eq_scaled hσ
+          (paper_theorem8_gaussian_canonical_scale σ * a)) := theorem8GaussianPairMeasureStd_strict_numerator_eq_scaled hσ
 
 /--
 Appendix C / Theorem 8, arbitrary-`σ` strict denominator mass equals the
@@ -1409,8 +1316,7 @@ theorem paper_theorem8_gaussian_pair_measure_std_strict_denominator_eq_scaled
         (paper_theorem8_gaussian_canonical_scale σ * xi)
         (paper_theorem8_gaussian_canonical_scale σ * xj)
         (paper_theorem8_gaussian_pair_strict_denominator_event
-          (paper_theorem8_gaussian_canonical_scale σ * a)) :=
-  theorem8GaussianPairMeasureStd_strict_denominator_eq_scaled hσ
+          (paper_theorem8_gaussian_canonical_scale σ * a)) := theorem8GaussianPairMeasureStd_strict_denominator_eq_scaled hσ
 
 /--
 Appendix C / Theorem 8, strict conditional probability ratio for independent
@@ -1418,8 +1324,7 @@ Gaussian scores with arbitrary positive standard deviation `σ`.
 -/
 noncomputable abbrev
     paper_theorem8_gaussian_product_strict_conditional_ratio_at_std
-    (σ xi xj a : ℝ) : ℝ :=
-  theorem8GaussianProductStrictConditionalRatioAtStd σ xi xj a
+    (σ xi xj a : ℝ) : ℝ := theorem8GaussianProductStrictConditionalRatioAtStd σ xi xj a
 
 /--
 Appendix C / Theorem 8, arbitrary-`σ` strict conditional probability ratio is
@@ -1431,8 +1336,7 @@ theorem paper_theorem8_gaussian_product_strict_conditional_ratio_at_std_eq_scale
       paper_theorem8_gaussian_product_strict_conditional_ratio_at
         (paper_theorem8_gaussian_canonical_scale σ * xi)
         (paper_theorem8_gaussian_canonical_scale σ * xj)
-        (paper_theorem8_gaussian_canonical_scale σ * a) :=
-  theorem8GaussianProductStrictConditionalRatioAtStd_eq_scaled hσ
+        (paper_theorem8_gaussian_canonical_scale σ * a) := theorem8GaussianProductStrictConditionalRatioAtStd_eq_scaled hσ
 
 /--
 Appendix C / Theorem 8, source-level strict Gaussian conditional derivative:
@@ -1447,8 +1351,7 @@ theorem paper_theorem8_gaussian_product_strict_conditional_ratio_at_std_hasDeriv
           paper_theorem8_gaussian_product_strict_conditional_ratio_at_std
             σ xi xj u)
         d a ∧
-        0 < d :=
-  theorem8GaussianProductStrictConditionalRatioAtStd_hasDerivAt_pos hσ hx
+        0 < d := theorem8GaussianProductStrictConditionalRatioAtStd_hasDerivAt_pos hσ hx
 
 /--
 Appendix C contraction map for one coordinate.
@@ -1456,8 +1359,7 @@ Appendix C contraction map for one coordinate.
 Paper notation: `r'ᵢ = xᵢ + (rᵢ - xᵢ) * θH / θA`.  Lean writes the contraction
 factor as `t`, with later lemmas assuming `0 ≤ t ≤ 1`.
 -/
-noncomputable abbrev paper_appendixC_contractedScore (t x r : ℝ) : ℝ :=
-  rumContractScore t x r
+noncomputable abbrev paper_appendixC_contractedScore (t x r : ℝ) : ℝ := rumContractScore t x r
 
 /-- Appendix C contraction cannot create inversions, two-candidate weak form. -/
 theorem paper_appendixC_contraction_preserves_weak_order
@@ -1465,8 +1367,7 @@ theorem paper_appendixC_contraction_preserves_weak_order
     (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
     (hx : xj ≤ xi) (hr : rj ≤ ri) :
     paper_appendixC_contractedScore t xj rj ≤
-      paper_appendixC_contractedScore t xi ri :=
-  rumContractScore_preserves_weak_order ht0 ht1 hx hr
+      paper_appendixC_contractedScore t xi ri := rumContractScore_preserves_weak_order ht0 ht1 hx hr
 
 /-- Appendix C contraction cannot create inversions, two-candidate strict form. -/
 theorem paper_appendixC_contraction_preserves_strict_order
@@ -1474,8 +1375,7 @@ theorem paper_appendixC_contraction_preserves_strict_order
     (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
     (hx : xj < xi) (hr : rj < ri) :
     paper_appendixC_contractedScore t xj rj <
-      paper_appendixC_contractedScore t xi ri :=
-  rumContractScore_preserves_strict_order ht0 ht1 hx hr
+      paper_appendixC_contractedScore t xi ri := rumContractScore_preserves_strict_order ht0 ht1 hx hr
 
 /-- Appendix C contraction top-first preservation for three candidates. -/
 theorem paper_appendixC_contraction_top_first_of_original_top_first
@@ -1541,8 +1441,7 @@ Appendix C / Lemma 3, pointwise density comparison under weak well-ordering.
 theorem paper_lemma3_swapi_density_le_of_weaklyWellOrdered
     {f : ℝ → ℝ} (hf : WeaklyWellOrderedNoise f)
     {x1 x2 r1 r2 : ℝ} (hx12 : x2 < x1) (hr12 : r1 < r2) :
-    f (r1 - x1) * f (r2 - x2) ≤ f (r2 - x1) * f (r1 - x2) :=
-  weaklyWellOrderedNoise_swap_middle_density_le hf hx12 hr12
+    f (r1 - x1) * f (r2 - x2) ≤ f (r2 - x1) * f (r1 - x2) := weaklyWellOrderedNoise_swap_middle_density_le hf hx12 hr12
 
 /--
 Appendix C / Lemma 3, strict pointwise density comparison under strict
@@ -1551,8 +1450,7 @@ well-ordering.
 theorem paper_lemma3_swapi_density_lt_of_strictlyWellOrdered
     {f : ℝ → ℝ} (hf : StrictlyWellOrderedNoise f)
     {x1 x2 r1 r2 : ℝ} (hx12 : x2 < x1) (hr12 : r1 < r2) :
-    f (r1 - x1) * f (r2 - x2) < f (r2 - x1) * f (r1 - x2) :=
-  strictlyWellOrderedNoise_swap_middle_density_lt hf hx12 hr12
+    f (r1 - x1) * f (r2 - x2) < f (r2 - x1) * f (r1 - x2) := strictlyWellOrderedNoise_swap_middle_density_lt hf hx12 hr12
 
 /-- Appendix C / pointwise density comparison for the `x₁`/`x₂` lambda swap. -/
 theorem paper_theorem6_lambda_swap12_density3_le_of_weaklyWellOrdered
@@ -1561,8 +1459,7 @@ theorem paper_theorem6_lambda_swap12_density3_le_of_weaklyWellOrdered
     (hctx : 0 ≤ f (r3 - x3))
     (hx12 : x2 < x1) (hr12 : r1 < r2) :
     f (r1 - x1) * f (r2 - x2) * f (r3 - x3) ≤
-      f (r2 - x1) * f (r1 - x2) * f (r3 - x3) :=
-  weaklyWellOrderedNoise_swap12_density3_le hf hctx hx12 hr12
+      f (r2 - x1) * f (r1 - x2) * f (r3 - x3) := weaklyWellOrderedNoise_swap12_density3_le hf hctx hx12 hr12
 
 /-- Appendix C / strict pointwise density comparison for the `x₁`/`x₂` lambda swap. -/
 theorem paper_theorem6_lambda_swap12_density3_lt_of_strictlyWellOrdered
@@ -1571,8 +1468,7 @@ theorem paper_theorem6_lambda_swap12_density3_lt_of_strictlyWellOrdered
     (hctx : 0 < f (r3 - x3))
     (hx12 : x2 < x1) (hr12 : r1 < r2) :
     f (r1 - x1) * f (r2 - x2) * f (r3 - x3) <
-      f (r2 - x1) * f (r1 - x2) * f (r3 - x3) :=
-  strictlyWellOrderedNoise_swap12_density3_lt hf hctx hx12 hr12
+      f (r2 - x1) * f (r1 - x2) * f (r3 - x3) := strictlyWellOrderedNoise_swap12_density3_lt hf hctx hx12 hr12
 
 /-- Appendix C / pointwise density comparison for the `x₂`/`x₃` lambda swap. -/
 theorem paper_theorem6_lambda_swap23_density3_le_of_weaklyWellOrdered
@@ -1581,8 +1477,7 @@ theorem paper_theorem6_lambda_swap23_density3_le_of_weaklyWellOrdered
     (hctx : 0 ≤ f (r1 - x1))
     (hx23 : x3 < x2) (hr23 : r2 < r3) :
     f (r1 - x1) * f (r2 - x2) * f (r3 - x3) ≤
-      f (r1 - x1) * f (r3 - x2) * f (r2 - x3) :=
-  weaklyWellOrderedNoise_swap23_density3_le hf hctx hx23 hr23
+      f (r1 - x1) * f (r3 - x2) * f (r2 - x3) := weaklyWellOrderedNoise_swap23_density3_le hf hctx hx23 hr23
 
 /-- Appendix C / strict pointwise density comparison for the `x₂`/`x₃` lambda swap. -/
 theorem paper_theorem6_lambda_swap23_density3_lt_of_strictlyWellOrdered
@@ -1591,8 +1486,7 @@ theorem paper_theorem6_lambda_swap23_density3_lt_of_strictlyWellOrdered
     (hctx : 0 < f (r1 - x1))
     (hx23 : x3 < x2) (hr23 : r2 < r3) :
     f (r1 - x1) * f (r2 - x2) * f (r3 - x3) <
-      f (r1 - x1) * f (r3 - x2) * f (r2 - x3) :=
-  strictlyWellOrderedNoise_swap23_density3_lt hf hctx hx23 hr23
+      f (r1 - x1) * f (r3 - x2) * f (r2 - x3) := strictlyWellOrderedNoise_swap23_density3_lt hf hctx hx23 hr23
 
 /--
 Appendix C / concrete continuous score space for three-candidate RUMs.
@@ -1616,8 +1510,7 @@ theorem paper_theorem6_scoreDensity_measurable
     {f : ℝ → ℝ} (hf : Measurable f) (x1 x2 x3 : ℝ) :
     Measurable
       (rum3ScoreDensityENN f x1 x2 x3
-        paper_theorem6_score1 paper_theorem6_score2 paper_theorem6_score3) :=
-  rum3ScoreDensityENN_measurable_scoreSpace hf x1 x2 x3
+        paper_theorem6_score1 paper_theorem6_score2 paper_theorem6_score3) := rum3ScoreDensityENN_measurable_scoreSpace hf x1 x2 x3
 
 /--
 Appendix C / normalization criterion for the continuous score-density law.
@@ -1670,24 +1563,20 @@ theorem paper_theorem6_scoreDensity_withDensity_measure_ne_zero_of_base_measure_
     base x1 x2 x3 r1 r2 r3 hD hpos hs hbase
 
 /-- Appendix C / `swapi` for `i = 2`, swapping score coordinates 1 and 2. -/
-abbrev paper_theorem6_scoreSwap12 : paper_theorem6_scoreSpace ≃ᵐ paper_theorem6_scoreSpace :=
-  rum3ScoreSwap12
+abbrev paper_theorem6_scoreSwap12 : paper_theorem6_scoreSpace ≃ᵐ paper_theorem6_scoreSpace := rum3ScoreSwap12
 
 /-- Appendix C / coordinate swap for candidates 2 and 3. -/
-abbrev paper_theorem6_scoreSwap23 : paper_theorem6_scoreSpace ≃ᵐ paper_theorem6_scoreSpace :=
-  rum3ScoreSwap23
+abbrev paper_theorem6_scoreSwap23 : paper_theorem6_scoreSpace ≃ᵐ paper_theorem6_scoreSpace := rum3ScoreSwap23
 
 /-- Appendix C / the `r₁`/`r₂` score swap preserves Lebesgue volume. -/
 theorem paper_theorem6_scoreSwap12_measurePreserving_volume :
     MeasurePreserving paper_theorem6_scoreSwap12
-      (volume : Measure paper_theorem6_scoreSpace) volume :=
-  rum3ScoreSwap12_measurePreserving_volume
+      (volume : Measure paper_theorem6_scoreSpace) volume := rum3ScoreSwap12_measurePreserving_volume
 
 /-- Appendix C / the `r₂`/`r₃` score swap preserves Lebesgue volume. -/
 theorem paper_theorem6_scoreSwap23_measurePreserving_volume :
     MeasurePreserving paper_theorem6_scoreSwap23
-      (volume : Measure paper_theorem6_scoreSpace) volume :=
-  rum3ScoreSwap23_measurePreserving_volume
+      (volume : Measure paper_theorem6_scoreSpace) volume := rum3ScoreSwap23_measurePreserving_volume
 
 /--
 Appendix C / continuous mass comparison from the `x₁`/`x₂` density formula.
@@ -1813,8 +1702,7 @@ ranking measure to a `PMF`.
 noncomputable abbrev paper_theorem6_rankingPMFOfMeasure
     {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (rank : Ω → Ranking 1) (hrank : Measurable rank) : PMF (Ranking 1) :=
-  rumRankingPMFOfMeasure μ rank hrank
+    (rank : Ω → Ranking 1) (hrank : Measurable rank) : PMF (Ranking 1) := rumRankingPMFOfMeasure μ rank hrank
 
 /--
 Appendix C / normalized continuous score-density ranking law.
@@ -1848,8 +1736,7 @@ theorem paper_theorem6_rankingPMF_eventProb
     (rank : Ω → Ranking 1) (hrank : Measurable rank)
     (p : Ranking 1 → Prop) [DecidablePred p] :
     pmfProb (paper_theorem6_rankingPMFOfMeasure μ rank hrank) p =
-      measureProb μ (fun ω => p (rank ω)) :=
-  rumRankingPMFOfMeasure_eventProb μ rank hrank p
+      measureProb μ (fun ω => p (rank ω)) := rumRankingPMFOfMeasure_eventProb μ rank hrank p
 
 /-- Appendix C / continuous-measure form of `λ₁`. -/
 theorem paper_theorem6_lambda1_rankingPMF_measure_form
@@ -1859,8 +1746,7 @@ theorem paper_theorem6_lambda1_rankingPMF_measure_form
     rum3Lambda1 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) =
       measureProb μ
         (fun ω => bestRemainingAfter (rank ω) (0 : Candidate 1) =
-          (1 : Candidate 1)) :=
-  rum3Lambda1_rumRankingPMFOfMeasure μ rank hrank
+          (1 : Candidate 1)) := rum3Lambda1_rumRankingPMFOfMeasure μ rank hrank
 
 /-- Appendix C / continuous-measure form of `λ₂`. -/
 theorem paper_theorem6_lambda2_rankingPMF_measure_form
@@ -1870,8 +1756,7 @@ theorem paper_theorem6_lambda2_rankingPMF_measure_form
     rum3Lambda2 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) =
       measureProb μ
         (fun ω => bestRemainingAfter (rank ω) (1 : Candidate 1) =
-          (0 : Candidate 1)) :=
-  rum3Lambda2_rumRankingPMFOfMeasure μ rank hrank
+          (0 : Candidate 1)) := rum3Lambda2_rumRankingPMFOfMeasure μ rank hrank
 
 /-- Appendix C / continuous-measure form of `λ₃`. -/
 theorem paper_theorem6_lambda3_rankingPMF_measure_form
@@ -1881,8 +1766,7 @@ theorem paper_theorem6_lambda3_rankingPMF_measure_form
     rum3Lambda3 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) =
       measureProb μ
         (fun ω => bestRemainingAfter (rank ω) (2 : Candidate 1) =
-          (0 : Candidate 1)) :=
-  rum3Lambda3_rumRankingPMFOfMeasure μ rank hrank
+          (0 : Candidate 1)) := rum3Lambda3_rumRankingPMFOfMeasure μ rank hrank
 
 /-- Appendix C / continuous-measure form of first-choice probabilities. -/
 theorem paper_theorem6_firstChoiceProb_rankingPMF_measure_form
@@ -1891,8 +1775,7 @@ theorem paper_theorem6_firstChoiceProb_rankingPMF_measure_form
     (rank : Ω → Ranking 1) (hrank : Measurable rank)
     (c : Candidate 1) :
     firstChoiceProb (paper_theorem6_rankingPMFOfMeasure μ rank hrank) c =
-      measureProb μ (fun ω => c = firstChoice (rank ω)) :=
-  firstChoiceProb_rumRankingPMFOfMeasure μ rank hrank c
+      measureProb μ (fun ω => c = firstChoice (rank ω)) := firstChoiceProb_rumRankingPMFOfMeasure μ rank hrank c
 
 /-- Appendix C / continuous-measure comparison proving the `x₂`/`x₃` lambda half-bound. -/
 theorem paper_theorem6_lambda1_wrong_lt_correct_of_measure
@@ -1906,8 +1789,7 @@ theorem paper_theorem6_lambda1_wrong_lt_correct_of_measure
           (1 : Candidate 1)}) :
     pmfProb (paper_theorem6_rankingPMFOfMeasure μ rank hrank)
         (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
-      rum3Lambda1 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) :=
-  rum3Lambda1_wrong_lt_correct_of_measure μ rank hrank hmeasure
+      rum3Lambda1 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) := rum3Lambda1_wrong_lt_correct_of_measure μ rank hrank hmeasure
 
 /-- Appendix C / continuous-measure comparison proving the `x₁`/`x₂` lambda half-bound. -/
 theorem paper_theorem6_lambda3_wrong_lt_correct_of_measure
@@ -1921,8 +1803,7 @@ theorem paper_theorem6_lambda3_wrong_lt_correct_of_measure
           (0 : Candidate 1)}) :
     pmfProb (paper_theorem6_rankingPMFOfMeasure μ rank hrank)
         (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
-      rum3Lambda3 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) :=
-  rum3Lambda3_wrong_lt_correct_of_measure μ rank hrank hmeasure
+      rum3Lambda3 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) := rum3Lambda3_wrong_lt_correct_of_measure μ rank hrank hmeasure
 
 /-- Appendix C / continuous-measure comparison proving `λ₁ < λ₂`. -/
 theorem paper_theorem6_lambda1_lt_lambda2_of_measure
@@ -1935,8 +1816,7 @@ theorem paper_theorem6_lambda1_lt_lambda2_of_measure
         μ {ω | bestRemainingAfter (rank ω) (1 : Candidate 1) =
           (0 : Candidate 1)}) :
     rum3Lambda1 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) <
-      rum3Lambda2 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) :=
-  rum3Lambda1_lt_lambda2_of_measure μ rank hrank hmeasure
+      rum3Lambda2 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) := rum3Lambda1_lt_lambda2_of_measure μ rank hrank hmeasure
 
 /--
 Appendix C / continuous-measure residual comparison proving `λ₁ < λ₂`.
@@ -1958,8 +1838,7 @@ theorem paper_theorem6_lambda1_lt_lambda2_of_cross_measure
           {ω | bestRemainingAfter (rank ω) (0 : Candidate 1) =
             (1 : Candidate 1)}ᶜ)) :
     rum3Lambda1 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) <
-      rum3Lambda2 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) :=
-  rum3Lambda1_lt_lambda2_of_cross_measure μ rank hrank hcross
+      rum3Lambda2 (paper_theorem6_rankingPMFOfMeasure μ rank hrank) := rum3Lambda1_lt_lambda2_of_cross_measure μ rank hrank hcross
 
 /--
 Appendix C / continuous-measure lambda certificate from the three continuous
@@ -2388,8 +2267,7 @@ theorem paper_lemma2_bottom_of_measure_coupling
       (2 : Candidate 1) = firstChoice (better ω) →
         (2 : Candidate 1) = firstChoice (worse ω)) :
     μ {ω | (2 : Candidate 1) = firstChoice (better ω)} ≤
-      μ {ω | (2 : Candidate 1) = firstChoice (worse ω)} :=
-  rum3_lemma2_bottom_of_measure_coupling μ better worse hbottomImp
+      μ {ω | (2 : Candidate 1) = firstChoice (worse ω)} := rum3_lemma2_bottom_of_measure_coupling μ better worse hbottomImp
 
 /--
 Appendix C / continuous Lemma 3 middle-candidate delta comparison from
@@ -2964,8 +2842,7 @@ theorem paper_theorem6_threeCandidate_prefersWeakerCompetition_of_certificate
     {μBetter μWorse : PMF (Ranking 1)} {value : Candidate 1 → ℝ}
     {x1 x2 x3 : ℝ}
     (cert : RUM3Theorem6Certificate μBetter μWorse value x1 x2 x3) :
-    Model.PrefersWeakerCompetition μBetter μWorse value :=
-  rum3_prefersWeakerCompetition_of_certificate cert
+    Model.PrefersWeakerCompetition μBetter μWorse value := rum3_prefersWeakerCompetition_of_certificate cert
 
 /--
 Appendix C / Theorem 6, certificate construction from paper sublemmas.
@@ -4238,8 +4115,7 @@ theorem paper_theorem6_lambdaCertificate_of_pairwise_facts
 Appendix C / lambda upper bound: every `λᵢ` is a probability.
 -/
 theorem paper_theorem6_lambda1_le_one (μ : PMF (Ranking 1)) :
-    rum3Lambda1 μ ≤ 1 :=
-  rum3Lambda1_le_one μ
+    rum3Lambda1 μ ≤ 1 := rum3Lambda1_le_one μ
 
 /--
 Appendix C / strict `λ₁ < 1` from positive support on the wrong remaining
@@ -4260,8 +4136,7 @@ Appendix C / strict `λ₁ < 1` from full support of the finite human ranking la
 theorem paper_theorem6_lambda1_lt_one_of_full_support
     (μ : PMF (Ranking 1))
     (hfull : ∀ π : Ranking 1, 0 < (μ π).toReal) :
-    rum3Lambda1 μ < 1 :=
-  rum3Lambda1_lt_one_of_full_support μ hfull
+    rum3Lambda1 μ < 1 := rum3Lambda1_lt_one_of_full_support μ hfull
 
 /--
 Appendix C / finite full-support bridge from realization preimages.
@@ -4273,8 +4148,7 @@ theorem paper_theorem6_fullSupport_of_sample_preimages
       (μ π).toReal = EconCSLib.pmfProb ν (fun ω => rank ω = π))
     (hsupport : ∀ π : Ranking 1,
       ∃ ω : Ω, rank ω = π ∧ 0 < (ν ω).toReal) :
-    ∀ π : Ranking 1, 0 < (μ π).toReal :=
-  rum3_fullSupport_of_sample_preimages μ ν rank hpreimage hsupport
+    ∀ π : Ranking 1, 0 < (μ π).toReal := rum3_fullSupport_of_sample_preimages μ ν rank hpreimage hsupport
 
 /--
 Appendix C / finite preimage bridge for realization events.
@@ -4305,8 +4179,7 @@ theorem paper_theorem6_map_atom_preimage
     {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
     (ν : PMF Ω) (rank : Ω → Ranking 1) (π : Ranking 1) :
     (((ν.map rank) π).toReal) =
-      EconCSLib.pmfProb ν (fun ω => rank ω = π) :=
-  EconCSLib.pmf_map_apply_toReal_eq_pmfProb_preimage ν rank π
+      EconCSLib.pmfProb ν (fun ω => rank ω = π) := EconCSLib.pmf_map_apply_toReal_eq_pmfProb_preimage ν rank π
 
 /--
 Appendix C / lambda certificate from pairwise facts plus support.
@@ -4332,8 +4205,7 @@ Appendix C / lambda complement identity for the `x₂` vs `x₃` subproblem.
 theorem paper_theorem6_lambda1_wrong_eq_one_sub (μ : PMF (Ranking 1)) :
     EconCSLib.pmfProb μ
         (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) =
-      1 - rum3Lambda1 μ :=
-  rum3Lambda1_wrong_eq_one_sub μ
+      1 - rum3Lambda1 μ := rum3Lambda1_wrong_eq_one_sub μ
 
 /--
 Appendix C / lambda complement identity for the `x₁` vs `x₂` subproblem.
@@ -4341,8 +4213,7 @@ Appendix C / lambda complement identity for the `x₁` vs `x₂` subproblem.
 theorem paper_theorem6_lambda3_wrong_eq_one_sub (μ : PMF (Ranking 1)) :
     EconCSLib.pmfProb μ
         (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) =
-      1 - rum3Lambda3 μ :=
-  rum3Lambda3_wrong_eq_one_sub μ
+      1 - rum3Lambda3 μ := rum3Lambda3_wrong_eq_one_sub μ
 
 /--
 Appendix C / pairwise correctness implies `λ₁ > 1/2`.
@@ -4353,8 +4224,7 @@ theorem paper_theorem6_lambda1_half_of_wrong_lt_correct
       EconCSLib.pmfProb μ
           (fun π => bestRemainingAfter π (0 : Candidate 1) = (2 : Candidate 1)) <
         rum3Lambda1 μ) :
-    (1 : ℝ) / 2 < rum3Lambda1 μ :=
-  rum3Lambda1_half_of_wrong_lt_correct hwrong
+    (1 : ℝ) / 2 < rum3Lambda1 μ := rum3Lambda1_half_of_wrong_lt_correct hwrong
 
 /--
 Appendix C / pairwise correctness implies `λ₃ > 1/2`.
@@ -4365,8 +4235,7 @@ theorem paper_theorem6_lambda3_half_of_wrong_lt_correct
       EconCSLib.pmfProb μ
           (fun π => bestRemainingAfter π (2 : Candidate 1) = (1 : Candidate 1)) <
         rum3Lambda3 μ) :
-    (1 : ℝ) / 2 < rum3Lambda3 μ :=
-  rum3Lambda3_half_of_wrong_lt_correct hwrong
+    (1 : ℝ) / 2 < rum3Lambda3 μ := rum3Lambda3_half_of_wrong_lt_correct hwrong
 
 /--
 Appendix C / lambda certificate from pairwise wrong-vs-correct comparisons.
@@ -6533,15 +6402,13 @@ first mover uses the noisier law μWorse rather than the more concentrated law
 theorem paper_definition3_prefersWeakerCompetition
     (n : ℕ) (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ)
     (h : Model.PrefersWeakerCompetition μBetter μWorse value) :
-    Model.PrefersWeakerCompetition μBetter μWorse value := by
-  exact h
+    Model.PrefersWeakerCompetition μBetter μWorse value :=  h
 
 /--
 Paper fixed-parameter hypotheses (Definitions 2 and 3).
 -/
 theorem paper_definition_hypotheses (n : ℕ) (M : Model n)
-    (h : Model.PaperHypotheses M) : Model.PaperHypotheses M := by
-  exact h
+    (h : Model.PaperHypotheses M) : Model.PaperHypotheses M :=  h
 
 /--
 Paper Definition 2 rewritten by first-choice decomposition.
@@ -6579,8 +6446,7 @@ candidates d by top-two pair probabilities.
 theorem paper_appendixE_firstChoiceGapWeight_eq_sum_firstSecondWeight
     {n : ℕ} (M : MallowsSpec n) (value : Candidate n → ℝ) (c : Candidate n) :
     M.firstChoiceGapWeight value c =
-      ∑ d : Candidate n, M.firstSecondWeight c d * (value c - value d) := by
-  exact M.firstChoiceGapWeight_eq_sum_firstSecondWeight value c
+      ∑ d : Candidate n, M.firstSecondWeight c d * (value c - value d) :=  M.firstChoiceGapWeight_eq_sum_firstSecondWeight value c
 
 /--
 Appendix E (pairwise regrouping): cleared independent-reranking numerator as
@@ -6591,8 +6457,7 @@ theorem paper_appendixE_independent_weight_sum_eq_pair_sum
     (∑ c : Candidate n,
       (M.partition - M.firstWeight c) * M.firstChoiceGapWeight value c) =
       ∑ c : Candidate n, ∑ d : Candidate n,
-        M.independentPairTerm value c d := by
-  exact M.independent_weight_sum_eq_pair_sum value
+        M.independentPairTerm value c d :=  M.independent_weight_sum_eq_pair_sum value
 
 /--
 Appendix E (pairwise swap): the (c,d)/(d,c) pair contribution factorizes into an
@@ -6601,8 +6466,7 @@ ordered-pair bracket.
 theorem paper_appendixE_independentPairTerm_add_swap
     {n : ℕ} (M : MallowsSpec n) (value : Candidate n → ℝ) (c d : Candidate n) :
     M.independentPairTerm value c d + M.independentPairTerm value d c =
-      M.independentPairBracket c d * (value c - value d) := by
-  exact M.independentPairTerm_add_swap value c d
+      M.independentPairBracket c d * (value c - value d) :=  M.independentPairTerm_add_swap value c d
 
 /--
 Appendix E (rank-factorized bracket sign): the closed-form Mallows top-fiber
@@ -6612,8 +6476,7 @@ theorem paper_appendixE_independentPairBracket_nonneg_of_rankFactorization
     {n : ℕ} (M : MallowsSpec n)
     (fac : M.RankFactorization) (hq_le_one : M.q ≤ 1)
     {c d : Candidate n} (hlt : rankOf M.center c < rankOf M.center d) :
-    0 ≤ M.independentPairBracket c d := by
-  exact M.independentPairBracket_nonneg_of_rankFactorization fac hq_le_one hlt
+    0 ≤ M.independentPairBracket c d :=  M.independentPairBracket_nonneg_of_rankFactorization fac hq_le_one hlt
 
 /--
 Appendix E (independent-reranking finite inequality): for at least three
@@ -6625,8 +6488,7 @@ theorem paper_appendixE_independent_weight_sum_pos_of_rankFactorization
     (fac : M.RankFactorization) (hn : 0 < n) (hq_lt_one : M.q < 1)
     (hvalue : StrictlyOrderedBy M.center value) :
     0 < ∑ c : Candidate n,
-      (M.partition - M.firstWeight c) * M.firstChoiceGapWeight value c := by
-  exact M.independent_weight_sum_pos_of_rankFactorization fac hn hq_lt_one hvalue
+      (M.partition - M.firstWeight c) * M.firstChoiceGapWeight value c :=  M.independent_weight_sum_pos_of_rankFactorization fac hn hq_lt_one hvalue
 
 /--
 Appendix E (independent-reranking finite inequality, finite Mallows form): the
@@ -6638,8 +6500,8 @@ theorem paper_appendixE_independent_weight_sum_pos
     (hn : 0 < n) (hq_lt_one : M.q < 1)
     (hvalue : StrictlyOrderedBy M.center value) :
     0 < ∑ c : Candidate n,
-      (M.partition - M.firstWeight c) * M.firstChoiceGapWeight value c := by
-  exact M.independent_weight_sum_pos_of_rankFactorization
+      (M.partition - M.firstWeight c) * M.firstChoiceGapWeight value c :=
+   M.independent_weight_sum_pos_of_rankFactorization
     M.rankFactorization hn hq_lt_one hvalue
 
 /--
@@ -6653,8 +6515,7 @@ theorem paper_appendixE_firstChoiceGapWeight_eq_rankConditionalGap
     M.firstChoiceGapWeight value c =
       M.q ^ (rankOf M.center c : ℕ) * fac.firstSecondTail *
         candidateRankConditionalGap n M.q
-          (fun r : Candidate n => value (M.center r)) (rankOf M.center c) := by
-  exact M.firstChoiceGapWeight_eq_rankConditionalGap fac value c
+          (fun r : Candidate n => value (M.center r)) (rankOf M.center c) :=  M.firstChoiceGapWeight_eq_rankConditionalGap fac value c
 
 /--
 Appendix E / Lemma 4 (finite MLR comparison, cross-multiplied form).
@@ -6670,8 +6531,7 @@ theorem paper_appendixE_candidateRankWeightedAverage_strictAnti
       candidateRankPowerSum n q₂ *
           (∑ i : Candidate n, q₁ ^ (i : ℕ) * B i) -
         candidateRankPowerSum n q₁ *
-          (∑ i : Candidate n, q₂ ^ (i : ℕ) * B i) := by
-  exact candidateRankWeightedAverage_strictAnti n hq₁_pos hq_lt hB
+          (∑ i : Candidate n, q₂ ^ (i : ℕ) * B i) :=  candidateRankWeightedAverage_strictAnti n hq₁_pos hq_lt hB
 
 /--
 Appendix F / Lemma 4, paper-facing cross-multiplied form.
@@ -6793,8 +6653,7 @@ theorem paper_lemma8_reduced_pairPositionCorrectProb_lt_of_q_lt
     (hq_pos : 0 < q_moreAccurate)
     (hq_lt : q_moreAccurate < q_lessAccurate) :
     pairPositionCorrectProb m q_lessAccurate <
-      pairPositionCorrectProb m q_moreAccurate := by
-  exact pairPositionCorrectProb_strictAnti m hq_pos hq_lt
+      pairPositionCorrectProb m q_moreAccurate :=  pairPositionCorrectProb_strictAnti m hq_pos hq_lt
 
 /--
 Appendix F.1 / Lemma 8, conditional Mallows-probability bridge.
@@ -6811,8 +6670,8 @@ theorem paper_lemma8_mallows_pairCorrectProb_lt_of_pairPositionReduction
     (red_more : PairPositionReduction Mmore c d m)
     (red_less : PairPositionReduction Mless c d m)
     (hq_lt : Mmore.q < Mless.q) :
-    Mless.pairCorrectProb c d < Mmore.pairCorrectProb c d := by
-  exact pairCorrectProb_lt_of_pairPositionReduction
+    Mless.pairCorrectProb c d < Mmore.pairCorrectProb c d :=
+   pairCorrectProb_lt_of_pairPositionReduction
     hcd_more hcd_less red_more red_less hq_lt
 
 /--
@@ -6854,8 +6713,7 @@ theorem paper_theorem4_mallows_pairwise_weak_dominance_of_q_le
     {n : ℕ} {human algorithm : MallowsSpec n}
     (hcenter : human.center = algorithm.center)
     (hq_le : human.q ≤ algorithm.q) :
-    PairwiseWeaklyMoreAccurate human algorithm :=
-  pairwiseWeaklyMoreAccurate_of_center_eq_q_le hcenter hq_le
+    PairwiseWeaklyMoreAccurate human algorithm := pairwiseWeaklyMoreAccurate_of_center_eq_q_le hcenter hq_le
 
 /--
 Section 4 / Theorem 4, Lemma-8 input in strict form.
@@ -6867,8 +6725,7 @@ theorem paper_theorem4_mallows_pairwise_strict_dominance_of_q_lt
     {n : ℕ} {human algorithm : MallowsSpec n}
     (hcenter : human.center = algorithm.center)
     (hq_lt : human.q < algorithm.q) :
-    PairwiseStrictlyMoreAccurate human algorithm :=
-  pairwiseStrictlyMoreAccurate_of_center_eq_q_lt hcenter hq_lt
+    PairwiseStrictlyMoreAccurate human algorithm := pairwiseStrictlyMoreAccurate_of_center_eq_q_lt hcenter hq_lt
 
 /--
 Section 4 / Theorem 4, backward-induction core.
@@ -6883,8 +6740,7 @@ theorem paper_theorem4_all_human_sequence_optimal_of_stepwise_dominance
     {n k : ℕ} (M : SequentialModel n)
     (hdom : M.HumanWeaklyDominatesAtAllHistories k) :
     M.IsSequentialBestResponseSequence k
-      (SequentialModel.allHumanSequence k) :=
-  M.allHumanSequence_isSequentialBestResponse_of_human_weaklyDominates hdom
+      (SequentialModel.allHumanSequence k) := M.allHumanSequence_isSequentialBestResponse_of_human_weaklyDominates hdom
 
 /--
 Section 4 / Theorem 4, strict uniqueness core.
@@ -6897,8 +6753,7 @@ same hire.
 theorem paper_theorem4_human_unique_at_each_history_of_strict_stepwise_dominance
     {n k : ℕ} (M : SequentialModel n)
     (hdom : M.HumanStrictlyDominatesAtAllNonterminalHistories k) :
-    M.HumanUniquelyOptimalAtAllNonterminalHistories k :=
-  M.human_uniqueOptimal_of_human_strictlyDominates hdom
+    M.HumanUniquelyOptimalAtAllNonterminalHistories k := M.human_uniqueOptimal_of_human_strictlyDominates hdom
 
 /--
 Section 4 / Theorem 4, remaining-set utility bridge.
@@ -6921,8 +6776,7 @@ theorem paper_theorem4_remaining_utility_dominance_of_bestInSetWeight_cross
             Mmore.bestInSetWeight remaining d *
               Mless.bestInSetWeight remaining c) :
     expectedBestInSet Mless.law value remaining ≤
-      expectedBestInSet Mmore.law value remaining :=
-  expectedBestInSet_le_of_bestInSetWeight_cross remaining hvalue hcross
+      expectedBestInSet Mmore.law value remaining := expectedBestInSet_le_of_bestInSetWeight_cross remaining hvalue hcross
 
 /--
 Section 4 / Theorem 4, identity-center best-in-set fiber MLR bridge.
@@ -7812,8 +7666,8 @@ theorem paper_appendixE_cross_weight_sum_pos_of_rankFactorization
     0 < ∑ c : Candidate n,
       (C.algorithm.firstWeight c * C.human.partition -
           C.human.firstWeight c * C.algorithm.partition) *
-        C.human.firstChoiceGapWeight value c := by
-  exact C.cross_weight_sum_pos_of_rankFactorization
+        C.human.firstChoiceGapWeight value c :=
+   C.cross_weight_sum_pos_of_rankFactorization
     hvalue halg_rank hhuman_rank hq_lt hhuman_q_lt_one
 
 /--
@@ -7829,8 +7683,8 @@ theorem paper_appendixE_cross_weight_sum_pos
     0 < ∑ c : Candidate n,
       (C.algorithm.firstWeight c * C.human.partition -
           C.human.firstWeight c * C.algorithm.partition) *
-        C.human.firstChoiceGapWeight value c := by
-  exact C.cross_weight_sum_pos_of_rankFactorization
+        C.human.firstChoiceGapWeight value c :=
+   C.cross_weight_sum_pos_of_rankFactorization
     hvalue C.algorithm.rankFactorization C.human.rankFactorization
     hq_lt hhuman_q_lt_one
 
@@ -7846,8 +7700,8 @@ theorem paper_theorem3_centerFirstWeight_cross_lt_of_rankFactorization
     (hhuman_rank : C.human.RankFactorization)
     (hq_lt : C.algorithm.q < C.human.q) :
     C.human.firstWeight C.human.centerFirst * C.algorithm.partition <
-      C.algorithm.firstWeight C.algorithm.centerFirst * C.human.partition := by
-  exact C.centerFirstWeight_cross_lt_of_rankFactorization
+      C.algorithm.firstWeight C.algorithm.centerFirst * C.human.partition :=
+   C.centerFirstWeight_cross_lt_of_rankFactorization
     halg_rank hhuman_rank hq_lt
 
 /--
@@ -7861,8 +7715,8 @@ theorem paper_theorem3_centerFirstProb_lt_of_rankFactorization
     (hhuman_rank : C.human.RankFactorization)
     (hq_lt : C.algorithm.q < C.human.q) :
     firstChoiceProb C.human.law C.human.centerFirst <
-      firstChoiceProb C.algorithm.law C.human.centerFirst := by
-  exact C.centerFirstProb_lt_of_rankFactorization
+      firstChoiceProb C.algorithm.law C.human.centerFirst :=
+   C.centerFirstProb_lt_of_rankFactorization
     halg_rank hhuman_rank hq_lt
 
 /--
@@ -7877,8 +7731,8 @@ theorem paper_theorem3_firstWeightPrefix_cross_lt_of_rankFactorization
     (hq_lt : C.algorithm.q < C.human.q)
     (k : Fin (n + 1)) :
     C.human.firstWeightPrefix k * C.algorithm.partition <
-      C.algorithm.firstWeightPrefix k * C.human.partition := by
-  exact C.firstWeightPrefix_cross_lt_of_rankFactorization
+      C.algorithm.firstWeightPrefix k * C.human.partition :=
+   C.firstWeightPrefix_cross_lt_of_rankFactorization
     halg_rank hhuman_rank hq_lt k
 
 /--
@@ -7894,8 +7748,8 @@ theorem paper_theorem3_weaker_center_cross_product_pos_of_rankFactorization
     (hq_lt : C.algorithm.q < C.human.q) :
     0 < (C.algorithm.firstWeight C.human.centerFirst * C.human.partition -
         C.human.firstWeight C.human.centerFirst * C.algorithm.partition) *
-      firstChoiceGapMass C.human.law value C.human.centerFirst := by
-  exact C.weaker_center_cross_product_pos_of_rankFactorization
+      firstChoiceGapMass C.human.law value C.human.centerFirst :=
+   C.weaker_center_cross_product_pos_of_rankFactorization
     hstrict halg_rank hhuman_rank hq_lt
 
 /--
@@ -7911,8 +7765,8 @@ theorem paper_theorem3_weaker_center_cross_weight_summand_pos_of_rankFactorizati
     (hq_lt : C.algorithm.q < C.human.q) :
     0 < (C.algorithm.firstWeight C.human.centerFirst * C.human.partition -
         C.human.firstWeight C.human.centerFirst * C.algorithm.partition) *
-      C.human.firstChoiceGapWeight value C.human.centerFirst := by
-  exact C.weaker_center_cross_weight_summand_pos_of_rankFactorization
+      C.human.firstChoiceGapWeight value C.human.centerFirst :=
+   C.weaker_center_cross_weight_summand_pos_of_rankFactorization
     hstrict halg_rank hhuman_rank hq_lt
 
 /--
@@ -7938,8 +7792,8 @@ theorem paper_theorem3_pointwise_finite_mallows_sum
       (C.algorithm.firstWeight c * C.human.partition -
           C.human.firstWeight c * C.algorithm.partition) *
         C.human.firstChoiceGapWeight value c) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate
     ⟨hstrict, halg, hhuman, hweaker⟩
 
 /--
@@ -7949,8 +7803,7 @@ structure directly.
 theorem paper_theorem3_pointwise_finite_mallows_sum_of_certificate
     {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
     (cert : C.CenterMallowsFiniteSumCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate cert
+    Model.PaperHypotheses (C.toModel value) :=  C.theorem3_pointwise_of_centerMallowsFiniteSumCertificate cert
 
 /--
 Theorem 3 (rank-factorized independent sums, backward-compatible form): the two
@@ -7970,8 +7823,8 @@ theorem paper_theorem3_pointwise_rankFactorization_and_crossWeight
       (C.algorithm.firstWeight c * C.human.partition -
           C.human.firstWeight c * C.algorithm.partition) *
         C.human.firstChoiceGapWeight value c) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.theorem3_pointwise_of_rankFactorization_and_crossWeight
+    Model.PaperHypotheses (C.toModel value) :=
+   C.theorem3_pointwise_of_rankFactorization_and_crossWeight
     hstrict hn halg_rank hhuman_rank halg_q_lt_one hhuman_q_lt_one hweaker
 
 /--
@@ -7994,8 +7847,8 @@ theorem paper_theorem3_pointwise_rankFactorization
     (halg_q_lt_one : C.algorithm.q < 1)
     (hhuman_q_lt_one : C.human.q < 1)
     (hq_lt : C.algorithm.q < C.human.q) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.theorem3_pointwise_of_rankFactorization
+    Model.PaperHypotheses (C.toModel value) :=
+   C.theorem3_pointwise_of_rankFactorization
     hstrict hn C.algorithm.rankFactorization C.human.rankFactorization
     halg_q_lt_one hhuman_q_lt_one hq_lt
 
@@ -8026,8 +7879,8 @@ theorem paper_theorem3_pointwise_reduced_product_certificate
           firstChoiceGapMass C.human.law value c)
     (hcenter : C.human.firstWeight C.human.centerFirst * C.algorithm.partition <
       C.algorithm.firstWeight C.algorithm.centerFirst * C.human.partition) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.theorem3_pointwise_of_centerMallowsReducedProductCrossWeightCertificate
+    Model.PaperHypotheses (C.toModel value) :=
+   C.theorem3_pointwise_of_centerMallowsReducedProductCrossWeightCertificate
     ⟨hstrict, halg_noncenter_nonneg, hhum_noncenter_nonneg,
       hweaker_noncenter_cross_product_nonneg, hcenter⟩
 
@@ -8038,8 +7891,7 @@ product-sign certificate structure directly.
 theorem paper_theorem3_pointwise_reduced_product_certificate_of_certificate
     {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
     (cert : C.CenterMallowsReducedProductCrossWeightCertificate value) :
-    Model.PaperHypotheses (C.toModel value) := by
-  exact C.theorem3_pointwise_of_centerMallowsReducedProductCrossWeightCertificate cert
+    Model.PaperHypotheses (C.toModel value) :=  C.theorem3_pointwise_of_centerMallowsReducedProductCrossWeightCertificate cert
 
 /--
 Normalization bridge: strict-center finite-sum certificates are equivalent to
@@ -8049,8 +7901,7 @@ theorem paper_theorem3_finite_sum_certificate_from_candidate_sums
     {n : ℕ} (C : MallowsComparison n) {value : Candidate n → ℝ}
     (hstrict : C.StrictlyCenterOrdered value)
     (cert : C.CandidateSumCertificate value) :
-    C.CenterMallowsFiniteSumCertificate value := by
-  exact C.centerMallowsFiniteSumCertificate_of_candidateSumCertificate hstrict cert
+    C.CenterMallowsFiniteSumCertificate value :=  C.centerMallowsFiniteSumCertificate_of_candidateSumCertificate hstrict cert
 
 /--
 Definition 1 / first-mover monotonicity for Mallows.
@@ -8067,8 +7918,8 @@ theorem paper_definition1_firstMoverUtility_strict_of_rankFactorization
     (hstrict : C.StrictlyCenterOrdered value)
     (hq_lt : C.algorithm.q < C.human.q) :
     expectedFirstMoverUtility C.human.law value <
-      expectedFirstMoverUtility C.algorithm.law value := by
-  exact C.firstMoverUtility_strict_of_rankFactorization
+      expectedFirstMoverUtility C.algorithm.law value :=
+   C.firstMoverUtility_strict_of_rankFactorization
     hstrict C.algorithm.rankFactorization C.human.rankFactorization hq_lt
 
 /--
@@ -8088,8 +7939,8 @@ theorem paper_definition1_expectedBestAfterRemoval_le_of_rankFactorization
     (hq_lt : C.algorithm.q < C.human.q)
     (hhuman_q_lt_one : C.human.q < 1) :
     AccuracyFamily.expectedBestAfterRemoval C.human.law value c ≤
-      AccuracyFamily.expectedBestAfterRemoval C.algorithm.law value c := by
-  exact C.expectedBestAfterRemoval_le_of_rankFactorization
+      AccuracyFamily.expectedBestAfterRemoval C.algorithm.law value c :=
+   C.expectedBestAfterRemoval_le_of_rankFactorization
     c C.algorithm.rankFactorization C.human.rankFactorization
     hstrict hq_lt hhuman_q_lt_one
 
@@ -8109,8 +7960,7 @@ fields separately below.
 noncomputable def paper_theorem1_paperAssumptions_from_mallows_family
     {n : ℕ} (MF : MallowsAccuracyFamilySpec n)
     (hn : 0 < n) :
-    AccuracyFamily.Theorem1PaperAssumptions MF.toAccuracyFamily :=
-  MF.theorem1PaperAssumptions hn
+    AccuracyFamily.Theorem1PaperAssumptions MF.toAccuracyFamily := MF.theorem1PaperAssumptions hn
 
 /--
 Paper Theorem 1 for a parameterized Mallows family.
@@ -8121,8 +7971,7 @@ and Definition 1 finite monotonicity is discharged by the Mallows MLR route.
 theorem paper_theorem1_mallows_family
     {n : ℕ} (MF : MallowsAccuracyFamilySpec n)
     (hn : 0 < n) (θH : ℝ) (hθH : 0 < θH) :
-    AccuracyFamily.Theorem1Target MF.toAccuracyFamily θH :=
-  MF.theorem1Target hn θH hθH
+    AccuracyFamily.Theorem1Target MF.toAccuracyFamily θH := MF.theorem1Target hn θH hθH
 
 end MallowsAccuracyFamilySpec
 
@@ -8142,8 +7991,7 @@ noncomputable def paper_theorem9_concrete_mallows_family_assumptions
     (hn : 0 < n) :
     AccuracyFamily.Theorem1PaperAssumptions
       (MallowsAccuracyFamilySpec.toAccuracyFamily
-        (concreteMallowsAccuracyFamilySpec center value hvalue)) :=
-  (concreteMallowsAccuracyFamilySpec center value hvalue).theorem1PaperAssumptions hn
+        (concreteMallowsAccuracyFamilySpec center value hvalue)) := (concreteMallowsAccuracyFamilySpec center value hvalue).theorem1PaperAssumptions hn
 
 /--
 Paper Theorem 1 for the concrete Mallows family.
@@ -8159,8 +8007,7 @@ theorem paper_theorem1_concrete_mallows_family
     AccuracyFamily.Theorem1Target
       (MallowsAccuracyFamilySpec.toAccuracyFamily
         (concreteMallowsAccuracyFamilySpec center value hvalue))
-      θH :=
-  concreteMallows_theorem1Target center value hvalue hn θH hθH
+      θH := concreteMallows_theorem1Target center value hvalue hn θH hθH
 
 /--
 Theorem 1 proof notation: `h(θA)` is constant in `θA`.
@@ -8168,8 +8015,7 @@ Theorem 1 proof notation: `h(θA)` is constant in `θA`.
 theorem paper_theorem1_h_is_constant
     {n : ℕ} (F : AccuracyFamily n) (θA θA' θH : ℝ) :
     AccuracyFamily.theorem1_h F θA θH =
-      AccuracyFamily.theorem1_h F θA' θH :=
-  AccuracyFamily.theorem1_h_const F θA θA' θH
+      AccuracyFamily.theorem1_h F θA' θH := AccuracyFamily.theorem1_h_const F θA θA' θH
 
 /--
 Theorem 1 proof notation: `f(θA)` is the all-algorithm welfare expression.
@@ -8178,8 +8024,7 @@ theorem paper_theorem1_f_eq_algorithm_welfare
     {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ) :
     AccuracyFamily.theorem1_f F θA θH =
       Model.welfareRandomOrder (F.modelAt θA θH)
-        Strategy.algorithm Strategy.algorithm :=
-  AccuracyFamily.theorem1_f_eq_algorithm_welfare F θA θH
+        Strategy.algorithm Strategy.algorithm := AccuracyFamily.theorem1_f_eq_algorithm_welfare F θA θH
 
 /--
 Theorem 1 proof notation: `h(θA)` is the all-human welfare expression.
@@ -8188,8 +8033,7 @@ theorem paper_theorem1_h_eq_human_welfare
     {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ) :
     AccuracyFamily.theorem1_h F θA θH =
       Model.welfareRandomOrder (F.modelAt θA θH)
-        Strategy.human Strategy.human :=
-  AccuracyFamily.theorem1_h_eq_human_welfare F θA θH
+        Strategy.human Strategy.human := AccuracyFamily.theorem1_h_eq_human_welfare F θA θH
 
 /--
 Theorem 1 proof notation, finite continuity bridge for `f`.
@@ -8332,8 +8176,7 @@ theorem paper_theorem1_g_lt_h_from_definition3
     {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ)
     (hpaper : Model.PaperHypotheses (F.modelAt θA θH)) :
     AccuracyFamily.theorem1_g F θA θH <
-      AccuracyFamily.theorem1_h F θA θH :=
-  AccuracyFamily.theorem1_g_lt_h_of_paperHypotheses F θA θH hpaper
+      AccuracyFamily.theorem1_h F θA θH := AccuracyFamily.theorem1_g_lt_h_of_paperHypotheses F θA θH hpaper
 
 /--
 Theorem 1 proof notation, inequality (5).
@@ -8382,8 +8225,7 @@ follows.
 theorem paper_theorem1_from_crossing_certificate
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (cert : AccuracyFamily.Theorem1CrossingCertificate F θH) :
-    AccuracyFamily.Theorem1Target F θH :=
-  AccuracyFamily.theorem1Target_of_crossingCertificate cert
+    AccuracyFamily.Theorem1Target F θH := AccuracyFamily.theorem1Target_of_crossingCertificate cert
 
 /--
 Paper Theorem 1 from the right-neighborhood nudge certificate.
@@ -8395,8 +8237,7 @@ witness accuracy at the midpoint of that neighborhood.
 theorem paper_theorem1_from_right_nudge_certificate
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (cert : AccuracyFamily.Theorem1RightNudgeCertificate F θH) :
-    AccuracyFamily.Theorem1Target F θH :=
-  AccuracyFamily.theorem1Target_of_rightNudgeCertificate cert
+    AccuracyFamily.Theorem1Target F θH := AccuracyFamily.theorem1Target_of_rightNudgeCertificate cert
 
 /--
 Paper Theorem 1 from the local analytic nudge certificate.
@@ -8409,8 +8250,7 @@ field in `AccuracyFamily.Theorem1LocalNudgeCertificate`.
 theorem paper_theorem1_from_local_nudge_certificate
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (cert : AccuracyFamily.Theorem1LocalNudgeCertificate F θH) :
-    AccuracyFamily.Theorem1Target F θH :=
-  AccuracyFamily.theorem1Target_of_localNudgeCertificate cert
+    AccuracyFamily.Theorem1Target F θH := AccuracyFamily.theorem1Target_of_localNudgeCertificate cert
 
 /--
 Paper Theorem 1 from the atomwise local analytic nudge certificate.
@@ -8421,8 +8261,7 @@ atomwise epsilon-delta continuity of the finite ranking family.
 theorem paper_theorem1_from_atom_local_nudge_certificate
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (cert : AccuracyFamily.Theorem1AtomLocalNudgeCertificate F θH) :
-    AccuracyFamily.Theorem1Target F θH :=
-  AccuracyFamily.theorem1Target_of_atomLocalNudgeCertificate cert
+    AccuracyFamily.Theorem1Target F θH := AccuracyFamily.theorem1Target_of_atomLocalNudgeCertificate cert
 
 /--
 Paper Theorem 1 from the interval sign-change nudge certificate.
@@ -8436,8 +8275,7 @@ the right one-sided sign.
 theorem paper_theorem1_from_sign_change_nudge_certificate
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (cert : AccuracyFamily.Theorem1SignChangeNudgeCertificate F θH) :
-    AccuracyFamily.Theorem1Target F θH :=
-  AccuracyFamily.theorem1Target_of_signChangeNudgeCertificate cert
+    AccuracyFamily.Theorem1Target F θH := AccuracyFamily.theorem1Target_of_signChangeNudgeCertificate cert
 
 /--
 Paper Theorem 1 from the paper-shaped interval analytic certificate.
@@ -8450,8 +8288,7 @@ finite-removal monotonicity certificate, and the analytic sign-change data for
 theorem paper_theorem1_from_interval_analytic_certificate
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (cert : AccuracyFamily.Theorem1IntervalAnalyticCertificate F θH) :
-    AccuracyFamily.Theorem1Target F θH :=
-  AccuracyFamily.theorem1Target_of_intervalAnalyticCertificate cert
+    AccuracyFamily.Theorem1Target F θH := AccuracyFamily.theorem1Target_of_intervalAnalyticCertificate cert
 
 /--
 Paper Theorem 1 from the global analytic certificate.
@@ -8464,8 +8301,7 @@ constructs the witness `θA > θH`.
 theorem paper_theorem1_from_global_analytic_certificate
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (cert : AccuracyFamily.Theorem1GlobalAnalyticCertificate F θH) :
-    AccuracyFamily.Theorem1Target F θH :=
-  AccuracyFamily.theorem1Target_of_globalAnalyticCertificate cert
+    AccuracyFamily.Theorem1Target F θH := AccuracyFamily.theorem1Target_of_globalAnalyticCertificate cert
 
 /--
 Paper Theorem 1 from paper-level family assumptions.
@@ -8488,8 +8324,7 @@ theorem paper_theorem1_from_paper_assumptions
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (hθH : 0 < θH)
     (assumptions : AccuracyFamily.Theorem1PaperAssumptions F) :
-    AccuracyFamily.Theorem1Target F θH :=
-  AccuracyFamily.theorem1Target_of_paperAssumptions hθH assumptions
+    AccuracyFamily.Theorem1Target F θH := AccuracyFamily.theorem1Target_of_paperAssumptions hθH assumptions
 
 /--
 Paper Theorem 1 from the direct payoff certificate.
@@ -8500,8 +8335,7 @@ dominance inequalities and the all-human/all-algorithm welfare comparison.
 theorem paper_theorem1_from_payoff_certificate
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (cert : AccuracyFamily.Theorem1PayoffCertificate F θH) :
-    AccuracyFamily.Theorem1Target F θH :=
-  AccuracyFamily.theorem1Target_of_payoffCertificate cert
+    AccuracyFamily.Theorem1Target F θH := AccuracyFamily.theorem1Target_of_payoffCertificate cert
 
 /--
 Paper Theorem 1 (family form).
@@ -8516,13 +8350,12 @@ target: `AccuracyFamily.Theorem1Target F θH`.
 theorem paper_theorem1_target
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ)
     (h : ∃ θA, θH < θA ∧ Model.HasKR21MonocultureParadox (AccuracyFamily.modelAt F θA θH)) :
-    AccuracyFamily.Theorem1Target F θH := by
-  exact (AccuracyFamily.theorem1Target_iff_exists_paradox (F := F) (θH := θH)).2 h
+    AccuracyFamily.Theorem1Target F θH :=  (AccuracyFamily.theorem1Target_iff_exists_paradox (F := F) (θH := θH)).2 h
 
 lemma paper_theorem1_target_iff_exists_paradox
     {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) :
     AccuracyFamily.Theorem1Target F θH ↔
-      ∃ θA, θH < θA ∧ Model.HasKR21MonocultureParadox (AccuracyFamily.modelAt F θA θH) := by
-  exact AccuracyFamily.theorem1Target_iff_exists_paradox (F := F) (θH := θH)
+      ∃ θA, θH < θA ∧ Model.HasKR21MonocultureParadox (AccuracyFamily.modelAt F θA θH) :=  AccuracyFamily.theorem1Target_iff_exists_paradox (F :=
+  F) (θH := θH)
 
 end KR21Monoculture

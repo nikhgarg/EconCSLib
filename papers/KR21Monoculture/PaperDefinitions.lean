@@ -33,8 +33,7 @@ A proposition packaging the fixed-parameter conclusion analogous to Theorem 1.
 The actual existence-of-`θA` statement belongs one level up, in a family of models
 indexed by an accuracy parameter.
 -/
-noncomputable def FixedParameterTheorem1Conclusion {n : ℕ} (M : Model n) : Prop :=
-  HasKR21MonocultureParadox M
+noncomputable def FixedParameterTheorem1Conclusion {n : ℕ} (M : Model n) : Prop := HasKR21MonocultureParadox M
 
 end Model
 end KR21Monoculture

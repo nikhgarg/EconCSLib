@@ -21,8 +21,7 @@ theorem tendsToZero_if_lt_const
     {ε : ℕ → ℝ} (hε : EconCSLib.Math.TendsToZero ε)
     (threshold : ℕ) (C : ℝ) :
     EconCSLib.Math.TendsToZero
-      (fun N => if N < threshold then C else ε N) := by
-  exact EconCSLib.Math.tendsToZero_if_lt_const hε threshold C
+      (fun N => if N < threshold then C else ε N) :=  EconCSLib.Math.tendsToZero_if_lt_const hε threshold C
 
 /--
 Source Theorem 1(i) asymptotic algebra: an exact geometric tail has the
@@ -33,52 +32,20 @@ theorem finiteDiscrete_log_geometric_tail_ratio
     Tendsto
       (fun N : ℕ =>
         Real.log (C * r ^ N) / (Real.log r * (N : ℝ)))
-      atTop (nhds 1) := by
-  have hlog_neg : Real.log r < 0 := Real.log_neg hr_pos hr_lt_one
-  have hlog_ne : Real.log r ≠ 0 := ne_of_lt hlog_neg
-  have hconst :
-      Tendsto
-        (fun N : ℕ => (Real.log C / Real.log r) / (N : ℝ))
-        atTop (nhds 0) :=
-    tendsto_const_div_atTop_nhds_zero_nat (Real.log C / Real.log r)
-  have hlim :
-      Tendsto
-        (fun N : ℕ => 1 + (Real.log C / Real.log r) / (N : ℝ))
-        atTop (nhds 1) := by
-    simpa using tendsto_const_nhds.add hconst
-  refine Tendsto.congr' ?_ hlim
-  filter_upwards [eventually_gt_atTop 0] with N hN
-  have hN_ne : (N : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hN)
-  have hrpow_ne : r ^ N ≠ 0 := pow_ne_zero N hr_pos.ne'
-  symm
-  calc
-    Real.log (C * r ^ N) / (Real.log r * (N : ℝ))
-        = (Real.log C + (N : ℝ) * Real.log r) /
-            (Real.log r * (N : ℝ)) := by
-          rw [Real.log_mul hC.ne' hrpow_ne, Real.log_pow]
-    _ = 1 + (Real.log C / Real.log r) / (N : ℝ) := by
-          field_simp [hlog_ne, hN_ne]
-          ring
+      atTop (nhds 1) :=
+  EconCSLib.Math.log_geometric_tail_ratio hC hr_pos hr_lt_one
 
 /-- `log N / N -> 0`, used by the finite-discrete polynomial tail factor. -/
 theorem tendsto_log_nat_div_nat_nhds_zero :
     Tendsto
       (fun N : ℕ => Real.log (N : ℝ) / (N : ℝ))
-      atTop (nhds 0) := by
-  have hreal :
-      Tendsto (fun x : ℝ => Real.log x / x) atTop (nhds 0) := by
-    simpa using
-      (isLittleO_log_rpow_atTop (r := (1 : ℝ)) (by norm_num)).tendsto_div_nhds_zero
-  exact hreal.comp tendsto_natCast_atTop_atTop
+      atTop (nhds 0) :=
+  EconCSLib.Math.tendsto_log_nat_div_nat_nhds_zero
 
 /-- Natural square root tends to infinity along natural numbers. -/
 theorem tendsto_nat_sqrt_atTop :
-    Tendsto (fun N : ℕ => Nat.sqrt N) atTop atTop := by
-  rw [tendsto_atTop]
-  intro M
-  refine eventually_atTop.2 ⟨M * M, ?_⟩
-  intro N hN
-  exact (Nat.le_sqrt).2 hN
+    Tendsto (fun N : ℕ => Nat.sqrt N) atTop atTop :=
+  EconCSLib.Math.tendsto_nat_sqrt_atTop
 
 /--
 The square-root integer gap is sublinear in the certificate sense:
@@ -86,34 +53,8 @@ The square-root integer gap is sublinear in the certificate sense:
 -/
 theorem finiteDiscrete_nat_sqrt_gap_error_tendsToZero :
     EconCSLib.Math.TendsToZero
-      (fun N : ℕ => ((Nat.sqrt N + 1 : ℕ) : ℝ) / (N : ℝ)) := by
-  refine EconCSLib.Math.TendsToZero_of_eventually_abs_le_inv_sqrt
-    (fun N : ℕ => ((Nat.sqrt N + 1 : ℕ) : ℝ) / (N : ℝ))
-    (by norm_num : (0 : ℝ) < 2) ?_
-  filter_upwards [eventually_ge_atTop 1] with N hN
-  have hN_pos : 0 < (N : ℝ) := by exact_mod_cast (Nat.succ_le_iff.mp hN)
-  have hN_nonneg : 0 ≤ (N : ℝ) := hN_pos.le
-  have hsqrt_pos : 0 < Real.sqrt (N : ℝ) := Real.sqrt_pos.mpr hN_pos
-  have hsqrt_ge_one : 1 ≤ Real.sqrt (N : ℝ) := by
-    rw [Real.one_le_sqrt]
-    exact_mod_cast hN
-  have hnat_sqrt_le : (Nat.sqrt N : ℝ) ≤ Real.sqrt (N : ℝ) :=
-    Real.nat_sqrt_le_real_sqrt
-  have hnum_le :
-      ((Nat.sqrt N + 1 : ℕ) : ℝ) ≤ 2 * Real.sqrt (N : ℝ) := by
-    norm_num
-    linarith
-  have hval_nonneg :
-      0 ≤ ((Nat.sqrt N + 1 : ℕ) : ℝ) / (N : ℝ) := by
-    positivity
-  rw [abs_of_nonneg hval_nonneg]
-  calc
-    ((Nat.sqrt N + 1 : ℕ) : ℝ) / (N : ℝ)
-        ≤ (2 * Real.sqrt (N : ℝ)) / (N : ℝ) :=
-          div_le_div_of_nonneg_right hnum_le hN_nonneg
-    _ = 2 / Real.sqrt (N : ℝ) := by
-          field_simp [hsqrt_pos.ne']
-          rw [Real.sq_sqrt hN_nonneg]
+      (fun N : ℕ => ((Nat.sqrt N + 1 : ℕ) : ℝ) / (N : ℝ)) :=
+  EconCSLib.Math.nat_sqrt_gap_error_tendsToZero
 
 /--
 For any `0 < rho < 1`, the square-root integer gap kills every fixed
@@ -123,66 +64,9 @@ theorem finiteDiscrete_nat_sqrt_gap_polynomial_geometric_tends_to_zero
     (k : ℕ) {rho : ℝ} (hrho_pos : 0 < rho) (hrho_lt_one : rho < 1) :
     Tendsto
       (fun N : ℕ => (N : ℝ) ^ k * rho ^ (Nat.sqrt N))
-      atTop (nhds 0) := by
-  have hsucc_base :
-      Tendsto
-        (fun m : ℕ => (((m + 1 : ℕ) : ℝ) ^ (2 * k)) * rho ^ (m + 1))
-        atTop (nhds 0) := by
-    exact
-      (tendsto_pow_const_mul_const_pow_of_lt_one (2 * k)
-        hrho_pos.le hrho_lt_one).comp (tendsto_add_atTop_nat 1)
-  have hsucc :
-      Tendsto
-        (fun m : ℕ => (((m + 1 : ℕ) : ℝ) ^ (2 * k)) * rho ^ m)
-        atTop (nhds 0) := by
-    have hmul :=
-      hsucc_base.const_mul rho⁻¹
-    refine Tendsto.congr' ?_ (by simpa using hmul)
-    filter_upwards with m
-    have hpow : rho ^ (m + 1) = rho ^ m * rho := by
-      rw [pow_succ]
-    rw [hpow]
-    field_simp [hrho_pos.ne']
-    ring_nf
-    norm_num [Nat.cast_add, add_comm, mul_comm]
-  have hupper_lim :
-      Tendsto
-        (fun N : ℕ =>
-          (((Nat.sqrt N + 1 : ℕ) : ℝ) ^ (2 * k)) *
-            rho ^ (Nat.sqrt N))
-        atTop (nhds 0) :=
-    hsucc.comp tendsto_nat_sqrt_atTop
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le'
-    tendsto_const_nhds hupper_lim ?_ ?_
-  · filter_upwards with N
-    positivity
-  · filter_upwards with N
-    let m : ℕ := Nat.sqrt N
-    have hN_le_nat : N ≤ (m + 1) ^ 2 := by
-      exact le_of_lt (by simpa [m] using Nat.lt_succ_sqrt' N)
-    have hN_le_real : (N : ℝ) ≤ ((m + 1 : ℕ) : ℝ) ^ 2 := by
-      exact_mod_cast hN_le_nat
-    have hpow_le :
-        (N : ℝ) ^ k ≤ (((m + 1 : ℕ) : ℝ) ^ 2) ^ k :=
-      pow_le_pow_left₀ (by positivity) hN_le_real k
-    have hpow_eq :
-        (((m + 1 : ℕ) : ℝ) ^ 2) ^ k =
-          ((m + 1 : ℕ) : ℝ) ^ (2 * k) := by
-      rw [pow_mul]
-    have hpow_le' :
-        (N : ℝ) ^ k ≤ ((m + 1 : ℕ) : ℝ) ^ (2 * k) := by
-      calc
-        (N : ℝ) ^ k ≤ (((m + 1 : ℕ) : ℝ) ^ 2) ^ k := hpow_le
-        _ = ((m + 1 : ℕ) : ℝ) ^ (2 * k) := hpow_eq
-    have htail_nonneg : 0 ≤ rho ^ m := pow_nonneg hrho_pos.le m
-    calc
-      (N : ℝ) ^ k * rho ^ (Nat.sqrt N)
-          = (N : ℝ) ^ k * rho ^ m := by rfl
-      _ ≤ (((m + 1 : ℕ) : ℝ) ^ (2 * k)) * rho ^ m := by
-            exact mul_le_mul_of_nonneg_right
-              hpow_le' htail_nonneg
-      _ = (((Nat.sqrt N + 1 : ℕ) : ℝ) ^ (2 * k)) *
-            rho ^ (Nat.sqrt N) := by rfl
+      atTop (nhds 0) :=
+  EconCSLib.Math.nat_sqrt_gap_polynomial_geometric_tends_to_zero
+    k hrho_pos hrho_lt_one
 
 /--
 Source Theorem 1(i) asymptotic algebra: multiplying a geometric tail by any
@@ -195,56 +79,9 @@ theorem finiteDiscrete_log_polynomial_geometric_tail_ratio
       (fun N : ℕ =>
         Real.log (C * (N : ℝ) ^ d * r ^ N) /
           (Real.log r * (N : ℝ)))
-      atTop (nhds 1) := by
-  have hlog_neg : Real.log r < 0 := Real.log_neg hr_pos hr_lt_one
-  have hlog_ne : Real.log r ≠ 0 := ne_of_lt hlog_neg
-  have hconst :
-      Tendsto
-        (fun N : ℕ => (Real.log C / Real.log r) / (N : ℝ))
-        atTop (nhds 0) :=
-    tendsto_const_div_atTop_nhds_zero_nat (Real.log C / Real.log r)
-  have hlog_over_N :
-      Tendsto
-        (fun N : ℕ =>
-          ((d : ℝ) / Real.log r) *
-            (Real.log (N : ℝ) / (N : ℝ)))
-        atTop (nhds 0) := by
-    simpa using tendsto_log_nat_div_nat_nhds_zero.const_mul
-      ((d : ℝ) / Real.log r)
-  have hlim :
-      Tendsto
-        (fun N : ℕ =>
-          1 + (Real.log C / Real.log r) / (N : ℝ) +
-            ((d : ℝ) / Real.log r) *
-              (Real.log (N : ℝ) / (N : ℝ)))
-        atTop (nhds 1) := by
-    have hfirst :
-        Tendsto
-          (fun N : ℕ => 1 + (Real.log C / Real.log r) / (N : ℝ))
-          atTop (nhds 1) := by
-      simpa using tendsto_const_nhds.add hconst
-    simpa using hfirst.add hlog_over_N
-  refine Tendsto.congr' ?_ hlim
-  filter_upwards [eventually_gt_atTop 0] with N hN
-  have hN_pos : 0 < (N : ℝ) := by exact_mod_cast hN
-  have hN_ne : (N : ℝ) ≠ 0 := ne_of_gt hN_pos
-  have hNpow_ne : (N : ℝ) ^ d ≠ 0 := pow_ne_zero d hN_ne
-  have hrpow_ne : r ^ N ≠ 0 := pow_ne_zero N hr_pos.ne'
-  symm
-  calc
-    Real.log (C * (N : ℝ) ^ d * r ^ N) /
-          (Real.log r * (N : ℝ))
-        =
-        (Real.log C + (d : ℝ) * Real.log (N : ℝ) +
-            (N : ℝ) * Real.log r) /
-          (Real.log r * (N : ℝ)) := by
-          rw [Real.log_mul (mul_ne_zero hC.ne' hNpow_ne) hrpow_ne,
-            Real.log_mul hC.ne' hNpow_ne, Real.log_pow, Real.log_pow]
-    _ = 1 + (Real.log C / Real.log r) / (N : ℝ) +
-          ((d : ℝ) / Real.log r) *
-            (Real.log (N : ℝ) / (N : ℝ)) := by
-          field_simp [hlog_ne, hN_ne]
-          ring
+      atTop (nhds 1) :=
+  EconCSLib.Math.log_polynomial_geometric_tail_ratio
+    d hC hr_pos hr_lt_one
 
 /--
 Source Theorem 1(i) asymptotic algebra: the paper's lower geometric and upper
@@ -262,40 +99,9 @@ theorem finiteDiscrete_log_tail_ratio_of_geometric_bounds
     Tendsto
       (fun N : ℕ =>
         Real.log (gap N) / (Real.log r * (N : ℝ)))
-      atTop (nhds 1) := by
-  have hlog_neg : Real.log r < 0 := Real.log_neg hr_pos hr_lt_one
-  have hlow_lim :=
-    finiteDiscrete_log_polynomial_geometric_tail_ratio
-      d hupper_pos hr_pos hr_lt_one
-  have hup_lim :=
-    finiteDiscrete_log_geometric_tail_ratio
-      hlower_pos hr_pos hr_lt_one
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' hlow_lim hup_lim ?_ ?_
-  · filter_upwards [hlower, hupper, eventually_gt_atTop 0] with N hlowerN hupperN hN
-    have hN_pos : 0 < (N : ℝ) := by exact_mod_cast hN
-    have hden_neg : Real.log r * (N : ℝ) < 0 :=
-      mul_neg_of_neg_of_pos hlog_neg hN_pos
-    have hlower_tail_pos : 0 < lower * r ^ N :=
-      mul_pos hlower_pos (pow_pos hr_pos N)
-    have hgap_pos : 0 < gap N := lt_of_lt_of_le hlower_tail_pos hlowerN
-    have hupper_tail_pos : 0 < upper * (N : ℝ) ^ d * r ^ N := by
-      positivity
-    have hlog_le :
-        Real.log (gap N) ≤
-          Real.log (upper * (N : ℝ) ^ d * r ^ N) :=
-      Real.log_le_log hgap_pos hupperN
-    exact (div_le_div_right_of_neg hden_neg).2 hlog_le
-  · filter_upwards [hlower, hupper, eventually_gt_atTop 0] with N hlowerN hupperN hN
-    have hN_pos : 0 < (N : ℝ) := by exact_mod_cast hN
-    have hden_neg : Real.log r * (N : ℝ) < 0 :=
-      mul_neg_of_neg_of_pos hlog_neg hN_pos
-    have hlower_tail_pos : 0 < lower * r ^ N :=
-      mul_pos hlower_pos (pow_pos hr_pos N)
-    have hgap_pos : 0 < gap N := lt_of_lt_of_le hlower_tail_pos hlowerN
-    have hlog_le :
-        Real.log (lower * r ^ N) ≤ Real.log (gap N) :=
-      Real.log_le_log hlower_tail_pos hlowerN
-    exact (div_le_div_right_of_neg hden_neg).2 hlog_le
+      atTop (nhds 1) :=
+  EconCSLib.Math.log_tail_ratio_of_geometric_bounds
+    d hlower_pos hupper_pos hr_pos hr_lt_one hlower hupper
 
 /--
 The binomial lower-tail expression from the finite-discrete proof of Theorem
@@ -324,8 +130,7 @@ before adding the new item there are exactly `k-1` top-support draws, and the
 new item is itself top-support.
 -/
 noncomputable def finiteDiscreteTopMassPromotingEvent
-    (k a : ℕ) (q rho : ℝ) : ℝ :=
-  (Nat.choose a (k - 1) : ℝ) * q ^ k * rho ^ (a + 1 - k)
+    (k a : ℕ) (q rho : ℝ) : ℝ := (Nat.choose a (k - 1) : ℝ) * q ^ k * rho ^ (a + 1 - k)
 
 theorem finiteDiscreteTopMassPromotingEvent_nonneg
     (k a : ℕ) {q rho : ℝ}
@@ -395,8 +200,8 @@ theorem finiteDiscreteTopMassFailureTail_le_polynomial_geometric
   calc
     finiteDiscreteTopMassFailureTail k a q rho
         ≤ ∑ _j ∈ Finset.range k,
-            (a : ℝ) ^ k * rho ^ (a + 1 - k) := by
-          exact Finset.sum_le_sum hterm
+            (a : ℝ) ^ k * rho ^ (a + 1 - k) :=
+          Finset.sum_le_sum hterm
     _ = (k : ℝ) * (a : ℝ) ^ k * rho ^ (a + 1 - k) := by
           simp [Finset.card_range, mul_assoc]
 
@@ -475,8 +280,7 @@ theorem finiteDiscreteTopMassFailureTail_pred_le_inv_mul
         = rho⁻¹ *
             (rho * finiteDiscreteTopMassFailureTail k (a - 1) q rho) := by
           field_simp [hrho_pos.ne']
-    _ ≤ rho⁻¹ * finiteDiscreteTopMassFailureTail k a q rho :=
-          mul_le_mul_of_nonneg_left hmul (inv_nonneg.mpr hrho_pos.le)
+    _ ≤ rho⁻¹ * finiteDiscreteTopMassFailureTail k a q rho :=         mul_le_mul_of_nonneg_left hmul (inv_nonneg.mpr hrho_pos.le)
 
 /--
 The binomial upper tail in the clean certificate form: the fixed exponent shift
@@ -564,8 +368,7 @@ theorem gammaLikelihoodProfile_targetShare_eq {T : ℕ}
     (hnorm : (∑ i : ItemType T, (likelihood i) ^ gamma) ≠ 0) :
     (gammaLikelihoodProfile likelihood gamma).targetShare t =
       (likelihood t) ^ gamma /
-        ∑ i : ItemType T, (likelihood i) ^ gamma := by
-  exact
+        ∑ i : ItemType T, (likelihood i) ^ gamma :=
     GammaHomogeneityProfile.targetShare_eq_div_of_normalizer_ne_zero
       (G := gammaLikelihoodProfile likelihood gamma) (t := t)
       (by
@@ -609,16 +412,14 @@ namespace AllocationSequence
 
 /-- Type representation in the `N`th allocation of a sequence. -/
 noncomputable def representation {T : ℕ}
-    (seq : AllocationSequence T) (N : ℕ) (t : ItemType T) : ℝ :=
-  CountAllocation.representation (seq.allocation N) t
+    (seq : AllocationSequence T) (N : ℕ) (t : ItemType T) : ℝ := CountAllocation.representation (seq.allocation N) t
 
 /--
 Definition 2-style asymptotic homogeneity for a concrete allocation sequence:
 each type share converges to the profile's target share.
 -/
 def ConvergesToProfile {T : ℕ}
-    (seq : AllocationSequence T) (G : GammaHomogeneityProfile T) : Prop :=
-  ∀ t, Tendsto (fun N => seq.representation N t) atTop (nhds (G.targetShare t))
+    (seq : AllocationSequence T) (G : GammaHomogeneityProfile T) : Prop := ∀ t, Tendsto (fun N => seq.representation N t) atTop (nhds (G.targetShare t))
 
 /--
 An eventual uniform approximation rate tending to zero implies Definition 2
@@ -700,8 +501,7 @@ theorem convergesToProfile_of_asymptoticHomogeneity {T : ℕ}
     {Mseq : ℕ → ConsumptionModel T} {G : GammaHomogeneityProfile T}
     (seq : OptimalAllocationSequence Mseq)
     (h : ConsumptionModel.AsymptoticHomogeneity Mseq G) :
-    seq.toAllocationSequence.ConvergesToProfile G :=
-  seq.convergesToProfile_of_asymptoticHomogeneityTarget h
+    seq.toAllocationSequence.ConvergesToProfile G := seq.convergesToProfile_of_asymptoticHomogeneityTarget h
 
 end OptimalAllocationSequence
 
@@ -802,44 +602,51 @@ structure PairwiseScaledHomogeneityCertificate {T : ℕ} [NeZero T]
 
 namespace PairwiseScaledHomogeneityCertificate
 
+noncomputable def toShared {T : ℕ} [NeZero T]
+    {Mseq : ℕ → ConsumptionModel T} {weight : ItemType T → ℝ}
+    {G : GammaHomogeneityProfile T}
+    (hcert : PairwiseScaledHomogeneityCertificate Mseq weight G) :
+    EconCSLib.Allocation.PairwiseScaledBoundedProfileCertificate
+      (fun N => (Mseq N).likelihood)
+      (fun N => (Mseq N).valueOfCount)
+      weight G.targetShare where
+  weight_pos := hcert.weight_pos
+  target_eq := hcert.targetShare_eq
+  bound := hcert.scaled_bound
+  bound_pos := hcert.scaled_bound_pos
+  pairwise_scaled := by
+    intro N a hN hopt i j
+    have hopt' : (Mseq N).IsOptimalAtTotal N a := by
+      simpa [EconCSLib.Allocation.IsOptimalAtTotal,
+        ConsumptionModel.IsOptimalAtTotal, ConsumptionModel.FeasibleAtTotal,
+        ConsumptionModel.objective] using hopt
+    exact hcert.pairwise_scaled N a hN hopt' i j
+
 theorem asymptoticHomogeneityTarget {T : ℕ} [NeZero T]
     {Mseq : ℕ → ConsumptionModel T} {weight : ItemType T → ℝ}
     {G : GammaHomogeneityProfile T}
     (hcert : PairwiseScaledHomogeneityCertificate Mseq weight G) :
     ConsumptionModel.AsymptoticHomogeneityTarget Mseq G
       EconCSLib.Math.ExactInvRate := by
-  refine ConsumptionModel.AsymptoticHomogeneityTarget.of_uniform_count_abs_error
-    (C := hcert.scaled_bound * ∑ i : ItemType T, weight i)
-    ?_ ?_
-  · exact mul_pos hcert.scaled_bound_pos
-      (Finset.sum_pos (fun i _ => hcert.weight_pos i) Finset.univ_nonempty)
-  · intro N a hN hopt t
-    have hNsum : (∑ i : ItemType T, (a.count i : ℝ)) = (N : ℝ) := by
-      rw [← Nat.cast_sum]
-      exact_mod_cast hopt.1
-    have hscaled :=
-      GammaHomogeneityProfile.count_abs_sub_weighted_average_le_of_pairwise_scaled_bounded
-        a weight hNsum hcert.weight_pos
-        (le_of_lt hcert.scaled_bound_pos)
-        (hcert.pairwise_scaled N a hN hopt) t
-    have htarget :
-        (N : ℝ) * G.targetShare t =
-          weight t * ((N : ℝ) / ∑ i : ItemType T, weight i) := by
-      rw [hcert.targetShare_eq t]
-      ring
-    have hweight_le_sum :
-        weight t ≤ ∑ i : ItemType T, weight i := by
-      exact Finset.single_le_sum
-        (fun i _ => le_of_lt (hcert.weight_pos i)) (Finset.mem_univ t)
-    calc
-      |(a.count t : ℝ) - (N : ℝ) * G.targetShare t|
-          = |(a.count t : ℝ) -
-              weight t * ((N : ℝ) / ∑ i : ItemType T, weight i)| := by
-            rw [htarget]
-      _ ≤ hcert.scaled_bound * weight t := hscaled
-      _ ≤ hcert.scaled_bound * ∑ i : ItemType T, weight i := by
-            exact mul_le_mul_of_nonneg_left hweight_le_sum
-              (le_of_lt hcert.scaled_bound_pos)
+  have hgeneric :
+      EconCSLib.Allocation.AsymptoticProfileTarget
+        (fun N => (Mseq N).likelihood)
+        (fun N => (Mseq N).valueOfCount)
+        G.targetShare EconCSLib.Math.ExactInvRate :=
+    hcert.toShared.asymptoticProfileTarget
+  rcases hgeneric with ⟨ε, hε, happrox⟩
+  refine ⟨ε, hε, ?_⟩
+  intro N a hN hopt
+  have hopt' :
+      EconCSLib.Allocation.IsOptimalAtTotal
+        (Mseq N).likelihood (Mseq N).valueOfCount N a := by
+    simpa [EconCSLib.Allocation.IsOptimalAtTotal,
+      ConsumptionModel.IsOptimalAtTotal, ConsumptionModel.FeasibleAtTotal,
+      ConsumptionModel.objective] using hopt
+  have happ := happrox N a hN hopt'
+  simpa [EconCSLib.Allocation.HasApproxShare,
+    GammaHomogeneityProfile.Approx, CountAllocation.HasApproxRepresentation,
+    CountAllocation.representation] using happ
 
 theorem asymptoticHomogeneity {T : ℕ} [NeZero T]
     {Mseq : ℕ → ConsumptionModel T} {weight : ItemType T → ℝ}
@@ -1004,8 +811,7 @@ theorem asymptoticHomogeneity {T : ℕ} [NeZero T]
     {Mseq : ℕ → ConsumptionModel T} {weight : ItemType T → ℝ}
     {G : GammaHomogeneityProfile T}
     (hcert : PairwiseScaledSublinearFOCCertificate Mseq weight G) :
-    ConsumptionModel.AsymptoticHomogeneity Mseq G :=
-  hcert.toPairwiseScaledSublinearHomogeneityCertificate.asymptoticHomogeneity
+    ConsumptionModel.AsymptoticHomogeneity Mseq G := hcert.toPairwiseScaledSublinearHomogeneityCertificate.asymptoticHomogeneity
 
 end PairwiseScaledSublinearFOCCertificate
 
@@ -1211,8 +1017,7 @@ theorem asymptoticHomogeneity {T : ℕ} [NeZero T]
     {O : TopKValueOracle T} {likelihood : ItemType T → ℝ} {k : ℕ}
     (hcert : TopKUniformSublinearFOCCertificate O likelihood k) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => O.toConsumptionModel likelihood k) (uniformProfile T) :=
-  hcert.toPairwiseScaledSublinearFOCCertificate.asymptoticHomogeneity
+      (fun _ => O.toConsumptionModel likelihood k) (uniformProfile T) := hcert.toPairwiseScaledSublinearFOCCertificate.asymptoticHomogeneity
 
 end TopKUniformSublinearFOCCertificate
 
@@ -1256,8 +1061,8 @@ theorem exists_count_gt_source_threshold {T : ℕ} [NeZero T]
     unfold EconCSLib.Allocation.total
     calc
       (∑ t : ItemType T, a.count t)
-          ≤ ∑ _t : ItemType T, hcert.source_threshold := by
-            exact Finset.sum_le_sum (fun t _ => hnone t)
+          ≤ ∑ _t : ItemType T, hcert.source_threshold :=
+            Finset.sum_le_sum (fun t _ => hnone t)
       _ = T * hcert.source_threshold := by
             simp [Finset.sum_const, Fintype.card_fin]
   rw [htotal] at hsum_le
@@ -1278,8 +1083,8 @@ theorem count_floor_eventually {T : ℕ} [NeZero T]
   have hlarge : T * hcert.source_threshold < N := by omega
   obtain ⟨src, hsrc_large⟩ :=
     hcert.exists_count_gt_source_threshold a hopt.1 hlarge
-  have hsrc_pos : 0 < a.count src := by
-    exact Nat.zero_lt_of_lt hsrc_large
+  have hsrc_pos : 0 < a.count src :=
+    Nat.zero_lt_of_lt hsrc_large
   have hne : src ≠ dst := by
     intro hsame
     subst dst
@@ -1409,8 +1214,7 @@ noncomputable def of_count_floor_certificate {T : ℕ} [NeZero T]
   base_error_tends_to_zero := base_error_tends_to_zero
   floor := hfloor.floor
   count_floor_eventually := hfloor.count_floor_eventually
-  large_gap_backward_lt_forward_after_floor :=
-    large_gap_backward_lt_forward_after_floor
+  large_gap_backward_lt_forward_after_floor :=   large_gap_backward_lt_forward_after_floor
 
 noncomputable def toTopKUniformSublinearFOCCertificate {T : ℕ} [NeZero T]
     {O : TopKValueOracle T} {likelihood : ItemType T → ℝ} {k : ℕ}
@@ -1454,8 +1258,7 @@ theorem asymptoticHomogeneity {T : ℕ} [NeZero T]
     {O : TopKValueOracle T} {likelihood : ItemType T → ℝ} {k : ℕ}
     (hcert : TopKUniformEventualSublinearFOCCertificate O likelihood k) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => O.toConsumptionModel likelihood k) (uniformProfile T) :=
-  hcert.toTopKUniformSublinearFOCCertificate.asymptoticHomogeneity
+      (fun _ => O.toConsumptionModel likelihood k) (uniformProfile T) := hcert.toTopKUniformSublinearFOCCertificate.asymptoticHomogeneity
 
 end TopKUniformEventualSublinearFOCCertificate
 
@@ -1566,8 +1369,8 @@ noncomputable def toEventualSublinearFOCCertificate {T : ℕ} [NeZero T]
         _ = hcert.rho ^ qdst * hcert.rho ^ hcert.gap N := by
               rw [pow_add]
     have hqsrc_pow_le_N_pow :
-        (qsrc : ℝ) ^ hcert.degree ≤ (N : ℝ) ^ hcert.degree := by
-      exact pow_le_pow_left₀ (Nat.cast_nonneg qsrc)
+        (qsrc : ℝ) ^ hcert.degree ≤ (N : ℝ) ^ hcert.degree :=
+      pow_le_pow_left₀ (Nat.cast_nonneg qsrc)
         (by exact_mod_cast hsrc_le_N) hcert.degree
     have hupper_nonneg : 0 ≤ hcert.upper := le_of_lt hcert.upper_pos
     have hNpow_nonneg : 0 ≤ (N : ℝ) ^ hcert.degree :=
@@ -1591,13 +1394,13 @@ noncomputable def toEventualSublinearFOCCertificate {T : ℕ} [NeZero T]
             ≤ hcert.upper * (qsrc : ℝ) ^ hcert.degree *
                 hcert.rho ^ qsrc := hback_upper
         _ ≤ hcert.upper * (N : ℝ) ^ hcert.degree *
-                hcert.rho ^ qsrc := by
-              exact mul_le_mul_of_nonneg_right
+                hcert.rho ^ qsrc :=
+              mul_le_mul_of_nonneg_right
                 (mul_le_mul_of_nonneg_left hqsrc_pow_le_N_pow hupper_nonneg)
                 hrho_qsrc_nonneg
         _ ≤ hcert.upper * (N : ℝ) ^ hcert.degree *
-                (hcert.rho ^ qdst * hcert.rho ^ hcert.gap N) := by
-              exact mul_le_mul_of_nonneg_left hpow_gap
+                (hcert.rho ^ qdst * hcert.rho ^ hcert.gap N) :=
+              mul_le_mul_of_nonneg_left hpow_gap
                 (mul_nonneg hupper_nonneg hNpow_nonneg)
     have hgap_weighted_lt :
         hcert.upper * (N : ℝ) ^ hcert.degree *
@@ -1622,8 +1425,7 @@ theorem asymptoticHomogeneity {T : ℕ} [NeZero T]
     (hcert :
       TopKUniformGeometricMarginalBoundCertificate O likelihood k) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => O.toConsumptionModel likelihood k) (uniformProfile T) :=
-  hcert.toEventualSublinearFOCCertificate.asymptoticHomogeneity
+      (fun _ => O.toConsumptionModel likelihood k) (uniformProfile T) := hcert.toEventualSublinearFOCCertificate.asymptoticHomogeneity
 
 end TopKUniformGeometricMarginalBoundCertificate
 
@@ -1732,11 +1534,11 @@ noncomputable def of_binomial_event_bounds {T : ℕ} [NeZero T]
   weighted_forward_lower_to_floor := weighted_forward_lower_to_floor
   lower := forwardGain * q ^ k * (rho ^ (k - 1))⁻¹
   upper := backwardLoss * ((k : ℝ) * (rho ^ (k - 1))⁻¹)
-  lower_pos := by
-    exact mul_pos (mul_pos forwardGain_pos (pow_pos hq_pos k))
+  lower_pos :=
+    mul_pos (mul_pos forwardGain_pos (pow_pos hq_pos k))
       (inv_pos.mpr (pow_pos hrho_pos (k - 1)))
-  upper_pos := by
-    exact mul_pos backwardLoss_pos
+  upper_pos :=
+    mul_pos backwardLoss_pos
       (mul_pos (by exact_mod_cast hk_pos)
         (inv_pos.mpr (pow_pos hrho_pos (k - 1))))
   degree := k
@@ -1760,8 +1562,8 @@ noncomputable def of_binomial_event_bounds {T : ℕ} [NeZero T]
             hback
       _ ≤ backwardLoss *
             (((k : ℝ) * (rho ^ (k - 1))⁻¹) *
-              (qsrc : ℝ) ^ k * rho ^ qsrc) := by
-            exact mul_le_mul_of_nonneg_left htail hbackwardLoss_nonneg
+              (qsrc : ℝ) ^ k * rho ^ qsrc) :=
+            mul_le_mul_of_nonneg_left htail hbackwardLoss_nonneg
       _ = backwardLoss * ((k : ℝ) * (rho ^ (k - 1))⁻¹) *
             (qsrc : ℝ) ^ k * rho ^ qsrc := by
             ring
@@ -1780,8 +1582,8 @@ noncomputable def of_binomial_event_bounds {T : ℕ} [NeZero T]
               (q ^ k * (rho ^ (k - 1))⁻¹ * rho ^ qdst) := by
             ring
       _ ≤ forwardGain *
-              finiteDiscreteTopMassPromotingEvent k qdst q rho := by
-            exact mul_le_mul_of_nonneg_left htail hforwardGain_nonneg
+              finiteDiscreteTopMassPromotingEvent k qdst q rho :=
+            mul_le_mul_of_nonneg_left htail hforwardGain_nonneg
       _ ≤ likelihood dst *
             (O.expectedTopSum k dst (qdst + 1) -
               O.expectedTopSum k dst qdst) := hforward
@@ -1945,8 +1747,8 @@ noncomputable def toGeometricMarginalBoundCertificate {T : ℕ} [NeZero T]
   have heventually_small :
       ∀ᶠ (q : ℕ) in atTop,
         hcert.upper * (q : ℝ) ^ hcert.degree * hcert.rho ^ q <
-          hcert.small_forward_lower := by
-    exact hcert.polynomial_geometric_tail_tendsToZero.eventually
+          hcert.small_forward_lower :=
+    hcert.polynomial_geometric_tail_tendsToZero.eventually
       (Iio_mem_nhds hcert.small_forward_lower_pos)
   let threshold : ℕ := Classical.choose (eventually_atTop.1 heventually_small)
   have hthreshold :
@@ -1989,8 +1791,7 @@ theorem asymptoticHomogeneity {T : ℕ} [NeZero T]
     {O : TopKValueOracle T} {likelihood : ItemType T → ℝ} {k : ℕ}
     (hcert : TopKUniformGeometricTailCertificate O likelihood k) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => O.toConsumptionModel likelihood k) (uniformProfile T) :=
-  hcert.toGeometricMarginalBoundCertificate.asymptoticHomogeneity
+      (fun _ => O.toConsumptionModel likelihood k) (uniformProfile T) := hcert.toGeometricMarginalBoundCertificate.asymptoticHomogeneity
 
 end TopKUniformGeometricTailCertificate
 

@@ -18,7 +18,7 @@
   },
   "paper_interface": {
     "path": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
-    "line_count": 160,
+    "line_count": 125,
     "declaration_rows": 36,
     "review_rows": 36,
     "oversized": false,

@@ -365,6 +365,14 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 - If two papers could use a lemma after renaming variables, it belongs in the generic library.
 - If a proof starts with a paper-local lemma and it becomes generic, extract it before building more paper-specific code on top of it.
 - It is fine, and often faster overall, to create reusable library material while proving a paper when the abstraction directly closes the active paper seam and is likely to serve the broader EC community. Avoid speculative polish, but do not avoid general infrastructure just because the current paper could be hacked locally.
+- In a multi-paper extraction pass, classify each lifted declaration before
+  committing: already cross-paper, future-facing generic, or paper-local wrapper
+  that should remain as audit trail. Do not expect paper LOC to fall in direct
+  proportion to library LOC; source-facing theorem names, status rows, and thin
+  adapters should stay in `papers/` even when the proof body moved. The useful
+  cleanup signal is repeated proof construction replaced by shared imports and
+  one-line adapters, plus green builds for all papers that import the lifted
+  API.
 - For LP-heavy papers, prefer a paper-local equality-form, certificate, or BFS-witness interface when that is enough to follow the paper proof and close named results. Build a generic LP/simplex/duality layer only when the current theorem truly needs it or a second paper will immediately reuse it; otherwise keep the optimization boundary narrow and auditable in the paper folder.
 - Keep paper-module imports as narrow as practical. Avoid importing aggregate
   roots such as `EconCSLib` from paper-local proof files when a leaf module like

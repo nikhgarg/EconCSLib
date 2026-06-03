@@ -90,6 +90,47 @@ theorem weighted_sum_le_bound_of_nonneg_sum_le_one
     (by intro i _; exact hvalue i)
     hB
 
+/-- If every term in a finite set is at most `C`, the finite sum is at most
+the set cardinality times `C`. -/
+theorem finset_sum_le_card_mul_of_forall_le
+    {α : Type*} (s : Finset α) (v : α → ℝ) (C : ℝ)
+    (h : ∀ i ∈ s, v i ≤ C) :
+    (∑ i ∈ s, v i) ≤ (s.card : ℝ) * C := by
+  calc
+    (∑ i ∈ s, v i) ≤ ∑ i ∈ s, C :=
+      Finset.sum_le_sum h
+    _ = (s.card : ℝ) * C := by
+      simp
+
+/-- Product of a two-valued coordinate weight over a finite type. -/
+theorem prod_ite_mem_eq_pow_mul_pow {α : Type*}
+    [Fintype α] [DecidableEq α] (s : Finset α) (q rho : ℝ) :
+    (∏ i : α, if i ∈ s then q else rho) =
+      q ^ s.card * rho ^ (Fintype.card α - s.card) := by
+  classical
+  have hfilter :
+      (Finset.univ : Finset α).filter (fun i => i ∈ s) = s := by
+    ext i
+    simp
+  have hfilter_not_card :
+      ((Finset.univ : Finset α).filter (fun i => ¬ i ∈ s)).card =
+        Fintype.card α - s.card := by
+    have hsum :=
+      Finset.card_filter_add_card_filter_not
+        (s := (Finset.univ : Finset α)) (p := fun i => i ∈ s)
+    rw [hfilter, Finset.card_univ] at hsum
+    omega
+  calc
+    (∏ i : α, if i ∈ s then q else rho)
+        = (∏ i ∈ (Finset.univ : Finset α),
+            if i ∈ s then q else rho) := by
+          simp
+    _ = (∏ i ∈ (Finset.univ : Finset α) with i ∈ s, q) *
+          ∏ i ∈ (Finset.univ : Finset α) with ¬ i ∈ s, rho := by
+          rw [Finset.prod_ite]
+    _ = q ^ s.card * rho ^ (Fintype.card α - s.card) := by
+          simp [hfilter, hfilter_not_card]
+
 /--
 Regroup a finite double sum into ordered off-diagonal pairs, using an
 injective key to decide which orientation of each pair is canonical.

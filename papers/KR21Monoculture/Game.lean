@@ -25,8 +25,7 @@ def rankingDist {n : ℕ} (M : Model n) : Strategy → PMF (Ranking n)
   | .human => M.humanRanking
 
 /-- Utility when the labeled firm is first to choose. -/
-noncomputable def firstMoverEU {n : ℕ} (M : Model n) (s : Strategy) : ℝ :=
-  expectedFirstMoverUtility (M.rankingDist s) M.value
+noncomputable def firstMoverEU {n : ℕ} (M : Model n) (s : Strategy) : ℝ := expectedFirstMoverUtility (M.rankingDist s) M.value
 
 /--
 Utility when the labeled first mover uses `s₁`
@@ -46,8 +45,7 @@ noncomputable def welfareOrdered {n : ℕ} (M : Model n) (s₁ s₂ : Strategy) 
   | _, _ => expectedWelfareOrdered (M.rankingDist s₂) (M.rankingDist s₁) M.value
 
 /-- Ex ante welfare when the order of the two labeled firms is uniform. -/
-noncomputable def welfareRandomOrder {n : ℕ} (M : Model n) (s₁ s₂ : Strategy) : ℝ :=
-  (welfareOrdered M s₁ s₂ + welfareOrdered M s₂ s₁) / 2
+noncomputable def welfareRandomOrder {n : ℕ} (M : Model n) (s₁ s₂ : Strategy) : ℝ := (welfareOrdered M s₁ s₂ + welfareOrdered M s₂ s₁) / 2
 
 /-- Under a symmetric profile, random-order welfare coincides with ordered welfare. -/
 theorem welfareRandomOrder_self {n : ℕ} (M : Model n) (s : Strategy) :

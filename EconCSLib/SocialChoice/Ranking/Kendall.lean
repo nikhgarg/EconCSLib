@@ -746,6 +746,23 @@ def StrictlyOrderedBy {n : ℕ} (ρ : Ranking n) (value : Candidate n → ℝ) :
 def WeaklyOrderedBy {n : ℕ} (ρ : Ranking n) (value : Candidate n → ℝ) : Prop :=
   ∀ {a b : Candidate n}, rankOf ρ a < rankOf ρ b → value b ≤ value a
 
+/-- A strict reference ordering implies the corresponding weak reference ordering. -/
+theorem weaklyOrderedBy_of_strictlyOrderedBy {n : ℕ}
+    {ρ : Ranking n} {value : Candidate n → ℝ}
+    (h : StrictlyOrderedBy ρ value) :
+    WeaklyOrderedBy ρ value := by
+  intro a b hab
+  exact le_of_lt (h hab)
+
+/--
+Any candidate different from the reference top candidate is ranked strictly
+below it in the reference ranking.
+-/
+theorem rankOf_firstChoice_lt_rankOf_of_ne {n : ℕ}
+    (ρ : Ranking n) {c : Candidate n} (hc : c ≠ firstChoice ρ) :
+    rankOf ρ (firstChoice ρ) < rankOf ρ c := by
+  simpa [rankOf, firstChoice] using zero_lt_rankOf_of_ne_firstChoice ρ hc
+
 /-- The value gap between the first and second candidates of a ranking. -/
 def topTwoValueGap {n : ℕ} (value : Candidate n → ℝ) (π : Ranking n) : ℝ :=
   value (firstChoice π) - value (secondChoice π)

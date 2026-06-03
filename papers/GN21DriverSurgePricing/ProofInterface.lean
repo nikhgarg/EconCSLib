@@ -19,12 +19,10 @@ namespace PaperInterface
 /-! ## Paper Definitions -/
 
 /-- Paper single-state incentive compatibility predicate for measurable trip policies. -/
-abbrev singleStateIC (R : SingleStateReward) : Prop :=
-  singleStateMeasurableIncentiveCompatible R
+abbrev singleStateIC (R : SingleStateReward) : Prop := singleStateMeasurableIncentiveCompatible R
 
 /-- Paper threshold-policy shape predicate. -/
-abbrev thresholdPolicy (w : PricingFunction) (c : ℝ) (sigma : TripPolicy) : Prop :=
-  thresholdRatePolicy w c sigma
+abbrev thresholdPolicy (w : PricingFunction) (c : ℝ) (sigma : TripPolicy) : Prop := thresholdRatePolicy w c sigma
 
 /-! ## Single-State Source Claims -/
 
@@ -41,8 +39,7 @@ theorem proposition3_1_affine_single_state_measurable_ic
     (ha_nonneg : 0 ≤ a)
     (ha_le_wait_value : a ≤ m / arrivalRate) :
     singleStateMeasurableIncentiveCompatible
-      (affineSingleStateRenewalReward mu arrivalRate m a) := by
-  exact
+      (affineSingleStateRenewalReward mu arrivalRate m a) :=
     GN21DriverSurgePricing.paper_proposition3_1_affine_single_state_measurable_ic
       mu arrivalRate m a A hlambda ha_nonneg ha_le_wait_value
 
@@ -61,8 +58,7 @@ theorem proposition3_1_affine_single_state_renewal_reward_measurable_ic_of_stand
     (ha_nonneg : 0 ≤ a)
     (ha_le_wait_value : a ≤ m / arrivalRate) :
     singleStateMeasurableIncentiveCompatible
-      (singleStateRenewalReward mu arrivalRate (affinePricing m a)) := by
-  exact
+      (singleStateRenewalReward mu arrivalRate (affinePricing m a)) :=
     GN21DriverSurgePricing.paper_proposition3_1_affine_single_state_renewal_reward_measurable_ic_of_standard_measure
       mu arrivalRate m a haccept_mass hfinite_acceptAll htime_integrable_acceptAll
       hlambda ha_nonneg ha_le_wait_value
@@ -86,8 +82,7 @@ theorem theorem1_single_state_threshold_best_response_measurable
     ∃ c : ℝ, 0 ≤ c ∧ ∃ sigma : TripPolicy,
       thresholdRatePolicy w c sigma ∧
         singleStateMeasurableOptimal
-          (singleStateRenewalReward mu arrivalRate w) sigma := by
-  exact
+          (singleStateRenewalReward mu arrivalRate w) sigma :=
     GN21DriverSurgePricing.paper_theorem1_single_state_threshold_best_response_measurable
       mu arrivalRate w hrate_measurable hrate_nonneg hfinite_acceptAll
       hw_integrable_acceptAll htime_integrable_acceptAll hlambda
@@ -116,8 +111,7 @@ theorem lemma5_fixed_response_feasible_policy_form_ae_of_response_shape
         MeasurableSet sigma' →
           lemma5MarginalSetReward mu response sigma' ≤
             lemma5MarginalSetReward mu response sigma) :
-    lemma5PolicyFormAlmostEverywhere mu shape sigma := by
-  exact
+    lemma5PolicyFormAlmostEverywhere mu shape sigma :=
     GN21DriverSurgePricing.paper_lemma5_fixed_response_policy_form_ae_of_response_shape
       mu response sigma D hresponse_measurable
       hresponse_integrable_acceptAll hsigma_measurable hsigma_subset hoptimal
@@ -279,8 +273,7 @@ theorem theorem2_multiplicative_measured_not_ic_of_witness
         mu arrival switch12 switch21 m) :
     ¬ dynamicIncentiveCompatible
       (gn21MeasuredDynamicRewardFunctional mu arrival switch12 switch21
-        (fun i => multiplicativePricing (m i))) := by
-  exact
+        (fun i => multiplicativePricing (m i))) :=
     GN21DriverSurgePricing.paper_theorem2_multiplicative_measured_not_ic_of_witness
       mu arrival switch12 switch21 m C
 
@@ -299,8 +292,7 @@ theorem theorem2_multiplicative_measured_not_ic_of_aggregate_witness
         mu arrival switch12 switch21 m) :
     ¬ dynamicIncentiveCompatible
       (gn21MeasuredDynamicRewardFunctional mu arrival switch12 switch21
-        (fun i => multiplicativePricing (m i))) := by
-  exact
+        (fun i => multiplicativePricing (m i))) :=
     GN21DriverSurgePricing.paper_theorem2_multiplicative_measured_not_ic_of_aggregate_witness
       mu arrival switch12 switch21 m C
 
@@ -322,8 +314,7 @@ theorem theorem2_multiplicative_extended_policy_shape_of_shape_derivation
         C.surge_shape = .strictlyIncreasing) :
     dynamicOptimal R C.policy ∧
       rejectsLongTripsFiniteOrInfiniteCutoff (C.policy 0) ∧
-      (∃ t : ℝ, rejectsShortTrips t (C.policy 1)) := by
-  exact
+      (∃ t : ℝ, rejectsShortTrips t (C.policy 1)) :=
     GN21DriverSurgePricing.paper_theorem2_multiplicative_extended_policy_shape_of_shape_derivation
       R C hnonsurge hsurge
 
@@ -342,8 +333,7 @@ theorem theorem2_multiplicative_extended_measurable_policy_shape_of_shape_deriva
         C.surge_shape = .strictlyIncreasing) :
     dynamicMeasurableOptimal R C.policy ∧
       rejectsLongTripsFiniteOrInfiniteCutoff (C.policy 0) ∧
-      (∃ t : ℝ, rejectsShortTrips t (C.policy 1)) := by
-  exact
+      (∃ t : ℝ, rejectsShortTrips t (C.policy 1)) :=
     GN21DriverSurgePricing.paper_theorem2_multiplicative_extended_measurable_policy_shape_of_shape_derivation
       R C hnonsurge hsurge
 
@@ -369,8 +359,7 @@ theorem theorem2_multiplicative_measurable_policy_shape_ae_of_feasible_ae_policy
         rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)) ∧
       ∀ rho : Fin 2 → TripPolicy, dynamicMeasurableOptimal R rho →
         rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) ∧
-          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1) := by
-  exact
+          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1) :=
     GN21DriverSurgePricing.paper_theorem2_multiplicative_measurable_policy_shape_ae_of_feasible_ae_policy_forms
       mu R forms hnonsurge hsurge
 
@@ -396,8 +385,7 @@ theorem lemma9_constraint_set_feasible_for_current_nonsurge
           (gn21ExitWeightIntegral (mu 0) (arrival 0) switch12 switch21 (rho 0))
           (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
           (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
-          switch21 := by
-  exact
+          switch21 :=
     S.lemma9_structured_bounds_feasible_for_current_nonsurge
       hrho_feasible hsurge_acceptAll_mass_pos
 
@@ -420,8 +408,7 @@ theorem lemma10_constraint_set_feasible_for_current_surge
         (gn21ExitWeightIntegral (mu 1) (arrival 1) switch21 switch12 (rho 1))
         (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
         (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
-        switch12 := by
-  exact
+        switch12 :=
     S.lemma10_structured_bounds_feasible_for_current_surge
       hrho_feasible hnonsurge_acceptAll_mass_pos
 
@@ -461,8 +448,7 @@ theorem theorem3_current_nonsurge_reward_rate_nonneg_of_acceptAllLemma10
       gn21MeasuredStateRewardRate (mu 0) (arrival 0)
         (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
         (rho 0) = R1_current) :
-    0 ≤ R1_current := by
-  exact
+    0 ≤ R1_current :=
     GN21DriverSurgePricing.theorem3CurrentNonsurgeRewardRate_nonneg_of_acceptAllLemma10
       harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos hR2_pos
       htime1_integrable htime2_integrable hq1_integrable hq2_integrable
@@ -479,8 +465,7 @@ theorem theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound
     (hden_pos : 0 < Q1 - switch12)
     (hbound : arrival0 * (rho * T1 - (T1 - 1)) ≤ Q1 - switch12) :
     arrival0 *
-        (theorem3NonsurgeZRatio rho T1 Q1 switch12 * R2) ≤ R2 := by
-  exact
+        (theorem3NonsurgeZRatio rho T1 Q1 switch12 * R2) ≤ R2 :=
     GN21DriverSurgePricing.theorem3_arrival_nonsurge_z_le_R2_of_ratio_numerator_bound
       rho R2 T1 Q1 switch12 arrival0 hR2_nonneg hden_pos hbound
 
@@ -533,8 +518,7 @@ theorem theorem3_positive_mass_measurable_ic_of_small_surge_fixed_lower_cross
       Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeSlackFixedLowerCrossDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_slack_fixed_lower_cross_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -552,8 +536,7 @@ theorem theorem3_positive_mass_measurable_ic_of_mass_affine_fixed_lower_cross
       Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineFixedLowerCrossArrivalBoundDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_fixed_lower_cross_arrival_bound_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -571,8 +554,7 @@ theorem theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign
       Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineCurrentLowerFinalSignArrivalBoundDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_arrival_bound_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -588,8 +570,7 @@ theorem theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_n
       Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineCurrentLowerFinalSignNoRmaxDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_no_rmax_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -605,8 +586,7 @@ theorem theorem3_positive_mass_measurable_ic_of_mass_affine_current_final_sign_n
       Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSmallSurgeMassAffineCurrentLowerFinalSignNoRmaxNormalizedMassDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredPositiveMassMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_prices_of_small_surge_mass_affine_current_lower_final_sign_no_rmax_normalized_mass_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -628,8 +608,7 @@ theorem theorem3_positive_mass_measurable_ic_ae_unique_of_source_and_positive_re
       theorem3AcceptAllPositiveMassPositiveResponseAEMarginalCertificate
         mu arrival R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredPositiveMassMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions_and_positive_response_marginal
       mu arrival rho R1 R2 switch12 switch21 A positive_marginal
 
@@ -648,8 +627,7 @@ theorem theorem3_positive_mass_measurable_ic_ae_unique_of_source_assumptions
       Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredPositiveMassMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -674,8 +652,7 @@ theorem theorem3_measurable_ic_ae_unique_of_source_assumptions_and_zero_mass_dom
               (gn21MeasuredCTMCStructuredDynamicReward
                 mu arrival switch12 switch21 m z)) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_source_assumptions_and_zero_mass_dominance
       mu arrival rho R1 R2 switch12 switch21 A zero_mass_dominance
 
@@ -693,8 +670,7 @@ theorem theorem3_structured_ic_of_positive_replacement
       Theorem3AcceptAllPositiveReplacementSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_ic_prices_of_positive_replacement_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -711,8 +687,7 @@ theorem theorem3_structured_measurable_ic_of_positive_replacement
       Theorem3AcceptAllPositiveReplacementSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_positive_replacement_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -730,8 +705,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_positive_response_margina
       Theorem3AcceptAllPositiveResponseAEMarginalSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_positive_response_marginal_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -748,8 +722,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_positive_fixed_response
       Theorem3AcceptAllPositiveFixedResponseSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_positive_fixed_response_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -764,8 +737,7 @@ theorem theorem3_structured_measurable_ic_of_positive_response_marginal
       Theorem3AcceptAllPositiveResponseAEMarginalSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_positive_response_marginal_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -781,8 +753,7 @@ theorem theorem3_structured_measurable_ic_of_positive_fixed_response
       Theorem3AcceptAllPositiveFixedResponseSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_positive_fixed_response_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -826,8 +797,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_positive_response_margina
       theorem3AcceptAllPositiveResponseAEMarginalCertificate
         mu arrival R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_positive_response_marginal_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -871,8 +841,7 @@ theorem theorem3_structured_measurable_ic_of_positive_response_marginal_normaliz
       theorem3AcceptAllPositiveResponseAEMarginalCertificate
         mu arrival R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_positive_response_marginal_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -919,8 +888,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_positive_fixed_response_n
       theorem3AcceptAllPositiveFixedResponseSourceCertificate
         mu arrival R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_positive_fixed_response_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -964,8 +932,7 @@ theorem theorem3_structured_measurable_ic_of_positive_fixed_response_normalized_
       theorem3AcceptAllPositiveFixedResponseSourceCertificate
         mu arrival R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_positive_fixed_response_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -985,8 +952,7 @@ theorem theorem3_structured_ic_of_allowed_replacement
       Theorem3AcceptAllAllowedReplacementSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_ic_prices_of_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -1001,8 +967,7 @@ theorem theorem3_structured_measurable_ic_of_allowed_replacement
       Theorem3AcceptAllAllowedReplacementSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_allowed_replacement_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -1019,8 +984,7 @@ theorem theorem3_structured_ic_of_endpoint_bridge
       Theorem3AcceptAllAllowedReplacementEndpointBridgeSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -1035,8 +999,7 @@ theorem theorem3_structured_measurable_ic_of_endpoint_bridge
       Theorem3AcceptAllAllowedReplacementEndpointBridgeSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_bridge_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -1084,8 +1047,7 @@ theorem theorem3_structured_ic_of_endpoint_bridge_ratio_source
           Theorem4AllowedReplacementEndpointBridgeCertificate
             mu arrival m z switch12 switch21) :
     theorem3MeasuredStructuredICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1136,8 +1098,7 @@ theorem theorem3_structured_measurable_ic_of_endpoint_bridge_ratio_source
           Theorem4AllowedReplacementEndpointBridgeCertificate
             mu arrival m z switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_bridge_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1187,8 +1148,7 @@ theorem theorem3_structured_ic_of_endpoint_bridge_normalized_mass_ratio_source
           Theorem4AllowedReplacementEndpointBridgeCertificate
             mu arrival m z switch12 switch21) :
     theorem3MeasuredStructuredICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_ic_prices_of_endpoint_bridge_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1239,8 +1199,7 @@ theorem theorem3_structured_measurable_ic_of_endpoint_bridge_normalized_mass_rat
           Theorem4AllowedReplacementEndpointBridgeCertificate
             mu arrival m z switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_bridge_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1260,8 +1219,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_s
       Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_selection_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -1278,8 +1236,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_a
       Theorem3AcceptAllMeasurableEndpointCurrentBoundsAllowedReplacementSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_allowed_replacement_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -1295,8 +1252,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_s
       Theorem3AcceptAllMeasurableEndpointCurrentBoundsSupportedSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_supported_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -1312,8 +1268,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_r
       Theorem3AcceptAllMeasurableEndpointCurrentBoundsRegularSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_regular_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -1333,8 +1288,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_policy_canonical_pointwis
       Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularPolicyCanonicalDominancePointwiseRewardRateSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_policy_canonical_dominance_pointwise_reward_rate_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -1353,8 +1307,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_policy_canonical
       Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularFeasiblePolicyCanonicalDominancePointwiseRewardRateSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_feasible_policy_canonical_dominance_pointwise_reward_rate_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -1412,8 +1365,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_policy_canonical
           Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularPointwiseRewardRateLocalEndpointCertificate
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_feasible_policy_canonical_dominance_pointwise_reward_rate_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1466,8 +1418,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_ae_representativ
           GN21Theorem3FeasibleAERepresentativeSourceData
             mu arrival switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_ae_representative_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1519,8 +1470,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_response_policy_for
           GN21Theorem3FixedResponsePolicyFormSourceData
             mu arrival switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1575,8 +1525,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_reroute
           GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_reroute_existence_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1625,8 +1574,7 @@ theorem theorem3_structured_measurable_ic_of_bracket_eq_middle_reroute_existence
           GN21Theorem3FixedResponseOneThresholdBracketEqMiddleRerouteSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_one_threshold_bracket_eq_middle_reroute_existence_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1679,8 +1627,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_response_eq_middle_
           GN21Theorem3FixedResponsePolicyFormEqMiddleCutoffRerouteSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_policy_form_eq_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1732,8 +1679,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_one_threshold_eq_middle_c
           GN21Theorem3FixedResponseOneThresholdEqMiddleCutoffRerouteSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_eq_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1785,8 +1731,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_cutoff_
           GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffRerouteSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1839,8 +1784,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_cutoff_
           GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffRerouteSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_reroute_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1891,8 +1835,7 @@ theorem theorem3_structured_measurable_ic_of_bracket_eq_middle_cutoff_normalized
           GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffRerouteSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_reroute_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1946,8 +1889,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_cutoff_
           GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffFixedStateEqSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_fixed_state_eq_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -1999,8 +1941,7 @@ theorem theorem3_structured_measurable_ic_of_bracket_eq_middle_cutoff_fixed_stat
           GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffFixedStateEqSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_fixed_state_eq_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2054,8 +1995,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_eq_middle_cutoff_
           GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffFixedStateNamedRateSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_fixed_state_named_rate_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2107,8 +2047,7 @@ theorem theorem3_structured_measurable_ic_of_bracket_eq_middle_cutoff_fixed_stat
           GN21Theorem3FixedResponseOneThresholdBracketEqMiddleCutoffFixedStateNamedRateSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_one_threshold_bracket_eq_middle_cutoff_fixed_state_named_rate_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2129,8 +2068,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_fea
       Theorem3AcceptAllStructuredCurrentBoundsSourceFeasibleSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2146,8 +2084,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_pos
       Theorem3AcceptAllStructuredCurrentBoundsSourceFeasibleSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_positive_response_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2166,8 +2103,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_
       Theorem3AcceptAllStructuredFeasibleWeakRewardOptimalPositiveResponseSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_optimal_positive_response_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2220,8 +2156,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_
         Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_optimal_positive_response_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2274,8 +2209,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_
         Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_optimal_positive_response_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2329,8 +2263,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_
         Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalAccountingPositiveResponseCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_optimal_accounting_positive_response_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2384,8 +2317,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_
         Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalRewardRatePositiveResponseCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_optimal_reward_rate_positive_response_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2441,8 +2373,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_
         Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate
           mu arrival R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_feasible_sequential_source_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2497,8 +2428,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_weak_reward_and_
         Theorem4MeasuredAggregateStructuredSequentialOptimalCurrentBoundsSourceCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_feasible_weak_reward_and_sequential_optimal_source_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2517,8 +2447,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_sequential_curre
       Theorem3AcceptAllStructuredFeasibleSequentialCurrentBoundsSourceDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_feasible_sequential_current_bounds_source_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2534,8 +2463,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_sequential_surge
       Theorem3AcceptAllStructuredFeasibleSequentialSurgeSourceDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_feasible_sequential_surge_source_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2548,8 +2476,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_sequential_surge
       Theorem3AcceptAllStructuredFeasibleSequentialSurgeAccountingDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_feasible_sequential_surge_accounting_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2562,8 +2489,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_feasible_sequential_surge
       Theorem3AcceptAllStructuredFeasibleSequentialSurgeRewardRateDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_feasible_sequential_surge_reward_rate_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2580,8 +2506,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_
       Theorem3AcceptAllStructuredOptimalSequentialSurgeSourceDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_source_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2594,8 +2519,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_
       Theorem3AcceptAllStructuredOptimalSequentialSurgeAccountingDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_accounting_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2608,8 +2532,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_
       Theorem3AcceptAllStructuredOptimalSequentialSurgeRewardRateDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_reward_rate_data_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2626,8 +2549,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_
       Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeSourceDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_source_data_zero_mass_bridge_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2640,8 +2562,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_
       Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeAccountingDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_accounting_data_zero_mass_bridge_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2654,8 +2575,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_optimal_sequential_surge_
       Theorem3AcceptAllStructuredOptimalSequentialSurgeZeroMassBridgeRewardRateDataAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_optimal_sequential_surge_reward_rate_data_zero_mass_bridge_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -2710,8 +2630,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_fea
         Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalSourcePositiveResponseCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_current_bounds_source_feasible_and_optimal_positive_response_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2769,8 +2688,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting
         Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalAccountingPositiveResponseCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_current_bounds_accounting_feasible_and_optimal_positive_response_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2827,8 +2745,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rat
         Theorem4MeasuredAggregateStructuredCurrentBoundsOptimalRewardRatePositiveResponseCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_current_bounds_reward_rate_feasible_and_optimal_positive_response_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2879,8 +2796,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_fea
         Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2931,8 +2847,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_source_fea
         Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_source_feasible_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -2983,8 +2898,7 @@ theorem theorem3_structured_measurable_ic_of_current_bounds_source_feasible_norm
         Theorem4MeasuredAggregateStructuredCurrentBoundsSourceFeasibleCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_source_feasible_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3003,8 +2917,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting
       Theorem3AcceptAllStructuredCurrentBoundsAccountingSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_accounting_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -3021,8 +2934,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rat
       Theorem3AcceptAllStructuredCurrentBoundsRewardRateSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_reward_rate_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -3070,8 +2982,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting
         Theorem4MeasuredAggregateStructuredCurrentBoundsAccountingFeasibleCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_accounting_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3122,8 +3033,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_accounting
         Theorem4MeasuredAggregateStructuredCurrentBoundsAccountingFeasibleCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_accounting_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3171,8 +3081,7 @@ theorem theorem3_structured_measurable_ic_of_current_bounds_accounting_normalize
         Theorem4MeasuredAggregateStructuredCurrentBoundsAccountingFeasibleCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_accounting_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3223,8 +3132,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rat
         Theorem4MeasuredAggregateStructuredCurrentBoundsRewardRateFeasibleCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_reward_rate_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3272,8 +3180,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_current_bounds_reward_rat
         Theorem4MeasuredAggregateStructuredCurrentBoundsRewardRateFeasibleCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_structured_current_bounds_reward_rate_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3321,8 +3228,7 @@ theorem theorem3_structured_measurable_ic_of_current_bounds_reward_rate_normaliz
         Theorem4MeasuredAggregateStructuredCurrentBoundsRewardRateFeasibleCertificate
           mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_structured_current_bounds_reward_rate_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3343,8 +3249,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_ae_endpoint_middle_rerout
       Theorem3AcceptAllMeasurableAEEndpointMiddleRerouteSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -3393,8 +3298,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_ae_endpoint_middle_rerout
           GN21Theorem3MiddleRerouteAEEndpointSourceData
             mu arrival switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3442,8 +3346,7 @@ theorem theorem3_structured_measurable_ic_of_ae_endpoint_middle_reroute_ratio_so
           GN21Theorem3MiddleRerouteAEEndpointSourceData
             mu arrival switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_ae_endpoint_middle_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3494,8 +3397,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_ae_endpoint_middle_rerout
           GN21Theorem3MiddleRerouteAEEndpointSourceData
             mu arrival switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_ae_endpoint_middle_reroute_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3546,8 +3448,7 @@ theorem theorem3_structured_measurable_ic_of_ae_endpoint_middle_reroute_normaliz
           GN21Theorem3MiddleRerouteAEEndpointSourceData
             mu arrival switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_ae_endpoint_middle_reroute_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3567,8 +3468,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_endpoint_current_bounds_m
       Theorem3AcceptAllMeasurableEndpointCurrentBoundsSelectionUnlessMiddleReroutePositiveSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_selection_unless_middle_reroute_positive_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -3586,8 +3486,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_endp
       Theorem3AcceptAllMeasurableEndpointCurrentBoundsExactOneThresholdNonAcceptAllSelectionUnlessSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_current_bounds_exact_one_threshold_non_accept_all_selection_unless_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -3604,8 +3503,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_fixe
       Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularExactOneThresholdNonAcceptAllSelectionUnlessSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_non_accept_all_selection_unless_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -3657,8 +3555,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_fixe
           Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdNonAcceptAllSelectionUnlessCertificate
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_non_accept_all_selection_unless_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3709,8 +3606,7 @@ theorem theorem3_structured_measurable_ic_of_exact_non_accept_all_fixed_transfer
           Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdNonAcceptAllSelectionUnlessCertificate
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_non_accept_all_selection_unless_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3764,8 +3660,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_non_accept_all_fixe
           Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdNonAcceptAllSelectionUnlessCertificate
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_non_accept_all_selection_unless_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3816,8 +3711,7 @@ theorem theorem3_structured_measurable_ic_of_exact_non_accept_all_fixed_transfer
           Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularExactOneThresholdNonAcceptAllSelectionUnlessCertificate
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_exact_one_threshold_non_accept_all_selection_unless_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3838,8 +3732,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_transfer_middle_rer
       Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementMiddleRerouteSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_middle_reroute_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -3858,8 +3751,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_state_eq_light_ae_m
       Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteLightAESourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -3875,8 +3767,7 @@ theorem theorem3_structured_measurable_ic_of_fixed_state_eq_light_ae_middle_rero
       Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteLightAESourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -3924,8 +3815,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_state_eq_light_ae_m
           GN21Theorem3MiddleRerouteLightAEEqSourceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3973,8 +3863,7 @@ theorem theorem3_structured_measurable_ic_of_fixed_state_eq_light_ae_middle_rero
           GN21Theorem3MiddleRerouteLightAEEqSourceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -3994,8 +3883,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_state_eq_light_ae_m
       Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteLightAEExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4011,8 +3899,7 @@ theorem theorem3_structured_measurable_ic_of_fixed_state_eq_light_ae_middle_rero
       Theorem3AcceptAllMeasurableEndpointTheorem3FixedTransferRegularAllowedReplacementFixedStateEqDerivedTailMiddleRerouteLightAEExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4060,8 +3947,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_state_eq_light_ae_m
           GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4109,8 +3995,7 @@ theorem theorem3_structured_measurable_ic_of_fixed_state_eq_light_ae_middle_rero
           GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4162,8 +4047,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_state_eq_light_ae_m
           GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4214,8 +4098,7 @@ theorem theorem3_structured_measurable_ic_of_fixed_state_eq_light_ae_middle_rero
           GN21Theorem3MiddleRerouteLightAEEqSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_eq_derived_tail_middle_reroute_light_ae_existence_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4272,8 +4155,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_branch_local_middle_rerou
           Theorem4MeasurableEndpointCurrentBoundsTheorem3FixedTransferRegularFixedStateByPolicyFormDerivedTailMiddleRerouteUnlessLocalEndpointCertificate
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_endpoint_theorem3_fixed_transfer_regular_allowed_replacement_fixed_state_by_policy_form_derived_tail_middle_reroute_unless_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4327,8 +4209,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_one_threshold_surge_cutof
           GN21Theorem3FixedResponseOneThresholdSurgeCutoffBranchFieldMiddleCutoffRerouteSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_surge_cutoff_branch_field_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4351,8 +4232,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_ordered_cross_fie
       Theorem3AcceptAllMeasurableFixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_ordered_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4403,8 +4283,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_ordered_cross_fie
           GN21Theorem3FixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_ordered_surge_cutoff_cross_field_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4455,8 +4334,7 @@ theorem theorem3_structured_measurable_ic_of_bracket_ordered_cross_fields_ratio_
           GN21Theorem3FixedResponseOneThresholdBracketOrderedSurgeCutoffCrossFieldMiddleCutoffRerouteSourceExistenceData
             mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_one_threshold_bracket_ordered_surge_cutoff_cross_field_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4476,8 +4354,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_bracket_cross_fields
       Theorem3AcceptAllMeasurableFixedResponseOneThresholdBracketSurgeCutoffCrossFieldMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_one_threshold_bracket_surge_cutoff_cross_field_middle_cutoff_reroute_existence_source_assumptions_via_ordered
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4496,8 +4373,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_t
       Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_bracket_branch_pointwise_transfer_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4515,8 +4391,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_u
       Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_bracket_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4565,8 +4440,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_t
             GN21Theorem3FixedResponseExactOneThresholdBracketBranchPointwiseTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_bracket_branch_pointwise_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4617,8 +4491,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_u
             GN21Theorem3FixedResponseExactOneThresholdBracketBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_bracket_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4638,8 +4511,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_extended_branch_pointwise
       Theorem3AcceptAllMeasurableFixedResponseExtendedOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_extended_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4687,8 +4559,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_extended_branch_pointwise
             GN21Theorem3FixedResponseExtendedOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_extended_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4736,8 +4607,7 @@ theorem theorem3_structured_measurable_ic_of_extended_branch_pointwise_upper_tra
             GN21Theorem3FixedResponseExtendedOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_extended_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -4757,8 +4627,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
       Theorem3AcceptAllMeasurableFixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4776,8 +4645,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_branch_fixed_transf
       Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_branch_by_policy_form_middle_cutoff_reroute_existence_source_assumptions_via_exact_fixed_transfer
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4795,8 +4663,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_extended_branch_fixed_tra
       Theorem3AcceptAllMeasurableEndpointExtendedOneThresholdBranchFixedTransferExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_fixed_transfer_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4813,8 +4680,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
       Theorem3AcceptAllMeasurableEndpointFiniteOrInfiniteOneThresholdBranchFixedTransferExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_fixed_transfer_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4831,8 +4697,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_fixed_trans
       Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_exact_one_threshold_bracket_branch_by_policy_form_middle_cutoff_reroute_existence_source_assumptions_via_exact_fixed_transfer
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4848,8 +4713,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_response_exact_bran
       Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21
       A.to_exact_branch_surge_cross_fixed_transfer_source_assumptions
@@ -4866,8 +4730,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_fixed_response_exact_brac
       Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21
       A.to_exact_branch_surge_cross_fixed_transfer_source_assumptions
@@ -4884,8 +4747,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_t
       Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21
       A.to_exact_branch_surge_cross_fixed_transfer_source_assumptions
@@ -4902,8 +4764,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_bracket_pointwise_u
       Theorem3AcceptAllMeasurableFixedResponseExactOneThresholdBracketBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21
       A.to_exact_branch_surge_cross_fixed_transfer_source_assumptions
@@ -4920,8 +4781,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_exact_branch_surge_cross_
       Theorem3AcceptAllMeasurableEndpointExactOneThresholdBranchSurgeCrossByPolicyFormFixedTransferExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_exact_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4939,8 +4799,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_extended_branch_surge_cro
       Theorem3AcceptAllMeasurableEndpointExtendedOneThresholdBranchSurgeCrossByPolicyFormFixedTransferExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -4988,8 +4847,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_extended_branch_surge_cro
             GN21Theorem3ExtendedOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5040,8 +4898,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_extended_branch_surge_cro
             GN21Theorem3ExtendedOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5089,8 +4946,7 @@ theorem theorem3_structured_measurable_ic_of_extended_branch_surge_cross_fixed_t
             GN21Theorem3ExtendedOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_extended_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5110,8 +4966,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
       Theorem3AcceptAllMeasurableEndpointFiniteOrInfiniteOneThresholdBranchSurgeCrossByPolicyFormFixedTransferExistenceSourceAssumptions
         mu arrival rho R1 R2 switch12 switch21) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_existence_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 A
 
@@ -5160,8 +5015,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
             GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5211,8 +5065,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
             GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5260,8 +5113,7 @@ theorem theorem3_structured_measurable_ic_of_finite_or_infinite_branch_surge_cro
             GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossByPolicyFormFixedTransferSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_by_policy_form_fixed_transfer_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5312,8 +5164,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
             GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossNamedRateSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_named_rate_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5364,8 +5215,7 @@ theorem theorem3_structured_measurable_ic_of_finite_or_infinite_branch_surge_cro
             GN21Theorem3FiniteOrInfiniteOneThresholdBranchSurgeCrossNamedRateSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_finite_or_infinite_one_threshold_branch_surge_cross_named_rate_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5418,8 +5268,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
             GN21Theorem3FixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5470,8 +5319,7 @@ theorem theorem3_structured_measurable_ic_of_finite_or_infinite_branch_pointwise
             GN21Theorem3FixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5522,8 +5370,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
             GN21Theorem3FixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5574,8 +5421,7 @@ theorem theorem3_structured_measurable_ic_of_finite_or_infinite_branch_pointwise
             GN21Theorem3FixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferByPolicyFormMiddleCutoffRerouteSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_by_policy_form_middle_cutoff_reroute_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5626,8 +5472,7 @@ theorem theorem3_structured_measurable_ic_ae_unique_of_finite_or_infinite_branch
             GN21Theorem3FixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferNamedRateSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_named_rate_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos
@@ -5678,8 +5523,7 @@ theorem theorem3_structured_measurable_ic_of_finite_or_infinite_branch_pointwise
             GN21Theorem3FixedResponseFiniteOrInfiniteOneThresholdBranchPointwiseUpperTransferNamedRateSourceExistenceData
               mu arrival R1 R2 switch12 switch21 m z) :
     theorem3MeasuredStructuredMeasurableICConclusion
-      mu arrival R1 R2 switch12 switch21 := by
-  exact
+      mu arrival R1 R2 switch12 switch21 :=
     GN21DriverSurgePricing.paper_theorem3_measured_structured_measurable_ic_prices_of_fixed_response_finite_or_infinite_one_threshold_branch_pointwise_upper_transfer_named_rate_normalized_mass_ratio_source_assumptions
       mu arrival rho R1 R2 switch12 switch21 hR1_eq hR2_pos hC_lt_rho
       hrho_lt_one harrival1_pos harrival2_pos hswitch12_pos hswitch21_pos

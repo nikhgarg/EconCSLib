@@ -310,6 +310,25 @@ theorem TendsToZero_of_eventually_abs_le_tendsto_zero
   · filter_upwards [hbound] with N hN
     exact (abs_le.mp hN).2
 
+/--
+If a real-valued scale is eventually positive and tends to zero, then any
+positive constant divided by that scale diverges to `atTop`.
+-/
+theorem tendsto_const_div_atTop_of_pos_tendsto_zero
+    {ι : Type*} {l : Filter ι} {scale : ι → ℝ} {C : ℝ}
+    (hC_pos : 0 < C)
+    (hscale_zero : Tendsto scale l (nhds 0))
+    (hscale_pos : ∀ᶠ i in l, 0 < scale i) :
+    Tendsto (fun i => C / scale i) l atTop := by
+  have hscale_nhdsGT :
+      Tendsto scale l (𝓝[>] (0 : ℝ)) := by
+    exact tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
+      scale hscale_zero hscale_pos
+  have hinv : Tendsto (fun i => (scale i)⁻¹) l atTop :=
+    hscale_nhdsGT.inv_tendsto_nhdsGT_zero
+  simpa [div_eq_mul_inv] using
+    (tendsto_const_mul_atTop_of_pos hC_pos).mpr hinv
+
 /-- `log N` tends to infinity along natural numbers. -/
 theorem tendsto_log_nat_atTop :
     Tendsto (fun N : ℕ => Real.log (N : ℝ)) atTop atTop :=
@@ -352,6 +371,334 @@ theorem TendsToZero_of_eventually_abs_le_inv_sqrt (ε : ℕ → ℝ) {C : ℝ}
   · filter_upwards [hbound, eventually_gt_atTop 0] with N hN hNpos
     rw [abs_le] at hN
     exact hN.2
+
+/-- An exact geometric tail has logarithmic saturation ratio one. -/
+theorem log_geometric_tail_ratio
+    {C r : ℝ} (hC : 0 < C) (hr_pos : 0 < r) (hr_lt_one : r < 1) :
+    Tendsto
+      (fun N : ℕ =>
+        Real.log (C * r ^ N) / (Real.log r * (N : ℝ)))
+      atTop (nhds 1) := by
+  have hlog_neg : Real.log r < 0 := Real.log_neg hr_pos hr_lt_one
+  have hlog_ne : Real.log r ≠ 0 := ne_of_lt hlog_neg
+  have hconst :
+      Tendsto
+        (fun N : ℕ => (Real.log C / Real.log r) / (N : ℝ))
+        atTop (nhds 0) :=
+    tendsto_const_div_atTop_nhds_zero_nat (Real.log C / Real.log r)
+  have hlim :
+      Tendsto
+        (fun N : ℕ => 1 + (Real.log C / Real.log r) / (N : ℝ))
+        atTop (nhds 1) := by
+    simpa using tendsto_const_nhds.add hconst
+  refine Tendsto.congr' ?_ hlim
+  filter_upwards [eventually_gt_atTop 0] with N hN
+  have hN_ne : (N : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hN)
+  have hrpow_ne : r ^ N ≠ 0 := pow_ne_zero N hr_pos.ne'
+  symm
+  calc
+    Real.log (C * r ^ N) / (Real.log r * (N : ℝ))
+        = (Real.log C + (N : ℝ) * Real.log r) /
+            (Real.log r * (N : ℝ)) := by
+          rw [Real.log_mul hC.ne' hrpow_ne, Real.log_pow]
+    _ = 1 + (Real.log C / Real.log r) / (N : ℝ) := by
+          field_simp [hlog_ne, hN_ne]
+          ring
+
+/-- `log N / N -> 0`. -/
+theorem tendsto_log_nat_div_nat_nhds_zero :
+    Tendsto
+      (fun N : ℕ => Real.log (N : ℝ) / (N : ℝ))
+      atTop (nhds 0) := by
+  have hreal :
+      Tendsto (fun x : ℝ => Real.log x / x) atTop (nhds 0) := by
+    simpa using
+      (isLittleO_log_rpow_atTop (r := (1 : ℝ)) (by norm_num)).tendsto_div_nhds_zero
+  exact hreal.comp tendsto_natCast_atTop_atTop
+
+/--
+Any fixed real-power polynomial factor is killed by a geometric term along
+natural-number indices.
+-/
+theorem rpow_mul_geometric_tendsto_zero
+    (s : ℝ) {rho : ℝ} (hrho_pos : 0 < rho) (hrho_lt_one : rho < 1) :
+    Tendsto (fun N : ℕ => (N : ℝ) ^ s * rho ^ N)
+      atTop (nhds 0) := by
+  have hlog_neg : Real.log rho < 0 := Real.log_neg hrho_pos hrho_lt_one
+  have hreal :
+      Tendsto (fun x : ℝ => x ^ s * Real.exp (Real.log rho * x))
+        atTop (nhds 0) := by
+    simpa [neg_mul, neg_neg, mul_comm, mul_left_comm, mul_assoc] using
+      tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero
+        s (-Real.log rho) (neg_pos.mpr hlog_neg)
+  refine Tendsto.congr' ?_ (hreal.comp tendsto_natCast_atTop_atTop)
+  filter_upwards with N
+  have hexp :
+      Real.exp (Real.log rho * (N : ℝ)) = rho ^ N := by
+    calc
+      Real.exp (Real.log rho * (N : ℝ))
+          = Real.exp ((N : ℝ) * Real.log rho) := by rw [mul_comm]
+      _ = (Real.exp (Real.log rho)) ^ N := Real.exp_nat_mul (Real.log rho) N
+      _ = rho ^ N := by rw [Real.exp_log hrho_pos]
+  change (N : ℝ) ^ s * Real.exp (Real.log rho * (N : ℝ)) =
+    (N : ℝ) ^ s * rho ^ N
+  rw [hexp]
+
+/-- Natural square root tends to infinity along natural numbers. -/
+theorem tendsto_nat_sqrt_atTop :
+    Tendsto (fun N : ℕ => Nat.sqrt N) atTop atTop := by
+  rw [tendsto_atTop]
+  intro M
+  refine eventually_atTop.2 ⟨M * M, ?_⟩
+  intro N hN
+  exact (Nat.le_sqrt).2 hN
+
+/-- The real cast of `N + 1` tends to infinity along natural numbers. -/
+theorem tendsto_nat_succ_cast_atTop :
+    Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ))) atTop atTop :=
+  tendsto_natCast_atTop_atTop.comp (tendsto_add_atTop_nat 1)
+
+/-- Adding a real constant to `(N + 1 : ℝ)` still tends to infinity. -/
+theorem tendsto_nat_succ_cast_add_const_atTop (d : ℝ) :
+    Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ) + d)) atTop atTop :=
+  tendsto_atTop_add_const_right atTop d tendsto_nat_succ_cast_atTop
+
+/-- A positive real power of `(N + 1 : ℝ)` tends to infinity. -/
+theorem tendsto_nat_succ_cast_rpow_atTop {β : ℝ} (hβ_pos : 0 < β) :
+    Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ) ^ β)) atTop atTop :=
+  (tendsto_rpow_atTop hβ_pos).comp tendsto_nat_succ_cast_atTop
+
+/-- A negative real power of `(N + 1 : ℝ)` tends to zero. -/
+theorem tendsto_nat_succ_cast_rpow_neg_nhds_zero {β : ℝ}
+    (hβ_pos : 0 < β) :
+    Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ) ^ (-β)))
+      atTop (nhds 0) :=
+  (tendsto_rpow_neg_atTop hβ_pos).comp tendsto_nat_succ_cast_atTop
+
+/-- A negative real power of `(N + 1 : ℝ) + d` tends to zero. -/
+theorem tendsto_nat_succ_cast_add_const_rpow_neg_nhds_zero
+    (d : ℝ) {β : ℝ} (hβ_pos : 0 < β) :
+    Tendsto (fun N : ℕ => ((((N + 1 : ℕ) : ℝ) + d) ^ (-β)))
+      atTop (nhds 0) :=
+  (tendsto_rpow_neg_atTop hβ_pos).comp
+    (tendsto_nat_succ_cast_add_const_atTop d)
+
+/-- The square root of `(N + 1 : ℝ)` tends to infinity. -/
+theorem tendsto_sqrt_nat_succ_cast_atTop :
+    Tendsto (fun N : ℕ => Real.sqrt (((N + 1 : ℕ) : ℝ))) atTop atTop :=
+  Real.tendsto_sqrt_atTop.comp tendsto_nat_succ_cast_atTop
+
+/-- The integer square-root gap `(sqrt N + 1) / N` tends to zero. -/
+theorem nat_sqrt_gap_error_tendsToZero :
+    TendsToZero
+      (fun N : ℕ => ((Nat.sqrt N + 1 : ℕ) : ℝ) / (N : ℝ)) := by
+  refine TendsToZero_of_eventually_abs_le_inv_sqrt
+    (fun N : ℕ => ((Nat.sqrt N + 1 : ℕ) : ℝ) / (N : ℝ))
+    (by norm_num : (0 : ℝ) < 2) ?_
+  filter_upwards [eventually_ge_atTop 1] with N hN
+  have hN_pos : 0 < (N : ℝ) := by exact_mod_cast (Nat.succ_le_iff.mp hN)
+  have hN_nonneg : 0 ≤ (N : ℝ) := hN_pos.le
+  have hsqrt_pos : 0 < Real.sqrt (N : ℝ) := Real.sqrt_pos.mpr hN_pos
+  have hsqrt_ge_one : 1 ≤ Real.sqrt (N : ℝ) := by
+    rw [Real.one_le_sqrt]
+    exact_mod_cast hN
+  have hnat_sqrt_le : (Nat.sqrt N : ℝ) ≤ Real.sqrt (N : ℝ) :=
+    Real.nat_sqrt_le_real_sqrt
+  have hnum_le :
+      ((Nat.sqrt N + 1 : ℕ) : ℝ) ≤ 2 * Real.sqrt (N : ℝ) := by
+    norm_num
+    linarith
+  have hval_nonneg :
+      0 ≤ ((Nat.sqrt N + 1 : ℕ) : ℝ) / (N : ℝ) := by
+    positivity
+  rw [abs_of_nonneg hval_nonneg]
+  calc
+    ((Nat.sqrt N + 1 : ℕ) : ℝ) / (N : ℝ)
+        ≤ (2 * Real.sqrt (N : ℝ)) / (N : ℝ) :=
+          div_le_div_of_nonneg_right hnum_le hN_nonneg
+    _ = 2 / Real.sqrt (N : ℝ) := by
+          field_simp [hsqrt_pos.ne']
+          rw [Real.sq_sqrt hN_nonneg]
+
+/--
+For any `0 < rho < 1`, a square-root gap kills every fixed polynomial factor:
+`N^k * rho^(sqrt N) -> 0`.
+-/
+theorem nat_sqrt_gap_polynomial_geometric_tends_to_zero
+    (k : ℕ) {rho : ℝ} (hrho_pos : 0 < rho) (hrho_lt_one : rho < 1) :
+    Tendsto
+      (fun N : ℕ => (N : ℝ) ^ k * rho ^ (Nat.sqrt N))
+      atTop (nhds 0) := by
+  have hsucc_base :
+      Tendsto
+        (fun m : ℕ => (((m + 1 : ℕ) : ℝ) ^ (2 * k)) * rho ^ (m + 1))
+        atTop (nhds 0) :=
+          (tendsto_pow_const_mul_const_pow_of_lt_one (2 * k)
+        hrho_pos.le hrho_lt_one).comp (tendsto_add_atTop_nat 1)
+  have hsucc :
+      Tendsto
+        (fun m : ℕ => (((m + 1 : ℕ) : ℝ) ^ (2 * k)) * rho ^ m)
+        atTop (nhds 0) := by
+    have hmul :=
+      hsucc_base.const_mul rho⁻¹
+    refine Tendsto.congr' ?_ (by simpa using hmul)
+    filter_upwards with m
+    have hpow : rho ^ (m + 1) = rho ^ m * rho := by
+      rw [pow_succ]
+    rw [hpow]
+    field_simp [hrho_pos.ne']
+    ring_nf
+    norm_num [Nat.cast_add, add_comm, mul_comm]
+  have hupper_lim :
+      Tendsto
+        (fun N : ℕ =>
+          (((Nat.sqrt N + 1 : ℕ) : ℝ) ^ (2 * k)) *
+            rho ^ (Nat.sqrt N))
+        atTop (nhds 0) :=
+    hsucc.comp tendsto_nat_sqrt_atTop
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le'
+    tendsto_const_nhds hupper_lim ?_ ?_
+  · filter_upwards with N
+    positivity
+  · filter_upwards with N
+    let m : ℕ := Nat.sqrt N
+    have hN_le_nat : N ≤ (m + 1) ^ 2 :=
+      le_of_lt (by simpa [m] using Nat.lt_succ_sqrt' N)
+    have hN_le_real : (N : ℝ) ≤ ((m + 1 : ℕ) : ℝ) ^ 2 := by
+      exact_mod_cast hN_le_nat
+    have hpow_le :
+        (N : ℝ) ^ k ≤ (((m + 1 : ℕ) : ℝ) ^ 2) ^ k :=
+      pow_le_pow_left₀ (by positivity) hN_le_real k
+    have hpow_eq :
+        (((m + 1 : ℕ) : ℝ) ^ 2) ^ k =
+          ((m + 1 : ℕ) : ℝ) ^ (2 * k) := by
+      rw [pow_mul]
+    have hpow_le' :
+        (N : ℝ) ^ k ≤ ((m + 1 : ℕ) : ℝ) ^ (2 * k) := by
+      calc
+        (N : ℝ) ^ k ≤ (((m + 1 : ℕ) : ℝ) ^ 2) ^ k := hpow_le
+        _ = ((m + 1 : ℕ) : ℝ) ^ (2 * k) := hpow_eq
+    have htail_nonneg : 0 ≤ rho ^ m := pow_nonneg hrho_pos.le m
+    calc
+      (N : ℝ) ^ k * rho ^ (Nat.sqrt N)
+          = (N : ℝ) ^ k * rho ^ m := by rfl
+      _ ≤ (((m + 1 : ℕ) : ℝ) ^ (2 * k)) * rho ^ m :=
+            mul_le_mul_of_nonneg_right
+              hpow_le' htail_nonneg
+      _ = (((Nat.sqrt N + 1 : ℕ) : ℝ) ^ (2 * k)) *
+            rho ^ (Nat.sqrt N) := by rfl
+
+/--
+Multiplying a geometric tail by any fixed polynomial factor does not change the
+logarithmic saturation ratio.
+-/
+theorem log_polynomial_geometric_tail_ratio
+    {C r : ℝ} (d : ℕ)
+    (hC : 0 < C) (hr_pos : 0 < r) (hr_lt_one : r < 1) :
+    Tendsto
+      (fun N : ℕ =>
+        Real.log (C * (N : ℝ) ^ d * r ^ N) /
+          (Real.log r * (N : ℝ)))
+      atTop (nhds 1) := by
+  have hlog_neg : Real.log r < 0 := Real.log_neg hr_pos hr_lt_one
+  have hlog_ne : Real.log r ≠ 0 := ne_of_lt hlog_neg
+  have hconst :
+      Tendsto
+        (fun N : ℕ => (Real.log C / Real.log r) / (N : ℝ))
+        atTop (nhds 0) :=
+    tendsto_const_div_atTop_nhds_zero_nat (Real.log C / Real.log r)
+  have hlog_over_N :
+      Tendsto
+        (fun N : ℕ =>
+          ((d : ℝ) / Real.log r) *
+            (Real.log (N : ℝ) / (N : ℝ)))
+        atTop (nhds 0) := by
+    simpa using tendsto_log_nat_div_nat_nhds_zero.const_mul
+      ((d : ℝ) / Real.log r)
+  have hlim :
+      Tendsto
+        (fun N : ℕ =>
+          1 + (Real.log C / Real.log r) / (N : ℝ) +
+            ((d : ℝ) / Real.log r) *
+              (Real.log (N : ℝ) / (N : ℝ)))
+        atTop (nhds 1) := by
+    have hfirst :
+        Tendsto
+          (fun N : ℕ => 1 + (Real.log C / Real.log r) / (N : ℝ))
+          atTop (nhds 1) := by
+      simpa using tendsto_const_nhds.add hconst
+    simpa using hfirst.add hlog_over_N
+  refine Tendsto.congr' ?_ hlim
+  filter_upwards [eventually_gt_atTop 0] with N hN
+  have hN_pos : 0 < (N : ℝ) := by exact_mod_cast hN
+  have hN_ne : (N : ℝ) ≠ 0 := ne_of_gt hN_pos
+  have hNpow_ne : (N : ℝ) ^ d ≠ 0 := pow_ne_zero d hN_ne
+  have hrpow_ne : r ^ N ≠ 0 := pow_ne_zero N hr_pos.ne'
+  symm
+  calc
+    Real.log (C * (N : ℝ) ^ d * r ^ N) /
+          (Real.log r * (N : ℝ))
+        =
+        (Real.log C + (d : ℝ) * Real.log (N : ℝ) +
+            (N : ℝ) * Real.log r) /
+          (Real.log r * (N : ℝ)) := by
+          rw [Real.log_mul (mul_ne_zero hC.ne' hNpow_ne) hrpow_ne,
+            Real.log_mul hC.ne' hNpow_ne, Real.log_pow, Real.log_pow]
+    _ = 1 + (Real.log C / Real.log r) / (N : ℝ) +
+          ((d : ℝ) / Real.log r) *
+            (Real.log (N : ℝ) / (N : ℝ)) := by
+          field_simp [hlog_ne, hN_ne]
+          ring
+
+/--
+Lower geometric and upper polynomial-times-geometric bounds squeeze the
+logarithmic saturation ratio to one.
+-/
+theorem log_tail_ratio_of_geometric_bounds
+    {gap : ℕ → ℝ} {lower upper r : ℝ} (d : ℕ)
+    (hlower_pos : 0 < lower) (hupper_pos : 0 < upper)
+    (hr_pos : 0 < r) (hr_lt_one : r < 1)
+    (hlower :
+      ∀ᶠ N in atTop, lower * r ^ N ≤ gap N)
+    (hupper :
+      ∀ᶠ N in atTop, gap N ≤ upper * (N : ℝ) ^ d * r ^ N) :
+    Tendsto
+      (fun N : ℕ =>
+        Real.log (gap N) / (Real.log r * (N : ℝ)))
+      atTop (nhds 1) := by
+  have hlog_neg : Real.log r < 0 := Real.log_neg hr_pos hr_lt_one
+  have hlow_lim :=
+    log_polynomial_geometric_tail_ratio
+      d hupper_pos hr_pos hr_lt_one
+  have hup_lim :=
+    log_geometric_tail_ratio
+      hlower_pos hr_pos hr_lt_one
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' hlow_lim hup_lim ?_ ?_
+  · filter_upwards [hlower, hupper, eventually_gt_atTop 0] with N hlowerN hupperN hN
+    have hN_pos : 0 < (N : ℝ) := by exact_mod_cast hN
+    have hden_neg : Real.log r * (N : ℝ) < 0 :=
+      mul_neg_of_neg_of_pos hlog_neg hN_pos
+    have hlower_tail_pos : 0 < lower * r ^ N :=
+      mul_pos hlower_pos (pow_pos hr_pos N)
+    have hgap_pos : 0 < gap N := lt_of_lt_of_le hlower_tail_pos hlowerN
+    have hupper_tail_pos : 0 < upper * (N : ℝ) ^ d * r ^ N := by
+      positivity
+    have hlog_le :
+        Real.log (gap N) ≤
+          Real.log (upper * (N : ℝ) ^ d * r ^ N) :=
+      Real.log_le_log hgap_pos hupperN
+    exact (div_le_div_right_of_neg hden_neg).2 hlog_le
+  · filter_upwards [hlower, hupper, eventually_gt_atTop 0] with N hlowerN hupperN hN
+    have hN_pos : 0 < (N : ℝ) := by exact_mod_cast hN
+    have hden_neg : Real.log r * (N : ℝ) < 0 :=
+      mul_neg_of_neg_of_pos hlog_neg hN_pos
+    have hlower_tail_pos : 0 < lower * r ^ N :=
+      mul_pos hlower_pos (pow_pos hr_pos N)
+    have hgap_pos : 0 < gap N := lt_of_lt_of_le hlower_tail_pos hlowerN
+    have hlog_le :
+        Real.log (lower * r ^ N) ≤ Real.log (gap N) :=
+      Real.log_le_log hlower_tail_pos hlowerN
+    exact (div_le_div_right_of_neg hden_neg).2 hlog_le
 
 /--
 If a nonnegative sequence is bounded by a constant, then dividing it by `N`

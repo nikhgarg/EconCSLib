@@ -25,8 +25,7 @@ noncomputable def modelAt {n : ℕ} (F : AccuracyFamily n) (θA θH : ℝ) : Mod
 The theorem-1 target for a fixed `θH`: there exists a better algorithmic accuracy
 `θA > θH` that creates the monoculture paradox.
 -/
-noncomputable def Theorem1Target {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) : Prop :=
-  ∃ θA, θH < θA ∧ Model.HasKR21MonocultureParadox (AccuracyFamily.modelAt F θA θH)
+noncomputable def Theorem1Target {n : ℕ} (F : AccuracyFamily n) (θH : ℝ) : Prop := ∃ θA, θH < θA ∧ Model.HasKR21MonocultureParadox (AccuracyFamily.modelAt F θA θH)
 
 /--
 Paper-facing theorem statement equivalent.

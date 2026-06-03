@@ -14,16 +14,14 @@ Expected top-one Bernoulli value from a ranked list of success probabilities:
 the probability that at least one of the first `q` items succeeds.
 -/
 noncomputable def rankBernoulliTopOneValue
-    (success : ℕ → ℝ) (q : ℕ) : ℝ :=
-  1 - ∏ i ∈ Finset.range q, (1 - success i)
+    (success : ℕ → ℝ) (q : ℕ) : ℝ := 1 - ∏ i ∈ Finset.range q, (1 - success i)
 
 /--
 Expected all-consumed Bernoulli value from a ranked list of success
 probabilities: the sum of expected item values.
 -/
 noncomputable def rankBernoulliAllConsumedValue
-    (success : ℕ → ℝ) (q : ℕ) : ℝ :=
-  ∑ i ∈ Finset.range q, success i
+    (success : ℕ → ℝ) (q : ℕ) : ℝ := ∑ i ∈ Finset.range q, success i
 
 @[simp] theorem rankBernoulliTopOneValue_zero (success : ℕ → ℝ) :
     rankBernoulliTopOneValue success 0 = 0 := by
@@ -43,15 +41,14 @@ theorem rankBernoulliTopOneValue_succ_sub (success : ℕ → ℝ) (q : ℕ) :
 
 theorem rankBernoulliTopOne_survivalProduct_pos
     (success : ℕ → ℝ) (hs_lt_one : ∀ i, success i < 1) (q : ℕ) :
-    0 < ∏ i ∈ Finset.range q, (1 - success i) := by
-  exact Finset.prod_pos (fun i _ => sub_pos.mpr (hs_lt_one i))
+    0 < ∏ i ∈ Finset.range q, (1 - success i) :=  Finset.prod_pos (fun i _ => sub_pos.mpr (hs_lt_one i))
 
 theorem rankBernoulliTopOne_marginalCore_pos
     (success : ℕ → ℝ)
     (hs_pos : ∀ i, 0 < success i)
     (hs_lt_one : ∀ i, success i < 1) (q : ℕ) :
-    0 < success q * ∏ i ∈ Finset.range q, (1 - success i) := by
-  exact mul_pos (hs_pos q)
+    0 < success q * ∏ i ∈ Finset.range q, (1 - success i) :=
+   mul_pos (hs_pos q)
     (rankBernoulliTopOne_survivalProduct_pos success hs_lt_one q)
 
 theorem rankBernoulliTopOne_survivalProduct_succ_le
@@ -76,8 +73,8 @@ theorem rankBernoulliTopOne_survivalProduct_antitone
     (hs_nonneg : ∀ i, 0 ≤ success i)
     (hs_le_one : ∀ i, success i ≤ 1) {q r : ℕ} (hqr : q ≤ r) :
     ∏ i ∈ Finset.range r, (1 - success i) ≤
-      ∏ i ∈ Finset.range q, (1 - success i) := by
-  exact Nat.le_induction (by rfl)
+      ∏ i ∈ Finset.range q, (1 - success i) :=
+   Nat.le_induction (by rfl)
     (fun n _ ih =>
       le_trans
         (rankBernoulliTopOne_survivalProduct_succ_le
@@ -112,8 +109,7 @@ theorem rankBernoulliTopOne_survivalProduct_eq_mul_Ico
     (success : ℕ → ℝ) {q r : ℕ} (hqr : q ≤ r) :
     ∏ i ∈ Finset.range r, (1 - success i) =
       (∏ i ∈ Finset.range q, (1 - success i)) *
-        ∏ i ∈ Finset.Ico q r, (1 - success i) := by
-  exact (Finset.prod_range_mul_prod_Ico (fun i => 1 - success i) hqr).symm
+        ∏ i ∈ Finset.Ico q r, (1 - success i) :=  (Finset.prod_range_mul_prod_Ico (fun i => 1 - success i) hqr).symm
 
 theorem rankBernoulliTopOne_survivalProduct_le_mul_exp_neg_sum_Ico
     (success : ℕ → ℝ)
@@ -253,8 +249,8 @@ theorem rankBernoulliTopOne_weighted_marginalCore_lt_of_Ico_exp_bound
         wsrc *
           (success (qsrc - 1) *
             ((∏ i ∈ Finset.range qdst, (1 - success i)) *
-              Real.exp (-(∑ i ∈ Finset.Ico qdst (qsrc - 1), success i)))) := by
-    exact mul_le_mul_of_nonneg_left
+              Real.exp (-(∑ i ∈ Finset.Ico qdst (qsrc - 1), success i)))) :=
+    mul_le_mul_of_nonneg_left
       (mul_le_mul_of_nonneg_left hprod_bound hsrc_success_nonneg)
       hwsrc_nonneg
   have hprefix_pos :
@@ -355,8 +351,8 @@ theorem rankBernoulliTopOneValue_marginal_antitone
       success (q + 1) * (1 - success q) ≤ success q := by
     calc
       success (q + 1) * (1 - success q)
-          ≤ success (q + 1) * 1 := by
-            exact mul_le_mul_of_nonneg_left (by linarith [hs_nonneg q])
+          ≤ success (q + 1) * 1 :=
+            mul_le_mul_of_nonneg_left (by linarith [hs_nonneg q])
               (hs_nonneg (q + 1))
       _ = success (q + 1) := by ring
       _ ≤ success q := hs_antitone q
@@ -614,8 +610,8 @@ theorem exp_sub_one_le_exp_one_sub_one_mul
     Real.exp x - 1 ≤ (Real.exp 1 - 1) * x := by
   have hconv :
       Real.exp ((1 - x) • (0 : ℝ) + x • (1 : ℝ)) ≤
-        (1 - x) • Real.exp (0 : ℝ) + x • Real.exp (1 : ℝ) := by
-    exact convexOn_exp.2 (Set.mem_univ 0) (Set.mem_univ 1)
+        (1 - x) • Real.exp (0 : ℝ) + x • Real.exp (1 : ℝ) :=
+    convexOn_exp.2 (Set.mem_univ 0) (Set.mem_univ 1)
       (by linarith) hx0 (by ring)
   simp only [smul_eq_mul, mul_zero, zero_add, mul_one, Real.exp_zero] at hconv
   linarith
@@ -629,8 +625,7 @@ theorem exp_sub_one_le_exp_one_mul
 
 /-- Source Theorem 2 rank-decay success probability `q_i = c (i + d)^(-α)`. -/
 noncomputable def decayingBernoulliSuccess
-    (c d α : ℝ) (i : ℕ) : ℝ :=
-  c * (((i + 1 : ℕ) : ℝ) + d) ^ (-α)
+    (c d α : ℝ) (i : ℕ) : ℝ := c * (((i + 1 : ℕ) : ℝ) + d) ^ (-α)
 
 @[simp] theorem decayingBernoulliSuccess_zero
     (c d : ℝ) (i : ℕ) :
@@ -662,16 +657,10 @@ theorem decayingBernoulliSuccess_pos
 theorem decayingBernoulliSuccess_tendsto_zero
     (c d α : ℝ) (hα : 0 < α) :
     Tendsto (decayingBernoulliSuccess c d α) atTop (nhds 0) := by
-  have hbase_nat :
-      Tendsto (fun i : ℕ => ((i + 1 : ℕ) : ℝ)) atTop atTop :=
-    tendsto_natCast_atTop_atTop.comp (tendsto_add_atTop_nat 1)
-  have hbase :
-      Tendsto (fun i : ℕ => (((i + 1 : ℕ) : ℝ) + d)) atTop atTop :=
-    tendsto_atTop_add_const_right atTop d hbase_nat
   have hpow :
       Tendsto (fun i : ℕ => (((i + 1 : ℕ) : ℝ) + d) ^ (-α))
         atTop (nhds 0) :=
-    (tendsto_rpow_neg_atTop hα).comp hbase
+    EconCSLib.Math.tendsto_nat_succ_cast_add_const_rpow_neg_nhds_zero d hα
   refine Tendsto.congr'
     (f₁ := fun i : ℕ => c * ((((i + 1 : ℕ) : ℝ) + d) ^ (-α))) ?_ ?_
   · filter_upwards with i
@@ -701,8 +690,8 @@ theorem decayingBernoulliSuccess_antitone_of_le
     (c d α : ℝ) (hc : 0 ≤ c) (hd : 0 ≤ d) (hα : 0 ≤ α)
     {i j : ℕ} (hij : i ≤ j) :
     decayingBernoulliSuccess c d α j ≤
-      decayingBernoulliSuccess c d α i := by
-  exact Nat.le_induction (by rfl)
+      decayingBernoulliSuccess c d α i :=
+   Nat.le_induction (by rfl)
     (fun n _ ih =>
       le_trans (decayingBernoulliSuccess_antitone c d α hc hd hα n) ih)
     j hij
@@ -891,8 +880,8 @@ theorem alpha_one_reverse_correction_sum_nonneg
     0 ≤
       ∑ i ∈ Finset.Ico q r,
         (c / ((((i + 1 : ℕ) : ℝ) + d) - c) -
-          c * (2 / (2 * (((i + 1 : ℕ) : ℝ) + d) + 1))) := by
-  exact Finset.sum_nonneg (fun i hi =>
+          c * (2 / (2 * (((i + 1 : ℕ) : ℝ) + d) + 1))) :=
+   Finset.sum_nonneg (fun i hi =>
     alpha_one_reverse_correction_term_nonneg
       hc (by positivity) (hlarge i hi))
 
@@ -1102,8 +1091,8 @@ theorem decayingBernoulliSuccess_one_Ico_sum_lower_log
 theorem decayingBernoulliTopOne_survivalProduct_pos
     (c d α : ℝ) (hc : 0 ≤ c) (hd : 0 ≤ d) (hα : 0 ≤ α)
     (hfirst : decayingBernoulliSuccess c d α 0 < 1) (q : ℕ) :
-    0 < ∏ i ∈ Finset.range q, (1 - decayingBernoulliSuccess c d α i) := by
-  exact rankBernoulliTopOne_survivalProduct_pos
+    0 < ∏ i ∈ Finset.range q, (1 - decayingBernoulliSuccess c d α i) :=
+   rankBernoulliTopOne_survivalProduct_pos
     (decayingBernoulliSuccess c d α)
     (decayingBernoulliSuccess_lt_one_of_first_lt_one c d α hc hd hα hfirst) q
 
@@ -1111,8 +1100,8 @@ theorem decayingBernoulliTopOne_marginalCore_pos
     (c d α : ℝ) (hc_pos : 0 < c) (hd : 0 ≤ d) (hα : 0 ≤ α)
     (hfirst : decayingBernoulliSuccess c d α 0 < 1) (q : ℕ) :
     0 < decayingBernoulliSuccess c d α q *
-      ∏ i ∈ Finset.range q, (1 - decayingBernoulliSuccess c d α i) := by
-  exact rankBernoulliTopOne_marginalCore_pos
+      ∏ i ∈ Finset.range q, (1 - decayingBernoulliSuccess c d α i) :=
+   rankBernoulliTopOne_marginalCore_pos
     (decayingBernoulliSuccess c d α)
     (decayingBernoulliSuccess_pos c d α hc_pos hd)
     (decayingBernoulliSuccess_lt_one_of_first_lt_one
@@ -1123,8 +1112,8 @@ theorem decayingBernoulliTopOne_survivalProduct_antitone
     (hfirst : decayingBernoulliSuccess c d α 0 ≤ 1) {q r : ℕ}
     (hqr : q ≤ r) :
     ∏ i ∈ Finset.range r, (1 - decayingBernoulliSuccess c d α i) ≤
-      ∏ i ∈ Finset.range q, (1 - decayingBernoulliSuccess c d α i) := by
-  exact rankBernoulliTopOne_survivalProduct_antitone
+      ∏ i ∈ Finset.range q, (1 - decayingBernoulliSuccess c d α i) :=
+   rankBernoulliTopOne_survivalProduct_antitone
     (decayingBernoulliSuccess c d α)
     (decayingBernoulliSuccess_nonneg c d α hc hd)
     (decayingBernoulliSuccess_le_one_of_first_le_one c d α hc hd hα hfirst)
@@ -1133,8 +1122,8 @@ theorem decayingBernoulliTopOne_survivalProduct_antitone
 theorem decayingBernoulliTopOne_survivalProduct_le_one
     (c d α : ℝ) (hc : 0 ≤ c) (hd : 0 ≤ d) (hα : 0 ≤ α)
     (hfirst : decayingBernoulliSuccess c d α 0 ≤ 1) (q : ℕ) :
-    ∏ i ∈ Finset.range q, (1 - decayingBernoulliSuccess c d α i) ≤ 1 := by
-  exact rankBernoulliTopOne_survivalProduct_le_one
+    ∏ i ∈ Finset.range q, (1 - decayingBernoulliSuccess c d α i) ≤ 1 :=
+   rankBernoulliTopOne_survivalProduct_le_one
     (decayingBernoulliSuccess c d α)
     (decayingBernoulliSuccess_nonneg c d α hc hd)
     (decayingBernoulliSuccess_le_one_of_first_le_one c d α hc hd hα hfirst) q
@@ -1145,8 +1134,7 @@ theorem decayingBernoulliTopOne_survivalProduct_le_mul_exp_neg_sum_Ico
     {q r : ℕ} (hqr : q ≤ r) :
     ∏ i ∈ Finset.range r, (1 - decayingBernoulliSuccess c d α i) ≤
       (∏ i ∈ Finset.range q, (1 - decayingBernoulliSuccess c d α i)) *
-        Real.exp (-(∑ i ∈ Finset.Ico q r, decayingBernoulliSuccess c d α i)) := by
-  exact
+        Real.exp (-(∑ i ∈ Finset.Ico q r, decayingBernoulliSuccess c d α i)) :=
     rankBernoulliTopOne_survivalProduct_le_mul_exp_neg_sum_Ico
       (decayingBernoulliSuccess c d α)
       (decayingBernoulliSuccess_le_one_of_first_le_one c d α hc hd hα hfirst)
@@ -1316,8 +1304,8 @@ theorem decayingBernoulliTopOne_alpha_one_reverse_survivalProduct_le_mul_prod_ex
     rw [hprod_inv]
     exact le_trans hprod_factor_le (le_of_eq hprod_rhs)
   have hsurv_r_pos :
-      0 < ∏ i ∈ Finset.range r, (1 - success i) := by
-    exact decayingBernoulliTopOne_survivalProduct_pos
+      0 < ∏ i ∈ Finset.range r, (1 - success i) :=
+    decayingBernoulliTopOne_survivalProduct_pos
       c d 1 (le_of_lt hc) hd (by norm_num) hfirst r
   calc
     ∏ i ∈ Finset.range q, (1 - decayingBernoulliSuccess c d 1 i)
@@ -1326,8 +1314,8 @@ theorem decayingBernoulliTopOne_alpha_one_reverse_survivalProduct_le_mul_prod_ex
           simpa [success] using hprefix_eq
     _ ≤ (∏ i ∈ Finset.range r, (1 - success i)) *
           ((∏ i ∈ Finset.Ico q r, ratio i ^ c) *
-            Real.exp (∑ i ∈ Finset.Ico q r, corr i)) := by
-          exact mul_le_mul_of_nonneg_left
+            Real.exp (∑ i ∈ Finset.Ico q r, corr i)) :=
+          mul_le_mul_of_nonneg_left
             hprod_factor_le_bound
             (le_of_lt hsurv_r_pos)
     _ =
@@ -1445,8 +1433,8 @@ theorem decayingBernoulliTopOne_alpha_one_weighted_marginalCore_lt_of_rpow_ratio
             ((∏ i ∈ Finset.range qdst,
               (1 - decayingBernoulliSuccess c d 1 i)) *
               ((((qdst + 1 : ℕ) : ℝ) + d) /
-                ((((qsrc - 1) + 1 : ℕ) : ℝ) + d)) ^ c)) := by
-    exact mul_le_mul_of_nonneg_left
+                ((((qsrc - 1) + 1 : ℕ) : ℝ) + d)) ^ c)) :=
+    mul_le_mul_of_nonneg_left
       (mul_le_mul_of_nonneg_left hprod_bound hsrc_success_nonneg)
       hwsrc_nonneg
   have hprefix_pos :
@@ -1558,8 +1546,8 @@ theorem decayingBernoulliTopOne_alpha_one_weighted_marginalCore_lt_of_reverse_rp
               Real.exp
                 (∑ i ∈ Finset.Ico (qsrc - 1) qdst,
                   (c / ((((i + 1 : ℕ) : ℝ) + d) - c) -
-                    c * (2 / (2 * (((i + 1 : ℕ) : ℝ) + d) + 1)))))) := by
-    exact mul_le_mul_of_nonneg_left
+                    c * (2 / (2 * (((i + 1 : ℕ) : ℝ) + d) + 1)))))) :=
+    mul_le_mul_of_nonneg_left
       (mul_le_mul_of_nonneg_left hprod_bound hsrc_success_nonneg)
       hwsrc_nonneg
   have hprefix_pos :
@@ -1868,8 +1856,7 @@ theorem decayingBernoulliTopOne_alpha_one_marginalCore_lt_of_shifted_scaled_lt
       p_dst *
         (decayingBernoulliSuccess c d 1 qdst *
           ∏ i ∈ Finset.range qdst,
-            (1 - decayingBernoulliSuccess c d 1 i)) := by
-  exact
+            (1 - decayingBernoulliSuccess c d 1 i)) :=
     decayingBernoulliTopOne_alpha_one_weighted_marginalCore_lt_of_rpow_ratio_bound
       c d hc hd hfirst (le_of_lt hp_src) hqsrc_pos hqdst_le
       (decayingBernoulliTopOne_alpha_one_scalar_lt_of_shifted_scaled_lt
@@ -1901,16 +1888,14 @@ theorem decayingBernoulliTopOne_alpha_one_marginalCore_lt_of_reverse_shifted_sca
       p_dst *
         (decayingBernoulliSuccess c d 1 qdst *
           ∏ i ∈ Finset.range qdst,
-            (1 - decayingBernoulliSuccess c d 1 i)) := by
-  exact
+            (1 - decayingBernoulliSuccess c d 1 i)) :=
     decayingBernoulliTopOne_alpha_one_weighted_marginalCore_lt_of_reverse_rpow_exp_bound
       c d hc hd hfirst (le_of_lt hp_src) hqsrc_pos hqsrc_pred_le hlarge
       (decayingBernoulliTopOne_alpha_one_scalar_exp_lt_of_shifted_scaled_exp_lt
         hp_src hp_dst hc hd hqsrc_pos hscaled)
 
 noncomputable def decayingBernoulliTopOneAlphaOneTargetWeight {T : ℕ}
-    (likelihood : ItemType T → ℝ) (c : ℝ) (t : ItemType T) : ℝ :=
-  likelihood t ^ (1 / (1 + c))
+    (likelihood : ItemType T → ℝ) (c : ℝ) (t : ItemType T) : ℝ := likelihood t ^ (1 / (1 + c))
 
 theorem decayingBernoulliTopOneAlphaOneTargetWeight_pos
     {T : ℕ} {likelihood : ItemType T → ℝ} {c : ℝ}
@@ -2019,13 +2004,13 @@ theorem alpha_one_reverse_correction_sum_le_scaled_gap_bound
       c d hc hd hlarge
   have hlength_bound :
       K * ((qdst - (qsrc - 1) : ℕ) : ℝ) * (1 / A ^ 2) ≤
-        K * (N : ℝ) * (1 / A ^ 2) := by
-    exact mul_le_mul_of_nonneg_right
+        K * (N : ℝ) * (1 / A ^ 2) :=
+    mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_left hlen_le_N hK_nonneg) htail_nonneg
   have hgap_bound :
       K * (N : ℝ) * (1 / A ^ 2) ≤
-        K * (N : ℝ) * (S ^ 2 / D ^ 2) := by
-    exact mul_le_mul_of_nonneg_left hinv_sq_le
+        K * (N : ℝ) * (S ^ 2 / D ^ 2) :=
+    mul_le_mul_of_nonneg_left hinv_sq_le
       (mul_nonneg hK_nonneg (Nat.cast_nonneg N))
   calc
     (∑ i ∈ Finset.Ico (qsrc - 1) qdst,
@@ -2144,8 +2129,8 @@ theorem decayingBernoulliTopOne_alpha_one_reverse_corrected_shift_lt_of_cube_gro
       nlinarith [mul_le_mul_of_nonneg_left hε_le_one hsq_nonneg]
     exact mul_le_mul_of_nonneg_right hε_cube_le_sq_base (Nat.cast_nonneg N)
   have harg_small :
-      K * S ^ 2 / ρ < ε ^ 2 * (N : ℝ) := by
-    exact lt_of_lt_of_le (by simpa [K, S, ρ, weight] using hsmall_arg)
+      K * S ^ 2 / ρ < ε ^ 2 * (N : ℝ) :=
+    lt_of_lt_of_le (by simpa [K, S, ρ, weight] using hsmall_arg)
       hε_cube_le_sq
   have hE_div_le_one : E / ρ ≤ 1 := by
     have hE_div_bound :
@@ -2188,8 +2173,8 @@ theorem decayingBernoulliTopOne_alpha_one_reverse_corrected_shift_lt_of_cube_gro
       B * (Real.exp (E / ρ) - 1) * S ≤ Ccorr / ε ^ 2 := by
     calc
       B * (Real.exp (E / ρ) - 1) * S
-          ≤ B * (Real.exp 1 * (E / ρ)) * S := by
-            exact mul_le_mul_of_nonneg_right
+          ≤ B * (Real.exp 1 * (E / ρ)) * S :=
+            mul_le_mul_of_nonneg_right
               (mul_le_mul_of_nonneg_left hexp_sub_bound hB_nonneg) hS_nonneg
       _ ≤ ((2 + d) * (N : ℝ)) *
             (Real.exp 1 *
@@ -2249,8 +2234,8 @@ theorem decayingBernoulliTopOne_alpha_one_shifted_scaled_lt_of_large_gap
       (1 + d) / weight dst ≤
         (1 + d) * ∑ t : ItemType T, 1 / weight t := by
     have hinv_le_sum :
-        1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t := by
-      exact Finset.single_le_sum
+        1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t :=
+      Finset.single_le_sum
         (fun t _ => div_nonneg zero_le_one
           (le_of_lt (decayingBernoulliTopOneAlphaOneTargetWeight_pos hlike_pos t)))
         (Finset.mem_univ dst)
@@ -2330,8 +2315,8 @@ theorem decayingBernoulliTopOne_alpha_one_corrected_shifted_scaled_lt_of_large_g
   have hsum_bound :
       C / weight dst ≤ C * ∑ t : ItemType T, 1 / weight t := by
     have hinv_le_sum :
-        1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t := by
-      exact Finset.single_le_sum
+        1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t :=
+      Finset.single_le_sum
         (fun t _ => div_nonneg zero_le_one
           (le_of_lt (decayingBernoulliTopOneAlphaOneTargetWeight_pos hlike_pos t)))
         (Finset.mem_univ dst)
@@ -2340,8 +2325,8 @@ theorem decayingBernoulliTopOne_alpha_one_corrected_shifted_scaled_lt_of_large_g
   have hdst_shift_lt_src :
       (qdst : ℝ) / weight dst + C / weight dst <
         (qsrc : ℝ) / weight src := by
-    have hshift_lt : C / weight dst < Δ := by
-      exact lt_of_le_of_lt hsum_bound (by simpa [C, B, weight] using hshift)
+    have hshift_lt : C / weight dst < Δ :=
+      lt_of_le_of_lt hsum_bound (by simpa [C, B, weight] using hshift)
     linarith
   have hsrc_le_shifted :
       (qsrc : ℝ) / weight src ≤ (((qsrc : ℕ) : ℝ) + d) / weight src := by
@@ -2478,8 +2463,7 @@ theorem decayingBernoulliTopOne_weighted_marginalCore_lt_of_Ico_exp_bound
       wdst *
         (decayingBernoulliSuccess c d α qdst *
           ∏ i ∈ Finset.range qdst,
-            (1 - decayingBernoulliSuccess c d α i)) := by
-  exact
+            (1 - decayingBernoulliSuccess c d α i)) :=
     rankBernoulliTopOne_weighted_marginalCore_lt_of_Ico_exp_bound
       (decayingBernoulliSuccess c d α)
       (decayingBernoulliSuccess_nonneg c d α (le_of_lt hc) hd)
@@ -2592,15 +2576,15 @@ theorem decayingBernoulliTopOne_weighted_marginalCore_lt_of_gap_exp_bound
             decayingBernoulliSuccess c d α i)) ≤
         Real.exp
           (-(((qsrc - 1 - qdst : ℕ) : ℝ) *
-            decayingBernoulliSuccess c d α (qsrc - 1 - 1))) := by
-    exact Real.exp_le_exp.mpr (by linarith)
+            decayingBernoulliSuccess c d α (qsrc - 1 - 1))) :=
+    Real.exp_le_exp.mpr (by linarith)
   have hweight_Ico :
       wsrc *
           Real.exp
             (-(∑ i ∈ Finset.Ico qdst (qsrc - 1),
               decayingBernoulliSuccess c d α i)) <
-        wdst := by
-    exact lt_of_le_of_lt
+        wdst :=
+    lt_of_le_of_lt
       (mul_le_mul_of_nonneg_left hexp_le hwsrc_nonneg) hweight
   exact
     decayingBernoulliTopOne_weighted_marginalCore_lt_of_Ico_exp_weight_bound
@@ -2666,8 +2650,8 @@ theorem decayingBernoulliTopOne_pair_large_count_dominance_exists
             ∏ i ∈ Finset.range 0,
               (1 - decayingBernoulliSuccess c d α i)) := by
   have htarget_pos :
-      0 < likelihood dst * decayingBernoulliSuccess c d α 0 := by
-    exact mul_pos hlike_dst
+      0 < likelihood dst * decayingBernoulliSuccess c d α 0 :=
+    mul_pos hlike_dst
       (decayingBernoulliSuccess_pos c d α hc hd 0)
   have htend :
       Tendsto (fun q => likelihood src * decayingBernoulliSuccess c d α q)
@@ -2678,8 +2662,8 @@ theorem decayingBernoulliTopOne_pair_large_count_dominance_exists
   have hevent :
       ∀ᶠ q in atTop,
         likelihood src * decayingBernoulliSuccess c d α q <
-          likelihood dst * decayingBernoulliSuccess c d α 0 := by
-    exact htend.eventually (eventually_lt_nhds htarget_pos)
+          likelihood dst * decayingBernoulliSuccess c d α 0 :=
+    htend.eventually (eventually_lt_nhds htarget_pos)
   obtain ⟨K, hK⟩ := eventually_atTop.1 hevent
   refine ⟨K, ?_⟩
   intro q hKq
@@ -2758,8 +2742,8 @@ theorem decayingBernoulliTopOne_pair_large_count_dominance_exists_at_count
       0 < likelihood dst *
         (decayingBernoulliSuccess c d α qdst *
           ∏ i ∈ Finset.range qdst,
-            (1 - decayingBernoulliSuccess c d α i)) := by
-    exact mul_pos hlike_dst hdst_core_pos
+            (1 - decayingBernoulliSuccess c d α i)) :=
+    mul_pos hlike_dst hdst_core_pos
   have htend :
       Tendsto (fun q => likelihood src * decayingBernoulliSuccess c d α q)
         atTop (nhds 0) := by
@@ -2772,8 +2756,8 @@ theorem decayingBernoulliTopOne_pair_large_count_dominance_exists_at_count
           likelihood dst *
             (decayingBernoulliSuccess c d α qdst *
               ∏ i ∈ Finset.range qdst,
-                (1 - decayingBernoulliSuccess c d α i)) := by
-    exact htend.eventually (eventually_lt_nhds htarget_pos)
+                (1 - decayingBernoulliSuccess c d α i)) :=
+    htend.eventually (eventually_lt_nhds htarget_pos)
   obtain ⟨K, hK⟩ := eventually_atTop.1 hevent
   refine ⟨K, ?_⟩
   intro q hKq
@@ -3003,8 +2987,8 @@ theorem decayingBernoulliTopOneConsumptionModel_has_nonnegative_marginals {T : �
     (likelihood : ItemType T → ℝ) (c d α : ℝ)
     (hc : 0 ≤ c) (hd : 0 ≤ d)
     (hle_one : ∀ i, decayingBernoulliSuccess c d α i ≤ 1) :
-    (decayingBernoulliTopOneConsumptionModel likelihood c d α).HasNonnegativeMarginals := by
-  exact rankBernoulliTopOneConsumptionModel_has_nonnegative_marginals
+    (decayingBernoulliTopOneConsumptionModel likelihood c d α).HasNonnegativeMarginals :=
+   rankBernoulliTopOneConsumptionModel_has_nonnegative_marginals
     likelihood (decayingBernoulliSuccess c d α)
     (decayingBernoulliSuccess_nonneg c d α hc hd) hle_one
 
@@ -3013,16 +2997,16 @@ theorem decayingBernoulliTopOneConsumptionModel_has_nonnegative_marginals_of_fir
     (likelihood : ItemType T → ℝ) (c d α : ℝ)
     (hc : 0 ≤ c) (hd : 0 ≤ d) (hα : 0 ≤ α)
     (hfirst : decayingBernoulliSuccess c d α 0 ≤ 1) :
-    (decayingBernoulliTopOneConsumptionModel likelihood c d α).HasNonnegativeMarginals := by
-  exact decayingBernoulliTopOneConsumptionModel_has_nonnegative_marginals
+    (decayingBernoulliTopOneConsumptionModel likelihood c d α).HasNonnegativeMarginals :=
+   decayingBernoulliTopOneConsumptionModel_has_nonnegative_marginals
     likelihood c d α hc hd
     (decayingBernoulliSuccess_le_one_of_first_le_one c d α hc hd hα hfirst)
 
 theorem decayingBernoulliAllConsumedConsumptionModel_has_nonnegative_marginals {T : ℕ}
     (likelihood : ItemType T → ℝ) (c d α : ℝ)
     (hc : 0 ≤ c) (hd : 0 ≤ d) :
-    (decayingBernoulliAllConsumedConsumptionModel likelihood c d α).HasNonnegativeMarginals := by
-  exact rankBernoulliAllConsumedConsumptionModel_has_nonnegative_marginals
+    (decayingBernoulliAllConsumedConsumptionModel likelihood c d α).HasNonnegativeMarginals :=
+   rankBernoulliAllConsumedConsumptionModel_has_nonnegative_marginals
     likelihood (decayingBernoulliSuccess c d α)
     (decayingBernoulliSuccess_nonneg c d α hc hd)
 
@@ -3030,8 +3014,8 @@ theorem decayingBernoulliTopOneConsumptionModel_has_diminishing_returns {T : ℕ
     (likelihood : ItemType T → ℝ) (c d α : ℝ)
     (hc : 0 ≤ c) (hd : 0 ≤ d) (hα : 0 ≤ α)
     (hle_one : ∀ i, decayingBernoulliSuccess c d α i ≤ 1) :
-    (decayingBernoulliTopOneConsumptionModel likelihood c d α).HasDiminishingReturns := by
-  exact rankBernoulliTopOneConsumptionModel_has_diminishing_returns
+    (decayingBernoulliTopOneConsumptionModel likelihood c d α).HasDiminishingReturns :=
+   rankBernoulliTopOneConsumptionModel_has_diminishing_returns
     likelihood (decayingBernoulliSuccess c d α)
     (decayingBernoulliSuccess_nonneg c d α hc hd) hle_one
     (decayingBernoulliSuccess_antitone c d α hc hd hα)
@@ -3041,16 +3025,16 @@ theorem decayingBernoulliTopOneConsumptionModel_has_diminishing_returns_of_first
     (likelihood : ItemType T → ℝ) (c d α : ℝ)
     (hc : 0 ≤ c) (hd : 0 ≤ d) (hα : 0 ≤ α)
     (hfirst : decayingBernoulliSuccess c d α 0 ≤ 1) :
-    (decayingBernoulliTopOneConsumptionModel likelihood c d α).HasDiminishingReturns := by
-  exact decayingBernoulliTopOneConsumptionModel_has_diminishing_returns
+    (decayingBernoulliTopOneConsumptionModel likelihood c d α).HasDiminishingReturns :=
+   decayingBernoulliTopOneConsumptionModel_has_diminishing_returns
     likelihood c d α hc hd hα
     (decayingBernoulliSuccess_le_one_of_first_le_one c d α hc hd hα hfirst)
 
 theorem decayingBernoulliAllConsumedConsumptionModel_has_diminishing_returns {T : ℕ}
     (likelihood : ItemType T → ℝ) (c d α : ℝ)
     (hc : 0 ≤ c) (hd : 0 ≤ d) (hα : 0 ≤ α) :
-    (decayingBernoulliAllConsumedConsumptionModel likelihood c d α).HasDiminishingReturns := by
-  exact rankBernoulliAllConsumedConsumptionModel_has_diminishing_returns
+    (decayingBernoulliAllConsumedConsumptionModel likelihood c d α).HasDiminishingReturns :=
+   rankBernoulliAllConsumedConsumptionModel_has_diminishing_returns
     likelihood (decayingBernoulliSuccess c d α)
     (decayingBernoulliSuccess_antitone c d α hc hd hα)
 
@@ -3147,8 +3131,8 @@ noncomputable def toPairwiseScaledSublinearFOCCertificate
   error_tends_to_zero := hcert.error_tends_to_zero
   large_gap_backward_lt_forward := by
     intro N a hN hopt src dst hgap
-    have hC_nonneg : 0 ≤ hcert.error N * (N : ℝ) := by
-      exact mul_nonneg (hcert.error_nonneg N) (Nat.cast_nonneg N)
+    have hC_nonneg : 0 ≤ hcert.error N * (N : ℝ) :=
+      mul_nonneg (hcert.error_nonneg N) (Nat.cast_nonneg N)
     have hdiff_pos :
         0 <
           (a.count src : ℝ) / weight src -
@@ -3313,8 +3297,8 @@ noncomputable def toSublinearFOCCertificate
   · intro N
     by_cases hN : N < threshold
     · have hsum_nonneg :
-          0 ≤ ∑ t : ItemType T, 1 / weight t := by
-        exact Finset.sum_nonneg
+          0 ≤ ∑ t : ItemType T, 1 / weight t :=
+        Finset.sum_nonneg
           (fun t _ => div_nonneg zero_le_one
             (le_of_lt (hcert.weight_pos t)))
       rw [if_pos hN]
@@ -3355,8 +3339,8 @@ noncomputable def toSublinearFOCCertificate
         exact mul_le_mul_of_nonneg_right hsrc_count_le_total_real
           (inv_nonneg.mpr (le_of_lt (hcert.weight_pos src)))
       have hinv_le_sum :
-          1 / weight src ≤ ∑ t : ItemType T, 1 / weight t := by
-        exact Finset.single_le_sum
+          1 / weight src ≤ ∑ t : ItemType T, 1 / weight t :=
+        Finset.single_le_sum
           (fun t _ => div_nonneg zero_le_one
             (le_of_lt (hcert.weight_pos t)))
           (Finset.mem_univ src)
@@ -3427,8 +3411,7 @@ theorem asymptoticHomogeneity
       DecayingBernoulliTopOneEventualSublinearFOCCertificate
         likelihood c d α weight G) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => decayingBernoulliTopOneConsumptionModel likelihood c d α) G :=
-  hcert.toSublinearFOCCertificate.asymptoticHomogeneity
+      (fun _ => decayingBernoulliTopOneConsumptionModel likelihood c d α) G := hcert.toSublinearFOCCertificate.asymptoticHomogeneity
 
 noncomputable def toHomogeneityCertificate
     {T : ℕ} [NeZero T] {likelihood : ItemType T → ℝ} {c d α : ℝ}
@@ -3436,8 +3419,7 @@ noncomputable def toHomogeneityCertificate
     (hcert :
       DecayingBernoulliTopOneEventualSublinearFOCCertificate
         likelihood c d α weight G) :
-    DecayingBernoulliTopOneHomogeneityCertificate likelihood c d α G :=
-  hcert.toSublinearFOCCertificate.toHomogeneityCertificate
+    DecayingBernoulliTopOneHomogeneityCertificate likelihood c d α G := hcert.toSublinearFOCCertificate.toHomogeneityCertificate
 
 end DecayingBernoulliTopOneEventualSublinearFOCCertificate
 
@@ -3470,8 +3452,7 @@ theorem decayingBernoulliTopOne_log_likelihood_ratio_lt_bound
   exact lt_of_le_of_lt (le_trans hx_le_abs habs_le_sum) hsum_lt
 
 noncomputable def decayingBernoulliTopOneSubunitError
-    (α : ℝ) (N : ℕ) : ℝ :=
-  (((N + 1 : ℕ) : ℝ)) ^ ((α - 1) / 2)
+    (α : ℝ) (N : ℕ) : ℝ := (((N + 1 : ℕ) : ℝ)) ^ ((α - 1) / 2)
 
 theorem decayingBernoulliTopOneSubunitError_nonneg
     (α : ℝ) (N : ℕ) :
@@ -3484,14 +3465,11 @@ theorem decayingBernoulliTopOneSubunitError_tends_to_zero
     EconCSLib.Math.TendsToZero
       (decayingBernoulliTopOneSubunitError α) := by
   have hβ : 0 < (1 - α) / 2 := by linarith
-  have hbase :
-      Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ))) atTop atTop :=
-    tendsto_natCast_atTop_atTop.comp (tendsto_add_atTop_nat 1)
   have hpow :
       Tendsto
         (fun N : ℕ => (((N + 1 : ℕ) : ℝ)) ^ (-((1 - α) / 2)))
         atTop (nhds 0) :=
-    (tendsto_rpow_neg_atTop hβ).comp hbase
+    EconCSLib.Math.tendsto_nat_succ_cast_rpow_neg_nhds_zero hβ
   rw [EconCSLib.Math.TendsToZero]
   refine Tendsto.congr' ?_ hpow
   filter_upwards with N
@@ -3551,8 +3529,7 @@ theorem decayingBernoulliSuccess_lower_by_scaled_power
         = c * (((1 + d) * (((N + 1 : ℕ) : ℝ))) ^ (-α)) := by
           rw [hmul_rpow]
           ring
-    _ ≤ c * ((((N + 1 : ℕ) : ℝ) + d) ^ (-α)) :=
-          mul_le_mul_of_nonneg_left hpow_le hc
+    _ ≤ c * ((((N + 1 : ℕ) : ℝ) + d) ^ (-α)) :=         mul_le_mul_of_nonneg_left hpow_le hc
 
 theorem decayingBernoulliTopOneSubunitGrowth_tendsto_atTop
     {c d α : ℝ} (hα_pos : 0 < α) (hα_lt_one : α < 1)
@@ -3573,19 +3550,16 @@ theorem decayingBernoulliTopOneSubunitGrowth_tendsto_atTop
       Real.rpow_pos_of_pos hone_d_pos (-α)
     dsimp [K]
     positivity
-  have hbase :
-      Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ))) atTop atTop :=
-    tendsto_natCast_atTop_atTop.comp (tendsto_add_atTop_nat 1)
   have hβpow :
       Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ) ^ β)) atTop atTop :=
-    (tendsto_rpow_atTop hβ).comp hbase
+    EconCSLib.Math.tendsto_nat_succ_cast_rpow_atTop hβ
   have hKβpow :
       Tendsto (fun N : ℕ => K * (((N + 1 : ℕ) : ℝ) ^ β))
         atTop atTop :=
     Filter.Tendsto.const_mul_atTop hK hβpow
   have hγpow :
       Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ) ^ γ)) atTop atTop :=
-    (tendsto_rpow_atTop hγ).comp hbase
+    EconCSLib.Math.tendsto_nat_succ_cast_rpow_atTop hγ
   have hhalfγpow :
       Tendsto
         (fun N : ℕ => (1 / 2 : ℝ) * (((N + 1 : ℕ) : ℝ) ^ γ))
@@ -3635,8 +3609,8 @@ theorem decayingBernoulliTopOneSubunitGrowth_tendsto_atTop
   have hprod_scaled_le :
       ((1 / 4 : ℝ) * (base ^ γ)) *
           ((c * (1 + d) ^ (-α)) * (base ^ (-α))) ≤
-        (epsN / 2) * decayingBernoulliSuccess c d α N := by
-    exact le_trans
+        (epsN / 2) * decayingBernoulliSuccess c d α N :=
+    le_trans
       (mul_le_mul_of_nonneg_right heps_half_lower hscaled_nonneg)
       (mul_le_mul_of_nonneg_left hsuccess_lower heps_half_nonneg)
   have hpow_combine :
@@ -3682,8 +3656,7 @@ theorem decayingBernoulliTopOneSubunitGrowth_eventually
   (decayingBernoulliTopOneSubunitGrowth_tendsto_atTop
     hα_pos hα_lt_one hc hd).eventually_gt_atTop B
 
-noncomputable def decayingBernoulliTopOneInvSqrtError (N : ℕ) : ℝ :=
-  1 / Real.sqrt (((N + 1 : ℕ) : ℝ))
+noncomputable def decayingBernoulliTopOneInvSqrtError (N : ℕ) : ℝ := 1 / Real.sqrt (((N + 1 : ℕ) : ℝ))
 
 theorem decayingBernoulliTopOneInvSqrtError_nonneg (N : ℕ) :
     0 ≤ decayingBernoulliTopOneInvSqrtError N := by
@@ -3692,12 +3665,9 @@ theorem decayingBernoulliTopOneInvSqrtError_nonneg (N : ℕ) :
 
 theorem decayingBernoulliTopOneInvSqrtError_tends_to_zero :
     EconCSLib.Math.TendsToZero decayingBernoulliTopOneInvSqrtError := by
-  have hbase :
-      Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ))) atTop atTop :=
-    tendsto_natCast_atTop_atTop.comp (tendsto_add_atTop_nat 1)
   have hsqrt :
       Tendsto (fun N : ℕ => Real.sqrt (((N + 1 : ℕ) : ℝ))) atTop atTop :=
-    Real.tendsto_sqrt_atTop.comp hbase
+    EconCSLib.Math.tendsto_sqrt_nat_succ_cast_atTop
   rw [EconCSLib.Math.TendsToZero]
   refine Tendsto.congr' ?_ (Filter.Tendsto.const_div_atTop hsqrt (1 : ℝ))
   filter_upwards with N
@@ -3707,12 +3677,9 @@ theorem decayingBernoulliTopOneInvSqrtError_mul_nat_tendsto_atTop :
     Tendsto
       (fun N : ℕ => decayingBernoulliTopOneInvSqrtError N * (N : ℝ))
       atTop atTop := by
-  have hbase :
-      Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ))) atTop atTop :=
-    tendsto_natCast_atTop_atTop.comp (tendsto_add_atTop_nat 1)
   have hsqrt :
       Tendsto (fun N : ℕ => Real.sqrt (((N + 1 : ℕ) : ℝ))) atTop atTop :=
-    Real.tendsto_sqrt_atTop.comp hbase
+    EconCSLib.Math.tendsto_sqrt_nat_succ_cast_atTop
   have hhalf_sqrt :
       Tendsto
         (fun N : ℕ => (1 / 2 : ℝ) * Real.sqrt (((N + 1 : ℕ) : ℝ)))
@@ -3746,8 +3713,7 @@ theorem decayingBernoulliTopOneInvSqrtError_mul_nat_eventually_gt
       B < decayingBernoulliTopOneInvSqrtError N * (N : ℝ) :=
   decayingBernoulliTopOneInvSqrtError_mul_nat_tendsto_atTop.eventually_gt_atTop B
 
-noncomputable def decayingBernoulliTopOneQuarterError (N : ℕ) : ℝ :=
-  (((N + 1 : ℕ) : ℝ)) ^ (-(1 / 4 : ℝ))
+noncomputable def decayingBernoulliTopOneQuarterError (N : ℕ) : ℝ := (((N + 1 : ℕ) : ℝ)) ^ (-(1 / 4 : ℝ))
 
 theorem decayingBernoulliTopOneQuarterError_nonneg (N : ℕ) :
     0 ≤ decayingBernoulliTopOneQuarterError N := by
@@ -4040,8 +4006,8 @@ noncomputable def toEventualSublinearFOCCertificate
           hcert.c_pos hcert.d_nonneg hcert.success_first_lt_one
           hcert.likelihood_pos (src := src) (dst := dst)
           (qsrc := qsrc) (qdst := qdst) hqsrc_pos hraw_order hraw hgap
-    · have hreverse_order : qsrc - 1 ≤ qdst := by
-        exact le_of_lt (Nat.lt_of_not_ge hraw_order)
+    · have hreverse_order : qsrc - 1 ≤ qdst :=
+        le_of_lt (Nat.lt_of_not_ge hraw_order)
       have hlarge :
           ∀ i ∈ Finset.Ico (qsrc - 1) qdst,
             2 * c ≤ (((i + 1 : ℕ) : ℝ) + d) := by
@@ -4077,14 +4043,12 @@ theorem asymptoticHomogeneity
       DecayingBernoulliTopOneAlphaOneGrowthCertificate likelihood c d) :
     ConsumptionModel.AsymptoticHomogeneity
       (fun _ => decayingBernoulliTopOneConsumptionModel likelihood c d 1)
-      (gammaLikelihoodProfile likelihood (1 / (1 + c))) :=
-  hcert.toEventualSublinearFOCCertificate.asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / (1 + c))) := hcert.toEventualSublinearFOCCertificate.asymptoticHomogeneity
 
 end DecayingBernoulliTopOneAlphaOneGrowthCertificate
 
 noncomputable def decayingBernoulliTopOneSuperunitTargetWeight {T : ℕ}
-    (likelihood : ItemType T → ℝ) (α : ℝ) (t : ItemType T) : ℝ :=
-  likelihood t ^ (1 / α)
+    (likelihood : ItemType T → ℝ) (α : ℝ) (t : ItemType T) : ℝ := likelihood t ^ (1 / α)
 
 theorem decayingBernoulliTopOneSuperunitTargetWeight_pos
     {T : ℕ} {likelihood : ItemType T → ℝ} {α : ℝ}
@@ -4169,8 +4133,8 @@ theorem decayingBernoulliTopOne_superunit_reverse_correction_sum_le_scaled_gap_b
       c * A ^ (-α) ≤ c * ((D * weight src) ^ (-α)) :=
         mul_le_mul_of_nonneg_left hpow_le (le_of_lt hc)
       _ = c * (D ^ (-α) * (weight src) ^ (-α)) := by rw [hmul_rpow]
-      _ ≤ c * (D ^ (-α) * P) := by
-        exact mul_le_mul_of_nonneg_left
+      _ ≤ c * (D ^ (-α) * P) :=
+        mul_le_mul_of_nonneg_left
           (mul_le_mul_of_nonneg_left hsrc_weight_pow_le_P hD_pow_nonneg)
           (le_of_lt hc)
       _ = c * D ^ (-α) * P := by ring
@@ -4190,8 +4154,8 @@ theorem decayingBernoulliTopOne_superunit_reverse_correction_sum_le_scaled_gap_b
   have hlength_success_le :
       ((qdst - (qsrc - 1) : ℕ) : ℝ) *
           decayingBernoulliSuccess c d α (qsrc - 1) ≤
-        (N : ℝ) * (c * D ^ (-α) * P) := by
-    exact le_trans
+        (N : ℝ) * (c * D ^ (-α) * P) :=
+    le_trans
       (mul_le_mul_of_nonneg_right hlen_le_N hsuccess_nonneg)
       (mul_le_mul_of_nonneg_left hsuccess_left_le (Nat.cast_nonneg N))
   calc
@@ -4237,8 +4201,8 @@ theorem decayingBernoulliTopOne_superunit_shifted_scaled_lt_of_large_gap
       (1 + d) / weight dst ≤
         (1 + d) * ∑ t : ItemType T, 1 / weight t := by
     have hinv_le_sum :
-        1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t := by
-      exact Finset.single_le_sum
+        1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t :=
+      Finset.single_le_sum
         (fun t _ => div_nonneg zero_le_one
           (le_of_lt (decayingBernoulliTopOneSuperunitTargetWeight_pos hlike_pos t)))
         (Finset.mem_univ dst)
@@ -4317,9 +4281,8 @@ theorem decayingBernoulliTopOne_superunit_rawOrdered_marginalCore_lt_of_large_ga
       likelihood src *
           (c * (((qsrc : ℕ) : ℝ) + d) ^ (-α)) <
         likelihood dst *
-          (c * ((((qdst + 1 : ℕ) : ℝ) + d) ^ (-α))) := by
-    exact
-      rpow_neg_marginal_lt_of_scaled_lt
+          (c * ((((qdst + 1 : ℕ) : ℝ) + d) ^ (-α))) :=
+          rpow_neg_marginal_lt_of_scaled_lt
         (hp_src := hlike_pos src) (hp_dst := hlike_pos dst)
         (hc := hc) (hα := hα_pos) (hx := hsrc_base_pos) (hy := hdst_base_pos)
         (by
@@ -4340,8 +4303,8 @@ theorem decayingBernoulliTopOne_superunit_rawOrdered_marginalCore_lt_of_large_ga
     decayingBernoulliTopOne_survivalProduct_antitone
       c d α (le_of_lt hc) hd (le_of_lt hα_pos) (le_of_lt hfirst) hqdst_le
   have hsrc_scale_nonneg :
-      0 ≤ likelihood src * decayingBernoulliSuccess c d α (qsrc - 1) := by
-    exact mul_nonneg (le_of_lt (hlike_pos src))
+      0 ≤ likelihood src * decayingBernoulliSuccess c d α (qsrc - 1) :=
+    mul_nonneg (le_of_lt (hlike_pos src))
       (decayingBernoulliSuccess_nonneg c d α (le_of_lt hc) hd (qsrc - 1))
   have hdst_prod_pos :
       0 < ∏ i ∈ Finset.range qdst, (1 - decayingBernoulliSuccess c d α i) :=
@@ -4364,8 +4327,8 @@ theorem decayingBernoulliTopOne_superunit_rawOrdered_marginalCore_lt_of_large_ga
     _ <
       (likelihood dst * decayingBernoulliSuccess c d α qdst) *
         ∏ i ∈ Finset.range qdst,
-          (1 - decayingBernoulliSuccess c d α i) := by
-        exact mul_lt_mul_of_pos_right
+          (1 - decayingBernoulliSuccess c d α i) :=
+        mul_lt_mul_of_pos_right
           (by simpa [hsrc_success, hdst_success] using hscaled_core)
           hdst_prod_pos
     _ =
@@ -4418,8 +4381,8 @@ theorem decayingBernoulliTopOne_superunit_corrected_shifted_scaled_lt_of_large_g
   have hsum_bound :
       C / weight dst ≤ C * ∑ t : ItemType T, 1 / weight t := by
     have hinv_le_sum :
-        1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t := by
-      exact Finset.single_le_sum
+        1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t :=
+      Finset.single_le_sum
         (fun t _ => div_nonneg zero_le_one
           (le_of_lt (decayingBernoulliTopOneSuperunitTargetWeight_pos hlike_pos t)))
         (Finset.mem_univ dst)
@@ -4428,8 +4391,8 @@ theorem decayingBernoulliTopOne_superunit_corrected_shifted_scaled_lt_of_large_g
   have hdst_shift_lt_src :
       (qdst : ℝ) / weight dst + C / weight dst <
         (qsrc : ℝ) / weight src := by
-    have hshift_lt : C / weight dst < Δ := by
-      exact lt_of_le_of_lt hsum_bound (by simpa [C, B, weight] using hshift)
+    have hshift_lt : C / weight dst < Δ :=
+      lt_of_le_of_lt hsum_bound (by simpa [C, B, weight] using hshift)
     linarith
   have hsrc_le_shifted :
       (qsrc : ℝ) / weight src ≤ (((qsrc : ℕ) : ℝ) + d) / weight src := by
@@ -4520,9 +4483,8 @@ theorem decayingBernoulliTopOne_superunit_reverse_marginalCore_lt_of_corrected_l
     rw [Real.mul_rpow (le_of_lt hB_pos) (le_of_lt hη_pos), hη_pow_neg]
   have hscaled_core_raw :
       likelihood src * (c * A ^ (-α)) <
-        likelihood dst * (c * (B * η) ^ (-α)) := by
-    exact
-      rpow_neg_marginal_lt_of_scaled_lt
+        likelihood dst * (c * (B * η) ^ (-α)) :=
+          rpow_neg_marginal_lt_of_scaled_lt
         (hp_src := hlike_pos src) (hp_dst := hlike_pos dst)
         (hc := hc) (hα := hα_pos) (hx := hA_pos) (hy := hBη_pos)
         (by
@@ -4561,8 +4523,8 @@ theorem decayingBernoulliTopOne_superunit_reverse_marginalCore_lt_of_corrected_l
         hqsrc_pred_le hhalf
     simpa [hE_eq] using h
   have hsrc_scale_nonneg :
-      0 ≤ likelihood src * decayingBernoulliSuccess c d α (qsrc - 1) := by
-    exact mul_nonneg (le_of_lt (hlike_pos src))
+      0 ≤ likelihood src * decayingBernoulliSuccess c d α (qsrc - 1) :=
+    mul_nonneg (le_of_lt (hlike_pos src))
       (decayingBernoulliSuccess_nonneg c d α (le_of_lt hc) hd (qsrc - 1))
   have hdst_prod_pos :
       0 < ∏ i ∈ Finset.range qdst, (1 - decayingBernoulliSuccess c d α i) :=
@@ -4693,8 +4655,8 @@ theorem decayingBernoulliTopOne_superunit_reverse_corrected_shift_lt_of_growth
         field_simp [ne_of_gt hα_pos]
   have hE_div_nonneg : 0 ≤ E / α :=
     div_nonneg hE_nonneg hα_nonneg
-  have hE_div_le_one : E / α ≤ 1 := by
-    exact le_of_lt (lt_of_le_of_lt hE_div_bound
+  have hE_div_le_one : E / α ≤ 1 :=
+    le_of_lt (lt_of_le_of_lt hE_div_bound
       (by simpa [P, D, weight] using hsmall_arg))
   have hexp_sub_bound :
       Real.exp (E / α) - 1 ≤ Real.exp 1 * (E / α) :=
@@ -4715,15 +4677,15 @@ theorem decayingBernoulliTopOne_superunit_reverse_corrected_shift_lt_of_growth
       _ ≤ (N : ℝ) + (1 + d) := by linarith
       _ ≤ (N : ℝ) + (1 + d) * (N : ℝ) := by linarith
       _ = (2 + d) * (N : ℝ) := by ring
-  have hcoeff_nonneg : 0 ≤ ((2 * c * P) / α) * (N : ℝ) * D ^ (-α) := by
-    exact le_trans hE_div_nonneg hE_div_bound
+  have hcoeff_nonneg : 0 ≤ ((2 * c * P) / α) * (N : ℝ) * D ^ (-α) :=
+    le_trans hE_div_nonneg hE_div_bound
   have hcorr_le :
       B * (Real.exp (E / α) - 1) * S ≤
         Ccorr * (N : ℝ) ^ 2 * D ^ (-α) := by
     calc
       B * (Real.exp (E / α) - 1) * S
-          ≤ B * (Real.exp 1 * (E / α)) * S := by
-            exact mul_le_mul_of_nonneg_right
+          ≤ B * (Real.exp 1 * (E / α)) * S :=
+            mul_le_mul_of_nonneg_right
               (mul_le_mul_of_nonneg_left hexp_sub_bound hB_nonneg) hS_nonneg
       _ ≤ ((2 + d) * (N : ℝ)) *
             (Real.exp 1 * (((2 * c * P) / α) * (N : ℝ) * D ^ (-α))) * S := by
@@ -4751,8 +4713,7 @@ theorem decayingBernoulliTopOne_superunit_reverse_corrected_shift_lt_of_growth
     _ = D := by ring
     _ = ε * (N : ℝ) := by rfl
 
-noncomputable def decayingBernoulliTopOneSuperunitBeta (α : ℝ) : ℝ :=
-  (α - 1) / (2 * (α + 1))
+noncomputable def decayingBernoulliTopOneSuperunitBeta (α : ℝ) : ℝ := (α - 1) / (2 * (α + 1))
 
 theorem decayingBernoulliTopOneSuperunitBeta_pos {α : ℝ} (hα_gt_one : 1 < α) :
     0 < decayingBernoulliTopOneSuperunitBeta α := by
@@ -4769,8 +4730,7 @@ theorem decayingBernoulliTopOneSuperunitBeta_lt_one {α : ℝ} (hα_gt_one : 1 <
   nlinarith
 
 noncomputable def decayingBernoulliTopOneSuperunitError
-    (α : ℝ) (N : ℕ) : ℝ :=
-  (((N + 1 : ℕ) : ℝ)) ^ (-(decayingBernoulliTopOneSuperunitBeta α))
+    (α : ℝ) (N : ℕ) : ℝ := (((N + 1 : ℕ) : ℝ)) ^ (-(decayingBernoulliTopOneSuperunitBeta α))
 
 theorem decayingBernoulliTopOneSuperunitError_nonneg
     (α : ℝ) (N : ℕ) :
@@ -4784,15 +4744,12 @@ theorem decayingBernoulliTopOneSuperunitError_tends_to_zero
       (decayingBernoulliTopOneSuperunitError α) := by
   have hβ : 0 < decayingBernoulliTopOneSuperunitBeta α :=
     decayingBernoulliTopOneSuperunitBeta_pos hα_gt_one
-  have hbase :
-      Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ))) atTop atTop :=
-    tendsto_natCast_atTop_atTop.comp (tendsto_add_atTop_nat 1)
   have hpow :
       Tendsto
         (fun N : ℕ =>
           (((N + 1 : ℕ) : ℝ)) ^ (-(decayingBernoulliTopOneSuperunitBeta α)))
         atTop (nhds 0) :=
-    (tendsto_rpow_neg_atTop hβ).comp hbase
+    EconCSLib.Math.tendsto_nat_succ_cast_rpow_neg_nhds_zero hβ
   rw [EconCSLib.Math.TendsToZero]
   refine Tendsto.congr' ?_ hpow
   filter_upwards with N
@@ -4849,12 +4806,9 @@ theorem decayingBernoulliTopOneSuperunitError_mul_nat_tendsto_atTop
   have hγ_pos : 0 < γ := by
     dsimp [γ]
     linarith
-  have hbase :
-      Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ))) atTop atTop :=
-    tendsto_natCast_atTop_atTop.comp (tendsto_add_atTop_nat 1)
   have hpow :
       Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ) ^ γ)) atTop atTop :=
-    (tendsto_rpow_atTop hγ_pos).comp hbase
+    EconCSLib.Math.tendsto_nat_succ_cast_rpow_atTop hγ_pos
   have hhalf :
       Tendsto
         (fun N : ℕ => (1 / 2 : ℝ) * (((N + 1 : ℕ) : ℝ) ^ γ))
@@ -4897,9 +4851,6 @@ theorem decayingBernoulliTopOneSuperunit_arg_tends_to_zero
     have hden_pos : 0 < 2 * (α + 1) := by nlinarith
     field_simp [ne_of_gt hden_pos]
     nlinarith
-  have hbase :
-      Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ))) atTop atTop :=
-    tendsto_natCast_atTop_atTop.comp (tendsto_add_atTop_nat 1)
   have hbound_tendsto :
       Tendsto
         (fun N : ℕ => K * (((N + 1 : ℕ) : ℝ) ^ (-δ)))
@@ -4907,13 +4858,13 @@ theorem decayingBernoulliTopOneSuperunit_arg_tends_to_zero
     have hpow :
         Tendsto (fun N : ℕ => (((N + 1 : ℕ) : ℝ) ^ (-δ)))
           atTop (nhds 0) :=
-      (tendsto_rpow_neg_atTop hδ_pos).comp hbase
+      EconCSLib.Math.tendsto_nat_succ_cast_rpow_neg_nhds_zero hδ_pos
     simpa using hpow.const_mul K
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hbound_tendsto ?_ ?_
   · filter_upwards [eventually_ge_atTop 1] with N hN
     have hD_nonneg :
-        0 ≤ decayingBernoulliTopOneSuperunitError α N * (N : ℝ) := by
-      exact mul_nonneg (decayingBernoulliTopOneSuperunitError_nonneg α N)
+        0 ≤ decayingBernoulliTopOneSuperunitError α N * (N : ℝ) :=
+      mul_nonneg (decayingBernoulliTopOneSuperunitError_nonneg α N)
         (Nat.cast_nonneg N)
     positivity
   · filter_upwards [eventually_ge_atTop 1] with N hN
@@ -4998,8 +4949,8 @@ theorem decayingBernoulliTopOneSuperunit_corr_tends_to_zero
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hbound_tendsto ?_ ?_
   · filter_upwards [eventually_ge_atTop 1] with N hN
     have hD_nonneg :
-        0 ≤ decayingBernoulliTopOneSuperunitError α N * (N : ℝ) := by
-      exact mul_nonneg (decayingBernoulliTopOneSuperunitError_nonneg α N)
+        0 ≤ decayingBernoulliTopOneSuperunitError α N * (N : ℝ) :=
+      mul_nonneg (decayingBernoulliTopOneSuperunitError_nonneg α N)
         (Nat.cast_nonneg N)
     positivity
   · filter_upwards [eventually_ge_atTop 1] with N hN
@@ -5110,9 +5061,8 @@ noncomputable def of_superunit_error
   have hevent_half :
       ∀ᶠ i in atTop, decayingBernoulliSuccess c d α i ≤ 1 / 2 := by
     have hlt :
-        ∀ᶠ i in atTop, decayingBernoulliSuccess c d α i < 1 / 2 := by
-      exact
-        (decayingBernoulliSuccess_tendsto_zero c d α hα_pos).eventually
+        ∀ᶠ i in atTop, decayingBernoulliSuccess c d α i < 1 / 2 :=
+              (decayingBernoulliSuccess_tendsto_zero c d α hα_pos).eventually
           (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1 / 2))
     filter_upwards [hlt] with i hi
     exact le_of_lt hi
@@ -5150,8 +5100,8 @@ noncomputable def of_superunit_error
         ∀ᶠ (N : ℕ) in atTop,
           Carg * ((N : ℝ) *
               (decayingBernoulliTopOneSuperunitError α N * (N : ℝ)) ^ (-α)) <
-            1 := by
-      exact harg_tendsto.eventually
+            1 :=
+      harg_tendsto.eventually
         (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1))
     have hcorr_tendsto :
         Tendsto
@@ -5168,8 +5118,8 @@ noncomputable def of_superunit_error
           (2 * Ccorr) * ((N : ℝ) ^ 2 *
               (decayingBernoulliTopOneSuperunitError α N * (N : ℝ)) ^
                 (-(α + 1))) <
-            1 := by
-      exact hcorr_tendsto.eventually
+            1 :=
+      hcorr_tendsto.eventually
         (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1))
     filter_upwards
       [eventually_ge_atTop 1,
@@ -5272,8 +5222,8 @@ noncomputable def toEventualSublinearFOCCertificate
           hcert.success_first_lt_one hcert.likelihood_pos
           (src := src) (dst := dst) (qsrc := qsrc) (qdst := qdst)
           hqsrc_pos hraw_order hraw hgap
-    · have hreverse_order : qsrc - 1 ≤ qdst := by
-        exact le_of_lt (Nat.lt_of_not_ge hraw_order)
+    · have hreverse_order : qsrc - 1 ≤ qdst :=
+        le_of_lt (Nat.lt_of_not_ge hraw_order)
       have hfloor_le_pred : hcert.floor ≤ qsrc - 1 :=
         Nat.le_sub_one_of_lt hqsrc_floor
       have hhalf :
@@ -5288,8 +5238,8 @@ noncomputable def toEventualSublinearFOCCertificate
               decayingBernoulliSuccess c d α i := by
         have hsum_nonneg :
             0 ≤ ∑ i ∈ Finset.Ico (qsrc - 1) qdst,
-              decayingBernoulliSuccess c d α i := by
-          exact Finset.sum_nonneg (fun i _ =>
+              decayingBernoulliSuccess c d α i :=
+          Finset.sum_nonneg (fun i _ =>
             decayingBernoulliSuccess_nonneg c d α (le_of_lt hcert.c_pos)
               hcert.d_nonneg i)
         nlinarith
@@ -5314,8 +5264,7 @@ theorem asymptoticHomogeneity
       DecayingBernoulliTopOneSuperunitGrowthCertificate likelihood c d α) :
     ConsumptionModel.AsymptoticHomogeneity
       (fun _ => decayingBernoulliTopOneConsumptionModel likelihood c d α)
-      (gammaLikelihoodProfile likelihood (1 / α)) :=
-  hcert.toEventualSublinearFOCCertificate.asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / α)) := hcert.toEventualSublinearFOCCertificate.asymptoticHomogeneity
 
 end DecayingBernoulliTopOneSuperunitGrowthCertificate
 
@@ -5412,8 +5361,8 @@ noncomputable def toEventualSublinearFOCCertificate
     filter_upwards [hcert.growth] with N hgrowth
     intro src dst qsrc qdst hqsrc_leN _hqdst_leN _hqsrc_floor _hqdst_floor hgap
     simp only [div_one] at hgap
-    have hgap_nonneg : 0 ≤ hcert.error N * (N : ℝ) := by
-      exact mul_nonneg (hcert.error_nonneg N) (Nat.cast_nonneg N)
+    have hgap_nonneg : 0 ≤ hcert.error N * (N : ℝ) :=
+      mul_nonneg (hcert.error_nonneg N) (Nat.cast_nonneg N)
     have hdiff_pos :
         0 < (qsrc : ℝ) - (qdst : ℝ) :=
       lt_of_le_of_lt hgap_nonneg hgap
@@ -5485,8 +5434,7 @@ theorem asymptoticHomogeneity
       DecayingBernoulliTopOneSubunitGrowthCertificate likelihood c d α) :
     ConsumptionModel.AsymptoticHomogeneity
       (fun _ => decayingBernoulliTopOneConsumptionModel likelihood c d α)
-      (uniformProfile T) :=
-  hcert.toEventualSublinearFOCCertificate.asymptoticHomogeneity
+      (uniformProfile T) := hcert.toEventualSublinearFOCCertificate.asymptoticHomogeneity
 
 end DecayingBernoulliTopOneSubunitGrowthCertificate
 
@@ -5526,8 +5474,7 @@ end DecayingBernoulliAllConsumedHomogeneityCertificate
 
 /-- Theorem 2(iv)'s all-consumed target weights, proportional to `p_t^(1/α)`. -/
 noncomputable def decayingBernoulliAllConsumedTargetWeight {T : ℕ}
-    (likelihood : ItemType T → ℝ) (α : ℝ) (t : ItemType T) : ℝ :=
-  likelihood t ^ (1 / α)
+    (likelihood : ItemType T → ℝ) (α : ℝ) (t : ItemType T) : ℝ := likelihood t ^ (1 / α)
 
 /--
 Finite pairwise-scaled certificate for the all-consumed branch of Theorem 2.
@@ -5597,8 +5544,7 @@ theorem asymptoticHomogeneity
       DecayingBernoulliAllConsumedPairwiseScaledCertificate likelihood c d α) :
     ConsumptionModel.AsymptoticHomogeneity
       (fun _ => decayingBernoulliAllConsumedConsumptionModel likelihood c d α)
-      (gammaLikelihoodProfile likelihood (1 / α)) :=
-  hcert.toPairwiseScaledHomogeneityCertificate.asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / α)) := hcert.toPairwiseScaledHomogeneityCertificate.asymptoticHomogeneity
 
 noncomputable def toHomogeneityCertificate
     {T : ℕ} [NeZero T] {likelihood : ItemType T → ℝ} {c d α : ℝ}
@@ -5634,8 +5580,8 @@ theorem decayingBernoulliAllConsumed_positive_alpha_scaled_count_sub_le
   have hweight_pos : ∀ t, 0 < weight t := by
     intro t
     exact Real.rpow_pos_of_pos (hlike_pos t) (1 / α)
-  have hsum_nonneg : 0 ≤ ∑ t : ItemType T, 1 / weight t := by
-    exact Finset.sum_nonneg (fun t _ => div_nonneg zero_le_one
+  have hsum_nonneg : 0 ≤ ∑ t : ItemType T, 1 / weight t :=
+    Finset.sum_nonneg (fun t _ => div_nonneg zero_le_one
       (le_of_lt (hweight_pos t)))
   have hC_nonneg : 0 ≤ C := by
     dsimp [C]
@@ -5679,16 +5625,16 @@ theorem decayingBernoulliAllConsumed_positive_alpha_scaled_count_sub_le
         (a.count src : ℝ) / weight src + d / weight src ≤
           (a.count dst : ℝ) / weight dst + (1 + d) / weight dst := by
       convert hscaled using 1 <;> ring_nf
-    have hd_div_nonneg : 0 ≤ d / weight src := by
-      exact div_nonneg hd (le_of_lt (hweight_pos src))
+    have hd_div_nonneg : 0 ≤ d / weight src :=
+      div_nonneg hd (le_of_lt (hweight_pos src))
     have hupper :
         (a.count src : ℝ) / weight src -
             (a.count dst : ℝ) / weight dst ≤
           (1 + d) / weight dst := by
       linarith
     have hinv_le_sum :
-        1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t := by
-      exact Finset.single_le_sum
+        1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t :=
+      Finset.single_le_sum
         (fun t _ => div_nonneg zero_le_one (le_of_lt (hweight_pos t)))
         (Finset.mem_univ dst)
     have htail :
@@ -5745,8 +5691,8 @@ noncomputable def
   scaled_bound :=
     (1 + d) *
       ∑ t : ItemType T, 1 / decayingBernoulliAllConsumedTargetWeight likelihood α t
-  scaled_bound_pos := by
-    exact mul_pos (by linarith : 0 < 1 + d)
+  scaled_bound_pos :=
+    mul_pos (by linarith : 0 < 1 + d)
       (Finset.sum_pos
         (fun t _ =>
           one_div_pos.mpr
@@ -5773,8 +5719,8 @@ theorem decayingBernoulliAllConsumed_alpha_one_scaled_count_sub_le
       (1 + d) * ∑ t : ItemType T, 1 / likelihood t := by
   classical
   let C : ℝ := (1 + d) * ∑ t : ItemType T, 1 / likelihood t
-  have hsum_nonneg : 0 ≤ ∑ t : ItemType T, 1 / likelihood t := by
-    exact Finset.sum_nonneg (fun t _ => div_nonneg zero_le_one
+  have hsum_nonneg : 0 ≤ ∑ t : ItemType T, 1 / likelihood t :=
+    Finset.sum_nonneg (fun t _ => div_nonneg zero_le_one
       (le_of_lt (hlike_pos t)))
   have hC_nonneg : 0 ≤ C := by
     dsimp [C]
@@ -5818,16 +5764,16 @@ theorem decayingBernoulliAllConsumed_alpha_one_scaled_count_sub_le
           (a.count dst : ℝ) / likelihood dst +
             (1 + d) / likelihood dst := by
       convert hscaled using 1 <;> ring_nf
-    have hd_div_nonneg : 0 ≤ d / likelihood src := by
-      exact div_nonneg hd (le_of_lt (hlike_pos src))
+    have hd_div_nonneg : 0 ≤ d / likelihood src :=
+      div_nonneg hd (le_of_lt (hlike_pos src))
     have hupper :
         (a.count src : ℝ) / likelihood src -
             (a.count dst : ℝ) / likelihood dst ≤
           (1 + d) / likelihood dst := by
       linarith
     have hinv_le_sum :
-        1 / likelihood dst ≤ ∑ t : ItemType T, 1 / likelihood t := by
-      exact Finset.single_le_sum
+        1 / likelihood dst ≤ ∑ t : ItemType T, 1 / likelihood t :=
+      Finset.single_le_sum
         (fun t _ => div_nonneg zero_le_one (le_of_lt (hlike_pos t)))
         (Finset.mem_univ dst)
     have htail :
@@ -5880,8 +5826,8 @@ noncomputable def decayingBernoulliAllConsumedPairwiseScaledCertificate_alpha_on
     intro t
     simpa [decayingBernoulliAllConsumedTargetWeight] using hlike_pos t
   scaled_bound := (1 + d) * ∑ t : ItemType T, 1 / likelihood t
-  scaled_bound_pos := by
-    exact mul_pos (by linarith : 0 < 1 + d)
+  scaled_bound_pos :=
+    mul_pos (by linarith : 0 < 1 + d)
       (Finset.sum_pos
         (fun t _ => one_div_pos.mpr (hlike_pos t)) Finset.univ_nonempty)
   pairwise_scaled := by

@@ -1,6 +1,10 @@
+import EconCSLib.Foundations.Math.FiniteSum
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Data.Fin.Basic
+import Mathlib.Data.Finset.Powerset
+import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Tactic.Ring
 
 open scoped BigOperators
@@ -48,6 +52,160 @@ noncomputable def pmfProduct (ι α : Type*) [Fintype ι] [DecidableEq ι] [Fint
   simpa using
     (ENNReal.toReal_prod
       (s := (Finset.univ : Finset ι)) (f := fun i : ι => μ (f i)))
+
+/-- Add one independent draw to a sample indexed by `ι`. -/
+def extendDraw {ι α : Type*} (sample : ι → α) (newItem : α) : Option ι → α
+  | none => newItem
+  | some i => sample i
+
+/-- Functions on `Option ι` are equivalent to a distinguished new draw and an old sample. -/
+def optionFunEquivProd (ι α : Type*) : (Option ι → α) ≃ α × (ι → α) where
+  toFun sample := (sample none, fun i => sample (some i))
+  invFun pair := extendDraw pair.2 pair.1
+  left_inv sample := by
+    funext x
+    cases x <;> rfl
+  right_inv pair := by
+    ext
+    · rfl
+    · rfl
+
+/-- `Option (Fin a)` is a canonical one-point extension of `Fin a`. -/
+def optionFinEquivFinSucc (a : ℕ) : Option (Fin a) ≃ Fin (a + 1) where
+  toFun
+    | none => Fin.last a
+    | some i => Fin.castSucc i
+  invFun j :=
+    if h : j = Fin.last a then none else some (j.castPred h)
+  left_inv x := by
+    cases x with
+    | none => simp
+    | some i =>
+        simp [Fin.castSucc_ne_last]
+  right_inv j := by
+    by_cases h : j = Fin.last a
+    · subst h
+      simp
+    · simp [h, Fin.castSucc_castPred]
+
+/--
+An iid product sample on `Option ι` has the same finite expectation as first
+drawing an iid old sample on `ι` and then drawing one independent new item.
+-/
+theorem pmfExp_pmfProduct_option_eq_pairExp
+    {ι α : Type*} [Fintype ι] [DecidableEq ι]
+    [Fintype α] [DecidableEq α]
+    (μ : PMF α) (F : (Option ι → α) → ℝ) :
+    pmfExp (pmfProduct (Option ι) α μ) F =
+      pmfPairExp (pmfProduct ι α μ) μ
+        (fun sample newItem => F (extendDraw sample newItem)) := by
+  classical
+  unfold pmfPairExp pmfExp
+  let e := optionFunEquivProd ι α
+  calc
+    ∑ sample : Option ι → α,
+        (pmfProduct (Option ι) α μ sample).toReal * F sample
+        =
+        ∑ pair : α × (ι → α),
+          (pmfProduct (Option ι) α μ (e.symm pair)).toReal *
+            F (e.symm pair) := by
+          simpa [e] using
+            (Equiv.sum_comp (optionFunEquivProd ι α).symm
+              (fun sample : Option ι → α =>
+                (pmfProduct (Option ι) α μ sample).toReal *
+                  F sample)).symm
+    _ =
+        ∑ pair : α × (ι → α),
+          ((μ pair.1).toReal * ∏ i : ι, (μ (pair.2 i)).toReal) *
+            F (extendDraw pair.2 pair.1) := by
+          refine Finset.sum_congr rfl ?_
+          intro pair _
+          simp [e, optionFunEquivProd, extendDraw,
+            Fintype.prod_option]
+    _ =
+        ∑ newItem : α, ∑ sample : ι → α,
+          ((μ newItem).toReal * ∏ i : ι, (μ (sample i)).toReal) *
+            F (extendDraw sample newItem) := by
+          simpa [Finset.univ_product_univ] using
+            (Finset.sum_product'
+              (s := (Finset.univ : Finset α))
+              (t := (Finset.univ : Finset (ι → α)))
+              (f := fun newItem sample =>
+                ((μ newItem).toReal *
+                    ∏ i : ι, (μ (sample i)).toReal) *
+                  F (extendDraw sample newItem)))
+    _ =
+        ∑ sample : ι → α, ∑ newItem : α,
+          ((μ newItem).toReal * ∏ i : ι, (μ (sample i)).toReal) *
+            F (extendDraw sample newItem) :=
+          Finset.sum_comm
+    _ =
+        ∑ sample : ι → α,
+          (∏ i : ι, (μ (sample i)).toReal) *
+            (∑ newItem : α,
+              (μ newItem).toReal * F (extendDraw sample newItem)) := by
+          refine Finset.sum_congr rfl ?_
+          intro sample _
+          rw [Finset.mul_sum]
+          refine Finset.sum_congr rfl ?_
+          intro newItem _
+          ring
+    _ =
+        ∑ sample : ι → α,
+          (pmfProduct ι α μ sample).toReal *
+            (∑ newItem : α,
+              (μ newItem).toReal * F (extendDraw sample newItem)) := by
+          refine Finset.sum_congr rfl ?_
+          intro sample _
+          rw [pmfProduct_apply_toReal]
+
+/-- Reindexing iid finite-product samples does not change finite expectation. -/
+theorem pmfExp_pmfProduct_equiv
+    {ι κ α : Type*} [Fintype ι] [DecidableEq ι]
+    [Fintype κ] [DecidableEq κ] [Fintype α] [DecidableEq α]
+    (e : ι ≃ κ) (μ : PMF α) (F : (κ → α) → ℝ) :
+    pmfExp (pmfProduct ι α μ)
+        (fun sample : ι → α => F (fun j : κ => sample (e.symm j))) =
+      pmfExp (pmfProduct κ α μ) F := by
+  classical
+  unfold pmfExp
+  let sampleEquiv : (ι → α) ≃ (κ → α) :=
+    { toFun := fun sample j => sample (e.symm j)
+      invFun := fun sample i => sample (e i)
+      left_inv := by
+        intro sample
+        funext i
+        simp
+      right_inv := by
+        intro sample
+        funext j
+        simp }
+  calc
+    ∑ sample : ι → α,
+        (pmfProduct ι α μ sample).toReal *
+          F (fun j : κ => sample (e.symm j))
+        =
+        ∑ sample : κ → α,
+          (pmfProduct ι α μ (sampleEquiv.symm sample)).toReal *
+            F sample := by
+          simpa [sampleEquiv] using
+            (Equiv.sum_comp sampleEquiv.symm
+              (fun sample : ι → α =>
+                (pmfProduct ι α μ sample).toReal *
+                  F (fun j : κ => sample (e.symm j)))).symm
+    _ =
+        ∑ sample : κ → α,
+          (pmfProduct κ α μ sample).toReal * F sample := by
+          refine Finset.sum_congr rfl ?_
+          intro sample _
+          have hprod :
+              (pmfProduct ι α μ (sampleEquiv.symm sample)).toReal =
+                (pmfProduct κ α μ sample).toReal := by
+            rw [pmfProduct_apply_toReal, pmfProduct_apply_toReal]
+            simpa [sampleEquiv] using
+              (Equiv.prod_comp e
+                (fun j : κ => (μ (sample j)).toReal))
+          rw [hprod]
 
 /-- The total real mass of a PMF on a finite type is `1`. -/
 theorem pmfToRealSum {α : Type*} [Fintype α] [DecidableEq α]
@@ -323,6 +481,268 @@ theorem pmfProduct_prob_forall
     _ = (∑ a : α, (μ a).toReal *
           (if p a then (1 : ℝ) else 0)) ^ Fintype.card ι := by
           simp [Finset.prod_const]
+
+/--
+For an independent finite product PMF, the probability of a coordinate-wise
+event with coordinate-dependent predicates factors into the product of the
+one-coordinate probabilities.
+-/
+theorem pmfProduct_prob_forall_dependent
+    {ι α : Type*} [Fintype ι] [DecidableEq ι]
+    [Fintype α] [DecidableEq α]
+    (μ : PMF α) (P : ι → α → Prop)
+    [∀ i, DecidablePred (P i)] :
+    pmfProb (pmfProduct ι α μ)
+        (fun f : ι → α => ∀ i : ι, P i (f i)) =
+      ∏ i : ι, pmfProb μ (P i) := by
+  classical
+  have hpoint : ∀ f : ι → α,
+      (pmfProduct ι α μ f).toReal *
+          (if ∀ i : ι, P i (f i) then (1 : ℝ) else 0) =
+        ∏ i : ι, ((μ (f i)).toReal *
+          (if P i (f i) then (1 : ℝ) else 0)) := by
+    intro f
+    by_cases hall : ∀ i : ι, P i (f i)
+    · simp [hall]
+    · have hnotall : ¬ ∀ i : ι, P i (f i) := hall
+      rcases not_forall.mp hnotall with ⟨i, hi⟩
+      have hprod_zero :
+          ∏ j : ι, (if P j (f j) then (μ (f j)).toReal else 0) = 0 := by
+        rw [Finset.prod_eq_zero (Finset.mem_univ i)]
+        simp [hi]
+      simp [hnotall, hprod_zero]
+  unfold pmfProb pmfExp
+  calc
+    ∑ f : ι → α, (pmfProduct ι α μ f).toReal *
+        (if ∀ i : ι, P i (f i) then (1 : ℝ) else 0)
+        = ∑ f : ι → α, ∏ i : ι, ((μ (f i)).toReal *
+            (if P i (f i) then (1 : ℝ) else 0)) :=
+          Finset.sum_congr rfl (fun f _ => hpoint f)
+    _ = ∏ i : ι, ∑ a : α,
+          ((μ a).toReal * (if P i a then (1 : ℝ) else 0)) := by
+          symm
+          simpa using
+            (Finset.prod_univ_sum
+              (t := fun _i : ι => (Finset.univ : Finset α))
+              (f := fun i a => (μ a).toReal *
+                (if P i a then (1 : ℝ) else 0)))
+
+/-- The set of coordinates where a sample satisfies a predicate. -/
+def successIndexSet {ι α : Type*} [Fintype ι]
+    (p : α → Prop) [DecidablePred p] (sample : ι → α) : Finset ι :=
+  (Finset.univ : Finset ι).filter (fun i => p (sample i))
+
+/-- The success-index set equals `s` iff each coordinate has the prescribed status. -/
+theorem successIndexSet_eq_iff {ι α : Type*}
+    [Fintype ι] [DecidableEq ι]
+    {p : α → Prop} [DecidablePred p]
+    (sample : ι → α) (s : Finset ι) :
+    successIndexSet p sample = s ↔
+      ∀ i : ι, p (sample i) ↔ i ∈ s := by
+  classical
+  constructor
+  · intro h i
+    have hi := congrArg (fun t : Finset ι => i ∈ t) h
+    simpa [successIndexSet] using hi
+  · intro h
+    ext i
+    simp [successIndexSet, h i]
+
+/--
+For an independent finite product PMF, the probability of a fixed success-index
+set is `q^|s| rho^(n-|s|)`, where `q` and `rho` are the one-draw success and
+failure probabilities.
+-/
+theorem pmfProduct_prob_successIndexSet_eq
+    {ι α : Type*} [Fintype ι] [DecidableEq ι]
+    [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] (s : Finset ι) :
+    pmfProb (pmfProduct ι α μ)
+        (fun sample : ι → α => successIndexSet p sample = s) =
+      (pmfProb μ p) ^ s.card *
+        (pmfProb μ (fun a => ¬ p a)) ^
+          (Fintype.card ι - s.card) := by
+  classical
+  calc
+    pmfProb (pmfProduct ι α μ)
+        (fun sample : ι → α => successIndexSet p sample = s)
+        =
+        pmfProb (pmfProduct ι α μ)
+          (fun sample : ι → α => ∀ i : ι, p (sample i) ↔ i ∈ s) := by
+          refine pmfProb_congr _ ?_
+          intro sample
+          exact successIndexSet_eq_iff sample s
+    _ = ∏ i : ι,
+          pmfProb μ (fun a : α => p a ↔ i ∈ s) :=
+          pmfProduct_prob_forall_dependent μ
+            (fun i a => p a ↔ i ∈ s)
+    _ = ∏ i : ι,
+          if i ∈ s then
+            pmfProb μ p
+          else
+            pmfProb μ (fun a : α => ¬ p a) := by
+          refine Finset.prod_congr rfl ?_
+          intro i _hi
+          by_cases his : i ∈ s
+          · simp [his]
+          · simp [his]
+    _ =
+        (pmfProb μ p) ^ s.card *
+          (pmfProb μ (fun a : α => ¬ p a)) ^
+            (Fintype.card ι - s.card) :=
+          EconCSLib.FiniteSum.prod_ite_mem_eq_pow_mul_pow s
+            (pmfProb μ p)
+            (pmfProb μ (fun a : α => ¬ p a))
+
+/--
+The number of successes in an independent finite product has the usual binomial
+mass formula, stated directly for finite PMFs and real-valued finite
+probabilities.
+-/
+theorem pmfProduct_prob_successIndexSet_card_eq
+    {ι α : Type*} [Fintype ι] [DecidableEq ι]
+    [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] (j : ℕ) :
+    pmfProb (pmfProduct ι α μ)
+        (fun sample : ι → α => (successIndexSet p sample).card = j) =
+      (Nat.choose (Fintype.card ι) j : ℝ) *
+        (pmfProb μ p) ^ j *
+          (pmfProb μ (fun a => ¬ p a)) ^
+            (Fintype.card ι - j) := by
+  classical
+  let exactSets : Finset (Finset ι) :=
+    (Finset.univ : Finset ι).powersetCard j
+  have hindicator :
+      ∀ sample : ι → α,
+        (if (successIndexSet p sample).card = j then (1 : ℝ) else 0) =
+          ∑ s ∈ exactSets,
+            if successIndexSet p sample = s then (1 : ℝ) else 0 := by
+    intro sample
+    by_cases hcard : (successIndexSet p sample).card = j
+    · have hmem : successIndexSet p sample ∈ exactSets := by
+        simp [exactSets, hcard]
+      simp [hcard, hmem]
+    · have hne :
+        ∀ s ∈ exactSets, successIndexSet p sample ≠ s := by
+        intro s hs heq
+        have hs_card : s.card = j := by
+          simpa [exactSets] using (Finset.mem_powersetCard.mp hs).2
+        exact hcard (by simpa [heq, hs_card])
+      have hnotmem : successIndexSet p sample ∉ exactSets := by
+        intro hmem
+        exact hne (successIndexSet p sample) hmem rfl
+      simp [hcard, hnotmem]
+  unfold pmfProb pmfExp
+  calc
+    ∑ sample : ι → α,
+        (pmfProduct ι α μ sample).toReal *
+          (if (successIndexSet p sample).card = j then (1 : ℝ) else 0)
+        =
+        ∑ sample : ι → α,
+          (pmfProduct ι α μ sample).toReal *
+            (∑ s ∈ exactSets,
+              if successIndexSet p sample = s then (1 : ℝ) else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro sample _
+          rw [hindicator sample]
+    _ =
+        ∑ sample : ι → α, ∑ s ∈ exactSets,
+          (pmfProduct ι α μ sample).toReal *
+            (if successIndexSet p sample = s then (1 : ℝ) else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro sample _
+          rw [Finset.mul_sum]
+    _ =
+        ∑ s ∈ exactSets, ∑ sample : ι → α,
+          (pmfProduct ι α μ sample).toReal *
+            (if successIndexSet p sample = s then (1 : ℝ) else 0) :=
+          Finset.sum_comm
+    _ =
+        ∑ s ∈ exactSets,
+          (pmfProb μ p) ^ s.card *
+            (pmfProb μ (fun a : α => ¬ p a)) ^
+              (Fintype.card ι - s.card) := by
+          refine Finset.sum_congr rfl ?_
+          intro s _hs
+          exact pmfProduct_prob_successIndexSet_eq μ p s
+    _ =
+        ∑ s ∈ exactSets,
+          (pmfProb μ p) ^ j *
+            (pmfProb μ (fun a : α => ¬ p a)) ^
+              (Fintype.card ι - j) := by
+          refine Finset.sum_congr rfl ?_
+          intro s hs
+          have hs_card : s.card = j := by
+            simpa [exactSets] using (Finset.mem_powersetCard.mp hs).2
+          simp [hs_card]
+    _ =
+        (Nat.choose (Fintype.card ι) j : ℝ) *
+          (pmfProb μ p) ^ j *
+            (pmfProb μ (fun a : α => ¬ p a)) ^
+              (Fintype.card ι - j) := by
+          simp [exactSets, Finset.card_powersetCard, Finset.card_univ, mul_assoc]
+
+/--
+The lower-tail probability for the number of successes in an independent
+finite product is the corresponding finite binomial sum over `j < k`.
+-/
+theorem pmfProduct_prob_successIndexSet_card_lt_eq_sum
+    {ι α : Type*} [Fintype ι] [DecidableEq ι]
+    [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] (k : ℕ) :
+    pmfProb (pmfProduct ι α μ)
+        (fun sample : ι → α => (successIndexSet p sample).card < k) =
+      ∑ j ∈ Finset.range k,
+        (Nat.choose (Fintype.card ι) j : ℝ) *
+          (pmfProb μ p) ^ j *
+            (pmfProb μ (fun a : α => ¬ p a)) ^
+              (Fintype.card ι - j) := by
+  classical
+  have hindicator :
+      ∀ sample : ι → α,
+        (if (successIndexSet p sample).card < k then (1 : ℝ) else 0) =
+          ∑ j ∈ Finset.range k,
+            if (successIndexSet p sample).card = j then (1 : ℝ) else 0 := by
+    intro sample
+    by_cases hlt : (successIndexSet p sample).card < k
+    · have hmem : (successIndexSet p sample).card ∈ Finset.range k := by
+        simpa using hlt
+      simp [hlt, hmem]
+    · simp [hlt]
+  unfold pmfProb pmfExp
+  calc
+    ∑ sample : ι → α,
+        (pmfProduct ι α μ sample).toReal *
+          (if (successIndexSet p sample).card < k then (1 : ℝ) else 0)
+        =
+        ∑ sample : ι → α,
+          (pmfProduct ι α μ sample).toReal *
+            (∑ j ∈ Finset.range k,
+              if (successIndexSet p sample).card = j then (1 : ℝ) else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro sample _
+          rw [hindicator sample]
+    _ =
+        ∑ sample : ι → α, ∑ j ∈ Finset.range k,
+          (pmfProduct ι α μ sample).toReal *
+            (if (successIndexSet p sample).card = j then (1 : ℝ) else 0) := by
+          refine Finset.sum_congr rfl ?_
+          intro sample _
+          rw [Finset.mul_sum]
+    _ =
+        ∑ j ∈ Finset.range k, ∑ sample : ι → α,
+          (pmfProduct ι α μ sample).toReal *
+            (if (successIndexSet p sample).card = j then (1 : ℝ) else 0) :=
+          Finset.sum_comm
+    _ =
+        ∑ j ∈ Finset.range k,
+          (Nat.choose (Fintype.card ι) j : ℝ) *
+            (pmfProb μ p) ^ j *
+              (pmfProb μ (fun a : α => ¬ p a)) ^
+                (Fintype.card ι - j) := by
+          refine Finset.sum_congr rfl ?_
+          intro j _hj
+          exact pmfProduct_prob_successIndexSet_card_eq μ p j
 
 /--
 Uniform finite probabilities are invariant under relabeling: if an event on

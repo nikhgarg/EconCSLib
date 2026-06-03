@@ -9,23 +9,19 @@ namespace PRPKG24AccuracyDiversity
 namespace CountAllocation
 
 /-- Representation of a type in a recommendation allocation. -/
-noncomputable def representation {T : ℕ} (a : CountAllocation T) (t : ItemType T) : ℝ :=
-  EconCSLib.Allocation.share a t
+noncomputable def representation {T : ℕ} (a : CountAllocation T) (t : ItemType T) : ℝ := EconCSLib.Allocation.share a t
 
 /-- Exact target representation profile. -/
 def HasExactRepresentation {T : ℕ}
-    (a : CountAllocation T) (target : ItemType T → ℝ) : Prop :=
-  ∀ t, representation a t = target t
+    (a : CountAllocation T) (target : ItemType T → ℝ) : Prop := ∀ t, representation a t = target t
 
 /-- Approximate target representation profile with uniform error `ε`. -/
 def HasApproxRepresentation {T : ℕ}
-    (a : CountAllocation T) (target : ItemType T → ℝ) (ε : ℝ) : Prop :=
-  ∀ t, |representation a t - target t| ≤ ε
+    (a : CountAllocation T) (target : ItemType T → ℝ) (ε : ℝ) : Prop := ∀ t, |representation a t - target t| ≤ ε
 
 /-- Representation of every type is at least the supplied lower bound. -/
 def HasRepresentationAtLeast {T : ℕ}
-    (a : CountAllocation T) (lower : ItemType T → ℝ) : Prop :=
-  ∀ t, lower t ≤ representation a t
+    (a : CountAllocation T) (lower : ItemType T → ℝ) : Prop := ∀ t, lower t ≤ representation a t
 
 @[simp] theorem representation_eq_share {T : ℕ}
     (a : CountAllocation T) (t : ItemType T) :
@@ -40,8 +36,7 @@ structure HomogeneityProfile (T : ℕ) where
 namespace HomogeneityProfile
 
 /-- Exact agreement with a target representation profile. -/
-def Exact {T : ℕ} (P : HomogeneityProfile T) (a : CountAllocation T) : Prop :=
-  CountAllocation.HasExactRepresentation a P.targetShare
+def Exact {T : ℕ} (P : HomogeneityProfile T) (a : CountAllocation T) : Prop := CountAllocation.HasExactRepresentation a P.targetShare
 
 /-- Approximate agreement with a target representation profile. -/
 def Approx {T : ℕ} (P : HomogeneityProfile T) (a : CountAllocation T) (ε : ℝ) : Prop :=
@@ -68,8 +63,7 @@ noncomputable def uniformProfile (T : ℕ) : GammaHomogeneityProfile T where
 namespace GammaHomogeneityProfile
 
 /-- Normalizer for the target weights. -/
-noncomputable def normalizer {T : ℕ} (G : GammaHomogeneityProfile T) : ℝ :=
-  ∑ t, G.targetWeight t
+noncomputable def normalizer {T : ℕ} (G : GammaHomogeneityProfile T) : ℝ := ∑ t, G.targetWeight t
 
 /-- Target share induced by the γ-profile weights, with zero fallback if the normalizer is zero. -/
 noncomputable def targetShare {T : ℕ} (G : GammaHomogeneityProfile T) (t : ItemType T) : ℝ :=
@@ -85,8 +79,7 @@ noncomputable def Exact {T : ℕ} (G : GammaHomogeneityProfile T) (a : CountAllo
 
 /-- Approximate γ-homogeneity for a finite allocation. -/
 noncomputable def Approx {T : ℕ}
-    (G : GammaHomogeneityProfile T) (a : CountAllocation T) (ε : ℝ) : Prop :=
-  CountAllocation.HasApproxRepresentation a G.targetShare ε
+    (G : GammaHomogeneityProfile T) (a : CountAllocation T) (ε : ℝ) : Prop := CountAllocation.HasApproxRepresentation a G.targetShare ε
 
 @[simp] theorem targetShare_of_normalizer_zero {T : ℕ}
     (G : GammaHomogeneityProfile T) (t : ItemType T) (h : G.normalizer = 0) :
@@ -215,8 +208,7 @@ theorem approx_of_count_abs_error {T : ℕ}
     _ = |(a.count t : ℝ) - (N : ℝ) * G.targetShare t| / (N : ℝ) := by
           rw [abs_div]
           rw [abs_of_pos hNreal_pos]
-    _ ≤ C / (N : ℝ) :=
-          div_le_div_of_nonneg_right (hclose t) hNreal_pos.le
+    _ ≤ C / (N : ℝ) :=         div_le_div_of_nonneg_right (hclose t) hNreal_pos.le
 
 /--
 Pairwise bounded scaled counts imply bounded distance from the weighted target.
@@ -237,8 +229,8 @@ theorem count_abs_sub_weighted_average_le_of_pairwise_scaled_bounded {T : ℕ}
         |(a.count i : ℝ) / weight i - (a.count j : ℝ) / weight j| ≤ C) :
     ∀ t,
       |(a.count t : ℝ) -
-        weight t * (N / ∑ i : ItemType T, weight i)| ≤ C * weight t := by
-  exact EconCSLib.Allocation.count_abs_sub_weighted_average_le_of_pairwise_scaled_bounded
+        weight t * (N / ∑ i : ItemType T, weight i)| ≤ C * weight t :=
+   EconCSLib.Allocation.count_abs_sub_weighted_average_le_of_pairwise_scaled_bounded
     a weight hN hweight_pos hC hpair
 
 end GammaHomogeneityProfile

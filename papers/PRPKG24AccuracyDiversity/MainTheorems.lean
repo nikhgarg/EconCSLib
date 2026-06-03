@@ -28,16 +28,14 @@ Finite optimizer existence for a fixed slate size.
 -/
 theorem paper_finite_optimum_exists
     {T : ℕ} [Nonempty (ItemType T)] (M : ConsumptionModel T) (N : ℕ) :
-    ∃ a : CountAllocation T, M.IsOptimalAtTotal N a := by
-  exact M.exists_isOptimalAtTotal N
+    ∃ a : CountAllocation T, M.IsOptimalAtTotal N a :=  M.exists_isOptimalAtTotal N
 
 /--
 Finite exchange-improvement theorem.
 -/
 theorem paper_finite_exchange_improvement
     {T : ℕ} (M : ConsumptionModel T) :
-    M.ExchangeImprovementTarget := by
-  exact M.exchangeImprovementTarget
+    M.ExchangeImprovementTarget :=  M.exchangeImprovementTarget
 
 /--
 Finite first-order condition for optimal count allocations.
@@ -48,8 +46,8 @@ theorem paper_finite_optimum_first_order_condition
     (hopt : M.IsOptimalAtTotal N a) (hne : src ≠ dst)
     (hcan : EconCSLib.Allocation.CanMoveOne a src) :
     M.weightedForwardMarginal dst (a.count dst) ≤
-      M.weightedBackwardMarginal src (a.count src) := by
-  exact M.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
+      M.weightedBackwardMarginal src (a.count src) :=
+   M.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
     N hopt hne hcan
 
 /--
@@ -65,8 +63,8 @@ theorem paper_theorem1_all_consumed_common_mean_argmax_optimum
     (hmean_nonneg : 0 ≤ mean)
     (hbest : ∀ t, likelihood t ≤ likelihood best) :
     (ConsumptionModel.linearized likelihood (fun _ => mean)).IsOptimalAtTotal
-      N (allOnTypeAllocation N best) := by
-  exact allOnTypeAllocation_linearized_isOptimalAtTotal
+      N (allOnTypeAllocation N best) :=
+   allOnTypeAllocation_linearized_isOptimalAtTotal
     likelihood (fun _ => mean) N best
     (fun t => mul_le_mul_of_nonneg_right (hbest t) hmean_nonneg)
 
@@ -154,8 +152,7 @@ slate size `n` when `p1 + p2 = 1`.
 -/
 theorem paper_example1_calibrated_split_sum
     {p1 p2 n : ℝ} (hp_sum : p1 + p2 = 1) :
-    p1 * n + p2 * n = n :=
-  example1_calibrated_split_sum hp_sum
+    p1 * n + p2 * n = n := example1_calibrated_split_sum hp_sum
 
 /--
 Source Example 1, top-one side: the calibrated split maximizes the displayed
@@ -246,8 +243,7 @@ bounded-support asymptotic layer.
 theorem paper_definition3_order_statistic_topk_sum_eq_fin_sum_of_le
     (μ : ℕ → ℕ → ℝ) {k a : ℕ} (hka : k ≤ a) :
     orderStatisticTopKSumFromMean μ k a =
-      ∑ i : Fin k, μ (a - i.val) a :=
-  orderStatisticTopKSumFromMean_eq_fin_sum_of_le μ hka
+      ∑ i : Fin k, μ (a - i.val) a := orderStatisticTopKSumFromMean_eq_fin_sum_of_le μ hka
 
 /--
 Endpoint-loss form of the Definition 3 finite-prefix bridge.  The event is
@@ -272,8 +268,7 @@ theorem paper_definition3_order_statistic_topk_sum_from_sample
         (fun rank sampleSize =>
           if sampleSize = a then sampleOrderStatisticValue sample rank else 0)
         k a =
-      EconCSLib.Probability.sampleTopKSum sample k :=
-  orderStatisticTopKSumFromSample_eq_sampleTopKSum sample k
+      EconCSLib.Probability.sampleTopKSum sample k := orderStatisticTopKSumFromSample_eq_sampleTopKSum sample k
 
 /--
 Measurability of the paper's bottom-indexed sample order-statistic value.
@@ -281,8 +276,7 @@ Measurability of the paper's bottom-indexed sample order-statistic value.
 theorem paper_definition3_sample_order_statistic_value_measurable
     {a : ℕ} (rank : ℕ) :
     Measurable
-      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) :=
-  sampleOrderStatisticValue_measurable rank
+      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) := sampleOrderStatisticValue_measurable rank
 
 /--
 Pointwise bounded-support reflection for real sample tuples: endpoint loss of
@@ -629,8 +623,7 @@ theorem paper_definition3_expected_reflected_bottom_sum_eq_sum_reflected_order_s
 Source Definition 3 oracle constructor from paper order-statistic means.
 -/
 noncomputable def paper_definition3_topk_value_oracle_from_order_statistic_mean
-    (T : ℕ) (μ : ℕ → ℕ → ℝ) : TopKValueOracle T :=
-  TopKValueOracle.ofOrderStatisticMean T μ
+    (T : ℕ) (μ : ℕ → ℕ → ℝ) : TopKValueOracle T := TopKValueOracle.ofOrderStatisticMean T μ
 
 @[simp] theorem paper_definition3_topk_value_oracle_expectedTopSum
     (T : ℕ) (μ : ℕ → ℕ → ℝ) (k : ℕ) (t : ItemType T) (a : ℕ) :
@@ -645,8 +638,7 @@ order-statistic convention.
 theorem paper_proposition5_uniform_order_statistic_topk_sum_eq_value
     (k a : ℕ) :
     orderStatisticTopKSumFromMean uniformAscendingOrderStatisticMean k a =
-      uniformTopKValue k a :=
-  uniform_orderStatisticTopKSumFromMean_eq_value k a
+      uniformTopKValue k a := uniform_orderStatisticTopKSumFromMean_eq_value k a
 
 /--
 Uniform `[0,1]` top-`k` order-statistic means satisfy the bounded branch's
@@ -743,8 +735,7 @@ theorem paper_theorem1_i_finite_discrete_log_geometric_tail_ratio
     Filter.Tendsto
       (fun N : ℕ =>
         Real.log (C * r ^ N) / (Real.log r * (N : ℝ)))
-      Filter.atTop (nhds 1) :=
-  finiteDiscrete_log_geometric_tail_ratio hC hr_pos hr_lt_one
+      Filter.atTop (nhds 1) := finiteDiscrete_log_geometric_tail_ratio hC hr_pos hr_lt_one
 
 /--
 Source Theorem 1(i), equation (90) algebra for the polynomial-times-geometric
@@ -757,8 +748,7 @@ theorem paper_theorem1_i_finite_discrete_log_polynomial_geometric_tail_ratio
       (fun N : ℕ =>
         Real.log (C * (N : ℝ) ^ d * r ^ N) /
           (Real.log r * (N : ℝ)))
-      Filter.atTop (nhds 1) :=
-  finiteDiscrete_log_polynomial_geometric_tail_ratio d hC hr_pos hr_lt_one
+      Filter.atTop (nhds 1) := finiteDiscrete_log_polynomial_geometric_tail_ratio d hC hr_pos hr_lt_one
 
 /--
 Source Theorem 1(i), equation (90) squeeze from the paper's geometric lower
@@ -836,8 +826,7 @@ the top-value count is at least `k`.
 theorem paper_theorem1_i_finite_discrete_hasKTopValues_iff_topValueCount
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ℕ) (xTop : ℝ) (v : ι → ℝ) :
-    hasKTopValues k xTop v ↔ k ≤ topValueCount xTop v :=
-  hasKTopValues_iff_le_topValueCount k xTop v
+    hasKTopValues k xTop v ↔ k ≤ topValueCount xTop v := hasKTopValues_iff_le_topValueCount k xTop v
 
 /--
 Source Theorem 1(i), deterministic promoting-event lower marginal step.
@@ -928,8 +917,7 @@ theorem paper_theorem1_i_finite_discrete_product_forall_factorization
     [∀ i, DecidablePred (event i)] :
     EconCSLib.pmfProb (EconCSLib.pmfProduct ι Ω itemLaw)
         (fun sample : ι → Ω => ∀ i : ι, event i (sample i)) =
-      ∏ i : ι, EconCSLib.pmfProb itemLaw (event i) :=
-  pmfProduct_prob_forall_dependent itemLaw event
+      ∏ i : ι, EconCSLib.pmfProb itemLaw (event i) := pmfProduct_prob_forall_dependent itemLaw event
 
 /--
 Source Theorem 1(i), exact finite i.i.d. binomial lower-tail bridge: the
@@ -1458,8 +1446,7 @@ theorem paper_lemmaD1_optimizer_sequence_limit_of_asymptotic_homogeneity
     {G : GammaHomogeneityProfile T}
     (seq : OptimalAllocationSequence Mseq)
     (h : ConsumptionModel.AsymptoticHomogeneity Mseq G) :
-    seq.toAllocationSequence.ConvergesToProfile G := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity h
+    seq.toAllocationSequence.ConvergesToProfile G :=  seq.convergesToProfile_of_asymptoticHomogeneity h
 
 /--
 Source Theorem 1(i), finite-discrete i.i.d. conditional item values, exposed at
@@ -1472,8 +1459,8 @@ theorem paper_theorem1_i_finite_discrete_sequence_homogeneity_of_certificate
       OptimalAllocationSequence (fun _ => O.toConsumptionModel likelihood k))
     (hcert :
       TopKAsymptoticHomogeneityCertificate O likelihood k (uniformProfile T)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptotic_homogeneity
 
 /--
@@ -1495,8 +1482,8 @@ theorem
       PairwiseScaledSublinearFOCCertificate
         (fun _ => O.toConsumptionModel likelihood k)
         (fun _ : ItemType T => (1 : ℝ)) (uniformProfile T)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -1514,8 +1501,8 @@ theorem
     (seq :
       OptimalAllocationSequence (fun _ => O.toConsumptionModel likelihood k))
     (hcert : TopKUniformSublinearFOCCertificate O likelihood k) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -1535,8 +1522,7 @@ theorem
     ∀ᶠ N in Filter.atTop,
       ∀ a : CountAllocation T, 0 < N →
         (O.toConsumptionModel likelihood k).IsOptimalAtTotal N a →
-        ∀ t, hcert.floor < a.count t :=
-  hcert.count_floor_eventually
+        ∀ t, hcert.floor < a.count t := hcert.count_floor_eventually
 
 /--
 Source Theorem 1(i), eventual top-`k` marginal proof seam.
@@ -1554,8 +1540,8 @@ theorem
     (seq :
       OptimalAllocationSequence (fun _ => O.toConsumptionModel likelihood k))
     (hcert : TopKUniformEventualSublinearFOCCertificate O likelihood k) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -1614,8 +1600,8 @@ theorem
     (seq :
       OptimalAllocationSequence (fun _ => O.toConsumptionModel likelihood k))
     (hcert : TopKUniformGeometricMarginalBoundCertificate O likelihood k) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -1633,8 +1619,8 @@ theorem
     (seq :
       OptimalAllocationSequence (fun _ => O.toConsumptionModel likelihood k))
     (hcert : TopKUniformGeometricTailCertificate O likelihood k) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -1763,8 +1749,7 @@ theorem
         floor < qdst →
           forwardGain * finiteDiscreteTopMassPromotingEvent k qdst q rho ≤
             h (qdst + 1) - h qdst) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     paper_theorem1_i_finite_discrete_sequence_homogeneity_of_unweighted_binomial_event_bounds
       (TopKValueOracle.common T h) likelihood k seq q rho hk_pos hq_pos
       hq_le_one hrho_pos hrho_lt_one floor hk_le_floor_succ
@@ -1852,8 +1837,8 @@ theorem
     calc
       rho = EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop) :=
         hrho_def
-      _ = 1 - EconCSLib.pmfProb itemLaw (fun ω => value ω = xTop) := by
-        exact EconCSLib.pmfProb_compl itemLaw (fun ω => value ω = xTop)
+      _ = 1 - EconCSLib.pmfProb itemLaw (fun ω => value ω = xTop) :=
+        EconCSLib.pmfProb_compl itemLaw (fun ω => value ω = xTop)
       _ = 1 - q := by
         rw [← hq_def]
   have hrho_lt_one : rho < 1 := by
@@ -1987,8 +1972,7 @@ theorem
             (N : ℝ) ^ k * rho ^ (gap N) <
           (likelihoodLower * forwardGain) * q ^ k *
             (rho ^ (k - 1))⁻¹) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     paper_theorem1_i_finite_discrete_sequence_homogeneity_of_iid_scalar_marginal_bounds
       itemLaw value likelihood k seq q rho hq_def hrho_def hk_pos hxTop_pos
       hxSecond_nonneg hsecond_le_top hsecond_lt_top hvalue_le hvalue_split
@@ -2143,8 +2127,8 @@ theorem
     calc
       rho = EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop) :=
         hrho_def
-      _ = 1 - EconCSLib.pmfProb itemLaw (fun ω => value ω = xTop) := by
-        exact EconCSLib.pmfProb_compl itemLaw (fun ω => value ω = xTop)
+      _ = 1 - EconCSLib.pmfProb itemLaw (fun ω => value ω = xTop) :=
+        EconCSLib.pmfProb_compl itemLaw (fun ω => value ω = xTop)
       _ = 1 - q := by
         rw [← hq_def]
   have hrho_lt_one : rho < 1 := by
@@ -2168,8 +2152,7 @@ probability `q`, so the expected top-one value for `a` items is
 `1 - (1-q)^a`.
 -/
 noncomputable def theorem1TwoPointBernoulliTopOneModel {T : ℕ}
-    (likelihood : ItemType T → ℝ) (q : ℝ) : ConsumptionModel T :=
-  (BernoulliSatisfactionModel.mk likelihood (fun _ => q)).toConsumptionModel
+    (likelihood : ItemType T → ℝ) (q : ℝ) : ConsumptionModel T := (BernoulliSatisfactionModel.mk likelihood (fun _ => q)).toConsumptionModel
 
 /--
 Source Theorem 1(i), fully formalized two-point finite-discrete top-one instance.
@@ -2250,8 +2233,7 @@ theorem paper_theorem1_order_statistic_scaled_marginal_sandwich
         (1 - ε) * (scale q * weight t) ≤
             O.expectedTopSum k t (q + 1) - O.expectedTopSum k t q ∧
           O.expectedTopSum k t (q + 1) - O.expectedTopSum k t q ≤
-            (1 + ε) * (scale q * weight t) :=
-  TopKScaledMarginalLimitCertificate.eventually_marginal_sandwich C hε
+            (1 + ε) * (scale q * weight t) := TopKScaledMarginalLimitCertificate.eventually_marginal_sandwich C hε
 
 /--
 Source Theorem 1(ii)-(iv), same-count marginal comparison seam.
@@ -2286,8 +2268,8 @@ theorem paper_theorem1_ii_bounded_sequence_homogeneity_of_certificate
       TopKAsymptoticHomogeneityCertificate O likelihood k
         (gammaLikelihoodProfile likelihood (β / (β + 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (β / (β + 1))) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (β / (β + 1))) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptotic_homogeneity
 
 /--
@@ -2311,8 +2293,8 @@ theorem paper_theorem1_ii_bounded_sequence_homogeneity_of_sublinear_foc_certific
         (fun t : ItemType T => likelihood t ^ (β / (β + 1)))
         (gammaLikelihoodProfile likelihood (β / (β + 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (β / (β + 1))) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (β / (β + 1))) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -2336,8 +2318,8 @@ theorem
         (fun t : ItemType T => likelihood t ^ (β / (β + 1)))
         (gammaLikelihoodProfile likelihood (β / (β + 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (β / (β + 1))) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (β / (β + 1))) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -2355,8 +2337,7 @@ theorem paper_lemmaD2_bounded_top_k_loss_asymptotic_of_rank_terms
     EconCSLib.Math.AsymptoticEquivalent
       (boundedLemmaD2TopKLoss k term)
       (fun a => (∑ p : BoundedLemmaD2Index k, C.coeff p) *
-        boundedTailScale β a) :=
-  boundedLemmaD2TopKLoss_asymptoticEquivalent term C
+        boundedTailScale β a) := boundedLemmaD2TopKLoss_asymptoticEquivalent term C
 
 /--
 Source Lemma D.2 to Theorem 1(ii), nested-display form of the finite-sum
@@ -2372,8 +2353,7 @@ theorem paper_lemmaD2_bounded_nested_top_k_loss_asymptotic_of_rank_terms
       (fun a => ∑ i : Fin k, ∑ j : Fin (i.val + 1), term ⟨i, j⟩ a)
       (fun a =>
         (∑ i : Fin k, ∑ j : Fin (i.val + 1), C.coeff ⟨i, j⟩) *
-          boundedTailScale β a) :=
-  boundedLemmaD2NestedTopKLoss_asymptoticEquivalent term C
+          boundedTailScale β a) := boundedLemmaD2NestedTopKLoss_asymptoticEquivalent term C
 
 /--
 Source Theorem 1(ii), equations (91)-(96) assembled. Given the reflection
@@ -2408,8 +2388,7 @@ theorem paper_lemmaD2_bounded_integral_top_k_loss_asymptotic
     EconCSLib.Math.AsymptoticEquivalent
       (boundedLemmaD2TopKLoss k (boundedLemmaD2IndexedIntegralTerm G))
       (fun a => (∑ p : BoundedLemmaD2Index k, C.coeff p) *
-        boundedTailScale β a) :=
-  boundedLemmaD2IntegralTopKLoss_asymptoticEquivalent G C
+        boundedTailScale β a) := boundedLemmaD2IntegralTopKLoss_asymptoticEquivalent G C
 
 /--
 Source Lemma D.2, epsilon-sandwich consequence of the actual integral-term
@@ -2436,8 +2415,7 @@ Source Lemma D.2, exponential kernel limit. This verifies the standard
 theorem paper_lemmaD2_bounded_one_sub_div_pow_tendsto_exp (z : ℝ) :
     Filter.Tendsto
       (fun a : ℕ => (1 - z / (a : ℝ)) ^ a)
-      Filter.atTop (nhds (Real.exp (-z))) :=
-  bounded_one_sub_div_pow_tendsto_exp z
+      Filter.atTop (nhds (Real.exp (-z))) := bounded_one_sub_div_pow_tendsto_exp z
 
 /--
 Source Lemma D.2, fixed-rank exponential kernel limit. For fixed `j`, replacing
@@ -2447,8 +2425,7 @@ theorem paper_lemmaD2_bounded_one_sub_div_pow_sub_tendsto_exp
     (z : ℝ) (j : ℕ) :
     Filter.Tendsto
       (fun a : ℕ => (1 - z / (a : ℝ)) ^ (a - j))
-      Filter.atTop (nhds (Real.exp (-z))) :=
-  bounded_one_sub_div_pow_sub_tendsto_exp z j
+      Filter.atTop (nhds (Real.exp (-z))) := bounded_one_sub_div_pow_sub_tendsto_exp z j
 
 /--
 Source Lemma D.2, CDF rescaling step. A near-zero CDF power-law sandwich
@@ -2462,8 +2439,7 @@ theorem paper_lemmaD2_bounded_rescaled_cdf_power_sandwich
       (1 - ε) * (c / β) * (y * boundedTailScale β a) ^ β ≤
           G (y * boundedTailScale β a) ∧
         G (y * boundedTailScale β a) ≤
-          (1 + ε) * (c / β) * (y * boundedTailScale β a) ^ β :=
-  C.eventually_rescaled_cdf_power_sandwich hε hy_pos
+          (1 + ε) * (c / β) * (y * boundedTailScale β a) ^ β := C.eventually_rescaled_cdf_power_sandwich hε hy_pos
 
 /--
 Source Lemma D.2, simplified CDF rescaling step. The rescaled power term is
@@ -2477,8 +2453,7 @@ theorem paper_lemmaD2_bounded_rescaled_cdf_power_sandwich_inv_nat
       (1 - ε) * (c / β) * (y ^ β * (a : ℝ) ^ (-1 : ℝ)) ≤
           G (y * boundedTailScale β a) ∧
         G (y * boundedTailScale β a) ≤
-          (1 + ε) * (c / β) * (y ^ β * (a : ℝ) ^ (-1 : ℝ)) :=
-  C.eventually_rescaled_cdf_power_sandwich_inv_nat hε hy_pos
+          (1 + ε) * (c / β) * (y ^ β * (a : ℝ) ^ (-1 : ℝ)) := C.eventually_rescaled_cdf_power_sandwich_inv_nat hε hy_pos
 
 /--
 Source Lemma D.2, rescaled CDF sandwich after multiplying by `a`. This is the
@@ -2493,8 +2468,7 @@ theorem paper_lemmaD2_bounded_rescaled_cdf_nat_mul_sandwich
       (1 - ε) * ((c / β) * y ^ β) ≤
           (a : ℝ) * G (y * boundedTailScale β a) ∧
         (a : ℝ) * G (y * boundedTailScale β a) ≤
-          (1 + ε) * ((c / β) * y ^ β) :=
-  C.eventually_rescaled_cdf_nat_mul_sandwich hε hy_pos
+          (1 + ε) * ((c / β) * y ^ β) := C.eventually_rescaled_cdf_nat_mul_sandwich hε hy_pos
 
 /--
 Source Lemma D.2, pointwise rescaled CDF limit:
@@ -2506,8 +2480,7 @@ theorem paper_lemmaD2_bounded_rescaled_cdf_nat_mul_tendsto
     {y : ℝ} (hy_pos : 0 < y) :
     Filter.Tendsto
       (fun a : ℕ => (a : ℝ) * G (y * boundedTailScale β a))
-      Filter.atTop (nhds ((c / β) * y ^ β)) :=
-  C.rescaled_cdf_nat_mul_tendsto hy_pos
+      Filter.atTop (nhds ((c / β) * y ^ β)) := C.rescaled_cdf_nat_mul_tendsto hy_pos
 
 /--
 Source Lemma D.2, the rescaled split threshold
@@ -2517,8 +2490,7 @@ theorem paper_lemmaD2_bounded_tail_scale_delta_div_tendsto_atTop
     {β delta : ℝ} (hβ_pos : 0 < β) (hdelta_pos : 0 < delta) :
     Filter.Tendsto
       (fun a : ℕ => delta / boundedTailScale β a)
-      Filter.atTop Filter.atTop :=
-  boundedTailScale_delta_div_tendsto_atTop hβ_pos hdelta_pos
+      Filter.atTop Filter.atTop := boundedTailScale_delta_div_tendsto_atTop hβ_pos hdelta_pos
 
 /--
 Source Lemma D.2, local CDF power bounds after the substitution
@@ -2551,8 +2523,7 @@ theorem paper_lemmaD2_bounded_exists_local_cdf_power_bounds
     ∃ delta A B : ℝ,
       0 < delta ∧ 0 < A ∧ 0 ≤ B ∧
         (∀ x : ℝ, 0 < x → x < delta → A * x ^ β ≤ G x) ∧
-        (∀ x : ℝ, 0 < x → x < delta → G x ≤ B * x ^ β) :=
-  C.exists_local_cdf_power_bounds
+        (∀ x : ℝ, 0 < x → x < delta → G x ≤ B * x ^ β) := C.exists_local_cdf_power_bounds
 
 /--
 Source Lemma D.2, scalar envelope bound for the fixed-rank binomial kernel
@@ -2606,8 +2577,7 @@ theorem paper_lemmaD2_bounded_rescaled_cdf_one_sub_pow_tendsto_exp
     Filter.Tendsto
       (fun a : ℕ =>
         (1 - G (y * boundedTailScale β a)) ^ a)
-      Filter.atTop (nhds (Real.exp (-((c / β) * y ^ β)))) :=
-  C.rescaled_cdf_one_sub_pow_tendsto_exp hy_pos
+      Filter.atTop (nhds (Real.exp (-((c / β) * y ^ β)))) := C.rescaled_cdf_one_sub_pow_tendsto_exp hy_pos
 
 /--
 Source Lemma D.2, fixed-rank rescaled exponential kernel limit with exponent
@@ -2620,8 +2590,7 @@ theorem paper_lemmaD2_bounded_rescaled_cdf_one_sub_pow_sub_tendsto_exp
     Filter.Tendsto
       (fun a : ℕ =>
         (1 - G (y * boundedTailScale β a)) ^ (a - j))
-      Filter.atTop (nhds (Real.exp (-((c / β) * y ^ β)))) :=
-  C.rescaled_cdf_one_sub_pow_sub_tendsto_exp hy_pos j
+      Filter.atTop (nhds (Real.exp (-((c / β) * y ^ β)))) := C.rescaled_cdf_one_sub_pow_sub_tendsto_exp hy_pos j
 
 /--
 Source Lemma D.2, pointwise binomial-kernel limit after the bounded-tail
@@ -2639,8 +2608,7 @@ theorem paper_lemmaD2_bounded_rescaled_cdf_binomial_kernel_tendsto
       Filter.atTop
       (nhds
         (Real.exp (-((c / β) * y ^ β)) *
-          (((c / β) * y ^ β) ^ j) / j.factorial)) :=
-  C.rescaled_cdf_binomial_kernel_tendsto hy_pos j
+          (((c / β) * y ^ β) ^ j) / j.factorial)) := C.rescaled_cdf_binomial_kernel_tendsto hy_pos j
 
 /--
 Source Lemma D.2, pointwise convergence of the rescaled finite-`a` kernel to
@@ -2652,8 +2620,7 @@ theorem paper_lemmaD2_bounded_rescaled_kernel_tendsto_limit
     {y : ℝ} (hy_pos : 0 < y) (j : ℕ) :
     Filter.Tendsto
       (fun a : ℕ => boundedLemmaD2RescaledKernel G β j a y)
-      Filter.atTop (nhds (boundedLemmaD2LimitKernel β c j y)) :=
-  C.rescaled_kernel_tendsto_limit hy_pos j
+      Filter.atTop (nhds (boundedLemmaD2LimitKernel β c j y)) := C.rescaled_kernel_tendsto_limit hy_pos j
 
 /--
 Source Lemma D.2, measurability of the rescaled finite-`a` kernel.
@@ -2662,8 +2629,7 @@ theorem paper_lemmaD2_bounded_rescaled_kernel_aestronglyMeasurable
     {G : ℝ → ℝ} (hG : Measurable G) (β : ℝ) (j a : ℕ) :
     MeasureTheory.AEStronglyMeasurable
       (fun y : ℝ => boundedLemmaD2RescaledKernel G β j a y)
-      (MeasureTheory.volume.restrict (Set.Ioi (0 : ℝ))) :=
-  boundedLemmaD2RescaledKernel_aestronglyMeasurable hG β j a
+      (MeasureTheory.volume.restrict (Set.Ioi (0 : ℝ))) := boundedLemmaD2RescaledKernel_aestronglyMeasurable hG β j a
 
 /--
 Source Lemma D.2, integrability of the gamma-shaped envelope
@@ -2673,14 +2639,12 @@ theorem paper_lemmaD2_bounded_gamma_envelope_integrableOn
     {p q b : ℝ} (hp : 0 < p) (hq : -1 < q) (hb : 0 < b) :
     MeasureTheory.IntegrableOn
       (fun x : ℝ => x ^ q * Real.exp (-b * x ^ p))
-      (Set.Ioi (0 : ℝ)) :=
-  integrableOn_rpow_mul_exp_neg_mul_rpow_of_pos hp hq hb
+      (Set.Ioi (0 : ℝ)) := integrableOn_rpow_mul_exp_neg_mul_rpow_of_pos hp hq hb
 
 /-- Source Lemma D.2, measurability of the finite-`a` source integrand. -/
 theorem paper_lemmaD2_bounded_integral_kernel_measurable
     {G : ℝ → ℝ} (hG : Measurable G) (j a : ℕ) :
-    Measurable (fun x : ℝ => boundedLemmaD2IntegralKernel G j a x) :=
-  boundedLemmaD2IntegralKernel_measurable hG j a
+    Measurable (fun x : ℝ => boundedLemmaD2IntegralKernel G j a x) := boundedLemmaD2IntegralKernel_measurable hG j a
 
 /--
 Source Lemma D.2, CDF-range bound for the finite-`a` source integrand.
@@ -2818,8 +2782,7 @@ theorem paper_lemmaD2_bounded_integral_term_changeOfVariables
     boundedLemmaD2IntegralTerm G j a =
       boundedTailScale β a *
         ∫ y in Set.Ioi (0 : ℝ),
-          boundedLemmaD2RescaledKernel G β j a y :=
-  boundedLemmaD2IntegralTerm_changeOfVariables G β j a hscale_pos
+          boundedLemmaD2RescaledKernel G β j a y := boundedLemmaD2IntegralTerm_changeOfVariables G β j a hscale_pos
 
 /--
 Source Lemma D.2, near-zero change of variables `x = y*a^(-1/β)` for the
@@ -2860,8 +2823,7 @@ theorem paper_lemmaD2_bounded_integral_term_eventually_changeOfVariables
       boundedLemmaD2IntegralTerm G j a =
         boundedTailScale β a *
           ∫ y in Set.Ioi (0 : ℝ),
-            boundedLemmaD2RescaledKernel G β j a y :=
-  boundedLemmaD2IntegralTerm_eventually_changeOfVariables G β j
+            boundedLemmaD2RescaledKernel G β j a y := boundedLemmaD2IntegralTerm_eventually_changeOfVariables G β j
 
 /--
 Source Lemma D.2, eventual near-zero change of variables for the below-`delta`
@@ -3084,8 +3046,7 @@ theorem paper_lemmaD2_bounded_integral_term_split
         (Set.Ioi (0 : ℝ))) :
     boundedLemmaD2IntegralTerm G j a =
       boundedLemmaD2IntegralTermBelow G j a delta +
-        boundedLemmaD2IntegralTermAbove G j a delta :=
-  boundedLemmaD2IntegralTerm_split G j a hdelta_nonneg h_integrable
+        boundedLemmaD2IntegralTermAbove G j a delta := boundedLemmaD2IntegralTerm_split G j a hdelta_nonneg h_integrable
 
 /--
 Source Lemma D.2, eventual near-zero/tail split from eventual source-kernel
@@ -3116,8 +3077,7 @@ theorem paper_lemmaD2_bounded_limit_coeff_eq_gamma
       ((c / β) ^ j / (j.factorial : ℝ)) *
         ((c / β) ^ (-(β * (j : ℝ) + 1) / β) *
           (1 / β) *
-          Real.Gamma ((β * (j : ℝ) + 1) / β)) :=
-  boundedLemmaD2LimitCoeff_eq_gamma hβ_pos hc_pos j
+          Real.Gamma ((β * (j : ℝ) + 1) / β)) := boundedLemmaD2LimitCoeff_eq_gamma hβ_pos hc_pos j
 
 /--
 Source Lemma D.2, positivity of the fixed-`j` limiting coefficient.
@@ -3125,8 +3085,7 @@ Source Lemma D.2, positivity of the fixed-`j` limiting coefficient.
 theorem paper_lemmaD2_bounded_limit_coeff_pos
     {β c : ℝ} (hβ_pos : 0 < β) (hc_pos : 0 < c)
     (j : ℕ) :
-    0 < boundedLemmaD2LimitCoeff β c j :=
-  boundedLemmaD2LimitCoeff_pos hβ_pos hc_pos j
+    0 < boundedLemmaD2LimitCoeff β c j := boundedLemmaD2LimitCoeff_pos hβ_pos hc_pos j
 
 /--
 Source Theorem 1(ii), equations (91)-(96) with the actual Lemma D.2 integral
@@ -3240,8 +3199,7 @@ theorem paper_lemmaD2_bounded_rescaled_integral_tendsto_of_dominated_certificate
       (fun a : ℕ =>
         ∫ y in Set.Ioi (0 : ℝ),
           boundedLemmaD2RescaledKernel G β j a y)
-      Filter.atTop (nhds (boundedLemmaD2LimitCoeff β c j)) :=
-  C.rescaled_integral_tendsto
+      Filter.atTop (nhds (boundedLemmaD2LimitCoeff β c j)) := C.rescaled_integral_tendsto
 
 /--
 Source Lemma D.2, the dominated-convergence certificate supplies eventual
@@ -3253,8 +3211,7 @@ theorem paper_lemmaD2_bounded_rescaled_kernel_eventually_integrableOn_of_dominat
     ∀ᶠ a in Filter.atTop,
       MeasureTheory.IntegrableOn
         (fun y : ℝ => boundedLemmaD2RescaledKernel G β j a y)
-        (Set.Ioi (0 : ℝ)) :=
-  C.eventually_rescaledKernel_integrableOn
+        (Set.Ioi (0 : ℝ)) := C.eventually_rescaledKernel_integrableOn
 
 /--
 Source Lemma D.2, dominated convergence gives the growing near-zero rescaled
@@ -3269,8 +3226,7 @@ theorem paper_lemmaD2_bounded_growing_rescaled_integral_tendsto_of_dominated_cer
       (fun a : ℕ =>
         ∫ y in Set.Ioo (0 : ℝ) (delta / boundedTailScale β a),
           boundedLemmaD2RescaledKernel G β j a y)
-      Filter.atTop (nhds (boundedLemmaD2LimitCoeff β c j)) :=
-  C.growing_rescaled_integral_tendsto hdelta_pos
+      Filter.atTop (nhds (boundedLemmaD2LimitCoeff β c j)) := C.growing_rescaled_integral_tendsto hdelta_pos
 
 /--
 Source Lemma D.2, dominated convergence gives the below-`delta` source
@@ -3282,8 +3238,7 @@ theorem paper_lemmaD2_bounded_integral_term_below_asymptotic_of_dominated_certif
     {delta : ℝ} (hdelta_pos : 0 < delta) :
     EconCSLib.Math.AsymptoticEquivalent
       (fun a => boundedLemmaD2IntegralTermBelow G j a delta)
-      (fun a => boundedLemmaD2LimitCoeff β c j * boundedTailScale β a) :=
-  C.integralTermBelow_asymptoticEquivalent hdelta_pos
+      (fun a => boundedLemmaD2LimitCoeff β c j * boundedTailScale β a) := C.integralTermBelow_asymptoticEquivalent hdelta_pos
 
 /--
 Source Lemma D.2, dominated convergence plus source-tail negligibility gives
@@ -3336,8 +3291,7 @@ theorem paper_lemmaD2_bounded_integral_term_asymptotic_of_dominated_certificate
     (C : BoundedLemmaD2DominatedKernelCertificate β c G j) :
     EconCSLib.Math.AsymptoticEquivalent
       (boundedLemmaD2IntegralTerm G j)
-      (fun a => boundedLemmaD2LimitCoeff β c j * boundedTailScale β a) :=
-  C.integralTerm_asymptoticEquivalent
+      (fun a => boundedLemmaD2LimitCoeff β c j * boundedTailScale β a) := C.integralTerm_asymptoticEquivalent
 
 /--
 Source Lemma D.2, conversion from the finite-index dominated-convergence
@@ -3346,8 +3300,7 @@ certificate to the exact-gamma integral asymptotic certificate.
 noncomputable def paper_lemmaD2_bounded_limit_integral_certificate_of_dominated
     {β c : ℝ} {k : ℕ} {G : ℝ → ℝ}
     (C : BoundedLemmaD2DominatedIntegralAsymptoticCertificate β c k G) :
-    BoundedLemmaD2LimitIntegralAsymptoticCertificate β c k G :=
-  C.toLimitIntegralAsymptoticCertificate
+    BoundedLemmaD2LimitIntegralAsymptoticCertificate β c k G := C.toLimitIntegralAsymptoticCertificate
 
 /--
 Source Lemma D.2, finite-index dominated-convergence certificate plus common
@@ -3659,8 +3612,7 @@ theorem paper_lemmaD2_bounded_integral_term_asymptotic_of_split_certificate
     (C : BoundedLemmaD2SplitIntegralAsymptoticCertificate β c G j) :
     EconCSLib.Math.AsymptoticEquivalent
       (boundedLemmaD2IntegralTerm G j)
-      (fun a => boundedLemmaD2LimitCoeff β c j * boundedTailScale β a) :=
-  C.integralTerm_asymptoticEquivalent
+      (fun a => boundedLemmaD2LimitCoeff β c j * boundedTailScale β a) := C.integralTerm_asymptoticEquivalent
 
 /--
 Source Lemma D.2, conversion from the paper-style split certificate to the
@@ -3669,8 +3621,7 @@ exact-gamma integral asymptotic certificate.
 noncomputable def paper_lemmaD2_bounded_limit_integral_certificate_of_split
     {β c : ℝ} {k : ℕ} {G : ℝ → ℝ}
     (C : BoundedLemmaD2SplitIntegralFiniteCertificate β c k G) :
-    BoundedLemmaD2LimitIntegralAsymptoticCertificate β c k G :=
-  C.toLimitIntegralAsymptoticCertificate
+    BoundedLemmaD2LimitIntegralAsymptoticCertificate β c k G := C.toLimitIntegralAsymptoticCertificate
 
 /--
 Source Lemma D.2, actual integral finite assembly from the paper-style
@@ -3968,8 +3919,8 @@ theorem
     expectedOrderStatisticMeanSeq_topKEndpointLoss_eq_expectedReflectedBottomKSum
       M sampleMeasure (a := a) k horder htop
   have hmin : min k a = k := min_eq_left hka
-  have hmin_real : min (k : ℝ) (a : ℝ) = (k : ℝ) := by
-    exact min_eq_left (by exact_mod_cast hka)
+  have hmin_real : min (k : ℝ) (a : ℝ) = (k : ℝ) :=
+    min_eq_left (by exact_mod_cast hka)
   have htarget :
       (k : ℝ) * M -
           orderStatisticTopKSumFromMean
@@ -4122,9 +4073,8 @@ theorem
         ∫ x in Set.Ioi (0 : ℝ),
           ∫ sample,
             EconCSLib.Probability.reflectedBottomKRankCountLayer
-              M k sample x ∂(sampleMeasure a) := by
-          exact
-            EconCSLib.Probability.expectedReflectedBottomKSum_eq_integral_rank_count_layer_of_integrable
+              M k sample x ∂(sampleMeasure a) :=
+                      EconCSLib.Probability.expectedReflectedBottomKSum_eq_integral_rank_count_layer_of_integrable
               M (sampleMeasure a) k hupper hlayer_int
       _ = ∑ i : Fin k, ∑ j : Fin (i.val + 1),
             boundedLemmaD2IntegralTerm G j.val a := hlayer_formula
@@ -4184,8 +4134,8 @@ theorem paper_definition3_iid_reflected_count_layer_inner_integral_binomial
         ∑ i : Fin (min k a),
           ∫ sample : Fin a → ℝ,
             (if EconCSLib.Probability.iidSuccessCount successSet sample ≤ i.val
-              then (1 : ℝ) else 0) ∂sampleLaw := by
-          exact MeasureTheory.integral_finset_sum Finset.univ
+              then (1 : ℝ) else 0) ∂sampleLaw :=
+          MeasureTheory.integral_finset_sum Finset.univ
             (fun i _hi => by
               have hmeas :
                   MeasurableSet
@@ -4321,8 +4271,8 @@ theorem paper_definition3_iid_reflected_count_layer_integral_kernel_of_integrabl
         ∑ i : Fin (min k a),
           ∫ x in Set.Ioi (0 : ℝ),
             ∑ j ∈ Finset.Icc 0 i.val,
-              boundedLemmaD2IntegralKernel G j a x := by
-          exact MeasureTheory.integral_finset_sum Finset.univ
+              boundedLemmaD2IntegralKernel G j a x :=
+          MeasureTheory.integral_finset_sum Finset.univ
             (fun i _hi =>
               MeasureTheory.integrable_finset_sum (Finset.Icc 0 i.val)
                 (fun j hj => h_kernel_integrable i j hj))
@@ -4549,8 +4499,7 @@ theorem
       (fun a =>
         (∑ q : BoundedLemmaD2Index k,
           boundedLemmaD2LimitCoeff β c q.2.val) *
-          boundedTailScale β a) := by
-  exact
+          boundedTailScale β a) :=
     paper_lemma1_bounded_support_iid_reflected_count_layer_top_k_loss_asymptotic_of_base_ae_bounds_and_cdf_power_sandwich_monotone_bounded_support
       baseMeasure h_base_bounds (by intro x _hx; rfl) tail k_pos hM₀_pos
       hG_measurable hG_mono hG_nonneg hG_le_one hG_eq_one_of_support
@@ -4582,8 +4531,7 @@ theorem
       (fun a =>
         (∑ q : BoundedLemmaD2Index k,
           boundedLemmaD2LimitCoeff β c q.2.val) *
-          boundedTailScale β a) := by
-  exact
+          boundedTailScale β a) :=
     paper_lemma1_bounded_support_iid_reflected_cdf_count_layer_top_k_loss_asymptotic_of_base_ae_bounds_and_cdf_power_sandwich_monotone_bounded_support
       (M₀ := M - L) baseMeasure h_base_bounds
       (by simpa [EconCSLib.Probability.reflectedCDFMass] using tail)
@@ -4658,8 +4606,7 @@ theorem
       (fun q =>
         ((∑ p : BoundedLemmaD2Index k,
           boundedLemmaD2LimitCoeff β c p.2.val) / β) *
-          boundedPowerMarginalScale β q) := by
-  exact
+          boundedPowerMarginalScale β q) :=
     bounded_source_forward_marginal_asymptotic_of_loss_ae_and_scaled_drop
       tail.beta_pos
       (boundedLemmaD2LimitCoeff_sum_pos tail.beta_pos tail.c_pos k_pos)
@@ -4870,8 +4817,8 @@ theorem
         EconCSLib.Probability.expectedReflectedBottomKSum_eq_sum_reflectedAscendingOrderStatistic_of_le
           M (sampleMeasure a) hka (href_int hka)
       _ = ∑ i : Fin k, ∑ j : Fin (i.val + 1),
-            boundedLemmaD2IntegralTerm G j.val a := by
-        exact Finset.sum_congr rfl (fun i _hi => hrank hka i)
+            boundedLemmaD2IntegralTerm G j.val a :=
+        Finset.sum_congr rfl (fun i _hi => hrank hka i)
   exact
     paper_lemma1_bounded_support_expected_reflected_bottom_top_k_loss_asymptotic_of_cdf_power_sandwich_monotone_bounded_support
       sampleMeasure hprob h_order_integrable h_top_integrable h_reflected
@@ -4983,8 +4930,7 @@ theorem paper_theorem1_ii_bounded_power_marginal_sequence_homogeneity
         (fun _ =>
           (boundedPowerMarginalOracle T β).toConsumptionModel likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (β / (β + 1))) := by
-  exact
+      (gammaLikelihoodProfile likelihood (β / (β + 1))) :=
     paper_theorem1_ii_bounded_sequence_homogeneity_of_sublinear_foc_certificate
       (boundedPowerMarginalOracle T β) likelihood 1 β hβ_pos seq
       (boundedPowerMarginalSublinearFOCCertificate
@@ -5026,8 +4972,7 @@ noncomputable def paper_theorem1_ii_bounded_order_statistic_scaled_marginal_cert
     TopKScaledMarginalLimitCertificate
       (TopKValueOracle.ofOrderStatisticMean T μ) k
       (boundedPowerMarginalScale β)
-      (fun _ : ItemType T => limitCoeff) :=
-  C.toTopKScaledMarginalLimitCertificate
+      (fun _ : ItemType T => limitCoeff) := C.toTopKScaledMarginalLimitCertificate
 
 /--
 Source Theorem 1(ii), bounded order-statistic scaled-marginal certificate from
@@ -5139,8 +5084,8 @@ theorem paper_theorem1_ii_bounded_power_marginal_sequence_formula
           ((likelihood t) ^ (β / (β + 1)) /
             ∑ i : ItemType T, (likelihood i) ^ (β / (β + 1)))) := by
   have hnorm_pos :
-      0 < ∑ i : ItemType T, (likelihood i) ^ (β / (β + 1)) := by
-    exact Finset.sum_pos
+      0 < ∑ i : ItemType T, (likelihood i) ^ (β / (β + 1)) :=
+    Finset.sum_pos
       (fun i _ => Real.rpow_pos_of_pos (hlike_pos i) (β / (β + 1)))
       Finset.univ_nonempty
   have hconv :=
@@ -5162,8 +5107,7 @@ noncomputable def paper_theorem1_ii_bounded_power_marginal_scaled_marginal_certi
     TopKScaledMarginalLimitCertificate
       (boundedPowerMarginalOracle T β) 1
       (boundedPowerMarginalScale β)
-      (fun _ : ItemType T => (1 : ℝ)) :=
-  boundedPowerMarginalScaledMarginalLimitCertificate T β
+      (fun _ : ItemType T => (1 : ℝ)) := boundedPowerMarginalScaledMarginalLimitCertificate T β
 
 /--
 Source Theorem 1(iii), exponential-tail i.i.d. conditional item values,
@@ -5179,8 +5123,8 @@ theorem paper_theorem1_iii_exponential_sequence_homogeneity_of_certificate
       TopKAsymptoticHomogeneityCertificate O likelihood k
         (gammaLikelihoodProfile likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood 1) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood 1) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptotic_homogeneity
 
 /--
@@ -5204,8 +5148,8 @@ theorem paper_theorem1_iii_exponential_sequence_homogeneity_of_sublinear_foc_cer
         (fun t : ItemType T => likelihood t ^ (1 : ℝ))
         (gammaLikelihoodProfile likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood 1) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood 1) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -5225,8 +5169,8 @@ theorem
         (fun t : ItemType T => likelihood t ^ (1 : ℝ))
         (gammaLikelihoodProfile likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood 1) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood 1) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -5248,8 +5192,7 @@ theorem paper_theorem1_iii_exponential_top_one_harmonic_sequence_homogeneity
           (exponentialTopOneHarmonicOracle T lambda).toConsumptionModel
             likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood 1) := by
-  exact
+      (gammaLikelihoodProfile likelihood 1) :=
     paper_theorem1_iii_exponential_sequence_homogeneity_of_sublinear_foc_certificate
       (exponentialTopOneHarmonicOracle T lambda) likelihood 1 lambda
       hlambda_pos seq
@@ -5277,8 +5220,8 @@ theorem paper_theorem1_iii_exponential_top_one_harmonic_sequence_formula
           ((likelihood t) ^ (1 : ℝ) /
             ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ))) := by
   have hnorm_pos :
-      0 < ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ) := by
-    exact Finset.sum_pos
+      0 < ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ) :=
+    Finset.sum_pos
       (fun i _ => by simpa [Real.rpow_one] using hlike_pos i)
       Finset.univ_nonempty
   have hconv :=
@@ -5302,8 +5245,7 @@ theorem paper_theorem1_iii_exponential_top_k_order_statistic_forward_marginal
     exponentialTopKOrderStatisticValue lambda k (q + 1) -
         exponentialTopKOrderStatisticValue lambda k q =
       (1 / lambda) *
-        (((min k (q + 1) : ℕ) : ℝ) / (((q + 1 : ℕ) : ℝ))) :=
-  exponentialTopKOrderStatistic_forward_marginal lambda k q
+        (((min k (q + 1) : ℕ) : ℝ) / (((q + 1 : ℕ) : ℝ))) := exponentialTopKOrderStatistic_forward_marginal lambda k q
 
 /--
 Source Lemma D.3, finite top-`k` exponential order-statistic value.
@@ -5317,8 +5259,7 @@ theorem paper_theorem1_iii_exponential_top_k_order_statistic_sum_Icc
     exponentialTopKOrderStatisticValue lambda k q =
       ∑ j ∈ Finset.Icc 1 q,
         (1 / lambda) *
-          (((min k j : ℕ) : ℝ) / (j : ℝ)) :=
-  exponentialTopKOrderStatisticValue_eq_sum_Icc lambda k q
+          (((min k j : ℕ) : ℝ) / (j : ℝ)) := exponentialTopKOrderStatisticValue_eq_sum_Icc lambda k q
 
 /--
 Source Lemma D.3, finite top-`k` exponential order-statistic value.
@@ -5331,8 +5272,7 @@ theorem paper_theorem1_iii_exponential_top_k_order_statistic_tail_harmonic_sum
     exponentialTopKOrderStatisticValue lambda k q =
       (1 / lambda) *
         ∑ r ∈ Finset.Icc 1 k,
-          ∑ j ∈ Finset.Icc r q, (1 / (j : ℝ)) :=
-  exponentialTopKOrderStatisticValue_eq_tail_harmonic_sum lambda k q
+          ∑ j ∈ Finset.Icc r q, (1 / (j : ℝ)) := exponentialTopKOrderStatisticValue_eq_tail_harmonic_sum lambda k q
 
 /--
 Source Lemma D.3, finite top-`k` exponential marginal nonnegativity.
@@ -5415,8 +5355,7 @@ theorem paper_theorem1_iii_exponential_top_k_order_statistic_log_asymptotic
       Filter.atTop
       (nhds
         (((1 / lambda) * (k : ℝ)) *
-          (1 + Real.eulerMascheroniConstant - harmonicReal k))) :=
-  exponentialTopKOrderStatisticValue_sub_log_tendsto lambda k
+          (1 + Real.eulerMascheroniConstant - harmonicReal k))) := exponentialTopKOrderStatisticValue_sub_log_tendsto lambda k
 
 /--
 Source Lemma D.3, scaled-marginal certificate for the finite top-`k`
@@ -5451,8 +5390,7 @@ The concrete top-`k` sum of a finite vector of exponential draws is measurable.
 -/
 theorem paper_theorem1_iii_exponential_finite_sample_top_k_sum_measurable
     {q : ℕ} (k : ℕ) :
-    Measurable (exponentialFiniteSampleTopKSum (q := q) k) :=
-  exponentialFiniteSampleTopKSum_measurable k
+    Measurable (exponentialFiniteSampleTopKSum (q := q) k) := exponentialFiniteSampleTopKSum_measurable k
 
 /--
 Source Theorem 1(iii), measure-facing finite top-`k` sample statistic.
@@ -5480,8 +5418,7 @@ theorem paper_theorem1_iii_exponential_finite_sample_top_one_sum_eq_max
     (hmax_nonneg :
       0 ≤ EconCSLib.Probability.Exponential.finiteSampleMax sample) :
     exponentialFiniteSampleTopKSum 1 sample =
-      EconCSLib.Probability.Exponential.finiteSampleMax sample :=
-  exponentialFiniteSampleTopKSum_one_eq_finiteSampleMax sample hmax_nonneg
+      EconCSLib.Probability.Exponential.finiteSampleMax sample := exponentialFiniteSampleTopKSum_one_eq_finiteSampleMax sample hmax_nonneg
 
 /--
 Source Theorem 1(iii), measure-facing finite top-`k` sample statistic.
@@ -5503,8 +5440,7 @@ At `k = 0`, the at-most-`k` top-sum statistic is identically zero.
 -/
 theorem paper_theorem1_iii_exponential_finite_sample_top_k_zero_sum
     {q : ℕ} (sample : Fin q → ℝ) :
-    exponentialFiniteSampleTopKSum 0 sample = 0 :=
-  exponentialFiniteSampleTopKSum_zero sample
+    exponentialFiniteSampleTopKSum 0 sample = 0 := exponentialFiniteSampleTopKSum_zero sample
 
 /--
 Source Theorem 1(iii), measure-facing finite top-`k` sample statistic.
@@ -5566,8 +5502,7 @@ theorem paper_theorem1_iii_exponential_success_count_measurable
     {q : ℕ} (x : ℝ) :
     Measurable
       (fun sample : Fin q → ℝ =>
-        (successIndexSet (fun y : ℝ => x < y) sample).card) :=
-  exponentialSuccessCount_measurable x
+        (successIndexSet (fun y : ℝ => x < y) sample).card) := exponentialSuccessCount_measurable x
 
 /--
 Source Lemma D.3, iid exponential threshold-count bridge.
@@ -5579,8 +5514,7 @@ theorem paper_theorem1_iii_exponential_success_count_min_real_measurable
     Measurable
       (fun sample : Fin q → ℝ =>
         ((min k
-          (successIndexSet (fun y : ℝ => x < y) sample).card : ℕ) : ℝ)) :=
-  exponentialSuccessCount_min_real_measurable x k
+          (successIndexSet (fun y : ℝ => x < y) sample).card : ℕ) : ℝ)) := exponentialSuccessCount_min_real_measurable x k
 
 /--
 Source Lemma D.3, iid exponential threshold-count bridge.
@@ -5714,8 +5648,7 @@ theorem paper_theorem1_iii_exponential_success_count_integral_eq_sum
     (h_nonneg : ∀ i, 0 ≤ sample i) :
     ∫ x in Set.Ioi (0 : ℝ),
         ((successIndexSet (fun y : ℝ => x < y) sample).card : ℝ) =
-      ∑ i : Fin q, sample i :=
-  successCount_integral_eq_sum sample h_nonneg
+      ∑ i : Fin q, sample i := successCount_integral_eq_sum sample h_nonneg
 
 /--
 Source Lemma D.3, deterministic top-`k` threshold-count layer-cake bridge.
@@ -5931,8 +5864,7 @@ theorem paper_theorem1_iii_exponential_top_k_order_statistic_sequence_homogeneit
           (exponentialTopKOrderStatisticOracle T lambda k).toConsumptionModel
             likelihood k)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood 1) := by
-  exact
+      (gammaLikelihoodProfile likelihood 1) :=
     paper_theorem1_iii_exponential_sequence_homogeneity_of_sublinear_foc_certificate
       (exponentialTopKOrderStatisticOracle T lambda k) likelihood k lambda
       hlambda_pos seq
@@ -5962,8 +5894,8 @@ theorem paper_theorem1_iii_exponential_top_k_order_statistic_sequence_formula
           ((likelihood t) ^ (1 : ℝ) /
             ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ))) := by
   have hnorm_pos :
-      0 < ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ) := by
-    exact Finset.sum_pos
+      0 < ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ) :=
+    Finset.sum_pos
       (fun i _ => by simpa [Real.rpow_one] using hlike_pos i)
       Finset.univ_nonempty
   have hconv :=
@@ -5989,8 +5921,7 @@ theorem paper_theorem1_iii_exponential_product_max_survival_eq_formula
     1 - (((exponentialDistributionModel lambda hlambda_pos).iidProductMeasure q)
         {sample : Fin q → ℝ |
           EconCSLib.Probability.Exponential.finiteSampleMax sample ≤ x}).toReal =
-      exponentialMaxSurvival lambda q x :=
-  exponentialProductMaxSurvival_eq_formula lambda hlambda_pos hx
+      exponentialMaxSurvival lambda q x := exponentialProductMaxSurvival_eq_formula lambda hlambda_pos hx
 
 /--
 Source Theorem 1(iii), exponential maximum survival algebra.
@@ -6006,8 +5937,7 @@ theorem paper_theorem1_iii_exponential_max_survival_binomial_expansion
       - ∑ m ∈ Finset.range q,
           (-1 : ℝ) ^ (m + q) *
             (Real.exp (-(lambda * x))) ^ (q - m) *
-            (q.choose m : ℝ) :=
-  exponentialMaxSurvival_expansion lambda q x
+            (q.choose m : ℝ) := exponentialMaxSurvival_expansion lambda q x
 
 /--
 Source Theorem 1(iii), exponential maximum survival term integral.
@@ -6019,8 +5949,7 @@ theorem paper_theorem1_iii_exponential_survival_power_integral
     (lambda : ℝ) (hlambda_pos : 0 < lambda)
     {n : ℕ} (hn : 0 < n) :
     ∫ x in Set.Ioi (0 : ℝ), (Real.exp (-(lambda * x))) ^ n =
-      1 / ((n : ℝ) * lambda) :=
-  exponentialSurvivalPower_integral lambda hlambda_pos hn
+      1 / ((n : ℝ) * lambda) := exponentialSurvivalPower_integral lambda hlambda_pos hn
 
 /--
 Source Theorem 1(iii), exponential maximum survival integral reduced to a
@@ -6031,8 +5960,7 @@ theorem paper_theorem1_iii_exponential_max_survival_integral_finite_sum
     ∫ x in Set.Ioi (0 : ℝ), exponentialMaxSurvival lambda q x =
       - ∑ m ∈ Finset.range q,
           ((-1 : ℝ) ^ (m + q) * (q.choose m : ℝ)) *
-            (1 / (((q - m : ℕ) : ℝ) * lambda)) :=
-  exponentialMaxSurvival_integral_eq_finite_sum lambda hlambda_pos q
+            (1 / (((q - m : ℕ) : ℝ) * lambda)) := exponentialMaxSurvival_integral_eq_finite_sum lambda hlambda_pos q
 
 /--
 Source Theorem 1(iii), exponential finite alternating binomial sum collapsed to
@@ -6137,8 +6065,7 @@ theorem paper_theorem1_iii_exponential_single_draw_survival_integral
     ∫ x in Set.Ioi (0 : ℝ),
         (1 - ProbabilityTheory.cdf
           (exponentialDistributionModel lambda hlambda_pos).measure x) =
-      exponentialTopOneHarmonicValue lambda 1 :=
-  exponentialTopOneHarmonic_singleDraw_survival_integral lambda hlambda_pos
+      exponentialTopOneHarmonicValue lambda 1 := exponentialTopOneHarmonic_singleDraw_survival_integral lambda hlambda_pos
 
 /--
 Source Theorem 1(iii), exponential top-one log approximation.
@@ -6153,8 +6080,7 @@ theorem paper_theorem1_iii_exponential_top_one_harmonic_log_approximation
         exponentialTopOneHarmonicValue lambda q -
           (1 / lambda) * Real.log q)
       Filter.atTop
-      (nhds ((1 / lambda) * Real.eulerMascheroniConstant)) :=
-  exponentialTopOneHarmonicValue_sub_log_tendsto lambda
+      (nhds ((1 / lambda) * Real.eulerMascheroniConstant)) := exponentialTopOneHarmonicValue_sub_log_tendsto lambda
 
 /--
 Source Theorem 1(iv), Pareto i.i.d. conditional item values, exposed at the
@@ -6170,8 +6096,8 @@ theorem paper_theorem1_iv_pareto_sequence_homogeneity_of_certificate
       TopKAsymptoticHomogeneityCertificate O likelihood k
         (gammaLikelihoodProfile likelihood (α / (α - 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (α / (α - 1))) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (α / (α - 1))) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptotic_homogeneity
 
 /--
@@ -6194,8 +6120,8 @@ theorem paper_theorem1_iv_pareto_sequence_homogeneity_of_sublinear_foc_certifica
         (fun t : ItemType T => likelihood t ^ (α / (α - 1)))
         (gammaLikelihoodProfile likelihood (α / (α - 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (α / (α - 1))) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (α / (α - 1))) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -6215,8 +6141,8 @@ theorem
         (fun t : ItemType T => likelihood t ^ (α / (α - 1)))
         (gammaLikelihoodProfile likelihood (α / (α - 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (α / (α - 1))) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (α / (α - 1))) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -6240,8 +6166,7 @@ theorem paper_theorem1_iv_pareto_power_marginal_sequence_homogeneity
           (paretoPowerMarginalOracle T α).toConsumptionModel
             likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (α / (α - 1))) := by
-  exact
+      (gammaLikelihoodProfile likelihood (α / (α - 1))) :=
     paper_theorem1_iv_pareto_sequence_homogeneity_of_sublinear_foc_certificate
       (paretoPowerMarginalOracle T α) likelihood 1 α hα_gt_one seq
       (paretoPowerMarginalSublinearFOCCertificate
@@ -6270,8 +6195,8 @@ theorem paper_theorem1_iv_pareto_power_marginal_sequence_formula
               (likelihood i) ^ (α / (α - 1)))) := by
   have hnorm_pos :
       0 < ∑ i : ItemType T,
-        (likelihood i) ^ (α / (α - 1)) := by
-    exact Finset.sum_pos
+        (likelihood i) ^ (α / (α - 1)) :=
+    Finset.sum_pos
       (fun i _ => Real.rpow_pos_of_pos
         (hlike_pos i) (α / (α - 1)))
       Finset.univ_nonempty
@@ -6294,8 +6219,7 @@ noncomputable def paper_theorem1_iv_pareto_power_marginal_scaled_marginal_certif
     TopKScaledMarginalLimitCertificate
       (paretoPowerMarginalOracle T α) 1
       (paretoPowerMarginalScale α)
-      (fun _ : ItemType T => (1 : ℝ)) :=
-  paretoPowerMarginalScaledMarginalLimitCertificate T α
+      (fun _ : ItemType T => (1 : ℝ)) := paretoPowerMarginalScaledMarginalLimitCertificate T α
 
 /--
 Source Lemma D.4, fixed-rank Pareto finite-difference bridge.
@@ -6322,8 +6246,7 @@ theorem paper_lemmaD4_pareto_rank_scaled_limit_of_value_asymptotic_and_scaled_dr
       (fun q : ℕ =>
         (μ (q + 1 - r) (q + 1) - μ (q - r) q) /
           paretoPowerMarginalScale α q)
-      Filter.atTop (nhds (C / α)) :=
-  pareto_rank_scaled_limit_of_value_asymptotic_and_scaled_drop hα hC hvalue hdrop
+      Filter.atTop (nhds (C / α)) := pareto_rank_scaled_limit_of_value_asymptotic_and_scaled_drop hα hC hvalue hdrop
 
 /--
 Source Lemma D.4, fixed-rank Pareto finite-difference bridge with the
@@ -6368,8 +6291,7 @@ theorem paper_lemmaD4_pareto_rank_gamma_ratio_mean_scaled_limit
         (paretoRankGammaRatioMean α r (q + 1) -
             paretoRankGammaRatioMean α r q) /
           paretoPowerMarginalScale α q)
-      Filter.atTop (nhds (paretoRankMarginalCoeff α r)) :=
-  paretoRankGammaRatioMean_scaled_limit hα r
+      Filter.atTop (nhds (paretoRankMarginalCoeff α r)) := paretoRankGammaRatioMean_scaled_limit hα r
 
 /--
 Source Theorem 1(iv), Pareto order-statistic marginal asymptotic as a reusable
@@ -6383,8 +6305,7 @@ noncomputable def
     TopKScaledMarginalLimitCertificate
       (TopKValueOracle.ofOrderStatisticMean T μ) k
       (paretoPowerMarginalScale α)
-      (fun _ : ItemType T => limitCoeff) :=
-  C.toTopKScaledMarginalLimitCertificate
+      (fun _ : ItemType T => limitCoeff) := C.toTopKScaledMarginalLimitCertificate
 
 /--
 Source Theorem 1(iv), Pareto order-statistic marginal asymptotic stated in
@@ -6640,8 +6561,8 @@ theorem paper_corollary1_any_gamma_attainable_of_certificate
       TopKAsymptoticHomogeneityCertificate O likelihood k
         (gammaLikelihoodProfile likelihood γ)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood γ) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood γ) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptotic_homogeneity
 
 /--
@@ -6678,8 +6599,7 @@ certificate has supplied the uniform value and universal lower bound.
 -/
 theorem paper_proposition4_continuous_sphere_uniform_minimizes
     {Profile : Type*} (C : Proposition4ContinuousSphereCertificate Profile) :
-    ∀ α : Profile, C.gamma C.uniformProfile ≤ C.gamma α :=
-  C.uniform_minimizes
+    ∀ α : Profile, C.gamma C.uniformProfile ≤ C.gamma α := C.uniform_minimizes
 
 /--
 Source Theorem 2(i), decaying Bernoulli success probabilities with `α < 1`,
@@ -6695,8 +6615,8 @@ theorem paper_theorem2_i_decaying_bernoulli_sequence_homogeneity_of_certificate
     (hcert :
       DecayingBernoulliTopOneHomogeneityCertificate
         likelihood c d α (uniformProfile T)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptotic_homogeneity
 
 /--
@@ -6717,8 +6637,8 @@ theorem
     (hcert :
       DecayingBernoulliTopOneSublinearFOCCertificate likelihood c d α
         (fun _ : ItemType T => (1 : ℝ)) (uniformProfile T)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -6739,8 +6659,8 @@ theorem
     (hcert :
       DecayingBernoulliTopOneEventualSublinearFOCCertificate likelihood c d α
         (fun _ : ItemType T => (1 : ℝ)) (uniformProfile T)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -6760,8 +6680,8 @@ theorem
         (fun _ => decayingBernoulliTopOneConsumptionModel likelihood c d α))
     (hcert :
       DecayingBernoulliTopOneSubunitGrowthCertificate likelihood c d α) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -6783,8 +6703,8 @@ theorem
     (seq :
       OptimalAllocationSequence
         (fun _ => decayingBernoulliTopOneConsumptionModel likelihood c d α)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     (DecayingBernoulliTopOneSubunitGrowthCertificate.of_positive_subunit_error
       likelihood c d α hα_pos hα_lt_one hc hd hfirst hlike_pos).asymptoticHomogeneity
 
@@ -6844,8 +6764,8 @@ theorem paper_theorem2_ii_decaying_bernoulli_sequence_homogeneity_of_certificate
       DecayingBernoulliTopOneHomogeneityCertificate
         likelihood c d α (gammaLikelihoodProfile likelihood (1 / (1 + c)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / (1 + c))) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / (1 + c))) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptotic_homogeneity
 
 /--
@@ -6867,8 +6787,8 @@ theorem
         (fun t : ItemType T => likelihood t ^ (1 / (1 + c)))
         (gammaLikelihoodProfile likelihood (1 / (1 + c)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / (1 + c))) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / (1 + c))) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -6890,8 +6810,8 @@ theorem
         (fun t : ItemType T => likelihood t ^ (1 / (1 + c)))
         (gammaLikelihoodProfile likelihood (1 / (1 + c)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / (1 + c))) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / (1 + c))) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -6911,8 +6831,8 @@ theorem
     (hcert :
       DecayingBernoulliTopOneAlphaOneGrowthCertificate likelihood c d) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / (1 + c))) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / (1 + c))) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -6933,8 +6853,8 @@ theorem
       OptimalAllocationSequence
         (fun _ => decayingBernoulliTopOneConsumptionModel likelihood c d 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / (1 + c))) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / (1 + c))) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     (DecayingBernoulliTopOneAlphaOneGrowthCertificate.of_quarter_error
       (T := T) likelihood (c := c) (d := d) hc hd hfirst hlike_pos).asymptoticHomogeneity
 
@@ -6953,8 +6873,8 @@ theorem paper_theorem2_iii_decaying_bernoulli_sequence_homogeneity_of_certificat
       DecayingBernoulliTopOneHomogeneityCertificate
         likelihood c d α (gammaLikelihoodProfile likelihood (1 / α))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / α)) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / α)) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptotic_homogeneity
 
 /--
@@ -6976,8 +6896,8 @@ theorem
         (fun t : ItemType T => likelihood t ^ (1 / α))
         (gammaLikelihoodProfile likelihood (1 / α))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / α)) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / α)) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -6999,8 +6919,8 @@ theorem
         (fun t : ItemType T => likelihood t ^ (1 / α))
         (gammaLikelihoodProfile likelihood (1 / α))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / α)) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / α)) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -7021,8 +6941,8 @@ theorem
     (hcert :
       DecayingBernoulliTopOneSuperunitGrowthCertificate likelihood c d α) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / α)) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / α)) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -7044,8 +6964,8 @@ theorem
       OptimalAllocationSequence
         (fun _ => decayingBernoulliTopOneConsumptionModel likelihood c d α)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / α)) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / α)) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     (DecayingBernoulliTopOneSuperunitGrowthCertificate.of_superunit_error
       (T := T) likelihood (c := c) (d := d) (α := α)
       hα_gt_one hc hd hfirst hlike_pos).asymptoticHomogeneity
@@ -7064,8 +6984,8 @@ theorem paper_theorem2_iv_decaying_bernoulli_all_consumed_sequence_homogeneity_o
       DecayingBernoulliAllConsumedHomogeneityCertificate
         likelihood c d α (gammaLikelihoodProfile likelihood (1 / α))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / α)) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / α)) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptotic_homogeneity
 
 /--
@@ -7083,8 +7003,8 @@ theorem
     (hcert :
       DecayingBernoulliAllConsumedPairwiseScaledCertificate likelihood c d α) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / α)) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / α)) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     hcert.asymptoticHomogeneity
 
 /--
@@ -7104,8 +7024,8 @@ theorem
       OptimalAllocationSequence
         (fun _ => decayingBernoulliAllConsumedConsumptionModel likelihood c d α)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / α)) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (gammaLikelihoodProfile likelihood (1 / α)) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     (decayingBernoulliAllConsumedPairwiseScaledCertificate_of_positive_parameters
       likelihood c d α hα hc hd hlike_pos).asymptoticHomogeneity
 
@@ -7202,8 +7122,7 @@ Bernoulli fixed-total optimizer existence.
 theorem paper_bernoulli_finite_optimum_exists
     {T : ℕ} [Nonempty (ItemType T)]
     (B : BernoulliSatisfactionModel T) (N : ℕ) :
-    ∃ a : CountAllocation T, B.toConsumptionModel.IsOptimalAtTotal N a := by
-  exact B.toConsumptionModel.exists_isOptimalAtTotal N
+    ∃ a : CountAllocation T, B.toConsumptionModel.IsOptimalAtTotal N a :=  B.toConsumptionModel.exists_isOptimalAtTotal N
 
 /--
 Bernoulli specialization of the finite first-order condition.
@@ -7216,8 +7135,7 @@ theorem paper_bernoulli_optimum_first_order_condition
     B.likelihood dst * B.successProb dst *
         (1 - B.successProb dst) ^ (a.count dst) ≤
       B.likelihood src * B.successProb src *
-        (1 - B.successProb src) ^ (a.count src - 1) := by
-  exact B.forwardMarginal_le_backwardMarginal_of_optimum N hopt hne hcan
+        (1 - B.successProb src) ^ (a.count src - 1) :=  B.forwardMarginal_le_backwardMarginal_of_optimum N hopt hne hcan
 
 /--
 Finite i.i.d. Bernoulli equal-representation balance theorem.
@@ -7231,8 +7149,8 @@ theorem paper_iid_bernoulli_optimum_pairwise_balanced
     (hlike_pos : ∀ i : ItemType T, 0 < B.likelihood i)
     (hprob_pos : ∀ i : ItemType T, 0 < B.successProb i)
     (hprob_lt_one : ∀ i : ItemType T, B.successProb i < 1) :
-    ∀ src dst : ItemType T, a.count src ≤ a.count dst + 1 := by
-  exact B.pairwise_count_le_succ_of_symmetric_optimum
+    ∀ src dst : ItemType T, a.count src ≤ a.count dst + 1 :=
+   B.pairwise_count_le_succ_of_symmetric_optimum
     N hopt hlike hprob hlike_pos hprob_pos hprob_lt_one
 
 /--
@@ -7266,8 +7184,8 @@ theorem paper_corollary3_iid_bernoulli_asymptotic_uniform_homogeneity
     (hlike_pos : ∀ t, 0 < B.likelihood t)
     (hprob_eq : ∀ i j : ItemType T, B.successProb i = B.successProb j) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => B.toConsumptionModel) (uniformProfile T) := by
-  exact iid_bernoulli_asymptotic_uniform_homogeneity
+      (fun _ => B.toConsumptionModel) (uniformProfile T) :=
+   iid_bernoulli_asymptotic_uniform_homogeneity
     B hprob_pos hprob_lt_one hlike_pos hprob_eq
 
 /--
@@ -7281,8 +7199,8 @@ theorem paper_corollary3_iid_bernoulli_sequence_uniform_homogeneity
     (hprob_eq : ∀ i j : ItemType T, B.successProb i = B.successProb j)
     (seq :
       OptimalAllocationSequence (fun _ => B.toConsumptionModel)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     (paper_corollary3_iid_bernoulli_asymptotic_uniform_homogeneity
       B hprob_pos hprob_lt_one hlike_pos hprob_eq)
 
@@ -7300,8 +7218,8 @@ theorem paper_uniform_top_one_optimum_first_order_condition
     likelihood dst *
         (1 / ((a.count dst + 1 : ℝ) * (a.count dst + 2 : ℝ))) ≤
       likelihood src *
-        (1 / ((a.count src : ℝ) * (a.count src + 1 : ℝ))) := by
-  exact UniformTopOne.forwardMarginal_le_backwardMarginal_of_optimum
+        (1 / ((a.count src : ℝ) * (a.count src + 1 : ℝ))) :=
+   UniformTopOne.forwardMarginal_le_backwardMarginal_of_optimum
     likelihood N hopt hne hcan
 
 /--
@@ -7314,8 +7232,7 @@ theorem paper_proposition_2_printed_relaxed_optimizer_total_mismatch
     {T : ℕ} [NeZero T] (likelihood : ItemType T → ℝ) (N : ℕ)
     (hnorm : (∑ i : ItemType T, Real.sqrt (likelihood i)) ≠ 0) :
     ∑ t : ItemType T, uniformSqrtPrintedOptTarget likelihood N t =
-      (N : ℝ) - T := by
-  exact sum_uniformSqrtPrintedOptTarget likelihood N hnorm
+      (N : ℝ) - T :=  sum_uniformSqrtPrintedOptTarget likelihood N hnorm
 
 /--
 Proposition 2 audit: the corrected shifted relaxed optimizer used by the Lean
@@ -7325,8 +7242,7 @@ theorem paper_proposition_2_corrected_relaxed_optimizer_total
     {T : ℕ} [NeZero T] (likelihood : ItemType T → ℝ) (N : ℕ)
     (hnorm : (∑ i : ItemType T, Real.sqrt (likelihood i)) ≠ 0) :
     ∑ t : ItemType T, uniformSqrtRealOptTarget likelihood N t =
-      (N : ℝ) := by
-  exact sum_uniformSqrtRealOptTarget likelihood N hnorm
+      (N : ℝ) :=  sum_uniformSqrtRealOptTarget likelihood N hnorm
 
 /--
 Proposition 2 square-root homogeneity bridge.
@@ -7372,8 +7288,8 @@ theorem paper_proposition_2_uniform_top_k_sharp_finite_of_count_closeness
               ∑ i : ItemType T, Real.sqrt (likelihood i))| ≤
           (Fintype.card (ItemType T) : ℝ) + 1) :
     (sqrtLikelihoodProfile likelihood).Approx a
-      (((Fintype.card (ItemType T) : ℝ) + 1) / (N : ℝ)) := by
-  exact paper_uniform_sqrt_homogeneity_of_count_closeness
+      (((Fintype.card (ItemType T) : ℝ) + 1) / (N : ℝ)) :=
+   paper_uniform_sqrt_homogeneity_of_count_closeness
     likelihood a hnorm hopt.1 hNpos hclose
 
 /--
@@ -7440,8 +7356,8 @@ theorem paper_proposition_2_uniform_top_one_finite_analogue {T : ℕ} [NeZero T]
     intro t
     unfold lower upper uniformSqrtLowerAnchor uniformSqrtUpperAnchor floorCountAnchor
     dsimp only
-    have h1 : 1 ≤ ⌊uniformSqrtShiftedTarget likelihood N t⌋₊ := by
-      exact Nat.succ_le_of_lt (Nat.floor_pos.mpr (h_interior t))
+    have h1 : 1 ≤ ⌊uniformSqrtShiftedTarget likelihood N t⌋₊ :=
+      Nat.succ_le_of_lt (Nat.floor_pos.mpr (h_interior t))
     exact Nat.sub_le _ _
   have hcert : UniformTopOne.StrictRoundingExchangeCertificateBetween likelihood lower upper := by
     apply UniformTopOne.strictRoundingExchangeCertificateBetween_of_shifted_target likelihood lower upper (uniformSqrtScale likelihood N) (uniformSqrtShiftedTarget likelihood N)
@@ -7457,7 +7373,8 @@ theorem paper_proposition_2_uniform_top_one_finite_analogue {T : ℕ} [NeZero T]
       exact uniformSqrtUpperAnchor_shift_le likelihood N t
     · intro t _
       exact uniformSqrtLowerAnchor_le_shift likelihood N t h_interior
-  have hno := UniformTopOne.noRoundingCrossingBetween_of_strictExchangeCertificate likelihood N hopt (fun t => le_of_lt (hlike_pos t)) horder hcert
+  have hno :=
+  UniformTopOne.noRoundingCrossingBetween_of_strictExchangeCertificate likelihood N hopt (fun t => le_of_lt (hlike_pos t)) horder hcert
   have h_total_lower : EconCSLib.Allocation.total lower ≤ N := by
     exact_mod_cast total_uniformSqrtLowerAnchor_le_N likelihood N hnorm h_interior
   have h_total_upper : EconCSLib.Allocation.total upper ≤ N + T := by
@@ -7550,8 +7467,8 @@ theorem paper_proposition_2_uniform_top_k_finite_analogue {T : ℕ} [NeZero T]
     intro t
     unfold lower upper uniformSqrtLowerAnchor uniformSqrtUpperAnchor floorCountAnchor
     dsimp only
-    have h1 : 1 ≤ ⌊uniformSqrtShiftedTarget likelihood N t⌋₊ := by
-      exact Nat.succ_le_of_lt (Nat.floor_pos.mpr (h_interior t))
+    have h1 : 1 ≤ ⌊uniformSqrtShiftedTarget likelihood N t⌋₊ :=
+      Nat.succ_le_of_lt (Nat.floor_pos.mpr (h_interior t))
     exact Nat.sub_le _ _
   have hupper_tail : ∀ t, k ≤ upper.count t := by
     intro t
@@ -7903,8 +7820,7 @@ theorem paper_aux_heterogeneous_bernoulli_asymptotic_uniform_homogeneity
     (hcert : HeterogeneousBernoulliUniformHomogeneityCertificate B) :
     ConsumptionModel.AsymptoticHomogeneityTarget
       (fun _ => B.toConsumptionModel) (uniformProfile T)
-      EconCSLib.Math.ExactInvRate := by
-  exact heterogeneous_bernoulli_asymptotic_uniform_homogeneity B hcert
+      EconCSLib.Math.ExactInvRate :=  heterogeneous_bernoulli_asymptotic_uniform_homogeneity B hcert
 
 /--
 Auxiliary tail-index homogeneity interface.
@@ -7918,8 +7834,7 @@ theorem paper_aux_tail_index_homogeneity
     (hcert : TailIndexHomogeneityCertificate M α) :
     ConsumptionModel.AsymptoticHomogeneityTarget
       (fun _ => M) (paretoProfile M.likelihood α)
-      EconCSLib.Math.ExactInvRate := by
-  exact homogeneity_of_tail_index M α hcert
+      EconCSLib.Math.ExactInvRate :=  homogeneity_of_tail_index M α hcert
 
 /--
 Auxiliary mixed Bernoulli-uniform homogeneity interface.
@@ -7935,8 +7850,7 @@ theorem paper_aux_mixed_bernoulli_uniform_homogeneity
     (hcert : MixedBernoulliUniformHomogeneityCertificate B Ulike) :
     ConsumptionModel.AsymptoticHomogeneityTarget
       (fun _ => mixedConsumptionModel B Ulike) (mixedTargetProfile (Ulike 0))
-      EconCSLib.Math.ExactInvSqrtRate := by
-  exact mixed_bernoulli_uniform_asymptotic_homogeneity B Ulike hcert
+      EconCSLib.Math.ExactInvSqrtRate :=  mixed_bernoulli_uniform_asymptotic_homogeneity B Ulike hcert
 
 /--
 Theorem 3 source target: varying Bernoulli success probabilities give limiting
@@ -7949,8 +7863,7 @@ theorem paper_theorem3_varying_success_probability_log_share_of_certificate
     {T : ℕ} [NeZero T] (B : BernoulliSatisfactionModel T)
     (hcert : VaryingBernoulliLogShareCertificate B) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) := by
-  exact varying_bernoulli_log_share_asymptotic_of_certificate B hcert
+      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) :=  varying_bernoulli_log_share_asymptotic_of_certificate B hcert
 
 /--
 Theorem 3 source target from the finite pairwise-scaled-count seam.
@@ -7962,8 +7875,8 @@ theorem paper_theorem3_varying_success_probability_log_share_of_pairwise_scaled_
     {T : ℕ} [NeZero T] (B : BernoulliSatisfactionModel T)
     (hcert : VaryingBernoulliPairwiseScaledCertificate B) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) := by
-  exact varying_bernoulli_log_share_asymptotic_of_certificate B
+      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) :=
+   varying_bernoulli_log_share_asymptotic_of_certificate B
     (varying_bernoulli_log_share_certificate_of_pairwise_scaled B hcert)
 
 /--
@@ -7978,8 +7891,7 @@ theorem paper_theorem3_varying_success_probability_log_share_of_positive_count_c
     {T : ℕ} [NeZero T] (B : BernoulliSatisfactionModel T)
     (hcert : VaryingBernoulliPositiveCountCertificate B) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) := by
-  exact varying_bernoulli_log_share_asymptotic_of_positive_count_certificate B hcert
+      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) :=  varying_bernoulli_log_share_asymptotic_of_positive_count_certificate B hcert
 
 /--
 Theorem 3 source target from an eventual-interior finite FOC seam.
@@ -7992,8 +7904,7 @@ theorem paper_theorem3_varying_success_probability_log_share_of_eventual_positiv
     {T : ℕ} [NeZero T] (B : BernoulliSatisfactionModel T)
     (hcert : VaryingBernoulliEventualPositiveCountCertificate B) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) := by
-  exact varying_bernoulli_log_share_asymptotic_of_eventual_positive_count_certificate B hcert
+      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) :=  varying_bernoulli_log_share_asymptotic_of_eventual_positive_count_certificate B hcert
 
 /--
 Theorem 3 source target from pairwise large-count marginal dominance.
@@ -8006,8 +7917,7 @@ theorem paper_theorem3_varying_success_probability_log_share_of_large_count_domi
     {T : ℕ} [NeZero T] (B : BernoulliSatisfactionModel T)
     (hcert : VaryingBernoulliLargeCountDominanceCertificate B) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) := by
-  exact varying_bernoulli_log_share_asymptotic_of_large_count_dominance_certificate B hcert
+      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) :=  varying_bernoulli_log_share_asymptotic_of_large_count_dominance_certificate B hcert
 
 /--
 Source Theorem 3, varying Bernoulli success probabilities.
@@ -8022,8 +7932,8 @@ theorem paper_theorem3_varying_success_probability_log_share
     (hprob_lt_one : ∀ t, B.successProb t < 1)
     (hlike_pos : ∀ t, 0 < B.likelihood t) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) := by
-  exact varying_bernoulli_log_share_asymptotic_of_primitive
+      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) :=
+   varying_bernoulli_log_share_asymptotic_of_primitive
     B hprob_pos hprob_lt_one hlike_pos
 
 /--
@@ -8037,8 +7947,8 @@ theorem paper_theorem3_varying_success_probability_log_share_sequence
     (seq :
       OptimalAllocationSequence (fun _ => B.toConsumptionModel)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (theorem3LogShareProfile B) := by
-  exact seq.convergesToProfile_of_asymptoticHomogeneity
+      (theorem3LogShareProfile B) :=
+   seq.convergesToProfile_of_asymptoticHomogeneity
     (paper_theorem3_varying_success_probability_log_share
       B hprob_pos hprob_lt_one hlike_pos)
 
@@ -8055,8 +7965,7 @@ theorem paper_theorem3_all_consumed_argmax_optimum
       ∀ t, B.likelihood t * B.successProb t ≤
         B.likelihood best * B.successProb best) :
     (bernoulliAllConsumedModel B).IsOptimalAtTotal
-      N (allOnTypeAllocation N best) := by
-  exact bernoulli_all_consumed_argmax_isOptimalAtTotal B N best hbest
+      N (allOnTypeAllocation N best) :=  bernoulli_all_consumed_argmax_isOptimalAtTotal B N best hbest
 
 /--
 Theorem 3 finite FOC seam: an optimum's log-scaled count for `src` is bounded
@@ -8075,8 +7984,8 @@ theorem paper_theorem3_log_scaled_count_pairwise_upper
       (a.count dst : ℝ) * theorem3LogScale B dst ≤
       Real.log (B.likelihood src * B.successProb src) -
         Real.log (B.likelihood dst * B.successProb dst) +
-        theorem3LogScale B src := by
-  exact bernoulli_optimum_log_scaled_count_pairwise_upper
+        theorem3LogScale B src :=
+   bernoulli_optimum_log_scaled_count_pairwise_upper
     B N hopt hprob_pos hprob_lt_one hlike_pos src dst hsrc_pos
 
 /--
@@ -8087,8 +7996,7 @@ theorem paper_two_type_forward_one_le_backward_zero
     (hopt : B.toConsumptionModel.IsOptimalAtTotal N (twoTypeAllocation a b))
     (ha : 0 < a) :
     B.likelihood 1 * B.successProb 1 * (1 - B.successProb 1) ^ b ≤
-      B.likelihood 0 * B.successProb 0 * (1 - B.successProb 0) ^ (a - 1) := by
-  exact twoTypeAllocation_forward_one_le_backward_zero_of_optimum B N a b hopt ha
+      B.likelihood 0 * B.successProb 0 * (1 - B.successProb 0) ^ (a - 1) :=  twoTypeAllocation_forward_one_le_backward_zero_of_optimum B N a b hopt ha
 
 /--
 Two-type Bernoulli first-order condition from type `1` to type `0`.
@@ -8098,8 +8006,7 @@ theorem paper_two_type_forward_zero_le_backward_one
     (hopt : B.toConsumptionModel.IsOptimalAtTotal N (twoTypeAllocation a b))
     (hb : 0 < b) :
     B.likelihood 0 * B.successProb 0 * (1 - B.successProb 0) ^ a ≤
-      B.likelihood 1 * B.successProb 1 * (1 - B.successProb 1) ^ (b - 1) := by
-  exact twoTypeAllocation_forward_zero_le_backward_one_of_optimum B N a b hopt hb
+      B.likelihood 1 * B.successProb 1 * (1 - B.successProb 1) ^ (b - 1) :=  twoTypeAllocation_forward_zero_le_backward_one_of_optimum B N a b hopt hb
 
 /--
 Symmetric two-type Bernoulli finite homogeneity theorem.
@@ -8112,8 +8019,8 @@ theorem paper_symmetric_two_type_bernoulli_optimum_balanced
     (hlike_pos : 0 < B.likelihood 0)
     (hprob_pos : 0 < B.successProb 0)
     (hprob_lt_one : B.successProb 0 < 1) :
-    a ≤ b + 1 ∧ b ≤ a + 1 := by
-  exact twoTypeAllocation_balanced_of_symmetric_bernoulli_optimum
+    a ≤ b + 1 ∧ b ≤ a + 1 :=
+   twoTypeAllocation_balanced_of_symmetric_bernoulli_optimum
     B N a b hopt hlike hprob hlike_pos hprob_pos hprob_lt_one
 
 /--
@@ -8128,8 +8035,8 @@ theorem paper_symmetric_two_type_bernoulli_optimum_equal_homogeneity
     (hlike_pos : 0 < B.likelihood 0)
     (hprob_pos : 0 < B.successProb 0)
     (hprob_lt_one : B.successProb 0 < 1) :
-    equalTwoTypeProfile.Approx (twoTypeAllocation a b) (1 / (N : ℝ)) := by
-  exact twoTypeAllocation_equalTwoTypeProfile_approx_of_symmetric_bernoulli_optimum
+    equalTwoTypeProfile.Approx (twoTypeAllocation a b) (1 / (N : ℝ)) :=
+   twoTypeAllocation_equalTwoTypeProfile_approx_of_symmetric_bernoulli_optimum
     B N a b hNpos hopt hlike hprob hlike_pos hprob_pos hprob_lt_one
 
 end PRPKG24AccuracyDiversity

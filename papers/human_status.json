@@ -76,7 +76,7 @@
       "paper_info": "Driver Surge Pricing by Nikhil Garg and Hamid Nazerzadeh; Management Science, 2021.",
       "status": "Formalized",
       "human_review": "0/24",
-      "lean_loc": 142863,
+      "lean_loc": 141928,
       "main_note": "",
       "paper_folder": "papers/GN21DriverSurgePricing",
       "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md"
@@ -91,7 +91,7 @@
       "paper_info": "Test-optional Policies: Overcoming Strategic Behavior and Informational Gaps by Zhi Liu and Nikhil Garg; EAAMO, 2021.",
       "status": "Formalized",
       "human_review": "0/16",
-      "lean_loc": 127862,
+      "lean_loc": 125476,
       "main_note": "",
       "paper_folder": "papers/LG21TestOptionalPolicies",
       "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md"
@@ -181,7 +181,7 @@
       "paper_info": "Algorithmic Monoculture and Social Welfare by Jon Kleinberg and Manish Raghavan; arXiv:2101.05853.",
       "status": "Partially formalized",
       "human_review": "0/6",
-      "lean_loc": 44054,
+      "lean_loc": 43162,
       "main_note": "Continuous RUM endpoints are exposed; arbitrary-size Mallows dominance and remaining paper-scope bridges remain open.",
       "paper_folder": "papers/KR21Monoculture",
       "review_entrypoint": "papers/KR21Monoculture/README.md"
@@ -196,7 +196,7 @@
       "paper_info": "Dropping Standardized Testing for Admissions Trades Off Information and Access by Nikhil Garg, Hannah Li, and Faidra Monachou; arXiv:2010.04396 / Management Science accepted version, 2026.",
       "status": "Partially formalized",
       "human_review": "0/50",
-      "lean_loc": 114388,
+      "lean_loc": 113536,
       "main_note": "Main early results and selected Section 5 bridge endpoints are exposed; Bayesian-game row identifications remain open.",
       "paper_folder": "papers/GLM20DroppingStandardizedTesting",
       "review_entrypoint": "papers/GLM20DroppingStandardizedTesting/FINAL_VALIDATION_REPORT.md"
@@ -241,7 +241,7 @@
       "paper_info": "Reconciling the Accuracy-Diversity Trade-off in Recommendations by Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg; arXiv:2307.15142v1.",
       "status": "Partially formalized",
       "human_review": "0/36",
-      "lean_loc": 36570,
+      "lean_loc": 35252,
       "main_note": "Finite optimization and distribution checkpoints are exposed; general order-statistic certificates remain open.",
       "paper_folder": "papers/PRPKG24AccuracyDiversity",
       "review_entrypoint": "papers/PRPKG24AccuracyDiversity/README.md"

@@ -14,8 +14,7 @@ open MeasureTheory Set
 namespace PRPKG24AccuracyDiversity
 
 /-- The continuous uniform probability measure on `[0,1]`. -/
-noncomputable def uniform01Measure : Measure ℝ :=
-  ProbabilityTheory.cond volume (Set.Icc (0 : ℝ) 1)
+noncomputable def uniform01Measure : Measure ℝ := ProbabilityTheory.cond volume (Set.Icc (0 : ℝ) 1)
 
 instance uniform01Measure_isProbabilityMeasure :
     IsProbabilityMeasure uniform01Measure := by
@@ -75,8 +74,7 @@ theorem uniform01_reflectedCDFMass_eventually_eq_power :
   rw [uniform01_reflectedCDFMass_eq hx_pos hx_lt_one]
   simp
 
-noncomputable def uniformTopOneValue (q : ℕ) : ℝ :=
-  1 - 1 / (q + 1 : ℝ)
+noncomputable def uniformTopOneValue (q : ℕ) : ℝ := 1 - 1 / (q + 1 : ℝ)
 
 @[simp] theorem uniformTopOneValue_zero :
     uniformTopOneValue 0 = 0 := by
@@ -94,7 +92,8 @@ theorem uniformTopOneValue_succ_sub (q : ℕ) :
   have hd2 : (q : ℝ) + 2 ≠ 0 := by positivity
   have h_diff : 1 - 1 / ((q : ℝ) + 2) - (1 - 1 / ((q : ℝ) + 1)) = 1 / ((q : ℝ) + 1) - 1 / ((q : ℝ) + 2) := by ring
   rw [h_diff]
-  have h_frac : 1 / ((q : ℝ) + 1) - 1 / ((q : ℝ) + 2) = (1 * ((q : ℝ) + 2) - ((q : ℝ) + 1) * 1) / (((q : ℝ) + 1) * ((q : ℝ) + 2)) := by
+  have h_frac : 1 / ((q : ℝ) + 1) - 1 / ((q : ℝ) + 2) = (1 * ((q : ℝ) + 2) - ((q : ℝ) + 1) * 1) / (((q : ℝ) + 1) * ((q : ℝ) + 2)) :=
+  by
     exact div_sub_div 1 1 hd1 hd2
   rw [h_frac]
   have h_num : 1 * ((q : ℝ) + 2) - ((q : ℝ) + 1) * 1 = 1 := by ring
@@ -115,31 +114,27 @@ theorem uniformTopOneValue_sub_pred {q : ℕ} (hq : 0 < q) :
   have hd2 : (q : ℝ) + 1 ≠ 0 := by positivity
   have h_diff : 1 - 1 / ((q : ℝ) + 1) - (1 - 1 / (q : ℝ)) = 1 / (q : ℝ) - 1 / ((q : ℝ) + 1) := by ring
   rw [h_diff]
-  have h_frac : 1 / (q : ℝ) - 1 / ((q : ℝ) + 1) = (1 * ((q : ℝ) + 1) - (q : ℝ) * 1) / ((q : ℝ) * ((q : ℝ) + 1)) := by
-    exact div_sub_div 1 1 hd1 hd2
+  have h_frac : 1 / (q : ℝ) - 1 / ((q : ℝ) + 1) = (1 * ((q : ℝ) + 1) - (q : ℝ) * 1) / ((q : ℝ) * ((q : ℝ) + 1)) :=
+    div_sub_div 1 1 hd1 hd2
   rw [h_frac]
   have h_num : 1 * ((q : ℝ) + 1) - (q : ℝ) * 1 = 1 := by ring
   rw [h_num]
 
-noncomputable def uniformTopKFactor (k : ℕ) : ℝ :=
-  (k : ℝ) * (k + 1 : ℝ) / 2
+noncomputable def uniformTopKFactor (k : ℕ) : ℝ := (k : ℝ) * (k + 1 : ℝ) / 2
 
 noncomputable def uniformTopKValue (k q : ℕ) : ℝ :=
   if q ≤ k then (q : ℝ) / 2
   else (k : ℝ) - uniformTopKFactor k / (q + 1 : ℝ)
 
-noncomputable def uniformOrderStatisticMean (i q : ℕ) : ℝ :=
-  1 - (i : ℝ) / (q + 1 : ℝ)
+noncomputable def uniformOrderStatisticMean (i q : ℕ) : ℝ := 1 - (i : ℝ) / (q + 1 : ℝ)
 
 /--
 Uniform `[0,1]` order-statistic mean in the paper's Definition 3 convention:
 `i` is the `i`-th smallest draw among `q` samples.
 -/
-noncomputable def uniformAscendingOrderStatisticMean (i q : ℕ) : ℝ :=
-  (i : ℝ) / (q + 1 : ℝ)
+noncomputable def uniformAscendingOrderStatisticMean (i q : ℕ) : ℝ := (i : ℝ) / (q + 1 : ℝ)
 
-noncomputable def uniformTopKOrderStatisticSum (k q : ℕ) : ℝ :=
-  ∑ i ∈ Finset.range (min k q), uniformOrderStatisticMean (i + 1) q
+noncomputable def uniformTopKOrderStatisticSum (k q : ℕ) : ℝ := ∑ i ∈ Finset.range (min k q), uniformOrderStatisticMean (i + 1) q
 
 theorem uniformTopKFactor_pos {k : ℕ} (hk : 0 < k) :
     0 < uniformTopKFactor k := by
@@ -339,25 +334,31 @@ theorem uniformTopKConsumptionModel_has_diminishing_returns {T : ℕ}
   intro t q
   exact uniformTopKValue_marginal_antitone_step k q
 
+theorem uniformTopOneConsumptionModel_has_diminishing_returns {T : ℕ}
+    (likelihood : ItemType T → ℝ) :
+    (uniformTopOneConsumptionModel likelihood).HasDiminishingReturns := by
+  intro t q
+  change uniformTopOneValue (q + 2) - uniformTopOneValue (q + 1) ≤
+    uniformTopOneValue (q + 1) - uniformTopOneValue q
+  rw [uniformTopOneValue_succ_sub (q + 1), uniformTopOneValue_succ_sub q]
+  norm_num only [Nat.cast_add, Nat.cast_one]
+  exact one_div_le_one_div_of_le (by positivity)
+    (by nlinarith [show (0 : ℝ) ≤ q by positivity])
+
 noncomputable def uniformSqrtTarget {T : ℕ}
-    (likelihood : ItemType T → ℝ) (N : ℕ) (t : ItemType T) : ℝ :=
-  (N : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i))
+    (likelihood : ItemType T → ℝ) (N : ℕ) (t : ItemType T) : ℝ := (N : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i))
 
 noncomputable def uniformSqrtShiftedTarget {T : ℕ}
-    (likelihood : ItemType T → ℝ) (N : ℕ) (t : ItemType T) : ℝ :=
-  (N + T : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i))
+    (likelihood : ItemType T → ℝ) (N : ℕ) (t : ItemType T) : ℝ := (N + T : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i))
 
 noncomputable def uniformSqrtRealOptTarget {T : ℕ}
-    (likelihood : ItemType T → ℝ) (N : ℕ) (t : ItemType T) : ℝ :=
-  uniformSqrtShiftedTarget likelihood N t - 1
+    (likelihood : ItemType T → ℝ) (N : ℕ) (t : ItemType T) : ℝ := uniformSqrtShiftedTarget likelihood N t - 1
 
 noncomputable def uniformSqrtPrintedOptTarget {T : ℕ}
-    (likelihood : ItemType T → ℝ) (N : ℕ) (t : ItemType T) : ℝ :=
-  uniformSqrtTarget likelihood N t - 1
+    (likelihood : ItemType T → ℝ) (N : ℕ) (t : ItemType T) : ℝ := uniformSqrtTarget likelihood N t - 1
 
 noncomputable def uniformSqrtScale {T : ℕ}
-    (likelihood : ItemType T → ℝ) (N : ℕ) : ℝ :=
-  (∑ i, Real.sqrt (likelihood i)) ^ 2 / (N + T : ℝ) ^ 2
+    (likelihood : ItemType T → ℝ) (N : ℕ) : ℝ := (∑ i, Real.sqrt (likelihood i)) ^ 2 / (N + T : ℝ) ^ 2
 
 theorem likelihood_eq_scale_mul_shiftedTarget_sq {T : ℕ} [NeZero T]
     (likelihood : ItemType T → ℝ) (N : ℕ) (t : ItemType T)
@@ -457,8 +458,8 @@ theorem sum_uniformSqrtPrintedOptTarget {T : ℕ} [NeZero T]
             ∑ i : ItemType T, Real.sqrt (likelihood i)))
           = ∑ t : ItemType T,
               ((N : ℝ) / ∑ i : ItemType T, Real.sqrt (likelihood i)) *
-                Real.sqrt (likelihood t) := by
-              exact Finset.sum_congr rfl (fun t _ => hpoint t)
+                Real.sqrt (likelihood t) :=
+              Finset.sum_congr rfl (fun t _ => hpoint t)
       _ = ((N : ℝ) / ∑ i : ItemType T, Real.sqrt (likelihood i)) *
             ∑ t : ItemType T, Real.sqrt (likelihood t) := by
               rw [Finset.mul_sum]
@@ -468,8 +469,7 @@ theorem sum_uniformSqrtPrintedOptTarget {T : ℕ} [NeZero T]
 
 theorem sum_uniformSqrtShiftedTarget_nonneg {T : ℕ} [NeZero T]
     (likelihood : ItemType T → ℝ) (N : ℕ) :
-    0 ≤ ∑ t, uniformSqrtShiftedTarget likelihood N t :=
-  Finset.sum_nonneg (fun t _ => uniformSqrtShiftedTarget_nonneg _ _ _)
+    0 ≤ ∑ t, uniformSqrtShiftedTarget likelihood N t := Finset.sum_nonneg (fun t _ => uniformSqrtShiftedTarget_nonneg _ _ _)
 
 theorem sqrtLikelihoodProfile_normalizer_ne_zero {T : ℕ}
     (likelihood : ItemType T → ℝ)
@@ -492,8 +492,7 @@ noncomputable def floorCountAnchor {T : ℕ}
   count := fun t => ⌊target t⌋₊
 
 noncomputable def uniformSqrtUpperAnchor {T : ℕ}
-    (likelihood : ItemType T → ℝ) (N : ℕ) : CountAllocation T :=
-  floorCountAnchor (uniformSqrtShiftedTarget likelihood N)
+    (likelihood : ItemType T → ℝ) (N : ℕ) : CountAllocation T := floorCountAnchor (uniformSqrtShiftedTarget likelihood N)
 
 noncomputable def uniformSqrtLowerAnchor {T : ℕ}
     (likelihood : ItemType T → ℝ) (N : ℕ) : CountAllocation T where
@@ -524,7 +523,8 @@ theorem total_uniformSqrtLowerAnchor_le_N {T : ℕ} [NeZero T]
   have h_ge1 : ∀ t, 1 ≤ ⌊uniformSqrtShiftedTarget likelihood N t⌋₊ := by
     intro t
     exact Nat.succ_le_of_lt (Nat.floor_pos.mpr (h_interior t))
-  have h_le : ∀ t, ((⌊uniformSqrtShiftedTarget likelihood N t⌋₊ - 1 : ℕ) : ℝ) ≤ uniformSqrtShiftedTarget likelihood N t - 1 := by
+  have h_le : ∀ t, ((⌊uniformSqrtShiftedTarget likelihood N t⌋₊ - 1 : ℕ) : ℝ) ≤ uniformSqrtShiftedTarget likelihood N t - 1 :=
+  by
     intro t
     rw [Nat.cast_sub (h_ge1 t), Nat.cast_one]
     exact sub_le_sub_right (Nat.floor_le (uniformSqrtShiftedTarget_nonneg likelihood N t)) 1
@@ -550,7 +550,8 @@ theorem total_uniformSqrtLowerAnchor_eq_N_of_integers {T : ℕ} [NeZero T]
   have h_ge1 : ∀ t, 1 ≤ ⌊uniformSqrtShiftedTarget likelihood N t⌋₊ := by
     intro t
     exact Nat.succ_le_of_lt (Nat.floor_pos.mpr (h_interior t))
-  have h_eq : ∀ t, ((⌊uniformSqrtShiftedTarget likelihood N t⌋₊ - 1 : ℕ) : ℝ) = uniformSqrtShiftedTarget likelihood N t - 1 := by
+  have h_eq : ∀ t, ((⌊uniformSqrtShiftedTarget likelihood N t⌋₊ - 1 : ℕ) : ℝ) = uniformSqrtShiftedTarget likelihood N t - 1 :=
+  by
     intro t
     rw [Nat.cast_sub (h_ge1 t), Nat.cast_one]
     rw [← hintegers t]
@@ -576,10 +577,12 @@ theorem total_uniformSqrtLowerAnchor_gt_N_sub_T_refined {T : ℕ} [NeZero T]
   have h_ge1 : ∀ t, 1 ≤ ⌊uniformSqrtShiftedTarget likelihood N t⌋₊ := by
     intro t
     exact Nat.succ_le_of_lt (Nat.floor_pos.mpr (h_interior t))
-  have h_eq : ∀ t, ((⌊uniformSqrtShiftedTarget likelihood N t⌋₊ - 1 : ℕ) : ℝ) = (⌊uniformSqrtShiftedTarget likelihood N t⌋₊ : ℝ) - 1 := by
+  have h_eq : ∀ t, ((⌊uniformSqrtShiftedTarget likelihood N t⌋₊ - 1 : ℕ) : ℝ) = (⌊uniformSqrtShiftedTarget likelihood N t⌋₊ : ℝ) - 1 :=
+  by
     intro t
     rw [Nat.cast_sub (h_ge1 t), Nat.cast_one]
-  have h_sum_rewrite : ((∑ t, (⌊uniformSqrtShiftedTarget likelihood N t⌋₊ - 1) : ℕ) : ℝ) = ∑ t, ((⌊uniformSqrtShiftedTarget likelihood N t⌋₊ : ℝ) - 1) := by
+  have h_sum_rewrite : ((∑ t, (⌊uniformSqrtShiftedTarget likelihood N t⌋₊ - 1) : ℕ) : ℝ) = ∑ t, ((⌊uniformSqrtShiftedTarget likelihood N t⌋₊ : ℝ) - 1) :=
+  by
     calc
       ((∑ t, (⌊uniformSqrtShiftedTarget likelihood N t⌋₊ - 1) : ℕ) : ℝ)
           = ∑ t, ((⌊uniformSqrtShiftedTarget likelihood N t⌋₊ - 1 : ℕ) : ℝ) := by push_cast; rfl
@@ -588,7 +591,8 @@ theorem total_uniformSqrtLowerAnchor_gt_N_sub_T_refined {T : ℕ} [NeZero T]
   rw [Finset.sum_sub_distrib]
   simp
   have h_lt : ∑ t, (⌊uniformSqrtShiftedTarget likelihood N t⌋₊ : ℝ) > (∑ t, uniformSqrtShiftedTarget likelihood N t) - T := by
-    have h_diff : (∑ t, uniformSqrtShiftedTarget likelihood N t) - ∑ t, (⌊uniformSqrtShiftedTarget likelihood N t⌋₊ : ℝ) = ∑ t, (uniformSqrtShiftedTarget likelihood N t - ⌊uniformSqrtShiftedTarget likelihood N t⌋₊) := by
+    have h_diff : (∑ t, uniformSqrtShiftedTarget likelihood N t) - ∑ t, (⌊uniformSqrtShiftedTarget likelihood N t⌋₊ : ℝ) = ∑ t, (uniformSqrtShiftedTarget likelihood N t - ⌊uniformSqrtShiftedTarget likelihood N t⌋₊) :=
+  by
       rw [Finset.sum_sub_distrib]
     have h_sum_lt_T : ∑ t, (uniformSqrtShiftedTarget likelihood N t - ⌊uniformSqrtShiftedTarget likelihood N t⌋₊) < T := by
       have h_lt_one : ∀ t, uniformSqrtShiftedTarget likelihood N t - ⌊uniformSqrtShiftedTarget likelihood N t⌋₊ < 1 := by
@@ -644,7 +648,8 @@ theorem uniformSqrtUpperAnchor_abs_close {T : ℕ} [NeZero T]
       Finset.single_le_sum (fun i _ => Real.sqrt_nonneg _) (Finset.mem_univ t)
     exact (div_le_one₀ h_den_pos).mpr hsum
   have h_shift : ((N : ℝ) + T) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) =
-      (N : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) + (T : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) := by ring
+      (N : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) + (T : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) :=
+  by ring
   have h_floor_le := Nat.floor_le (uniformSqrtShiftedTarget_nonneg likelihood N t)
   have h_le_floor_add_one := Nat.lt_floor_add_one (uniformSqrtShiftedTarget likelihood N t)
   have h_T_frac_le_T : (T : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) ≤ T := by
@@ -681,7 +686,8 @@ theorem uniformSqrtLowerAnchor_abs_close {T : ℕ} [NeZero T]
       Finset.single_le_sum (fun i _ => Real.sqrt_nonneg _) (Finset.mem_univ t)
     exact (div_le_one₀ h_den_pos).mpr hsum
   have h_shift : ((N : ℝ) + T) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) =
-      (N : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) + (T : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) := by ring
+      (N : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) + (T : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) :=
+  by ring
   have h_floor_le := Nat.floor_le (uniformSqrtShiftedTarget_nonneg likelihood N t)
   have h_le_floor_add_one := Nat.lt_floor_add_one (uniformSqrtShiftedTarget likelihood N t)
   have h_T_frac_le_T : (T : ℝ) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i)) ≤ T := by
@@ -696,7 +702,8 @@ theorem uniformSqrtLowerAnchor_abs_close {T : ℕ} [NeZero T]
     exact_mod_cast Nat.sub_le _ _
   have h_sub_lower : (⌊((N : ℝ) + T) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i))⌋₊ : ℝ) - 1 ≤
       ((⌊((N : ℝ) + T) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i))⌋₊ - 1 : ℕ) : ℝ) := by
-    have hge1 : 1 ≤ ⌊((N : ℝ) + T) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i))⌋₊ := Nat.succ_le_of_lt (Nat.floor_pos.mpr (h_interior t))
+    have hge1 : 1 ≤ ⌊((N : ℝ) + T) * (Real.sqrt (likelihood t) / ∑ i, Real.sqrt (likelihood i))⌋₊ :=
+  Nat.succ_le_of_lt (Nat.floor_pos.mpr (h_interior t))
     rw [Nat.cast_sub hge1, Nat.cast_one]
   rw [abs_lt]
   constructor
@@ -769,8 +776,8 @@ theorem targetShare_eq {T : ℕ}
     (hnorm : (∑ i : ItemType T, Real.sqrt (likelihood i)) ≠ 0) :
     (sqrtLikelihoodProfile likelihood).targetShare t =
       Real.sqrt (likelihood t) /
-        ∑ i : ItemType T, Real.sqrt (likelihood i) := by
-  exact GammaHomogeneityProfile.targetShare_eq_div_of_normalizer_ne_zero
+        ∑ i : ItemType T, Real.sqrt (likelihood i) :=
+   GammaHomogeneityProfile.targetShare_eq_div_of_normalizer_ne_zero
     (G := sqrtLikelihoodProfile likelihood) (t := t) (by simpa using hnorm)
 
 theorem approx_of_count_abs_error {T : ℕ}
@@ -780,8 +787,8 @@ theorem approx_of_count_abs_error {T : ℕ}
       ∀ t,
         |(a.count t : ℝ) -
           (N : ℝ) * (sqrtLikelihoodProfile likelihood).targetShare t| ≤ C) :
-    (sqrtLikelihoodProfile likelihood).Approx a (C / (N : ℝ)) := by
-  exact GammaHomogeneityProfile.approx_of_count_abs_error
+    (sqrtLikelihoodProfile likelihood).Approx a (C / (N : ℝ)) :=
+   GammaHomogeneityProfile.approx_of_count_abs_error
     (sqrtLikelihoodProfile likelihood) a hN hNpos hclose
 
 end sqrtLikelihoodProfile
@@ -806,7 +813,8 @@ theorem forwardMarginal_le_backwardMarginal_of_optimum {T : ℕ}
         (1 / ((a.count dst + 1 : ℝ) * (a.count dst + 2 : ℝ))) ≤
       likelihood src *
         (1 / ((a.count src : ℝ) * (a.count src + 1 : ℝ))) := by
-  have h := ConsumptionModel.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum (uniformTopOneConsumptionModel likelihood) N hopt hne hcan
+  have h :=
+  ConsumptionModel.weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum (uniformTopOneConsumptionModel likelihood) N hopt hne hcan
   unfold ConsumptionModel.weightedForwardMarginal ConsumptionModel.weightedBackwardMarginal at h
   unfold ConsumptionModel.marginalValue at h
   unfold EconCSLib.Allocation.marginal at h
@@ -830,35 +838,21 @@ theorem noRoundingCrossingBetween_of_strictExchangeCertificate {T : ℕ}
       (fun t : ItemType T => a.count t)
       (fun t : ItemType T => lower.count t)
       (fun t : ItemType T => upper.count t) := by
-  intro high low
-  rintro ⟨h_high, h_low⟩
-  have h_low_pos : 0 < lower.count low := by exact lt_of_le_of_lt (Nat.zero_le _) h_low
-  have h_can : EconCSLib.Allocation.CanMoveOne a high := by
-    exact lt_of_lt_of_le (Nat.succ_pos _) h_high
-  have hne : high ≠ low := by
-    rintro rfl
-    have hc := calc
-      upper.count high + 2 ≤ a.count high + 1 := Nat.add_le_add_right h_high 1
-      _ ≤ lower.count high := h_low
-      _ ≤ upper.count high := horder high
-    linarith
-  have h_foc := forwardMarginal_le_backwardMarginal_of_optimum likelihood N hopt hne h_can
-  have h_cert_eval := hcert high low h_low_pos
-  have hu_le : (upper.count high + 1 : ℝ) * (upper.count high + 2 : ℝ) ≤ (a.count high : ℝ) * (a.count high + 1 : ℝ) := by
-    have h1 : (upper.count high + 1 : ℝ) ≤ (a.count high : ℝ) := by exact_mod_cast h_high
-    have h2 : (upper.count high + 2 : ℝ) ≤ (a.count high + 1 : ℝ) := by exact_mod_cast (Nat.add_le_add_right h_high 1)
-    exact mul_le_mul h1 h2 (by positivity) (by positivity)
-  have hv_le : (a.count low + 1 : ℝ) * (a.count low + 2 : ℝ) ≤ (lower.count low : ℝ) * (lower.count low + 1 : ℝ) := by
-    have h1 : (a.count low + 1 : ℝ) ≤ (lower.count low : ℝ) := by exact_mod_cast h_low
-    have h2 : (a.count low + 2 : ℝ) ≤ (lower.count low + 1 : ℝ) := by exact_mod_cast (Nat.add_le_add_right h_low 1)
-    exact mul_le_mul h1 h2 (by positivity) (by positivity)
-  have h_lx_le : likelihood high * (1 / ((a.count high : ℝ) * (a.count high + 1 : ℝ))) ≤ likelihood high * (1 / ((upper.count high + 1 : ℝ) * (upper.count high + 2 : ℝ))) := by
-    gcongr
-    exact hlike_nonneg high
-  have h_ly_ge : likelihood low * (1 / ((lower.count low : ℝ) * (lower.count low + 1 : ℝ))) ≤ likelihood low * (1 / ((a.count low + 1 : ℝ) * (a.count low + 2 : ℝ))) := by
-    gcongr
-    exact hlike_nonneg low
-  linarith
+  have hcert' :
+      (uniformTopOneConsumptionModel likelihood).StrictRoundingExchangeCertificateBetween
+        lower upper := by
+    intro high low hlow
+    have hlow_ne : lower.count low ≠ 0 := ne_of_gt hlow
+    simpa [ConsumptionModel.StrictRoundingExchangeCertificateBetween,
+      ConsumptionModel.weightedForwardMarginal, ConsumptionModel.weightedBackwardMarginal,
+      ConsumptionModel.marginalValue, uniformTopOneConsumptionModel,
+      EconCSLib.Allocation.marginal, hlow_ne, uniformTopOneValue_succ_sub,
+      uniformTopOneValue_sub_pred hlow] using hcert high low hlow
+  exact
+    ConsumptionModel.noRoundingCrossingBetween_of_strictExchangeCertificate
+      (uniformTopOneConsumptionModel likelihood) N hopt
+      (uniformTopOneConsumptionModel_has_diminishing_returns likelihood)
+      hlike_nonneg horder hcert'
 
 theorem strictRoundingExchangeCertificateBetween_of_shifted_target {T : ℕ}
     (likelihood : ItemType T → ℝ)
@@ -899,8 +893,8 @@ theorem strictRoundingExchangeCertificateBetween_of_shifted_target {T : ℕ}
         = scale * ((shift high) ^ 2 / (((upper.count high : ℝ) + 1) * ((upper.count high : ℝ) + 2))) := by ring
     _ < scale * 1 := mul_lt_mul_of_pos_left hs_h_lt hscale_pos
     _ = scale * 1 := by rfl
-    _ < scale * ((shift low) ^ 2 / ((lower.count low : ℝ) * ((lower.count low : ℝ) + 1))) := by
-      exact mul_lt_mul_of_pos_left hs_l_gt hscale_pos
+    _ < scale * ((shift low) ^ 2 / ((lower.count low : ℝ) * ((lower.count low : ℝ) + 1))) :=
+      mul_lt_mul_of_pos_left hs_l_gt hscale_pos
     _ = scale * (shift low) ^ 2 * (1 / ((lower.count low : ℝ) * ((lower.count low : ℝ) + 1))) := by ring
 
 end UniformTopOne
@@ -1013,18 +1007,12 @@ theorem count_close_of_no_rounding_crossing_between {T : ℕ}
     ∀ t : ItemType T,
       lower.count t < a.count t + Fintype.card (ItemType T) + 1 ∧
         a.count t < upper.count t + Fintype.card (ItemType T) + 1 := by
-  intro t
-  constructor
-  · exact EconCSLib.FiniteRounding.NoRoundingCrossingBetween.lower_lt_count_add_card
+  exact
+    EconCSLib.FiniteRounding.NoRoundingCrossingBetween.count_close
       (fun t : ItemType T => a.count t)
       (fun t : ItemType T => lower.count t)
       (fun t : ItemType T => upper.count t)
-      t ha hupper hUlt horder hno
-  · exact EconCSLib.FiniteRounding.NoRoundingCrossingBetween.count_lt_upper_add_card
-      (fun t : ItemType T => a.count t)
-      (fun t : ItemType T => lower.count t)
-      (fun t : ItemType T => upper.count t)
-      t ha hlower hNlt horder hno
+      ha hlower hupper hNlt hUlt horder hno
 end UniformRounding
 
 end PRPKG24AccuracyDiversity

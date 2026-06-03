@@ -51,6 +51,7 @@ standard-normal interfaces used by admissions and testing formalizations.
 - `standardGaussianHazardInverseCertificate`
 - `standardGaussian_normalUpperTailMean_gt_threshold`
 - `standardGaussian_toMeasure_Ico_threshold_normalUpperTailMean_pos`
+- `standardGaussian_affineUpperTail_delta_lt_eventually_of_same_side_slope_order`
 -/
 
 open Filter MeasureTheory ProbabilityTheory Set Function
@@ -2367,6 +2368,68 @@ def standardGaussianDerivativeAPI : StandardGaussianDerivativeAPI where
   api := standardGaussianCDFAPI
   cdf_hasDerivAt_density := standardGaussianCDF_hasDerivAt_density
   density_pos := standardGaussianDensity_pos
+
+/--
+Same-side affine upper-tail delta comparison for the concrete standard normal.
+
+If a faster left tail is compared against a slower positive-slope reference in
+both the A-sub and B-full terms, then the A full-minus-sub upper-tail change is
+eventually smaller than the corresponding B full-minus-sub change.  This is the
+source-neutral Gaussian left-tail dominance step used in admissions/testing
+proofs where the same group remains the slow tail before and after a policy
+change.
+-/
+theorem standardGaussian_affineUpperTail_delta_lt_eventually_of_same_side_slope_order
+    {interceptAFull slopeAFull interceptASub slopeASub
+      interceptBFull slopeBFull interceptBSub slopeBSub : ℝ}
+    (hslopeBSub_pos : 0 < slopeBSub)
+    (hsubSlope : slopeBSub < slopeASub)
+    (hBPolicySlope : slopeBSub < slopeBFull) :
+    ∃ qDelta : ℝ, ∀ q : ℝ, qDelta < q →
+      standardGaussianDerivativeAPI.affineUpperTail interceptAFull slopeAFull q -
+          standardGaussianDerivativeAPI.affineUpperTail interceptASub slopeASub q <
+        standardGaussianDerivativeAPI.affineUpperTail interceptBFull slopeBFull q -
+          standardGaussianDerivativeAPI.affineUpperTail interceptBSub slopeBSub q := by
+  have heps : 0 < (1 / 3 : ℝ) := by norm_num
+  have hASub_ev : ∀ᶠ q in Filter.atTop,
+      standardGaussianCDF (interceptASub - slopeASub * q) <
+        (1 / 3 : ℝ) * standardGaussianCDF (interceptBSub - slopeBSub * q) :=
+    standardGaussianCDF_affine_leftTail_lt_mul_eventually_of_slope_lt
+      hslopeBSub_pos hsubSlope heps
+  have hBFull_ev : ∀ᶠ q in Filter.atTop,
+      standardGaussianCDF (interceptBFull - slopeBFull * q) <
+        (1 / 3 : ℝ) * standardGaussianCDF (interceptBSub - slopeBSub * q) :=
+    standardGaussianCDF_affine_leftTail_lt_mul_eventually_of_slope_lt
+      hslopeBSub_pos hBPolicySlope heps
+  have hdelta_ev : ∀ᶠ q in Filter.atTop,
+      standardGaussianDerivativeAPI.affineUpperTail interceptAFull slopeAFull q -
+          standardGaussianDerivativeAPI.affineUpperTail interceptASub slopeASub q <
+        standardGaussianDerivativeAPI.affineUpperTail interceptBFull slopeBFull q -
+          standardGaussianDerivativeAPI.affineUpperTail interceptBSub slopeBSub q := by
+    filter_upwards [hASub_ev, hBFull_ev] with q hASub hBFull
+    let cdfAFull := standardGaussianCDF (interceptAFull - slopeAFull * q)
+    let cdfASub := standardGaussianCDF (interceptASub - slopeASub * q)
+    let cdfBFull := standardGaussianCDF (interceptBFull - slopeBFull * q)
+    let cdfBSub := standardGaussianCDF (interceptBSub - slopeBSub * q)
+    have hBSub_pos : 0 < cdfBSub := by
+      dsimp [cdfBSub]
+      exact standardGaussianCDF_pos _
+    have hAF_pos : 0 < cdfAFull := by
+      dsimp [cdfAFull]
+      exact standardGaussianCDF_pos _
+    have hASub' : cdfASub < (1 / 3 : ℝ) * cdfBSub := by
+      simpa [cdfASub, cdfBSub] using hASub
+    have hBFull' : cdfBFull < (1 / 3 : ℝ) * cdfBSub := by
+      simpa [cdfBFull, cdfBSub] using hBFull
+    have hsum : cdfASub + cdfBFull < cdfBSub := by
+      nlinarith
+    dsimp [StandardGaussianDerivativeAPI.affineUpperTail]
+    dsimp [standardGaussianDerivativeAPI]
+    change (1 - cdfAFull) - (1 - cdfASub) <
+      (1 - cdfBFull) - (1 - cdfBSub)
+    nlinarith
+  obtain ⟨qDelta, hqDelta⟩ := Filter.eventually_atTop.1 hdelta_ev
+  exact ⟨qDelta, fun q hq => hqDelta q (le_of_lt hq)⟩
 
 /-- Concrete standard-normal doubled-log-density API. -/
 def standardGaussianDoubledLogDensityAPI : StandardGaussianDoubledLogDensityAPI where

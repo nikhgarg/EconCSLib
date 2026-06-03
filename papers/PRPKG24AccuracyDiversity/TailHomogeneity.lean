@@ -34,8 +34,7 @@ theorem heterogeneous_bernoulli_asymptotic_uniform_homogeneity
     {T : ℕ} [NeZero T] (B : BernoulliSatisfactionModel T)
     (hcert : HeterogeneousBernoulliUniformHomogeneityCertificate B) :
     ConsumptionModel.AsymptoticHomogeneityTarget
-      (fun _ => B.toConsumptionModel) (uniformProfile T) EconCSLib.Math.ExactInvRate :=
-  hcert.asymptotic_uniform
+      (fun _ => B.toConsumptionModel) (uniformProfile T) EconCSLib.Math.ExactInvRate := hcert.asymptotic_uniform
 
 /--
 The source Theorem 3 log-share weight for a Bernoulli type.
@@ -44,13 +43,11 @@ For success probability `q_t`, the paper's limiting representation is
 proportional to `1 / log (1 / (1 - q_t))`.
 -/
 noncomputable def theorem3LogShareWeight {T : ℕ}
-    (B : BernoulliSatisfactionModel T) (t : ItemType T) : ℝ :=
-  (Real.log ((1 - B.successProb t)⁻¹))⁻¹
+    (B : BernoulliSatisfactionModel T) (t : ItemType T) : ℝ := (Real.log ((1 - B.successProb t)⁻¹))⁻¹
 
 /-- The positive logarithmic scale whose inverse is the Theorem 3 target weight. -/
 noncomputable def theorem3LogScale {T : ℕ}
-    (B : BernoulliSatisfactionModel T) (t : ItemType T) : ℝ :=
-  Real.log ((1 - B.successProb t)⁻¹)
+    (B : BernoulliSatisfactionModel T) (t : ItemType T) : ℝ := Real.log ((1 - B.successProb t)⁻¹)
 
 /--
 The source Theorem 3 target profile. The `gamma` field is unused here; the
@@ -140,8 +137,7 @@ theorem theorem3LogOffsetBound_pos {T : ℕ} [NeZero T]
 
 /-- The minimum Theorem 3 target weight across the finite type set. -/
 noncomputable def theorem3LogShareWeightMin {T : ℕ} [NeZero T]
-    (B : BernoulliSatisfactionModel T) : ℝ :=
-  EconCSLib.finiteMin (theorem3LogShareWeight B)
+    (B : BernoulliSatisfactionModel T) : ℝ := EconCSLib.finiteMin (theorem3LogShareWeight B)
 
 theorem theorem3LogShareWeightMin_pos {T : ℕ} [NeZero T]
     (B : BernoulliSatisfactionModel T)
@@ -160,8 +156,7 @@ theorem theorem3LogShareWeightMin_le {T : ℕ} [NeZero T]
 
 /-- Generic small-`N` scaled-count bound from the finite positive weight floor. -/
 noncomputable def theorem3SmallNScaledBound {T : ℕ} [NeZero T]
-    (B : BernoulliSatisfactionModel T) (threshold : ℕ) : ℝ :=
-  2 * ((threshold : ℝ) / theorem3LogShareWeightMin B)
+    (B : BernoulliSatisfactionModel T) (threshold : ℕ) : ℝ := 2 * ((threshold : ℝ) / theorem3LogShareWeightMin B)
 
 theorem theorem3SmallNScaledBound_nonneg {T : ℕ} [NeZero T]
     (B : BernoulliSatisfactionModel T) (threshold : ℕ)
@@ -220,8 +215,7 @@ theorem theorem3LogShareProfile_normalizer_ne_zero {T : ℕ} [NeZero T]
     (B : BernoulliSatisfactionModel T)
     (hprob_pos : ∀ t, 0 < B.successProb t)
     (hprob_lt_one : ∀ t, B.successProb t < 1) :
-    (theorem3LogShareProfile B).normalizer ≠ 0 :=
-  ne_of_gt (theorem3LogShareProfile_normalizer_pos B hprob_pos hprob_lt_one)
+    (theorem3LogShareProfile B).normalizer ≠ 0 := ne_of_gt (theorem3LogShareProfile_normalizer_pos B hprob_pos hprob_lt_one)
 
 theorem theorem3LogShareProfile_targetShare_eq {T : ℕ} [NeZero T]
     (B : BernoulliSatisfactionModel T)
@@ -230,8 +224,8 @@ theorem theorem3LogShareProfile_targetShare_eq {T : ℕ} [NeZero T]
     (t : ItemType T) :
     (theorem3LogShareProfile B).targetShare t =
       theorem3LogShareWeight B t /
-        ∑ i : ItemType T, theorem3LogShareWeight B i := by
-  exact GammaHomogeneityProfile.targetShare_eq_div_of_normalizer_ne_zero
+        ∑ i : ItemType T, theorem3LogShareWeight B i :=
+   GammaHomogeneityProfile.targetShare_eq_div_of_normalizer_ne_zero
     (G := theorem3LogShareProfile B) (t := t)
     (theorem3LogShareProfile_normalizer_ne_zero B hprob_pos hprob_lt_one)
 
@@ -264,8 +258,7 @@ theorem theorem3LogShareWeight_lt_of_successProb_gt {T : ℕ}
 
 /-- The all-consumed Bernoulli objective from Theorem 3's `S_{n,n}` statement. -/
 noncomputable def bernoulliAllConsumedModel {T : ℕ}
-    (B : BernoulliSatisfactionModel T) : ConsumptionModel T :=
-  ConsumptionModel.linearized B.likelihood B.successProb
+    (B : BernoulliSatisfactionModel T) : ConsumptionModel T := ConsumptionModel.linearized B.likelihood B.successProb
 
 /-- Allocation putting all `N` recommendations on one type. -/
 def allOnTypeAllocation {T : ℕ} (N : ℕ) (best : ItemType T) :
@@ -320,8 +313,8 @@ theorem allOnTypeAllocation_linearized_isOptimalAtTotal {T : ℕ}
     calc
       (∑ t : ItemType T, (b.count t : ℝ) * (likelihood t * perItemValue t))
           ≤ ∑ t : ItemType T,
-              (b.count t : ℝ) * (likelihood best * perItemValue best) := by
-            exact Finset.sum_le_sum (fun t _ =>
+              (b.count t : ℝ) * (likelihood best * perItemValue best) :=
+            Finset.sum_le_sum (fun t _ =>
               mul_le_mul_of_nonneg_left (hbest t) (Nat.cast_nonneg _))
       _ = (N : ℝ) * (likelihood best * perItemValue best) := by
             rw [← Finset.sum_mul, hsum_counts]
@@ -403,8 +396,8 @@ theorem bernoulli_all_consumed_argmax_isOptimalAtTotal
       ∀ t, B.likelihood t * B.successProb t ≤
         B.likelihood best * B.successProb best) :
     (bernoulliAllConsumedModel B).IsOptimalAtTotal
-      N (allOnTypeAllocation N best) := by
-  exact allOnTypeAllocation_linearized_isOptimalAtTotal
+      N (allOnTypeAllocation N best) :=
+   allOnTypeAllocation_linearized_isOptimalAtTotal
     B.likelihood B.successProb N best hbest
 
 /--
@@ -644,8 +637,8 @@ noncomputable def varying_bernoulli_log_share_certificate_of_pairwise_scaled
   successProb_lt_one := hcert.successProb_lt_one
   likelihood_pos := hcert.likelihood_pos
   count_bound := hcert.scaled_bound * (theorem3LogShareProfile B).normalizer
-  count_bound_pos := by
-    exact mul_pos hcert.scaled_bound_pos
+  count_bound_pos :=
+    mul_pos hcert.scaled_bound_pos
       (theorem3LogShareProfile_normalizer_pos B
         hcert.successProb_pos hcert.successProb_lt_one)
   count_close := by
@@ -678,8 +671,8 @@ noncomputable def varying_bernoulli_log_share_certificate_of_pairwise_scaled
                 ((N : ℝ) / ∑ i : ItemType T, theorem3LogShareWeight B i)| := by
             rw [htarget]
       _ ≤ hcert.scaled_bound * theorem3LogShareWeight B t := hscaled
-      _ ≤ hcert.scaled_bound * (theorem3LogShareProfile B).normalizer := by
-            exact mul_le_mul_of_nonneg_left hweight_le_norm
+      _ ≤ hcert.scaled_bound * (theorem3LogShareProfile B).normalizer :=
+            mul_le_mul_of_nonneg_left hweight_le_norm
               (le_of_lt hcert.scaled_bound_pos)
 
 /-- Source Theorem 3 target with the explicit finite-rate certificate exposed. -/
@@ -728,8 +721,8 @@ theorem bernoulli_optimum_pairwise_difference_bounded
     have hlog_neg : Real.log (1 - B.successProb t₁) < 0 := Real.log_neg hbase1 hprob1
     have h1 : Real.log (B.likelihood t₁ * B.successProb t₁) - Real.log (B.likelihood t₁ * B.successProb t₁) = 0 := sub_self _
     rw [h1, zero_add]
-    have h2 : ((a.count t₁ : ℝ) * Real.log (1 - B.successProb t₁)) / Real.log (1 - B.successProb t₁) = (a.count t₁ : ℝ) := by
-      exact mul_div_cancel_right₀ (↑(a.count t₁)) hlog_neg.ne
+    have h2 : ((a.count t₁ : ℝ) * Real.log (1 - B.successProb t₁)) / Real.log (1 - B.successProb t₁) = (a.count t₁ : ℝ) :=
+      mul_div_cancel_right₀ (↑(a.count t₁)) hlog_neg.ne
     rw [h2]
     linarith
   · have hcan : EconCSLib.Allocation.CanMoveOne a t₁ := ha1
@@ -917,8 +910,8 @@ noncomputable def varying_bernoulli_pairwise_scaled_certificate_of_eventual_posi
   scaled_bound :=
     theorem3LogOffsetBound B +
       theorem3SmallNScaledBound B hcert.interior_threshold
-  scaled_bound_pos := by
-    exact add_pos_of_pos_of_nonneg
+  scaled_bound_pos :=
+    add_pos_of_pos_of_nonneg
       (theorem3LogOffsetBound_pos B
         hcert.successProb_pos hcert.successProb_lt_one)
       (theorem3SmallNScaledBound_nonneg B hcert.interior_threshold
@@ -1026,8 +1019,8 @@ theorem theorem3LogShareProfile_targetShare_eq_uniform
         (T : ℝ) * theorem3LogShareWeight B t := by
     calc
       (∑ i : ItemType T, theorem3LogShareWeight B i)
-          = ∑ _i : ItemType T, theorem3LogShareWeight B t := by
-            exact Finset.sum_congr rfl (fun i _ => hweight_eq i)
+          = ∑ _i : ItemType T, theorem3LogShareWeight B t :=
+            Finset.sum_congr rfl (fun i _ => hweight_eq i)
       _ = (T : ℝ) * theorem3LogShareWeight B t := by
             simp [Finset.sum_const, Fintype.card_fin, nsmul_eq_mul]
   rw [theorem3LogShareProfile_targetShare_eq B hprob_pos hprob_lt_one t]
@@ -1083,22 +1076,27 @@ theorem mixed_foc_one_zero (B : BernoulliSatisfactionModel 1) (Ulike : ItemType 
   dsimp only at h
   have ha0ne0 : a.count 0 ≠ 0 := ne_of_gt ha0
   rw [dif_neg ha0ne0] at h
-  have h_lhs : (if (1 : ItemType 2) = 0 then B.likelihood 0 else Ulike 0) = Ulike 0 := by
-    exact if_neg (by norm_num : (1 : ItemType 2) ≠ 0)
-  have h_rhs : (if (0 : ItemType 2) = 0 then B.likelihood 0 else Ulike 0) = B.likelihood 0 := by
-    exact if_pos rfl
-  have h_lhs_val1 : (if (1 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 1 + 1) else uniformTopOneValue (a.count 1 + 1)) = uniformTopOneValue (a.count 1 + 1) := by
+  have h_lhs : (if (1 : ItemType 2) = 0 then B.likelihood 0 else Ulike 0) = Ulike 0 :=
+    if_neg (by norm_num : (1 : ItemType 2) ≠ 0)
+  have h_rhs : (if (0 : ItemType 2) = 0 then B.likelihood 0 else Ulike 0) = B.likelihood 0 :=
+    if_pos rfl
+  have h_lhs_val1 : (if (1 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 1 + 1) else uniformTopOneValue (a.count 1 + 1)) = uniformTopOneValue (a.count 1 + 1) :=
+  by
     exact if_neg (by norm_num)
-  have h_lhs_val2 : (if (1 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 1) else uniformTopOneValue (a.count 1)) = uniformTopOneValue (a.count 1) := by
+  have h_lhs_val2 : (if (1 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 1) else uniformTopOneValue (a.count 1)) = uniformTopOneValue (a.count 1) :=
+  by
     exact if_neg (by norm_num)
-  have h_rhs_val1 : (if (0 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 0) else uniformTopOneValue (a.count 0)) = bernoulliAtLeastOneValue (B.successProb 0) (a.count 0) := by
+  have h_rhs_val1 : (if (0 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 0) else uniformTopOneValue (a.count 0)) = bernoulliAtLeastOneValue (B.successProb 0) (a.count 0) :=
+  by
     exact if_pos rfl
-  have h_rhs_val2 : (if (0 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 0 - 1) else uniformTopOneValue (a.count 0 - 1)) = bernoulliAtLeastOneValue (B.successProb 0) (a.count 0 - 1) := by
+  have h_rhs_val2 : (if (0 : ItemType 2) = 0 then bernoulliAtLeastOneValue (B.successProb 0) (a.count 0 - 1) else uniformTopOneValue (a.count 0 - 1)) = bernoulliAtLeastOneValue (B.successProb 0) (a.count 0 - 1) :=
+  by
     exact if_pos rfl
   rw [h_lhs, h_rhs, h_lhs_val1, h_lhs_val2, h_rhs_val1, h_rhs_val2] at h
   rw [uniformTopOneValue_succ_sub] at h
   rw [bernoulliAtLeastOneValue_sub_pred ha0] at h
-  have h_assoc : B.likelihood 0 * (B.successProb 0 * (1 - B.successProb 0) ^ (a.count 0 - 1)) = B.likelihood 0 * B.successProb 0 * (1 - B.successProb 0) ^ (a.count 0 - 1) := by ring
+  have h_assoc : B.likelihood 0 * (B.successProb 0 * (1 - B.successProb 0) ^ (a.count 0 - 1)) = B.likelihood 0 * B.successProb 0 * (1 - B.successProb 0) ^ (a.count 0 - 1) :=
+  by ring
   rw [h_assoc] at h
   exact h
 
@@ -1138,7 +1136,6 @@ theorem mixed_bernoulli_uniform_asymptotic_homogeneity
     (hcert : MixedBernoulliUniformHomogeneityCertificate B Ulike) :
     ConsumptionModel.AsymptoticHomogeneityTarget
       (fun _ => mixedConsumptionModel B Ulike) (mixedTargetProfile (Ulike 0))
-      EconCSLib.Math.ExactInvSqrtRate :=
-  hcert.asymptotic_mixed
+      EconCSLib.Math.ExactInvSqrtRate := hcert.asymptotic_mixed
 
 end PRPKG24AccuracyDiversity

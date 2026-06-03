@@ -18,7 +18,7 @@
   },
   "paper_interface": {
     "path": "papers/GLM20DroppingStandardizedTesting/PaperInterface.lean",
-    "line_count": 405,
+    "line_count": 356,
     "declaration_rows": 50,
     "review_rows": 50,
     "oversized": false,

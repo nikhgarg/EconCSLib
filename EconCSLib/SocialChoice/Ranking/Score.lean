@@ -199,7 +199,7 @@ noncomputable def rum3RankByScoreFns {Ω : Type*}
   · by_cases h0 : s2 ≤ s1 ∧ s3 ≤ s1
     · simp [h0, h32]
     · by_cases h1 : s1 < s2 ∧ s3 ≤ s2
-      · simp [h0, h1, h32]
+      · simp [h0, h1]
       · exfalso
         by_cases h21 : s2 ≤ s1
         · exact h0 ⟨h21, le_trans h32 h21⟩
@@ -212,8 +212,8 @@ noncomputable def rum3RankByScoreFns {Ω : Type*}
         · have h31 : ¬ s3 ≤ s1 := by
             intro h31
             exact h0 ⟨h21, h31⟩
-          simp [h0, h1, h21, h32, h31]
-        · simp [h0, h1, h21, h32]
+          simp [h32, h31]
+        · simp [h21, h32]
 
 @[simp] theorem bestRemainingAfter_rum3RankByScores_remove1
     (s1 s2 s3 : ℝ) :
@@ -226,9 +226,9 @@ noncomputable def rum3RankByScoreFns {Ω : Type*}
       if s3 ≤ s1 then (0 : Candidate 1) else (2 : Candidate 1)
   by_cases h31 : s3 ≤ s1
   · by_cases h0 : s2 ≤ s1 ∧ s3 ≤ s1
-    · simp [h0, h31]
+    · simp [h0]
     · by_cases h1 : s1 < s2 ∧ s3 ≤ s2
-      · simp [h0, h1, h31]
+      · simp [h1, h31]
       · by_cases h21 : s2 ≤ s1
         · exact False.elim (h0 ⟨h21, h31⟩)
         · exact False.elim
@@ -237,9 +237,9 @@ noncomputable def rum3RankByScoreFns {Ω : Type*}
   · by_cases h0 : s2 ≤ s1 ∧ s3 ≤ s1
     · exact False.elim (h31 h0.2)
     · by_cases h1 : s1 < s2 ∧ s3 ≤ s2
-      · simp [h0, h1, h31]
+      · simp [h1, h31]
       · by_cases h21 : s2 ≤ s1 <;>
-          simp [h0, h1, h21, h31]
+          simp [h1, h21, h31]
 
 @[simp] theorem bestRemainingAfter_rum3RankByScores_remove2
     (s1 s2 s3 : ℝ) :
@@ -252,22 +252,22 @@ noncomputable def rum3RankByScoreFns {Ω : Type*}
       if s2 ≤ s1 then (0 : Candidate 1) else (1 : Candidate 1)
   by_cases h21 : s2 ≤ s1
   · by_cases h0 : s2 ≤ s1 ∧ s3 ≤ s1
-    · simp [h0, h21]
+    · simp [h0]
     · by_cases h1 : s1 < s2 ∧ s3 ≤ s2
       · exact False.elim (not_lt_of_ge h21 h1.1)
       · have h31 : ¬ s3 ≤ s1 := by
           intro h31
           exact h0 ⟨h21, h31⟩
-        simp [h0, h1, h21, h31]
+        simp [h1, h21, h31]
   · by_cases h0 : s2 ≤ s1 ∧ s3 ≤ s1
     · exact False.elim (h21 h0.1)
     · by_cases h1 : s1 < s2 ∧ s3 ≤ s2
-      · simp [h0, h1, h21]
+      · simp [h1, h21]
       · by_cases h31 : s3 ≤ s1
         · have h1' : s1 < s2 ∧ s3 ≤ s2 :=
             ⟨lt_of_not_ge h21, le_trans h31 (le_of_lt (lt_of_not_ge h21))⟩
           exact False.elim (h1 h1')
-        · simp [h0, h1, h21]
+        · simp [h1, h21]
 
 theorem rum3RankByScores_firstChoice_of_top_scores
     {s1 s2 s3 : ℝ}

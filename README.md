@@ -60,18 +60,18 @@ markdown table is [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md).
 | [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 468 lines |  |
 | [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/19 | OK: 290 lines | Theorem 8.2 follows the journal version; the broader preliminary wording is documented as refuted. |
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines |  |
-| [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 184 lines |  |
-| [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 92 lines |  |
+| [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 160 lines |  |
+| [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 76 lines |  |
 | [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | 0/32 | OK: 406 lines |  |
 | [GCG24 User Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 235 lines |  |
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized with caveat | 0/17 | OK: 296 lines | Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1. |
 | [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 174 lines | Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external. |
 | [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/33 | OK: 171 lines | Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure. |
-| [KR21 Monoculture](papers/KR21Monoculture) | Partially formalized | 0/6 | OK: 82 lines | Continuous RUM endpoints are exposed; arbitrary-size Mallows dominance and remaining paper-scope bridges remain open. |
-| [GLM20 Dropping Standardized Testing](papers/GLM20DroppingStandardizedTesting) | Partially formalized | 0/50 | OK: 405 lines | Main early results and selected Section 5 bridge endpoints are exposed; Bayesian-game row identifications remain open. |
+| [KR21 Monoculture](papers/KR21Monoculture) | Partially formalized | 0/6 | OK: 76 lines | Continuous RUM endpoints are exposed; arbitrary-size Mallows dominance and remaining paper-scope bridges remain open. |
+| [GLM20 Dropping Standardized Testing](papers/GLM20DroppingStandardizedTesting) | Partially formalized | 0/50 | OK: 356 lines | Main early results and selected Section 5 bridge endpoints are exposed; Bayesian-game row identifications remain open. |
 | [EOS07 GSP](papers/EOS07GSP) | Partially formalized | 0/42 | OK: 183 lines | Non-truthfulness, examples, Theorem 7, and finite Theorem 8 direct-PBE endpoints are exposed; full source-game completion remains open. |
 | [IM05 Marriage Honesty Stability](papers/IM05MarriageHonestyStability) | Partially formalized | 0/6 | OK: 106 lines | Matching preliminaries and theorem wrappers are exposed; Algorithm 4.1 and experiment constructions remain open. |
-| [PRPKG24 Accuracy Diversity](papers/PRPKG24AccuracyDiversity) | Partially formalized | 0/36 | OK: 160 lines | Finite optimization and distribution checkpoints are exposed; general order-statistic certificates remain open. |
+| [PRPKG24 Accuracy Diversity](papers/PRPKG24AccuracyDiversity) | Partially formalized | 0/36 | OK: 125 lines | Finite optimization and distribution checkpoints are exposed; general order-statistic certificates remain open. |
 <!-- END GENERATED PAPER STATUS TABLE -->
 
 For more detail, use:

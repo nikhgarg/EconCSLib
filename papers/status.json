@@ -432,7 +432,7 @@
       },
       "paper_interface": {
         "path": "papers/GLM20DroppingStandardizedTesting/PaperInterface.lean",
-        "line_count": 405,
+        "line_count": 356,
         "declaration_rows": 50,
         "review_rows": 50,
         "oversized": false,
@@ -602,13 +602,13 @@
       },
       "paper_interface": {
         "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
-        "line_count": 184,
+        "line_count": 160,
         "declaration_rows": 24,
         "review_rows": 24,
         "oversized": false,
         "maintainability_issue": null,
         "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",
-        "proof_interface_line_count": 5690
+        "proof_interface_line_count": 5534
       },
       "artifacts": {
         "readme": "papers/GN21DriverSurgePricing/README.md",
@@ -820,7 +820,7 @@
       },
       "paper_interface": {
         "path": "papers/KR21Monoculture/PaperInterface.lean",
-        "line_count": 82,
+        "line_count": 76,
         "declaration_rows": 6,
         "review_rows": 6,
         "oversized": false,
@@ -878,13 +878,13 @@
       },
       "paper_interface": {
         "path": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
-        "line_count": 92,
+        "line_count": 76,
         "declaration_rows": 16,
         "review_rows": 16,
         "oversized": false,
         "maintainability_issue": null,
         "proof_interface_path": "papers/LG21TestOptionalPolicies/ProofInterface.lean",
-        "proof_interface_line_count": 25103
+        "proof_interface_line_count": 24096
       },
       "artifacts": {
         "readme": "papers/LG21TestOptionalPolicies/README.md",
@@ -1387,7 +1387,7 @@
       },
       "paper_interface": {
         "path": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
-        "line_count": 160,
+        "line_count": 125,
         "declaration_rows": 36,
         "review_rows": 36,
         "oversized": false,

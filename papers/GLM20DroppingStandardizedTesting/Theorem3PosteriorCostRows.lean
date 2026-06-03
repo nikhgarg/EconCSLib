@@ -11,8 +11,7 @@ namespace GLM20DroppingStandardizedTesting
 noncomputable section
 
 /-- The concrete Gaussian hazard certificate used by the standard-Gaussian wrappers. -/
-abbrev standardGaussianHazardCertificate : GaussianHazardCertificate :=
-  standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
+abbrev standardGaussianHazardCertificate : GaussianHazardCertificate := standardGaussianHazardInverseCertificate.toGaussianHazardCertificate
 
 /--
 Standard-Gaussian posterior cost-row regularity for the common fixed-law case.

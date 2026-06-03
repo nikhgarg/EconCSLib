@@ -211,16 +211,13 @@ theorem theorem2AtomicMu_one_rejectShort_integral
       (by norm_num : ((1 : ℝ≥0∞) / 2) ≠ ∞)
 
 /-- State-0 switch probability at the single state-0 atom. -/
-def theorem2AtomicQ0 : ℝ :=
-  gn21SwitchProb ((1 : ℝ) / 4) 4 ((1 : ℝ) / 2)
+def theorem2AtomicQ0 : ℝ := gn21SwitchProb ((1 : ℝ) / 4) 4 ((1 : ℝ) / 2)
 
 /-- State-1 switch probability at trip length `1`. -/
-def theorem2AtomicQ1 : ℝ :=
-  gn21SwitchProb 4 ((1 : ℝ) / 4) 1
+def theorem2AtomicQ1 : ℝ := gn21SwitchProb 4 ((1 : ℝ) / 4) 1
 
 /-- State-1 switch probability at trip length `6`. -/
-def theorem2AtomicQ6 : ℝ :=
-  gn21SwitchProb 4 ((1 : ℝ) / 4) 6
+def theorem2AtomicQ6 : ℝ := gn21SwitchProb 4 ((1 : ℝ) / 4) 6
 
 theorem theorem2AtomicQ0_le :
     theorem2AtomicQ0 ≤ (1 : ℝ) / 17 := by
@@ -260,22 +257,21 @@ theorem theorem2AtomicQ6_le :
 theorem theorem2AtomicQ_bounds :
     theorem2AtomicQ0 ≤ (1 : ℝ) / 17 ∧
       (16 : ℝ) / 21 < theorem2AtomicQ1 ∧
-      theorem2AtomicQ6 ≤ (16 : ℝ) / 17 :=
-  ⟨theorem2AtomicQ0_le, theorem2AtomicQ1_gt, theorem2AtomicQ6_le⟩
+      theorem2AtomicQ6 ≤ (16 : ℝ) / 17 := ⟨theorem2AtomicQ0_le, theorem2AtomicQ1_gt, theorem2AtomicQ6_le⟩
 
 theorem theorem2AtomicQ0_nonneg :
-    0 ≤ theorem2AtomicQ0 := by
-  exact paper_lemma2_switch_probability_nonneg ((1 : ℝ) / 4) 4 ((1 : ℝ) / 2)
+    0 ≤ theorem2AtomicQ0 :=
+   paper_lemma2_switch_probability_nonneg ((1 : ℝ) / 4) 4 ((1 : ℝ) / 2)
     (by norm_num) (by norm_num) (by norm_num)
 
 theorem theorem2AtomicQ1_nonneg :
-    0 ≤ theorem2AtomicQ1 := by
-  exact paper_lemma2_switch_probability_nonneg 4 ((1 : ℝ) / 4) 1
+    0 ≤ theorem2AtomicQ1 :=
+   paper_lemma2_switch_probability_nonneg 4 ((1 : ℝ) / 4) 1
     (by norm_num) (by norm_num) (by norm_num)
 
 theorem theorem2AtomicQ6_nonneg :
-    0 ≤ theorem2AtomicQ6 := by
-  exact paper_lemma2_switch_probability_nonneg 4 ((1 : ℝ) / 4) 6
+    0 ≤ theorem2AtomicQ6 :=
+   paper_lemma2_switch_probability_nonneg 4 ((1 : ℝ) / 4) 6
     (by norm_num) (by norm_num) (by norm_num)
 
 theorem theorem2AtomicExitWeight_zero_acceptAll :
@@ -441,8 +437,7 @@ theorem paper_theorem2_multiplicative_measured_not_ic_explicit_atomic :
     ¬ dynamicIncentiveCompatible
       (gn21MeasuredDynamicRewardFunctional theorem2AtomicMu theorem2AtomicArrival
         ((1 : ℝ) / 4) 4
-        (fun i => multiplicativePricing (theorem2AtomicM i))) := by
-  exact
+        (fun i => multiplicativePricing (theorem2AtomicM i))) :=
     paper_theorem2_multiplicative_measured_not_ic_of_aggregate_witness
       theorem2AtomicMu theorem2AtomicArrival ((1 : ℝ) / 4) 4
       theorem2AtomicM
@@ -598,22 +593,20 @@ theorem theorem2BothStatesAtomicMix_rejectShort_integral
       (by norm_num : ((1 : ℝ≥0∞) / 2) ≠ ∞)
 
 /-- Switch probability at trip length `1` for the both-state witness. -/
-def theorem2BothStatesAtomicQ1 : ℝ :=
-  gn21SwitchProb ((1 : ℝ) / 4) ((1 : ℝ) / 4) 1
+def theorem2BothStatesAtomicQ1 : ℝ := gn21SwitchProb ((1 : ℝ) / 4) ((1 : ℝ) / 4) 1
 
 /-- Switch probability at trip length `6` for the both-state witness. -/
-def theorem2BothStatesAtomicQ6 : ℝ :=
-  gn21SwitchProb ((1 : ℝ) / 4) ((1 : ℝ) / 4) 6
+def theorem2BothStatesAtomicQ6 : ℝ := gn21SwitchProb ((1 : ℝ) / 4) ((1 : ℝ) / 4) 6
 
 theorem theorem2BothStatesAtomicQ1_nonneg :
-    0 ≤ theorem2BothStatesAtomicQ1 := by
-  exact paper_lemma2_switch_probability_nonneg
+    0 ≤ theorem2BothStatesAtomicQ1 :=
+   paper_lemma2_switch_probability_nonneg
     ((1 : ℝ) / 4) ((1 : ℝ) / 4) 1
     (by norm_num) (by norm_num) (by norm_num)
 
 theorem theorem2BothStatesAtomicQ6_nonneg :
-    0 ≤ theorem2BothStatesAtomicQ6 := by
-  exact paper_lemma2_switch_probability_nonneg
+    0 ≤ theorem2BothStatesAtomicQ6 :=
+   paper_lemma2_switch_probability_nonneg
     ((1 : ℝ) / 4) ((1 : ℝ) / 4) 6
     (by norm_num) (by norm_num) (by norm_num)
 
@@ -1136,8 +1129,7 @@ theorem paper_theorem2_multiplicative_measured_not_ic_both_states_explicit_atomi
     ¬ dynamicIncentiveCompatible
       (gn21MeasuredDynamicRewardFunctional theorem2BothStatesAtomicMu
         theorem2BothStatesAtomicArrival ((1 : ℝ) / 4) ((1 : ℝ) / 4)
-        (fun i => multiplicativePricing (theorem2BothStatesAtomicM i))) := by
-  exact
+        (fun i => multiplicativePricing (theorem2BothStatesAtomicM i))) :=
     not_dynamicIncentiveCompatible_of_profitableDeviation
       (gn21MeasuredDynamicRewardFunctional theorem2BothStatesAtomicMu
         theorem2BothStatesAtomicArrival ((1 : ℝ) / 4) ((1 : ℝ) / 4)

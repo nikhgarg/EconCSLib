@@ -18,7 +18,7 @@
   },
   "paper_interface": {
     "path": "papers/KR21Monoculture/PaperInterface.lean",
-    "line_count": 82,
+    "line_count": 76,
     "declaration_rows": 6,
     "review_rows": 6,
     "oversized": false,

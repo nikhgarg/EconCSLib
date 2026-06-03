@@ -149,6 +149,34 @@ theorem ae_imp_le_contradicts_positive_selected_lt_mass
     hpos
 
 /--
+Cancel a positive affine score transform inside an a.e. implication.
+
+This is useful for equilibrium arguments where a payoff comparison is stated
+as `(base + weight * x) / denom ≤ (base + weight * y) / denom`, with positive
+`weight` and `denom`, but the economic conclusion is `x ≤ y`.
+-/
+theorem ae_imp_le_of_affine_div_le_affine_div
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) (selected : α → Prop)
+    (base weight denom x y : α → ℝ)
+    (hweight : ∀ a, 0 < weight a)
+    (hdenom : ∀ a, 0 < denom a)
+    (hAE :
+      ∀ᵐ a ∂μ, selected a →
+        (base a + weight a * x a) / denom a ≤
+          (base a + weight a * y a) / denom a) :
+    ∀ᵐ a ∂μ, selected a → x a ≤ y a :=
+  hAE.mono fun a hle hselected => by
+    have hmul :=
+      mul_le_mul_of_nonneg_right (hle hselected) (le_of_lt (hdenom a))
+    have hsimpl :
+        base a + weight a * x a ≤ base a + weight a * y a := by
+      simpa [div_mul_cancel₀ _ (ne_of_gt (hdenom a))] using hmul
+    have hmulxy : weight a * x a ≤ weight a * y a :=
+      (add_le_add_iff_left (base a)).mp hsimpl
+    exact le_of_mul_le_mul_left hmulxy (hweight a)
+
+/--
 If every point in an interval-like event is selected, then positive mass of
 that event gives positive mass of selected points below the reference value.
 -/

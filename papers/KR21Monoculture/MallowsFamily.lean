@@ -16,8 +16,7 @@ and 3.
 namespace KR21Monoculture
 
 /-- Inverse Mallows parameter for the paper convention `θ = φ - 1`. -/
-noncomputable def mallowsInverseAccuracyQ (θ : ℝ) : ℝ :=
-  (θ + 1)⁻¹
+noncomputable def mallowsInverseAccuracyQ (θ : ℝ) : ℝ := (θ + 1)⁻¹
 
 theorem mallowsInverseAccuracyQ_pos {θ : ℝ} (hθ : 0 < θ) :
     0 < mallowsInverseAccuracyQ θ := by
@@ -43,8 +42,7 @@ Totalized inverse Mallows accuracy parameter.
 The paper only uses positive `θ`; outside that domain this definition returns
 `1` so that `θ ↦ MallowsSpec.ofQ ...` is a total Lean function.
 -/
-noncomputable def mallowsAccuracyQ (θ : ℝ) : ℝ :=
-  if 0 < θ then mallowsInverseAccuracyQ θ else 1
+noncomputable def mallowsAccuracyQ (θ : ℝ) : ℝ := if 0 < θ then mallowsInverseAccuracyQ θ else 1
 
 theorem mallowsAccuracyQ_eq_of_pos {θ : ℝ} (hθ : 0 < θ) :
     mallowsAccuracyQ θ = mallowsInverseAccuracyQ θ := by
@@ -92,8 +90,7 @@ theorem exists_gt_mallowsAccuracyQ_lt (lower δ : ℝ) (hδ : 0 < δ) :
 
 /-- Concrete Mallows specification for the paper's `θ = φ - 1` convention. -/
 noncomputable def concreteMallowsSpec {n : ℕ}
-    (center : Ranking n) (θ : ℝ) : MallowsSpec n :=
-  MallowsSpec.ofQ center (mallowsAccuracyQ θ) (mallowsAccuracyQ_pos θ)
+    (center : Ranking n) (θ : ℝ) : MallowsSpec n := MallowsSpec.ofQ center (mallowsAccuracyQ θ) (mallowsAccuracyQ_pos θ)
 
 theorem mallowsAccuracyQ_continuousAt_of_pos {θ : ℝ} (hθ : 0 < θ) :
     ContinuousAt mallowsAccuracyQ θ := by
@@ -165,8 +162,8 @@ theorem candidateRankPowerWeightedSum_zero
           intro h
           exact hr (Fin.ext h)
         have hrpos : 0 < (r : ℕ) := Nat.pos_of_ne_zero hrval_ne
-        have hpow : (0 : ℝ) ^ (r : ℕ) = 0 := by
-          exact zero_pow hrval_ne
+        have hpow : (0 : ℝ) ^ (r : ℕ) = 0 :=
+          zero_pow hrval_ne
         simp [hpow]
       · intro h
         simp at h
@@ -196,8 +193,8 @@ theorem candidateRankWeightedAverage_continuousAt_zero
   classical
   have hnum :
       ContinuousAt
-        (fun q => ∑ r : Candidate n, q ^ (r : ℕ) * B r) 0 := by
-    exact EconCSLib.continuousAt_finset_sum
+        (fun q => ∑ r : Candidate n, q ^ (r : ℕ) * B r) 0 :=
+    EconCSLib.continuousAt_finset_sum
       (s := (Finset.univ : Finset (Candidate n)))
       (f := fun r q => q ^ (r : ℕ) * B r)
       (fun r _ => (continuousAt_id.pow (r : ℕ)).mul continuousAt_const)
@@ -257,8 +254,8 @@ theorem candidateRankSecondChoiceWeight_zero_one
             change 0 < 1 + (r : ℕ)
             omega
           have hpow :
-              (0 : ℝ) ^ (((1 : Candidate n) : ℕ) + (r : ℕ)) = 0 := by
-            exact zero_pow (ne_of_gt hexp_pos)
+              (0 : ℝ) ^ (((1 : Candidate n) : ℕ) + (r : ℕ)) = 0 :=
+            zero_pow (ne_of_gt hexp_pos)
           simp [hnot_lt, hgt]
         · simp [hnot_lt, hgt]
       · intro h
@@ -281,15 +278,15 @@ theorem candidateRankSecondChoiceWeight_zero_of_ne_one
         exact hs (Fin.ext h)
       omega
     have hpow :
-        (0 : ℝ) ^ ((r : ℕ) + (s : ℕ) - 1) = 0 := by
-      exact zero_pow (ne_of_gt hexp_pos)
+        (0 : ℝ) ^ ((r : ℕ) + (s : ℕ) - 1) = 0 :=
+      zero_pow (ne_of_gt hexp_pos)
     simp [hrs, hpow]
   · by_cases hsr : s < r
     · have hexp_pos : 0 < (s : ℕ) + (r : ℕ) := by
         have hr_pos : 0 < (r : ℕ) := lt_of_le_of_lt (Nat.zero_le _) hsr
         omega
-      have hpow : (0 : ℝ) ^ ((s : ℕ) + (r : ℕ)) = 0 := by
-        exact zero_pow (ne_of_gt hexp_pos)
+      have hpow : (0 : ℝ) ^ ((s : ℕ) + (r : ℕ)) = 0 :=
+        zero_pow (ne_of_gt hexp_pos)
       simp [hrs, hsr, hpow]
     · simp [hrs, hsr]
 
@@ -382,8 +379,8 @@ theorem candidateRankSecondChoiceWeightedAverage_continuousAt_zero
       ContinuousAt
         (fun q =>
           ∑ s : Candidate n,
-            candidateRankSecondChoiceWeight n q s * B s) 0 := by
-    exact EconCSLib.continuousAt_finset_sum
+            candidateRankSecondChoiceWeight n q s * B s) 0 :=
+    EconCSLib.continuousAt_finset_sum
       (s := (Finset.univ : Finset (Candidate n)))
       (f := fun s q => candidateRankSecondChoiceWeight n q s * B s)
       (fun s _ => (hweight s).mul continuousAt_const)
@@ -499,8 +496,8 @@ theorem exists_pos_radius_humanAgainstRankAverage_lt_pureCenter_payoff
       EconCSLib.EpsilonContinuousAt (fun _ : ℝ => purePayoff) 0 :=
     EconCSLib.epsilonContinuousAt_const purePayoff 0
   have hlt :
-      M.humanAgainstRankAverage value 0 < purePayoff := by
-    exact M.humanAgainstRankAverage_zero_lt_pureCenter_payoff value hvalue
+      M.humanAgainstRankAverage value 0 < purePayoff :=
+    M.humanAgainstRankAverage_zero_lt_pureCenter_payoff value hvalue
   rcases EconCSLib.exists_right_radius_lt_of_epsilonContinuousAt
       hcont hpure_cont hlt with ⟨δ, hδ_pos, hδ⟩
   refine ⟨δ, hδ_pos, ?_⟩
@@ -756,8 +753,8 @@ theorem firstMoverUtility_gt_secondMoverIndependent_same_of_rankFactorization
     simpa [mul_pow, mul_assoc] using hcore_raw
   let scale : ℝ := (fac.firstTail * fac.firstSecondTail) /
     (M.partition * M.partition)
-  have hscale_pos : 0 < scale := by
-    exact div_pos (mul_pos fac.firstTail_pos fac.firstSecondTail_pos)
+  have hscale_pos : 0 < scale :=
+    div_pos (mul_pos fac.firstTail_pos fac.firstSecondTail_pos)
       (mul_pos M.partition_pos M.partition_pos)
   have hsum_eq :
       (∑ c : Candidate n,
@@ -1289,8 +1286,8 @@ theorem expectedBestAfterRemoval_le_of_rankBestAfterRemoval_pairwise
         (∑ j : Candidate n, wH j) *
             (∑ i : Candidate n, wA i * B i) -
           (∑ j : Candidate n, wA j) *
-            (∑ i : Candidate n, wH i * B i) := by
-    exact candidateWeightedAverage_cross_nonneg_of_pairwise n
+            (∑ i : Candidate n, wH i * B i) :=
+    candidateWeightedAverage_cross_nonneg_of_pairwise n
       (wA := wA) (wH := wH) (B := B)
       (by
         intro i j hij
@@ -1373,8 +1370,8 @@ theorem expectedBestAfterRemoval_le_of_rankFactorization
     (hq_lt : C.algorithm.q < C.human.q)
     (hhuman_q_lt_one : C.human.q < 1) :
     AccuracyFamily.expectedBestAfterRemoval C.human.law value c ≤
-      AccuracyFamily.expectedBestAfterRemoval C.algorithm.law value c := by
-  exact C.expectedBestAfterRemoval_le_of_rankBestAfterRemoval_pairwise
+      AccuracyFamily.expectedBestAfterRemoval C.algorithm.law value c :=
+   C.expectedBestAfterRemoval_le_of_rankBestAfterRemoval_pairwise
     c halg_rank hhuman_rank hvalue
     (candidateRankBestAfterRemovalWeight_pairwise_cross_nonneg
       n C.algorithm.q_pos hq_lt hhuman_q_lt_one (rankOf C.human.center c))
@@ -1407,10 +1404,10 @@ theorem firstMoverUtility_strict_of_rankFactorization
     simpa [A, H, SA, SH] using
       candidateRankWeightedAverage_strictAnti
         n C.algorithm.q_pos hq_lt hB
-  have hSA_pos : 0 < SA := by
-    exact candidateRankPowerSum_pos n C.algorithm.q_pos
-  have hSH_pos : 0 < SH := by
-    exact candidateRankPowerSum_pos n C.human.q_pos
+  have hSA_pos : 0 < SA :=
+    candidateRankPowerSum_pos n C.algorithm.q_pos
+  have hSH_pos : 0 < SH :=
+    candidateRankPowerSum_pos n C.human.q_pos
   have havg : H / SH < A / SA := by
     field_simp [ne_of_gt hSA_pos, ne_of_gt hSH_pos]
     nlinarith [hmain]
@@ -1587,8 +1584,8 @@ theorem prefersWeakerCompetition
     intro a b h
     exact (MF.comparisonAt_strictlyCenterOrdered θA θH)
       (by simpa [C] using h)
-  have hpaper : Model.PaperHypotheses (C.toModel MF.value) := by
-    exact C.theorem3_pointwise_of_rankFactorization
+  have hpaper : Model.PaperHypotheses (C.toModel MF.value) :=
+    C.theorem3_pointwise_of_rankFactorization
       hstrict
       hn
       C.algorithm.rankFactorization
@@ -1702,8 +1699,8 @@ noncomputable def concreteMallowsAccuracyFamilySpec
     intro θ hθ π
     simpa [concreteMallowsSpec] using
       concreteMallowsSpec_atom_continuity center hθ π
-  asymptotic_first_dominance := by
-    exact concreteMallowsSpec_asymptotic_first_dominance center value hvalue
+  asymptotic_first_dominance :=
+    concreteMallowsSpec_asymptotic_first_dominance center value hvalue
 
 theorem concreteMallows_theorem1Target
     {n : ℕ} (center : Ranking n) (value : Candidate n → ℝ)

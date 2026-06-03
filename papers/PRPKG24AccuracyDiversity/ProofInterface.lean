@@ -20,8 +20,7 @@ namespace PaperInterface
 abbrev gammaProfile {T : ℕ} := GammaHomogeneityProfile T
 
 /-- Definition 2 style sequence convergence to a representation profile. -/
-abbrev convergesToProfile {T : ℕ} :=
-  AllocationSequence.ConvergesToProfile (T := T)
+abbrev convergesToProfile {T : ℕ} := AllocationSequence.ConvergesToProfile (T := T)
 
 /--
 Definition 1 target-share formula:
@@ -33,8 +32,7 @@ theorem definition1_gamma_target_share_eq
     (hnorm : (∑ i : ItemType T, (likelihood i) ^ gamma) ≠ 0) :
     (gammaLikelihoodProfile likelihood gamma).targetShare t =
       (likelihood t) ^ gamma /
-        ∑ i : ItemType T, (likelihood i) ^ gamma := by
-  exact gammaLikelihoodProfile_targetShare_eq likelihood gamma t hnorm
+        ∑ i : ItemType T, (likelihood i) ^ gamma :=  gammaLikelihoodProfile_targetShare_eq likelihood gamma t hnorm
 
 /--
 Definition 1 finite γ-homogeneity, stated directly with the paper's equation
@@ -48,8 +46,7 @@ theorem definition1_gamma_homogeneity_exact_iff
       ∀ t : ItemType T,
         CountAllocation.representation a t =
           (likelihood t) ^ gamma /
-            ∑ i : ItemType T, (likelihood i) ^ gamma := by
-  exact
+            ∑ i : ItemType T, (likelihood i) ^ gamma :=
     PRPKG24AccuracyDiversity.paper_definition1_gamma_homogeneity_exact_iff
       a likelihood gamma hnorm
 
@@ -68,8 +65,7 @@ theorem definition2_gamma_homogeneity_sequence_iff
           Filter.atTop
           (nhds
             ((likelihood t) ^ gamma /
-              ∑ i : ItemType T, (likelihood i) ^ gamma)) := by
-  exact
+              ∑ i : ItemType T, (likelihood i) ^ gamma)) :=
     PRPKG24AccuracyDiversity.paper_definition2_gamma_homogeneity_sequence_iff
       seq likelihood gamma hnorm
 
@@ -80,8 +76,7 @@ bottom-indexed order-statistic means.
 theorem definition3_order_statistic_topk_sum_from_mean
     (mu : ℕ → ℕ → ℝ) (k a : ℕ) :
     orderStatisticTopKSumFromMean mu k a =
-      ∑ i ∈ Finset.range (min k a), mu (a - i) a := by
-  exact
+      ∑ i ∈ Finset.range (min k a), mu (a - i) a :=
     PRPKG24AccuracyDiversity.paper_definition3_order_statistic_topk_sum_from_mean
       mu k a
 
@@ -94,8 +89,7 @@ theorem definition3_order_statistic_topk_loss_eventually_eq_fin_loss
     (M : ℝ) (mu : ℕ → ℕ → ℝ) (k : ℕ) :
     ∀ᶠ a in Filter.atTop,
       (k : ℝ) * M - orderStatisticTopKSumFromMean mu k a =
-        (k : ℝ) * M - ∑ i : Fin k, mu (a - i.val) a := by
-  exact
+        (k : ℝ) * M - ∑ i : Fin k, mu (a - i.val) a :=
     PRPKG24AccuracyDiversity.paper_definition3_order_statistic_topk_loss_eventually_eq_fin_loss
       M mu k
 
@@ -109,8 +103,7 @@ theorem definition3_order_statistic_topk_sum_from_sample
         (fun rank sampleSize =>
           if sampleSize = a then sampleOrderStatisticValue sample rank else 0)
         k a =
-      EconCSLib.Probability.sampleTopKSum sample k := by
-  exact
+      EconCSLib.Probability.sampleTopKSum sample k :=
     PRPKG24AccuracyDiversity.paper_definition3_order_statistic_topk_sum_from_sample
       sample k
 
@@ -120,8 +113,7 @@ Measurability of the paper's bottom-indexed sample order-statistic value.
 theorem definition3_sample_order_statistic_value_measurable
     {a : ℕ} (rank : ℕ) :
     Measurable
-      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) := by
-  exact
+      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) :=
     PRPKG24AccuracyDiversity.paper_definition3_sample_order_statistic_value_measurable
       rank
 
@@ -131,8 +123,7 @@ Pointwise bounded-support reflection for real sample tuples.
 theorem definition3_sample_topk_endpoint_loss_eq_reflected_bottom_sum
     (M : ℝ) {a : ℕ} (sample : Fin a → ℝ) (k : ℕ) :
     EconCSLib.Probability.sampleTopKEndpointLoss M sample k =
-      EconCSLib.Probability.reflectedBottomKSum M sample k := by
-  exact
+      EconCSLib.Probability.reflectedBottomKSum M sample k :=
     PRPKG24AccuracyDiversity.paper_definition3_sample_topk_endpoint_loss_eq_reflected_bottom_sum
       M sample k
 
@@ -149,8 +140,7 @@ theorem definition3_reflected_bottom_sum_eq_integral_rank_count_indicator
               (fun j : Fin a =>
                 EconCSLib.Probability.reflectedSample M sample j ≤ x)).card ≤
               (EconCSLib.Probability.topKRankEmbedding k a i).val
-          then (1 : ℝ) else 0 := by
-  exact
+          then (1 : ℝ) else 0 :=
     PRPKG24AccuracyDiversity.paper_definition3_reflected_bottom_sum_eq_integral_rank_count_indicator
       M sample k hM
 
@@ -161,8 +151,7 @@ endpoint `M`, then the reflected bottom-`k` sum is nonnegative.
 theorem definition3_reflected_bottom_sum_nonneg_of_forall_le
     (M : ℝ) {a : ℕ} {sample : Fin a → ℝ}
     (hM : ∀ i, sample i ≤ M) (k : ℕ) :
-    0 ≤ EconCSLib.Probability.reflectedBottomKSum M sample k := by
-  exact
+    0 ≤ EconCSLib.Probability.reflectedBottomKSum M sample k :=
     PRPKG24AccuracyDiversity.paper_definition3_reflected_bottom_sum_nonneg_of_forall_le
       M hM k
 
@@ -174,8 +163,7 @@ theorem definition3_reflected_bottom_sum_le_of_forall_lower
     (M L : ℝ) {a : ℕ} {sample : Fin a → ℝ}
     (hL : ∀ i, L ≤ sample i) (k : ℕ) :
     EconCSLib.Probability.reflectedBottomKSum M sample k ≤
-      (min k a : ℝ) * (M - L) := by
-  exact
+      (min k a : ℝ) * (M - L) :=
     PRPKG24AccuracyDiversity.paper_definition3_reflected_bottom_sum_le_of_forall_lower
       M L hL k
 
@@ -186,8 +174,7 @@ theorem definition3_sample_topk_endpoint_loss_le_of_forall_bounds
     (M L : ℝ) {a : ℕ} {sample : Fin a → ℝ}
     (hL : ∀ i, L ≤ sample i) (k : ℕ) :
     EconCSLib.Probability.sampleTopKEndpointLoss M sample k ≤
-      (min k a : ℝ) * (M - L) := by
-  exact
+      (min k a : ℝ) * (M - L) :=
     PRPKG24AccuracyDiversity.paper_definition3_sample_topk_endpoint_loss_le_of_forall_bounds
       M L hL k
 
@@ -200,8 +187,7 @@ theorem definition3_sample_order_statistic_value_integrable_of_ae_bounds
     (h_bounds :
       ∀ᵐ sample ∂mu, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ U) :
     MeasureTheory.Integrable
-      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) mu := by
-  exact
+      (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) mu :=
     PRPKG24AccuracyDiversity.paper_definition3_sample_order_statistic_value_integrable_of_ae_bounds
       L U mu rank h_bounds
 
@@ -216,8 +202,7 @@ theorem definition3_sample_order_statistic_topk_range_integrable_of_ae_bounds
       ∀ᵐ sample ∂mu, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ U) :
     ∀ i ∈ Finset.range (min k a),
       MeasureTheory.Integrable
-        (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample (a - i)) mu := by
-  exact
+        (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample (a - i)) mu :=
     PRPKG24AccuracyDiversity.paper_definition3_sample_order_statistic_topk_range_integrable_of_ae_bounds
       L U mu k h_bounds
 
@@ -230,8 +215,7 @@ theorem definition3_sample_topk_sum_integrable_of_ae_bounds
     (h_bounds :
       ∀ᵐ sample ∂mu, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ U) :
     MeasureTheory.Integrable
-      (fun sample : Fin a → ℝ => EconCSLib.Probability.sampleTopKSum sample k) mu := by
-  exact
+      (fun sample : Fin a → ℝ => EconCSLib.Probability.sampleTopKSum sample k) mu :=
     PRPKG24AccuracyDiversity.paper_definition3_sample_topk_sum_integrable_of_ae_bounds
       L U mu k h_bounds
 
@@ -245,8 +229,7 @@ theorem definition3_sample_topk_endpoint_loss_integrable_of_ae_bounds
       ∀ᵐ sample ∂mu, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ M) :
     MeasureTheory.Integrable
       (fun sample : Fin a → ℝ =>
-        EconCSLib.Probability.sampleTopKEndpointLoss M sample k) mu := by
-  exact
+        EconCSLib.Probability.sampleTopKEndpointLoss M sample k) mu :=
     PRPKG24AccuracyDiversity.paper_definition3_sample_topk_endpoint_loss_integrable_of_ae_bounds
       M L mu k h_bounds
 
@@ -260,8 +243,7 @@ theorem definition3_reflected_bottom_sum_integrable_of_ae_bounds
       ∀ᵐ sample ∂mu, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ M) :
     MeasureTheory.Integrable
       (fun sample : Fin a → ℝ =>
-        EconCSLib.Probability.reflectedBottomKSum M sample k) mu := by
-  exact
+        EconCSLib.Probability.reflectedBottomKSum M sample k) mu :=
     PRPKG24AccuracyDiversity.paper_definition3_reflected_bottom_sum_integrable_of_ae_bounds
       M L mu k h_bounds
 
@@ -277,8 +259,7 @@ theorem definition3_expected_order_statistic_topk_sum_eq_expected_sample_topk_su
           (fun sample => sampleOrderStatisticValue sample (a - i)) mu) :
     orderStatisticTopKSumFromMean
         (expectedSampleOrderStatisticMean mu) k a =
-      EconCSLib.Probability.expectedSampleTopKSum mu k := by
-  exact
+      EconCSLib.Probability.expectedSampleTopKSum mu k :=
     PRPKG24AccuracyDiversity.paper_definition3_expected_order_statistic_topk_sum_eq_expected_sample_topk_sum
       mu k h_integrable
 
@@ -292,8 +273,7 @@ theorem definition3_expected_order_statistic_topk_sum_eq_expected_sample_topk_su
       ∀ᵐ sample ∂mu, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ U) :
     orderStatisticTopKSumFromMean
         (expectedSampleOrderStatisticMean mu) k a =
-      EconCSLib.Probability.expectedSampleTopKSum mu k := by
-  exact
+      EconCSLib.Probability.expectedSampleTopKSum mu k :=
     PRPKG24AccuracyDiversity.paper_definition3_expected_order_statistic_topk_sum_eq_expected_sample_topk_sum_of_ae_bounds
       L U mu k h_bounds
 
@@ -313,8 +293,7 @@ theorem definition3_expected_order_statistic_topk_endpoint_loss_eq_expected_refl
     (min k a : ℝ) * M -
         orderStatisticTopKSumFromMean
           (expectedSampleOrderStatisticMean mu) k a =
-      EconCSLib.Probability.expectedReflectedBottomKSum M mu k := by
-  exact
+      EconCSLib.Probability.expectedReflectedBottomKSum M mu k :=
     PRPKG24AccuracyDiversity.paper_definition3_expected_order_statistic_topk_endpoint_loss_eq_expected_reflected_bottom_sum
       M mu k h_order_integrable h_top_integrable
 
@@ -329,8 +308,7 @@ theorem definition3_expected_order_statistic_topk_endpoint_loss_eq_expected_refl
     (min k a : ℝ) * M -
         orderStatisticTopKSumFromMean
           (expectedSampleOrderStatisticMean mu) k a =
-      EconCSLib.Probability.expectedReflectedBottomKSum M mu k := by
-  exact
+      EconCSLib.Probability.expectedReflectedBottomKSum M mu k :=
     PRPKG24AccuracyDiversity.paper_definition3_expected_order_statistic_topk_endpoint_loss_eq_expected_reflected_bottom_sum_of_ae_bounds
       M L mu k h_bounds
 
@@ -348,8 +326,7 @@ theorem definition3_expected_order_statistic_mean_seq_topk_sum_eq_expected_sampl
           (sampleMeasure a)) :
     orderStatisticTopKSumFromMean
         (expectedOrderStatisticMeanSeq sampleMeasure) k a =
-      EconCSLib.Probability.expectedSampleTopKSum (sampleMeasure a) k := by
-  exact
+      EconCSLib.Probability.expectedSampleTopKSum (sampleMeasure a) k :=
     PRPKG24AccuracyDiversity.paper_definition3_expected_order_statistic_mean_seq_topk_sum_eq_expected_sample_topk_sum
       sampleMeasure k a h_integrable
 
@@ -364,8 +341,7 @@ theorem definition3_expected_order_statistic_mean_seq_topk_sum_eq_expected_sampl
       ∀ᵐ sample ∂sampleMeasure a, ∀ i : Fin a, L ≤ sample i ∧ sample i ≤ U) :
     orderStatisticTopKSumFromMean
         (expectedOrderStatisticMeanSeq sampleMeasure) k a =
-      EconCSLib.Probability.expectedSampleTopKSum (sampleMeasure a) k := by
-  exact
+      EconCSLib.Probability.expectedSampleTopKSum (sampleMeasure a) k :=
     PRPKG24AccuracyDiversity.paper_definition3_expected_order_statistic_mean_seq_topk_sum_eq_expected_sample_topk_sum_of_ae_bounds
       L U sampleMeasure k a h_bounds
 
@@ -390,8 +366,7 @@ theorem definition3_expected_order_statistic_mean_seq_topk_endpoint_loss_eq_expe
         orderStatisticTopKSumFromMean
           (expectedOrderStatisticMeanSeq sampleMeasure) k a =
       EconCSLib.Probability.expectedReflectedBottomKSum
-        M (sampleMeasure a) k := by
-  exact
+        M (sampleMeasure a) k :=
     PRPKG24AccuracyDiversity.paper_definition3_expected_order_statistic_mean_seq_topk_endpoint_loss_eq_expected_reflected_bottom_sum
       M sampleMeasure k h_order_integrable h_top_integrable
 
@@ -408,8 +383,7 @@ theorem definition3_expected_order_statistic_mean_seq_topk_endpoint_loss_eq_expe
         orderStatisticTopKSumFromMean
           (expectedOrderStatisticMeanSeq sampleMeasure) k a =
       EconCSLib.Probability.expectedReflectedBottomKSum
-        M (sampleMeasure a) k := by
-  exact
+        M (sampleMeasure a) k :=
     PRPKG24AccuracyDiversity.paper_definition3_expected_order_statistic_mean_seq_topk_endpoint_loss_eq_expected_reflected_bottom_sum_of_ae_bounds
       M L sampleMeasure k h_bounds
 
@@ -431,8 +405,7 @@ theorem definition3_expected_reflected_bottom_sum_eq_sum_reflected_order_statist
         ∫ sample,
           EconCSLib.Probability.ascendingOrderStatistic
             (EconCSLib.Probability.reflectedSample M sample)
-            (EconCSLib.Probability.topKRankEmbedding k a i) ∂mu := by
-  exact
+            (EconCSLib.Probability.topKRankEmbedding k a i) ∂mu :=
     PRPKG24AccuracyDiversity.paper_definition3_expected_reflected_bottom_sum_eq_sum_reflected_order_statistic_integrals
       M mu k h_integrable
 
@@ -456,8 +429,7 @@ theorem definition3_expected_reflected_bottom_sum_eq_sum_reflected_order_statist
         ∫ sample,
           EconCSLib.Probability.ascendingOrderStatistic
             (EconCSLib.Probability.reflectedSample M sample)
-            ⟨i.val, lt_of_lt_of_le i.isLt hka⟩ ∂mu := by
-  exact
+            ⟨i.val, lt_of_lt_of_le i.isLt hka⟩ ∂mu :=
     PRPKG24AccuracyDiversity.paper_definition3_expected_reflected_bottom_sum_eq_sum_reflected_order_statistic_integrals_of_le
       M mu hka h_integrable
 
@@ -480,8 +452,7 @@ order-statistic convention.
 theorem proposition5_uniform_order_statistic_topk_sum_eq_value
     (k a : ℕ) :
     orderStatisticTopKSumFromMean uniformAscendingOrderStatisticMean k a =
-      uniformTopKValue k a := by
-  exact
+      uniformTopKValue k a :=
     PRPKG24AccuracyDiversity.paper_proposition5_uniform_order_statistic_topk_sum_eq_value
       k a
 
@@ -506,8 +477,7 @@ theorem theorem1_ii_uniform_order_statistic_toConsumptionModel_eq
     {T : ℕ} (likelihood : ItemType T → ℝ) (k : ℕ) :
     (TopKValueOracle.ofOrderStatisticMean T uniformAscendingOrderStatisticMean).toConsumptionModel
         likelihood k =
-      uniformTopKConsumptionModel likelihood k := by
-  exact
+      uniformTopKConsumptionModel likelihood k :=
     PRPKG24AccuracyDiversity.paper_theorem1_ii_uniform_order_statistic_toConsumptionModel_eq
       likelihood k
 
@@ -630,23 +600,20 @@ theorem theorem1_i_finite_discrete_top_mass_promoting_event_lower_bound_at_a
 /--
 Example 1 likelihoods: romance is Lean type `0`, action is Lean type `1`.
 -/
-noncomputable abbrev example1GenreLikelihood (p1 p2 : ℝ) : ItemType 2 → ℝ :=
-  example1Likelihood p1 p2
+noncomputable abbrev example1GenreLikelihood (p1 p2 : ℝ) : ItemType 2 → ℝ := example1Likelihood p1 p2
 
 /--
 Example 1 all-consumed model with common exponential mean `1/lambda`.
 -/
 noncomputable abbrev example1AllConsumed
-    (p1 p2 lambda : ℝ) : ConsumptionModel 2 :=
-  example1AllConsumedModel p1 p2 lambda
+    (p1 p2 lambda : ℝ) : ConsumptionModel 2 := example1AllConsumedModel p1 p2 lambda
 
 /--
 Example 1 top-one log-relaxation objective:
 `(p1/lambda) log x + (p2/lambda) log y`.
 -/
 noncomputable abbrev example1TopOneLogObjective
-    (p1 p2 lambda x y : ℝ) : ℝ :=
-  example1LogRelaxedObjective p1 p2 lambda x y
+    (p1 p2 lambda x y : ℝ) : ℝ := example1LogRelaxedObjective p1 p2 lambda x y
 
 /--
 Example 1 all-consumed side: when romance is at least as likely as action, a
@@ -656,8 +623,7 @@ theorem example1_all_consumed_all_romance_is_optimal
     {p1 p2 lambda : ℝ} (N : ℕ)
     (hlambda : 0 < lambda) (hp2_le_p1 : p2 ≤ p1) :
     (example1AllConsumed p1 p2 lambda).IsOptimalAtTotal
-      N (allOnTypeAllocation N (0 : ItemType 2)) := by
-  exact
+      N (allOnTypeAllocation N (0 : ItemType 2)) :=
     PRPKG24AccuracyDiversity.paper_example1_all_consumed_all_romance_is_optimal
       N hlambda hp2_le_p1
 
@@ -669,8 +635,7 @@ theorem example1_all_consumed_only_romance
     {p1 p2 lambda : ℝ} {N : ℕ} (a : CountAllocation 2)
     (hlambda : 0 < lambda) (hp2_lt_p1 : p2 < p1)
     (hopt : (example1AllConsumed p1 p2 lambda).IsOptimalAtTotal N a) :
-    a.count (1 : ItemType 2) = 0 := by
-  exact
+    a.count (1 : ItemType 2) = 0 :=
     PRPKG24AccuracyDiversity.paper_example1_all_consumed_only_romance
       a hlambda hp2_lt_p1 hopt
 
@@ -679,8 +644,7 @@ Example 1 feasibility check: the calibrated relaxed split has total `n`.
 -/
 theorem example1_calibrated_split_sum
     {p1 p2 n : ℝ} (hp_sum : p1 + p2 = 1) :
-    p1 * n + p2 * n = n :=
-  PRPKG24AccuracyDiversity.paper_example1_calibrated_split_sum hp_sum
+    p1 * n + p2 * n = n := PRPKG24AccuracyDiversity.paper_example1_calibrated_split_sum hp_sum
 
 /--
 Example 1 top-one side: the calibrated relaxed split maximizes the displayed
@@ -711,22 +675,19 @@ noncomputable abbrev proposition2SqrtShare {T : ℕ}
 Proposition 2 `1/2`-homogeneity target profile with weights `sqrt(p_t)`.
 -/
 noncomputable abbrev proposition2SqrtProfile {T : ℕ}
-    (likelihood : ItemType T → ℝ) : GammaHomogeneityProfile T :=
-  sqrtLikelihoodProfile likelihood
+    (likelihood : ItemType T → ℝ) : GammaHomogeneityProfile T := sqrtLikelihoodProfile likelihood
 
 theorem proposition2_sqrt_profile_target_share_eq
     {T : ℕ} (likelihood : ItemType T → ℝ) (t : ItemType T)
     (hnorm : (∑ i : ItemType T, Real.sqrt (likelihood i)) ≠ 0) :
     (proposition2SqrtProfile likelihood).targetShare t =
-      proposition2SqrtShare likelihood t := by
-  exact sqrtLikelihoodProfile.targetShare_eq likelihood t hnorm
+      proposition2SqrtShare likelihood t :=  sqrtLikelihoodProfile.targetShare_eq likelihood t hnorm
 
 theorem proposition2_sqrt_profile_target_share_eq_gamma_half
     {T : ℕ} (likelihood : ItemType T → ℝ) (t : ItemType T)
     (hnorm : (∑ i : ItemType T, Real.sqrt (likelihood i)) ≠ 0) :
     (proposition2SqrtProfile likelihood).targetShare t =
-      (gammaLikelihoodProfile likelihood (1 / 2)).targetShare t := by
-  exact
+      (gammaLikelihoodProfile likelihood (1 / 2)).targetShare t :=
     PRPKG24AccuracyDiversity.paper_uniform_sqrt_profile_targetShare_eq_gamma_half
       likelihood t hnorm
 
@@ -735,8 +696,7 @@ theorem proposition2_sqrt_profile_target_share_eq_gamma_half
 /-- Finite optimizer existence for a fixed slate size. -/
 theorem finite_optimum_exists
     {T : ℕ} [Nonempty (ItemType T)] (M : ConsumptionModel T) (N : ℕ) :
-    ∃ a : CountAllocation T, M.IsOptimalAtTotal N a := by
-  exact PRPKG24AccuracyDiversity.ConsumptionModel.paper_finite_optimum_exists M N
+    ∃ a : CountAllocation T, M.IsOptimalAtTotal N a :=  PRPKG24AccuracyDiversity.ConsumptionModel.paper_finite_optimum_exists M N
 
 /--
 Source Theorem 1(v), all-consumed/no-consumption-constraint core: when every
@@ -749,8 +709,7 @@ theorem theorem1_all_consumed_common_mean_argmax_optimum
     (hmean_nonneg : 0 ≤ mean)
     (hbest : ∀ t, likelihood t ≤ likelihood best) :
     (ConsumptionModel.linearized likelihood (fun _ => mean)).IsOptimalAtTotal
-      N (allOnTypeAllocation N best) := by
-  exact
+      N (allOnTypeAllocation N best) :=
     PRPKG24AccuracyDiversity.ConsumptionModel.paper_theorem1_all_consumed_common_mean_argmax_optimum
       likelihood mean N best hmean_nonneg hbest
 
@@ -768,8 +727,7 @@ theorem theorem1_all_consumed_unique_common_mean_only_argmax
     (hopt :
       (ConsumptionModel.linearized likelihood (fun _ => mean)).IsOptimalAtTotal
         N a) :
-    ∀ t, t ≠ best → a.count t = 0 := by
-  exact
+    ∀ t, t ≠ best → a.count t = 0 :=
     PRPKG24AccuracyDiversity.ConsumptionModel.paper_theorem1_all_consumed_unique_common_mean_only_argmax
       likelihood mean N best hmean_pos hbest_strict a hopt
 
@@ -782,8 +740,7 @@ theorem lemmaD1_optimizer_sequence_limit_of_asymptotic_homogeneity
     {G : GammaHomogeneityProfile T}
     (seq : OptimalAllocationSequence Mseq)
     (h : ConsumptionModel.AsymptoticHomogeneity Mseq G) :
-    seq.toAllocationSequence.ConvergesToProfile G := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile G :=
     PRPKG24AccuracyDiversity.paper_lemmaD1_optimizer_sequence_limit_of_asymptotic_homogeneity
       seq h
 
@@ -798,8 +755,7 @@ theorem theorem1_i_finite_discrete_sequence_homogeneity_of_certificate
       OptimalAllocationSequence (fun _ => O.toConsumptionModel likelihood k))
     (hcert :
       TopKAsymptoticHomogeneityCertificate O likelihood k (uniformProfile T)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_certificate
       O likelihood k seq hcert
 
@@ -840,8 +796,7 @@ theorem
       PairwiseScaledSublinearFOCCertificate
         (fun _ => O.toConsumptionModel likelihood k)
         (fun _ : ItemType T => (1 : ℝ)) (uniformProfile T)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_sublinear_foc_certificate
       O likelihood k seq hcert
 
@@ -856,8 +811,7 @@ theorem
     (seq :
       OptimalAllocationSequence (fun _ => O.toConsumptionModel likelihood k))
     (hcert : TopKUniformSublinearFOCCertificate O likelihood k) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_topk_sublinear_foc_certificate
       O likelihood k seq hcert
 
@@ -874,8 +828,7 @@ theorem
     ∀ᶠ N in Filter.atTop,
       ∀ a : CountAllocation T, 0 < N →
         (O.toConsumptionModel likelihood k).IsOptimalAtTotal N a →
-        ∀ t, hcert.floor < a.count t := by
-  exact
+        ∀ t, hcert.floor < a.count t :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_eventual_count_floor_of_topk_marginal_dominance
       O likelihood k hcert
 
@@ -890,8 +843,7 @@ theorem
     (seq :
       OptimalAllocationSequence (fun _ => O.toConsumptionModel likelihood k))
     (hcert : TopKUniformEventualSublinearFOCCertificate O likelihood k) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_eventual_topk_foc_certificate
       O likelihood k seq hcert
 
@@ -924,8 +876,7 @@ theorem
             likelihood dst *
               (O.expectedTopSum k dst (qdst + 1) -
                 O.expectedTopSum k dst qdst)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_count_floor_and_large_gap
       O likelihood k seq hfloor base_error base_error_nonneg
       base_error_tends_to_zero large_gap_backward_lt_forward_after_floor
@@ -942,8 +893,7 @@ theorem
     (seq :
       OptimalAllocationSequence (fun _ => O.toConsumptionModel likelihood k))
     (hcert : TopKUniformGeometricMarginalBoundCertificate O likelihood k) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_geometric_marginal_bounds
       O likelihood k seq hcert
 
@@ -958,8 +908,7 @@ theorem
     (seq :
       OptimalAllocationSequence (fun _ => O.toConsumptionModel likelihood k))
     (hcert : TopKUniformGeometricTailCertificate O likelihood k) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_geometric_tail_certificate
       O likelihood k seq hcert
 
@@ -977,8 +926,7 @@ theorem theorem1_i_finite_discrete_sample_topK_upper_marginal_failure_indicator
     (h_le : ∀ i, v i ≤ xTop) (hnew_le : newValue ≤ xTop) :
     topKSumOn k (extendSample v newValue) - topKSumOn k v ≤
       (k : ℝ) * xTop *
-        (if hasKTopValues k xTop v then (0 : ℝ) else 1) := by
-  exact
+        (if hasKTopValues k xTop v then (0 : ℝ) else 1) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sample_topK_upper_marginal_failure_indicator
       k v hxTop_nonneg h_le hnew_le
 
@@ -1006,8 +954,7 @@ theorem theorem1_i_finite_discrete_expected_topK_upper_marginal_failure_prob
         (k : ℝ) * xTop *
           EconCSLib.pmfProb sampleLaw
             (fun sample =>
-              ¬ hasKTopValues k xTop (fun i => value (sample i))) := by
-  exact
+              ¬ hasKTopValues k xTop (fun i => value (sample i))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_expected_topK_upper_marginal_failure_prob
       sampleLaw itemLaw k value hxTop_nonneg hvalue_le
 
@@ -1019,8 +966,7 @@ the top-value count is at least `k`.
 theorem theorem1_i_finite_discrete_hasKTopValues_iff_topValueCount
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ℕ) (xTop : ℝ) (v : ι → ℝ) :
-    hasKTopValues k xTop v ↔ k ≤ topValueCount xTop v := by
-  exact
+    hasKTopValues k xTop v ↔ k ≤ topValueCount xTop v :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_hasKTopValues_iff_topValueCount
       k xTop v
 
@@ -1042,8 +988,7 @@ theorem theorem1_i_finite_discrete_sample_topK_lower_marginal_promoting_event
     (hnontop_le : ∀ i, i ∉ topSet → v i ≤ xSecond)
     (hnew_eq : newValue = xTop) :
     xTop - xSecond ≤
-      topKSumOn k (extendSample v newValue) - topKSumOn k v := by
-  exact
+      topKSumOn k (extendSample v newValue) - topKSumOn k v :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sample_topK_lower_marginal_promoting_event
       k v hk_pos hxTop_nonneg hxSecond_nonneg hsecond_le_top topSet
       htop_card htop_value hnontop_le hnew_eq
@@ -1078,8 +1023,7 @@ theorem theorem1_i_finite_discrete_expected_topK_lower_marginal_promoting_event
           (fun sample newItem =>
             topKSumOn k
                 (extendSample (fun i => value (sample i)) (value newItem)) -
-              topKSumOn k (fun i => value (sample i))) := by
-  exact
+              topKSumOn k (fun i => value (sample i))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_expected_topK_lower_marginal_promoting_event
       sampleLaw itemLaw k value hk_pos hxTop_nonneg hxSecond_nonneg
       hsecond_le_top
@@ -1095,8 +1039,7 @@ theorem theorem1_i_finite_discrete_promoting_event_iff_topValueCount_eq
     (hsecond_lt_top : xSecond < xTop)
     (hvalue_split : ∀ i, v i = xTop ∨ v i ≤ xSecond) :
     hasPredTopValuesWithSecondBound k xTop xSecond v ↔
-      topValueCount xTop v = k - 1 := by
-  exact
+      topValueCount xTop v = k - 1 :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_promoting_event_iff_topValueCount_eq
       k v hsecond_lt_top hvalue_split
 
@@ -1111,8 +1054,7 @@ theorem theorem1_i_finite_discrete_product_forall_factorization
     [∀ i, DecidablePred (event i)] :
     EconCSLib.pmfProb (EconCSLib.pmfProduct ι Ω itemLaw)
         (fun sample : ι → Ω => ∀ i : ι, event i (sample i)) =
-      ∏ i : ι, EconCSLib.pmfProb itemLaw (event i) := by
-  exact
+      ∏ i : ι, EconCSLib.pmfProb itemLaw (event i) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_product_forall_factorization
       itemLaw event
 
@@ -1133,8 +1075,7 @@ theorem theorem1_i_finite_discrete_product_failure_tail_exact
           ¬ hasKTopValues k xTop (fun i => value (sample i))) =
       finiteDiscreteTopMassFailureTail k (Fintype.card ι)
         (EconCSLib.pmfProb itemLaw (fun ω => value ω = xTop))
-        (EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop)) := by
-  exact
+        (EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop)) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_product_failure_tail_exact
       itemLaw k value xTop
 
@@ -1163,8 +1104,7 @@ theorem theorem1_i_finite_discrete_product_promoting_event_exact
             value newItem = xTop then (1 : ℝ) else 0) =
       finiteDiscreteTopMassPromotingEvent k (Fintype.card ι)
         (EconCSLib.pmfProb itemLaw (fun ω => value ω = xTop))
-        (EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop)) := by
-  exact
+        (EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop)) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_product_promoting_event_exact
       itemLaw k value hk_pos hsecond_lt_top hvalue_split
 
@@ -1183,8 +1123,7 @@ theorem theorem1_i_finite_discrete_iid_option_marginal_identity
         (fun sample newItem =>
           topKSumOn k
               (extendSample (fun i => value (sample i)) (value newItem)) -
-            topKSumOn k (fun i => value (sample i))) := by
-  exact
+            topKSumOn k (fun i => value (sample i))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_iid_option_marginal_identity
       itemLaw k value
 
@@ -1206,8 +1145,7 @@ theorem theorem1_i_finite_discrete_iid_option_upper_marginal_failure_tail
       (k : ℝ) * xTop *
         finiteDiscreteTopMassFailureTail k (Fintype.card ι)
           (EconCSLib.pmfProb itemLaw (fun ω => value ω = xTop))
-          (EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop)) := by
-  exact
+          (EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop)) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_iid_option_upper_marginal_failure_tail
       itemLaw k value hxTop_nonneg hvalue_le
 
@@ -1237,8 +1175,7 @@ theorem theorem1_i_finite_discrete_iid_option_lower_marginal_promoting_event
           (EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop))
       ≤
         iidTopKExpectedOn (Option ι) Ω itemLaw k value -
-          iidTopKExpectedOn ι Ω itemLaw k value := by
-  exact
+          iidTopKExpectedOn ι Ω itemLaw k value :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_iid_option_lower_marginal_promoting_event
       itemLaw k value hk_pos hxTop_nonneg hxSecond_nonneg hsecond_le_top
       hsecond_lt_top hvalue_split
@@ -1260,8 +1197,7 @@ theorem theorem1_i_finite_discrete_scalar_upper_marginal_failure_tail
       (k : ℝ) * xTop *
         finiteDiscreteTopMassFailureTail k a
           (EconCSLib.pmfProb itemLaw (fun ω => value ω = xTop))
-          (EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop)) := by
-  exact
+          (EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop)) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_scalar_upper_marginal_failure_tail
       itemLaw k a value hxTop_nonneg hvalue_le
 
@@ -1290,8 +1226,7 @@ theorem theorem1_i_finite_discrete_scalar_lower_marginal_promoting_event
           (EconCSLib.pmfProb itemLaw (fun ω => ¬ value ω = xTop))
       ≤
         finiteDiscreteIidTopKExpected Ω itemLaw k value (a + 1) -
-          finiteDiscreteIidTopKExpected Ω itemLaw k value a := by
-  exact
+          finiteDiscreteIidTopKExpected Ω itemLaw k value a :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_scalar_lower_marginal_promoting_event
       itemLaw k a value hk_pos hxTop_nonneg hxSecond_nonneg hsecond_le_top
       hsecond_lt_top hvalue_split
@@ -1309,8 +1244,7 @@ theorem theorem1_i_finite_discrete_scalar_lower_marginal_top_event_before_k
     (hxTop_nonneg : 0 ≤ xTop) :
     xTop * EconCSLib.pmfProb itemLaw (fun ω => value ω = xTop) ≤
       finiteDiscreteIidTopKExpected Ω itemLaw k value (a + 1) -
-        finiteDiscreteIidTopKExpected Ω itemLaw k value a := by
-  exact
+        finiteDiscreteIidTopKExpected Ω itemLaw k value a :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_scalar_lower_marginal_top_event_before_k
       itemLaw k a value ha_lt_k hxTop_nonneg
 
@@ -1368,8 +1302,7 @@ theorem
           forwardGain * finiteDiscreteTopMassPromotingEvent k qdst q rho ≤
             O.expectedTopSum k dst (qdst + 1) -
               O.expectedTopSum k dst qdst) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_unweighted_binomial_event_bounds
       O likelihood k seq q rho hk_pos hq_pos hq_le_one hrho_pos
       hrho_lt_one floor hk_le_floor_succ likelihoodLower likelihoodUpper
@@ -1387,8 +1320,7 @@ Theorem 1(i) common scalar top-`k` model generated by the paper's function
 -/
 noncomputable abbrev theorem1CommonTopKModel {T : ℕ}
     (h : ℕ → ℝ) (likelihood : ItemType T → ℝ) (k : ℕ) :
-    ConsumptionModel T :=
-  (TopKValueOracle.common T h).toConsumptionModel likelihood k
+    ConsumptionModel T := (TopKValueOracle.common T h).toConsumptionModel likelihood k
 
 /--
 Source Theorem 1(i), scalar `h(a)` binomial-event seam: the source-style
@@ -1440,8 +1372,7 @@ theorem
         floor < qdst →
           forwardGain * finiteDiscreteTopMassPromotingEvent k qdst q rho ≤
             h (qdst + 1) - h qdst) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_scalar_binomial_event_bounds
       h likelihood k seq q rho hk_pos hq_pos hq_le_one hrho_pos
       hrho_lt_one floor hk_le_floor_succ likelihoodLower likelihoodUpper
@@ -1509,8 +1440,7 @@ theorem
           smallForward ≤
             finiteDiscreteIidTopKExpected Ω itemLaw k value (qdst + 1) -
               finiteDiscreteIidTopKExpected Ω itemLaw k value qdst) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_iid_scalar_marginal_bounds
       itemLaw value likelihood k seq q rho hq_def hrho_def hk_pos hxTop_pos
       hxSecond_nonneg hsecond_le_top hsecond_lt_top hvalue_le hvalue_split
@@ -1568,8 +1498,7 @@ theorem
             (N : ℝ) ^ k * rho ^ (gap N) <
           (likelihoodLower * forwardGain) * q ^ k *
             (rho ^ (k - 1))⁻¹) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_iid_scalar_marginal_bounds_pred_floor
       itemLaw value likelihood k seq q rho hq_def hrho_def hk_pos hxTop_pos
       hxSecond_nonneg hsecond_le_top hsecond_lt_top hvalue_le hvalue_split
@@ -1622,8 +1551,7 @@ theorem
       Filter.Tendsto
         (fun N : ℕ => (N : ℝ) ^ k * rho ^ (gap N))
         Filter.atTop (nhds 0)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_iid_scalar_marginal_bounds_pred_floor_of_gap_decay
       itemLaw value likelihood k seq q rho hq_def hrho_def hk_pos hxTop_pos
       hxSecond_nonneg hsecond_le_top hsecond_lt_top hvalue_le hvalue_split
@@ -1665,8 +1593,7 @@ theorem
     (likelihoodUpper_pos : 0 < likelihoodUpper)
     (likelihoodLower_le : ∀ t, likelihoodLower ≤ likelihood t)
     (likelihood_le_upper : ∀ t, likelihood t ≤ likelihoodUpper) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_finite_discrete_sequence_homogeneity_of_iid_scalar_marginal_bounds_sqrt_gap
       itemLaw value likelihood k seq q rho hq_def hrho_def hk_pos hxTop_pos
       hxSecond_nonneg hsecond_le_top hsecond_lt_top hvalue_le hvalue_split
@@ -2209,8 +2136,7 @@ Two-point finite-discrete top-one model used as a fully formalized instance of
 source Theorem 1(i).
 -/
 noncomputable abbrev theorem1TwoPointTopOneModel {T : ℕ}
-    (likelihood : ItemType T → ℝ) (q : ℝ) : ConsumptionModel T :=
-  theorem1TwoPointBernoulliTopOneModel likelihood q
+    (likelihood : ItemType T → ℝ) (q : ℝ) : ConsumptionModel T := theorem1TwoPointBernoulliTopOneModel likelihood q
 
 /--
 Source Theorem 1(i), fully formalized two-point finite-discrete top-one instance:
@@ -2225,8 +2151,7 @@ theorem theorem1_i_two_point_bernoulli_top_one_sequence_uniform_homogeneity
     (seq :
       OptimalAllocationSequence
         (fun _ => theorem1TwoPointTopOneModel likelihood q)) :
-    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) := by
-  exact
+    seq.toAllocationSequence.ConvergesToProfile (uniformProfile T) :=
     PRPKG24AccuracyDiversity.paper_theorem1_i_two_point_bernoulli_top_one_sequence_uniform_homogeneity
       likelihood q hq_pos hq_lt_one hlike_pos seq
 
@@ -2268,8 +2193,7 @@ theorem theorem1_order_statistic_scaled_marginal_sandwich
         (1 - epsilon) * (scale q * weight t) ≤
             O.expectedTopSum k t (q + 1) - O.expectedTopSum k t q ∧
           O.expectedTopSum k t (q + 1) - O.expectedTopSum k t q ≤
-            (1 + epsilon) * (scale q * weight t) := by
-  exact
+            (1 + epsilon) * (scale q * weight t) :=
     PRPKG24AccuracyDiversity.paper_theorem1_order_statistic_scaled_marginal_sandwich
       O k scale weight C hepsilon
 
@@ -2286,8 +2210,7 @@ theorem theorem1_order_statistic_same_count_marginal_lt_of_weight_gap
     (hgap : (1 + epsilon) * weight src < (1 - epsilon) * weight dst) :
     ∀ᶠ q in Filter.atTop,
       O.expectedTopSum k src (q + 1) - O.expectedTopSum k src q <
-        O.expectedTopSum k dst (q + 1) - O.expectedTopSum k dst q := by
-  exact
+        O.expectedTopSum k dst (q + 1) - O.expectedTopSum k dst q :=
     PRPKG24AccuracyDiversity.paper_theorem1_order_statistic_same_count_marginal_lt_of_weight_gap
       O k scale weight C hepsilon hgap
 
@@ -2305,8 +2228,7 @@ theorem theorem1_ii_bounded_sequence_homogeneity_of_certificate
       TopKAsymptoticHomogeneityCertificate O likelihood k
         (gammaLikelihoodProfile likelihood (beta / (beta + 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (beta / (beta + 1))) := by
-  exact
+      (gammaLikelihoodProfile likelihood (beta / (beta + 1))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_ii_bounded_sequence_homogeneity_of_certificate
       O likelihood k beta hbeta_pos seq hcert
 
@@ -2326,8 +2248,7 @@ theorem theorem1_ii_bounded_sequence_homogeneity_of_sublinear_foc_certificate
         (fun t : ItemType T => likelihood t ^ (beta / (beta + 1)))
         (gammaLikelihoodProfile likelihood (beta / (beta + 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (beta / (beta + 1))) := by
-  exact
+      (gammaLikelihoodProfile likelihood (beta / (beta + 1))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_ii_bounded_sequence_homogeneity_of_sublinear_foc_certificate
       O likelihood k beta hbeta_pos seq hcert
 
@@ -2347,8 +2268,7 @@ theorem theorem1_ii_bounded_sequence_homogeneity_of_eventual_sublinear_foc_certi
         (fun t : ItemType T => likelihood t ^ (beta / (beta + 1)))
         (gammaLikelihoodProfile likelihood (beta / (beta + 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (beta / (beta + 1))) := by
-  exact
+      (gammaLikelihoodProfile likelihood (beta / (beta + 1))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_ii_bounded_sequence_homogeneity_of_eventual_sublinear_foc_certificate
       O likelihood k beta hbeta_pos seq hcert
 
@@ -2537,8 +2457,7 @@ Source Lemma D.2, exponential kernel limit after rescaling.
 theorem lemmaD2_bounded_one_sub_div_pow_tendsto_exp (z : ℝ) :
     Filter.Tendsto
       (fun a : ℕ => (1 - z / (a : ℝ)) ^ a)
-      Filter.atTop (nhds (Real.exp (-z))) :=
-  PRPKG24AccuracyDiversity.paper_lemmaD2_bounded_one_sub_div_pow_tendsto_exp z
+      Filter.atTop (nhds (Real.exp (-z))) := PRPKG24AccuracyDiversity.paper_lemmaD2_bounded_one_sub_div_pow_tendsto_exp z
 
 /--
 Source Lemma D.2, fixed-rank exponential kernel limit after rescaling.
@@ -4623,8 +4542,7 @@ theorem theorem1_ii_bounded_power_marginal_sequence_homogeneity
         (fun _ =>
           (boundedPowerMarginalOracle T beta).toConsumptionModel likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (beta / (beta + 1))) := by
-  exact
+      (gammaLikelihoodProfile likelihood (beta / (beta + 1))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_ii_bounded_power_marginal_sequence_homogeneity
       likelihood beta hbeta_pos hlike_pos seq
 
@@ -4647,8 +4565,7 @@ theorem theorem1_ii_bounded_forward_marginal_asymptotic_of_loss_ae_and_scaled_dr
         Filter.atTop (nhds (1 / beta))) :
     EconCSLib.Math.AsymptoticEquivalent
       (fun q => h (q + 1) - h q)
-      (fun q => (C / beta) * boundedPowerMarginalScale beta q) := by
-  exact
+      (fun q => (C / beta) * boundedPowerMarginalScale beta q) :=
     PRPKG24AccuracyDiversity.paper_theorem1_ii_bounded_forward_marginal_asymptotic_of_loss_ae_and_scaled_drop
       hbeta_pos hC_pos hloss hdrop
 
@@ -4758,8 +4675,7 @@ theorem theorem1_ii_bounded_power_marginal_sequence_formula
         Filter.atTop
         (nhds
           ((likelihood t) ^ (beta / (beta + 1)) /
-            ∑ i : ItemType T, (likelihood i) ^ (beta / (beta + 1)))) := by
-  exact
+            ∑ i : ItemType T, (likelihood i) ^ (beta / (beta + 1)))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_ii_bounded_power_marginal_sequence_formula
       likelihood beta hbeta_pos hlike_pos seq
 
@@ -4795,8 +4711,7 @@ theorem theorem1_ii_uniform_bounded_top_k_sequence_homogeneity_of_paper_bound
       OptimalAllocationSequence
         (fun N => uniformTopKConsumptionModel likelihood (kseq N))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / 2)) := by
-  exact
+      (gammaLikelihoodProfile likelihood (1 / 2)) :=
     PRPKG24AccuracyDiversity.paper_theorem1_ii_uniform_bounded_top_k_sequence_homogeneity_of_paper_bound
       likelihood kseq hlike_pos hkpos hbound seq
 
@@ -4822,8 +4737,7 @@ theorem theorem1_ii_uniform_bounded_top_k_sequence_formula_of_paper_bound
         Filter.atTop
         (nhds
           ((likelihood t) ^ (1 / 2 : ℝ) /
-            ∑ i : ItemType T, (likelihood i) ^ (1 / 2 : ℝ))) := by
-  exact
+            ∑ i : ItemType T, (likelihood i) ^ (1 / 2 : ℝ))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_ii_uniform_bounded_top_k_sequence_formula_of_paper_bound
       likelihood kseq hlike_pos hkpos hbound seq
 
@@ -4846,8 +4760,7 @@ theorem theorem1_ii_uniform_order_statistic_sequence_homogeneity_of_paper_bound
           (TopKValueOracle.ofOrderStatisticMean T uniformAscendingOrderStatisticMean).toConsumptionModel
             likelihood (kseq N))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (1 / 2)) := by
-  exact
+      (gammaLikelihoodProfile likelihood (1 / 2)) :=
     PRPKG24AccuracyDiversity.paper_theorem1_ii_uniform_order_statistic_sequence_homogeneity_of_paper_bound
       likelihood kseq hlike_pos hkpos hbound seq
 
@@ -4875,8 +4788,7 @@ theorem theorem1_ii_uniform_order_statistic_sequence_formula_of_paper_bound
         Filter.atTop
         (nhds
           ((likelihood t) ^ (1 / 2 : ℝ) /
-            ∑ i : ItemType T, (likelihood i) ^ (1 / 2 : ℝ))) := by
-  exact
+            ∑ i : ItemType T, (likelihood i) ^ (1 / 2 : ℝ))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_ii_uniform_order_statistic_sequence_formula_of_paper_bound
       likelihood kseq hlike_pos hkpos hbound seq
 
@@ -4895,8 +4807,7 @@ theorem theorem1_iii_exponential_sequence_homogeneity_of_certificate
       TopKAsymptoticHomogeneityCertificate O likelihood k
         (gammaLikelihoodProfile likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood 1) := by
-  exact
+      (gammaLikelihoodProfile likelihood 1) :=
     PRPKG24AccuracyDiversity.paper_theorem1_iii_exponential_sequence_homogeneity_of_certificate
       O likelihood k lambda hlambda_pos seq hcert
 
@@ -4917,8 +4828,7 @@ theorem theorem1_iii_exponential_sequence_homogeneity_of_sublinear_foc_certifica
         (fun t : ItemType T => likelihood t ^ (1 : ℝ))
         (gammaLikelihoodProfile likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood 1) := by
-  exact
+      (gammaLikelihoodProfile likelihood 1) :=
     PRPKG24AccuracyDiversity.paper_theorem1_iii_exponential_sequence_homogeneity_of_sublinear_foc_certificate
       O likelihood k lambda hlambda_pos seq hcert
 
@@ -4939,8 +4849,7 @@ theorem theorem1_iii_exponential_sequence_homogeneity_of_eventual_sublinear_foc_
         (fun t : ItemType T => likelihood t ^ (1 : ℝ))
         (gammaLikelihoodProfile likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood 1) := by
-  exact
+      (gammaLikelihoodProfile likelihood 1) :=
     PRPKG24AccuracyDiversity.paper_theorem1_iii_exponential_sequence_homogeneity_of_eventual_sublinear_foc_certificate
       O likelihood k lambda hlambda_pos seq hcert
 
@@ -4958,8 +4867,7 @@ theorem theorem1_iii_exponential_top_one_harmonic_sequence_homogeneity
           (exponentialTopOneHarmonicOracle T lambda).toConsumptionModel
             likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood 1) := by
-  exact
+      (gammaLikelihoodProfile likelihood 1) :=
     PRPKG24AccuracyDiversity.paper_theorem1_iii_exponential_top_one_harmonic_sequence_homogeneity
       likelihood lambda hlambda_pos hlike_pos seq
 
@@ -5533,8 +5441,7 @@ theorem theorem1_iii_exponential_top_k_order_statistic_sequence_homogeneity
           (exponentialTopKOrderStatisticOracle T lambda k).toConsumptionModel
             likelihood k)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood 1) := by
-  exact
+      (gammaLikelihoodProfile likelihood 1) :=
     PRPKG24AccuracyDiversity.paper_theorem1_iii_exponential_top_k_order_statistic_sequence_homogeneity
       likelihood lambda k hlambda_pos hk_pos hlike_pos seq
 
@@ -5802,8 +5709,8 @@ theorem theorem1_iii_exponential_top_one_harmonic_sequence_formula
           ((likelihood t) ^ (1 : ℝ) /
             ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ))) := by
   have hnorm_pos :
-      0 < ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ) := by
-    exact Finset.sum_pos
+      0 < ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ) :=
+    Finset.sum_pos
       (fun i _ => by simpa [Real.rpow_one] using hlike_pos i)
       Finset.univ_nonempty
   have hconv :=
@@ -5837,8 +5744,7 @@ theorem theorem1_iii_exponential_top_k_order_statistic_sequence_formula
         Filter.atTop
         (nhds
           ((likelihood t) ^ (1 : ℝ) /
-            ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ))) := by
-  exact
+            ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_iii_exponential_top_k_order_statistic_sequence_formula
       likelihood lambda k hlambda_pos hk_pos hlike_pos seq
 
@@ -5889,8 +5795,7 @@ theorem theorem1_iv_pareto_sequence_homogeneity_of_certificate
       TopKAsymptoticHomogeneityCertificate O likelihood k
         (gammaLikelihoodProfile likelihood (alpha / (alpha - 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (alpha / (alpha - 1))) := by
-  exact
+      (gammaLikelihoodProfile likelihood (alpha / (alpha - 1))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_iv_pareto_sequence_homogeneity_of_certificate
       O likelihood k alpha halpha_gt_one seq hcert
 
@@ -5910,8 +5815,7 @@ theorem theorem1_iv_pareto_sequence_homogeneity_of_sublinear_foc_certificate
         (fun t : ItemType T => likelihood t ^ (alpha / (alpha - 1)))
         (gammaLikelihoodProfile likelihood (alpha / (alpha - 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (alpha / (alpha - 1))) := by
-  exact
+      (gammaLikelihoodProfile likelihood (alpha / (alpha - 1))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_iv_pareto_sequence_homogeneity_of_sublinear_foc_certificate
       O likelihood k alpha halpha_gt_one seq hcert
 
@@ -5931,8 +5835,7 @@ theorem theorem1_iv_pareto_sequence_homogeneity_of_eventual_sublinear_foc_certif
         (fun t : ItemType T => likelihood t ^ (alpha / (alpha - 1)))
         (gammaLikelihoodProfile likelihood (alpha / (alpha - 1)))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (alpha / (alpha - 1))) := by
-  exact
+      (gammaLikelihoodProfile likelihood (alpha / (alpha - 1))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_iv_pareto_sequence_homogeneity_of_eventual_sublinear_foc_certificate
       O likelihood k alpha halpha_gt_one seq hcert
 
@@ -5950,8 +5853,7 @@ theorem theorem1_iv_pareto_power_marginal_sequence_homogeneity
           (paretoPowerMarginalOracle T alpha).toConsumptionModel
             likelihood 1)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood (alpha / (alpha - 1))) := by
-  exact
+      (gammaLikelihoodProfile likelihood (alpha / (alpha - 1))) :=
     PRPKG24AccuracyDiversity.paper_theorem1_iv_pareto_power_marginal_sequence_homogeneity
       likelihood alpha halpha_gt_one hlike_pos seq
 
@@ -6008,8 +5910,8 @@ theorem theorem1_iv_pareto_power_marginal_sequence_formula
               (likelihood i) ^ (alpha / (alpha - 1)))) := by
   have hnorm_pos :
       0 < ∑ i : ItemType T,
-        (likelihood i) ^ (alpha / (alpha - 1)) := by
-    exact Finset.sum_pos
+        (likelihood i) ^ (alpha / (alpha - 1)) :=
+    Finset.sum_pos
       (fun i _ => Real.rpow_pos_of_pos
         (hlike_pos i) (alpha / (alpha - 1)))
       Finset.univ_nonempty
@@ -6273,8 +6175,7 @@ bounded branch's `beta/(beta+1)` exponent.
 theorem corollary1_bounded_beta_for_gamma_between_zero_and_one
     {gamma : ℝ} (hgamma_pos : 0 < gamma) (hgamma_lt_one : gamma < 1) :
     0 < gamma / (1 - gamma) ∧
-      (gamma / (1 - gamma)) / (gamma / (1 - gamma) + 1) = gamma := by
-  exact
+      (gamma / (1 - gamma)) / (gamma / (1 - gamma) + 1) = gamma :=
     PRPKG24AccuracyDiversity.paper_corollary1_bounded_beta_for_gamma_between_zero_and_one
       hgamma_pos hgamma_lt_one
 
@@ -6285,8 +6186,7 @@ Pareto branch's `alpha/(alpha-1)` exponent.
 theorem corollary1_pareto_alpha_for_gamma_gt_one
     {gamma : ℝ} (hgamma_gt_one : 1 < gamma) :
     1 < gamma / (gamma - 1) ∧
-      (gamma / (gamma - 1)) / (gamma / (gamma - 1) - 1) = gamma := by
-  exact
+      (gamma / (gamma - 1)) / (gamma / (gamma - 1) - 1) = gamma :=
     PRPKG24AccuracyDiversity.paper_corollary1_pareto_alpha_for_gamma_gt_one
       hgamma_gt_one
 
@@ -6298,8 +6198,7 @@ theorem corollary1_gamma_parameter_cases
     gamma = 0 ∨
       (∃ beta : ℝ, 0 < beta ∧ beta / (beta + 1) = gamma) ∨
       gamma = 1 ∨
-      (∃ alpha : ℝ, 1 < alpha ∧ alpha / (alpha - 1) = gamma) := by
-  exact
+      (∃ alpha : ℝ, 1 < alpha ∧ alpha / (alpha - 1) = gamma) :=
     PRPKG24AccuracyDiversity.paper_corollary1_gamma_parameter_cases
       gamma hgamma_nonneg
 
@@ -6323,8 +6222,7 @@ theorem corollary1_bounded_power_marginal_sequence_formula
         Filter.atTop
         (nhds
           ((likelihood t) ^ gamma /
-            ∑ i : ItemType T, (likelihood i) ^ gamma)) := by
-  exact
+            ∑ i : ItemType T, (likelihood i) ^ gamma)) :=
     PRPKG24AccuracyDiversity.paper_corollary1_bounded_power_marginal_sequence_formula
       likelihood hgamma_pos hgamma_lt_one hlike_pos seq
 
@@ -6348,8 +6246,7 @@ theorem corollary1_pareto_power_marginal_sequence_formula
         Filter.atTop
         (nhds
           ((likelihood t) ^ gamma /
-            ∑ i : ItemType T, (likelihood i) ^ gamma)) := by
-  exact
+            ∑ i : ItemType T, (likelihood i) ^ gamma)) :=
     PRPKG24AccuracyDiversity.paper_corollary1_pareto_power_marginal_sequence_formula
       likelihood hgamma_gt_one hlike_pos seq
 
@@ -6374,8 +6271,7 @@ theorem corollary1_exponential_top_k_order_statistic_gamma_one_sequence_formula
         Filter.atTop
         (nhds
           ((likelihood t) ^ (1 : ℝ) /
-            ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ))) := by
-  exact
+            ∑ i : ItemType T, (likelihood i) ^ (1 : ℝ))) :=
     PRPKG24AccuracyDiversity.paper_corollary1_exponential_top_k_order_statistic_gamma_one_sequence_formula
       likelihood lambda k hlambda_pos hk_pos hlike_pos seq
 
@@ -6390,8 +6286,7 @@ theorem corollary1_any_gamma_attainable_of_certificate
       TopKAsymptoticHomogeneityCertificate O likelihood k
         (gammaLikelihoodProfile likelihood gamma)) :
     seq.toAllocationSequence.ConvergesToProfile
-      (gammaLikelihoodProfile likelihood gamma) := by
-  exact
+      (gammaLikelihoodProfile likelihood gamma) :=
     PRPKG24AccuracyDiversity.paper_corollary1_any_gamma_attainable_of_certificate
       O likelihood k gamma _hgamma_nonneg seq hcert
 
@@ -6403,8 +6298,7 @@ certificate has supplied the uniform value and universal lower bound.
 theorem proposition4_continuous_sphere_uniform_minimizes
     {Profile : Type*}
     (C : Proposition4ContinuousSphereCertificate Profile) :
-    ∀ alpha : Profile, C.gamma C.uniformProfile ≤ C.gamma alpha := by
-  exact
+    ∀ alpha : Profile, C.gamma C.uniformProfile ≤ C.gamma alpha :=
     PRPKG24AccuracyDiversity.paper_proposition4_continuous_sphere_uniform_minimizes
       C
 
@@ -6418,8 +6312,7 @@ theorem proposition2_printed_relaxed_optimizer_total_mismatch
     {T : ℕ} [NeZero T] (likelihood : ItemType T → ℝ) (N : ℕ)
     (hnorm : (∑ i : ItemType T, Real.sqrt (likelihood i)) ≠ 0) :
     ∑ t : ItemType T, uniformSqrtPrintedOptTarget likelihood N t =
-      (N : ℝ) - T := by
-  exact
+      (N : ℝ) - T :=
     PRPKG24AccuracyDiversity.paper_proposition_2_printed_relaxed_optimizer_total_mismatch
       likelihood N hnorm
 
@@ -6431,8 +6324,7 @@ theorem proposition2_corrected_relaxed_optimizer_total
     {T : ℕ} [NeZero T] (likelihood : ItemType T → ℝ) (N : ℕ)
     (hnorm : (∑ i : ItemType T, Real.sqrt (likelihood i)) ≠ 0) :
     ∑ t : ItemType T, uniformSqrtRealOptTarget likelihood N t =
-      (N : ℝ) := by
-  exact
+      (N : ℝ) :=
     PRPKG24AccuracyDiversity.paper_proposition_2_corrected_relaxed_optimizer_total
       likelihood N hnorm
 
@@ -6454,8 +6346,7 @@ theorem proposition2_uniform_top_k_sequence_homogeneity_of_paper_bound
       OptimalAllocationSequence
         (fun N => uniformTopKConsumptionModel likelihood (kseq N))) :
     seq.toAllocationSequence.ConvergesToProfile
-      (proposition2SqrtProfile likelihood) := by
-  exact
+      (proposition2SqrtProfile likelihood) :=
     PRPKG24AccuracyDiversity.paper_proposition_2_uniform_top_k_sequence_homogeneity_of_paper_bound
       likelihood kseq hlike_pos hkpos hbound seq
 
@@ -6476,8 +6367,7 @@ theorem proposition2_uniform_top_k_sharp_finite_of_count_closeness
           (N : ℝ) * proposition2SqrtShare likelihood t| ≤
           (Fintype.card (ItemType T) : ℝ) + 1) :
     (proposition2SqrtProfile likelihood).Approx a
-      (((Fintype.card (ItemType T) : ℝ) + 1) / (N : ℝ)) := by
-  exact
+      (((Fintype.card (ItemType T) : ℝ) + 1) / (N : ℝ)) :=
     PRPKG24AccuracyDiversity.paper_proposition_2_uniform_top_k_sharp_finite_of_count_closeness
       likelihood N k hNpos a hopt hnorm hclose
 
@@ -6498,8 +6388,7 @@ theorem proposition2_uniform_top_k_sharp_finite_of_printed_optimizer_closeness
         |(a.count t : ℝ) - uniformSqrtPrintedOptTarget likelihood N t| ≤
           (Fintype.card (ItemType T) : ℝ)) :
     (proposition2SqrtProfile likelihood).Approx a
-      (((Fintype.card (ItemType T) : ℝ) + 1) / (N : ℝ)) := by
-  exact
+      (((Fintype.card (ItemType T) : ℝ) + 1) / (N : ℝ)) :=
     PRPKG24AccuracyDiversity.paper_proposition_2_uniform_top_k_sharp_finite_of_printed_optimizer_closeness
       likelihood N k hNpos a hopt hnorm hclose_printed
 
@@ -6514,8 +6403,7 @@ theorem corollary3_iid_bernoulli_asymptotic_uniform_homogeneity
     (hlike_pos : ∀ t, 0 < B.likelihood t)
     (hprob_eq : ∀ i j : ItemType T, B.successProb i = B.successProb j) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => B.toConsumptionModel) (uniformProfile T) := by
-  exact
+      (fun _ => B.toConsumptionModel) (uniformProfile T) :=
     PRPKG24AccuracyDiversity.BernoulliSatisfactionModel.paper_corollary3_iid_bernoulli_asymptotic_uniform_homogeneity
       B hprob_pos hprob_lt_one hlike_pos hprob_eq
 
@@ -6529,8 +6417,7 @@ theorem theorem3_varying_success_probability_log_share
     (hprob_lt_one : ∀ t, B.successProb t < 1)
     (hlike_pos : ∀ t, 0 < B.likelihood t) :
     ConsumptionModel.AsymptoticHomogeneity
-      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) := by
-  exact
+      (fun _ => B.toConsumptionModel) (theorem3LogShareProfile B) :=
     PRPKG24AccuracyDiversity.paper_theorem3_varying_success_probability_log_share
       B hprob_pos hprob_lt_one hlike_pos
 
@@ -6545,8 +6432,7 @@ theorem theorem3_all_consumed_argmax_optimum
       ∀ t, B.likelihood t * B.successProb t ≤
         B.likelihood best * B.successProb best) :
     (bernoulliAllConsumedModel B).IsOptimalAtTotal
-      N (allOnTypeAllocation N best) := by
-  exact
+      N (allOnTypeAllocation N best) :=
     PRPKG24AccuracyDiversity.paper_theorem3_all_consumed_argmax_optimum
       B N best hbest
 

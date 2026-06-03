@@ -13,8 +13,7 @@ For a rate-`lambda` exponential distribution, the expected maximum of `q`
 i.i.d. draws is `harmonicReal q / lambda`; this file formalizes the exact
 top-one oracle used by the exponential branch of Theorem 1.
 -/
-noncomputable def harmonicReal (q : ℕ) : ℝ :=
-  EconCSLib.Probability.Exponential.harmonicReal q
+noncomputable def harmonicReal (q : ℕ) : ℝ := EconCSLib.Probability.Exponential.harmonicReal q
 
 theorem harmonicReal_zero : harmonicReal 0 = 0 := by
   simpa [harmonicReal] using
@@ -35,8 +34,7 @@ Analytic survival function for the maximum of `q` rate-`lambda` exponential
 draws, after substituting the exponential CDF on the nonnegative line.
 -/
 noncomputable def exponentialMaxSurvival
-    (lambda : ℝ) (q : ℕ) (x : ℝ) : ℝ :=
-  EconCSLib.Probability.Exponential.maxSurvivalOfRate lambda q x
+    (lambda : ℝ) (q : ℕ) (x : ℝ) : ℝ := EconCSLib.Probability.Exponential.maxSurvivalOfRate lambda q x
 
 theorem exponentialMaxSurvival_eq_formula
     (lambda : ℝ) (q : ℕ) (x : ℝ) :
@@ -257,8 +255,7 @@ theorem exponentialTopOneHarmonic_singleDraw_survival_integral
 
 /-- Common top-one oracle with the exact exponential maximum formula. -/
 noncomputable def exponentialTopOneHarmonicOracle (T : ℕ) (lambda : ℝ) :
-    TopKValueOracle T :=
-  TopKValueOracle.common T (exponentialTopOneHarmonicValue lambda)
+    TopKValueOracle T := TopKValueOracle.common T (exponentialTopOneHarmonicValue lambda)
 
 theorem exponentialTopOneHarmonic_forward_marginal
     (lambda : ℝ) (q : ℕ) :
@@ -332,8 +329,8 @@ theorem exponentialTopOneHarmonicError_nonneg {T : ℕ}
   by_cases hN : N = 0
   · simp [exponentialTopOneHarmonicError, hN]
   · have hS_nonneg :
-        0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (1 : ℝ)) := by
-      exact Finset.sum_nonneg
+        0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (1 : ℝ)) :=
+      Finset.sum_nonneg
         (fun t _ => div_nonneg zero_le_one
           (le_of_lt (by
             simpa [Real.rpow_one] using hlike_pos t)))
@@ -352,8 +349,8 @@ theorem exponentialTopOneHarmonicError_tends_to_zero {T : ℕ}
       (exponentialTopOneHarmonicError likelihood) := by
   let S : ℝ := (∑ t : ItemType T, 1 / (likelihood t ^ (1 : ℝ))) + 1
   have hsum_nonneg :
-      0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (1 : ℝ)) := by
-    exact Finset.sum_nonneg
+      0 ≤ ∑ t : ItemType T, 1 / (likelihood t ^ (1 : ℝ)) :=
+    Finset.sum_nonneg
       (fun t _ => div_nonneg zero_le_one
         (le_of_lt (by
           simpa [Real.rpow_one] using hlike_pos t)))
@@ -384,8 +381,8 @@ noncomputable def exponentialTopOneHarmonicSublinearFOCCertificate
   targetShare_eq := by
     intro t
     have hnorm_pos :
-        0 < ∑ i : ItemType T, likelihood i ^ (1 : ℝ) := by
-      exact Finset.sum_pos
+        0 < ∑ i : ItemType T, likelihood i ^ (1 : ℝ) :=
+      Finset.sum_pos
         (fun i _ => by simpa [Real.rpow_one] using hlike_pos i)
         Finset.univ_nonempty
     exact gammaLikelihoodProfile_targetShare_eq likelihood 1 t
@@ -405,8 +402,8 @@ noncomputable def exponentialTopOneHarmonicSublinearFOCCertificate
     have hS_pos : 0 < S := by
       dsimp [S]
       have hsum_nonneg :
-          0 ≤ ∑ t : ItemType T, 1 / weight t := by
-        exact Finset.sum_nonneg
+          0 ≤ ∑ t : ItemType T, 1 / weight t :=
+        Finset.sum_nonneg
           (fun t _ => div_nonneg zero_le_one (le_of_lt (hweight_pos t)))
       linarith
     have hN_ne : N ≠ 0 := Nat.ne_of_gt hN
@@ -432,8 +429,8 @@ noncomputable def exponentialTopOneHarmonicSublinearFOCCertificate
       simp at hsrc_div_pos
     have hinv_dst_lt_S : 1 / weight dst < S := by
       have hinv_le_sum :
-          1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t := by
-        exact Finset.single_le_sum
+          1 / weight dst ≤ ∑ t : ItemType T, 1 / weight t :=
+        Finset.single_le_sum
           (fun t _ => div_nonneg zero_le_one (le_of_lt (hweight_pos t)))
           (Finset.mem_univ dst)
       dsimp [S]
@@ -647,8 +644,7 @@ theorem exponentialTopKOrderStatisticValue_eq_tail_harmonic_sum
 
 theorem exponentialTopKOrderStatistic_min_ratio_nonneg
     (k q : ℕ) :
-    0 ≤ (((min k (q + 1) : ℕ) : ℝ) / (((q + 1 : ℕ) : ℝ))) :=
-  div_nonneg (Nat.cast_nonneg _) (by positivity)
+    0 ≤ (((min k (q + 1) : ℕ) : ℝ) / (((q + 1 : ℕ) : ℝ))) := div_nonneg (Nat.cast_nonneg _) (by positivity)
 
 theorem exponentialTopKOrderStatistic_min_ratio_antitone_succ
     (k q : ℕ) :
@@ -851,8 +847,8 @@ theorem exponentialTopKOrderStatisticValue_sub_log_tendsto
           Filter.atTop
           (nhds
             (c * (1 - harmonicReal k) +
-              c * Real.eulerMascheroniConstant)) := by
-      exact tendsto_const_nhds.add (hbase.const_mul c)
+              c * Real.eulerMascheroniConstant)) :=
+      tendsto_const_nhds.add (hbase.const_mul c)
     have htarget :
         Filter.Tendsto
           (fun q : ℕ =>
@@ -910,8 +906,7 @@ theorem exponentialTopKOrderStatistic_min_ratio_le
 
 /-- Common top-`k` oracle with the exact exponential order-statistic marginals. -/
 noncomputable def exponentialTopKOrderStatisticOracle
-    (T : ℕ) (lambda : ℝ) (k : ℕ) : TopKValueOracle T :=
-  TopKValueOracle.common T (exponentialTopKOrderStatisticValue lambda k)
+    (T : ℕ) (lambda : ℝ) (k : ℕ) : TopKValueOracle T := TopKValueOracle.common T (exponentialTopKOrderStatisticValue lambda k)
 
 theorem exponentialTopKOrderStatisticOracle_has_nonnegative_marginals
     (T : ℕ) (lambda : ℝ) (k : ℕ) (hlambda_pos : 0 < lambda) :
@@ -963,13 +958,11 @@ This is the measure-facing random variable whose expectation should eventually
 be connected to `exponentialTopKOrderStatisticValue`.
 -/
 noncomputable def exponentialFiniteSampleTopKSum {q : ℕ}
-    (k : ℕ) (sample : Fin q → ℝ) : ℝ :=
-  topKSumOn k sample
+    (k : ℕ) (sample : Fin q → ℝ) : ℝ := topKSumOn k sample
 
 theorem exponentialFiniteSampleTopKSum_nonneg {q : ℕ}
     (k : ℕ) (sample : Fin q → ℝ) :
-    0 ≤ exponentialFiniteSampleTopKSum k sample :=
-  topKSumOn_nonneg k sample
+    0 ≤ exponentialFiniteSampleTopKSum k sample := topKSumOn_nonneg k sample
 
 theorem sample_le_finiteSampleMax {q : ℕ} [NeZero q]
     (sample : Fin q → ℝ) (i : Fin q) :
@@ -982,8 +975,8 @@ theorem exponentialFiniteSampleTopKSum_le_k_mul_finiteSampleMax
     (hmax_nonneg :
       0 ≤ EconCSLib.Probability.Exponential.finiteSampleMax sample) :
     exponentialFiniteSampleTopKSum k sample ≤
-      (k : ℝ) * EconCSLib.Probability.Exponential.finiteSampleMax sample := by
-  exact topKSumOn_le_card_mul_of_forall_le
+      (k : ℝ) * EconCSLib.Probability.Exponential.finiteSampleMax sample :=
+   topKSumOn_le_card_mul_of_forall_le
     k sample hmax_nonneg (sample_le_finiteSampleMax sample)
 
 theorem exponentialFiniteSampleTopKSum_one_eq_finiteSampleMax
@@ -1141,8 +1134,8 @@ theorem exponentialSuccessIndexSet_eq_pi
         (p := fun y : ℝ => x < y) sample s).1 hs i
     by_cases his : i ∈ s
     · simp [his, hiff.2 his]
-    · have hle : sample i ≤ x := by
-        exact le_of_not_gt (fun hgt => his (hiff.1 hgt))
+    · have hle : sample i ≤ x :=
+        le_of_not_gt (fun hgt => his (hiff.1 hgt))
       simp [his, hle]
   · intro hpi
     refine (successIndexSet_eq_iff
@@ -1246,8 +1239,8 @@ theorem exponentialSuccessCount_real_measurable
     {q : ℕ} (x : ℝ) :
     Measurable
       (fun sample : Fin q → ℝ =>
-        ((successIndexSet (fun y : ℝ => x < y) sample).card : ℝ)) := by
-  exact (measurable_of_countable (fun n : ℕ => (n : ℝ))).comp
+        ((successIndexSet (fun y : ℝ => x < y) sample).card : ℝ)) :=
+   (measurable_of_countable (fun n : ℕ => (n : ℝ))).comp
     (exponentialSuccessCount_measurable (q := q) x)
 
 theorem exponentialSuccessCount_min_real_measurable
@@ -1288,8 +1281,8 @@ theorem exponentialProductMeasure_successIndexSet_eq_real
           (p := fun y : ℝ => x < y) sample s).1 hs i
       by_cases his : i ∈ s
       · simp [his, hiff.2 his]
-      · have hle : sample i ≤ x := by
-          exact le_of_not_gt (fun hgt => his (hiff.1 hgt))
+      · have hle : sample i ≤ x :=
+          le_of_not_gt (fun hgt => his (hiff.1 hgt))
         simp [his, hle]
     · intro hpi
       refine (successIndexSet_eq_iff
@@ -1410,8 +1403,8 @@ theorem exponentialProductMeasure_successIndexSet_card_eq_real
         ∑ s ∈ exactSets,
           (M.iidProductMeasure q).real
             {sample : Fin q → ℝ |
-              successIndexSet (fun y : ℝ => x < y) sample = s} := by
-          exact MeasureTheory.measureReal_biUnion_finset hdisj hmeas
+              successIndexSet (fun y : ℝ => x < y) sample = s} :=
+          MeasureTheory.measureReal_biUnion_finset hdisj hmeas
     _ =
         ∑ s ∈ exactSets,
           (Real.exp (-(lambda * x))) ^ s.card *
@@ -1504,8 +1497,8 @@ theorem exponentialProductMeasure_successIndexSet_card_ge_real
         ∑ j ∈ exactCounts,
           (M.iidProductMeasure q).real
             {sample : Fin q → ℝ |
-              (successIndexSet (fun y : ℝ => x < y) sample).card = j} := by
-          exact MeasureTheory.measureReal_biUnion_finset hdisj hmeas
+              (successIndexSet (fun y : ℝ => x < y) sample).card = j} :=
+          MeasureTheory.measureReal_biUnion_finset hdisj hmeas
     _ =
       ∑ j ∈ exactCounts,
         (Nat.choose q j : ℝ) *
@@ -1575,8 +1568,8 @@ theorem exponentialProductMeasure_successCount_min_integral_eq_finite_sum
           ∫ sample,
             (countEvent j).indicator
               (fun _sample : Fin q → ℝ => ((min k j : ℕ) : ℝ)) sample
-            ∂μ := by
-          exact MeasureTheory.integral_finset_sum exactCounts
+            ∂μ :=
+          MeasureTheory.integral_finset_sum exactCounts
             (fun j _hj =>
               (MeasureTheory.integrable_const (((min k j : ℕ) : ℝ))).indicator
                 (by
@@ -1657,8 +1650,8 @@ theorem exponentialProductMeasure_successCount_min_integral_eq_tail_sum
           ∫ sample,
             (tailEvent r).indicator
               (fun _sample : Fin q → ℝ => (1 : ℝ)) sample
-          ∂μ := by
-          exact MeasureTheory.integral_finset_sum (Finset.Icc 1 k)
+          ∂μ :=
+          MeasureTheory.integral_finset_sum (Finset.Icc 1 k)
             (fun r _hr =>
               (MeasureTheory.integrable_const (1 : ℝ)).indicator
                 (by
@@ -1923,8 +1916,8 @@ theorem alternating_choose_div_add_eq_inv_mul_choose
           (((n + j + 1).choose (n + 1) : ℕ) : ℝ) *
               (((n + 1 : ℕ) : ℝ)) =
             (((n + j + 1 : ℕ) : ℝ)) *
-              (((n + j).choose n : ℕ) : ℝ) := by
-        exact hchoose_succ.symm
+              (((n + j).choose n : ℕ) : ℝ) :=
+        hchoose_succ.symm
       have hN_sub :
           (((n + j + 1 : ℕ) : ℝ)) - ((j : ℕ) : ℝ) =
             (((n + 1 : ℕ) : ℝ)) := by
@@ -2182,8 +2175,8 @@ theorem successCount_integrable_fintype
   have hsum_int :
       MeasureTheory.Integrable
         (fun x : ℝ => ∑ i : ι, if x < sample i then (1 : ℝ) else 0)
-        (MeasureTheory.volume.restrict (Set.Ioi (0 : ℝ))) := by
-    exact MeasureTheory.integrable_finset_sum
+        (MeasureTheory.volume.restrict (Set.Ioi (0 : ℝ))) :=
+    MeasureTheory.integrable_finset_sum
       (μ := MeasureTheory.volume.restrict (Set.Ioi (0 : ℝ)))
       (Finset.univ : Finset ι)
       (fun i _hi => thresholdIndicator_integrable_Ioi (sample i))
@@ -2227,8 +2220,8 @@ theorem successCount_min_integrable_fintype
         (fun x : ℝ =>
           ((min k
             (successIndexSet (fun y : ℝ => x < y) sample).card : ℕ) : ℝ))
-        (MeasureTheory.volume.restrict (Set.Ioi (0 : ℝ))) := by
-    exact (successCount_min_real_measurable_fintype
+        (MeasureTheory.volume.restrict (Set.Ioi (0 : ℝ))) :=
+    (successCount_min_real_measurable_fintype
       (k := k) (sample := sample)).aestronglyMeasurable
   exact hcount_int.mono_nonneg hmin_aestrong
     (Filter.Eventually.of_forall (fun x => by
@@ -2265,8 +2258,8 @@ theorem successCount_min_real_measurable_prod
       intro i _hi
       have hset :
           MeasurableSet
-            {z : (Fin q → ℝ) × ℝ | z.2 < z.1 i} := by
-        exact measurableSet_lt measurable_snd
+            {z : (Fin q → ℝ) × ℝ | z.2 < z.1 i} :=
+        measurableSet_lt measurable_snd
           ((measurable_pi_apply (X := fun _ : Fin q => ℝ) i).comp
             measurable_fst)
       have hindicator :
@@ -2321,8 +2314,8 @@ theorem successCount_integral_eq_sum_fintype
     _ =
         ∑ i : ι,
           ∫ x in Set.Ioi (0 : ℝ),
-            (if x < sample i then (1 : ℝ) else 0) := by
-          exact MeasureTheory.integral_finset_sum
+            (if x < sample i then (1 : ℝ) else 0) :=
+          MeasureTheory.integral_finset_sum
             (μ := MeasureTheory.volume.restrict (Set.Ioi (0 : ℝ)))
             (Finset.univ : Finset ι) h_integrable
     _ = ∑ i : ι, sample i := by
@@ -2378,7 +2371,8 @@ theorem successCount_subtype_real_le_min_successCount
       (fun y : ℝ => x < y)
       (fun i : {i : Fin q // i ∈ s} => sample i)).card : ℝ) ≤
         ((min k
-          (successIndexSet (fun y : ℝ => x < y) sample).card : ℕ) : ℝ) := by
+          (successIndexSet (fun y : ℝ => x < y) sample).card : ℕ) : ℝ) :=
+  by
   exact_mod_cast
     successCount_subtype_card_le_min_successCount
       k sample s hs_card x
@@ -2734,8 +2728,8 @@ theorem exponentialFiniteSampleTopKSum_eq_integral_min_successCount
     exponentialFiniteSampleTopKSum k sample =
       ∫ x in Set.Ioi (0 : ℝ),
         ((min k
-          (successIndexSet (fun y : ℝ => x < y) sample).card : ℕ) : ℝ) := by
-  exact le_antisymm
+          (successIndexSet (fun y : ℝ => x < y) sample).card : ℕ) : ℝ) :=
+   le_antisymm
     (exponentialFiniteSampleTopKSum_le_integral_min_successCount
       k sample h_nonneg)
     (integral_min_successCount_le_exponentialFiniteSampleTopKSum
@@ -2786,8 +2780,8 @@ theorem exponentialFiniteSampleTopKSum_integrable
     simpa [maxFun] using
       exponentialFiniteSampleTopKSum_le_k_mul_finiteSampleMax
         (q := q) k sample hmax_nonneg
-  have hbound_nonneg : 0 ≤ (k : ℝ) * maxFun sample := by
-    exact mul_nonneg (Nat.cast_nonneg k) (by simpa [maxFun] using hmax_nonneg)
+  have hbound_nonneg : 0 ≤ (k : ℝ) * maxFun sample :=
+    mul_nonneg (Nat.cast_nonneg k) (by simpa [maxFun] using hmax_nonneg)
   simpa [Real.norm_eq_abs, abs_of_nonneg htop_nonneg,
     abs_of_nonneg hbound_nonneg] using hbound
 
@@ -2839,16 +2833,16 @@ theorem thresholdMinSuccessCount_prod_integrable
             ((min k
               (successIndexSet (fun y : ℝ => x < y) sample).card : ℕ) : ℝ) := by
             rfl
-      _ = exponentialFiniteSampleTopKSum k sample := by
-            exact (exponentialFiniteSampleTopKSum_eq_integral_min_successCount
+      _ = exponentialFiniteSampleTopKSum k sample :=
+            (exponentialFiniteSampleTopKSum_eq_integral_min_successCount
               k sample (fun i => h_nonneg i)).symm
   have hinner_int :
       MeasureTheory.Integrable
-        (fun sample : Fin q → ℝ => ∫ x, ‖f (sample, x)‖ ∂ν) μ := by
-    exact (exponentialFiniteSampleTopKSum_integrable M k).congr hinner_eq.symm
+        (fun sample : Fin q → ℝ => ∫ x, ‖f (sample, x)‖ ∂ν) μ :=
+    (exponentialFiniteSampleTopKSum_integrable M k).congr hinner_eq.symm
   have hf_int :
-      MeasureTheory.Integrable f (μ.prod ν) := by
-    exact (MeasureTheory.integrable_prod_iff hf_meas.aestronglyMeasurable).2
+      MeasureTheory.Integrable f (μ.prod ν) :=
+    (MeasureTheory.integrable_prod_iff hf_meas.aestronglyMeasurable).2
       ⟨hsections, hinner_int⟩
   simpa [M, μ, ν, f] using hf_int
 
@@ -2918,16 +2912,16 @@ theorem exponentialFiniteSampleTopKSum_integral_eq_tail_binomial_integral
           (∫ x in Set.Ioi (0 : ℝ),
             ((min k
               (successIndexSet (fun y : ℝ => x < y) sample).card : ℕ) : ℝ))
-          ∂(exponentialDistributionModel lambda hlambda_pos).iidProductMeasure q := by
-          exact exponentialFiniteSampleTopKSum_integral_eq_thresholdLayerCakeIntegral
+          ∂(exponentialDistributionModel lambda hlambda_pos).iidProductMeasure q :=
+          exponentialFiniteSampleTopKSum_integral_eq_thresholdLayerCakeIntegral
             lambda hlambda_pos k
     _ =
         ∫ x in Set.Ioi (0 : ℝ),
           (∫ sample,
             ((min k
               (successIndexSet (fun y : ℝ => x < y) sample).card : ℕ) : ℝ)
-            ∂(exponentialDistributionModel lambda hlambda_pos).iidProductMeasure q) := by
-          exact thresholdLayerCakeIntegral_integral_swap lambda hlambda_pos k
+            ∂(exponentialDistributionModel lambda hlambda_pos).iidProductMeasure q) :=
+          thresholdLayerCakeIntegral_integral_swap lambda hlambda_pos k
     _ =
       ∫ x in Set.Ioi (0 : ℝ),
         (∑ r ∈ Finset.Icc 1 k,
@@ -2963,16 +2957,16 @@ theorem exponentialFiniteSampleTopKSum_integral_eq_tail_harmonic_sum
             (∑ j ∈ Finset.Icc r q,
               (Nat.choose q j : ℝ) *
                 (Real.exp (-(lambda * x))) ^ j *
-                  (1 - Real.exp (-(lambda * x))) ^ (q - j)) := by
-          exact MeasureTheory.integral_finset_sum (Finset.Icc 1 k)
+                  (1 - Real.exp (-(lambda * x))) ^ (q - j)) :=
+          MeasureTheory.integral_finset_sum (Finset.Icc 1 k)
             (fun r hr =>
               MeasureTheory.integrable_finset_sum (Finset.Icc r q)
                 (fun j hj =>
                   exponentialBinomialMass_integrable_Ioi
                     lambda hlambda_pos
                     (by
-                      have hr_pos : 0 < r := by
-                        exact Nat.lt_of_lt_of_le (by omega : 0 < 1)
+                      have hr_pos : 0 < r :=
+                        Nat.lt_of_lt_of_le (by omega : 0 < 1)
                           (Finset.mem_Icc.mp hr).1
                       exact Nat.lt_of_lt_of_le hr_pos (Finset.mem_Icc.mp hj).1)
                     (Finset.mem_Icc.mp hj).2))
@@ -2990,8 +2984,8 @@ theorem exponentialFiniteSampleTopKSum_integral_eq_tail_harmonic_sum
               exponentialBinomialMass_integrable_Ioi
                 lambda hlambda_pos
                 (by
-                  have hr_pos : 0 < r := by
-                    exact Nat.lt_of_lt_of_le (by omega : 0 < 1)
+                  have hr_pos : 0 < r :=
+                    Nat.lt_of_lt_of_le (by omega : 0 < 1)
                       (Finset.mem_Icc.mp hr).1
                   exact Nat.lt_of_lt_of_le hr_pos (Finset.mem_Icc.mp hj).1)
                 (Finset.mem_Icc.mp hj).2)
@@ -3006,8 +3000,8 @@ theorem exponentialFiniteSampleTopKSum_integral_eq_tail_harmonic_sum
           exact exponentialBinomialMass_integral_eq_inv_lambda_mul_inv
             lambda hlambda_pos
             (by
-              have hr_pos : 0 < r := by
-                exact Nat.lt_of_lt_of_le (by omega : 0 < 1)
+              have hr_pos : 0 < r :=
+                Nat.lt_of_lt_of_le (by omega : 0 < 1)
                   (Finset.mem_Icc.mp hr).1
               exact Nat.lt_of_lt_of_le hr_pos (Finset.mem_Icc.mp hj).1)
             (Finset.mem_Icc.mp hj).2
@@ -3104,16 +3098,15 @@ theorem exponentialFiniteSampleTopKSum_card_le_integral_eq_orderStatisticValue
         exponentialFiniteSampleTopKSum (q := q) k sample
           ∂M.iidProductMeasure q =
         ∫ sample,
-          (∑ i : Fin q, sample i) ∂M.iidProductMeasure q := by
-      exact MeasureTheory.integral_congr_ae htop_eq_sum
-    _ = (q : ℝ) * M.expectedMaxValue 1 := by
-      exact
-        M.iidProductMeasure_sum_integral_eq_card_mul_expectedMaxValue_one q
+          (∑ i : Fin q, sample i) ∂M.iidProductMeasure q :=
+      MeasureTheory.integral_congr_ae htop_eq_sum
+    _ = (q : ℝ) * M.expectedMaxValue 1 :=
+              M.iidProductMeasure_sum_integral_eq_card_mul_expectedMaxValue_one q
     _ = (1 / lambda) * (q : ℝ) := by
       rw [hmean]
       ring
-    _ = exponentialTopKOrderStatisticValue lambda k q := by
-      exact (exponentialTopKOrderStatisticValue_eq_linear_of_le lambda hqk).symm
+    _ = exponentialTopKOrderStatisticValue lambda k q :=
+      (exponentialTopKOrderStatisticValue_eq_linear_of_le lambda hqk).symm
 
 theorem exponentialFiniteSampleTopPredCard_integral_eq_orderStatisticValue
     (lambda : ℝ) (hlambda_pos : 0 < lambda)
@@ -3157,14 +3150,14 @@ theorem exponentialFiniteSampleTopPredCard_integral_eq_orderStatisticValue
         ∫ sample,
           ((∑ i : Fin q, sample i) -
             EconCSLib.Probability.Exponential.finiteSampleMin sample)
-          ∂M.iidProductMeasure q := by
-      exact MeasureTheory.integral_congr_ae htop_eq
+          ∂M.iidProductMeasure q :=
+      MeasureTheory.integral_congr_ae htop_eq
     _ = ∫ sample,
           (∑ i : Fin q, sample i) ∂M.iidProductMeasure q -
         ∫ sample,
           EconCSLib.Probability.Exponential.finiteSampleMin sample
-            ∂M.iidProductMeasure q := by
-      exact MeasureTheory.integral_sub hsum_int hmin_int
+            ∂M.iidProductMeasure q :=
+      MeasureTheory.integral_sub hsum_int hmin_int
     _ = (q : ℝ) * M.expectedMaxValue 1 -
         1 / ((q : ℝ) * M.rate) := by
       rw [M.iidProductMeasure_sum_integral_eq_card_mul_expectedMaxValue_one q,
@@ -3173,8 +3166,8 @@ theorem exponentialFiniteSampleTopPredCard_integral_eq_orderStatisticValue
       rw [hmean]
       simp [M, exponentialDistributionModel]
       ring
-    _ = exponentialTopKOrderStatisticValue lambda (q - 1) q := by
-      exact (exponentialTopKOrderStatisticValue_pred_card
+    _ = exponentialTopKOrderStatisticValue lambda (q - 1) q :=
+      (exponentialTopKOrderStatisticValue_pred_card
         lambda hlambda_pos (q := q)).symm
 
 theorem exponentialFiniteSampleTopKSum_zero_integral_eq_orderStatisticValue
@@ -3201,8 +3194,7 @@ theorem exponentialFiniteSampleTopKSum_zero_integral_eq_orderStatisticValue
 
 /-- The exact asymptotic marginal scale for the exponential top-`k` oracle. -/
 noncomputable def exponentialTopKOrderStatisticScale
-    (lambda : ℝ) (k q : ℕ) : ℝ :=
-  (1 / lambda) * ((k : ℝ) / (((q + 1 : ℕ) : ℝ)))
+    (lambda : ℝ) (k q : ℕ) : ℝ := (1 / lambda) * ((k : ℝ) / (((q + 1 : ℕ) : ℝ)))
 
 noncomputable def exponentialTopKOrderStatisticScaledMarginalLimitCertificate
     (T : ℕ) (lambda : ℝ) (k : ℕ)
@@ -3224,8 +3216,8 @@ noncomputable def exponentialTopKOrderStatisticScaledMarginalLimitCertificate
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [Filter.eventually_atTop.2 ⟨k, fun q hq => hq⟩] with q hq
     have hmin : min k (q + 1) = k := min_eq_left (by omega)
-    have hscale_pos : 0 < exponentialTopKOrderStatisticScale lambda k q := by
-      exact mul_pos (one_div_pos.mpr hlambda_pos)
+    have hscale_pos : 0 < exponentialTopKOrderStatisticScale lambda k q :=
+      mul_pos (one_div_pos.mpr hlambda_pos)
         (div_pos (by exact_mod_cast hk_pos) (by positivity))
     have hscale_ne :
         exponentialTopKOrderStatisticScale lambda k q ≠ 0 :=
@@ -3255,8 +3247,8 @@ theorem exponentialTopKOrderStatisticError_nonneg {T : ℕ}
   by_cases hN : N = 0
   · simp [exponentialTopKOrderStatisticError, hN]
   · have hS_nonneg :
-        0 ≤ ∑ t : ItemType T, (k : ℝ) / (likelihood t ^ (1 : ℝ)) := by
-      exact Finset.sum_nonneg
+        0 ≤ ∑ t : ItemType T, (k : ℝ) / (likelihood t ^ (1 : ℝ)) :=
+      Finset.sum_nonneg
         (fun t _ => div_nonneg (Nat.cast_nonneg k)
           (le_of_lt (by
             simpa [Real.rpow_one] using hlike_pos t)))
@@ -3276,8 +3268,8 @@ theorem exponentialTopKOrderStatisticError_tends_to_zero {T : ℕ}
   let S : ℝ :=
     (∑ t : ItemType T, (k : ℝ) / (likelihood t ^ (1 : ℝ))) + 1
   have hsum_nonneg :
-      0 ≤ ∑ t : ItemType T, (k : ℝ) / (likelihood t ^ (1 : ℝ)) := by
-    exact Finset.sum_nonneg
+      0 ≤ ∑ t : ItemType T, (k : ℝ) / (likelihood t ^ (1 : ℝ)) :=
+    Finset.sum_nonneg
       (fun t _ => div_nonneg (Nat.cast_nonneg k)
         (le_of_lt (by
           simpa [Real.rpow_one] using hlike_pos t)))
@@ -3309,8 +3301,8 @@ noncomputable def exponentialTopKOrderStatisticSublinearFOCCertificate
   targetShare_eq := by
     intro t
     have hnorm_pos :
-        0 < ∑ i : ItemType T, likelihood i ^ (1 : ℝ) := by
-      exact Finset.sum_pos
+        0 < ∑ i : ItemType T, likelihood i ^ (1 : ℝ) :=
+      Finset.sum_pos
         (fun i _ => by simpa [Real.rpow_one] using hlike_pos i)
         Finset.univ_nonempty
     exact gammaLikelihoodProfile_targetShare_eq likelihood 1 t
@@ -3341,8 +3333,8 @@ noncomputable def exponentialTopKOrderStatisticSublinearFOCCertificate
       simpa [hmul, weight] using hgap
     have hS_pos : 0 < S := by
       have hsum_nonneg :
-          0 ≤ ∑ t : ItemType T, (k : ℝ) / weight t := by
-        exact Finset.sum_nonneg
+          0 ≤ ∑ t : ItemType T, (k : ℝ) / weight t :=
+        Finset.sum_nonneg
           (fun t _ => div_nonneg (Nat.cast_nonneg k)
             (le_of_lt (hweight_pos t)))
       dsimp [S]
@@ -3417,12 +3409,12 @@ noncomputable def exponentialTopKOrderStatisticSublinearFOCCertificate
       calc
         (((min k (a.count src) : ℕ) : ℝ) *
             (likelihood src / (a.count src : ℝ)))
-            ≤ (k : ℝ) * (likelihood src / (a.count src : ℝ)) := by
-              exact mul_le_mul_of_nonneg_right hsrc_min_le_k
+            ≤ (k : ℝ) * (likelihood src / (a.count src : ℝ)) :=
+              mul_le_mul_of_nonneg_right hsrc_min_le_k
                 (le_of_lt hsrc_ratio_pos)
         _ < (k : ℝ) *
-            (likelihood dst / (((a.count dst + k : ℕ) : ℝ))) := by
-              exact mul_lt_mul_of_pos_left hratio_like (by exact_mod_cast hk_pos)
+            (likelihood dst / (((a.count dst + k : ℕ) : ℝ))) :=
+              mul_lt_mul_of_pos_left hratio_like (by exact_mod_cast hk_pos)
         _ ≤ (((min k (a.count dst + 1) : ℕ) : ℝ) *
             (likelihood dst / (((a.count dst + 1 : ℕ) : ℝ)))) := by
               calc
@@ -3433,8 +3425,8 @@ noncomputable def exponentialTopKOrderStatisticSublinearFOCCertificate
                       ring
                 _ ≤ likelihood dst *
                     ((((min k (a.count dst + 1) : ℕ) : ℝ)) /
-                      (((a.count dst + 1 : ℕ) : ℝ))) := by
-                      exact mul_le_mul_of_nonneg_left hmin_ratio_le
+                      (((a.count dst + 1 : ℕ) : ℝ))) :=
+                      mul_le_mul_of_nonneg_left hmin_ratio_le
                         hdst_nonneg_like
                 _ = (((min k (a.count dst + 1) : ℕ) : ℝ) *
                     (likelihood dst /
@@ -3461,8 +3453,8 @@ noncomputable def exponentialTopKOrderStatisticSublinearFOCCertificate
         _ < (1 / lambda) *
                 ((((min k (a.count dst + 1) : ℕ) : ℝ) *
                   (likelihood dst /
-                    (((a.count dst + 1 : ℕ) : ℝ))))) := by
-              exact mul_lt_mul_of_pos_left hcore
+                    (((a.count dst + 1 : ℕ) : ℝ))))) :=
+              mul_lt_mul_of_pos_left hcore
                 (one_div_pos.mpr hlambda_pos)
         _ = likelihood dst *
             ((1 / lambda) *

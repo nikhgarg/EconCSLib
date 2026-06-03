@@ -121,8 +121,7 @@ theorem
       (subFullMass groupA ≥ capacity2 ∧
         populationShare groupA * subFullMerit J2 groupA >
           populationShare groupA * subSubMerit J2 groupA +
-            populationShare groupB * subSubMerit J2 groupB) := by
-  exact
+            populationShare groupB * subSubMerit J2 groupB) :=
     (paper_theorem3_policyStateTableWeightedAcademicMeritSurface_subFull_j2_keep_test_pair_iff_components
       api subEstimateLaw subSubMass subFullMass fullFullCutoff fullSubCutoff
       subSubMerit subFullMerit fullSubMerit fullFullMerit diversity J1 J2
