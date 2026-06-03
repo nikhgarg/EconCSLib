@@ -34,6 +34,7 @@ comparisons into threshold statements.
 - `existsUnique_eq_of_continuous_strictMono_tendsto_atBot_atTop`
 - `existsUnique_zero_and_nonneg_iff_of_continuous_strictMono_crossing`
 - `existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop`
+- `existsUnique_eq_and_upper_region_of_continuous_strictAnti_tendsto_atBot_atTop`
 -/
 
 namespace EconCSLib
@@ -440,6 +441,46 @@ theorem existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop
   · have hstrict := hf_anti hgt
     rw [hcutoff', hcutoff] at hstrict
     exact (lt_irrefl level) hstrict
+
+/--
+Unbounded uniqueness cutoff for a continuous strictly decreasing scalar
+function, bundled with the upper-threshold region characterization.
+
+This is the reusable form of capacity-cutoff arguments: once `f cutoff = level`,
+strict antitonicity makes `{z | f z ≤ level}` exactly the upper ray starting at
+that cutoff.
+-/
+theorem existsUnique_eq_and_upper_region_of_continuous_strictAnti_tendsto_atBot_atTop
+    {f : ℝ → ℝ} {level low high : ℝ}
+    (hf_cont : Continuous f)
+    (hf_anti : StrictAnti f)
+    (hatBot : Filter.Tendsto f Filter.atBot (nhds high))
+    (hatTop : Filter.Tendsto f Filter.atTop (nhds low))
+    (hlevel : level ∈ Ioo low high) :
+    ∃! cutoff : ℝ,
+      f cutoff = level ∧
+        ∀ z : ℝ, f z ≤ level ↔ cutoff ≤ z := by
+  rcases
+    existsUnique_eq_of_continuous_strictAnti_tendsto_atBot_atTop
+      hf_cont hf_anti hatBot hatTop hlevel with
+    ⟨cutoff, hcutoff, hunique⟩
+  refine ⟨cutoff, ⟨hcutoff, ?_⟩, ?_⟩
+  · intro z
+    constructor
+    · intro hz
+      by_contra hnot
+      have hzlt : z < cutoff := lt_of_not_ge hnot
+      have hstrict := hf_anti hzlt
+      rw [hcutoff] at hstrict
+      linarith
+    · intro hle
+      rcases lt_or_eq_of_le hle with hlt | rfl
+      · have hstrict := hf_anti hlt
+        rw [hcutoff] at hstrict
+        exact le_of_lt hstrict
+      · exact le_of_eq hcutoff
+  · intro cutoff' hprops
+    exact hunique cutoff' hprops.1
 
 /--
 Unbounded uniqueness cutoff for a continuous strictly increasing scalar

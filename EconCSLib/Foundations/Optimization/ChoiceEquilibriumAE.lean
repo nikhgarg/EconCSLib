@@ -1,4 +1,5 @@
 import EconCSLib.Foundations.Optimization.ChoiceEquilibrium
+import EconCSLib.Foundations.Probability.MeasureInequalities
 import Mathlib.MeasureTheory.Measure.MeasureSpace
 
 namespace EconCSLib
@@ -20,6 +21,7 @@ every syntactically possible information state.
 - `isChoiceEquilibriumAE_best_response_ae`
 - `isChoiceEquilibriumAE_consistency`
 - `isChoiceEquilibriumAE_of_pointwise`
+- `isChoiceEquilibriumAE_of_forall_not_mem_null`
 -/
 
 /--
@@ -71,5 +73,28 @@ theorem isChoiceEquilibriumAE_of_pointwise
   · exact Filter.Eventually.of_forall fun info action hfeasible =>
       isChoiceEquilibrium_best_response hEq info action hfeasible
   · exact isChoiceEquilibrium_consistency hEq
+
+/--
+Build an a.e. choice equilibrium when feasibility and best response hold
+pointwise outside a null exception set.  This is the common continuous-type
+bridge for off-support states and cutoff-boundary ties.
+-/
+theorem isChoiceEquilibriumAE_of_forall_not_mem_null
+    {Info Action : Type*} [MeasurableSpace Info]
+    {μ : Measure Info} {E : ChoiceEquilibriumData Info Action}
+    {exception : Set Info}
+    (hexception : μ exception = 0)
+    (hfeasible :
+      ∀ info, info ∉ exception →
+        E.actionFeasible info (E.chosenAction info))
+    (hbest :
+      ∀ info, info ∉ exception → ∀ action,
+        E.actionFeasible info action →
+          E.payoff info action ≤ E.payoff info (E.chosenAction info))
+    (hconsistency : E.consistency) :
+    IsChoiceEquilibriumAE μ E := by
+  refine ⟨?_, ?_, hconsistency⟩
+  · exact ae_of_forall_not_mem_null (μ := μ) hexception hfeasible
+  · exact ae_of_forall_not_mem_null (μ := μ) hexception hbest
 
 end EconCSLib

@@ -133,6 +133,216 @@ theorem acceptedSetReward_nonneg_of_pointwise_nonneg
   unfold acceptedSetReward
   exact setIntegral_nonneg hσ_measurable hreward_nonneg
 
+/-- Reward integral over a disjoint union of accepted sets. -/
+theorem acceptedSetReward_union
+    (μ : Measure ℝ) (reward : ℝ → ℝ) (σ added : Set ℝ)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (hreward_integrable_σ : IntegrableOn reward σ μ)
+    (hreward_integrable_added : IntegrableOn reward added μ) :
+    acceptedSetReward μ reward (σ ∪ added) =
+      acceptedSetReward μ reward σ + acceptedSetReward μ reward added := by
+  unfold acceptedSetReward
+  exact setIntegral_union hdisjoint hadded_measurable
+    hreward_integrable_σ hreward_integrable_added
+
+/-- Accepted positive quantity over a disjoint union of accepted sets. -/
+theorem acceptedSetTime_union
+    (μ : Measure ℝ) (σ added : Set ℝ)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (htime_integrable_σ : IntegrableOn (fun x : ℝ => x) σ μ)
+    (htime_integrable_added : IntegrableOn (fun x : ℝ => x) added μ) :
+    acceptedSetTime μ (σ ∪ added) =
+      acceptedSetTime μ σ + acceptedSetTime μ added := by
+  unfold acceptedSetTime
+  exact setIntegral_union hdisjoint hadded_measurable
+    htime_integrable_σ htime_integrable_added
+
+/-- Reward integral after removing a measurable accepted subset. -/
+theorem acceptedSetReward_diff
+    (μ : Measure ℝ) (reward : ℝ → ℝ) (σ removed : Set ℝ)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (hreward_integrable_σ : IntegrableOn reward σ μ) :
+    acceptedSetReward μ reward (σ \ removed) =
+      acceptedSetReward μ reward σ - acceptedSetReward μ reward removed := by
+  unfold acceptedSetReward
+  exact setIntegral_diff hremoved_measurable hreward_integrable_σ hremoved_subset
+
+/-- Accepted positive quantity after removing a measurable accepted subset. -/
+theorem acceptedSetTime_diff
+    (μ : Measure ℝ) (σ removed : Set ℝ)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (htime_integrable_σ : IntegrableOn (fun x : ℝ => x) σ μ) :
+    acceptedSetTime μ (σ \ removed) =
+      acceptedSetTime μ σ - acceptedSetTime μ removed := by
+  unfold acceptedSetTime
+  exact setIntegral_diff hremoved_measurable htime_integrable_σ hremoved_subset
+
+/-- A measure-zero accepted component has zero reward integral. -/
+theorem acceptedSetReward_eq_zero_of_measure_zero
+    (μ : Measure ℝ) (reward : ℝ → ℝ) (σ : Set ℝ)
+    (hmeasure_zero : μ σ = 0) :
+    acceptedSetReward μ reward σ = 0 := by
+  unfold acceptedSetReward
+  have hrestrict_zero : μ.restrict σ = 0 :=
+    Measure.restrict_eq_zero.2 hmeasure_zero
+  rw [hrestrict_zero, integral_zero_measure]
+
+/-- A measure-zero accepted component has zero accepted positive quantity. -/
+theorem acceptedSetTime_eq_zero_of_measure_zero
+    (μ : Measure ℝ) (σ : Set ℝ)
+    (hmeasure_zero : μ σ = 0) :
+    acceptedSetTime μ σ = 0 := by
+  unfold acceptedSetTime
+  have hrestrict_zero : μ.restrict σ = 0 :=
+    Measure.restrict_eq_zero.2 hmeasure_zero
+  rw [hrestrict_zero, integral_zero_measure]
+
+/--
+If every accepted quantity has reward at least `targetRate * x`, then the
+accepted-set average reward rate is at least `targetRate`.
+-/
+theorem le_acceptedSetAverageRewardRate_of_pointwise_le
+    (μ : Measure ℝ) (reward : ℝ → ℝ) (σ : Set ℝ) (targetRate : ℝ)
+    (hσ_measurable : MeasurableSet σ)
+    (htime_integrable : IntegrableOn (fun x : ℝ => x) σ μ)
+    (hreward_integrable : IntegrableOn reward σ μ)
+    (htime_pos : 0 < acceptedSetTime μ σ)
+    (hpointwise : ∀ x ∈ σ, targetRate * x ≤ reward x) :
+    targetRate ≤ acceptedSetAverageRewardRate μ reward σ := by
+  unfold acceptedSetAverageRewardRate averageRewardRate
+  rw [le_div_iff₀ htime_pos]
+  unfold acceptedSetReward acceptedSetTime
+  have hmono :
+      ∫ x in σ, targetRate * x ∂μ ≤ ∫ x in σ, reward x ∂μ :=
+    setIntegral_mono_on (htime_integrable.const_mul targetRate)
+      hreward_integrable hσ_measurable hpointwise
+  rw [integral_const_mul] at hmono
+  exact hmono
+
+/--
+If every accepted quantity has reward at most `targetRate * x`, then the
+accepted-set average reward rate is at most `targetRate`.
+-/
+theorem acceptedSetAverageRewardRate_le_of_pointwise_le
+    (μ : Measure ℝ) (reward : ℝ → ℝ) (σ : Set ℝ) (targetRate : ℝ)
+    (hσ_measurable : MeasurableSet σ)
+    (htime_integrable : IntegrableOn (fun x : ℝ => x) σ μ)
+    (hreward_integrable : IntegrableOn reward σ μ)
+    (htime_pos : 0 < acceptedSetTime μ σ)
+    (hpointwise : ∀ x ∈ σ, reward x ≤ targetRate * x) :
+    acceptedSetAverageRewardRate μ reward σ ≤ targetRate := by
+  unfold acceptedSetAverageRewardRate averageRewardRate
+  rw [div_le_iff₀ htime_pos]
+  unfold acceptedSetReward acceptedSetTime
+  have hmono :
+      ∫ x in σ, reward x ∂μ ≤ ∫ x in σ, targetRate * x ∂μ :=
+    setIntegral_mono_on hreward_integrable
+      (htime_integrable.const_mul targetRate) hσ_measurable hpointwise
+  rw [integral_const_mul] at hmono
+  exact hmono
+
+/--
+If every accepted quantity has reward strictly above `targetRate * x`, then
+the accepted-set average reward rate is strictly above `targetRate`.
+-/
+theorem lt_acceptedSetAverageRewardRate_of_pointwise_lt
+    (μ : Measure ℝ) (reward : ℝ → ℝ) (σ : Set ℝ) (targetRate : ℝ)
+    (hσ_measurable : MeasurableSet σ)
+    (htime_integrable : IntegrableOn (fun x : ℝ => x) σ μ)
+    (hreward_integrable : IntegrableOn reward σ μ)
+    (htime_pos : 0 < acceptedSetTime μ σ)
+    (hpointwise : ∀ x ∈ σ, targetRate * x < reward x) :
+    targetRate < acceptedSetAverageRewardRate μ reward σ := by
+  unfold acceptedSetAverageRewardRate averageRewardRate
+  rw [lt_div_iff₀ htime_pos]
+  unfold acceptedSetReward acceptedSetTime
+  have hdiff_integrable :
+      IntegrableOn (fun x : ℝ => reward x - targetRate * x) σ μ :=
+    hreward_integrable.sub (htime_integrable.const_mul targetRate)
+  have hnonneg_ae :
+      0 ≤ᵐ[μ.restrict σ] (fun x : ℝ => reward x - targetRate * x) :=
+    (ae_restrict_iff' hσ_measurable).2
+      (Filter.Eventually.of_forall (fun x hx =>
+        le_of_lt (sub_pos.mpr (hpointwise x hx))))
+  have hsupport :
+      Function.support (fun x : ℝ => reward x - targetRate * x) ∩ σ = σ := by
+    ext x
+    constructor
+    · intro hx
+      exact hx.2
+    · intro hx
+      exact ⟨ne_of_gt (sub_pos.mpr (hpointwise x hx)), hx⟩
+  have hmeasure_pos : 0 < μ σ := by
+    by_contra hnot_pos
+    have hmeasure_zero : μ σ = 0 :=
+      le_antisymm (le_of_not_gt hnot_pos) (zero_le _)
+    have hrestrict_zero : μ.restrict σ = 0 :=
+      Measure.restrict_eq_zero.2 hmeasure_zero
+    unfold acceptedSetTime at htime_pos
+    rw [hrestrict_zero, integral_zero_measure] at htime_pos
+    exact (lt_irrefl (0 : ℝ)) htime_pos
+  have hdiff_pos :
+      0 < ∫ x in σ, reward x - targetRate * x ∂μ :=
+    (setIntegral_pos_iff_support_of_nonneg_ae
+      hnonneg_ae hdiff_integrable).2 (by
+        simpa [hsupport] using hmeasure_pos)
+  rw [integral_sub hreward_integrable (htime_integrable.const_mul targetRate),
+    integral_const_mul] at hdiff_pos
+  linarith
+
+/--
+If every accepted quantity has reward strictly below `targetRate * x`, then
+the accepted-set average reward rate is strictly below `targetRate`.
+-/
+theorem acceptedSetAverageRewardRate_lt_of_pointwise_lt
+    (μ : Measure ℝ) (reward : ℝ → ℝ) (σ : Set ℝ) (targetRate : ℝ)
+    (hσ_measurable : MeasurableSet σ)
+    (htime_integrable : IntegrableOn (fun x : ℝ => x) σ μ)
+    (hreward_integrable : IntegrableOn reward σ μ)
+    (htime_pos : 0 < acceptedSetTime μ σ)
+    (hpointwise : ∀ x ∈ σ, reward x < targetRate * x) :
+    acceptedSetAverageRewardRate μ reward σ < targetRate := by
+  unfold acceptedSetAverageRewardRate averageRewardRate
+  rw [div_lt_iff₀ htime_pos]
+  unfold acceptedSetReward acceptedSetTime
+  have hdiff_integrable :
+      IntegrableOn (fun x : ℝ => targetRate * x - reward x) σ μ :=
+    (htime_integrable.const_mul targetRate).sub hreward_integrable
+  have hnonneg_ae :
+      0 ≤ᵐ[μ.restrict σ] (fun x : ℝ => targetRate * x - reward x) :=
+    (ae_restrict_iff' hσ_measurable).2
+      (Filter.Eventually.of_forall (fun x hx =>
+        le_of_lt (sub_pos.mpr (hpointwise x hx))))
+  have hsupport :
+      Function.support (fun x : ℝ => targetRate * x - reward x) ∩ σ = σ := by
+    ext x
+    constructor
+    · intro hx
+      exact hx.2
+    · intro hx
+      exact ⟨ne_of_gt (sub_pos.mpr (hpointwise x hx)), hx⟩
+  have hmeasure_pos : 0 < μ σ := by
+    by_contra hnot_pos
+    have hmeasure_zero : μ σ = 0 :=
+      le_antisymm (le_of_not_gt hnot_pos) (zero_le _)
+    have hrestrict_zero : μ.restrict σ = 0 :=
+      Measure.restrict_eq_zero.2 hmeasure_zero
+    unfold acceptedSetTime at htime_pos
+    rw [hrestrict_zero, integral_zero_measure] at htime_pos
+    exact (lt_irrefl (0 : ℝ)) htime_pos
+  have hdiff_pos :
+      0 < ∫ x in σ, targetRate * x - reward x ∂μ :=
+    (setIntegral_pos_iff_support_of_nonneg_ae
+      hnonneg_ae hdiff_integrable).2 (by
+        simpa [hsupport] using hmeasure_pos)
+  rw [integral_sub (htime_integrable.const_mul targetRate) hreward_integrable,
+    integral_const_mul] at hdiff_pos
+  linarith
+
 /-- Renewal reward is positive when arrival rate and accepted reward are positive. -/
 theorem continuousSetRenewalRewardRate_pos_of_reward_pos
     (μ : Measure ℝ) (arrivalRate : ℝ) (reward : ℝ → ℝ) (σ : Set ℝ)
@@ -148,6 +358,207 @@ theorem continuousSetRenewalRewardRate_pos_of_reward_pos
       0 < 1 + arrivalRate * acceptedSetTime μ σ := by
     nlinarith [mul_nonneg (le_of_lt hlambda) htime_nonneg]
   exact div_pos hnum_pos hden_pos
+
+/--
+Adding a disjoint positive-time set whose average reward rate is at least the
+current renewal reward cannot reduce the accepted-set renewal reward.
+-/
+theorem continuousSetRenewalRewardRate_le_union_of_le_average
+    (μ : Measure ℝ) (arrivalRate : ℝ) (reward : ℝ → ℝ)
+    (σ added : Set ℝ)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (hreward_integrable_σ : IntegrableOn reward σ μ)
+    (hreward_integrable_added : IntegrableOn reward added μ)
+    (htime_integrable_σ : IntegrableOn (fun x : ℝ => x) σ μ)
+    (htime_integrable_added : IntegrableOn (fun x : ℝ => x) added μ)
+    (hlambda : 0 < arrivalRate)
+    (htime_nonneg : 0 ≤ acceptedSetTime μ σ)
+    (hadded_time_pos : 0 < acceptedSetTime μ added)
+    (hcurrent_le_added_average :
+      continuousSetRenewalRewardRate μ arrivalRate reward σ ≤
+        acceptedSetAverageRewardRate μ reward added) :
+    continuousSetRenewalRewardRate μ arrivalRate reward σ ≤
+      continuousSetRenewalRewardRate μ arrivalRate reward (σ ∪ added) := by
+  change
+    renewalRewardRate arrivalRate
+        (acceptedSetReward μ reward σ) (acceptedSetTime μ σ) ≤
+      renewalRewardRate arrivalRate
+        (acceptedSetReward μ reward (σ ∪ added))
+        (acceptedSetTime μ (σ ∪ added))
+  rw [acceptedSetReward_union μ reward σ added hdisjoint hadded_measurable
+      hreward_integrable_σ hreward_integrable_added,
+    acceptedSetTime_union μ σ added hdisjoint hadded_measurable
+      htime_integrable_σ htime_integrable_added]
+  exact renewalRewardRate_le_add_component_of_le_average
+    arrivalRate (acceptedSetReward μ reward σ) (acceptedSetTime μ σ)
+    (acceptedSetReward μ reward added) (acceptedSetTime μ added)
+    hlambda htime_nonneg hadded_time_pos
+    (by
+      simpa [continuousSetRenewalRewardRate,
+        acceptedSetAverageRewardRate, renewalRewardRate] using
+          hcurrent_le_added_average)
+
+/--
+Removing a positive-time accepted subset whose average reward rate is at most
+the current renewal reward cannot reduce the accepted-set renewal reward.
+-/
+theorem continuousSetRenewalRewardRate_le_diff_of_average_le
+    (μ : Measure ℝ) (arrivalRate : ℝ) (reward : ℝ → ℝ)
+    (σ removed : Set ℝ)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (hreward_integrable_σ : IntegrableOn reward σ μ)
+    (htime_integrable_σ : IntegrableOn (fun x : ℝ => x) σ μ)
+    (hlambda : 0 < arrivalRate)
+    (htime_remaining_nonneg :
+      0 ≤ acceptedSetTime μ σ - acceptedSetTime μ removed)
+    (hremoved_time_pos : 0 < acceptedSetTime μ removed)
+    (hremoved_average_le_current :
+      acceptedSetAverageRewardRate μ reward removed ≤
+        continuousSetRenewalRewardRate μ arrivalRate reward σ) :
+    continuousSetRenewalRewardRate μ arrivalRate reward σ ≤
+      continuousSetRenewalRewardRate μ arrivalRate reward (σ \ removed) := by
+  change
+    renewalRewardRate arrivalRate
+        (acceptedSetReward μ reward σ) (acceptedSetTime μ σ) ≤
+      renewalRewardRate arrivalRate
+        (acceptedSetReward μ reward (σ \ removed))
+        (acceptedSetTime μ (σ \ removed))
+  rw [acceptedSetReward_diff μ reward σ removed hremoved_subset
+      hremoved_measurable hreward_integrable_σ,
+    acceptedSetTime_diff μ σ removed hremoved_subset hremoved_measurable
+      htime_integrable_σ]
+  exact renewalRewardRate_remove_component_ge_of_average_le
+    arrivalRate (acceptedSetReward μ reward σ) (acceptedSetTime μ σ)
+    (acceptedSetReward μ reward removed) (acceptedSetTime μ removed)
+    hlambda htime_remaining_nonneg hremoved_time_pos
+    (by
+      simpa [continuousSetRenewalRewardRate,
+        acceptedSetAverageRewardRate, renewalRewardRate] using
+          hremoved_average_le_current)
+
+/--
+Adding a disjoint positive-time set whose average reward rate is strictly above
+the current renewal reward strictly increases the accepted-set renewal reward.
+-/
+theorem continuousSetRenewalRewardRate_lt_union_of_lt_average
+    (μ : Measure ℝ) (arrivalRate : ℝ) (reward : ℝ → ℝ)
+    (σ added : Set ℝ)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (hreward_integrable_σ : IntegrableOn reward σ μ)
+    (hreward_integrable_added : IntegrableOn reward added μ)
+    (htime_integrable_σ : IntegrableOn (fun x : ℝ => x) σ μ)
+    (htime_integrable_added : IntegrableOn (fun x : ℝ => x) added μ)
+    (hlambda : 0 < arrivalRate)
+    (htime_nonneg : 0 ≤ acceptedSetTime μ σ)
+    (hadded_time_pos : 0 < acceptedSetTime μ added)
+    (hcurrent_lt_added_average :
+      continuousSetRenewalRewardRate μ arrivalRate reward σ <
+        acceptedSetAverageRewardRate μ reward added) :
+    continuousSetRenewalRewardRate μ arrivalRate reward σ <
+      continuousSetRenewalRewardRate μ arrivalRate reward (σ ∪ added) := by
+  change
+    renewalRewardRate arrivalRate
+        (acceptedSetReward μ reward σ) (acceptedSetTime μ σ) <
+      renewalRewardRate arrivalRate
+        (acceptedSetReward μ reward (σ ∪ added))
+        (acceptedSetTime μ (σ ∪ added))
+  rw [acceptedSetReward_union μ reward σ added hdisjoint hadded_measurable
+      hreward_integrable_σ hreward_integrable_added,
+    acceptedSetTime_union μ σ added hdisjoint hadded_measurable
+      htime_integrable_σ htime_integrable_added]
+  exact renewalRewardRate_lt_add_component_of_lt_average
+    arrivalRate (acceptedSetReward μ reward σ) (acceptedSetTime μ σ)
+    (acceptedSetReward μ reward added) (acceptedSetTime μ added)
+    hlambda htime_nonneg hadded_time_pos
+    (by
+      simpa [continuousSetRenewalRewardRate,
+        acceptedSetAverageRewardRate, renewalRewardRate] using
+          hcurrent_lt_added_average)
+
+/--
+Removing a positive-time accepted subset whose average reward rate is strictly
+below the current renewal reward strictly increases the accepted-set renewal
+reward.
+-/
+theorem continuousSetRenewalRewardRate_lt_diff_of_average_lt
+    (μ : Measure ℝ) (arrivalRate : ℝ) (reward : ℝ → ℝ)
+    (σ removed : Set ℝ)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (hreward_integrable_σ : IntegrableOn reward σ μ)
+    (htime_integrable_σ : IntegrableOn (fun x : ℝ => x) σ μ)
+    (hlambda : 0 < arrivalRate)
+    (htime_remaining_nonneg :
+      0 ≤ acceptedSetTime μ σ - acceptedSetTime μ removed)
+    (hremoved_time_pos : 0 < acceptedSetTime μ removed)
+    (hremoved_average_lt_current :
+      acceptedSetAverageRewardRate μ reward removed <
+        continuousSetRenewalRewardRate μ arrivalRate reward σ) :
+    continuousSetRenewalRewardRate μ arrivalRate reward σ <
+      continuousSetRenewalRewardRate μ arrivalRate reward (σ \ removed) := by
+  change
+    renewalRewardRate arrivalRate
+        (acceptedSetReward μ reward σ) (acceptedSetTime μ σ) <
+      renewalRewardRate arrivalRate
+        (acceptedSetReward μ reward (σ \ removed))
+        (acceptedSetTime μ (σ \ removed))
+  rw [acceptedSetReward_diff μ reward σ removed hremoved_subset
+      hremoved_measurable hreward_integrable_σ,
+    acceptedSetTime_diff μ σ removed hremoved_subset hremoved_measurable
+      htime_integrable_σ]
+  exact renewalRewardRate_remove_component_gt_of_average_lt
+    arrivalRate (acceptedSetReward μ reward σ) (acceptedSetTime μ σ)
+    (acceptedSetReward μ reward removed) (acceptedSetTime μ removed)
+    hlambda htime_remaining_nonneg hremoved_time_pos
+    (by
+      simpa [continuousSetRenewalRewardRate,
+        acceptedSetAverageRewardRate, renewalRewardRate] using
+          hremoved_average_lt_current)
+
+/-- Removing a zero reward/time accepted subset leaves renewal reward unchanged. -/
+theorem continuousSetRenewalRewardRate_diff_eq_self_of_zero_component
+    (μ : Measure ℝ) (arrivalRate : ℝ) (reward : ℝ → ℝ)
+    (σ removed : Set ℝ)
+    (hremoved_subset : removed ⊆ σ)
+    (hremoved_measurable : MeasurableSet removed)
+    (hreward_integrable_σ : IntegrableOn reward σ μ)
+    (htime_integrable_σ : IntegrableOn (fun x : ℝ => x) σ μ)
+    (hremoved_reward_zero : acceptedSetReward μ reward removed = 0)
+    (hremoved_time_zero : acceptedSetTime μ removed = 0) :
+    continuousSetRenewalRewardRate μ arrivalRate reward (σ \ removed) =
+      continuousSetRenewalRewardRate μ arrivalRate reward σ := by
+  unfold continuousSetRenewalRewardRate
+  rw [acceptedSetReward_diff μ reward σ removed hremoved_subset
+      hremoved_measurable hreward_integrable_σ,
+    acceptedSetTime_diff μ σ removed hremoved_subset hremoved_measurable
+      htime_integrable_σ]
+  rw [hremoved_reward_zero, hremoved_time_zero]
+  ring
+
+/-- Adding a disjoint zero reward/time set leaves renewal reward unchanged. -/
+theorem continuousSetRenewalRewardRate_union_eq_self_of_zero_component
+    (μ : Measure ℝ) (arrivalRate : ℝ) (reward : ℝ → ℝ)
+    (σ added : Set ℝ)
+    (hdisjoint : Disjoint σ added)
+    (hadded_measurable : MeasurableSet added)
+    (hreward_integrable_σ : IntegrableOn reward σ μ)
+    (hreward_integrable_added : IntegrableOn reward added μ)
+    (htime_integrable_σ : IntegrableOn (fun x : ℝ => x) σ μ)
+    (htime_integrable_added : IntegrableOn (fun x : ℝ => x) added μ)
+    (hadded_reward_zero : acceptedSetReward μ reward added = 0)
+    (hadded_time_zero : acceptedSetTime μ added = 0) :
+    continuousSetRenewalRewardRate μ arrivalRate reward (σ ∪ added) =
+      continuousSetRenewalRewardRate μ arrivalRate reward σ := by
+  unfold continuousSetRenewalRewardRate
+  rw [acceptedSetReward_union μ reward σ added hdisjoint hadded_measurable
+      hreward_integrable_σ hreward_integrable_added,
+    acceptedSetTime_union μ σ added hdisjoint hadded_measurable
+      htime_integrable_σ htime_integrable_added]
+  rw [hadded_reward_zero, hadded_time_zero]
+  ring
 
 /--
 If accepted reward and accepted time vanish along a filter, then the

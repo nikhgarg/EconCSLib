@@ -190,12 +190,12 @@ LIBRARY_COMPONENTS = [
         "papers": ["GCG24UserItemFairness"],
     },
     {
-        "title": "Social choice and fair division",
-        "paths": ["EconCSLib/SocialChoice/FairDivision"],
+        "title": "Social choice, rankings, and fair division",
+        "paths": ["EconCSLib/SocialChoice"],
         "examples": (
-            "Allocations and valuations, envy graphs, bounded-envy "
-            "guarantees, partition/search interfaces, and fair-division "
-            "mechanisms."
+            "Rankings and pairwise orders, Kendall distance, Mallows-style "
+            "sequential ranking models, score/payoff interfaces, envy "
+            "graphs, and bounded-envy guarantees."
         ),
         "papers": ["LMMS04FairDivision"],
     },

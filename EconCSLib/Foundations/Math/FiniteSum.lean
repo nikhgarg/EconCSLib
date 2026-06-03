@@ -90,6 +90,285 @@ theorem weighted_sum_le_bound_of_nonneg_sum_le_one
     (by intro i _; exact hvalue i)
     hB
 
+/-- If every term in a finite set is at most `C`, the finite sum is at most
+the set cardinality times `C`. -/
+theorem finset_sum_le_card_mul_of_forall_le
+    {α : Type*} (s : Finset α) (v : α → ℝ) (C : ℝ)
+    (h : ∀ i ∈ s, v i ≤ C) :
+    (∑ i ∈ s, v i) ≤ (s.card : ℝ) * C := by
+  calc
+    (∑ i ∈ s, v i) ≤ ∑ i ∈ s, C :=
+      Finset.sum_le_sum h
+    _ = (s.card : ℝ) * C := by
+      simp
+
+/-- Product of a two-valued coordinate weight over a finite type. -/
+theorem prod_ite_mem_eq_pow_mul_pow {α : Type*}
+    [Fintype α] [DecidableEq α] (s : Finset α) (q rho : ℝ) :
+    (∏ i : α, if i ∈ s then q else rho) =
+      q ^ s.card * rho ^ (Fintype.card α - s.card) := by
+  classical
+  have hfilter :
+      (Finset.univ : Finset α).filter (fun i => i ∈ s) = s := by
+    ext i
+    simp
+  have hfilter_not_card :
+      ((Finset.univ : Finset α).filter (fun i => ¬ i ∈ s)).card =
+        Fintype.card α - s.card := by
+    have hsum :=
+      Finset.card_filter_add_card_filter_not
+        (s := (Finset.univ : Finset α)) (p := fun i => i ∈ s)
+    rw [hfilter, Finset.card_univ] at hsum
+    omega
+  calc
+    (∏ i : α, if i ∈ s then q else rho)
+        = (∏ i ∈ (Finset.univ : Finset α),
+            if i ∈ s then q else rho) := by
+          simp
+    _ = (∏ i ∈ (Finset.univ : Finset α) with i ∈ s, q) *
+          ∏ i ∈ (Finset.univ : Finset α) with ¬ i ∈ s, rho := by
+          rw [Finset.prod_ite]
+    _ = q ^ s.card * rho ^ (Fintype.card α - s.card) := by
+          simp [hfilter, hfilter_not_card]
+
+/--
+Regroup a finite double sum into ordered off-diagonal pairs, using an
+injective key to decide which orientation of each pair is canonical.
+-/
+theorem pair_sum_eq_ordered_swap_sum_of_injective_key
+    {α β : Type*} [Fintype α] [DecidableEq α] [LinearOrder β]
+    (key : α → β) (hkey : Function.Injective key) (t : α → α → ℝ)
+    (hdiag : ∀ a : α, t a a = 0) :
+    (∑ a : α, ∑ b : α, t a b) =
+      ∑ a : α, ∑ b : α,
+        if key a < key b then t a b + t b a else 0 := by
+  classical
+  have hsplit : ∀ a b : α,
+      t a b =
+        (if key a < key b then t a b else 0) +
+          (if key b < key a then t a b else 0) := by
+    intro a b
+    by_cases hlt : key a < key b
+    · have hnot : ¬ key b < key a := not_lt_of_gt hlt
+      simp [hlt, hnot]
+    · by_cases hgt : key b < key a
+      · simp [hlt, hgt]
+      · have hkey_eq : key a = key b :=
+          le_antisymm (le_of_not_gt hgt) (le_of_not_gt hlt)
+        have hab : a = b := hkey hkey_eq
+        subst b
+        simp [hdiag]
+  calc
+    (∑ a : α, ∑ b : α, t a b)
+        = ∑ a : α, ∑ b : α,
+            ((if key a < key b then t a b else 0) +
+              (if key b < key a then t a b else 0)) := by
+          refine Finset.sum_congr rfl ?_
+          intro a _
+          refine Finset.sum_congr rfl ?_
+          intro b _
+          exact hsplit a b
+    _ = (∑ a : α, ∑ b : α,
+            if key a < key b then t a b else 0) +
+          (∑ a : α, ∑ b : α,
+            if key b < key a then t a b else 0) := by
+          simp_rw [Finset.sum_add_distrib]
+    _ = (∑ a : α, ∑ b : α,
+            if key a < key b then t a b else 0) +
+          (∑ a : α, ∑ b : α,
+            if key a < key b then t b a else 0) := by
+          have hswap :
+              (∑ a : α, ∑ b : α,
+                if key b < key a then t a b else 0) =
+                ∑ a : α, ∑ b : α,
+                  if key a < key b then t b a else 0 := by
+            rw [Finset.sum_comm]
+          rw [hswap]
+    _ = ∑ a : α, ∑ b : α,
+          if key a < key b then t a b + t b a else 0 := by
+          rw [← Finset.sum_add_distrib]
+          refine Finset.sum_congr rfl ?_
+          intro a _
+          rw [← Finset.sum_add_distrib]
+          refine Finset.sum_congr rfl ?_
+          intro b _
+          by_cases hlt : key a < key b <;> simp [hlt]
+
+/-- Regroup a finite double sum into ordered off-diagonal pairs. -/
+theorem pair_sum_eq_ordered_swap_sum
+    {α : Type*} [Fintype α] [DecidableEq α] [LinearOrder α]
+    (t : α → α → ℝ) (hdiag : ∀ a : α, t a a = 0) :
+    (∑ a : α, ∑ b : α, t a b) =
+      ∑ a : α, ∑ b : α,
+        if a < b then t a b + t b a else 0 :=
+  pair_sum_eq_ordered_swap_sum_of_injective_key (fun a : α => a)
+    (fun _ _ h => h) t hdiag
+
+/--
+Pairwise cross-ratio dominance implies a cleared weighted-average comparison.
+If `wA i * wH j >= wA j * wH i` for every `i < j`, then every weakly
+decreasing payoff `B` has at least as large a `wA` average as a `wH` average
+after clearing denominators.
+-/
+theorem weighted_average_cross_nonneg_of_pairwise
+    {α : Type*} [Fintype α] [DecidableEq α] [LinearOrder α]
+    {wA wH B : α → ℝ}
+    (hpair : ∀ i j : α, i < j → 0 ≤ wA i * wH j - wA j * wH i)
+    (hB : ∀ i j : α, i < j → B j ≤ B i) :
+    0 ≤
+      (∑ j : α, wH j) * (∑ i : α, wA i * B i) -
+        (∑ j : α, wA j) * (∑ i : α, wH i * B i) := by
+  classical
+  let t : α → α → ℝ := fun i j =>
+    wA i * B i * wH j - wH i * B i * wA j
+  have hdouble :
+      (∑ j : α, wH j) * (∑ i : α, wA i * B i) -
+        (∑ j : α, wA j) * (∑ i : α, wH i * B i) =
+        ∑ i : α, ∑ j : α, t i j := by
+    calc
+      (∑ j : α, wH j) * (∑ i : α, wA i * B i) -
+          (∑ j : α, wA j) * (∑ i : α, wH i * B i)
+          =
+          (∑ i : α, ∑ j : α, wA i * B i * wH j) -
+            (∑ i : α, ∑ j : α, wH i * B i * wA j) := by
+            rw [Finset.sum_mul, Finset.sum_mul]
+            simp_rw [Finset.mul_sum]
+            rw [Finset.sum_comm]
+            congr 1
+            · refine Finset.sum_congr rfl ?_
+              intro i _
+              refine Finset.sum_congr rfl ?_
+              intro j _
+              ring
+            · rw [Finset.sum_comm]
+              refine Finset.sum_congr rfl ?_
+              intro i _
+              refine Finset.sum_congr rfl ?_
+              intro j _
+              ring
+      _ = ∑ i : α, ∑ j : α, t i j := by
+            rw [← Finset.sum_sub_distrib]
+            refine Finset.sum_congr rfl ?_
+            intro i _
+            rw [← Finset.sum_sub_distrib]
+  rw [hdouble]
+  rw [pair_sum_eq_ordered_swap_sum t (by intro i; simp [t]; ring)]
+  apply Finset.sum_nonneg
+  intro i _
+  apply Finset.sum_nonneg
+  intro j _
+  by_cases hij : i < j
+  · have heq :
+        t i j + t j i = (wA i * wH j - wA j * wH i) * (B i - B j) := by
+      simp [t]
+      ring
+    rw [if_pos hij, heq]
+    exact mul_nonneg (hpair i j hij) (sub_nonneg.mpr (hB i j hij))
+  · simp [hij]
+
+/--
+Strict version of `weighted_average_cross_nonneg_of_pairwise`: one strictly
+positive pairwise cross-ratio bracket and a strictly decreasing payoff make
+the cleared comparison strict.
+-/
+theorem weighted_average_cross_pos_of_pairwise
+    {α : Type*} [Fintype α] [DecidableEq α] [LinearOrder α]
+    {wA wH B : α → ℝ}
+    (hpair_nonneg :
+      ∀ i j : α, i < j → 0 ≤ wA i * wH j - wA j * wH i)
+    (hpair_pos :
+      ∃ i j : α, i < j ∧ 0 < wA i * wH j - wA j * wH i)
+    (hB : StrictAnti B) :
+    0 <
+      (∑ j : α, wH j) * (∑ i : α, wA i * B i) -
+        (∑ j : α, wA j) * (∑ i : α, wH i * B i) := by
+  classical
+  let t : α → α → ℝ := fun i j =>
+    wA i * B i * wH j - wH i * B i * wA j
+  have hdouble :
+      (∑ j : α, wH j) * (∑ i : α, wA i * B i) -
+        (∑ j : α, wA j) * (∑ i : α, wH i * B i) =
+        ∑ i : α, ∑ j : α, t i j := by
+    calc
+      (∑ j : α, wH j) * (∑ i : α, wA i * B i) -
+          (∑ j : α, wA j) * (∑ i : α, wH i * B i)
+          =
+          (∑ i : α, ∑ j : α, wA i * B i * wH j) -
+            (∑ i : α, ∑ j : α, wH i * B i * wA j) := by
+            rw [Finset.sum_mul, Finset.sum_mul]
+            simp_rw [Finset.mul_sum]
+            rw [Finset.sum_comm]
+            congr 1
+            · refine Finset.sum_congr rfl ?_
+              intro i _
+              refine Finset.sum_congr rfl ?_
+              intro j _
+              ring
+            · rw [Finset.sum_comm]
+              refine Finset.sum_congr rfl ?_
+              intro i _
+              refine Finset.sum_congr rfl ?_
+              intro j _
+              ring
+      _ = ∑ i : α, ∑ j : α, t i j := by
+            rw [← Finset.sum_sub_distrib]
+            refine Finset.sum_congr rfl ?_
+            intro i _
+            rw [← Finset.sum_sub_distrib]
+  rw [hdouble]
+  rw [pair_sum_eq_ordered_swap_sum t (by intro i; simp [t]; ring)]
+  rcases hpair_pos with ⟨i₀, j₀, hij₀, hcross₀⟩
+  have hrow_nonneg : ∀ i : α,
+      0 ≤
+        ∑ j : α, if i < j then t i j + t j i else 0 := by
+    intro i
+    apply Finset.sum_nonneg
+    intro j _
+    by_cases hij : i < j
+    · have heq :
+          t i j + t j i = (wA i * wH j - wA j * wH i) * (B i - B j) := by
+        simp [t]
+        ring
+      rw [if_pos hij, heq]
+      exact mul_nonneg (hpair_nonneg i j hij)
+        (le_of_lt (sub_pos.mpr (hB hij)))
+    · simp [hij]
+  have hrow_pos :
+      0 <
+        ∑ j : α, if i₀ < j then t i₀ j + t j i₀ else 0 := by
+    have hterm_nonneg :
+        ∀ j : α, 0 ≤ if i₀ < j then t i₀ j + t j i₀ else 0 := by
+      intro j
+      by_cases hij : i₀ < j
+      · have heq :
+            t i₀ j + t j i₀ =
+              (wA i₀ * wH j - wA j * wH i₀) * (B i₀ - B j) := by
+          simp [t]
+          ring
+        rw [if_pos hij, heq]
+        exact mul_nonneg (hpair_nonneg i₀ j hij)
+          (le_of_lt (sub_pos.mpr (hB hij)))
+      · simp [hij]
+    have hterm_pos :
+        0 < if i₀ < j₀ then t i₀ j₀ + t j₀ i₀ else 0 := by
+      have heq :
+          t i₀ j₀ + t j₀ i₀ =
+            (wA i₀ * wH j₀ - wA j₀ * wH i₀) * (B i₀ - B j₀) := by
+        simp [t]
+        ring
+      rw [if_pos hij₀, heq]
+      exact mul_pos hcross₀ (sub_pos.mpr (hB hij₀))
+    have hle :
+        (if i₀ < j₀ then t i₀ j₀ + t j₀ i₀ else 0) ≤
+          ∑ j : α, if i₀ < j then t i₀ j + t j i₀ else 0 :=
+      Finset.single_le_sum (fun j _ => hterm_nonneg j) (by simp)
+    exact lt_of_lt_of_le hterm_pos hle
+  have hle :
+      (∑ j : α, if i₀ < j then t i₀ j + t j i₀ else 0) ≤
+        ∑ i : α, ∑ j : α, if i < j then t i j + t j i else 0 :=
+    Finset.single_le_sum (fun i _ => hrow_nonneg i) (by simp)
+  exact lt_of_lt_of_le hrow_pos hle
+
 /--
 If every element of a finite comparison set has weight at least `a`'s weight,
 then `a`'s share of the combined weight of `a` and that set is at most
