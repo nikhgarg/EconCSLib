@@ -253,10 +253,6 @@ a:focus-visible {
   font-style: italic;
 }
 
-.paper-source {
-  font-weight: 700;
-}
-
 .status-table td:nth-child(3) {
   white-space: nowrap;
 }
