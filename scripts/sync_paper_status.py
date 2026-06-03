@@ -20,6 +20,8 @@ SITE_INDEX = ROOT / "site" / "index.html"
 TEMPLATE = PAPERS / "TEMPLATE"
 README_STATUS_BEGIN = "<!-- BEGIN GENERATED PAPER STATUS TABLE -->"
 README_STATUS_END = "<!-- END GENERATED PAPER STATUS TABLE -->"
+SITE_LIBRARY_BEGIN = "<!-- BEGIN GENERATED LIBRARY COMPONENT ROWS -->"
+SITE_LIBRARY_END = "<!-- END GENERATED LIBRARY COMPONENT ROWS -->"
 SITE_STATUS_BEGIN = "<!-- BEGIN GENERATED PAPER STATUS ROWS -->"
 SITE_STATUS_END = "<!-- END GENERATED PAPER STATUS ROWS -->"
 GITHUB_MAIN = "https://github.com/nikhgarg/EconCSLib/blob/main/"
@@ -68,6 +70,136 @@ SOURCE_URL_OVERRIDES = {
 README_TITLE_OVERRIDES = {
     "MSVV07AdWords": "MSVV07 AdWords",
 }
+
+LIBRARY_COMPONENTS = [
+    {
+        "title": "Foundations: finite math and graph tools",
+        "paths": [
+            "EconCSLib/Foundations/Math",
+            "EconCSLib/Foundations/Graph",
+        ],
+        "examples": (
+            "Finite sums and rankings, sign and rounding lemmas, threshold "
+            "and interval characterizations, asymptotic/exponential bounds, "
+            "and directed-cycle extraction."
+        ),
+        "papers": [
+            "DSWG24DiscretizationBias",
+            "LMMS04FairDivision",
+            "GN21DriverSurgePricing",
+            "LG21TestOptionalPolicies",
+        ],
+    },
+    {
+        "title": "Foundations: probability and stochastic processes",
+        "paths": ["EconCSLib/Foundations/Probability"],
+        "examples": (
+            "Finite-support expectations and conditioning, kernels and "
+            "distributions, atoms and variance, Gaussian/exponential facts, "
+            "stochastic dominance, Markov chains, MDPs, CTMCs, and renewal "
+            "reward."
+        ),
+        "papers": [
+            "DSWG24DiscretizationBias",
+            "MBJG25ProducerFairness",
+            "LMMS04FairDivision",
+            "GN21DriverSurgePricing",
+            "LG21TestOptionalPolicies",
+        ],
+    },
+    {
+        "title": "Foundations: optimization and certificates",
+        "paths": ["EconCSLib/Foundations/Optimization"],
+        "examples": (
+            "Argmax and endpoint principles, finite-search and certificate "
+            "patterns, approximation statements, linear programs, binary "
+            "choice, move graphs, and choice equilibria."
+        ),
+        "papers": [
+            "DSWG24DiscretizationBias",
+            "MSVV07AdWords",
+            "GN21DriverSurgePricing",
+            "LG21TestOptionalPolicies",
+            "LMMS04FairDivision",
+        ],
+    },
+    {
+        "title": "Rating-system applications",
+        "paths": [
+            "EconCSLib/Foundations/Econometrics/RatingModels",
+            "EconCSLib/Learning/Bandits",
+        ],
+        "examples": (
+            "Binary and ordinal rating-model definitions, posterior means, "
+            "bias/variance decompositions, monotonicity/correction lemmas, "
+            "and minimal bandit-regret interfaces."
+        ),
+        "papers": ["MBJG25ProducerFairness"],
+    },
+    {
+        "title": "Matching markets",
+        "paths": ["EconCSLib/Markets/Matching"],
+        "examples": (
+            "Agents and preferences, matching functions, blocking pairs and "
+            "stability, deferred acceptance, incentives, and many-to-one "
+            "admissions."
+        ),
+        "papers": ["GS62CollegeAdmissions", "Roth82StableMatching"],
+    },
+    {
+        "title": "Auctions and mechanisms",
+        "paths": ["EconCSLib/MechanismDesign/Auctions"],
+        "examples": (
+            "Bids, allocations and payments, truthfulness, benchmarks and "
+            "competitiveness, position auctions, and combinatorial "
+            "set-packing mechanisms."
+        ),
+        "papers": ["GHW01DigitalGoods", "LOS02CombinatorialAuctions"],
+    },
+    {
+        "title": "Online algorithms and regret",
+        "paths": ["EconCSLib/Algorithms/Online"],
+        "examples": (
+            "Online allocation and matching states, primal-dual accounting, "
+            "competitive-ratio and regret interfaces, and learning-platform "
+            "abstractions."
+        ),
+        "papers": ["MSVV07AdWords", "MBJG25ProducerFairness"],
+    },
+    {
+        "title": "Complexity abstractions",
+        "paths": ["EconCSLib/Algorithms/Complexity"],
+        "examples": (
+            "Decision and search classes, reductions, randomized and "
+            "expectation consequences, Yao-style minimax interfaces, and "
+            "external solver assumptions."
+        ),
+        "papers": [
+            "LOS02CombinatorialAuctions",
+            "MSVV07AdWords",
+            "LMMS04FairDivision",
+        ],
+    },
+    {
+        "title": "Applications: recommender systems",
+        "paths": ["EconCSLib/Applications/RecommenderSystems"],
+        "examples": (
+            "Policies and allocations, classwise exposure and fairness "
+            "constraints, top-k surfaces, and policy-averaging lemmas."
+        ),
+        "papers": ["GCG24UserItemFairness"],
+    },
+    {
+        "title": "Social choice and fair division",
+        "paths": ["EconCSLib/SocialChoice/FairDivision"],
+        "examples": (
+            "Allocations and valuations, envy graphs, bounded-envy "
+            "guarantees, partition/search interfaces, and fair-division "
+            "mechanisms."
+        ),
+        "papers": ["LMMS04FairDivision"],
+    },
+]
 
 
 def note_citation(payload: dict[str, Any]) -> dict[str, str] | None:
@@ -154,6 +286,21 @@ def human_review_label(payload: dict[str, Any]) -> str:
 def lean_loc(folder: Path) -> int:
     total = 0
     for path in folder.rglob("*.lean"):
+        with path.open(encoding="utf-8") as handle:
+            total += sum(1 for _line in handle)
+    return total
+
+
+def component_loc(paths: list[str]) -> int:
+    files: set[Path] = set()
+    for raw_path in paths:
+        path = ROOT / raw_path
+        if path.is_dir():
+            files.update(path.rglob("*.lean"))
+        elif path.is_file() and path.suffix == ".lean":
+            files.add(path)
+    total = 0
+    for path in sorted(files):
         with path.open(encoding="utf-8") as handle:
             total += sum(1 for _line in handle)
     return total
@@ -400,6 +547,27 @@ def html_note_with_citation(note: str, citation: dict[str, str] | None) -> str:
     return f"{rendered} {rendered_citation}"
 
 
+def render_site_library_block(human: dict[str, Any]) -> str:
+    indent = " " * 14
+    lines = [f"{indent}{SITE_LIBRARY_BEGIN}"]
+    for component in LIBRARY_COMPONENTS:
+        title = html_escape(component["title"])
+        paths = component["paths"]
+        if paths:
+            title = f'<a href="{html_escape(github_link(paths[0]))}">{title}</a>'
+        lines.extend(
+            [
+                f"{indent}<tr>",
+                f"{indent}  <td>{title}</td>",
+                f"{indent}  <td>{html_escape(component['examples'])}</td>",
+                f"{indent}  <td>{component_loc(component['paths']):,}</td>",
+                f"{indent}</tr>",
+            ]
+        )
+    lines.append(f"{indent}{SITE_LIBRARY_END}")
+    return "\n".join(lines)
+
+
 def render_site_status_block(payload: dict[str, Any]) -> str:
     indent = " " * 14
     lines = [f"{indent}{SITE_STATUS_BEGIN}"]
@@ -435,6 +603,18 @@ def render_site_status_block(payload: dict[str, Any]) -> str:
 
 def render_site_index(payload: dict[str, Any]) -> str:
     current = SITE_INDEX.read_text(encoding="utf-8")
+    library_block = render_site_library_block(payload)
+    library_start = current.find(SITE_LIBRARY_BEGIN)
+    library_end = current.find(SITE_LIBRARY_END)
+    if library_start >= 0 and library_end >= library_start:
+        library_end += len(SITE_LIBRARY_END)
+        line_start = current.rfind("\n", 0, library_start) + 1
+        line_end = current.find("\n", library_end)
+        if line_end < 0:
+            current = current[:line_start] + library_block
+        else:
+            current = current[:line_start] + library_block + current[line_end:]
+
     block = render_site_status_block(payload)
     start = current.find(SITE_STATUS_BEGIN)
     end = current.find(SITE_STATUS_END)

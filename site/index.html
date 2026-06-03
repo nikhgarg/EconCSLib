@@ -73,6 +73,82 @@
         </p>
       </section>
 
+      <section class="band" id="library" aria-label="Library components">
+        <div class="section-heading">
+          <p class="eyebrow">Library: reusable components</p>
+          <p>
+            The shared library contains paper-independent Lean infrastructure
+            that current paper formalizations reuse.
+          </p>
+        </div>
+
+        <div class="table-wrap" role="region" aria-label="Library component table" tabindex="0">
+          <table class="status-table library-table">
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Examples</th>
+                <th>Lines of code</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- BEGIN GENERATED LIBRARY COMPONENT ROWS -->
+              <tr>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Foundations/Math">Foundations: finite math and graph tools</a></td>
+                <td>Finite sums and rankings, sign and rounding lemmas, threshold and interval characterizations, asymptotic/exponential bounds, and directed-cycle extraction.</td>
+                <td>4,527</td>
+              </tr>
+              <tr>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Foundations/Probability">Foundations: probability and stochastic processes</a></td>
+                <td>Finite-support expectations and conditioning, kernels and distributions, atoms and variance, Gaussian/exponential facts, stochastic dominance, Markov chains, MDPs, CTMCs, and renewal reward.</td>
+                <td>25,621</td>
+              </tr>
+              <tr>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Foundations/Optimization">Foundations: optimization and certificates</a></td>
+                <td>Argmax and endpoint principles, finite-search and certificate patterns, approximation statements, linear programs, binary choice, move graphs, and choice equilibria.</td>
+                <td>2,651</td>
+              </tr>
+              <tr>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Foundations/Econometrics/RatingModels">Rating-system applications</a></td>
+                <td>Binary and ordinal rating-model definitions, posterior means, bias/variance decompositions, monotonicity/correction lemmas, and minimal bandit-regret interfaces.</td>
+                <td>502</td>
+              </tr>
+              <tr>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Markets/Matching">Matching markets</a></td>
+                <td>Agents and preferences, matching functions, blocking pairs and stability, deferred acceptance, incentives, and many-to-one admissions.</td>
+                <td>3,418</td>
+              </tr>
+              <tr>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/MechanismDesign/Auctions">Auctions and mechanisms</a></td>
+                <td>Bids, allocations and payments, truthfulness, benchmarks and competitiveness, position auctions, and combinatorial set-packing mechanisms.</td>
+                <td>68,163</td>
+              </tr>
+              <tr>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Algorithms/Online">Online algorithms and regret</a></td>
+                <td>Online allocation and matching states, primal-dual accounting, competitive-ratio and regret interfaces, and learning-platform abstractions.</td>
+                <td>4,372</td>
+              </tr>
+              <tr>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Algorithms/Complexity">Complexity abstractions</a></td>
+                <td>Decision and search classes, reductions, randomized and expectation consequences, Yao-style minimax interfaces, and external solver assumptions.</td>
+                <td>463</td>
+              </tr>
+              <tr>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/Applications/RecommenderSystems">Applications: recommender systems</a></td>
+                <td>Policies and allocations, classwise exposure and fairness constraints, top-k surfaces, and policy-averaging lemmas.</td>
+                <td>582</td>
+              </tr>
+              <tr>
+                <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/EconCSLib/SocialChoice/FairDivision">Social choice and fair division</a></td>
+                <td>Allocations and valuations, envy graphs, bounded-envy guarantees, partition/search interfaces, and fair-division mechanisms.</td>
+                <td>1,778</td>
+              </tr>
+              <!-- END GENERATED LIBRARY COMPONENT ROWS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section class="band" id="status" aria-label="Current status">
         <div class="section-heading">
           <p class="eyebrow">Current status</p>
@@ -89,7 +165,7 @@
               <tr>
                 <th>Paper</th>
                 <th>Status</th>
-                <th>Lean LOC</th>
+                <th>Lines of code</th>
                 <th>Note</th>
               </tr>
             </thead>
@@ -129,7 +205,7 @@
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
                 <td>13,221</td>
-                <td></td>
+                <td>This only uses a few lines of code as its infrastructure has largely been elevated to the shared auctions library.</td>
               </tr>
               <tr>
                 <td>

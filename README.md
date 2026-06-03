@@ -64,7 +64,7 @@ published citation title and year.
 | [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized | 0/7 | OK: 109 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library. |
 | [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 468 lines |  |
 | [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/19 | OK: 290 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared auctions library. The journal version is used as the corrected source for Theorem 8.2 [Goldberg et al. 2006](https://www.sciencedirect.com/science/article/pii/S0899825606000303). |
-| [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines |  |
+| [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared auctions library. |
 | [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 92 lines |  |
 | [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 184 lines |  |
 | [GCG24 User Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 235 lines |  |
