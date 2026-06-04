@@ -420,6 +420,26 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   review workflow, and the detailed public skill bundle. Keep private incubator
   folders, unpublished paper attempts, and private planning surfaces out of
   public diagrams and public-facing status text.
+- When publishing work that was developed in the private incubator, do not raw
+  merge, cherry-pick, or push the private branch into the public repository.
+  Create a new public branch from current public `main`, then apply only an
+  allowlisted patch from private. The allowlist should name exact shared-library
+  paths, exact already-public paper folders, and generated public status/site
+  files. Use a binary/full-index patch for PDFs, for example
+  `git diff --binary --full-index public/main..origin/main -- <allowlisted paths>
+  --output=/tmp/public-filter.patch`, then `git apply` it in the public
+  checkout. Before committing, inspect `git diff --name-only main..HEAD` and
+  reject the branch if any private paper folder, private-only plan, source
+  cache, scaffold row, or unpublished status entry appears.
+- Public-release leakage checks must be path-sensitive. Grep the changed public
+  surface for private paper identifiers and titles such as GLM/KR/PRPKG/new
+  scaffold IDs. Existing historical mentions outside the changed path set do
+  not justify new leakage. Regenerate public status from paper-local
+  `status.json`, run `python3 scripts/sync_paper_status.py --check`,
+  `python3 scripts/audit_repository.py`, placeholder scans on changed Lean
+  paper folders, and the relevant `lake build` targets before pushing. When the
+  filtered branch is approved, fast-forward public `main` to that audited
+  commit rather than redoing the merge from private.
 - Before moving work from a private incubator into the public repository, run a
   release-hygiene pass. Public commits should not contain source-paper PDFs,
   extracted source-paper `.txt` caches, unpacked publisher/arXiv source
@@ -432,6 +452,24 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 - Public partials are acceptable when their remaining seams are valuable and
   explicit. Do not hide partiality by publishing an all-green DAG, an empty
   caveat column, or a final report that only says the code compiles.
+- After any broad library-extraction or paper-thinning pass, run a preservation
+  audit before declaring the pass done. Compare the current private repo against
+  the archive or the pre-extraction ref used for recovery. Check that no
+  archived paper folder disappeared, no archived `.lean` file disappeared, and
+  any large paper-local LOC drop is explained by wrappers moving to
+  `ProofInterface.lean` or reusable library modules, not by deleting proof
+  declarations. If `PaperInterface.lean` was thinned, every removed archive
+  declaration name must either still be declared elsewhere in current Lean code
+  or point to an underlying target declaration that still exists. If a removed
+  interface alias cannot be resolved this way, treat it as proof-surface loss
+  and restore or deliberately replace it before committing.
+- Preservation audits must compile the actual private paper targets, not only
+  the default public aggregate. Explicitly build private/in-progress papers
+  such as GLM, KR, PRPKG, EOS, IM, and any new scaffolds when they are part of
+  the pass. Strip comments before scanning for actual `sorry`, `admit`,
+  `axiom`, or `unsafe` tokens; do not count ordinary arithmetic `by omega` or
+  prose comments as proof gaps. Push private and public remotes only after both
+  the content-preservation check and the relevant builds/audits pass.
 
 ### 1.2.1 Paper Link Intake Protocol
 
