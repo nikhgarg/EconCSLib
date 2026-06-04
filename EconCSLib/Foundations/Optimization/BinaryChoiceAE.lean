@@ -17,11 +17,15 @@ be pointwise equilibrium obligations.
 
 - `NoProfitableBinaryChoiceDeviationAE`
 - `noProfitableBinaryChoiceDeviationAE_of_pointwise`
+- `noProfitableBinaryChoiceDeviationAE_of_forall_not_mem_null`
+- `noProfitableBinaryChoiceDeviationAE_of_bool_best_response_forall_not_mem_null`
 - `noProfitableBinaryChoiceDeviationAE_of_bool_best_response_ae`
 - `bool_best_response_ae_of_noProfitableBinaryChoiceDeviationAE`
 - `noProfitableBinaryChoiceDeviationAE_of_choiceEquilibriumAE_payoff_projection`
 - `choice_rule_iff_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_no_tie`
+- `choice_rule_iff_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_null_tie`
 - `bool_choice_eq_decide_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_no_tie`
+- `bool_choice_eq_decide_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_null_tie`
 - `chosen_reference_le_value_ae_of_affine_noProfitableBinaryChoiceDeviationAE`
 - `unchosen_value_le_reference_ae_of_affine_noProfitableBinaryChoiceDeviationAE`
 -/
@@ -63,6 +67,23 @@ theorem noProfitableBinaryChoiceDeviationAE_of_pointwise
     Filter.Eventually.of_forall hbest.2⟩
 
 /--
+Build an a.e. binary no-deviation certificate from pointwise chosen/unchosen
+payoff comparisons outside a null exception set.
+-/
+theorem noProfitableBinaryChoiceDeviationAE_of_forall_not_mem_null
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {chooses : α → Prop} {choosePayoff otherPayoff : α → ℝ}
+    {exception : Set α}
+    (hexception : μ exception = 0)
+    (hchosen :
+      ∀ a, a ∉ exception → chooses a → otherPayoff a ≤ choosePayoff a)
+    (hunchosen :
+      ∀ a, a ∉ exception → ¬ chooses a → choosePayoff a ≤ otherPayoff a) :
+    NoProfitableBinaryChoiceDeviationAE μ chooses choosePayoff otherPayoff :=
+  ⟨ae_of_forall_not_mem_null (μ := μ) hexception hchosen,
+    ae_of_forall_not_mem_null (μ := μ) hexception hunchosen⟩
+
+/--
 Convert a raw a.e. Boolean best-response condition into the named binary
 no-profitable-deviation predicate.
 -/
@@ -86,6 +107,24 @@ theorem noProfitableBinaryChoiceDeviationAE_of_bool_best_response_ae
       · rfl
       · exact False.elim (hnotChoose hchoose)
     simpa [hchoose_false] using h
+
+/--
+Convert a raw Boolean best-response condition outside a null exception set into
+the named a.e. binary no-profitable-deviation predicate.
+-/
+theorem noProfitableBinaryChoiceDeviationAE_of_bool_best_response_forall_not_mem_null
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    (chooses : α → Bool) {choosePayoff otherPayoff : α → ℝ}
+    {exception : Set α}
+    (hexception : μ exception = 0)
+    (hbest :
+      ∀ a, a ∉ exception → ∀ action : Bool,
+        (if action then choosePayoff a else otherPayoff a) ≤
+          if chooses a then choosePayoff a else otherPayoff a) :
+    NoProfitableBinaryChoiceDeviationAE μ (fun a => chooses a = true)
+      choosePayoff otherPayoff :=
+  noProfitableBinaryChoiceDeviationAE_of_bool_best_response_ae chooses
+    (ae_of_forall_not_mem_null (μ := μ) hexception hbest)
 
 /--
 Convert the named a.e. binary no-profitable-deviation predicate back into the
@@ -181,6 +220,25 @@ theorem choice_rule_iff_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_no_t
       exact False.elim (hnoTie_a (le_antisymm hchoose_le_other hother_le_choose))
 
 /--
+A.e. binary threshold identification when the tie set itself is null.  This is
+the cutoff-boundary form usually supplied by continuous laws or no-atoms facts.
+-/
+theorem choice_rule_iff_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_null_tie
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {chooses threshold : α → Prop}
+    {choosePayoff otherPayoff : α → ℝ}
+    (hbest :
+      NoProfitableBinaryChoiceDeviationAE μ chooses choosePayoff otherPayoff)
+    (hthreshold :
+      ∀ a, otherPayoff a ≤ choosePayoff a ↔ threshold a)
+    (htie : μ {a | choosePayoff a = otherPayoff a} = 0) :
+    ∀ᵐ a ∂μ, chooses a ↔ threshold a :=
+  choice_rule_iff_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_no_tie
+    hbest hthreshold
+    (ae_of_forall_not_mem_null (μ := μ) htie
+      (fun a ha hEq => ha hEq))
+
+/--
 Boolean a.e. threshold identification away from ties.  The chosen action is
 represented as a `Bool` and is equal a.e. to `decide (threshold a)`.
 -/
@@ -207,6 +265,25 @@ theorem bool_choice_eq_decide_threshold_ae_of_noProfitableBinaryChoiceDeviationA
     cases hchoose : chooses a
     · simp [hthreshold_a]
     · exact False.elim (hnotTrue hchoose)
+
+/--
+Boolean a.e. threshold identification when the payoff tie set is null.
+-/
+theorem bool_choice_eq_decide_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_null_tie
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    (chooses : α → Bool) {threshold : α → Prop} [DecidablePred threshold]
+    {choosePayoff otherPayoff : α → ℝ}
+    (hbest :
+      NoProfitableBinaryChoiceDeviationAE μ (fun a => chooses a = true)
+        choosePayoff otherPayoff)
+    (hthreshold :
+      ∀ a, otherPayoff a ≤ choosePayoff a ↔ threshold a)
+    (htie : μ {a | choosePayoff a = otherPayoff a} = 0) :
+    ∀ᵐ a ∂μ, chooses a = decide (threshold a) :=
+  bool_choice_eq_decide_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_no_tie
+    chooses hbest hthreshold
+    (ae_of_forall_not_mem_null (μ := μ) htie
+      (fun a ha hEq => ha hEq))
 
 /--
 Affine chosen-payoff specialization: if choosing has positive-slope affine

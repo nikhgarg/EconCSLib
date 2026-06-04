@@ -1,3 +1,4 @@
+import EconCSLib.Foundations.Math.FiniteSum
 import Mathlib.Probability.CDF
 import Mathlib.MeasureTheory.Measure.Real
 import Mathlib.Order.Interval.Set.LinearOrder
@@ -503,29 +504,7 @@ theorem prod_ite_mem_eq_pow_mul_pow {ι : Type*}
     [Fintype ι] [DecidableEq ι] (s : Finset ι) (q rho : ℝ) :
     (∏ i : ι, if i ∈ s then q else rho) =
       q ^ s.card * rho ^ (Fintype.card ι - s.card) := by
-  classical
-  have hfilter :
-      (Finset.univ : Finset ι).filter (fun i => i ∈ s) = s := by
-    ext i
-    simp
-  have hfilter_not_card :
-      ((Finset.univ : Finset ι).filter (fun i => ¬ i ∈ s)).card =
-        Fintype.card ι - s.card := by
-    have hsum :=
-      Finset.card_filter_add_card_filter_not
-        (s := (Finset.univ : Finset ι)) (p := fun i => i ∈ s)
-    rw [hfilter, Finset.card_univ] at hsum
-    omega
-  calc
-    (∏ i : ι, if i ∈ s then q else rho)
-        = (∏ i ∈ (Finset.univ : Finset ι),
-            if i ∈ s then q else rho) := by
-          simp
-    _ = (∏ i ∈ (Finset.univ : Finset ι) with i ∈ s, q) *
-          ∏ i ∈ (Finset.univ : Finset ι) with ¬ i ∈ s, rho := by
-          rw [Finset.prod_ite]
-    _ = q ^ s.card * rho ^ (Fintype.card ι - s.card) := by
-          simp [hfilter, hfilter_not_card]
+  exact EconCSLib.FiniteSum.prod_ite_mem_eq_pow_mul_pow s q rho
 
 /-! ## Finite iid threshold counts -/
 

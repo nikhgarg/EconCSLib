@@ -16,7 +16,7 @@ import Mathlib.Probability.ProbabilityMassFunction.Integrals
 open MeasureTheory
 open ProbabilityTheory
 open Filter
-open scoped ENNReal
+open scoped ENNReal symmDiff
 
 namespace EconCSLib
 
@@ -25,6 +25,25 @@ namespace EconCSLib
 
 Small reusable measure-theoretic probability lemmas for continuous
 change-of-variables arguments.
+
+## Main declarations
+
+- `ae_of_forall_not_mem_null`
+- `ae_eq_of_forall_not_mem_null`
+- `ae_iff_of_forall_not_mem_null`
+- `ae_eq_decide_of_ae_iff`
+- `ae_eq_if_of_ae_iff`
+- `ae_eq_setIndicator_of_ae_iff_mem`
+- `measure_set_congr_of_symmDiff_null`
+- `measure_symmDiff_union_left_eq_zero`
+- `measure_symmDiff_diff_left_eq_zero`
+- `measure_symmDiff_Ioo_union_Ioo_touching_eq_zero`
+- `measure_symmDiff_Ioo_union_Ioi_touching_eq_zero`
+- `ae_iff_le_lt_of_level_null`
+- `ae_iff_lt_le_of_level_null`
+- `measure_eq_zero_of_ae_property_failure_mass`
+- `ae_le_contradicts_positive_gt_mass`
+- `ae_lt_contradicts_positive_le_mass`
 -/
 
 /-- Real-valued probability/mass of an event under a measure. -/
@@ -91,6 +110,18 @@ theorem measure_pos_of_subset
 /--
 An almost-everywhere property cannot fail on a positive-measure event.
 -/
+theorem measure_eq_zero_of_ae_property_failure_mass
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) (P Q : α → Prop)
+    (hAE : ∀ᵐ a ∂μ, P a)
+    (hQ_bad : ∀ a, Q a → ¬ P a) :
+    μ {a | Q a} = 0 := by
+  exact measure_mono_null (fun a hQ => hQ_bad a hQ)
+    (MeasureTheory.ae_iff.1 hAE)
+
+/--
+An almost-everywhere property cannot fail on a positive-measure event.
+-/
 theorem ae_property_contradicts_positive_failure_mass
     {α : Type*} [MeasurableSpace α]
     (μ : Measure α) (P Q : α → Prop)
@@ -98,9 +129,436 @@ theorem ae_property_contradicts_positive_failure_mass
     (hQ_bad : ∀ a, Q a → ¬ P a)
     (hpos : 0 < μ {a | Q a}) : False := by
   have hzero : μ {a | Q a} = 0 := by
-    exact measure_mono_null (fun a hQ => hQ_bad a hQ)
-      (MeasureTheory.ae_iff.1 hAE)
+    exact measure_eq_zero_of_ae_property_failure_mass μ P Q hAE hQ_bad
   exact (ne_of_gt hpos) hzero
+
+/--
+An a.e. implication of the form `selected a → reference a ≤ value a` rules out
+positive mass of selected points with `value a < reference a`.
+-/
+theorem ae_imp_le_contradicts_positive_selected_lt_mass
+    {α β : Type*} [MeasurableSpace α] [Preorder β]
+    (μ : Measure α) (selected : α → Prop) (reference value : α → β)
+    (hAE : ∀ᵐ a ∂μ, selected a → reference a ≤ value a)
+    (hpos : 0 < μ {a | selected a ∧ value a < reference a}) : False :=
+  ae_property_contradicts_positive_failure_mass μ
+    (fun a => selected a → reference a ≤ value a)
+    (fun a => selected a ∧ value a < reference a)
+    hAE
+    (fun _ hbad hAE_a => not_le_of_gt hbad.2 (hAE_a hbad.1))
+    hpos
+
+/--
+Cancel a positive affine score transform inside an a.e. implication.
+
+This is useful for equilibrium arguments where a payoff comparison is stated
+as `(base + weight * x) / denom ≤ (base + weight * y) / denom`, with positive
+`weight` and `denom`, but the economic conclusion is `x ≤ y`.
+-/
+theorem ae_imp_le_of_affine_div_le_affine_div
+    {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) (selected : α → Prop)
+    (base weight denom x y : α → ℝ)
+    (hweight : ∀ a, 0 < weight a)
+    (hdenom : ∀ a, 0 < denom a)
+    (hAE :
+      ∀ᵐ a ∂μ, selected a →
+        (base a + weight a * x a) / denom a ≤
+          (base a + weight a * y a) / denom a) :
+    ∀ᵐ a ∂μ, selected a → x a ≤ y a :=
+  hAE.mono fun a hle hselected => by
+    have hmul :=
+      mul_le_mul_of_nonneg_right (hle hselected) (le_of_lt (hdenom a))
+    have hsimpl :
+        base a + weight a * x a ≤ base a + weight a * y a := by
+      simpa [div_mul_cancel₀ _ (ne_of_gt (hdenom a))] using hmul
+    have hmulxy : weight a * x a ≤ weight a * y a :=
+      (add_le_add_iff_left (base a)).mp hsimpl
+    exact le_of_mul_le_mul_left hmulxy (hweight a)
+
+/--
+If every point in an interval-like event is selected, then positive mass of
+that event gives positive mass of selected points below the reference value.
+-/
+theorem positive_selected_lt_mass_of_positive_lower_lt_mass
+    {α β : Type*} [MeasurableSpace α] [Preorder β]
+    {μ : Measure α} {selected : α → Prop}
+    {lower reference value : α → β}
+    (hselected : ∀ a, lower a ≤ value a → selected a)
+    (hpos : 0 < μ {a | lower a ≤ value a ∧ value a < reference a}) :
+    0 < μ {a | selected a ∧ value a < reference a} :=
+  measure_pos_of_subset
+    (A := {a | lower a ≤ value a ∧ value a < reference a})
+    (B := {a | selected a ∧ value a < reference a})
+    (fun a ha => ⟨hselected a ha.1, ha.2⟩)
+    hpos
+
+/-- If `f ≤ g` a.e., then the strict reverse inequality has zero mass. -/
+theorem measure_eq_zero_of_ae_le_of_gt
+    {α β : Type*} [MeasurableSpace α] [Preorder β]
+    {μ : Measure α} {f g : α → β}
+    (hAE : ∀ᵐ a ∂μ, f a ≤ g a) :
+    μ {a | g a < f a} = 0 :=
+  measure_eq_zero_of_ae_property_failure_mass μ
+    (fun a => f a ≤ g a) (fun a => g a < f a)
+    hAE (fun _ hgt => not_le_of_gt hgt)
+
+/--
+An a.e. weak inequality cannot be strictly reversed on a positive-measure
+event.
+-/
+theorem ae_le_contradicts_positive_gt_mass
+    {α β : Type*} [MeasurableSpace α] [Preorder β]
+    {μ : Measure α} {f g : α → β}
+    (hAE : ∀ᵐ a ∂μ, f a ≤ g a)
+    (hpos : 0 < μ {a | g a < f a}) : False := by
+  exact (ne_of_gt hpos) (measure_eq_zero_of_ae_le_of_gt (μ := μ) hAE)
+
+/-- If `f < g` a.e., then the weak reverse inequality has zero mass. -/
+theorem measure_eq_zero_of_ae_lt_of_le
+    {α β : Type*} [MeasurableSpace α] [Preorder β]
+    {μ : Measure α} {f g : α → β}
+    (hAE : ∀ᵐ a ∂μ, f a < g a) :
+    μ {a | g a ≤ f a} = 0 :=
+  measure_eq_zero_of_ae_property_failure_mass μ
+    (fun a => f a < g a) (fun a => g a ≤ f a)
+    hAE (fun _ hle hlt => not_le_of_gt hlt hle)
+
+/--
+An a.e. strict inequality cannot be weakly reversed on a positive-measure
+event.
+-/
+theorem ae_lt_contradicts_positive_le_mass
+    {α β : Type*} [MeasurableSpace α] [Preorder β]
+    {μ : Measure α} {f g : α → β}
+    (hAE : ∀ᵐ a ∂μ, f a < g a)
+    (hpos : 0 < μ {a | g a ≤ f a}) : False := by
+  exact (ne_of_gt hpos) (measure_eq_zero_of_ae_lt_of_le (μ := μ) hAE)
+
+/--
+If a property holds away from a null set, then it holds almost everywhere.
+This is the basic boundary-null bridge for continuous cutoff arguments.
+-/
+theorem ae_of_forall_not_mem_null
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {P : α → Prop} {s : Set α}
+    (hs : μ s = 0)
+    (hP : ∀ a, a ∉ s → P a) :
+    ∀ᵐ a ∂μ, P a := by
+  refine MeasureTheory.ae_iff.2 ?_
+  exact measure_mono_null
+    (fun a hnotP => by
+      by_contra hnotMem
+      exact hnotP (hP a hnotMem))
+    hs
+
+/-- Two functions that agree outside a null set are equal almost everywhere. -/
+theorem ae_eq_of_forall_not_mem_null
+    {α β : Type*} [MeasurableSpace α] {μ : Measure α}
+    {f g : α → β} {s : Set α}
+    (hs : μ s = 0)
+    (hfg : ∀ a, a ∉ s → f a = g a) :
+    f =ᵐ[μ] g :=
+  ae_of_forall_not_mem_null (μ := μ) hs hfg
+
+/-- Two predicates that agree outside a null set are equivalent almost everywhere. -/
+theorem ae_iff_of_forall_not_mem_null
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {P Q : α → Prop} {s : Set α}
+    (hs : μ s = 0)
+    (hPQ : ∀ a, a ∉ s → (P a ↔ Q a)) :
+    ∀ᵐ a ∂μ, (P a ↔ Q a) :=
+  ae_of_forall_not_mem_null (μ := μ) hs hPQ
+
+/-- A function is equal a.e. if its pointwise mismatch set is contained in a null set. -/
+theorem ae_eq_of_subset_null
+    {α β : Type*} [MeasurableSpace α] {μ : Measure α}
+    {f g : α → β} {s : Set α}
+    (hsub : {a | f a ≠ g a} ⊆ s)
+    (hs : μ s = 0) :
+    f =ᵐ[μ] g := by
+  exact MeasureTheory.ae_iff.2 (measure_mono_null hsub hs)
+
+/-- Predicate equivalence a.e. from a null set containing all mismatches. -/
+theorem ae_iff_of_subset_null
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {P Q : α → Prop} {s : Set α}
+    (hsub : {a | ¬ (P a ↔ Q a)} ⊆ s)
+    (hs : μ s = 0) :
+    ∀ᵐ a ∂μ, (P a ↔ Q a) := by
+  exact MeasureTheory.ae_iff.2 (measure_mono_null hsub hs)
+
+/-- An a.e. predicate equivalence gives a.e. equality of Boolean indicators. -/
+theorem ae_eq_decide_of_ae_iff
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {P Q : α → Prop} [DecidablePred P] [DecidablePred Q]
+    (hPQ : ∀ᵐ a ∂μ, (P a ↔ Q a)) :
+    (fun a => decide (P a)) =ᵐ[μ] fun a => decide (Q a) := by
+  filter_upwards [hPQ] with a hiff
+  by_cases hP : P a
+  · have hQ : Q a := hiff.1 hP
+    simp [hP, hQ]
+  · have hQ : ¬ Q a := fun hQa => hP (hiff.2 hQa)
+    simp [hP, hQ]
+
+/--
+An a.e. predicate equivalence lets an `if` expression switch predicates when
+the two branches are the same.
+-/
+theorem ae_eq_if_of_ae_iff
+    {α β : Type*} [MeasurableSpace α] {μ : Measure α}
+    {P Q : α → Prop} [DecidablePred P] [DecidablePred Q]
+    (thenBranch elseBranch : α → β)
+    (hPQ : ∀ᵐ a ∂μ, (P a ↔ Q a)) :
+    (fun a => if P a then thenBranch a else elseBranch a) =ᵐ[μ]
+      fun a => if Q a then thenBranch a else elseBranch a := by
+  filter_upwards [hPQ] with a hiff
+  by_cases hP : P a
+  · have hQ : Q a := hiff.1 hP
+    simp [hP, hQ]
+  · have hQ : ¬ Q a := fun hQa => hP (hiff.2 hQa)
+    simp [hP, hQ]
+
+/-- Set indicators are equal a.e. when their membership predicates agree a.e. -/
+theorem ae_eq_setIndicator_of_ae_iff_mem
+    {α β : Type*} [MeasurableSpace α] {μ : Measure α}
+    [Zero β] {s t : Set α} (f : α → β)
+    (hst : ∀ᵐ a ∂μ, (a ∈ s ↔ a ∈ t)) :
+    s.indicator f =ᵐ[μ] t.indicator f := by
+  filter_upwards [hst] with a hiff
+  by_cases hs : a ∈ s
+  · have ht : a ∈ t := hiff.1 hs
+    simp [Set.indicator, hs, ht]
+  · have ht : a ∉ t := fun ht => hs (hiff.2 ht)
+    simp [Set.indicator, hs, ht]
+
+/-- Set indicators are equal a.e. when their sets differ only inside a null set. -/
+theorem ae_eq_setIndicator_of_forall_not_mem_null
+    {α β : Type*} [MeasurableSpace α] {μ : Measure α}
+    [Zero β] {s t boundary : Set α} (f : α → β)
+    (hboundary : μ boundary = 0)
+    (hst : ∀ a, a ∉ boundary → (a ∈ s ↔ a ∈ t)) :
+    s.indicator f =ᵐ[μ] t.indicator f :=
+  ae_eq_setIndicator_of_ae_iff_mem (μ := μ) f
+    (ae_iff_of_forall_not_mem_null (μ := μ) hboundary hst)
+
+/-- Sets whose symmetric difference is null have equal measure. -/
+theorem measure_set_congr_of_symmDiff_null
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {s t : Set α} (hst : μ (s ∆ t) = 0) :
+    μ s = μ t :=
+  measure_congr (measure_symmDiff_eq_zero_iff.mp hst)
+
+/--
+Adding the same fixed context to both sets cannot create new symmetric
+difference points.
+-/
+theorem symmDiff_union_left_subset
+    {α : Type*} {κ s t : Set α} :
+    ((κ ∪ s) ∆ (κ ∪ t)) ⊆ s ∆ t := by
+  intro x hx
+  rw [Set.symmDiff_def] at hx ⊢
+  rcases hx with hx | hx
+  · rcases hx with ⟨hx_left, hx_not_right⟩
+    have hxs : x ∈ s := by
+      rcases hx_left with hxκ | hxs
+      · exact False.elim (hx_not_right (Or.inl hxκ))
+      · exact hxs
+    have hxt_not : x ∉ t := by
+      intro hxt
+      exact hx_not_right (Or.inr hxt)
+    exact Or.inl ⟨hxs, hxt_not⟩
+  · rcases hx with ⟨hx_right, hx_not_left⟩
+    have hxt : x ∈ t := by
+      rcases hx_right with hxκ | hxt
+      · exact False.elim (hx_not_left (Or.inl hxκ))
+      · exact hxt
+    have hxs_not : x ∉ s := by
+      intro hxs
+      exact hx_not_left (Or.inr hxs)
+    exact Or.inr ⟨hxt, hxs_not⟩
+
+/-- Null symmetric difference is preserved after unioning with fixed context. -/
+theorem measure_symmDiff_union_left_eq_zero
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {κ s t : Set α} (hst : μ (s ∆ t) = 0) :
+    μ ((κ ∪ s) ∆ (κ ∪ t)) = 0 :=
+  measure_mono_null symmDiff_union_left_subset hst
+
+/-- A.e. set equality is preserved after unioning with fixed context. -/
+theorem ae_eq_set_union_left
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {κ s t : Set α} (hst : s =ᵐ[μ] t) :
+    ((κ ∪ s : Set α) =ᵐ[μ] (κ ∪ t : Set α)) := by
+  rw [← measure_symmDiff_eq_zero_iff] at hst ⊢
+  exact measure_symmDiff_union_left_eq_zero hst
+
+/--
+Intersecting a fixed left set with the complements of two sets cannot create
+new symmetric difference points.
+-/
+theorem symmDiff_diff_left_subset
+    {α : Type*} {A s t : Set α} :
+    ((A \ s) ∆ (A \ t)) ⊆ s ∆ t := by
+  intro x hx
+  rw [Set.mem_symmDiff] at hx ⊢
+  rcases hx with hx | hx
+  · rcases hx with ⟨hxAs, hnotAt⟩
+    have hxt : x ∈ t := by
+      by_contra hxt
+      exact hnotAt ⟨hxAs.1, hxt⟩
+    exact Or.inr ⟨hxt, hxAs.2⟩
+  · rcases hx with ⟨hxAt, hnotAs⟩
+    have hxs : x ∈ s := by
+      by_contra hxs
+      exact hnotAs ⟨hxAt.1, hxs⟩
+    exact Or.inl ⟨hxs, hxAt.2⟩
+
+/-- Null symmetric difference is preserved by fixed-left set difference. -/
+theorem measure_symmDiff_diff_left_eq_zero
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {A s t : Set α} (hst : μ (s ∆ t) = 0) :
+    μ ((A \ s) ∆ (A \ t)) = 0 :=
+  measure_mono_null symmDiff_diff_left_subset hst
+
+/-- A.e. set equality is preserved by fixed-left set difference. -/
+theorem ae_eq_set_diff_left
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {A s t : Set α} (hst : s =ᵐ[μ] t) :
+    ((A \ s : Set α) =ᵐ[μ] (A \ t : Set α)) := by
+  rw [← measure_symmDiff_eq_zero_iff] at hst ⊢
+  exact measure_symmDiff_diff_left_eq_zero hst
+
+/-- Measure of fixed-left set difference is invariant under null symmetric difference. -/
+theorem measure_diff_left_congr_of_symmDiff_null
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {A s t : Set α} (hst : μ (s ∆ t) = 0) :
+    μ (A \ s) = μ (A \ t) :=
+  measure_set_congr_of_symmDiff_null
+    (measure_symmDiff_diff_left_eq_zero (A := A) hst)
+
+/--
+Two touching open intervals differ from the merged open interval only at the
+touching endpoint.
+-/
+theorem symmDiff_Ioo_union_Ioo_touching_subset_singleton
+    {a b c : ℝ} (hab : a ≤ b) (hbc : b ≤ c) :
+    ((Set.Ioo a b ∪ Set.Ioo b c) ∆ Set.Ioo a c) ⊆
+      ({b} : Set ℝ) := by
+  intro x hx
+  rw [Set.symmDiff_def] at hx
+  rcases hx with hx | hx
+  · rcases hx with ⟨hx_union, hx_not⟩
+    rcases hx_union with hx_left | hx_right
+    · have hx_ac : x ∈ Set.Ioo a c :=
+        ⟨hx_left.1, lt_of_lt_of_le hx_left.2 hbc⟩
+      exact False.elim (hx_not hx_ac)
+    · have hx_ac : x ∈ Set.Ioo a c :=
+        ⟨lt_of_le_of_lt hab hx_right.1, hx_right.2⟩
+      exact False.elim (hx_not hx_ac)
+  · rcases hx with ⟨hx_ac, hx_not_union⟩
+    by_cases hxb : x = b
+    · simpa [hxb]
+    · exfalso
+      rcases lt_or_gt_of_ne hxb with hx_lt_b | hb_lt_x
+      · exact hx_not_union (Or.inl ⟨hx_ac.1, hx_lt_b⟩)
+      · exact hx_not_union (Or.inr ⟨hb_lt_x, hx_ac.2⟩)
+
+/-- Under a nonatomic measure, touching open intervals are equal a.e. -/
+theorem measure_symmDiff_Ioo_union_Ioo_touching_eq_zero
+    (μ : Measure ℝ) [NoAtoms μ]
+    {a b c : ℝ} (hab : a ≤ b) (hbc : b ≤ c) :
+    μ ((Set.Ioo a b ∪ Set.Ioo b c) ∆ Set.Ioo a c) = 0 :=
+  measure_mono_null
+    (symmDiff_Ioo_union_Ioo_touching_subset_singleton
+      (a := a) (b := b) (c := c) hab hbc)
+    (measure_singleton b)
+
+/-- A.e. set equality form of `measure_symmDiff_Ioo_union_Ioo_touching_eq_zero`. -/
+theorem ae_eq_Ioo_union_Ioo_touching
+    (μ : Measure ℝ) [NoAtoms μ]
+    {a b c : ℝ} (hab : a ≤ b) (hbc : b ≤ c) :
+    ((Set.Ioo a b ∪ Set.Ioo b c : Set ℝ) =ᵐ[μ] Set.Ioo a c) :=
+  measure_symmDiff_eq_zero_iff.mp
+    (measure_symmDiff_Ioo_union_Ioo_touching_eq_zero
+      μ hab hbc)
+
+/--
+An open interval touching a right ray differs from the merged right ray only
+at the touching endpoint.
+-/
+theorem symmDiff_Ioo_union_Ioi_touching_subset_singleton
+    {a b : ℝ} (hab : a ≤ b) :
+    ((Set.Ioo a b ∪ Set.Ioi b) ∆ Set.Ioi a) ⊆
+      ({b} : Set ℝ) := by
+  intro x hx
+  rw [Set.symmDiff_def] at hx
+  rcases hx with hx | hx
+  · rcases hx with ⟨hx_union, hx_not⟩
+    have hx_a : a < x := by
+      rcases hx_union with hx_interval | hx_ray
+      · exact hx_interval.1
+      · exact lt_of_le_of_lt hab hx_ray
+    exact False.elim (hx_not hx_a)
+  · rcases hx with ⟨hx_ray, hx_not_union⟩
+    by_cases hxb : x = b
+    · simpa [hxb]
+    · exfalso
+      rcases lt_or_gt_of_ne hxb with hx_lt_b | hb_lt_x
+      · exact hx_not_union (Or.inl ⟨hx_ray, hx_lt_b⟩)
+      · exact hx_not_union (Or.inr hb_lt_x)
+
+/-- Under a nonatomic measure, a touching open interval and right ray are equal a.e. -/
+theorem measure_symmDiff_Ioo_union_Ioi_touching_eq_zero
+    (μ : Measure ℝ) [NoAtoms μ]
+    {a b : ℝ} (hab : a ≤ b) :
+    μ ((Set.Ioo a b ∪ Set.Ioi b) ∆ Set.Ioi a) = 0 :=
+  measure_mono_null
+    (symmDiff_Ioo_union_Ioi_touching_subset_singleton
+      (a := a) (b := b) hab)
+    (measure_singleton b)
+
+/-- A.e. set equality form of `measure_symmDiff_Ioo_union_Ioi_touching_eq_zero`. -/
+theorem ae_eq_Ioo_union_Ioi_touching
+    (μ : Measure ℝ) [NoAtoms μ]
+    {a b : ℝ} (hab : a ≤ b) :
+    ((Set.Ioo a b ∪ Set.Ioi b : Set ℝ) =ᵐ[μ] Set.Ioi a) :=
+  measure_symmDiff_eq_zero_iff.mp
+    (measure_symmDiff_Ioo_union_Ioi_touching_eq_zero μ hab)
+
+/--
+Weak and strict lower cutoff predicates are equivalent a.e. when the level set
+has zero mass.
+-/
+theorem ae_iff_le_lt_of_level_null
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {score : α → ℝ} {cutoff : ℝ}
+    (hlevel : μ {a | score a = cutoff} = 0) :
+    ∀ᵐ a ∂μ, (cutoff ≤ score a ↔ cutoff < score a) := by
+  refine ae_iff_of_forall_not_mem_null (μ := μ)
+    (s := {a | score a = cutoff}) hlevel ?_
+  intro a ha
+  constructor
+  · intro hle
+    exact lt_of_le_of_ne hle (fun hEq => ha hEq.symm)
+  · exact le_of_lt
+
+/--
+Strict and weak upper cutoff predicates are equivalent a.e. when the level set
+has zero mass.
+-/
+theorem ae_iff_lt_le_of_level_null
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {score : α → ℝ} {cutoff : ℝ}
+    (hlevel : μ {a | score a = cutoff} = 0) :
+    ∀ᵐ a ∂μ, (score a < cutoff ↔ score a ≤ cutoff) := by
+  refine ae_iff_of_forall_not_mem_null (μ := μ)
+    (s := {a | score a = cutoff}) hlevel ?_
+  intro a ha
+  constructor
+  · exact le_of_lt
+  · intro hle
+    exact lt_of_le_of_ne hle (fun hEq => ha hEq)
 
 theorem measureReal_inter_ge_one_sub_add
     {α : Type*} [MeasurableSpace α]

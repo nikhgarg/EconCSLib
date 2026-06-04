@@ -23,11 +23,13 @@ Aggregate import for reusable optimization primitives.
 - `EconCSLib.Foundations.Optimization.ChoiceEquilibrium`: static
   choice-equilibrium data, weak best-response, and consistency projections.
 - `EconCSLib.Foundations.Optimization.ChoiceEquilibriumAE`: almost-everywhere
-  best-response variant for continuous or mixed information laws.
+  best-response variant for continuous or mixed information laws, including
+  off-null-set constructors.
 - `EconCSLib.Foundations.Optimization.BinaryChoice`: two-sided binary
   best-response predicates and basic contradiction lemmas.
 - `EconCSLib.Foundations.Optimization.BinaryChoiceAE`: a.e. binary
-  best-response predicates and affine cutoff consequences.
+  best-response predicates, null-tie threshold identification, and affine
+  cutoff consequences.
 - `EconCSLib.Foundations.Optimization.Approximation`: primal-dual/benchmark
   sandwich certificates for approximation and competitive-ratio proofs.
 - `EconCSLib.Foundations.Optimization.Certificate`: reusable optimality

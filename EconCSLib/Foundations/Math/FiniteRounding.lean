@@ -347,6 +347,28 @@ theorem lower_lt_count_add_card
   have hlow_one : a t + 1 ≤ lower t := by omega
   exact hno high t ⟨hhigh_one, hlow_one⟩
 
+/--
+Two-sided coordinate closeness from a no-crossing certificate between lower
+and upper integer anchors.
+-/
+theorem count_close
+    {κ : Type*} [Fintype κ]
+    (a lower upper : κ → ℕ) {N L U : ℕ}
+    (ha : (∑ i : κ, a i) = N)
+    (hlower : (∑ i : κ, lower i) = L)
+    (hupper : (∑ i : κ, upper i) = U)
+    (hNlt : N < L + Fintype.card κ + 1)
+    (hUlt : U < N + Fintype.card κ + 1)
+    (horder : ∀ i, lower i ≤ upper i)
+    (hno : NoRoundingCrossingBetween a lower upper) :
+    ∀ i : κ,
+      lower i < a i + Fintype.card κ + 1 ∧
+        a i < upper i + Fintype.card κ + 1 := by
+  intro i
+  exact
+    ⟨lower_lt_count_add_card a lower upper i ha hupper hUlt horder hno,
+      count_lt_upper_add_card a lower upper i ha hlower hNlt horder hno⟩
+
 end NoRoundingCrossingBetween
 
 end FiniteRounding
