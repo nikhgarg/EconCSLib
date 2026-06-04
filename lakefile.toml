@@ -80,6 +80,10 @@ name = "MSVV07AdWords"
 srcDir = "papers"
 
 [[lean_lib]]
+name = "PRPKG24AccuracyDiversity"
+srcDir = "papers"
+
+[[lean_lib]]
 name = "LMMS04FairDivision"
 srcDir = "papers"
 

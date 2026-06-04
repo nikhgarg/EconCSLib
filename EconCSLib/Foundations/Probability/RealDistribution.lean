@@ -29,6 +29,7 @@ needs real-valued lower-CDF and upper-tail probabilities.
 - `upperTailMass_eq_one_sub_cdf`
 - `intervalOCMass_eq_cdf_sub`
 - `UpperTailThresholdCertificate`
+- `CDFPowerTailSandwich`
 -/
 
 /-- Real-valued lower CDF mass, `P[X <= x]`. -/
@@ -38,6 +39,69 @@ def lowerCDFMass (μ : Measure ℝ) (x : ℝ) : ℝ :=
 /-- Real-valued upper-tail mass, `P[X > x]`. -/
 def upperTailMass (μ : Measure ℝ) (x : ℝ) : ℝ :=
   μ.real (Ioi x)
+
+/--
+Positive mean from nonnegative support and positive mass above a positive
+threshold.
+-/
+theorem integral_id_pos_of_ae_nonneg_of_measure_Ici_pos
+    (μ : Measure ℝ) [IsFiniteMeasure μ]
+    (h_nonneg : ∀ᵐ x ∂μ, 0 ≤ x)
+    (h_int : Integrable (fun x : ℝ => x) μ)
+    {a : ℝ} (ha_pos : 0 < a)
+    (hmass : 0 < μ (Set.Ici a)) :
+    0 < ∫ x, x ∂μ := by
+  rw [MeasureTheory.integral_pos_iff_support_of_nonneg_ae h_nonneg h_int]
+  exact lt_of_lt_of_le hmass (measure_mono (by
+    intro x hx
+    exact ne_of_gt (lt_of_lt_of_le ha_pos hx)))
+
+/--
+Bounded-support version of
+`integral_id_pos_of_ae_nonneg_of_measure_Ici_pos`, deriving integrability from
+an a.e. interval bound.
+-/
+theorem integral_id_pos_of_ae_nonneg_of_measure_Ici_pos_of_ae_bounds
+    (μ : Measure ℝ) [IsFiniteMeasure μ]
+    {L M a : ℝ}
+    (h_bounds : ∀ᵐ x ∂μ, L ≤ x ∧ x ≤ M)
+    (h_nonneg : ∀ᵐ x ∂μ, 0 ≤ x)
+    (ha_pos : 0 < a)
+    (hmass : 0 < μ (Set.Ici a)) :
+    0 < ∫ x, x ∂μ := by
+  have h_int : Integrable (fun x : ℝ => x) μ := by
+    exact Integrable.of_mem_Icc L M measurable_id.aemeasurable h_bounds
+  exact integral_id_pos_of_ae_nonneg_of_measure_Ici_pos
+    μ h_nonneg h_int ha_pos hmass
+
+/--
+Positive one-dimensional mass gives positive mass to the corresponding finite
+product rectangle.
+-/
+theorem pi_univ_const_set_measure_pos
+    {ι α : Type*} [Fintype ι] [MeasurableSpace α]
+    (μ : Measure α) [SigmaFinite μ] {s : Set α}
+    (hs : MeasurableSet s) (hpos : 0 < μ s) :
+    0 < (Measure.pi (fun _ : ι => μ))
+      (Set.pi Set.univ (fun _ : ι => s)) := by
+  rw [Measure.pi_pi]
+  rw [CanonicallyOrderedAdd.prod_pos]
+  intro i _hi
+  exact hpos
+
+theorem pi_univ_Iio_measure_pos
+    {ι : Type*} [Fintype ι] (μ : Measure ℝ) [SigmaFinite μ] {b : ℝ}
+    (hpos : 0 < μ (Set.Iio b)) :
+    0 < (Measure.pi (fun _ : ι => μ))
+      (Set.pi Set.univ (fun _ : ι => Set.Iio b)) :=
+  pi_univ_const_set_measure_pos μ measurableSet_Iio hpos
+
+theorem pi_univ_Ici_measure_pos
+    {ι : Type*} [Fintype ι] (μ : Measure ℝ) [SigmaFinite μ] {a : ℝ}
+    (hpos : 0 < μ (Set.Ici a)) :
+    0 < (Measure.pi (fun _ : ι => μ))
+      (Set.pi Set.univ (fun _ : ι => Set.Ici a)) :=
+  pi_univ_const_set_measure_pos μ measurableSet_Ici hpos
 
 /-- Real-valued reflected CDF mass, `P[M - X <= x]`. -/
 def reflectedCDFMass (μ : Measure ℝ) (M x : ℝ) : ℝ :=
@@ -139,6 +203,388 @@ theorem reflectedCDFMass_eq_one_of_ae_bounds
         μ.real (univ : Set ℝ) := by
           simpa [reflectedCDFMass] using measureReal_congr (μ := μ) hset
     _ = 1 := probReal_univ
+
+/--
+Near-zero CDF power-law sandwich.
+
+This records the reusable source convention used by bounded-support
+order-statistic arguments: near zero, a CDF-like mass `G` is sandwiched between
+`(1 ± ε) * (c / beta) * x^beta` on a right-neighborhood of zero.
+-/
+structure CDFPowerTailSandwich
+    (G : ℝ → ℝ) (beta c : ℝ) where
+  beta_pos : 0 < beta
+  c_pos : 0 < c
+  cdf_power_sandwich :
+    ∀ {ε : ℝ}, 0 < ε →
+      ∀ᶠ x in 𝓝[>] (0 : ℝ),
+        (1 - ε) * (c / beta) * x ^ beta ≤ G x ∧
+          G x ≤ (1 + ε) * (c / beta) * x ^ beta
+
+namespace CDFPowerTailSandwich
+
+/--
+Build the power-tail sandwich when the CDF-like function is eventually exactly
+the limiting power law near zero.
+-/
+theorem of_eventually_eq_const_mul_power
+    {G : ℝ → ℝ} {beta c : ℝ}
+    (hbeta_pos : 0 < beta) (hc_pos : 0 < c)
+    (hG :
+      ∀ᶠ x in 𝓝[>] (0 : ℝ),
+        G x = (c / beta) * x ^ beta) :
+    CDFPowerTailSandwich G beta c where
+  beta_pos := hbeta_pos
+  c_pos := hc_pos
+  cdf_power_sandwich := by
+    intro ε hε
+    filter_upwards [hG, self_mem_nhdsWithin] with x hx_eq hx_pos
+    have hcoeff_nonneg : 0 ≤ c / beta :=
+      (div_pos hc_pos hbeta_pos).le
+    have hxpow_nonneg : 0 ≤ x ^ beta :=
+      Real.rpow_nonneg (le_of_lt hx_pos) beta
+    have hmain_nonneg : 0 ≤ (c / beta) * x ^ beta :=
+      mul_nonneg hcoeff_nonneg hxpow_nonneg
+    have hleft : 1 - ε ≤ (1 : ℝ) := by linarith
+    have hright : (1 : ℝ) ≤ 1 + ε := by linarith
+    constructor
+    · rw [hx_eq]
+      calc
+        (1 - ε) * (c / beta) * x ^ beta
+            = (1 - ε) * ((c / beta) * x ^ beta) := by ring
+        _ ≤ 1 * ((c / beta) * x ^ beta) :=
+            mul_le_mul_of_nonneg_right hleft hmain_nonneg
+        _ = (c / beta) * x ^ beta := by ring
+    · rw [hx_eq]
+      calc
+        (c / beta) * x ^ beta
+            = 1 * ((c / beta) * x ^ beta) := by ring
+        _ ≤ (1 + ε) * ((c / beta) * x ^ beta) :=
+            mul_le_mul_of_nonneg_right hright hmain_nonneg
+        _ = (1 + ε) * (c / beta) * x ^ beta := by ring
+
+/--
+Build the reflected-CDF power-tail sandwich from a source-style upper-endpoint
+tail mass sandwich.
+
+The upper-tail event `M - x ≤ y` is the same as the reflected-CDF event
+`M ≤ x + y`.
+-/
+theorem of_reflectedCDFMass_upper_endpoint_tail_sandwich
+    {μ : Measure ℝ} {M beta c : ℝ}
+    (hbeta_pos : 0 < beta) (hc_pos : 0 < c)
+    (htail :
+      ∀ {ε : ℝ}, 0 < ε →
+        ∀ᶠ x in 𝓝[>] (0 : ℝ),
+          (1 - ε) * (c / beta) * x ^ beta ≤
+              μ.real (Set.Ici (M - x)) ∧
+            μ.real (Set.Ici (M - x)) ≤
+              (1 + ε) * (c / beta) * x ^ beta) :
+    CDFPowerTailSandwich (reflectedCDFMass μ M) beta c where
+  beta_pos := hbeta_pos
+  c_pos := hc_pos
+  cdf_power_sandwich := by
+    intro ε hε
+    filter_upwards [htail hε] with x hx
+    have hset : {y : ℝ | M ≤ x + y} = Set.Ici (M - x) := by
+      ext y
+      simp only [Set.mem_setOf_eq, Set.mem_Ici]
+      constructor <;> intro hy <;> linarith
+    simpa [reflectedCDFMass, hset] using hx
+
+/--
+Build the reflected-CDF power-tail sandwich when the source law gives an
+eventual exact upper-endpoint power identity near zero.
+-/
+theorem of_reflectedCDFMass_upper_endpoint_eventually_eq_power
+    {μ : Measure ℝ} {M beta c : ℝ}
+    (hbeta_pos : 0 < beta) (hc_pos : 0 < c)
+    (htail :
+      ∀ᶠ x in 𝓝[>] (0 : ℝ),
+        μ.real (Set.Ici (M - x)) = (c / beta) * x ^ beta) :
+    CDFPowerTailSandwich (reflectedCDFMass μ M) beta c := by
+  refine of_eventually_eq_const_mul_power hbeta_pos hc_pos ?_
+  filter_upwards [htail] with x hx
+  have hset : {y : ℝ | M ≤ x + y} = Set.Ici (M - x) := by
+    ext y
+    simp only [Set.mem_setOf_eq, Set.mem_Ici]
+    constructor <;> intro hy <;> linarith
+  simpa [reflectedCDFMass, hset] using hx
+
+/-- The identity CDF has the power-tail sandwich with `beta = c = 1`. -/
+theorem identity_beta_one :
+    CDFPowerTailSandwich (fun x : ℝ => x) 1 1 := by
+  refine of_eventually_eq_const_mul_power (by norm_num) (by norm_num) ?_
+  filter_upwards with x
+  norm_num
+
+/--
+The asymptotic CDF sandwich supplies concrete local power bounds on a
+right-neighborhood of zero.
+-/
+theorem exists_local_cdf_power_bounds
+    {G : ℝ → ℝ} {beta c : ℝ}
+    (C : CDFPowerTailSandwich G beta c) :
+    ∃ delta A B : ℝ,
+      0 < delta ∧ 0 < A ∧ 0 ≤ B ∧
+        (∀ x : ℝ, 0 < x → x < delta → A * x ^ beta ≤ G x) ∧
+        (∀ x : ℝ, 0 < x → x < delta → G x ≤ B * x ^ beta) := by
+  let ε : ℝ := 1 / 2
+  have hε : 0 < ε := by positivity
+  let A : ℝ := (1 - ε) * (c / beta)
+  let B : ℝ := (1 + ε) * (c / beta)
+  have hA_pos : 0 < A := by
+    have hcdiv_pos : 0 < c / beta := div_pos C.c_pos C.beta_pos
+    dsimp [A, ε]
+    positivity
+  have hB_nonneg : 0 ≤ B := by
+    have hcdiv_pos : 0 < c / beta := div_pos C.c_pos C.beta_pos
+    dsimp [B, ε]
+    positivity
+  have hnear := C.cdf_power_sandwich hε
+  rcases Metric.mem_nhdsWithin_iff.mp hnear with ⟨delta, hdelta_pos, hdelta⟩
+  refine ⟨delta, A, B, hdelta_pos, hA_pos, hB_nonneg, ?_, ?_⟩
+  · intro x hx_pos hx_lt
+    have hx_ball : x ∈ Metric.ball (0 : ℝ) delta := by
+      rw [Metric.mem_ball, dist_eq_norm, sub_zero, Real.norm_of_nonneg hx_pos.le]
+      exact hx_lt
+    have hx_side : x ∈ Set.Ioi (0 : ℝ) := hx_pos
+    have hx_prop := hdelta ⟨hx_ball, hx_side⟩
+    simpa [A, mul_assoc] using hx_prop.1
+  · intro x hx_pos hx_lt
+    have hx_ball : x ∈ Metric.ball (0 : ℝ) delta := by
+      rw [Metric.mem_ball, dist_eq_norm, sub_zero, Real.norm_of_nonneg hx_pos.le]
+      exact hx_lt
+    have hx_side : x ∈ Set.Ioi (0 : ℝ) := hx_pos
+    have hx_prop := hdelta ⟨hx_ball, hx_side⟩
+    simpa [B, mul_assoc] using hx_prop.2
+
+/--
+A reflected-CDF power-tail law at a positive endpoint supplies positive source
+mass above some positive threshold.
+-/
+theorem exists_positive_Ici_mass_of_reflectedCDFMass_tail
+    {μ : Measure ℝ} {M beta c : ℝ}
+    (C : CDFPowerTailSandwich (reflectedCDFMass μ M) beta c)
+    (hM_pos : 0 < M) :
+    ∃ a : ℝ, 0 < a ∧ 0 < μ (Set.Ici a) := by
+  rcases C.exists_local_cdf_power_bounds with
+    ⟨delta, A, _B, hdelta_pos, hA_pos, _hB_nonneg, hlower, _hupper⟩
+  let x : ℝ := min delta M / 2
+  have hx_pos : 0 < x := by
+    dsimp [x]
+    positivity
+  have hx_lt_delta : x < delta := by
+    dsimp [x]
+    have hmin_le : min delta M ≤ delta := min_le_left _ _
+    nlinarith [hdelta_pos, hM_pos, hmin_le]
+  have hx_lt_M : x < M := by
+    dsimp [x]
+    have hmin_le : min delta M ≤ M := min_le_right _ _
+    nlinarith [hdelta_pos, hM_pos, hmin_le]
+  have hxpow_pos : 0 < x ^ beta := Real.rpow_pos_of_pos hx_pos beta
+  have hG_pos : 0 < reflectedCDFMass μ M x := by
+    have hlower_x := hlower x hx_pos hx_lt_delta
+    exact lt_of_lt_of_le (mul_pos hA_pos hxpow_pos) hlower_x
+  have hset : {y : ℝ | M ≤ x + y} = Set.Ici (M - x) := by
+    ext y
+    simp only [Set.mem_setOf_eq, Set.mem_Ici]
+    constructor <;> intro hy <;> linarith
+  have hreal_pos : 0 < μ.real (Set.Ici (M - x)) := by
+    simpa [reflectedCDFMass, hset] using hG_pos
+  have hmass : 0 < μ (Set.Ici (M - x)) :=
+    (ENNReal.toReal_pos_iff.mp hreal_pos).1
+  exact ⟨M - x, by linarith, hmass⟩
+
+theorem tendsto_zero
+    {G : ℝ → ℝ} {beta c : ℝ}
+    (C : CDFPowerTailSandwich G beta c) :
+    Tendsto G (𝓝[>] (0 : ℝ)) (nhds 0) := by
+  refine tendsto_order.2 ?_
+  constructor
+  · intro a ha
+    let ε : ℝ := 1 / 2
+    have hε : 0 < ε := by positivity
+    let A : ℝ := (1 - ε) * (c / beta)
+    have hA_nonneg : 0 ≤ A := by
+      have hcdiv_pos : 0 < c / beta := div_pos C.c_pos C.beta_pos
+      dsimp [A, ε]
+      positivity
+    have hnear := C.cdf_power_sandwich hε
+    filter_upwards [hnear, self_mem_nhdsWithin] with x hx hx_pos
+    have hxpow_nonneg : 0 ≤ x ^ beta :=
+      Real.rpow_nonneg (le_of_lt hx_pos) beta
+    have hG_nonneg : 0 ≤ G x := by
+      have hmain_nonneg : 0 ≤ A * x ^ beta :=
+        mul_nonneg hA_nonneg hxpow_nonneg
+      exact le_trans hmain_nonneg (by simpa [A, mul_assoc] using hx.1)
+    linarith
+  · intro b hb
+    let ε : ℝ := 1 / 2
+    have hε : 0 < ε := by positivity
+    let B : ℝ := (1 + ε) * (c / beta)
+    have hpow_zero :
+        Tendsto (fun x : ℝ => B * x ^ beta)
+          (𝓝[>] (0 : ℝ)) (nhds 0) := by
+      have hxpow_zero :
+          Tendsto (fun x : ℝ => x ^ beta)
+            (𝓝[>] (0 : ℝ)) (nhds 0) := by
+        have hcont :=
+          (Real.continuousAt_rpow_const
+            (0 : ℝ) beta (Or.inr C.beta_pos.le)).tendsto
+        simpa [Real.zero_rpow C.beta_pos.ne'] using
+          hcont.mono_left nhdsWithin_le_nhds
+      simpa using hxpow_zero.const_mul B
+    have hsmall :
+        ∀ᶠ x in 𝓝[>] (0 : ℝ), B * x ^ beta < b :=
+      hpow_zero.eventually (eventually_lt_nhds hb)
+    have hnear := C.cdf_power_sandwich hε
+    filter_upwards [hnear, hsmall] with x hx hxsmall
+    exact lt_of_le_of_lt (by simpa [B, mul_assoc] using hx.2) hxsmall
+
+/--
+A reflected-CDF power-tail law at a positive endpoint supplies positive source
+mass strictly below some point before the endpoint.
+
+Together with `exists_positive_Ici_mass_of_reflectedCDFMass_tail`, this gives
+the low/high positive-mass split used by finite-prefix top-`k` positivity
+arguments.
+-/
+theorem exists_positive_Iio_mass_below_endpoint_of_reflectedCDFMass_tail
+    {μ : Measure ℝ} [IsProbabilityMeasure μ] {M beta c : ℝ}
+    (C : CDFPowerTailSandwich (reflectedCDFMass μ M) beta c)
+    (hM_pos : 0 < M) :
+    ∃ b : ℝ, b < M ∧ 0 < μ (Set.Iio b) := by
+  have hsmall :
+      ∀ᶠ x in 𝓝[>] (0 : ℝ),
+        reflectedCDFMass μ M x < 1 :=
+    C.tendsto_zero.eventually (eventually_lt_nhds zero_lt_one)
+  rcases Metric.mem_nhdsWithin_iff.mp hsmall with
+    ⟨delta, hdelta_pos, hdelta⟩
+  let x : ℝ := min delta M / 2
+  have hx_pos : 0 < x := by
+    dsimp [x]
+    positivity
+  have hx_lt_delta : x < delta := by
+    dsimp [x]
+    have hmin_le : min delta M ≤ delta := min_le_left _ _
+    nlinarith [hdelta_pos, hM_pos, hmin_le]
+  have hx_lt_M : x < M := by
+    dsimp [x]
+    have hmin_le : min delta M ≤ M := min_le_right _ _
+    nlinarith [hdelta_pos, hM_pos, hmin_le]
+  have hx_ball : x ∈ Metric.ball (0 : ℝ) delta := by
+    rw [Metric.mem_ball, dist_eq_norm, sub_zero,
+      Real.norm_of_nonneg hx_pos.le]
+    exact hx_lt_delta
+  have hG_lt_one : reflectedCDFMass μ M x < 1 :=
+    hdelta ⟨hx_ball, hx_pos⟩
+  let b : ℝ := M - x
+  have hset : {y : ℝ | M ≤ x + y} = Set.Ici b := by
+    ext y
+    simp only [Set.mem_setOf_eq, Set.mem_Ici]
+    dsimp [b]
+    constructor <;> intro hy <;> linarith
+  have hIci_real_lt_one : μ.real (Set.Ici b) < 1 := by
+    simpa [reflectedCDFMass, hset, b] using hG_lt_one
+  have hcompl_real : μ.real (Set.Iio b) = 1 - μ.real (Set.Ici b) := by
+    have hcompl :=
+      probReal_compl_eq_one_sub (μ := μ) (s := Set.Ici b)
+        measurableSet_Ici
+    simpa [compl_Ici] using hcompl
+  have hIio_real_pos : 0 < μ.real (Set.Iio b) := by
+    rw [hcompl_real]
+    linarith
+  have hmass : 0 < μ (Set.Iio b) :=
+    (ENNReal.toReal_pos_iff.mp hIio_real_pos).1
+  exact ⟨b, by dsimp [b]; linarith, hmass⟩
+
+/--
+A reflected-CDF power-tail law at a positive endpoint supplies a strict
+low/high positive-mass split: some low interval `(-∞, b)` and some high tail
+`[a, ∞)` both have positive mass, with `0 < b < a`.
+-/
+theorem exists_positive_Iio_Ici_mass_gap_of_reflectedCDFMass_tail
+    {μ : Measure ℝ} [IsProbabilityMeasure μ] {M beta c : ℝ}
+    (C : CDFPowerTailSandwich (reflectedCDFMass μ M) beta c)
+    (hM_pos : 0 < M) :
+    ∃ b a : ℝ, 0 < b ∧ b < a ∧ 0 < μ (Set.Iio b) ∧ 0 < μ (Set.Ici a) := by
+  rcases C.exists_local_cdf_power_bounds with
+    ⟨delta_bound, A, _B, hdelta_bound_pos, hA_pos, _hB_nonneg,
+      hlower, _hupper⟩
+  have hsmall :
+      ∀ᶠ x in 𝓝[>] (0 : ℝ),
+        reflectedCDFMass μ M x < 1 :=
+    C.tendsto_zero.eventually (eventually_lt_nhds zero_lt_one)
+  rcases Metric.mem_nhdsWithin_iff.mp hsmall with
+    ⟨delta_small, hdelta_small_pos, hdelta_small⟩
+  let x : ℝ := min (min delta_small delta_bound) M / 2
+  have hx_pos : 0 < x := by
+    dsimp [x]
+    positivity
+  have hx_lt_small : x < delta_small := by
+    dsimp [x]
+    have hmin_le : min (min delta_small delta_bound) M ≤ delta_small := by
+      exact le_trans (min_le_left _ _) (min_le_left _ _)
+    nlinarith [hdelta_small_pos, hdelta_bound_pos, hM_pos, hmin_le]
+  have hx_lt_bound : x < delta_bound := by
+    dsimp [x]
+    have hmin_le : min (min delta_small delta_bound) M ≤ delta_bound := by
+      exact le_trans (min_le_left _ _) (min_le_right _ _)
+    nlinarith [hdelta_small_pos, hdelta_bound_pos, hM_pos, hmin_le]
+  have hx_lt_M : x < M := by
+    dsimp [x]
+    have hmin_le : min (min delta_small delta_bound) M ≤ M :=
+      min_le_right _ _
+    nlinarith [hdelta_small_pos, hdelta_bound_pos, hM_pos, hmin_le]
+  have hx_half_pos : 0 < x / 2 := by positivity
+  have hx_half_lt_bound : x / 2 < delta_bound := by linarith
+  have hx_ball : x ∈ Metric.ball (0 : ℝ) delta_small := by
+    rw [Metric.mem_ball, dist_eq_norm, sub_zero,
+      Real.norm_of_nonneg hx_pos.le]
+    exact hx_lt_small
+  have hGx_lt_one : reflectedCDFMass μ M x < 1 :=
+    hdelta_small ⟨hx_ball, hx_pos⟩
+  let b : ℝ := M - x
+  have hset_low : {y : ℝ | M ≤ x + y} = Set.Ici b := by
+    ext y
+    simp only [Set.mem_setOf_eq, Set.mem_Ici]
+    dsimp [b]
+    constructor <;> intro hy <;> linarith
+  have hIci_b_real_lt_one : μ.real (Set.Ici b) < 1 := by
+    simpa [reflectedCDFMass, hset_low, b] using hGx_lt_one
+  have hcompl_real : μ.real (Set.Iio b) = 1 - μ.real (Set.Ici b) := by
+    have hcompl :=
+      probReal_compl_eq_one_sub (μ := μ) (s := Set.Ici b)
+        measurableSet_Ici
+    simpa [compl_Ici] using hcompl
+  have hIio_b_real_pos : 0 < μ.real (Set.Iio b) := by
+    rw [hcompl_real]
+    linarith
+  have hlow_mass : 0 < μ (Set.Iio b) :=
+    (ENNReal.toReal_pos_iff.mp hIio_b_real_pos).1
+  let a : ℝ := M - x / 2
+  have hset_high : {y : ℝ | M ≤ (x / 2) + y} = Set.Ici a := by
+    ext y
+    simp only [Set.mem_setOf_eq, Set.mem_Ici]
+    dsimp [a]
+    constructor <;> intro hy <;> linarith
+  have hG_half_pos : 0 < reflectedCDFMass μ M (x / 2) := by
+    have hlower_half := hlower (x / 2) hx_half_pos hx_half_lt_bound
+    have hxpow_pos : 0 < (x / 2) ^ beta :=
+      Real.rpow_pos_of_pos hx_half_pos beta
+    exact lt_of_lt_of_le (mul_pos hA_pos hxpow_pos) hlower_half
+  have hIci_a_real_pos : 0 < μ.real (Set.Ici a) := by
+    simpa [reflectedCDFMass, hset_high, a] using hG_half_pos
+  have hhigh_mass : 0 < μ (Set.Ici a) :=
+    (ENNReal.toReal_pos_iff.mp hIci_a_real_pos).1
+  refine ⟨b, a, ?_, ?_, hlow_mass, hhigh_mass⟩
+  · dsimp [b]
+    linarith
+  · dsimp [a, b]
+    linarith
+
+end CDFPowerTailSandwich
 
 theorem lowerCDFMass_eq_cdf (μ : Measure ℝ) [IsProbabilityMeasure μ]
     (x : ℝ) :
@@ -508,32 +954,40 @@ theorem prod_ite_mem_eq_pow_mul_pow {ι : Type*}
 
 /-! ## Finite iid threshold counts -/
 
+theorem productMeasure_forall_bounds_ae
+    {ι : Type*} [Fintype ι] (μ : Measure ℝ) {L M : ℝ}
+    [SigmaFinite μ]
+    (h_bounds : ∀ᵐ x ∂μ, L ≤ x ∧ x ≤ M) :
+    ∀ᵐ sample ∂Measure.pi (fun _ : ι => μ),
+      ∀ i : ι, L ≤ sample i ∧ sample i ≤ M := by
+  have hlower :
+      ∀ i : ι, (fun _ : ℝ => L) ≤ᵐ[μ] (fun x : ℝ => x) := by
+    intro _i
+    filter_upwards [h_bounds] with x hx
+    exact hx.1
+  have hupper :
+      ∀ i : ι, (fun x : ℝ => x) ≤ᵐ[μ] (fun _ : ℝ => M) := by
+    intro _i
+    filter_upwards [h_bounds] with x hx
+    exact hx.2
+  have hlower_pi :
+      (fun sample : ι → ℝ => fun _ : ι => L) ≤ᵐ[
+        Measure.pi (fun _ : ι => μ)] fun sample => sample :=
+    Measure.ae_le_pi (μ := fun _ : ι => μ) hlower
+  have hupper_pi :
+      (fun sample : ι → ℝ => sample) ≤ᵐ[
+        Measure.pi (fun _ : ι => μ)] fun _sample => fun _ : ι => M :=
+    Measure.ae_le_pi (μ := fun _ : ι => μ) hupper
+  filter_upwards [hlower_pi, hupper_pi] with sample hsample_lower hsample_upper i
+  exact ⟨hsample_lower i, hsample_upper i⟩
+
 theorem iidProductMeasure_forall_bounds_ae
     {n : ℕ} (μ : Measure ℝ) {L M : ℝ}
     [SigmaFinite μ]
     (h_bounds : ∀ᵐ x ∂μ, L ≤ x ∧ x ≤ M) :
     ∀ᵐ sample ∂Measure.pi (fun _ : Fin n => μ),
-      ∀ i : Fin n, L ≤ sample i ∧ sample i ≤ M := by
-  have hlower :
-      ∀ i : Fin n, (fun _ : ℝ => L) ≤ᵐ[μ] (fun x : ℝ => x) := by
-    intro _i
-    filter_upwards [h_bounds] with x hx
-    exact hx.1
-  have hupper :
-      ∀ i : Fin n, (fun x : ℝ => x) ≤ᵐ[μ] (fun _ : ℝ => M) := by
-    intro _i
-    filter_upwards [h_bounds] with x hx
-    exact hx.2
-  have hlower_pi :
-      (fun sample : Fin n → ℝ => fun _ : Fin n => L) ≤ᵐ[
-        Measure.pi (fun _ : Fin n => μ)] fun sample => sample :=
-    Measure.ae_le_pi (μ := fun _ : Fin n => μ) hlower
-  have hupper_pi :
-      (fun sample : Fin n → ℝ => sample) ≤ᵐ[
-        Measure.pi (fun _ : Fin n => μ)] fun _sample => fun _ : Fin n => M :=
-    Measure.ae_le_pi (μ := fun _ : Fin n => μ) hupper
-  filter_upwards [hlower_pi, hupper_pi] with sample hsample_lower hsample_upper i
-  exact ⟨hsample_lower i, hsample_upper i⟩
+      ∀ i : Fin n, L ≤ sample i ∧ sample i ≤ M :=
+  productMeasure_forall_bounds_ae (ι := Fin n) μ h_bounds
 
 /-- Coordinates whose sample value falls in a designated measurable event. -/
 noncomputable def iidSuccessIndexSet {α : Type*} {n : ℕ}

@@ -369,6 +369,30 @@ theorem count_close
     ⟨lower_lt_count_add_card a lower upper i ha hupper hUlt horder hno,
       count_lt_upper_add_card a lower upper i ha hlower hNlt horder hno⟩
 
+/--
+Non-strict form of `count_close`.
+
+This is often the more convenient finite-rounding estimate after turning a
+strict natural inequality into an additive real error bound.
+-/
+theorem count_le_close
+    {κ : Type*} [Fintype κ]
+    (a lower upper : κ → ℕ) {N L U : ℕ}
+    (ha : (∑ i : κ, a i) = N)
+    (hlower : (∑ i : κ, lower i) = L)
+    (hupper : (∑ i : κ, upper i) = U)
+    (hNlt : N < L + Fintype.card κ + 1)
+    (hUlt : U < N + Fintype.card κ + 1)
+    (horder : ∀ i, lower i ≤ upper i)
+    (hno : NoRoundingCrossingBetween a lower upper) :
+    ∀ i : κ,
+      lower i ≤ a i + Fintype.card κ ∧
+        a i ≤ upper i + Fintype.card κ := by
+  intro i
+  have hi :=
+    count_close a lower upper ha hlower hupper hNlt hUlt horder hno i
+  omega
+
 end NoRoundingCrossingBetween
 
 end FiniteRounding

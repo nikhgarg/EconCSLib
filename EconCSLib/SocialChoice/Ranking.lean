@@ -4,6 +4,7 @@ import EconCSLib.SocialChoice.Ranking.Probability
 import EconCSLib.SocialChoice.Ranking.Mallows
 import EconCSLib.SocialChoice.Ranking.Payoff
 import EconCSLib.SocialChoice.Ranking.RankPower
+import EconCSLib.SocialChoice.Ranking.Approval
 import EconCSLib.SocialChoice.Ranking.MallowsRankFactorization
 import EconCSLib.SocialChoice.Ranking.Score
 import EconCSLib.SocialChoice.Ranking.Sequential

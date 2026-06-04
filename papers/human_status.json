@@ -185,6 +185,22 @@
       "main_note_citation": null,
       "paper_folder": "papers/LMMS04FairDivision",
       "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md"
+    },
+    {
+      "id": "PRPKG24AccuracyDiversity",
+      "title": "Reconciling the Accuracy-Diversity Trade-off in Recommendations",
+      "authors": "Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg",
+      "publication": "arXiv:2307.15142v1",
+      "publication_year": 9999,
+      "source_url": "",
+      "paper_info": "Reconciling the Accuracy-Diversity Trade-off in Recommendations by Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg; arXiv:2307.15142v1.",
+      "status": "Partially formalized",
+      "human_review": "0/27",
+      "lean_loc": 48366,
+      "main_note": "Proposition 2's printed finite bound appears to miss a factor of 2/type-count shift; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
+      "main_note_citation": null,
+      "paper_folder": "papers/PRPKG24AccuracyDiversity",
+      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/README.md"
     }
   ]
 }

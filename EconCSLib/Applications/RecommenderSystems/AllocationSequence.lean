@@ -1,5 +1,7 @@
 import EconCSLib.Applications.RecommenderSystems.Allocation
 import EconCSLib.Foundations.Math.Asymptotics
+import EconCSLib.Foundations.Math.PowerComparisons
+import Mathlib.Analysis.Convex.StdSimplex
 
 open Filter Topology
 open scoped BigOperators
@@ -63,6 +65,78 @@ theorem convergesToProfile_of_eventual_approx
   simpa [share, sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using hsum
 
 end Sequence
+
+/--
+A strict unique maximizer on the finite standard simplex has a uniform
+objective gap outside every coordinatewise `ε`-neighborhood of the maximizer.
+
+This is the reusable compactness step behind many finite-type asymptotic
+optimizer proofs: once the limiting relaxed objective has a strict unique
+simplex maximizer, it is separated by a positive margin from all profiles that
+remain a fixed distance away from the maximizer.
+-/
+theorem exists_gap_on_stdSimplex_of_strict_unique_max
+    (objective : (κ → ℝ) → ℝ) (target : κ → ℝ)
+    (htarget : target ∈ stdSimplex ℝ κ)
+    (hcont : ContinuousOn objective (stdSimplex ℝ κ))
+    (hstrict :
+      ∀ x : κ → ℝ, x ∈ stdSimplex ℝ κ → x ≠ target →
+        objective x < objective target) :
+    ∀ ε : ℝ, 0 < ε →
+      ∃ η : ℝ, 0 < η ∧
+        ∀ x : κ → ℝ, x ∈ stdSimplex ℝ κ →
+          (∃ k : κ, ε < |x k - target k|) →
+            objective x ≤ objective target - η := by
+  classical
+  intro ε hε_pos
+  let bad : Set (κ → ℝ) :=
+    stdSimplex ℝ κ ∩ {x : κ → ℝ | ∃ k : κ, ε ≤ |x k - target k|}
+  have hclosed_coord :
+      ∀ k : κ, IsClosed {x : κ → ℝ | ε ≤ |x k - target k|} := by
+    intro k
+    exact isClosed_le continuous_const
+      ((continuous_apply k).sub continuous_const).abs
+  have hclosed_far :
+      IsClosed {x : κ → ℝ | ∃ k : κ, ε ≤ |x k - target k|} := by
+    simpa [Set.setOf_exists] using
+      (isClosed_iUnion_of_finite (fun k : κ => hclosed_coord k))
+  have hcompact_bad : IsCompact bad :=
+    (isCompact_stdSimplex ℝ κ).inter_right hclosed_far
+  by_cases hbad_empty : bad = ∅
+  · refine ⟨1, by norm_num, ?_⟩
+    intro x hx_simplex hfar
+    have hx_bad : x ∈ bad := by
+      rcases hfar with ⟨k, hk⟩
+      exact ⟨hx_simplex, ⟨k, le_of_lt hk⟩⟩
+    rw [hbad_empty] at hx_bad
+    exact hx_bad.elim
+  · have hbad_nonempty : bad.Nonempty := Set.nonempty_iff_ne_empty.mpr hbad_empty
+    have hcont_bad : ContinuousOn objective bad :=
+      hcont.mono (by intro x hx; exact hx.1)
+    rcases hcompact_bad.exists_isMaxOn hbad_nonempty hcont_bad with
+      ⟨x₀, hx₀_bad, hx₀_max⟩
+    have hx₀_ne : x₀ ≠ target := by
+      intro hx_eq
+      rcases hx₀_bad.2 with ⟨k, hk⟩
+      subst x₀
+      simp at hk
+      linarith
+    have hstrict₀ : objective x₀ < objective target :=
+      hstrict x₀ hx₀_bad.1 hx₀_ne
+    let η : ℝ := objective target - objective x₀
+    have hη_pos : 0 < η := by
+      dsimp [η]
+      linarith
+    refine ⟨η, hη_pos, ?_⟩
+    intro x hx_simplex hfar
+    have hx_bad : x ∈ bad := by
+      rcases hfar with ⟨k, hk⟩
+      exact ⟨hx_simplex, ⟨k, le_of_lt hk⟩⟩
+    have hx_le := hx₀_max hx_bad
+    have hx_le' : objective x ≤ objective x₀ := by
+      simpa using hx_le
+    dsimp [η]
+    linarith
 
 /--
 An asymptotic target for fixed-total optimal allocations: every positive-size
@@ -170,6 +244,90 @@ theorem convergesToProfile_of_asymptoticProfile
     (h : AsymptoticProfile objectiveWeightSeq valueOfCountSeq target) :
     seq.toSequence.ConvergesToProfile target :=
   seq.convergesToProfile_of_asymptoticProfileTarget h
+
+/--
+Optimizer convergence from a unique limiting objective gap.
+
+This is the compactness-free form of a common separable-allocation argument.
+If the finite objective of every selected optimum is eventually bounded above
+by a continuous relaxed objective, a feasible comparison sequence eventually
+achieves the relaxed target value from below, and every allocation share profile
+outside an `ε`-ball around `target` has a strict relaxed-objective gap, then the
+selected finite optima converge to `target`.
+
+The finite comparison objective is deliberately explicit: it can be a
+normalized or shifted form of the model objective, as long as the selected
+optima also maximize that comparison objective.
+-/
+theorem convergesToProfile_of_unique_limit_objective_gap
+    {objectiveWeightSeq : ℕ → κ → ℝ}
+    {valueOfCountSeq : ℕ → κ → ℕ → ℝ}
+    {target : κ → ℝ}
+    (seq : OptimalSequence objectiveWeightSeq valueOfCountSeq)
+    (finiteObj : ℕ → Allocation κ → ℝ)
+    (limitObj : (κ → ℝ) → ℝ)
+    (candidate : ℕ → Allocation κ)
+    (hopt_le :
+      ∀ᶠ N in atTop, ∀ b : Allocation κ, HasTotal b N →
+        finiteObj N b ≤ finiteObj N (seq.allocation N))
+    (hcand_feas :
+      ∀ᶠ N in atTop, HasTotal (candidate N) N)
+    (hcand_lower :
+      ∀ δ : ℝ, 0 < δ →
+        ∀ᶠ N in atTop,
+          limitObj target - δ ≤ finiteObj N (candidate N))
+    (hupper :
+      ∀ δ : ℝ, 0 < δ →
+        ∀ᶠ N in atTop, ∀ a : Allocation κ, HasTotal a N →
+          finiteObj N a ≤ limitObj (fun k => share a k) + δ)
+    (hgap :
+      ∀ ε : ℝ, 0 < ε →
+        ∃ η : ℝ, 0 < η ∧
+          ∀ N (a : Allocation κ), 0 < N → HasTotal a N →
+            ¬ HasApproxShare a target ε →
+              limitObj (fun k => share a k) ≤ limitObj target - η) :
+    seq.toSequence.ConvergesToProfile target := by
+  have heventual_approx :
+      ∀ ε : ℝ, 0 < ε →
+        ∀ᶠ N in atTop, HasApproxShare (seq.allocation N) target ε := by
+    intro ε hε
+    rcases hgap ε hε with ⟨η, hη_pos, hη_gap⟩
+    let δ : ℝ := η / 3
+    have hδ_pos : 0 < δ := by dsimp [δ]; linarith
+    filter_upwards
+      [eventually_gt_atTop 0, hopt_le, hcand_feas, hcand_lower δ hδ_pos,
+        hupper δ hδ_pos]
+      with N hNpos hopt_cmp hcandN hcand_lowerN hupperN
+    by_contra hnot
+    have hseq_upper :
+        finiteObj N (seq.allocation N) ≤ limitObj target - η + δ := by
+      have hgapN :=
+        hη_gap N (seq.allocation N) hNpos (seq.optimal N).1 hnot
+      have hupper_seq :=
+        hupperN (seq.allocation N) (seq.optimal N).1
+      linarith
+    have hcand_le_seq :
+        finiteObj N (candidate N) ≤ finiteObj N (seq.allocation N) :=
+      hopt_cmp (candidate N) hcandN
+    have htarget_lower :
+        limitObj target - δ ≤ limitObj target - η + δ :=
+      le_trans hcand_lowerN (le_trans hcand_le_seq hseq_upper)
+    have hη_le_twoδ : η ≤ 2 * δ := by linarith
+    have htwoδ_lt_η : 2 * δ < η := by
+      dsimp [δ]
+      linarith
+    exact (not_lt_of_ge hη_le_twoδ) htwoδ_lt_η
+  intro k
+  rw [Metric.tendsto_nhds]
+  intro ε hε
+  let ε' : ℝ := ε / 2
+  have hε'_pos : 0 < ε' := by dsimp [ε']; linarith
+  filter_upwards [heventual_approx ε' hε'_pos] with N hN
+  have hle := hN k
+  have hlt : |share (seq.allocation N) k - target k| < ε := by
+    dsimp [ε'] at hle
+    linarith
+  simpa [Sequence.share, Real.dist_eq] using hlt
 
 end OptimalSequence
 
@@ -549,6 +707,104 @@ theorem asymptoticProfile
     hcert.error_tends_to_zero hcert.pairwise_scaled
 
 end PairwiseScaledSublinearProfileCertificate
+
+/--
+Finite-envelope power-law large-gap comparison.
+
+For objectives whose weighted backward/forward marginals are trapped by a
+common negative-power template, the sublinear gap `1 / sqrt (N+1)` absorbs the
+fixed source/destination count shifts and yields the FOC large-gap comparison
+used by asymptotic allocation-profile arguments.
+-/
+theorem powerLawEnvelope_large_gap_count_eventually
+    (objectiveWeight : κ → ℝ) (valueOfCount : κ → ℕ → ℝ)
+    {η γ coeff dstShift : ℝ} {floor : ℕ}
+    (hη_pos : 0 < η)
+    (hγ_eq : 1 / η = γ)
+    (hcoeff_pos : 0 < coeff)
+    (hdstShift_nonneg : 0 ≤ dstShift)
+    (hfloor_pos : 0 < floor)
+    (hweight_pos : ∀ k : κ, 0 < objectiveWeight k)
+    (backward_le :
+      ∀ src qsrc,
+        floor < qsrc →
+        weightedBackwardMarginal objectiveWeight valueOfCount src qsrc ≤
+          objectiveWeight src *
+            (coeff * (((qsrc - 1 : ℕ) : ℝ) ^ (-η))))
+    (forward_ge :
+      ∀ dst qdst,
+        floor < qdst →
+        objectiveWeight dst *
+            (coeff * (((qdst : ℝ) + 1 + dstShift) ^ (-η))) ≤
+          weightedForwardMarginal objectiveWeight valueOfCount dst qdst) :
+    ∀ᶠ N in atTop,
+      ∀ src dst qsrc qdst,
+        qsrc ≤ N →
+        qdst ≤ N →
+        floor < qsrc →
+        floor < qdst →
+        Math.invSqrtSuccError N * (N : ℝ) <
+          (qsrc : ℝ) / objectiveWeight src ^ γ -
+            (qdst : ℝ) / objectiveWeight dst ^ γ →
+        weightedBackwardMarginal objectiveWeight valueOfCount src qsrc <
+          weightedForwardMarginal objectiveWeight valueOfCount dst qdst := by
+  classical
+  have hshift_ev :
+      ∀ᶠ N in atTop,
+        ∀ src dst : κ,
+          1 / objectiveWeight src ^ γ +
+              (1 + dstShift) / objectiveWeight dst ^ γ <
+            Math.invSqrtSuccError N * (N : ℝ) := by
+    simpa using
+      Math.invSqrtSuccError_mul_nat_eventually_gt_fintype_pair
+        (fun src dst : κ =>
+          1 / objectiveWeight src ^ γ +
+            (1 + dstShift) / objectiveWeight dst ^ γ)
+  filter_upwards [hshift_ev] with N hshift src dst qsrc qdst
+    _hqsrc_le _hqdst_le hsrc_floor hdst_floor hgap
+  have hshift_lt_gap :
+      1 / objectiveWeight src ^ γ +
+          (1 + dstShift) / objectiveWeight dst ^ γ <
+        (qsrc : ℝ) / objectiveWeight src ^ γ -
+          (qdst : ℝ) / objectiveWeight dst ^ γ := by
+    exact lt_trans (hshift src dst) hgap
+  have hscaled_shift :
+      (((qdst : ℝ) + 1 + dstShift) / objectiveWeight dst ^ γ) <
+        (((qsrc - 1 : ℕ) : ℝ) / objectiveWeight src ^ γ) := by
+    have hsrc_cast : (((qsrc - 1 : ℕ) : ℝ)) = (qsrc : ℝ) - 1 := by
+      rw [Nat.cast_sub (R := ℝ) (by omega : 1 ≤ qsrc)]
+      norm_num
+    rw [hsrc_cast]
+    simpa [add_assoc] using
+      Math.scaled_gap_absorbs_additive_shifts
+        (qsrc := (qsrc : ℝ)) (qdst := (qdst : ℝ))
+        (wsrc := objectiveWeight src ^ γ)
+        (wdst := objectiveWeight dst ^ γ)
+        (srcShift := 1) (dstShift := 1 + dstShift) hshift_lt_gap
+  have hscaled_power :
+      (((qdst : ℝ) + 1 + dstShift) / objectiveWeight dst ^ (1 / η)) <
+        (((qsrc - 1 : ℕ) : ℝ) / objectiveWeight src ^ (1 / η)) := by
+    simpa [hγ_eq] using hscaled_shift
+  have hx_pos : 0 < (((qsrc - 1 : ℕ) : ℝ)) := by
+    exact_mod_cast (by omega : 0 < qsrc - 1)
+  have hy_pos : 0 < (qdst : ℝ) + 1 + dstShift := by
+    have hqdst_nonneg : 0 ≤ (qdst : ℝ) := Nat.cast_nonneg qdst
+    linarith
+  have hpower :
+      objectiveWeight src *
+          (coeff * (((qsrc - 1 : ℕ) : ℝ) ^ (-η))) <
+        objectiveWeight dst *
+          (coeff * (((qdst : ℝ) + 1 + dstShift) ^ (-η))) :=
+    Math.rpow_neg_marginal_lt_of_scaled_lt
+      (p_src := objectiveWeight src) (p_dst := objectiveWeight dst)
+      (c := coeff) (eta := η)
+      (x := ((qsrc - 1 : ℕ) : ℝ))
+      (y := (qdst : ℝ) + 1 + dstShift)
+      (hweight_pos src) (hweight_pos dst) hcoeff_pos hη_pos
+      hx_pos hy_pos hscaled_power
+  have hback_le := backward_le src qsrc hsrc_floor
+  have hforward_ge := forward_ge dst qdst hdst_floor
+  exact lt_of_le_of_lt hback_le (lt_of_lt_of_le hpower hforward_ge)
 
 /--
 Certificate form of the FOC-based pairwise scaled-count bridge.

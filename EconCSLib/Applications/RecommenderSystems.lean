@@ -3,6 +3,7 @@ import EconCSLib.Applications.RecommenderSystems.Allocation
 import EconCSLib.Applications.RecommenderSystems.AllocationSequence
 import EconCSLib.Applications.RecommenderSystems.Classwise
 import EconCSLib.Applications.RecommenderSystems.PolicyAveraging
+import EconCSLib.Applications.RecommenderSystems.TopKOracle
 
 /-!
 # Recommender-System Applications

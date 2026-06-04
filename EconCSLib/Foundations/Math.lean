@@ -1,4 +1,5 @@
 import EconCSLib.Foundations.Math.FiniteSum
+import EconCSLib.Foundations.Math.BinomialBounds
 import EconCSLib.Foundations.Math.FiniteRanking
 import EconCSLib.Foundations.Math.FiniteRounding
 import EconCSLib.Foundations.Math.FiniteSigns

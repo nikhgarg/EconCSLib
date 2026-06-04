@@ -954,6 +954,84 @@
     },
     {
       "schema": 1,
+      "id": "PRPKG24AccuracyDiversity",
+      "title": "Reconciling the Accuracy-Diversity Trade-off in Recommendations",
+      "authors": "Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg",
+      "source_version": "arXiv:2307.15142v1",
+      "build_target": "lake build PRPKG24AccuracyDiversity",
+      "status": "partially formalized",
+      "main_caveat": "Finite optimization, Bernoulli, uniform, bounded density/tail-mass, exponential, Pareto, Example 1 exact harmonic calibration, Corollary 1 concrete model existence, Theorems 1-3, Proposition 2's corrected finite/asymptotic homogeneity route, Lemma D.1/D.5 downstream routes, and Proposition 4 averaging/kernel checkpoint layers are exposed. The only remaining literal source gap is Proposition 4's continuous sphere/Laplace analytic certificate. Proposition 2's printed sharp finite constant and Lemma D.1(i)'s printed sign convention are documented as nonblocking source deviations.",
+      "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2/type-count shift; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
+      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/README.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 27,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+      },
+      "paper_interface": {
+        "path": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
+        "line_count": 138,
+        "declaration_rows": 27,
+        "review_rows": 27,
+        "oversized": false,
+        "maintainability_issue": null
+      },
+      "artifacts": {
+        "readme": "papers/PRPKG24AccuracyDiversity/README.md",
+        "paper_interface": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
+        "final_validation_report": "papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md",
+        "dependency_dag_tex": "papers/PRPKG24AccuracyDiversity/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/DependencyDAG.pdf"
+      },
+      "review_surface": {
+        "source_file": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
+        "include_names": [
+          "definition1",
+          "definition2",
+          "definition3",
+          "example1",
+          "theorem1_i",
+          "theorem1_ii",
+          "theorem1_iii",
+          "theorem1_iv",
+          "theorem1_v_common_mean",
+          "theorem1_v_unique_common_mean",
+          "corollary1",
+          "theorem2_i",
+          "theorem2_ii",
+          "theorem2_iii",
+          "theorem2_iv_positive_alpha",
+          "theorem2_iv_alpha_zero",
+          "theorem3",
+          "corollary3",
+          "proposition2",
+          "proposition4",
+          "proposition5",
+          "lemmaD1",
+          "lemmaD2",
+          "lemma1",
+          "lemmaD3",
+          "lemmaD4",
+          "lemmaD5"
+        ],
+        "slices": [
+          {
+            "id": "main_named_results",
+            "title": "Definitions, example, and main results",
+            "name_regex": "^(definition|example|theorem|corollary|proposition)"
+          },
+          {
+            "id": "appendix_named_results",
+            "title": "Appendix lemmas",
+            "name_regex": "^lemma"
+          }
+        ]
+      }
+    },
+    {
+      "schema": 1,
       "id": "Roth82StableMatching",
       "title": "The Economics of Matching: Stability and Incentives",
       "authors": "Alvin E. Roth",

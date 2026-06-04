@@ -1,5 +1,8 @@
+import EconCSLib.Foundations.Math.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Tactic
+
+open Filter Topology
 
 namespace EconCSLib
 namespace Math
@@ -83,6 +86,119 @@ theorem rpow_neg_marginal_lt_of_scaled_lt
         rw [Real.rpow_neg (le_of_lt hy)]
         ring
   nlinarith [mul_lt_mul_of_pos_right hscaled_marginal hc]
+
+/--
+Two-coefficient version of `rpow_neg_marginal_lt_of_scaled_lt`.
+
+This is useful when asymptotic sandwich bounds put a `(1 + ε)` coefficient on
+the source upper bound and a `(1 - ε)` coefficient on the destination lower
+bound.
+-/
+theorem rpow_neg_marginal_lt_of_scaled_lt'
+    {p_src p_dst c_src c_dst eta x y : ℝ}
+    (hp_src : 0 < p_src) (hp_dst : 0 < p_dst)
+    (hc_src : 0 < c_src) (hc_dst : 0 < c_dst)
+    (heta : 0 < eta) (hx : 0 < x) (hy : 0 < y)
+    (hscaled :
+      y / (p_dst * c_dst) ^ (1 / eta) <
+        x / (p_src * c_src) ^ (1 / eta)) :
+    p_src * (c_src * x ^ (-eta)) <
+      p_dst * (c_dst * y ^ (-eta)) := by
+  have hcore :=
+    rpow_neg_marginal_lt_of_scaled_lt
+      (p_src := p_src * c_src) (p_dst := p_dst * c_dst)
+      (c := 1) (eta := eta) (x := x) (y := y)
+      (mul_pos hp_src hc_src) (mul_pos hp_dst hc_dst)
+      (by norm_num) heta hx hy hscaled
+  simpa [mul_assoc, mul_left_comm, mul_comm] using hcore
+
+/--
+Reciprocal powered weights are stable under a `1 + o(1)` multiplicative
+perturbation.
+
+This packages the continuity step needed by asymptotic first-order-condition
+proofs: replacing a positive weight `p` by `p * (1 + ε_N)` changes
+`1 / weight^γ` by `o(1)` whenever `ε_N -> 0`.
+-/
+theorem reciprocal_rpow_one_add_perturb_tendsToZero
+    {ε : ℕ → ℝ} (hε : TendsToZero ε) {p γ : ℝ} (hp : 0 < p) :
+    TendsToZero
+      (fun N : ℕ =>
+        |1 / (p ^ γ) - 1 / ((p * (1 + ε N)) ^ γ)|) := by
+  rw [TendsToZero] at hε ⊢
+  have hbase :
+      Tendsto (fun N : ℕ => p * (1 + ε N)) atTop (nhds (p * (1 + 0))) := by
+    have hone : Tendsto (fun _ : ℕ => (1 : ℝ)) atTop (nhds 1) :=
+      tendsto_const_nhds
+    simpa using (hone.add hε).const_mul p
+  have hpow :
+      Tendsto (fun N : ℕ => (p * (1 + ε N)) ^ γ)
+        atTop (nhds ((p * (1 + 0)) ^ γ)) := by
+    exact hbase.rpow_const (p := γ)
+      (Or.inl (by positivity : p * (1 + 0) ≠ 0))
+  have hrecip :
+      Tendsto (fun N : ℕ => 1 / ((p * (1 + ε N)) ^ γ))
+        atTop (nhds (1 / ((p * (1 + 0)) ^ γ))) := by
+    simpa [one_div] using
+      hpow.inv₀
+        (by
+          have hpos : 0 < (p * (1 + 0 : ℝ)) ^ γ := by
+            exact Real.rpow_pos_of_pos (by positivity : 0 < p * (1 + 0 : ℝ)) γ
+          exact ne_of_gt hpos)
+  have hsub :
+      Tendsto
+        (fun N : ℕ =>
+          1 / (p ^ γ) - 1 / ((p * (1 + ε N)) ^ γ))
+        atTop
+        (nhds (1 / (p ^ γ) - 1 / ((p * (1 + 0)) ^ γ))) := by
+    exact tendsto_const_nhds.sub hrecip
+  have hlimit_zero :
+      1 / (p ^ γ) - 1 / ((p * (1 + 0 : ℝ)) ^ γ) = 0 := by
+    ring_nf
+  have habs := hsub.abs
+  simpa [hlimit_zero] using habs
+
+/--
+Reciprocal powered weights are stable under a `1 - o(1)` multiplicative
+perturbation.
+-/
+theorem reciprocal_rpow_one_sub_perturb_tendsToZero
+    {ε : ℕ → ℝ} (hε : TendsToZero ε) {p γ : ℝ} (hp : 0 < p) :
+    TendsToZero
+      (fun N : ℕ =>
+        |1 / ((p * (1 - ε N)) ^ γ) - 1 / (p ^ γ)|) := by
+  rw [TendsToZero] at hε ⊢
+  have hbase :
+      Tendsto (fun N : ℕ => p * (1 - ε N)) atTop (nhds (p * (1 - 0))) := by
+    have hone : Tendsto (fun _ : ℕ => (1 : ℝ)) atTop (nhds 1) :=
+      tendsto_const_nhds
+    simpa using (hone.sub hε).const_mul p
+  have hpow :
+      Tendsto (fun N : ℕ => (p * (1 - ε N)) ^ γ)
+        atTop (nhds ((p * (1 - 0)) ^ γ)) := by
+    exact hbase.rpow_const (p := γ)
+      (Or.inl (by positivity : p * (1 - 0) ≠ 0))
+  have hrecip :
+      Tendsto (fun N : ℕ => 1 / ((p * (1 - ε N)) ^ γ))
+        atTop (nhds (1 / ((p * (1 - 0)) ^ γ))) := by
+    simpa [one_div] using
+      hpow.inv₀
+        (by
+          have hpos : 0 < (p * (1 - 0 : ℝ)) ^ γ := by
+            exact Real.rpow_pos_of_pos (by positivity : 0 < p * (1 - 0 : ℝ)) γ
+          exact ne_of_gt hpos)
+  have hsub :
+      Tendsto
+        (fun N : ℕ =>
+          1 / ((p * (1 - ε N)) ^ γ) - 1 / (p ^ γ))
+        atTop
+        (nhds (1 / ((p * (1 - 0)) ^ γ) - 1 / (p ^ γ))) := by
+    exact hrecip.sub tendsto_const_nhds
+  have hlimit_zero :
+      1 / ((p * (1 - 0 : ℝ)) ^ γ) - 1 / (p ^ γ) = 0 := by
+    ring_nf
+  have habs := hsub.abs
+  simpa [hlimit_zero] using habs
 
 end Math
 end EconCSLib
