@@ -39,8 +39,7 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_
           (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
             (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
           ρ →
-          ρ = acceptAllDynamicPolicy := by
-  exact
+          ρ = acceptAllDynamicPolicy :=
     paper_theorem4_measurable_accept_all_unique_optimal_of_shape_replacement_statewise_improvements_unless
       μ arrival m z switch12 switch21
       (Theorem4MeasurableShapeReplacementStatewiseImprovementUnlessCertificate.of_endpoint_current_bounds_exact_one_threshold_non_accept_all_selection_unless
@@ -71,8 +70,7 @@ theorem paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_theorem3
           (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
             (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
           ρ →
-          ρ = acceptAllDynamicPolicy := by
-  exact
+          ρ = acceptAllDynamicPolicy :=
     paper_theorem4_measurable_accept_all_unique_optimal_of_endpoint_current_bounds_exact_one_threshold_non_accept_all_selection_unless
       μ arrival m z switch12 switch21
       (C.to_endpoint_current_bounds_exact_one_threshold_non_accept_all_selection_unless
@@ -398,8 +396,7 @@ theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_middle_reroute
           (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
             (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
           ρ →
-          dynamicAcceptAllAlmostEverywhere μ ρ := by
-  exact
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
     paper_theorem4_measurable_accept_all_ae_unique_optimal_of_shape_replacement_statewise_rejected_mass_improvements_unless
       μ arrival m z switch12 switch21
       ((D.local_endpoint.to_shape_replacement_rejected_mass_improvements_existence_of_shape_replacements
@@ -439,8 +436,7 @@ theorem paper_theorem4_measurable_accept_all_ae_unique_optimal_of_middle_reroute
           (gn21MeasuredDynamicRewardFunctional μ arrival switch12 switch21
             (ctmcStructuredDynamicSurgePrice m z switch12 switch21))
           ρ →
-          dynamicAcceptAllAlmostEverywhere μ ρ := by
-  exact
+          dynamicAcceptAllAlmostEverywhere μ ρ :=
     paper_theorem4_measurable_accept_all_ae_unique_optimal_of_middle_reroute_ae_policy_form_source_existence
       μ arrival m z R1 R2 switch12 switch21 P hR1_pos hR1_lt_R2 hR2_pos
       hmeasure_nonsurge_acceptAll_pos hmeasure_surge_acceptAll_pos

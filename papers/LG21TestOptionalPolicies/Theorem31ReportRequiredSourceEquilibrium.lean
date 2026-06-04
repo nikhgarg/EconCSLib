@@ -430,8 +430,8 @@ theorem paper_theorem3_1_report_required_source_equilibriumAE_of_no_take_mixture
     exact (hdecision_iff_takes base skill).trans (htakes base skill)
   have hchosen_feasible_ae :
       ∀ᵐ info ∂μ, takeDecision info.skill info.base =
-        reportDecision info.base info.test := by
-    exact hdiag.mono fun info hinfo => by
+        reportDecision info.base info.test :=
+    hdiag.mono fun info hinfo => by
       dsimp [reportDecision]
       rw [hinfo]
   have hbest :

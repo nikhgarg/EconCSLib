@@ -293,9 +293,8 @@ theorem lg21_gaussian_pbo_literal_decision_actor_support_of_cutoff_support
   have hpbo :
       pboThreshold e base ≤
         PBO base
-          (Function.update (theta base) k (actorValue e base actor)) := by
-    exact
-      (lg21GaussianPosteriorMeanPBO_threshold_iff_cutoff
+          (Function.update (theta base) k (actorValue e base actor)) :=
+          (lg21GaussianPosteriorMeanPBO_threshold_iff_cutoff
         PBO M theta k pboThreshold hPBO e base
         (actorValue e base actor)).mpr
         (hactorCutoff e base actor hmass)

@@ -1433,8 +1433,8 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_str
                   gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy *
                       switch12 +
                     gn21ExitWeightIntegral (μ 1) (arrival 1)
-                      switch21 switch12 acceptAllPolicy := by
-              exact add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
+                      switch21 switch12 acceptAllPolicy :=
+              add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
                 hfixed_exit_pos
             have hfixed_reward_rate :
                 gn21ScaledStateEarning (μ 1) (arrival 1)
@@ -1620,8 +1620,8 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_str
                   gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy *
                       switch12 +
                     gn21ExitWeightIntegral (μ 1) (arrival 1)
-                      switch21 switch12 acceptAllPolicy := by
-              exact add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
+                      switch21 switch12 acceptAllPolicy :=
+              add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
                 hfixed_exit_pos
             have hfixed_mass :
                 singleStateTripMass (μ 1) acceptAllPolicy ≠ 0 := by
@@ -2037,8 +2037,8 @@ theorem paper_theorem3_measured_structured_measurable_ic_ae_unique_prices_of_str
                     gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy *
                         switch12 +
                       gn21ExitWeightIntegral (μ 1) (arrival 1)
-                        switch21 switch12 acceptAllPolicy := by
-                exact add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
+                        switch21 switch12 acceptAllPolicy :=
+                add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
                   hfixed_exit_pos
               have hfixed_reward_rate :
                   gn21ScaledStateEarning (μ 1) (arrival 1)
@@ -2190,8 +2190,8 @@ def Theorem4MeasuredAggregateStructuredSequentialOptimalRewardRatePositiveRespon
               gn21ScaledStateTime (μ 1) (arrival 1) acceptAllPolicy *
                   switch12 +
                 gn21ExitWeightIntegral (μ 1) (arrival 1)
-                  switch21 switch12 acceptAllPolicy := by
-          exact add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
+                  switch21 switch12 acceptAllPolicy :=
+          add_pos (mul_pos hfixed_time_pos A.hswitch12_pos)
             hfixed_exit_pos
         have hfixed_mass :
             singleStateTripMass (μ 1) acceptAllPolicy ≠ 0 :=

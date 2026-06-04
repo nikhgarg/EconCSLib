@@ -22,10 +22,9 @@ variable [Fintype Action] [DecidableEq Action]
 abbrev FiniteDriverModel (State Action : Type*) := FiniteMDP State Action
 
 /-- Finite-horizon driver IC in a discrete MDP approximation. -/
-def finiteHorizonDriverIC
+abbrev finiteHorizonDriverIC
     (M : FiniteDriverModel State Action) (π : FiniteMDP.Policy State Action)
-    (n : ℕ) : Prop :=
-  FiniteMDP.IncentiveCompatibleAtHorizon M π n
+    (n : ℕ) : Prop := FiniteMDP.IncentiveCompatibleAtHorizon M π n
 
 /--
 Auxiliary finite dynamic-pricing theorem: a deterministic policy that is
@@ -36,8 +35,8 @@ theorem paper_aux_finite_dynamic_pricing_ic_of_greedy
     (M : FiniteDriverModel State Action) (choose : State → Action)
     (hgreedy : ∀ n, FiniteMDP.Greedy M choose (FiniteMDP.optimalValue M n))
     (n : ℕ) :
-    finiteHorizonDriverIC M (FiniteMDP.deterministicPolicy choose) n := by
-  exact FiniteMDP.incentiveCompatibleAtHorizon_of_greedy_optimalValue M choose
+    finiteHorizonDriverIC M (FiniteMDP.deterministicPolicy choose) n :=
+   FiniteMDP.incentiveCompatibleAtHorizon_of_greedy_optimalValue M choose
     hgreedy n
 
 /--
@@ -48,8 +47,8 @@ theorem paper_aux_finite_dynamic_pricing_not_ic_of_profitable_deviation
     (M : FiniteDriverModel State Action) (π ρ : FiniteMDP.Policy State Action)
     (n : ℕ) (x : State)
     (hdev : FiniteMDP.ProfitableDeviationAtHorizon M π ρ n x) :
-    ¬ finiteHorizonDriverIC M π n := by
-  exact FiniteMDP.not_incentiveCompatibleAtHorizon_of_profitableDeviation
+    ¬ finiteHorizonDriverIC M π n :=
+   FiniteMDP.not_incentiveCompatibleAtHorizon_of_profitableDeviation
     M π ρ n x hdev
 
 end FiniteSupport

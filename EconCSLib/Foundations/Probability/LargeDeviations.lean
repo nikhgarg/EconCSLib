@@ -40,6 +40,7 @@ This file formalizes the reusable algebra around steps 2 and 3.
 - `finite_weighted_sum_hasExpUpperBoundWithConst_of_rate_certificates`
 - `finite_weighted_sum_hasExpLowerBoundWithConst_of_component`
 - `finite_weighted_sum_hasExpLowerBoundWithConst_of_rate_certificate_component`
+- `FiniteErrorRateCertificate`
 - `PairwiseErrorUpperBoundCertificate`
 - `PairwiseErrorRateCertificate`
 -/
@@ -352,6 +353,72 @@ theorem finite_weighted_sum_hasExpLowerBoundWithConst_of_rate_certificate_compon
     (hcert.hasExpLowerBoundWithConst_of_gt hrate)
 
 /--
+Generic finite family of exact error-rate certificates.  This abstracts the
+common EC large-deviation pattern before specializing to pairwise ranking
+errors: each index has an error probability and an exact exponential rate.
+-/
+structure FiniteErrorRateCertificate (ι : Type*) where
+  errorProb : ι → ℕ → ℝ
+  rate : ι → ℝ
+  has_rate : ∀ i, ExponentialRateCertificate (errorProb i) (rate i)
+
+namespace FiniteErrorRateCertificate
+
+variable {ι : Type*} [Fintype ι]
+
+/-- Weighted finite aggregate of certified error probabilities. -/
+def aggregateError (C : FiniteErrorRateCertificate ι)
+    (weight : ι → ℝ) (n : ℕ) : ℝ :=
+  ∑ i : ι, weight i * C.errorProb i n
+
+theorem aggregateError_hasExpUpperBoundWithConst_of_lt
+    (C : FiniteErrorRateCertificate ι)
+    {weight : ι → ℝ} {targetRate : ℝ}
+    (hweight : ∀ i, 0 ≤ weight i)
+    (hrate : ∀ i, targetRate < C.rate i) :
+    HasExpUpperBoundWithConst
+      (C.aggregateError weight) targetRate := by
+  simpa [aggregateError] using
+    finite_weighted_sum_hasExpUpperBoundWithConst_of_rate_certificates
+      (ι := ι)
+      (p := fun i n => C.errorProb i n)
+      (weight := weight)
+      (rate := C.rate)
+      (targetRate := targetRate)
+      hweight
+      C.has_rate
+      hrate
+
+theorem aggregateError_hasExpLowerBoundWithConst_of_component_gt
+    [DecidableEq ι]
+    (C : FiniteErrorRateCertificate ι)
+    {weight : ι → ℝ} {targetRate : ℝ}
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (i0 : ι) (hweight_pos : 0 < weight i0)
+    (hrate : C.rate i0 < targetRate) :
+    HasExpLowerBoundWithConst
+      (C.aggregateError weight) targetRate := by
+  have hp_nonneg :
+      ∀ i : ι, ∀ᶠ n : ℕ in atTop, 0 ≤ C.errorProb i n := by
+    intro i
+    exact (C.has_rate i).eventually_pos.mono (fun _ hn => hn.le)
+  simpa [aggregateError] using
+    finite_weighted_sum_hasExpLowerBoundWithConst_of_rate_certificate_component
+      (ι := ι)
+      (p := fun i n => C.errorProb i n)
+      (weight := weight)
+      (rate := C.rate)
+      (targetRate := targetRate)
+      hweight_nonneg
+      hp_nonneg
+      i0
+      hweight_pos
+      (C.has_rate i0)
+      hrate
+
+end FiniteErrorRateCertificate
+
+/--
 Pairwise ranking-error upper-bound certificate.  `errorProb hi lo n` is the
 probability that the pair `(hi, lo)` is misordered after scale `n`; `rate hi lo`
 is a certified exponential upper-bound rate.
@@ -404,6 +471,13 @@ structure PairwiseErrorRateCertificate (θ : Type*) where
 namespace PairwiseErrorRateCertificate
 
 variable {θ : Type*} [Fintype θ]
+
+/-- View a pairwise ranking-error certificate as a generic finite certificate. -/
+def toFiniteErrorRateCertificate (C : PairwiseErrorRateCertificate θ) :
+    FiniteErrorRateCertificate (θ × θ) where
+  errorProb := fun pair n => C.errorProb pair.1 pair.2 n
+  rate := fun pair => C.rate pair.1 pair.2
+  has_rate := fun pair => C.has_rate pair.1 pair.2
 
 /-- Weighted aggregate of finitely many pairwise ranking errors. -/
 def aggregateError (C : PairwiseErrorRateCertificate θ)
