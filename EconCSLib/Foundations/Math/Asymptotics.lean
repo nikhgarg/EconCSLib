@@ -46,6 +46,227 @@ theorem tendsToZero_if_lt_const
       ⟨threshold, fun N hN => hN⟩] with N hN
   simp [not_lt.mpr hN]
 
+/--
+Turn a family of eventual thresholds for tolerances `1 / (m + 1)` into a
+single nonnegative error schedule.
+
+At problem size `N`, the schedule uses the reciprocal of the largest tolerance
+index whose threshold is at most `N`.  This is useful when an asymptotic proof
+provides, for every fixed tolerance, a tail threshold, while an optimization
+argument needs one concrete `o(1)` error sequence.
+-/
+noncomputable def reciprocalThresholdError (threshold : ℕ → ℕ) (N : ℕ) : ℝ :=
+  1 / (((Nat.findGreatest (fun m => threshold m ≤ N) N + 1 : ℕ) : ℝ))
+
+theorem reciprocalThresholdError_nonneg (threshold : ℕ → ℕ) (N : ℕ) :
+    0 ≤ reciprocalThresholdError threshold N := by
+  unfold reciprocalThresholdError
+  positivity
+
+theorem reciprocalThresholdError_tendsToZero (threshold : ℕ → ℕ) :
+    TendsToZero (reciprocalThresholdError threshold) := by
+  rw [TendsToZero]
+  refine tendsto_order.2 ?_
+  constructor
+  · intro a ha
+    filter_upwards with N
+    have hnonneg := reciprocalThresholdError_nonneg threshold N
+    linarith
+  · intro b hb
+    rcases exists_nat_one_div_lt hb with ⟨m, hm⟩
+    let K : ℕ := max m (threshold m)
+    refine eventually_atTop.2 ⟨K, ?_⟩
+    intro N hN
+    have hm_le_N : m ≤ N := le_trans (Nat.le_max_left m (threshold m)) hN
+    have hthreshold_le_N : threshold m ≤ N :=
+      le_trans (Nat.le_max_right m (threshold m)) hN
+    have hfind_ge :
+        m ≤ Nat.findGreatest (fun r => threshold r ≤ N) N :=
+      Nat.le_findGreatest hm_le_N hthreshold_le_N
+    have hden_le :
+        (m + 1 : ℝ) ≤
+          ((Nat.findGreatest (fun r => threshold r ≤ N) N + 1 : ℕ) : ℝ) := by
+      exact_mod_cast Nat.succ_le_succ hfind_ge
+    have hden_pos : 0 < (m + 1 : ℝ) := by positivity
+    have hden_find_pos :
+        0 <
+          ((Nat.findGreatest (fun r => threshold r ≤ N) N + 1 : ℕ) : ℝ) := by
+      positivity
+    have hle :
+        reciprocalThresholdError threshold N ≤ 1 / (m + 1 : ℝ) := by
+      unfold reciprocalThresholdError
+      exact one_div_le_one_div_of_le hden_pos hden_le
+    exact lt_of_le_of_lt hle hm
+
+theorem reciprocalThresholdError_le_of_threshold_le
+    (threshold : ℕ → ℕ) {m N : ℕ}
+    (hm_le_N : m ≤ N) (hthreshold_le_N : threshold m ≤ N) :
+    reciprocalThresholdError threshold N ≤ 1 / (m + 1 : ℝ) := by
+  have hfind_ge :
+      m ≤ Nat.findGreatest (fun r => threshold r ≤ N) N :=
+    Nat.le_findGreatest hm_le_N hthreshold_le_N
+  have hden_le :
+      (m + 1 : ℝ) ≤
+        ((Nat.findGreatest (fun r => threshold r ≤ N) N + 1 : ℕ) : ℝ) := by
+    exact_mod_cast Nat.succ_le_succ hfind_ge
+  have hden_find_pos :
+      0 <
+        ((Nat.findGreatest (fun r => threshold r ≤ N) N + 1 : ℕ) : ℝ) := by
+    positivity
+  have hden_pos : 0 < (m + 1 : ℝ) := by positivity
+  unfold reciprocalThresholdError
+  exact one_div_le_one_div_of_le hden_pos hden_le
+
+/--
+Prefix-scaled envelope of a pointwise error sequence.
+
+At problem size `N`, this records the largest product `ε q * q` among
+`q ≤ N`, normalized by `N`.  Thus `prefixScaledError ε N * N` dominates every
+prefix product.  If `ε q -> 0` and `ε` is nonnegative, then this normalized
+prefix envelope also tends to zero.
+-/
+noncomputable def prefixScaledError (ε : ℕ → ℝ) (N : ℕ) : ℝ :=
+  if h : N = 0 then 0
+  else
+    ((Finset.range (N + 1)).sup'
+      (by exact ⟨0, by simp⟩)
+      (fun q => ε q * (q : ℝ))) / (N : ℝ)
+
+theorem prefixScaledError_nonneg
+    (ε : ℕ → ℝ) (hε_nonneg : ∀ q, 0 ≤ ε q) (N : ℕ) :
+    0 ≤ prefixScaledError ε N := by
+  by_cases hN : N = 0
+  · simp [prefixScaledError, hN]
+  · have hzero_mem : 0 ∈ Finset.range (N + 1) := by simp
+    have hsup_nonneg :
+        0 ≤
+          (Finset.range (N + 1)).sup'
+            (by exact ⟨0, by simp⟩)
+            (fun q => ε q * (q : ℝ)) := by
+      simpa using
+        (Finset.le_sup'
+          (s := Finset.range (N + 1))
+          (f := fun q => ε q * (q : ℝ)) hzero_mem)
+    simp [prefixScaledError, hN]
+    exact div_nonneg hsup_nonneg (Nat.cast_nonneg N)
+
+theorem le_prefixScaledError_mul_nat
+    (ε : ℕ → ℝ) {q N : ℕ} (hN_pos : 0 < N) (hq_le_N : q ≤ N) :
+    ε q * (q : ℝ) ≤ prefixScaledError ε N * (N : ℝ) := by
+  have hq_mem : q ∈ Finset.range (N + 1) := by
+    simp
+    omega
+  have hle :
+      ε q * (q : ℝ) ≤
+        (Finset.range (N + 1)).sup'
+          (by exact ⟨0, by simp⟩)
+          (fun q => ε q * (q : ℝ)) :=
+    Finset.le_sup'
+      (s := Finset.range (N + 1))
+      (f := fun q => ε q * (q : ℝ)) hq_mem
+  have hN_ne : (N : ℝ) ≠ 0 := by
+    exact_mod_cast (Nat.ne_of_gt hN_pos)
+  calc
+    ε q * (q : ℝ)
+        ≤ (Finset.range (N + 1)).sup'
+            (by exact ⟨0, by simp⟩)
+            (fun q => ε q * (q : ℝ)) := hle
+    _ = prefixScaledError ε N * (N : ℝ) := by
+          simp [prefixScaledError, Nat.ne_of_gt hN_pos, hN_ne]
+
+theorem prefixScaledError_tendsToZero
+    (ε : ℕ → ℝ) (hε_nonneg : ∀ q, 0 ≤ ε q)
+    (hε_zero : TendsToZero ε) :
+    TendsToZero (prefixScaledError ε) := by
+  rw [TendsToZero] at hε_zero ⊢
+  refine tendsto_order.2 ?_
+  constructor
+  · intro a ha
+    filter_upwards with N
+    have hnonneg := prefixScaledError_nonneg ε hε_nonneg N
+    linarith
+  · intro b hb
+    have hhalf_pos : 0 < b / 2 := by linarith
+    have hε_small_eventually :
+        ∀ᶠ q in atTop, ε q < b / 2 := by
+      exact hε_zero.eventually (eventually_lt_nhds hhalf_pos)
+    rcases eventually_atTop.1 hε_small_eventually with
+      ⟨K, hK⟩
+    let C : ℝ :=
+      max 0
+        ((Finset.range (K + 1)).sup'
+          (by exact ⟨0, by simp⟩)
+          (fun q => ε q * (q : ℝ)))
+    have hC_div_zero :
+        Tendsto (fun N : ℕ => C / (N : ℝ)) atTop (nhds 0) :=
+      tendsto_const_div_atTop_nhds_zero_nat C
+    have hC_small_eventually :
+        ∀ᶠ N : ℕ in atTop, C / (N : ℝ) < b / 2 :=
+      hC_div_zero.eventually (eventually_lt_nhds hhalf_pos)
+    filter_upwards
+      [hC_small_eventually,
+        eventually_atTop.2 ⟨K + 1, fun N hN => hN⟩]
+      with N hC_small hN_large
+    have hN_pos : 0 < N := by omega
+    have hN_real_pos : 0 < (N : ℝ) := by exact_mod_cast hN_pos
+    have hN_real_ne : (N : ℝ) ≠ 0 := ne_of_gt hN_real_pos
+    have hsup_le :
+        (Finset.range (N + 1)).sup'
+            (by exact ⟨0, by simp⟩)
+            (fun q => ε q * (q : ℝ)) ≤
+          (b / 2) * (N : ℝ) := by
+      refine Finset.sup'_le
+        (s := Finset.range (N + 1))
+        (H := by exact ⟨0, by simp⟩)
+        (f := fun q => ε q * (q : ℝ)) ?_
+      intro q hq_mem
+      have hq_le_N : q ≤ N := by
+        simp at hq_mem
+        omega
+      by_cases hK_le_q : K ≤ q
+      · have hε_q_le : ε q ≤ b / 2 := le_of_lt (hK q hK_le_q)
+        calc
+          ε q * (q : ℝ)
+              ≤ (b / 2) * (q : ℝ) :=
+                mul_le_mul_of_nonneg_right hε_q_le (Nat.cast_nonneg q)
+          _ ≤ (b / 2) * (N : ℝ) := by
+                exact mul_le_mul_of_nonneg_left
+                  (by exact_mod_cast hq_le_N) hhalf_pos.le
+      · have hq_lt_K : q < K := Nat.lt_of_not_ge hK_le_q
+        have hq_prefix_mem : q ∈ Finset.range (K + 1) := by
+          simp
+          omega
+        have hterm_le_C :
+            ε q * (q : ℝ) ≤ C := by
+          have hterm_le_sup :
+              ε q * (q : ℝ) ≤
+                (Finset.range (K + 1)).sup'
+                  (by exact ⟨0, by simp⟩)
+                  (fun q => ε q * (q : ℝ)) :=
+            Finset.le_sup'
+              (s := Finset.range (K + 1))
+              (f := fun q => ε q * (q : ℝ)) hq_prefix_mem
+          exact le_trans hterm_le_sup (le_max_right _ _)
+        have hC_lt :
+            C < (b / 2) * (N : ℝ) := by
+          calc
+            C = (C / (N : ℝ)) * (N : ℝ) := by
+                  field_simp [hN_real_ne]
+            _ < (b / 2) * (N : ℝ) :=
+                  mul_lt_mul_of_pos_right hC_small hN_real_pos
+        exact le_trans hterm_le_C (le_of_lt hC_lt)
+    have hpref_le_half : prefixScaledError ε N ≤ b / 2 := by
+      simp [prefixScaledError, Nat.ne_of_gt hN_pos]
+      calc
+        ((Finset.range (N + 1)).sup'
+            (by exact ⟨0, by simp⟩)
+            (fun q => ε q * (q : ℝ))) / (N : ℝ)
+            ≤ ((b / 2) * (N : ℝ)) / (N : ℝ) :=
+              div_le_div_of_nonneg_right hsup_le hN_real_pos.le
+        _ = b / 2 := by
+              field_simp [hN_real_ne]
+    linarith
+
 namespace AsymptoticEquivalent
 
 theorem congr_left_eventually
@@ -487,6 +708,94 @@ theorem tendsto_nat_succ_cast_add_const_rpow_neg_nhds_zero
 theorem tendsto_sqrt_nat_succ_cast_atTop :
     Tendsto (fun N : ℕ => Real.sqrt (((N + 1 : ℕ) : ℝ))) atTop atTop :=
   Real.tendsto_sqrt_atTop.comp tendsto_nat_succ_cast_atTop
+
+/-- Canonical inverse-square-root error schedule `1 / sqrt (N+1)`. -/
+noncomputable def invSqrtSuccError (N : ℕ) : ℝ :=
+  1 / Real.sqrt (((N + 1 : ℕ) : ℝ))
+
+theorem invSqrtSuccError_nonneg (N : ℕ) :
+    0 ≤ invSqrtSuccError N := by
+  unfold invSqrtSuccError
+  positivity
+
+theorem invSqrtSuccError_tendsToZero :
+    TendsToZero invSqrtSuccError := by
+  rw [TendsToZero]
+  refine Tendsto.congr' ?_
+    (Filter.Tendsto.const_div_atTop tendsto_sqrt_nat_succ_cast_atTop (1 : ℝ))
+  filter_upwards with N
+  simp [invSqrtSuccError, one_div, Nat.cast_add]
+
+/-- `N / sqrt (N+1)`, equivalently `invSqrtSuccError N * N`, tends to infinity. -/
+theorem invSqrtSuccError_mul_nat_tendsto_atTop :
+    Tendsto (fun N : ℕ => invSqrtSuccError N * (N : ℝ)) atTop atTop := by
+  have hhalf_sqrt :
+      Tendsto
+        (fun N : ℕ => (1 / 2 : ℝ) * Real.sqrt (((N + 1 : ℕ) : ℝ)))
+        atTop atTop :=
+    Filter.Tendsto.const_mul_atTop
+      (by norm_num : (0 : ℝ) < 1 / 2) tendsto_sqrt_nat_succ_cast_atTop
+  refine tendsto_atTop_mono' atTop ?_ hhalf_sqrt
+  filter_upwards [eventually_ge_atTop 1] with N hN
+  have hN_real : (1 : ℝ) ≤ N := by exact_mod_cast hN
+  have hbase_pos : 0 < (((N + 1 : ℕ) : ℝ)) := by positivity
+  have hsqrt_pos : 0 < Real.sqrt (((N + 1 : ℕ) : ℝ)) :=
+    Real.sqrt_pos.mpr hbase_pos
+  have hbase_div_le_N :
+      (((N + 1 : ℕ) : ℝ)) / 2 ≤ (N : ℝ) := by
+    have hbase_eq : (((N + 1 : ℕ) : ℝ)) = (N : ℝ) + 1 := by norm_num
+    nlinarith
+  unfold invSqrtSuccError
+  calc
+    (1 / 2 : ℝ) * Real.sqrt (((N + 1 : ℕ) : ℝ))
+        =
+          (((N + 1 : ℕ) : ℝ)) /
+            (2 * Real.sqrt (((N + 1 : ℕ) : ℝ))) := by
+          field_simp [hsqrt_pos.ne']
+          rw [Real.sq_sqrt hbase_pos.le]
+    _ ≤ (N : ℝ) / Real.sqrt (((N + 1 : ℕ) : ℝ)) := by
+          rw [div_le_div_iff₀ (by positivity : 0 < 2 * Real.sqrt (((N + 1 : ℕ) : ℝ)))
+            hsqrt_pos]
+          nlinarith
+    _ = (1 / Real.sqrt (((N + 1 : ℕ) : ℝ))) * (N : ℝ) := by ring
+
+/--
+The growing scale `N / sqrt(N+1)` eventually dominates every fixed finite
+family of real bounds.
+-/
+theorem invSqrtSuccError_mul_nat_eventually_gt_fintype_pair
+    {ι κ : Type*} [Fintype ι] [Fintype κ] (B : ι → κ → ℝ) :
+    ∀ᶠ N in atTop,
+      ∀ i : ι, ∀ j : κ,
+        B i j < invSqrtSuccError N * (N : ℝ) := by
+  classical
+  refine eventually_all.2 ?_
+  intro i
+  refine eventually_all.2 ?_
+  intro j
+  exact invSqrtSuccError_mul_nat_tendsto_atTop.eventually_gt_atTop (B i j)
+
+/--
+If a scaled-count gap beats the source and destination additive shifts, then
+the corresponding shifted destination count is below the shifted source count.
+
+This is the arithmetic core used by finite FOC arguments that compare
+backward and forward marginals with one-count or constant shifts.
+-/
+theorem scaled_gap_absorbs_additive_shifts
+    {qsrc qdst wsrc wdst srcShift dstShift : ℝ}
+    (hshift_lt_gap :
+      srcShift / wsrc + dstShift / wdst <
+        qsrc / wsrc - qdst / wdst) :
+    (qdst + dstShift) / wdst < (qsrc - srcShift) / wsrc := by
+  have hdst :
+      (qdst + dstShift) / wdst =
+        qdst / wdst + dstShift / wdst := by ring
+  have hsrc :
+      (qsrc - srcShift) / wsrc =
+        qsrc / wsrc - srcShift / wsrc := by ring
+  rw [hdst, hsrc]
+  linarith
 
 /-- The integer square-root gap `(sqrt N + 1) / N` tends to zero. -/
 theorem nat_sqrt_gap_error_tendsToZero :

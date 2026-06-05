@@ -177,6 +177,45 @@ theorem share_eq_div_of_total_ne_zero (a : Allocation κ) (k : κ)
 @[simp] theorem marginal_apply (valueOfCount : κ → ℕ → ℝ) (k : κ) (q : ℕ) :
     marginal valueOfCount k q = valueOfCount k (q + 1) - valueOfCount k q := rfl
 
+/-- Linear value-of-count function with a fixed per-unit value for each type. -/
+def linearValueOfCount (perUnitValue : κ → ℝ) : κ → ℕ → ℝ :=
+  fun k q => (q : ℝ) * perUnitValue k
+
+/-- Allocation putting all `N` units on one type. -/
+def allOnTypeAllocation (N : ℕ) (best : κ) : Allocation κ where
+  count := fun k => if k = best then N else 0
+
+@[simp] theorem linearValueOfCount_zero
+    (perUnitValue : κ → ℝ) (k : κ) :
+    linearValueOfCount perUnitValue k 0 = 0 := by
+  simp [linearValueOfCount]
+
+@[simp] theorem allOnTypeAllocation_self
+    (N : ℕ) (best : κ) :
+    (allOnTypeAllocation N best).count best = N := by
+  simp [allOnTypeAllocation]
+
+theorem allOnTypeAllocation_of_ne
+    (N : ℕ) {best k : κ} (hne : k ≠ best) :
+    (allOnTypeAllocation N best).count k = 0 := by
+  simp [allOnTypeAllocation, hne]
+
+@[simp] theorem allOnTypeAllocation_total
+    (N : ℕ) (best : κ) :
+    total (allOnTypeAllocation N best) = N := by
+  classical
+  unfold total allOnTypeAllocation
+  simp
+
+theorem objective_linearValueOfCount_eq_sum_count_mul_score
+    (weight perUnitValue : κ → ℝ) (a : Allocation κ) :
+    objective a weight (linearValueOfCount perUnitValue) =
+      ∑ k : κ, (a.count k : ℝ) * (weight k * perUnitValue k) := by
+  unfold objective linearValueOfCount
+  refine Finset.sum_congr rfl ?_
+  intro k _
+  ring
+
 /-- Weighted forward marginal gain from adding one unit to coordinate `k`. -/
 noncomputable def weightedForwardMarginal
     (weight : κ → ℝ) (valueOfCount : κ → ℕ → ℝ) (k : κ) (q : ℕ) : ℝ :=
@@ -206,6 +245,43 @@ def IsOptimalAtTotal
   HasTotal a N ∧
     ∀ b : Allocation κ, HasTotal b N →
       objective b weight valueOfCount ≤ objective a weight valueOfCount
+
+/--
+For a linear objective, putting all mass on a maximizing type is optimal among
+allocations with the same total.
+-/
+theorem allOnTypeAllocation_isOptimalAtTotal_linearValueOfCount
+    (weight perUnitValue : κ → ℝ) (N : ℕ) (best : κ)
+    (hbest : ∀ k, weight k * perUnitValue k ≤ weight best * perUnitValue best) :
+    IsOptimalAtTotal weight (linearValueOfCount perUnitValue) N
+      (allOnTypeAllocation N best) := by
+  constructor
+  · exact allOnTypeAllocation_total N best
+  · intro b hb
+    have hsum_counts : (∑ k : κ, (b.count k : ℝ)) = (N : ℝ) := by
+      rw [← Nat.cast_sum]
+      exact_mod_cast hb
+    rw [objective_linearValueOfCount_eq_sum_count_mul_score]
+    rw [objective_linearValueOfCount_eq_sum_count_mul_score]
+    calc
+      (∑ k : κ, (b.count k : ℝ) * (weight k * perUnitValue k))
+          ≤ ∑ k : κ,
+              (b.count k : ℝ) * (weight best * perUnitValue best) :=
+            Finset.sum_le_sum (fun k _ =>
+              mul_le_mul_of_nonneg_left (hbest k) (Nat.cast_nonneg _))
+      _ = (N : ℝ) * (weight best * perUnitValue best) := by
+            rw [← Finset.sum_mul, hsum_counts]
+      _ = ∑ k : κ,
+              ((allOnTypeAllocation N best).count k : ℝ) *
+                (weight k * perUnitValue k) := by
+            symm
+            unfold allOnTypeAllocation
+            change
+              (∑ k : κ,
+                ((if k = best then N else 0 : ℕ) : ℝ) *
+                  (weight k * perUnitValue k)) =
+                (N : ℝ) * (weight best * perUnitValue best)
+            simp
 
 @[simp] theorem weightedForwardMarginal_apply
     (weight : κ → ℝ) (valueOfCount : κ → ℕ → ℝ) (k : κ) (q : ℕ) :
@@ -323,6 +399,45 @@ theorem weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
   rw [objective_moveOne_eq (a := a) (weight := weight)
     (valueOfCount := valueOfCount) hne hcan] at hno
   linarith
+
+/--
+For a linear objective, a type whose per-unit score is strictly below another
+type's score receives zero count in every optimum.
+-/
+theorem count_eq_zero_of_isOptimalAtTotal_linearValueOfCount_of_strict_score_lt
+    {weight perUnitValue : κ → ℝ} {N : ℕ} {a : Allocation κ} {k best : κ}
+    (hopt : IsOptimalAtTotal weight (linearValueOfCount perUnitValue) N a)
+    (hstrict : weight k * perUnitValue k < weight best * perUnitValue best) :
+    a.count k = 0 := by
+  by_contra hne_zero
+  have hpos : 0 < a.count k := Nat.pos_of_ne_zero hne_zero
+  have hk_ne_best : k ≠ best := by
+    intro h
+    rw [h] at hstrict
+    exact (lt_irrefl (weight best * perUnitValue best)) hstrict
+  have hle :=
+    weightedForwardMarginal_le_weightedBackwardMarginal_of_optimum
+      (a := a) (weight := weight) (valueOfCount := linearValueOfCount perUnitValue)
+      (N := N) hopt hk_ne_best hpos
+  have hforward :
+      weightedForwardMarginal weight (linearValueOfCount perUnitValue)
+          best (a.count best) =
+        weight best * perUnitValue best := by
+    unfold weightedForwardMarginal marginal linearValueOfCount
+    rw [Nat.cast_add, Nat.cast_one]
+    ring
+  have hbackward :
+      weightedBackwardMarginal weight (linearValueOfCount perUnitValue)
+          k (a.count k) =
+        weight k * perUnitValue k := by
+    unfold weightedBackwardMarginal linearValueOfCount
+    rw [dif_neg hpos.ne']
+    have hsucc : a.count k = (a.count k - 1) + 1 := by omega
+    nth_rewrite 1 [hsucc]
+    rw [Nat.cast_add, Nat.cast_one]
+    ring
+  rw [hforward, hbackward] at hle
+  exact not_le_of_gt hstrict hle
 
 /--
 If every scaled-count gap above `error * N` would make the source backward

@@ -1,0 +1,194 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+
+% Visual validation loop:
+% 1. Compile this file after every substantive DAG edit.
+% 2. Inspect the rendered PDF/PNG, not just the TeX source.
+% 3. Increase spacing or reroute arrows until no box, legend, edge, or label overlaps.
+%
+% This DAG is paper-facing: primary nodes are source definitions, examples,
+% lemmas, propositions, theorems, and corollaries. Implementation interfaces and
+% certificate seams are tracked in the README rather than as graph nodes.
+
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={font=\sffamily\small, outer sep=3pt}
+]
+
+% --- Legend: README status vocabulary plus formalized node-type styles. ---
+  \dagPaperMetadata{Reconciling the accuracy-diversity trade-off in recommendations}{Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg}{arXiv:2307.15142v1}{2023}{https://arxiv.org/pdf/2307.15142}
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) at (0,0) {formalized\\result};
+\node[dag_lemma, dag_template_legend] (legLem) at (4.2,0) {formalized\\lemma};
+\node[dag_model, dag_template_legend] (legDef) at (8.4,0) {formalized\\definition};
+\node[dag_caveat_legend] (legCav) at (12.6,0) {formalized\\with caveat};
+\node[dag_partial, dag_template_legend] (legPart) at (0,-2.6) {partially\\formalized};
+\node[dag_conditional, dag_template_legend] (legCond) at (4.2,-2.6) {conditional};
+\node[dag_scaffold, dag_template_legend] (legScaf) at (8.4,-2.6) {scaffold};
+\node[dag_unformalized, dag_template_legend] (legNot) at (12.6,-2.6) {not started /\\not formalized};
+
+
+}
+\daglegend{(legRes)(legLem)(legDef)(legCav)(legPart)(legCond)(legScaf)(legNot)}{Legend}
+
+\begin{dagPaperBody}
+% Grid: source definitions, appendix machinery, main results, and corollaries.
+% Solid arrows are Lean-checked dependencies.  Dashed arrows, when present, are
+% source proof routes only: either the full named source item is still
+% partial/conditional, or Lean bypasses that printed route with a direct
+% proof.  A green node must not depend on a red/yellow node by a solid edge.
+
+% --- Source definitions and example. ---
+\node[dag_model] (Def1) at (0,0) {
+  \textbf{Definition 1} \\
+  $\gamma$-homogeneity \\
+  equation (5) target share \\
+  $\gamma=\infty$ is a limit note
+};
+\node[dag_model] (Def2) at (6.8,0) {
+  \textbf{Definition 2} \\
+  sequence homogeneity \\
+  equation (6) limit shares
+};
+\node[dag_result] (Ex1) at (0,-3.8) {
+  \textbf{Example 1} \\
+  calibration example \\
+  log relaxation and \\
+  harmonic top-one split
+};
+\node[dag_model] (Def3) at (0,-8.4) {
+  \textbf{Definition 3} \\
+  order-statistic means \\
+  $\mu_D(i,a)$ top-$k$ oracle
+};
+
+% --- Appendix / proof machinery. ---
+\node[dag_lemma] (Prop5) at (6.8,-8.4) {
+  \textbf{Proposition 5} \\
+  top-$k$ order-statistic \\
+  identity
+};
+\node[dag_lemma] (DensityBridge) at (0,-12.8) {
+  \textbf{Bounded density bridge} \\
+  reflected pdf ratio \\
+  plus tail integral \\
+  $\Rightarrow$ upper-tail mass
+};
+\node[dag_lemma] (LemmaD2) at (6.8,-12.8) {
+  \textbf{Lemma D.2} \\
+  density/tail integral \\
+  kernel asymptotic
+};
+\node[dag_lemma] (Lemma1) at (13.2,-8.4) {
+  \textbf{Lemma 1} \\
+  bounded top-$k$ loss \\
+  reflected-CDF and \\
+  upper-tail formulations
+};
+\node[dag_lemma] (LemmaD3) at (13.2,-12.8) {
+  \textbf{Lemma D.3} \\
+  exponential order statistics \\
+  harmonic/top-$k$ oracle
+};
+\node[dag_lemma] (LemmaD4) at (13.2,-17.2) {
+  \textbf{Lemma D.4} \\
+  Pareto order statistics \\
+  iid gamma-ratio asymptotics
+};
+\node[dag_lemma] (LemmaD5) at (13.2,-22.6) {
+  \textbf{Lemma D.5} \\
+  real/integer rounding \\
+  no-crossing count bound \\
+  Prop. 2 finite-constant \\
+  note in audit
+};
+\node[dag_lemma] (LemmaD1) at (26.4,-14.4) {
+  \textbf{Lemma D.1} \\
+  optimizer-limit bridge \\
+  scaled-count and FOC \\
+  endpoints; sign \\
+  note in audit
+};
+
+% --- Main source results. ---
+\node[dag_result] (Thm1) at (19.6,-8.4) {
+  \textbf{Theorem 1} \\
+  i.i.d. conditional values \\
+  finite top-split, bounded, \\
+  exponential, Pareto, and \\
+  common-mean regimes
+};
+\node[dag_result] (Cor1) at (26.4,-8.4) {
+  \textbf{Corollary 1} \\
+  every $\gamma \ge 0$ attainable \\
+  concrete model witnesses
+};
+\node[dag_result] (Prop2) at (19.6,-17.2) {
+  \textbf{Proposition 2} \\
+  uniform $[0,1]$ \\
+  corrected $(2m+1)/N$ \\
+  finite bound implies \\
+  $1/2$ homogeneity
+};
+\node[dag_result] (Thm3) at (19.6,-22.6) {
+  \textbf{Theorem 3} \\
+  varying success rates \\
+  log-share limit and \\
+  all-consumed argmax
+};
+\node[dag_result] (Cor3) at (26.4,-22.6) {
+  \textbf{Corollary 3} \\
+  i.i.d. Bernoulli \\
+  $0$-homogeneity
+};
+\node[dag_result] (Thm2) at (32.4,-22.8) {
+  \textbf{Theorem 2} \\
+  decaying Bernoulli \\
+  top-one parts (i)--(iii) \\
+  and all-consumed part (iv) \\
+  homogeneity regimes
+};
+\node[dag_result] (Prop4Avg) at (15.0,-28.8) {
+  \textbf{Proposition 4 checkpoint} \\
+  averaging/kernel symmetry \\
+  minimization layer
+};
+\node[dag_conditional] (Prop4) at (26.4,-28.8) {
+  \textbf{Full Proposition 4} \\
+  continuous sphere model \\
+  needs general \\
+  Laplace-principle \\
+  analysis library
+};
+
+% --- Definition and source-identity edges. ---
+\draw[dag_arrow] (Def1.east) -- (Def2.west);
+\draw[dag_arrow] (Def1.south) -- (Ex1.north);
+\draw[dag_arrow] (Def3.east) -- (Prop5.west);
+
+% --- Theorem 1 paper route. ---
+\draw[dag_arrow] (DensityBridge.east) -- (LemmaD2.west);
+\draw[dag_arrow] (Prop5.east) -- (Lemma1.west);
+\draw[dag_arrow] (LemmaD2.east) -- ++(0.9,0) |- (Lemma1.south west);
+\draw[dag_arrow] (LemmaD3.east) -- ++(0.9,0) |- (Thm1.205);
+\draw[dag_arrow] (LemmaD4.east) -- ++(0.9,0) |- (Thm1.225);
+\draw[dag_arrow] (Lemma1.east) -- (Thm1.west);
+\draw[dag_arrow] (LemmaD1.west) -- ++(-1.0,0) |- (Thm1.south east);
+\draw[dag_arrow] (Thm1.east) -- (Cor1.west);
+
+% --- Uniform finite result and Bernoulli results. ---
+\draw[dag_arrow]
+  (Prop5.south) -- ++(0,-1.3) -- ++(10.0,0) |- (Prop2.west);
+\draw[dag_arrow] (LemmaD5.east) -- ++(0.8,0) |- (Prop2.south west);
+\draw[dag_arrow] (LemmaD5.east) -- (Thm3.west);
+\draw[dag_arrow] (Thm3.east) -- (Cor3.west);
+\draw[dag_arrow] (Cor3.east) -- (Thm2.west);
+\draw[dag_arrow] (LemmaD1.east) -- ++(0.7,0) |- (Thm2.north west);
+\draw[dag_arrow] (Prop4Avg.east) -- (Prop4.west);
+
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

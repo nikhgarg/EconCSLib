@@ -517,6 +517,27 @@ theorem exists_total_le_card_mul_of_le_sum
     _ ≤ cardR * mass k := hmul
     _ = (Fintype.card κ : ℝ) * mass k := by rfl
 
+/--
+Finite average witness: on a nonempty finite type, some term is at least the
+uniform average.
+-/
+theorem exists_fintype_average_le
+    {κ : Type*} [Fintype κ] [Nonempty κ] (value : κ → ℝ) :
+    ∃ k : κ,
+      (∑ i : κ, value i) / (Fintype.card κ : ℝ) ≤ value k := by
+  classical
+  obtain ⟨k, hk⟩ :=
+    exists_total_le_card_mul_of_le_sum value
+      (total := ∑ i : κ, value i) le_rfl
+  refine ⟨k, ?_⟩
+  have hcard_pos : 0 < (Fintype.card κ : ℝ) := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card κ)
+  have hcard_nonneg : 0 ≤ (Fintype.card κ : ℝ) := le_of_lt hcard_pos
+  have hdiv :=
+    div_le_div_of_nonneg_right hk hcard_nonneg
+  have hcard_ne : (Fintype.card κ : ℝ) ≠ 0 := ne_of_gt hcard_pos
+  simpa [mul_div_cancel_left₀ _ hcard_ne] using hdiv
+
 /-- Cauchy-Schwarz for a finite real sum against the all-ones vector. -/
 theorem sq_sum_le_card_mul_sum_sq
     {α : Type*} (s : Finset α) (f : α → ℝ) :

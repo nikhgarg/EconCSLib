@@ -1,11 +1,14 @@
 import EconCSLib.Foundations.Math.Asymptotics
 import EconCSLib.Foundations.Math.FiniteSum
 import EconCSLib.Foundations.Probability.FiniteExpectation
+import EconCSLib.Foundations.Probability.RealDistribution
 import Mathlib.Data.Fin.Rev
 import Mathlib.Data.Fin.Tuple.Sort
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.MeasureTheory.Integral.Layercake
+import Mathlib.MeasureTheory.Integral.Pi
 import Mathlib.Topology.MetricSpace.Basic
 import Mathlib.Tactic
 
@@ -105,6 +108,28 @@ theorem topKSumOn_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
   classical
   simpa using sum_le_topKSumOn (ι := ι) k v ∅ (Nat.zero_le k)
 
+theorem topKSumOn_measurable {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (k : ℕ) :
+    Measurable (fun sample : ι → ℝ => topKSumOn k sample) := by
+  classical
+  unfold topKSumOn
+  let F : Finset ι → (ι → ℝ) → ℝ :=
+    fun s sample => ∑ i ∈ s, sample i
+  have hF : Measurable
+      ((topKCandidateSets ι k).sup' (topKCandidateSets_nonempty ι k) F) :=
+    Finset.measurable_sup'
+      (α := ℝ) (δ := ι → ℝ)
+      (s := topKCandidateSets ι k)
+      (f := F)
+      (topKCandidateSets_nonempty ι k)
+      (by
+        intro s _hs
+        exact Finset.measurable_sum s
+          (fun i _hi => measurable_pi_apply i))
+  convert hF using 1
+  ext sample
+  simp [F]
+
 /-- Reindexing the finite sample does not change its top-`k` sum. -/
 theorem topKSumOn_comp_equiv {ι κ : Type*}
     [Fintype ι] [DecidableEq ι] [Fintype κ] [DecidableEq κ]
@@ -177,6 +202,26 @@ theorem topKSumOn_le_card_mul_of_forall_le {ι : Type*}
     mul_le_mul_of_nonneg_right (by exact_mod_cast hs_card) hC_nonneg
   exact le_trans hsum_le hcard_le
 
+/--
+If every coordinate is almost surely in `[0, M]`, then the max-over-subsets
+top-`k` sum is integrable.
+-/
+theorem topKSumOn_integrable_of_ae_nonneg_bounds {ι : Type*}
+    [Fintype ι] [DecidableEq ι]
+    (M : ℝ) (μ : MeasureTheory.Measure (ι → ℝ))
+    [MeasureTheory.IsFiniteMeasure μ] (k : ℕ)
+    (hM_nonneg : 0 ≤ M)
+    (h_bounds :
+      ∀ᵐ sample ∂μ, ∀ i : ι, 0 ≤ sample i ∧ sample i ≤ M) :
+    MeasureTheory.Integrable (fun sample : ι → ℝ => topKSumOn k sample) μ := by
+  refine MeasureTheory.Integrable.of_mem_Icc 0 ((k : ℝ) * M)
+    (topKSumOn_measurable k).aemeasurable ?_
+  filter_upwards [h_bounds] with sample hsample
+  exact ⟨
+    topKSumOn_nonneg k sample,
+    topKSumOn_le_card_mul_of_forall_le k sample hM_nonneg
+      (fun i => (hsample i).2)⟩
+
 /-- A witnessed set of `k` top values pins the top-`k` sum to `k * xTop`. -/
 theorem topKSumOn_eq_card_mul_of_top_witness {ι : Type*}
     [Fintype ι] [DecidableEq ι]
@@ -238,6 +283,67 @@ theorem hasKTopValues_iff_le_topValueCount {ι : Type*}
 def extendSample {ι : Type*} (v : ι → ℝ) (newValue : ℝ) : Option ι → ℝ
   | none => newValue
   | some i => v i
+
+/--
+Measurable equivalence between an option-extended real sample and an old
+sample together with one new draw.
+-/
+def optionSampleMeasurableEquivProd (ι : Type*) :
+    (Option ι → ℝ) ≃ᵐ (ι → ℝ) × ℝ where
+  toFun sample := (fun i => sample (some i), sample none)
+  invFun pair := extendSample pair.1 pair.2
+  left_inv sample := by
+    funext x
+    cases x <;> rfl
+  right_inv pair := by
+    ext i
+    · rfl
+    · rfl
+  measurable_toFun := by
+    exact
+      (measurable_pi_iff.mpr
+        (fun i => measurable_pi_apply (some i))).prodMk
+        (measurable_pi_apply none)
+  measurable_invFun := by
+    exact measurable_pi_iff.mpr (by
+      intro x
+      cases x with
+      | none =>
+          exact
+            (measurable_snd :
+              Measurable (fun z : (ι → ℝ) × ℝ => z.2))
+      | some i =>
+          exact (measurable_pi_apply i).comp
+            (measurable_fst :
+              Measurable (fun z : (ι → ℝ) × ℝ => z.1)))
+
+theorem pi_map_optionSampleMeasurableEquivProd_symm
+    {ι : Type*} [Fintype ι]
+    (μ : MeasureTheory.Measure ℝ) [MeasureTheory.SigmaFinite μ] :
+    (((MeasureTheory.Measure.pi (fun _ : ι => μ)).prod μ).map
+        (optionSampleMeasurableEquivProd ι).symm) =
+      MeasureTheory.Measure.pi (fun _ : Option ι => μ) := by
+  refine MeasureTheory.Measure.pi_eq (fun s _ ↦ ?_) |>.symm
+  let e_meas : ((ι → ℝ) × ℝ) ≃ᵐ (Option ι → ℝ) :=
+    (optionSampleMeasurableEquivProd ι).symm
+  have me := MeasurableEquiv.measurableEmbedding e_meas
+  have hpre :
+      e_meas ⁻¹' Set.pi Set.univ s =
+        (Set.pi Set.univ (fun i : ι => s (some i))) ×ˢ (s none) := by
+    ext x
+    constructor
+    · intro hx
+      refine ⟨?_, ?_⟩
+      · intro i _hi
+        exact hx (some i) (by simp)
+      · exact hx none (by simp)
+    · intro hx i _hi
+      cases i with
+      | none => exact hx.2
+      | some i => exact hx.1 i (by simp)
+  rw [me.map_apply, hpre, MeasureTheory.Measure.prod_prod,
+    MeasureTheory.Measure.pi_pi, Fintype.prod_option]
+  rw [mul_comm]
 
 /-- Adding one more value cannot reduce the at-most-`k` top value. -/
 theorem topKSumOn_le_extend {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -338,6 +444,124 @@ theorem newValue_le_topKSumOn_extend_sub_of_card_lt {ι : Type*}
   have h :=
     topKSumOn_add_newValue_le_extend_of_card_lt
       (ι := ι) k v newValue hcard_lt
+  linarith
+
+/--
+Adding a new coordinate to a maximizer for the old top-`k - 1` problem gives
+a candidate for the extended top-`k` problem.
+-/
+theorem topKSumOn_pred_add_newValue_le_extend {ι : Type*}
+    [Fintype ι] [DecidableEq ι]
+    (k : ℕ) (v : ι → ℝ) (newValue : ℝ)
+    (hk_pos : 0 < k) :
+    topKSumOn (k - 1) v + newValue ≤
+      topKSumOn k (extendSample v newValue) := by
+  classical
+  obtain ⟨s, hs_mem, hs_eq⟩ :=
+    Finset.exists_mem_eq_sup'
+      (s := topKCandidateSets ι (k - 1))
+      (H := topKCandidateSets_nonempty ι (k - 1))
+      (f := fun s => ∑ i ∈ s, v i)
+  have hs_card : s.card ≤ k - 1 := by
+    simpa [topKCandidateSets] using hs_mem
+  let sExt : Finset (Option ι) := insert none (s.image (fun i => some i))
+  have hnone_not_mem : none ∉ s.image (fun i : ι => some i) := by
+    simp
+  have hcard_image :
+      (s.image (fun i : ι => some i)).card = s.card :=
+    Finset.card_image_of_injective s (fun _ _ h => Option.some.inj h)
+  have hsExt_card : sExt.card ≤ k := by
+    have hcard : sExt.card = s.card + 1 := by
+      simp [sExt, hnone_not_mem, hcard_image]
+    omega
+  have hold_eq : topKSumOn (k - 1) v = ∑ i ∈ s, v i := by
+    unfold topKSumOn
+    exact hs_eq
+  have hsum_ext :
+      (∑ x ∈ sExt, extendSample v newValue x) =
+        (∑ i ∈ s, v i) + newValue := by
+    simp [sExt, hnone_not_mem, extendSample, add_comm]
+  calc
+    topKSumOn (k - 1) v + newValue =
+        (∑ i ∈ s, v i) + newValue := by rw [hold_eq]
+    _ = ∑ x ∈ sExt, extendSample v newValue x := hsum_ext.symm
+    _ ≤ topKSumOn k (extendSample v newValue) :=
+        sum_le_topKSumOn (ι := Option ι) k
+          (extendSample v newValue) sExt hsExt_card
+
+/--
+If every old coordinate is at most `bound`, then the old top-`k` sum is at
+most the old top-`k - 1` sum plus `bound`.
+-/
+theorem topKSumOn_le_pred_add_bound {ι : Type*}
+    [Fintype ι] [DecidableEq ι]
+    (k : ℕ) (v : ι → ℝ) {bound : ℝ}
+    (hk_pos : 0 < k) (hbound_nonneg : 0 ≤ bound)
+    (h_le : ∀ i, v i ≤ bound) :
+    topKSumOn k v ≤ topKSumOn (k - 1) v + bound := by
+  classical
+  unfold topKSumOn
+  refine Finset.sup'_le (topKCandidateSets_nonempty ι k)
+    (fun s => ∑ i ∈ s, v i) ?_
+  intro s hs
+  have hs_card : s.card ≤ k := by
+    simpa [topKCandidateSets] using hs
+  by_cases hsmall : s.card ≤ k - 1
+  · have hcandidate :
+        (∑ i ∈ s, v i) ≤
+          Finset.sup' (topKCandidateSets ι (k - 1))
+            (topKCandidateSets_nonempty ι (k - 1))
+            (fun s => ∑ i ∈ s, v i) :=
+      Finset.le_sup' (fun s => ∑ i ∈ s, v i)
+        (by simpa [topKCandidateSets] using hsmall)
+    have hnonneg :
+        0 ≤
+          Finset.sup' (topKCandidateSets ι (k - 1))
+            (topKCandidateSets_nonempty ι (k - 1))
+            (fun s => ∑ i ∈ s, v i) := by
+      change 0 ≤ topKSumOn (k - 1) v
+      exact topKSumOn_nonneg (k - 1) v
+    linarith
+  · have hcard_eq : s.card = k := by omega
+    have hs_nonempty : s.Nonempty := by
+      exact Finset.card_pos.mp (by omega)
+    rcases hs_nonempty with ⟨i, hi⟩
+    have herase_card : (s.erase i).card ≤ k - 1 := by
+      exact le_of_eq (by rw [Finset.card_erase_of_mem hi, hcard_eq])
+    have herase_candidate :
+        (∑ j ∈ s.erase i, v j) ≤
+          Finset.sup' (topKCandidateSets ι (k - 1))
+            (topKCandidateSets_nonempty ι (k - 1))
+            (fun s => ∑ i ∈ s, v i) :=
+      Finset.le_sup' (fun s => ∑ i ∈ s, v i)
+        (by simpa [topKCandidateSets] using herase_card)
+    have hsum :
+        (∑ j ∈ s, v j) = (∑ j ∈ s.erase i, v j) + v i := by
+      rw [← Finset.sum_erase_add _ _ hi]
+    calc
+      (∑ j ∈ s, v j) =
+          (∑ j ∈ s.erase i, v j) + v i := hsum
+      _ ≤
+          Finset.sup' (topKCandidateSets ι (k - 1))
+            (topKCandidateSets_nonempty ι (k - 1))
+            (fun s => ∑ i ∈ s, v i) + bound :=
+          add_le_add herase_candidate (h_le i)
+
+/--
+If all old values are at most `bound` and the new value is above `bound`,
+then the top-`k` increment is at least the gap `newValue - bound`.
+-/
+theorem topKSumOn_extend_sub_ge_newValue_sub_bound_of_forall_le
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (k : ℕ) (v : ι → ℝ) {bound newValue : ℝ}
+    (hk_pos : 0 < k) (hbound_nonneg : 0 ≤ bound)
+    (h_le : ∀ i, v i ≤ bound) :
+    newValue - bound ≤
+      topKSumOn k (extendSample v newValue) - topKSumOn k v := by
+  have hnew :=
+    topKSumOn_pred_add_newValue_le_extend k v newValue hk_pos
+  have hold :=
+    topKSumOn_le_pred_add_bound k v hk_pos hbound_nonneg h_le
   linarith
 
 theorem hasKTopValues_extend_of_hasKTopValues {ι : Type*}
@@ -1009,6 +1233,61 @@ theorem upperOrderStatistic_measurable {n : ℕ} (rankFromTop : Fin n) :
       (fun sample : Fin n → ℝ => upperOrderStatistic sample rankFromTop) :=
   ascendingOrderStatistic_measurable rankFromTop.rev
 
+/--
+The `rankFromTop`-th largest value is strictly above `x` iff more than
+`rankFromTop` coordinates are strictly above `x`.
+-/
+theorem upperOrderStatistic_lt_iff_rank_lt_iidSuccessCount_Ioi
+    {n : ℕ} (sample : Fin n → ℝ) (rankFromTop : Fin n) (x : ℝ) :
+    x < upperOrderStatistic sample rankFromTop ↔
+      rankFromTop.val < iidSuccessCount (Set.Ioi x) sample := by
+  classical
+  let countLE : ℕ :=
+    (Finset.univ.filter (fun i : Fin n => sample i ≤ x)).card
+  let countGT : ℕ := iidSuccessCount (Set.Ioi x) sample
+  have hcountGT :
+      countGT =
+        (Finset.univ.filter (fun i : Fin n => ¬ sample i ≤ x)).card := by
+    dsimp [countGT, iidSuccessCount, iidSuccessIndexSet]
+    congr 1
+    ext i
+    simp [Set.mem_Ioi, not_le]
+  have hsum : countLE + countGT = n := by
+    have h :=
+      Finset.card_filter_add_card_filter_not
+        (s := (Finset.univ : Finset (Fin n)))
+        (p := fun i : Fin n => sample i ≤ x)
+    rw [hcountGT]
+    simpa [countLE] using h
+  have hle :
+      upperOrderStatistic sample rankFromTop ≤ x ↔
+        rankFromTop.rev.val < countLE := by
+    simpa [upperOrderStatistic, countLE] using
+      ascendingOrderStatistic_le_iff_rank_lt_card_le
+        sample rankFromTop.rev x
+  constructor
+  · intro hgt
+    have hnle : ¬ upperOrderStatistic sample rankFromTop ≤ x :=
+      not_le.mpr hgt
+    have hnot : ¬ rankFromTop.rev.val < countLE := by
+      intro hrank
+      exact hnle (hle.2 hrank)
+    have hcount_le : countLE ≤ rankFromTop.rev.val :=
+      Nat.le_of_not_gt hnot
+    have hrev : rankFromTop.rev.val = n - (rankFromTop.val + 1) := by
+      simp [Fin.val_rev]
+    have hrank_lt_n : rankFromTop.val < n := rankFromTop.is_lt
+    omega
+  · intro hcount
+    have hnle : ¬ upperOrderStatistic sample rankFromTop ≤ x := by
+      intro hupper_le
+      have hrank : rankFromTop.rev.val < countLE := hle.1 hupper_le
+      have hrev : rankFromTop.rev.val = n - (rankFromTop.val + 1) := by
+        simp [Fin.val_rev]
+      have hrank_lt_n : rankFromTop.val < n := rankFromTop.is_lt
+      omega
+    exact lt_of_not_ge hnle
+
 /-- Reflect a finite sample around an upper endpoint `M`. -/
 def reflectedSample (M : ℝ) {n : ℕ} (sample : Fin n → ℝ) : Fin n → ℝ :=
   fun i => M - sample i
@@ -1142,6 +1421,184 @@ theorem sampleTopKSum_nonneg_of_forall_nonneg
     (fun i _hi =>
       le_upperOrderStatistic_of_forall_le h_nonneg
         (topKRankEmbedding k n i))
+
+/-- Indices of the largest `min k n` entries of a finite sample. -/
+def sampleTopKIndexSet {n : ℕ} (sample : Fin n → ℝ) (k : ℕ) :
+    Finset (Fin n) :=
+  (Finset.univ : Finset (Fin (min k n))).image
+    (fun i => Tuple.sort sample (topKRankEmbedding k n i).rev)
+
+theorem sampleTopKIndexSet_card {n : ℕ} (sample : Fin n → ℝ) (k : ℕ) :
+    (sampleTopKIndexSet sample k).card = min k n := by
+  classical
+  unfold sampleTopKIndexSet
+  rw [Finset.card_image_of_injective]
+  · simp
+  · intro i j hij
+    have hrev :
+        (topKRankEmbedding k n i).rev =
+          (topKRankEmbedding k n j).rev :=
+      (Tuple.sort sample).injective hij
+    have htop :
+        topKRankEmbedding k n i = topKRankEmbedding k n j := by
+      exact Fin.rev_injective hrev
+    exact Fin.ext (by simpa [topKRankEmbedding] using congrArg Fin.val htop)
+
+theorem sampleTopKIndexSet_mem_iff {n : ℕ} (sample : Fin n → ℝ)
+    (k : ℕ) (x : Fin n) :
+    x ∈ sampleTopKIndexSet sample k ↔
+      (((Tuple.sort sample).symm x).rev.val < min k n) := by
+  classical
+  constructor
+  · intro hx
+    rcases Finset.mem_image.mp hx with ⟨i, _hi, hix⟩
+    have hs :
+        (Tuple.sort sample).symm x =
+          (topKRankEmbedding k n i).rev := by
+      simpa [hix] using
+        (Equiv.symm_apply_apply (Tuple.sort sample)
+          (topKRankEmbedding k n i).rev)
+    have hrev :
+        ((Tuple.sort sample).symm x).rev =
+          topKRankEmbedding k n i := by
+      rw [hs, Fin.rev_rev]
+    simpa [hrev, topKRankEmbedding] using i.isLt
+  · intro hx
+    let i : Fin (min k n) :=
+      ⟨((Tuple.sort sample).symm x).rev.val, hx⟩
+    have htop :
+        topKRankEmbedding k n i =
+          ((Tuple.sort sample).symm x).rev := by
+      exact Fin.ext (by simp [i, topKRankEmbedding])
+    have hx_eq :
+        x = Tuple.sort sample (topKRankEmbedding k n i).rev := by
+      rw [htop, Fin.rev_rev]
+      exact (Equiv.apply_symm_apply (Tuple.sort sample) x).symm
+    exact Finset.mem_image.mpr ⟨i, Finset.mem_univ _, hx_eq.symm⟩
+
+theorem sample_le_of_not_mem_sampleTopKIndexSet_of_mem
+    {n : ℕ} {sample : Fin n → ℝ} {k : ℕ}
+    {a b : Fin n}
+    (ha : a ∉ sampleTopKIndexSet sample k)
+    (hb : b ∈ sampleTopKIndexSet sample k) :
+    sample a ≤ sample b := by
+  classical
+  have ha_rank :
+      min k n ≤ (((Tuple.sort sample).symm a).rev.val) := by
+    have hnot :=
+      mt (sampleTopKIndexSet_mem_iff sample k a).2 ha
+    exact le_of_not_gt hnot
+  have hb_rank :
+      (((Tuple.sort sample).symm b).rev.val) < min k n :=
+    (sampleTopKIndexSet_mem_iff sample k b).1 hb
+  have hrev_lt :
+      (((Tuple.sort sample).symm b).rev.val) <
+        (((Tuple.sort sample).symm a).rev.val) :=
+    lt_of_lt_of_le hb_rank ha_rank
+  have hrank_le :
+      (Tuple.sort sample).symm a ≤ (Tuple.sort sample).symm b := by
+    change ((Tuple.sort sample).symm a).val ≤
+      ((Tuple.sort sample).symm b).val
+    simp only [Fin.val_rev] at hrev_lt
+    omega
+  have hmono :=
+    ascendingOrderStatistic_mono sample hrank_le
+  simpa [ascendingOrderStatistic] using hmono
+
+theorem sampleTopKSum_eq_sum_sampleTopKIndexSet
+    {n : ℕ} (sample : Fin n → ℝ) (k : ℕ) :
+    sampleTopKSum sample k =
+      ∑ i ∈ sampleTopKIndexSet sample k, sample i := by
+  classical
+  unfold sampleTopKSum sampleTopKIndexSet upperOrderStatistic
+  symm
+  refine Finset.sum_image ?_
+  intro i _hi j _hj hij
+  have hrev :
+      (topKRankEmbedding k n i).rev =
+        (topKRankEmbedding k n j).rev :=
+    (Tuple.sort sample).injective hij
+  have htop :
+      topKRankEmbedding k n i = topKRankEmbedding k n j :=
+    Fin.rev_injective hrev
+  exact Fin.ext (by simpa [topKRankEmbedding] using congrArg Fin.val htop)
+
+theorem topKSumOn_eq_sampleTopKSum_of_forall_nonneg
+    {n : ℕ} (sample : Fin n → ℝ) (k : ℕ)
+    (h_nonneg : ∀ i, 0 ≤ sample i) :
+    topKSumOn k sample = sampleTopKSum sample k := by
+  classical
+  let topSet : Finset (Fin n) := sampleTopKIndexSet sample k
+  have htop_card : topSet.card = min k n := by
+    simpa [topSet] using sampleTopKIndexSet_card sample k
+  have htop_card_le : topSet.card ≤ k := by
+    rw [htop_card]
+    exact min_le_left k n
+  have htop_sum :
+      sampleTopKSum sample k = ∑ i ∈ topSet, sample i := by
+    simpa [topSet] using sampleTopKSum_eq_sum_sampleTopKIndexSet sample k
+  apply le_antisymm
+  · unfold topKSumOn
+    refine Finset.sup'_le (topKCandidateSets_nonempty (Fin n) k)
+      (fun s => ∑ i ∈ s, sample i) ?_
+    intro s hs
+    have hs_card_le_k : s.card ≤ k := by
+      simpa [topKCandidateSets] using hs
+    have hs_card_le_n : s.card ≤ n := by
+      simpa using Finset.card_le_univ (s := s)
+    have hs_card : s.card ≤ topSet.card := by
+      rw [htop_card]
+      exact le_min hs_card_le_k hs_card_le_n
+    have hpair :
+        ∀ a ∈ s \ topSet, ∀ b ∈ topSet \ s, sample a ≤ sample b := by
+      intro a ha b hb
+      exact sample_le_of_not_mem_sampleTopKIndexSet_of_mem
+        (sample := sample) (k := k)
+        (by simpa [topSet] using (Finset.mem_sdiff.mp ha).2)
+        (by simpa [topSet] using (Finset.mem_sdiff.mp hb).1)
+    have htdiff_nonneg :
+        ∀ b ∈ topSet \ s, 0 ≤ sample b := by
+      intro b _hb
+      exact h_nonneg b
+    have hleTop :
+        (∑ i ∈ s, sample i) ≤ ∑ i ∈ topSet, sample i :=
+      EconCSLib.FiniteSum.finset_sum_le_sum_of_card_le_pairwise_sdiff
+        s topSet sample hs_card hpair htdiff_nonneg
+    exact hleTop.trans_eq htop_sum.symm
+  · have hle :=
+      sum_le_topKSumOn (ι := Fin n) k sample topSet htop_card_le
+    simpa [htop_sum] using hle
+
+/-- If `k` covers the whole sample, the top-`k` sum is the full sample sum. -/
+theorem sampleTopKSum_eq_sum_of_card_le
+    {n : ℕ} (sample : Fin n → ℝ) (k : ℕ)
+    (hnk : n ≤ k) :
+    sampleTopKSum sample k = ∑ i : Fin n, sample i := by
+  classical
+  have hmin : min k n = n := min_eq_right hnk
+  calc
+    sampleTopKSum sample k
+        = ∑ i : Fin (min k n),
+            sample (Tuple.sort sample (topKRankEmbedding k n i).rev) := by
+          rfl
+    _ = ∑ j : Fin n, sample (Tuple.sort sample j.rev) := by
+          let e : Fin (min k n) ≃ Fin n := finCongr hmin
+          exact Fintype.sum_equiv e
+            (fun i : Fin (min k n) =>
+              sample (Tuple.sort sample (topKRankEmbedding k n i).rev))
+            (fun j : Fin n => sample (Tuple.sort sample j.rev))
+            (by
+              intro i
+              apply congrArg (fun r : Fin n => sample (Tuple.sort sample r.rev))
+              apply Fin.ext
+              simp [e, topKRankEmbedding])
+    _ = ∑ j : Fin n, sample j := by
+          let e : Equiv.Perm (Fin n) := Fin.revPerm.trans (Tuple.sort sample)
+          have hsum :
+              (∑ j : Fin n, sample (e j)) = ∑ j : Fin n, sample j :=
+            Fintype.sum_equiv e
+              (fun j : Fin n => sample (e j)) sample (by intro j; rfl)
+          simpa [e, Fin.revPerm] using hsum
 
 /-- Endpoint loss of the pointwise top-`k` sample sum. -/
 def sampleTopKEndpointLoss (M : ℝ) {n : ℕ}
@@ -1641,10 +2098,374 @@ def expectedUpperOrderStatistic {n : ℕ}
     (μ : MeasureTheory.Measure (Fin n → ℝ)) (rankFromTop : Fin n) : ℝ :=
   ∫ sample, upperOrderStatistic sample rankFromTop ∂μ
 
+/--
+Layer-cake form for a nonnegative integrable upper order statistic.
+
+Distribution-specific files can combine this with their threshold-event
+probability formulas to derive closed-form expected order statistics.
+-/
+theorem expectedUpperOrderStatistic_eq_integral_tail_probability_of_nonneg
+    {n : ℕ} (μ : MeasureTheory.Measure (Fin n → ℝ))
+    (rankFromTop : Fin n)
+    (h_nonneg :
+      0 ≤ᵐ[μ] fun sample : Fin n → ℝ =>
+        upperOrderStatistic sample rankFromTop)
+    (h_integrable :
+      MeasureTheory.Integrable
+        (fun sample : Fin n → ℝ =>
+          upperOrderStatistic sample rankFromTop) μ) :
+    expectedUpperOrderStatistic μ rankFromTop =
+      ∫ x in Set.Ioi (0 : ℝ),
+        μ.real
+          {sample : Fin n → ℝ |
+            x < upperOrderStatistic sample rankFromTop} := by
+  simpa [expectedUpperOrderStatistic] using
+    h_integrable.integral_eq_integral_meas_lt h_nonneg
+
+/--
+Layer-cake form for a nonnegative integrable ascending order statistic.
+
+This is the bottom-indexed counterpart of
+`expectedUpperOrderStatistic_eq_integral_tail_probability_of_nonneg`.
+-/
+theorem expectedAscendingOrderStatistic_eq_integral_tail_probability_of_nonneg
+    {n : ℕ} (μ : MeasureTheory.Measure (Fin n → ℝ))
+    (rank : Fin n)
+    (h_nonneg :
+      0 ≤ᵐ[μ] fun sample : Fin n → ℝ =>
+        ascendingOrderStatistic sample rank)
+    (h_integrable :
+      MeasureTheory.Integrable
+        (fun sample : Fin n → ℝ =>
+          ascendingOrderStatistic sample rank) μ) :
+    expectedAscendingOrderStatistic μ rank =
+      ∫ x in Set.Ioi (0 : ℝ),
+        μ.real
+          {sample : Fin n → ℝ |
+            x < ascendingOrderStatistic sample rank} := by
+  simpa [expectedAscendingOrderStatistic] using
+    h_integrable.integral_eq_integral_meas_lt h_nonneg
+
 /-- Expected pointwise top-`k` sum under a finite-sample law. -/
 def expectedSampleTopKSum {n : ℕ}
     (μ : MeasureTheory.Measure (Fin n → ℝ)) (k : ℕ) : ℝ :=
   ∫ sample, sampleTopKSum sample k ∂μ
+
+theorem expectedSampleTopKSum_eq_integral_topKSumOn_of_ae_nonneg
+    {n : ℕ} (μ : MeasureTheory.Measure (Fin n → ℝ)) (k : ℕ)
+    (h_nonneg : ∀ᵐ sample ∂μ, ∀ i, 0 ≤ sample i) :
+    expectedSampleTopKSum μ k =
+      ∫ sample, topKSumOn k sample ∂μ := by
+  unfold expectedSampleTopKSum
+  exact MeasureTheory.integral_congr_ae
+    (h_nonneg.mono fun sample hsample =>
+      (topKSumOn_eq_sampleTopKSum_of_forall_nonneg sample k hsample).symm)
+
+theorem integral_topKSumOn_pi_option_eq_prod
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (μ : MeasureTheory.Measure ℝ) [MeasureTheory.SigmaFinite μ] (k : ℕ) :
+    (∫ sample : Option ι → ℝ, topKSumOn k sample
+        ∂MeasureTheory.Measure.pi (fun _ : Option ι => μ)) =
+      ∫ z : (ι → ℝ) × ℝ,
+        topKSumOn k (extendSample z.1 z.2)
+          ∂((MeasureTheory.Measure.pi (fun _ : ι => μ)).prod μ) := by
+  let e : ((ι → ℝ) × ℝ) ≃ᵐ (Option ι → ℝ) :=
+    (optionSampleMeasurableEquivProd ι).symm
+  have hmap :
+      (((MeasureTheory.Measure.pi (fun _ : ι => μ)).prod μ).map e) =
+        MeasureTheory.Measure.pi (fun _ : Option ι => μ) := by
+    simpa [e] using pi_map_optionSampleMeasurableEquivProd_symm
+      (ι := ι) μ
+  calc
+    (∫ sample : Option ι → ℝ, topKSumOn k sample
+        ∂MeasureTheory.Measure.pi (fun _ : Option ι => μ))
+        =
+      ∫ sample : Option ι → ℝ, topKSumOn k sample
+        ∂(((MeasureTheory.Measure.pi (fun _ : ι => μ)).prod μ).map e) := by
+          rw [hmap]
+    _ =
+      ∫ z : (ι → ℝ) × ℝ, topKSumOn k (e z)
+        ∂((MeasureTheory.Measure.pi (fun _ : ι => μ)).prod μ) := by
+          rw [MeasureTheory.integral_map_equiv e]
+    _ =
+      ∫ z : (ι → ℝ) × ℝ,
+        topKSumOn k (extendSample z.1 z.2)
+          ∂((MeasureTheory.Measure.pi (fun _ : ι => μ)).prod μ) := by
+          rfl
+
+theorem integral_topKSumOn_pi_fin_succ_eq_prod
+    (μ : MeasureTheory.Measure ℝ) [MeasureTheory.SigmaFinite μ]
+    (k q : ℕ) :
+    (∫ sample : Fin (q + 1) → ℝ, topKSumOn k sample
+        ∂MeasureTheory.Measure.pi (fun _ : Fin (q + 1) => μ)) =
+      ∫ z : (Fin q → ℝ) × ℝ,
+        topKSumOn k (extendSample z.1 z.2)
+          ∂((MeasureTheory.Measure.pi (fun _ : Fin q => μ)).prod μ) := by
+  classical
+  let eFin : Option (Fin q) ≃ Fin (q + 1) :=
+    EconCSLib.optionFinEquivFinSucc q
+  let e :
+      (Option (Fin q) → ℝ) ≃ᵐ (Fin (q + 1) → ℝ) :=
+    MeasurableEquiv.piCongrLeft (fun _ : Fin (q + 1) => ℝ) eFin
+  have hmp :
+      MeasureTheory.MeasurePreserving e
+        (MeasureTheory.Measure.pi (fun _ : Option (Fin q) => μ))
+        (MeasureTheory.Measure.pi (fun _ : Fin (q + 1) => μ)) := by
+    simpa [e, eFin] using
+      (MeasureTheory.measurePreserving_piCongrLeft
+        (fun _ : Fin (q + 1) => μ) eFin)
+  have hreindex :
+      (∫ sample : Option (Fin q) → ℝ, topKSumOn k (e sample)
+          ∂MeasureTheory.Measure.pi (fun _ : Option (Fin q) => μ)) =
+        ∫ sample : Option (Fin q) → ℝ, topKSumOn k sample
+          ∂MeasureTheory.Measure.pi (fun _ : Option (Fin q) => μ) := by
+    refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
+    intro sample
+    have htop :=
+      topKSumOn_comp_equiv (e := eFin) (k := k)
+        (v := e sample)
+    simpa [e, MeasurableEquiv.piCongrLeft_apply_apply] using htop.symm
+  calc
+    (∫ sample : Fin (q + 1) → ℝ, topKSumOn k sample
+        ∂MeasureTheory.Measure.pi (fun _ : Fin (q + 1) => μ))
+        =
+      ∫ sample : Option (Fin q) → ℝ, topKSumOn k (e sample)
+        ∂MeasureTheory.Measure.pi (fun _ : Option (Fin q) => μ) := by
+          exact (hmp.integral_comp' (g := fun sample : Fin (q + 1) → ℝ =>
+            topKSumOn k sample)).symm
+    _ =
+      ∫ sample : Option (Fin q) → ℝ, topKSumOn k sample
+        ∂MeasureTheory.Measure.pi (fun _ : Option (Fin q) => μ) := hreindex
+    _ =
+      ∫ z : (Fin q → ℝ) × ℝ,
+        topKSumOn k (extendSample z.1 z.2)
+          ∂((MeasureTheory.Measure.pi (fun _ : Fin q => μ)).prod μ) :=
+        integral_topKSumOn_pi_option_eq_prod μ k
+
+theorem expectedSampleTopKSum_pi_succ_sub_eq_integral_topKSumOn_extend_sub
+    (μ : MeasureTheory.Measure ℝ) [MeasureTheory.IsProbabilityMeasure μ]
+    {k q : ℕ}
+    (h_nonneg_q :
+      ∀ᵐ sample ∂MeasureTheory.Measure.pi (fun _ : Fin q => μ),
+        ∀ i, 0 ≤ sample i)
+    (h_nonneg_succ :
+      ∀ᵐ sample ∂MeasureTheory.Measure.pi (fun _ : Fin (q + 1) => μ),
+        ∀ i, 0 ≤ sample i)
+    (h_int_extend :
+      MeasureTheory.Integrable
+        (fun z : (Fin q → ℝ) × ℝ =>
+          topKSumOn k (extendSample z.1 z.2))
+        ((MeasureTheory.Measure.pi (fun _ : Fin q => μ)).prod μ))
+    (h_int_old :
+      MeasureTheory.Integrable
+        (fun z : (Fin q → ℝ) × ℝ => topKSumOn k z.1)
+        ((MeasureTheory.Measure.pi (fun _ : Fin q => μ)).prod μ)) :
+    expectedSampleTopKSum
+        (MeasureTheory.Measure.pi (fun _ : Fin (q + 1) => μ)) k -
+      expectedSampleTopKSum
+        (MeasureTheory.Measure.pi (fun _ : Fin q => μ)) k =
+      ∫ z : (Fin q → ℝ) × ℝ,
+        (topKSumOn k (extendSample z.1 z.2) - topKSumOn k z.1)
+          ∂((MeasureTheory.Measure.pi (fun _ : Fin q => μ)).prod μ) := by
+  rw [expectedSampleTopKSum_eq_integral_topKSumOn_of_ae_nonneg
+      (MeasureTheory.Measure.pi (fun _ : Fin (q + 1) => μ)) k h_nonneg_succ,
+    expectedSampleTopKSum_eq_integral_topKSumOn_of_ae_nonneg
+      (MeasureTheory.Measure.pi (fun _ : Fin q => μ)) k h_nonneg_q,
+    integral_topKSumOn_pi_fin_succ_eq_prod]
+  have hold :
+      (∫ z : (Fin q → ℝ) × ℝ, topKSumOn k z.1
+          ∂((MeasureTheory.Measure.pi (fun _ : Fin q => μ)).prod μ)) =
+        ∫ sample : Fin q → ℝ, topKSumOn k sample
+          ∂MeasureTheory.Measure.pi (fun _ : Fin q => μ) := by
+    rw [MeasureTheory.integral_fun_fst
+      (μ := MeasureTheory.Measure.pi (fun _ : Fin q => μ))
+      (ν := μ)
+      (f := fun sample : Fin q → ℝ => topKSumOn k sample)]
+    simp [MeasureTheory.probReal_univ]
+  rw [← hold]
+  rw [MeasureTheory.integral_sub h_int_extend h_int_old]
+
+/--
+If a bounded nonnegative one-dimensional law has positive mass below `b` and
+positive mass above `a > b`, then adding one more iid draw strictly increases
+the expected top-`k` value for every positive `k`.
+-/
+theorem expectedSampleTopKSum_pi_succ_sub_pos_of_mass_gap
+    (μ : MeasureTheory.Measure ℝ) [MeasureTheory.IsProbabilityMeasure μ]
+    {M b a : ℝ}
+    (h_bounds : ∀ᵐ x ∂μ, 0 ≤ x ∧ x ≤ M)
+    (hM_nonneg : 0 ≤ M)
+    (hb_nonneg : 0 ≤ b)
+    (hba : b < a)
+    (hlow : 0 < μ (Set.Iio b))
+    (hhigh : 0 < μ (Set.Ici a))
+    {k q : ℕ} (hk_pos : 0 < k) :
+    0 <
+      expectedSampleTopKSum
+          (MeasureTheory.Measure.pi (fun _ : Fin (q + 1) => μ)) k -
+        expectedSampleTopKSum
+          (MeasureTheory.Measure.pi (fun _ : Fin q => μ)) k := by
+  classical
+  let μq : MeasureTheory.Measure (Fin q → ℝ) :=
+    MeasureTheory.Measure.pi (fun _ : Fin q => μ)
+  let μprod : MeasureTheory.Measure ((Fin q → ℝ) × ℝ) := μq.prod μ
+  let μoption : MeasureTheory.Measure (Option (Fin q) → ℝ) :=
+    MeasureTheory.Measure.pi (fun _ : Option (Fin q) => μ)
+  let inc : (Fin q → ℝ) × ℝ → ℝ :=
+    fun z => topKSumOn k (extendSample z.1 z.2) - topKSumOn k z.1
+  have h_bounds_q :
+      ∀ᵐ sample ∂μq, ∀ i : Fin q, 0 ≤ sample i ∧ sample i ≤ M := by
+    simpa [μq] using
+      (productMeasure_forall_bounds_ae (ι := Fin q) μ h_bounds)
+  have h_bounds_succ :
+      ∀ᵐ sample ∂MeasureTheory.Measure.pi (fun _ : Fin (q + 1) => μ),
+        ∀ i : Fin (q + 1), 0 ≤ sample i ∧ sample i ≤ M := by
+    simpa using
+      (productMeasure_forall_bounds_ae (ι := Fin (q + 1)) μ h_bounds)
+  have h_nonneg_q :
+      ∀ᵐ sample ∂MeasureTheory.Measure.pi (fun _ : Fin q => μ),
+        ∀ i, 0 ≤ sample i := by
+    simpa [μq] using h_bounds_q.mono (fun sample hsample i => (hsample i).1)
+  have h_nonneg_succ :
+      ∀ᵐ sample ∂MeasureTheory.Measure.pi (fun _ : Fin (q + 1) => μ),
+        ∀ i, 0 ≤ sample i :=
+    h_bounds_succ.mono (fun sample hsample i => (hsample i).1)
+  have h_int_old_pi :
+      MeasureTheory.Integrable
+        (fun sample : Fin q → ℝ => topKSumOn k sample) μq :=
+    topKSumOn_integrable_of_ae_nonneg_bounds M μq k
+      hM_nonneg h_bounds_q
+  have h_int_old :
+      MeasureTheory.Integrable
+        (fun z : (Fin q → ℝ) × ℝ => topKSumOn k z.1) μprod := by
+    have hmp :
+        MeasureTheory.MeasurePreserving
+          (fun z : (Fin q → ℝ) × ℝ => z.1) μprod μq := by
+      simpa [μprod, μq] using
+        (MeasureTheory.measurePreserving_fst
+          (μ := μq) (ν := μ))
+    simpa [Function.comp_def] using
+      hmp.integrable_comp_of_integrable h_int_old_pi
+  have h_bounds_option :
+      ∀ᵐ sample ∂μoption, ∀ i : Option (Fin q),
+        0 ≤ sample i ∧ sample i ≤ M := by
+    simpa [μoption] using
+      (productMeasure_forall_bounds_ae
+        (ι := Option (Fin q)) μ h_bounds)
+  have h_int_option :
+      MeasureTheory.Integrable
+        (fun sample : Option (Fin q) → ℝ => topKSumOn k sample) μoption :=
+    topKSumOn_integrable_of_ae_nonneg_bounds M μoption k
+      hM_nonneg h_bounds_option
+  let e : ((Fin q → ℝ) × ℝ) ≃ᵐ (Option (Fin q) → ℝ) :=
+    (optionSampleMeasurableEquivProd (Fin q)).symm
+  have hmap : μprod.map e = μoption := by
+    simpa [μprod, μq, μoption, e] using
+      (pi_map_optionSampleMeasurableEquivProd_symm
+        (ι := Fin q) μ)
+  have h_int_extend :
+      MeasureTheory.Integrable
+        (fun z : (Fin q → ℝ) × ℝ =>
+          topKSumOn k (extendSample z.1 z.2)) μprod := by
+    have hmp : MeasureTheory.MeasurePreserving e μprod μoption :=
+      ⟨e.measurable, hmap⟩
+    have hcomp :=
+      hmp.integrable_comp_of_integrable h_int_option
+    simpa [Function.comp_def, e, optionSampleMeasurableEquivProd] using hcomp
+  have hdiff :=
+    expectedSampleTopKSum_pi_succ_sub_eq_integral_topKSumOn_extend_sub
+      (μ := μ) (k := k) (q := q)
+      h_nonneg_q h_nonneg_succ h_int_extend h_int_old
+  rw [hdiff]
+  have hinc_nonneg : ∀ᵐ z ∂μprod, 0 ≤ inc z := by
+    exact Filter.Eventually.of_forall (fun z => by
+      dsimp [inc]
+      exact sub_nonneg.mpr (topKSumOn_le_extend k z.1 z.2))
+  have hinc_int : MeasureTheory.Integrable inc μprod := by
+    exact h_int_extend.sub h_int_old
+  change 0 < ∫ z, inc z ∂μprod
+  rw [MeasureTheory.integral_pos_iff_support_of_nonneg_ae hinc_nonneg hinc_int]
+  let R : Set ((Fin q → ℝ) × ℝ) :=
+    (Set.pi Set.univ (fun _ : Fin q => Set.Iio b)) ×ˢ Set.Ici a
+  have hlow_prod :
+      0 < μq (Set.pi Set.univ (fun _ : Fin q => Set.Iio b)) := by
+    simpa [μq] using
+      (pi_univ_Iio_measure_pos (ι := Fin q) μ hlow)
+  have hRpos : 0 < μprod R := by
+    have hprod :
+        μprod R =
+          μq (Set.pi Set.univ (fun _ : Fin q => Set.Iio b)) *
+            μ (Set.Ici a) := by
+      simp [μprod, R]
+    rw [hprod]
+    exact ENNReal.mul_pos hlow_prod.ne' hhigh.ne'
+  exact lt_of_lt_of_le hRpos (MeasureTheory.measure_mono (by
+    intro z hz
+    have hold_le : ∀ i : Fin q, z.1 i ≤ b := by
+      intro i
+      exact le_of_lt (hz.1 i (by simp))
+    have hgap :=
+      topKSumOn_extend_sub_ge_newValue_sub_bound_of_forall_le
+        (ι := Fin q) k z.1 (bound := b) (newValue := z.2)
+        hk_pos hb_nonneg hold_le
+    have hnew_gap : 0 < z.2 - b := by
+      have hz2 : a ≤ z.2 := hz.2
+      linarith
+    exact ne_of_gt (lt_of_lt_of_le hnew_gap hgap)))
+
+/--
+For an iid product sample below top-`k` capacity, the expected top-`k` value is
+the number of draws times the one-draw mean.
+-/
+theorem expectedSampleTopKSum_pi_eq_card_mul_integral_of_card_le
+    {n : ℕ} (μ : MeasureTheory.Measure ℝ) [MeasureTheory.IsProbabilityMeasure μ]
+    (h_int : MeasureTheory.Integrable (fun x : ℝ => x) μ)
+    (k : ℕ) (hnk : n ≤ k) :
+    expectedSampleTopKSum (MeasureTheory.Measure.pi (fun _ : Fin n => μ)) k =
+      (n : ℝ) * ∫ x, x ∂μ := by
+  classical
+  unfold expectedSampleTopKSum
+  calc
+    ∫ sample : Fin n → ℝ, sampleTopKSum sample k
+        ∂MeasureTheory.Measure.pi (fun _ : Fin n => μ)
+        = ∫ sample : Fin n → ℝ, ∑ i : Fin n, sample i
+            ∂MeasureTheory.Measure.pi (fun _ : Fin n => μ) := by
+          exact MeasureTheory.integral_congr_ae
+            (Filter.Eventually.of_forall
+              (fun sample => sampleTopKSum_eq_sum_of_card_le sample k hnk))
+    _ = ∑ i : Fin n, ∫ sample : Fin n → ℝ, sample i
+            ∂MeasureTheory.Measure.pi (fun _ : Fin n => μ) := by
+          rw [MeasureTheory.integral_finset_sum]
+          intro i _hi
+          simpa using
+            (MeasureTheory.integrable_eval
+              (μ := fun _ : Fin n => μ) (i := i) h_int)
+    _ = ∑ _i : Fin n, ∫ x, x ∂μ := by
+          refine Finset.sum_congr rfl ?_
+          intro i _hi
+          simpa using
+            (MeasureTheory.integral_comp_eval
+              (μ := fun _ : Fin n => μ) (i := i)
+              (f := fun x : ℝ => x) measurable_id.aestronglyMeasurable)
+    _ = (n : ℝ) * ∫ x, x ∂μ := by
+          simp [Fintype.card_fin, nsmul_eq_mul]
+
+/--
+Layer-cake form for a nonnegative integrable top-`k` sample sum.
+-/
+theorem expectedSampleTopKSum_eq_integral_tail_probability_of_nonneg
+    {n : ℕ} (μ : MeasureTheory.Measure (Fin n → ℝ)) (k : ℕ)
+    (h_nonneg :
+      0 ≤ᵐ[μ] fun sample : Fin n → ℝ => sampleTopKSum sample k)
+    (h_integrable :
+      MeasureTheory.Integrable
+        (fun sample : Fin n → ℝ => sampleTopKSum sample k) μ) :
+    expectedSampleTopKSum μ k =
+      ∫ x in Set.Ioi (0 : ℝ),
+        μ.real
+          {sample : Fin n → ℝ | x < sampleTopKSum sample k} := by
+  simpa [expectedSampleTopKSum] using
+    h_integrable.integral_eq_integral_meas_lt h_nonneg
 
 /-- Expected reflected bottom-`k` sum under a finite-sample law. -/
 def expectedReflectedBottomKSum (M : ℝ) {n : ℕ}
@@ -1918,6 +2739,19 @@ def sampleOrderStatisticValue {a : ℕ}
     ascendingOrderStatistic sample ⟨rank - 1, by omega⟩
   else 0
 
+/--
+The paper's bottom-indexed one-based rank `a - r` is the same statistic as the
+`r`-th value from the top, whenever `r < a`.
+-/
+theorem sampleOrderStatisticValue_eq_upperOrderStatistic_of_rank_from_top
+    {a r : ℕ} (sample : Fin a → ℝ) (hr : r < a) :
+    sampleOrderStatisticValue sample (a - r) =
+      upperOrderStatistic sample ⟨r, hr⟩ := by
+  have hrank : 0 < a - r ∧ a - r ≤ a := by omega
+  simp [sampleOrderStatisticValue, hrank, upperOrderStatistic]
+  exact congrArg (ascendingOrderStatistic sample)
+    (Fin.ext (by simp [Fin.rev]; omega))
+
 theorem sampleOrderStatisticValue_measurable {a : ℕ} (rank : ℕ) :
     Measurable
       (fun sample : Fin a → ℝ => sampleOrderStatisticValue sample rank) := by
@@ -1985,6 +2819,22 @@ def expectedSampleOrderStatisticMean {a : ℕ}
   if sampleSize = a then
     ∫ sample, sampleOrderStatisticValue sample rank ∂μ
   else 0
+
+/--
+Expectation-level bridge from the paper's bottom-indexed one-based rank
+`a - r` to the library's `r`-from-top order statistic.
+-/
+theorem expectedSampleOrderStatisticMean_eq_expectedUpperOrderStatistic_of_rank_from_top
+    {a r : ℕ} (μ : MeasureTheory.Measure (Fin a → ℝ)) (hr : r < a) :
+    expectedSampleOrderStatisticMean μ (a - r) a =
+      expectedUpperOrderStatistic μ ⟨r, hr⟩ := by
+  unfold expectedSampleOrderStatisticMean expectedUpperOrderStatistic
+  simp
+  exact MeasureTheory.integral_congr_ae
+    (Filter.Eventually.of_forall
+      (fun sample =>
+        sampleOrderStatisticValue_eq_upperOrderStatistic_of_rank_from_top
+          sample hr))
 
 /--
 Expectation form of the pointwise bridge: if the bottom-indexed mean function
@@ -2115,6 +2965,14 @@ namespace TopKExpectationOracle
 
 variable {τ : Type*}
 
+/-- Top-`k` expectation oracle induced by a common scalar value function. -/
+def common (τ : Type*) (h : ℕ → ℝ) : TopKExpectationOracle τ where
+  expectedTopSum := fun _k _t q => h q
+
+@[simp] theorem common_expectedTopSum
+    (τ : Type*) (h : ℕ → ℝ) (k : ℕ) (t : τ) (q : ℕ) :
+    (common τ h).expectedTopSum k t q = h q := rfl
+
 /-- Marginal expected top-`k` value from adding one more sampled item. -/
 def marginalTopK (O : TopKExpectationOracle τ)
     (k : ℕ) (t : τ) (q : ℕ) : ℝ :=
@@ -2132,6 +2990,29 @@ def HasNonnegativeMarginalsAt (O : TopKExpectationOracle τ) (k : ℕ) : Prop :=
     (k : ℕ) (t : τ) (q : ℕ) :
     O.marginalTopK k t q =
       O.expectedTopSum k t (q + 1) - O.expectedTopSum k t q := rfl
+
+/--
+Weight a top-`k` expectation oracle by a type-specific objective coefficient.
+
+This is the probability-side analogue of recommendation objectives whose
+expected value contribution is `likelihood t * expectedTopSum t q`.
+-/
+def weighted (O : TopKExpectationOracle τ) (objectiveWeight : τ → ℝ) :
+    TopKExpectationOracle τ where
+  expectedTopSum := fun k t q => objectiveWeight t * O.expectedTopSum k t q
+
+@[simp] theorem weighted_expectedTopSum
+    (O : TopKExpectationOracle τ) (objectiveWeight : τ → ℝ)
+    (k : ℕ) (t : τ) (q : ℕ) :
+    (O.weighted objectiveWeight).expectedTopSum k t q =
+      objectiveWeight t * O.expectedTopSum k t q := rfl
+
+@[simp] theorem weighted_marginalTopK
+    (O : TopKExpectationOracle τ) (objectiveWeight : τ → ℝ)
+    (k : ℕ) (t : τ) (q : ℕ) :
+    (O.weighted objectiveWeight).marginalTopK k t q =
+      objectiveWeight t * O.marginalTopK k t q := by
+  simp [marginalTopK, mul_sub]
 
 /--
 Top-`k` expectation oracle induced by a bottom-indexed order-statistic mean
@@ -2174,6 +3055,52 @@ variable [Fintype τ]
 variable {O : TopKExpectationOracle τ} {k : ℕ}
 variable {scale : ℕ → ℝ} {weight : τ → ℝ}
 
+/--
+Lift a scaled-marginal certificate through type-specific objective weights.
+
+If `O.marginalTopK k t q ~ scale q * weight t`, then the weighted oracle has
+margin `objectiveWeight t * O.marginalTopK k t q` and type weight
+`objectiveWeight t * weight t`.
+-/
+theorem weighted
+    (C : ScaledMarginalLimitCertificate O k scale weight)
+    {objectiveWeight : τ → ℝ} (hobjective_pos : ∀ t, 0 < objectiveWeight t) :
+    ScaledMarginalLimitCertificate
+      (O.weighted objectiveWeight) k scale
+      (fun t => objectiveWeight t * weight t) where
+  scale_pos_eventually := C.scale_pos_eventually
+  weight_pos := fun t => mul_pos (hobjective_pos t) (C.weight_pos t)
+  marginal_ratio_tendsto := by
+    intro t
+    refine Tendsto.congr' ?_ (C.marginal_ratio_tendsto t)
+    filter_upwards [C.scale_pos_eventually] with q hscale
+    have hobjective_ne : objectiveWeight t ≠ 0 := ne_of_gt (hobjective_pos t)
+    have hweight_ne : weight t ≠ 0 := ne_of_gt (C.weight_pos t)
+    have hscale_ne : scale q ≠ 0 := ne_of_gt hscale
+    dsimp [TopKExpectationOracle.marginalTopK, TopKExpectationOracle.weighted]
+    field_simp [hobjective_ne, hweight_ne, hscale_ne]
+
+/--
+Transport a scaled-marginal certificate across an eventually equal marginal
+sequence.  This is useful when a source-specific expected top-`k` table has
+first been identified with a synthetic table whose asymptotics are already
+proved.
+-/
+theorem congr_marginal
+    {O' : TopKExpectationOracle τ}
+    (C : ScaledMarginalLimitCertificate O k scale weight)
+    (hmargin :
+      ∀ᶠ q in atTop,
+        ∀ t, O'.marginalTopK k t q = O.marginalTopK k t q) :
+    ScaledMarginalLimitCertificate O' k scale weight where
+  scale_pos_eventually := C.scale_pos_eventually
+  weight_pos := C.weight_pos
+  marginal_ratio_tendsto := by
+    intro t
+    refine Tendsto.congr' ?_ (C.marginal_ratio_tendsto t)
+    filter_upwards [hmargin] with q hq
+    rw [hq t]
+
 theorem eventually_uniform_ratio_abs_sub_lt
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {ε : ℝ} (hε : 0 < ε) :
@@ -2188,6 +3115,109 @@ theorem eventually_uniform_ratio_abs_sub_lt
       (Metric.ball_mem_nhds 1 hε)
   filter_upwards [ht] with q hq
   simpa [Metric.mem_ball, Real.dist_eq] using hq
+
+/--
+Threshold for the uniform finite-type ratio estimate at tolerance
+`1 / (m + 1)`.
+
+This packages the usual `eventually_atTop` choice so downstream optimization
+arguments can build one concrete `o(1)` error schedule from the family of
+asymptotic marginal estimates.
+-/
+noncomputable def uniformRatioThreshold
+    (C : ScaledMarginalLimitCertificate O k scale weight) (m : ℕ) : ℕ :=
+  Classical.choose
+    (eventually_atTop.1
+      (C.eventually_uniform_ratio_abs_sub_lt
+        (by positivity : (0 : ℝ) < 1 / ((m + 1 : ℕ) : ℝ))))
+
+theorem uniformRatioThreshold_spec
+    (C : ScaledMarginalLimitCertificate O k scale weight) (m : ℕ) :
+    ∀ q ≥ C.uniformRatioThreshold m,
+      ∀ t : τ,
+        |O.marginalTopK k t q / (scale q * weight t) - 1| <
+          1 / ((m + 1 : ℕ) : ℝ) :=
+  Classical.choose_spec
+    (eventually_atTop.1
+      (C.eventually_uniform_ratio_abs_sub_lt
+        (by positivity : (0 : ℝ) < 1 / ((m + 1 : ℕ) : ℝ))))
+
+/--
+Concrete `o(1)` error schedule induced by the uniform finite-type ratio
+thresholds of a scaled-marginal certificate.
+-/
+noncomputable def uniformRatioError
+    (C : ScaledMarginalLimitCertificate O k scale weight) : ℕ → ℝ :=
+  EconCSLib.Math.reciprocalThresholdError C.uniformRatioThreshold
+
+theorem uniformRatioError_nonneg
+    (C : ScaledMarginalLimitCertificate O k scale weight) (N : ℕ) :
+    0 ≤ C.uniformRatioError N :=
+  EconCSLib.Math.reciprocalThresholdError_nonneg C.uniformRatioThreshold N
+
+theorem uniformRatioError_tendsToZero
+    (C : ScaledMarginalLimitCertificate O k scale weight) :
+    EconCSLib.Math.TendsToZero C.uniformRatioError :=
+  EconCSLib.Math.reciprocalThresholdError_tendsToZero C.uniformRatioThreshold
+
+theorem uniformRatioError_le_of_threshold_le
+    (C : ScaledMarginalLimitCertificate O k scale weight)
+    {m N : ℕ}
+    (hm_le_N : m ≤ N)
+    (hthreshold_le_N : C.uniformRatioThreshold m ≤ N) :
+    C.uniformRatioError N ≤ 1 / ((m + 1 : ℕ) : ℝ) := by
+  simpa [uniformRatioError, Nat.cast_add, Nat.cast_one] using
+    EconCSLib.Math.reciprocalThresholdError_le_of_threshold_le
+      C.uniformRatioThreshold hm_le_N hthreshold_le_N
+
+theorem uniform_ratio_abs_sub_lt_uniformRatioError
+    (C : ScaledMarginalLimitCertificate O k scale weight)
+    {q : ℕ} (hq_base : C.uniformRatioThreshold 0 ≤ q) :
+    ∀ t : τ,
+      |O.marginalTopK k t q / (scale q * weight t) - 1| <
+        C.uniformRatioError q := by
+  let m : ℕ :=
+    Nat.findGreatest (fun r => C.uniformRatioThreshold r ≤ q) q
+  have hm_threshold : C.uniformRatioThreshold m ≤ q := by
+    dsimp [m]
+    exact
+      Nat.findGreatest_spec
+        (P := fun r => C.uniformRatioThreshold r ≤ q)
+        (m := 0) (n := q) (Nat.zero_le q) hq_base
+  intro t
+  have hspec := C.uniformRatioThreshold_spec m q hm_threshold t
+  simpa [uniformRatioError, EconCSLib.Math.reciprocalThresholdError, m,
+    Nat.cast_add, Nat.cast_one] using hspec
+
+/--
+Prefix-scaled envelope of the certificate's uniform ratio error.
+
+For every `q ≤ N`, `uniformRatioError q * q` is bounded by
+`uniformRatioPrefixError N * N`, while the prefix envelope still tends to zero.
+-/
+noncomputable def uniformRatioPrefixError
+    (C : ScaledMarginalLimitCertificate O k scale weight) : ℕ → ℝ :=
+  EconCSLib.Math.prefixScaledError C.uniformRatioError
+
+theorem uniformRatioPrefixError_nonneg
+    (C : ScaledMarginalLimitCertificate O k scale weight) (N : ℕ) :
+    0 ≤ C.uniformRatioPrefixError N :=
+  EconCSLib.Math.prefixScaledError_nonneg C.uniformRatioError
+    C.uniformRatioError_nonneg N
+
+theorem uniformRatioPrefixError_tendsToZero
+    (C : ScaledMarginalLimitCertificate O k scale weight) :
+    EconCSLib.Math.TendsToZero C.uniformRatioPrefixError :=
+  EconCSLib.Math.prefixScaledError_tendsToZero C.uniformRatioError
+    C.uniformRatioError_nonneg C.uniformRatioError_tendsToZero
+
+theorem uniformRatioError_mul_count_le_prefix
+    (C : ScaledMarginalLimitCertificate O k scale weight)
+    {q N : ℕ} (hN_pos : 0 < N) (hq_le_N : q ≤ N) :
+    C.uniformRatioError q * (q : ℝ) ≤
+      C.uniformRatioPrefixError N * (N : ℝ) :=
+  EconCSLib.Math.le_prefixScaledError_mul_nat
+    C.uniformRatioError hN_pos hq_le_N
 
 theorem eventually_uniform_ratio_mem_Icc
     (C : ScaledMarginalLimitCertificate O k scale weight)
@@ -2253,6 +3283,29 @@ theorem eventually_marginal_sandwich
               (scale q * weight t) := heq
       _ ≤ (1 + ε) * (scale q * weight t) :=
             mul_le_mul_of_nonneg_right (hratio t).2 hden_nonneg
+
+/--
+If the common marginal scale vanishes, then every type-specific top-`k`
+marginal in a scaled-marginal certificate also vanishes.
+-/
+theorem marginalTopK_tendsto_zero
+    (C : ScaledMarginalLimitCertificate O k scale weight)
+    (hscale_zero : Tendsto scale atTop (nhds 0)) (t : τ) :
+    Tendsto (fun q => O.marginalTopK k t q) atTop (nhds 0) := by
+  have hscaled_zero :
+      Tendsto (fun q => scale q * weight t) atTop (nhds 0) := by
+    simpa using hscale_zero.mul_const (weight t)
+  have hprod :
+      Tendsto
+        (fun q =>
+          (O.marginalTopK k t q / (scale q * weight t)) *
+            (scale q * weight t))
+        atTop (nhds (1 * 0)) :=
+    (C.marginal_ratio_tendsto t).mul hscaled_zero
+  refine Tendsto.congr' ?_ (by simpa using hprod)
+  filter_upwards [C.scale_pos_eventually] with q hscale
+  exact (C.marginalTopK_eq_ratio_mul (q := q) (t := t)
+    (ne_of_gt hscale)).symm
 
 /-- A one-index marginal sandwich at a fixed count. -/
 def MarginalSandwichAt
