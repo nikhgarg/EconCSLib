@@ -33,14 +33,15 @@ Start in the paper folder under `papers/<PaperName>/`.
 
 For a completed or nearly completed paper, read these files in this order:
 
-1. `FINAL_VALIDATION_REPORT.md`: source checked, theorem inventory, proof
-   deviations, remaining assumptions, and final status.
+1. `FINAL_VALIDATION_REPORT.md` or `POST_FORMALIZATION_AUDIT.md`: source
+   checked, deviations, assumptions, and final status.
 2. `PaperInterface.lean`: readable definitions and theorem statements matching
    the paper. This is the main human-facing Lean file.
 3. Dependency graph: visual map of named definitions, lemmas, theorems, and
    remaining caveats. Some paper folders keep only the source graph tracked and
    render the PDF locally.
-4. `README.md`: paper metadata and theorem-status ledger.
+4. `README.md`: paper metadata or implementation notes; if not human-facing, it
+   should say so at the top and link to the report above.
 
 Implementation-level proof files are for maintainers and agents. They should
 not be necessary for a first human audit of what the paper claims and what Lean
@@ -64,7 +65,7 @@ published citation title and year.
 | [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized | 0/7 | OK: 109 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library. |
 | [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 468 lines |  |
 | [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/19 | OK: 290 lines | The journal version is used as the corrected source for Theorem 8.2 [Goldberg et al. 2006](https://www.sciencedirect.com/science/article/pii/S0899825606000303). |
-| [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared auctions library. |
+| [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines |  |
 | [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 76 lines |  |
 | [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 160 lines |  |
 | [GCG24 User Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 235 lines |  |
@@ -78,15 +79,11 @@ published citation title and year.
 For more detail, use:
 
 - `papers/<PaperName>/status.json` for the paper-local source of truth.
-- [`papers/human_status.json`](papers/human_status.json) for the compact
-  public-facing status summary.
-- [`papers/status.json`](papers/status.json) for the generated aggregate
-  status, review counts, and interface metadata.
-- [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md) for the generated public paper
-  status table.
-- [`site/index.html`](site/index.html) for the generated public website status
-  table.
-- Individual `papers/<PaperName>/README.md` files for paper-specific caveats.
+- Generated public snapshots: [`papers/human_status.json`](papers/human_status.json),
+  [`papers/status.json`](papers/status.json), [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md),
+  and [`site/index.html`](site/index.html).
+- Individual paper validation/audit reports for paper-specific caveats. Some
+  `README.md` files are implementation ledgers and point to those reports.
 
 Partial public formalizations are included when the remaining assumption seam is
 explicit and useful to expose. LMMS04 and LOS02 are the current examples:

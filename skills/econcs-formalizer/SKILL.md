@@ -1723,6 +1723,11 @@ pass:
   deviations, findings, reusable lessons, DAG, and validation checks; move
   source-line mappings to `SOURCE_AUDIT.md` and declaration inventories to
   `PostPaperAudit.lean` or the README.
+- Point `status.json` `review_entrypoint` at the human-facing status note,
+  normally `FINAL_VALIDATION_REPORT.md` or `POST_FORMALIZATION_AUDIT.md`. If a
+  paper `README.md` is an implementation/source-audit ledger rather than the
+  human-facing note, title it accordingly and add a top-of-file pointer to the
+  human-facing report.
 - Distinguish agent audit from human review. A report may say an agent
   source-audited every row, but it must not say rows were "reviewed" or imply
   dashboard completion unless a human actually saved those dashboard reviews.

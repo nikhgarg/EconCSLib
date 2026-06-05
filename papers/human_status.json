@@ -69,7 +69,7 @@
       "status": "Formalized",
       "human_review": "0/39",
       "lean_loc": 13221,
-      "main_note": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared auctions library.",
+      "main_note": "",
       "main_note_citation": null,
       "paper_folder": "papers/MSVV07AdWords",
       "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md"
@@ -200,7 +200,7 @@
       "main_note": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
       "main_note_citation": null,
       "paper_folder": "papers/PRPKG24AccuracyDiversity",
-      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/README.md"
+      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md"
     }
   ]
 }

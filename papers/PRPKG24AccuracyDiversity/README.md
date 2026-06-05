@@ -1,4 +1,8 @@
-# Reconciling the Accuracy-Diversity Trade-off in Recommendations
+# PRPKG24 Implementation Notes
+
+The human-facing formalization status note is
+`POST_FORMALIZATION_AUDIT.md`. This README is an implementation/source-audit
+ledger and may contain proof-planning or declaration-level detail.
 
 ## Source Version
 
