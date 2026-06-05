@@ -3,11 +3,11 @@
   "id": "PRPKG24AccuracyDiversity",
   "title": "Reconciling the Accuracy-Diversity Trade-off in Recommendations",
   "authors": "Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg",
-  "source_version": "arXiv:2307.15142v1",
+  "source_version": "WWW '24: Proceedings of the ACM Web Conference 2024, pp. 1318--1329; arXiv:2307.15142v1",
   "build_target": "lake build PRPKG24AccuracyDiversity",
   "status": "partially formalized",
   "main_caveat": "Finite optimization, Bernoulli, uniform, bounded density/tail-mass, exponential, Pareto, Example 1 exact harmonic calibration, Corollary 1 concrete model existence, Theorems 1-3, Proposition 2's corrected finite/asymptotic homogeneity route, Lemma D.1/D.5 downstream routes, and Proposition 4 averaging/kernel checkpoint layers are exposed. The only remaining literal source gap is Proposition 4's continuous sphere/Laplace analytic certificate. Proposition 2's printed sharp finite constant and Lemma D.1(i)'s printed sign convention are documented as nonblocking source deviations.",
-  "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2/type-count shift; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
+  "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
   "review_entrypoint": "papers/PRPKG24AccuracyDiversity/README.md",
   "human_review": {
     "reviewed_rows": 0,

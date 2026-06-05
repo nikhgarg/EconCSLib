@@ -133,9 +133,29 @@ README_STATUS_DETAIL_RE = re.compile(
 README_STATUS_HEADER = ["Paper", "Status", "Review", "Interface", "Human summary"]
 README_REVIEW_COUNT_RE = re.compile(r"^\d+/\d+$")
 README_MAX_STATUS_ROWS = 20
-README_MAX_STATUS_SUMMARY_CHARS = 240
+README_MAX_STATUS_SUMMARY_CHARS = 320
 MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\([^)]+\)")
 README_MAX_LINES = 140
+REPORT_LEAN_LABEL_RE = re.compile(
+    r"\bLean\s+(?:interface\s+statement(?:\(s\))?|declaration(?:s)?|witness(?:es)?)\s*[:.]",
+    re.I,
+)
+REPORT_DECL_TABLE_HEADER_RE = re.compile(
+    r"\bLean\s+(?:interface\s+statement(?:\(s\))?|declaration(?:s)?|witness(?:es)?)\b",
+    re.I,
+)
+REPORT_CODE_SPAN_RE = re.compile(r"`([^`]+)`")
+REPORT_DECL_NAME_RE = re.compile(
+    r"(?:[A-Za-z_][A-Za-z0-9_']*\.)*[A-Za-z_][A-Za-z0-9_']*"
+)
+REPORT_NON_DECL_CODE_SUFFIXES = (
+    ".lean",
+    ".md",
+    ".json",
+    ".tex",
+    ".pdf",
+    ".py",
+)
 
 
 @dataclass(frozen=True)
@@ -674,6 +694,65 @@ def check_post_paper_audit_interfaces(include_active: bool) -> list[Finding]:
                     )
                 )
 
+        for markdown_report in (report, folder / "POST_FORMALIZATION_AUDIT.md"):
+            if markdown_report.exists():
+                findings.extend(check_report_declaration_inventory(markdown_report))
+
+    return findings
+
+
+def report_decl_code_spans(text: str) -> list[str]:
+    spans: list[str] = []
+    for span in REPORT_CODE_SPAN_RE.findall(text):
+        if span.endswith(REPORT_NON_DECL_CODE_SUFFIXES):
+            continue
+        if "/" in span or " " in span or "-" in span:
+            continue
+        if REPORT_DECL_NAME_RE.fullmatch(span):
+            spans.append(span)
+    return spans
+
+
+def check_report_declaration_inventory(path: Path) -> list[Finding]:
+    findings: list[Finding] = []
+    text = path.read_text(encoding="utf-8")
+    if re.search(r"\bmain Lean declarations\b", text, re.I):
+        findings.append(
+            Finding(
+                "WARN",
+                path,
+                "final/post report should name one main interface declaration per paper-facing result, not a declaration inventory",
+            )
+        )
+
+    for line_no, line in enumerate(text.splitlines(), start=1):
+        if REPORT_LEAN_LABEL_RE.search(line):
+            spans = report_decl_code_spans(line)
+            if len(spans) > 1:
+                findings.append(
+                    Finding(
+                        "WARN",
+                        path,
+                        f"line {line_no} lists {len(spans)} Lean declarations; keep only the single main interface declaration",
+                    )
+                )
+
+    for header, rows in iter_markdown_tables(path):
+        for idx, cell in enumerate(header):
+            if not REPORT_DECL_TABLE_HEADER_RE.search(cell):
+                continue
+            for row in rows:
+                if idx >= len(row):
+                    continue
+                spans = report_decl_code_spans(row[idx])
+                if len(spans) > 1:
+                    findings.append(
+                        Finding(
+                            "WARN",
+                            path,
+                            f"table column `{cell}` lists {len(spans)} Lean declarations in one row; keep one main interface declaration per paper-facing result",
+                        )
+                    )
     return findings
 
 

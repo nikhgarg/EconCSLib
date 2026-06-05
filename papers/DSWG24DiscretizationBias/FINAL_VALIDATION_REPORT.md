@@ -33,40 +33,32 @@ These are the mathematical objects from the paper interface. All are exposed in
   Lean: `PaperInterface.posteriorSimplex`,
   `Finite.FiniteBayesDatasetModel`.
 - Argmax rule: assign each row the tie-broken class `arg max_y q(y,x_i)`.
-  Lean: `PaperInterface.isArgmaxRule`,
-  `EconCSLib.Decision.IsPointwiseMax`.
+  Lean: `PaperInterface.isArgmaxRule`.
 - Marginal label share:
   `p_hat_marg(y) = (1/N) sum_i 1[y_hat_i = y]`.
-  Lean: `PaperInterface.marginalLabelShare`,
-  `PaperInterface.continuousMarginalLabelShare`.
+  Lean: `PaperInterface.marginalLabelShare`.
 - Bias: `bias(y, y_hat, p_ref) = p_hat_marg(y) - p_ref(y)`.
-  Lean: `PaperInterface.bias`, `PaperInterface.continuousBias`,
-  `PaperInterface.continuousAggregateBias`.
+  Lean: `PaperInterface.bias`.
 - Fidelity: `fid(p_ref, y_hat) = - sum_y |bias(y, y_hat, p_ref)|`.
-  Lean: `PaperInterface.fidelity`,
-  `EconCSLib.Decision.datasetFidelity`.
+  Lean: `PaperInterface.fidelity`.
 - Aggregate posterior: `p_agg^q(y) = (1/N) sum_i q(y,x_i)`.
-  Lean: `PaperInterface.aggregatePosterior`,
-  `PaperInterface.continuousAggregatePosterior`.
+  Lean: `PaperInterface.aggregatePosterior`.
 - Predictive MAE: `MAE(q) = E[1 - q(Y,X)]`, represented for Bayes posterior
   scores as `E_X sum_y q(y,x)(1-q(y,x))`.
-  Lean: `PaperInterface.classifierMAE`,
-  `PaperInterface.continuousClassifierMAE`.
+  Lean: `PaperInterface.classifierMAE`.
 - Calibration: `Pr(Y=y | q(y,x)=c)=c`, used to derive
   `E_X q(y,x)=Pr(y)`.
   Lean: `PaperInterface.calibrated`.
 - Expected objective:
   `O_N^gamma(D,q,p_ref) = gamma ACC_N(D,q) + (1-gamma) FID_N(D,q,p_ref)`.
-  Lean: `PaperInterface.objective`, `PaperInterface.expectedObjective`.
+  Lean: `PaperInterface.objective`.
 - Non-trivial reference distribution: the reference gives enough mass to the
   argmax class in a dataset, at least `1/N`, ruling out degenerate references.
   Lean: Theorem 2(iii)'s `hnontrivial` hypotheses.
 - Source proof regions: for focal class `z`, the proof partitions points into
   `S_a,S_b,S_c,S_d,S_e` according to whether `q(z,x)` is `1`, in `(1/K,1)`,
   equal to `1/K`, in `(0,1/K)`, or `0`.
-  Lean: `PaperInterface.sourceSa`, `PaperInterface.sourceSb`,
-  `PaperInterface.sourceSc`, `PaperInterface.sourceSd`,
-  `PaperInterface.sourceSe`.
+  Lean: `PaperInterface.sourceSa`.
 
 ## 3. Named Theorem Statements Checked
 

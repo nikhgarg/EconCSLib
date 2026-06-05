@@ -36,15 +36,16 @@ fractional LP value and feasibility, Balance/MSVV tradeoff function, competitive
 ratio `1 - 1/e`, scaled Balance score, feasibility of assigning a query, and
 the Balance choice rule.
 
-The main Lean declarations are:
+Representative reader-facing Lean declarations:
 
-- `PaperInstance`, `PaperAssignment`, `paperSpend`, `paperRevenue`,
-  `paperFeasible`, `paperSmallBids`.
-- `paperFractionalRevenue`, `PaperFractionalFeasible`.
-- `paperTradeoff`, `paperMsvvRatio`, `paperBalanceScore`, `paperCanAssign`,
-  `paperIsBalanceChoice`.
-- `PaperSmallBidsLimitFamily` for the finite-instance sequence used by the
-  paper's small-bids limiting theorem.
+- AdWords instance: `PaperInterface.PaperInstance`.
+- Assignment and spend/revenue accounting: `PaperInterface.paperRevenue`.
+- Budget feasibility: `PaperInterface.paperFeasible`.
+- Small-bids condition: `PaperInterface.paperSmallBids`.
+- Fractional LP benchmark: `PaperInterface.paperFractionalRevenue`.
+- Balance/MSVV tradeoff function: `PaperInterface.paperTradeoff`.
+- Balance choice rule: `PaperInterface.paperIsBalanceChoice`.
+- Small-bids limiting family: `PaperInterface.PaperSmallBidsLimitFamily`.
 
 ## 4. Named Results Checked
 

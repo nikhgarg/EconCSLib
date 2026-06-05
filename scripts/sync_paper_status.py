@@ -50,6 +50,7 @@ PUBLICATION_OVERRIDES = {
     "LOS02CombinatorialAuctions": ("Journal of the ACM, 2002", 2002),
     "MBJG25ProducerFairness": ("ICWSM, 2025", 2025),
     "MSVV07AdWords": ("Journal of the ACM, 2007", 2007),
+    "PRPKG24AccuracyDiversity": ("WWW '24 / The ACM Web Conference, 2024", 2024),
     "Roth82StableMatching": ("Mathematics of Operations Research, 1982", 1982),
 }
 
@@ -64,6 +65,7 @@ SOURCE_URL_OVERRIDES = {
     "LOS02CombinatorialAuctions": "https://jmvidal.cse.sc.edu/library/lehmann02a.pdf",
     "MBJG25ProducerFairness": "https://arxiv.org/pdf/2207.04369",
     "MSVV07AdWords": "https://people.eecs.berkeley.edu/~vazirani/pubs/adwords.pdf",
+    "PRPKG24AccuracyDiversity": "https://arxiv.org/abs/2307.15142",
     "Roth82StableMatching": "https://pubsonline.informs.org/doi/epdf/10.1287/moor.7.4.617",
 }
 
