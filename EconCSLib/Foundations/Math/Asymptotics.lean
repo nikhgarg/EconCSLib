@@ -532,6 +532,115 @@ theorem TendsToZero_of_eventually_abs_le_tendsto_zero
     exact (abs_le.mp hN).2
 
 /--
+The integer sample count `floor (N * g)` has asymptotic rate `g`.
+This is the deterministic normalization step for floor-sampled
+large-deviation statements.
+-/
+theorem tendsto_nat_floor_mul_const_div_nat
+    {g : ℝ} (hg_nonneg : 0 ≤ g) :
+    Tendsto
+      (fun N : ℕ => ((Nat.floor ((N : ℝ) * g) : ℝ) / (N : ℝ)))
+      atTop (nhds g) := by
+  have hlower_tendsto :
+      Tendsto (fun N : ℕ => g - 1 / (N : ℝ)) atTop (nhds g) := by
+    have hzero :
+        Tendsto (fun N : ℕ => (1 : ℝ) / (N : ℝ)) atTop (nhds 0) :=
+      tendsto_const_div_atTop_nhds_zero_nat (1 : ℝ)
+    simpa using (tendsto_const_nhds.sub hzero)
+  have hupper_tendsto :
+      Tendsto (fun N : ℕ => g) atTop (nhds g) :=
+    tendsto_const_nhds
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le'
+    hlower_tendsto hupper_tendsto ?_ ?_
+  · filter_upwards [eventually_gt_atTop 0] with N hN
+    have hNpos : 0 < (N : ℝ) := by exact_mod_cast hN
+    have hfloor_gt :
+        (N : ℝ) * g - 1 <
+          (Nat.floor ((N : ℝ) * g) : ℝ) := by
+      have hlt :
+          (N : ℝ) * g <
+            (Nat.floor ((N : ℝ) * g) : ℝ) + 1 :=
+        Nat.lt_floor_add_one ((N : ℝ) * g)
+      linarith
+    have hdiv :
+        ((N : ℝ) * g - 1) / (N : ℝ) ≤
+          (Nat.floor ((N : ℝ) * g) : ℝ) / (N : ℝ) :=
+      div_le_div_of_nonneg_right hfloor_gt.le hNpos.le
+    have hleft :
+        ((N : ℝ) * g - 1) / (N : ℝ) = g - 1 / (N : ℝ) := by
+      field_simp [hNpos.ne']
+    simpa [hleft] using hdiv
+  · filter_upwards [eventually_gt_atTop 0] with N hN
+    have hNpos : 0 < (N : ℝ) := by exact_mod_cast hN
+    have harg_nonneg : 0 ≤ (N : ℝ) * g :=
+      mul_nonneg (Nat.cast_nonneg N) hg_nonneg
+    have hfloor_le :
+        (Nat.floor ((N : ℝ) * g) : ℝ) ≤ (N : ℝ) * g :=
+      Nat.floor_le harg_nonneg
+    have hdiv :
+        (Nat.floor ((N : ℝ) * g) : ℝ) / (N : ℝ) ≤
+          ((N : ℝ) * g) / (N : ℝ) :=
+      div_le_div_of_nonneg_right hfloor_le hNpos.le
+    have hright : ((N : ℝ) * g) / (N : ℝ) = g := by
+      field_simp [hNpos.ne']
+    exact hdiv.trans_eq hright
+
+/-- If `g > 0`, then `floor (N * g)` diverges to infinity. -/
+theorem tendsto_nat_floor_mul_const_atTop
+    {g : ℝ} (hg_pos : 0 < g) :
+    Tendsto (fun N : ℕ => Nat.floor ((N : ℝ) * g)) atTop atTop := by
+  rw [tendsto_atTop]
+  intro B
+  have hratio :
+      Tendsto
+        (fun N : ℕ =>
+          ((Nat.floor ((N : ℝ) * g) : ℝ) / (N : ℝ)))
+        atTop (nhds g) :=
+    tendsto_nat_floor_mul_const_div_nat hg_pos.le
+  have hhalf_pos : 0 < g / 2 := by linarith
+  have hratio_event :
+      ∀ᶠ N : ℕ in atTop,
+        g / 2 <
+          ((Nat.floor ((N : ℝ) * g) : ℝ) / (N : ℝ)) :=
+    hratio.eventually (Ioi_mem_nhds (show g / 2 < g by linarith))
+  let K : ℕ := Nat.floor ((2 * (B : ℝ)) / g) + 1
+  have hK_bound : (2 * (B : ℝ)) / g < (K : ℝ) := by
+    dsimp [K]
+    have hlt :
+        (2 * (B : ℝ)) / g <
+          (Nat.floor ((2 * (B : ℝ)) / g) : ℝ) + 1 :=
+      Nat.lt_floor_add_one ((2 * (B : ℝ)) / g)
+    simpa using hlt
+  refine (hratio_event.and (Filter.eventually_ge_atTop K)).mono ?_
+  intro N hN
+  rcases hN with ⟨hratioN, hNK⟩
+  have hN_pos : 0 < (N : ℝ) := by
+    have hK_pos : 0 < K := Nat.succ_pos _
+    exact_mod_cast lt_of_lt_of_le hK_pos hNK
+  have hB_lt_half :
+      (B : ℝ) < (N : ℝ) * (g / 2) := by
+    have hK_le_N : (K : ℝ) ≤ (N : ℝ) := by exact_mod_cast hNK
+    calc
+      (B : ℝ) < K * (g / 2) := by
+        have hmul := mul_lt_mul_of_pos_right hK_bound hhalf_pos
+        field_simp [ne_of_gt hg_pos] at hmul
+        linarith
+      _ ≤ (N : ℝ) * (g / 2) :=
+        mul_le_mul_of_nonneg_right hK_le_N hhalf_pos.le
+  have hfloor_gt :
+      (B : ℝ) < (Nat.floor ((N : ℝ) * g) : ℝ) := by
+    have hmul :
+        (N : ℝ) * (g / 2) <
+          (Nat.floor ((N : ℝ) * g) : ℝ) := by
+      have hmul' :=
+        mul_lt_mul_of_pos_right hratioN hN_pos
+      field_simp [ne_of_gt hN_pos] at hmul'
+      rw [mul_comm g (N : ℝ)] at hmul'
+      linarith
+    exact lt_trans hB_lt_half hmul
+  exact_mod_cast le_of_lt hfloor_gt
+
+/--
 If a real-valued scale is eventually positive and tends to zero, then any
 positive constant divided by that scale diverges to `atTop`.
 -/

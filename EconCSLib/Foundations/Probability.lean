@@ -8,9 +8,15 @@ import EconCSLib.Foundations.Probability.ContinuousReward
 import EconCSLib.Foundations.Probability.Exponential
 import EconCSLib.Foundations.Probability.FairCoin
 import EconCSLib.Foundations.Probability.FiniteExpectation
+import EconCSLib.Foundations.Probability.FiniteEmpiricalMultinomialCounts
 import EconCSLib.Foundations.Probability.FiniteLabel
 import EconCSLib.Foundations.Probability.FiniteMixture
+import EconCSLib.Foundations.Probability.FiniteProductMultinomialCounts
+import EconCSLib.Foundations.Probability.FiniteProductTernaryCounts
+import EconCSLib.Foundations.Probability.FiniteRatingComparison
+import EconCSLib.Foundations.Probability.FiniteRankingEvents
 import EconCSLib.Foundations.Probability.FiniteSupportMGF
+import EconCSLib.Foundations.Probability.FiniteTypeLogMass
 import EconCSLib.Foundations.Probability.FinsetVariance
 import EconCSLib.Foundations.Probability.Gaussian
 import EconCSLib.Foundations.Probability.GaussianDerivatives
@@ -19,6 +25,8 @@ import EconCSLib.Foundations.Probability.GaussianMathlib
 import EconCSLib.Foundations.Probability.GaussianMills
 import EconCSLib.Foundations.Probability.GaussianQuantile
 import EconCSLib.Foundations.Probability.InformationOrder
+import EconCSLib.Foundations.Probability.IIDLargeDeviations
+import EconCSLib.Foundations.Probability.IndependentProduct
 import EconCSLib.Foundations.Probability.Kernel
 import EconCSLib.Foundations.Probability.LargeDeviations
 import EconCSLib.Foundations.Probability.MarkovChain
@@ -55,12 +63,16 @@ Aggregate import for reusable probability infrastructure.
   product-event factorization, option-extension product decompositions, and
   finite-product reindexing/binomial success-count formulas.
 - Continuous measure and concentration helpers:
+  `EconCSLib.Foundations.Probability.Averaging`,
+  `EconCSLib.Foundations.Probability.Bernoulli`,
   `EconCSLib.Foundations.Probability.ContinuousReward`,
   `EconCSLib.Foundations.Probability.MeasureInequalities`,
   `EconCSLib.Foundations.Probability.FairCoin`, and
   `EconCSLib.Foundations.Probability.FinsetVariance`.
 - Large-deviation scaffolding:
-  `EconCSLib.Foundations.Probability.FiniteSupportMGF` and
+  `EconCSLib.Foundations.Probability.FiniteSupportMGF`,
+  `EconCSLib.Foundations.Probability.FiniteProductMultinomialCounts`,
+  `EconCSLib.Foundations.Probability.IIDLargeDeviations`, and
   `EconCSLib.Foundations.Probability.LargeDeviations`.
 - Finite information orders:
   `EconCSLib.Foundations.Probability.InformationOrder`.
@@ -68,10 +80,17 @@ Aggregate import for reusable probability infrastructure.
   `EconCSLib.Foundations.Probability.OrderStatistics`.
   This includes finite at-most-`k` top-sum maximization and tuple-level
   order-statistic integration interfaces, plus pointwise top-k sample-extension
-  and two-level top-mass marginal bounds. It also provides finite iid expected
-  top-k wrappers and option-step marginal identities for adding one iid draw.
+  and two-level top-mass marginal bounds. It also provides the bridge from an
+  upper-order-statistic threshold event to an iid strict-success count, finite
+  iid expected top-k wrappers, and option-step marginal identities for adding
+  one iid draw.
 - Real distribution tail/CDF helpers:
   `EconCSLib.Foundations.Probability.RealDistribution`.
+- Continuous heavy-tail distribution helpers:
+  `EconCSLib.Foundations.Probability.Pareto`, including finite iid
+  product-measure wrappers, closed-form Pareto upper-tail/CDF mass, and
+  threshold-count and upper-order-statistic survival binomial formulas, plus
+  support-scale tail-integral reductions.
 - Dynamic and stochastic-process support:
   `EconCSLib.Foundations.Probability.MarkovChain`,
   `EconCSLib.Foundations.Probability.MDP`,

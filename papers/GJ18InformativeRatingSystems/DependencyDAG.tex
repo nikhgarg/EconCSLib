@@ -1,0 +1,120 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={outer sep=4pt}
+]
+
+\dagPaperMetadata{Designing Informative Rating Systems}{Garg, Johari}{Manufacturing \& Service Operations Management 23(3)}{2020}{https://arxiv.org/pdf/1810.13028}
+
+\dagPaperLegendRightOfMetadata{
+\node[dag_model, dag_template_legend] (legDef) at (0,0) {definition /\\formula};
+\node[dag_lemma, dag_template_legend] (legLemma) at (3.4,0) {formalized\\lemma};
+\node[dag_result, dag_template_legend] (legResult) at (6.8,0) {formalized\\result};
+\node[dag_conditional, dag_template_legend] (legCond) at (10.2,0) {conditional\\helper};
+}
+\daglegend{(legDef)(legLemma)(legResult)(legCond)}{Legend}
+
+\begin{dagPaperBody}
+
+\node[dag_model] (Model) at (0,0) {
+  \textbf{Rating Model} \\
+  seller types, full-support levels, scores, matching rates
+};
+
+\node[dag_model] (LogMGF) at (7.2,0) {
+  \textbf{Definitions: Lambda and I} \\
+  log-MGF and Legendre formulas
+};
+
+\node[dag_model] (PairFormula) at (14.4,0) {
+  \textbf{Lemma C.1 Formula Side} \\
+  pairwise threshold-rate RHS
+};
+
+\node[dag_lemma] (EqualSample) at (0,-4.1) {
+  \textbf{Lemma C Equal-Sample Bridge} \\
+  paired MGF and mean formulas
+};
+
+\node[dag_lemma] (TwoPop) at (7.2,-4.1) {
+  \textbf{Lemma C.1 Two-Pop Samples} \\
+  MGF and Chernoff upper bound
+};
+
+\node[dag_lemma] (Block) at (14.4,-4.1) {
+  \textbf{Lemma C.1 Integer-Rate Block} \\
+  finite-type Cramer and log-MGF bridge
+};
+
+\node[dag_model] (FloorCounts) at (0,-8.3) {
+  \textbf{Floor Counts} \\
+  floor(k g)/k and natural-rate equality
+};
+
+\node[dag_lemma] (Fenchel) at (7.2,-8.3) {
+  \textbf{Lemma C.1 Source Rate} \\
+  exact rate from common-dual derivatives
+};
+
+\node[dag_lemma] (PkTransfer) at (14.4,-8.3) {
+  \textbf{Lemma C.2 Pk Transfer} \\
+  1-P algebra and rate transfer
+};
+
+\node[dag_lemma] (TailDom) at (4.0,-12.4) {
+  \textbf{Finite FOSD Bridge} \\
+  upper-tail dominance gives expected-score order
+};
+
+\node[dag_lemma, text width=4.7cm, minimum height=1.8cm, font=\sffamily\small] (ChainDom) at (14.4,-12.4) {
+  \textbf{Joint Adjacent Reduction} \\
+  joint floor law and finite union bounds
+};
+
+\node[dag_result] (FiniteAgg) at (14.4,-16.6) {
+  \textbf{Theorem 1 Aggregation Bridge} \\
+  $1-W_k$ rate from pairwise rates
+};
+
+\node[dag_result, text width=5.0cm, minimum height=2.0cm, font=\sffamily\small] (TheoremOne) at (4.0,-16.6) {
+  \textbf{Theorem 1} \\
+  $1-W_k$ has the minimum adjacent threshold rate
+};
+
+\coordinate (ModelToFloorBendA) at (-3.2,-3.7);
+\coordinate (ModelToFloorBendB) at (-3.2,-7.2);
+\coordinate (ModelToTailBendA) at (-3.6,-11.0);
+\coordinate (ModelToTailBendB) at (0.5,-12.4);
+\coordinate (FloorToTheoremBend) at (0,-14.8);
+\coordinate (PkToFiniteAggBendA) at (18.0,-9.8);
+\coordinate (PkToFiniteAggBendB) at (18.0,-15.4);
+
+\draw[dag_arrow] (Model) -- (LogMGF);
+\draw[dag_arrow] (LogMGF) -- (PairFormula);
+\draw[dag_arrow] (LogMGF) -- (EqualSample);
+\draw[dag_arrow] (LogMGF) -- (TwoPop);
+\draw[dag_arrow] (TwoPop) -- (Block);
+\draw[dag_dashed_arrow] (EqualSample.south east) to[out=-20,in=-160,looseness=0.75] (Block.south west);
+\draw[dag_arrow] (Model.south west) to[out=-135,in=90] (ModelToFloorBendA)
+  -- (ModelToFloorBendB) to[out=-90,in=160] (FloorCounts.north west);
+\draw[dag_arrow] (PairFormula) -- (Fenchel);
+\draw[dag_arrow] (Block) -- (Fenchel);
+\draw[dag_arrow] (Model.south west) to[out=-145,in=90] (ModelToTailBendA)
+  to[out=-90,in=180] (ModelToTailBendB) -- (TailDom.west);
+\draw[dag_arrow] (Fenchel) -- (PkTransfer);
+\draw[dag_arrow] (PkTransfer.south east) to[out=-40,in=90] (PkToFiniteAggBendA)
+  -- (PkToFiniteAggBendB) to[out=-90,in=25] (FiniteAgg.north east);
+\draw[dag_arrow] (FloorCounts.south) -- (FloorToTheoremBend)
+  to[out=-90,in=145] (TheoremOne.north west);
+\draw[dag_arrow] (PkTransfer) -- (ChainDom);
+\draw[dag_arrow] (TailDom) -- (TheoremOne);
+\draw[dag_arrow] (FiniteAgg) -- (TheoremOne);
+\draw[dag_arrow] (ChainDom) -- (FiniteAgg);
+
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

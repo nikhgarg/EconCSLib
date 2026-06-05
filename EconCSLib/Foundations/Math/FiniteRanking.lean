@@ -24,6 +24,88 @@ namespace FiniteRanking
 
 open Prod.Lex
 
+/--
+Any nonadjacent weak inversion in a real-valued sequence contains an adjacent
+weak inversion. This is the deterministic event-inclusion kernel behind
+reducing a nonadjacent ranking error to an adjacent ranking error.
+-/
+theorem exists_adjacent_inversion_of_nonadjacent_inversion
+    (x : ℕ → ℝ) {i j : ℕ} (hij : i < j) (hbad : x j ≤ x i) :
+    ∃ m : ℕ, i ≤ m ∧ m < j ∧ x (m + 1) ≤ x m := by
+  by_contra hnone
+  have hstep :
+      ∀ m : ℕ, i ≤ m → m < j → x m < x (m + 1) := by
+    intro m him hmj
+    by_contra hnot
+    exact hnone ⟨m, him, hmj, le_of_not_gt hnot⟩
+  have hchain : x i < x j := by
+    have hsucc : i + 1 ≤ j := Nat.succ_le_of_lt hij
+    have hbase : (i + 1 ≤ j → x i < x (i + 1)) := by
+      intro _h
+      exact hstep i le_rfl hij
+    have hind :
+        ∀ n : ℕ, i + 1 ≤ n →
+          (n ≤ j → x i < x n) → (n + 1 ≤ j → x i < x (n + 1)) := by
+      intro n hle ih hn1
+      have hn_lt_j : n < j := Nat.lt_of_succ_le hn1
+      have hi_le_n : i ≤ n := (Nat.le_succ i).trans hle
+      exact (ih hn_lt_j.le).trans (hstep n hi_le_n hn_lt_j)
+    exact
+      (Nat.le_induction
+        (P := fun n _ => n ≤ j → x i < x n)
+        hbase hind j hsucc) le_rfl
+  exact (not_lt_of_ge hbad) hchain
+
+/--
+Finite-index version of
+`exists_adjacent_inversion_of_nonadjacent_inversion`.  Any inverted pair in a
+finite ranked vector contains an adjacent inverted pair between them.
+-/
+theorem exists_adjacent_fin_inversion_of_nonadjacent_inversion
+    {n : ℕ} (x : Fin n → ℝ) {i j : Fin n}
+    (hij : i.val < j.val) (hbad : x j ≤ x i) :
+    ∃ (m : Fin n) (hm_succ : m.val + 1 < n),
+      i.val ≤ m.val ∧ m.val < j.val ∧
+        x ⟨m.val + 1, hm_succ⟩ ≤ x m := by
+  let xNat : ℕ → ℝ := fun k => if hk : k < n then x ⟨k, hk⟩ else 0
+  have hbadNat : xNat j.val ≤ xNat i.val := by
+    simp [xNat, hbad]
+  obtain ⟨m, him, hmj, hstep⟩ :=
+    exists_adjacent_inversion_of_nonadjacent_inversion xNat hij hbadNat
+  have hm_lt_n : m < n := lt_trans hmj j.isLt
+  have hm_succ_lt : m + 1 < n :=
+    lt_of_le_of_lt (Nat.succ_le_of_lt hmj) j.isLt
+  refine ⟨⟨m, hm_lt_n⟩, hm_succ_lt, him, hmj, ?_⟩
+  simpa [xNat, hm_lt_n, hm_succ_lt] using hstep
+
+/--
+Event-shaped finite ranking kernel: the existence of any inverted pair implies
+the existence of an adjacent inverted pair.
+-/
+theorem exists_adjacent_fin_inversion_of_any_inversion
+    {n : ℕ} (x : Fin n → ℝ)
+    (hbad : ∃ i j : Fin n, i.val < j.val ∧ x j ≤ x i) :
+    ∃ (m : Fin n) (hm_succ : m.val + 1 < n),
+      x ⟨m.val + 1, hm_succ⟩ ≤ x m := by
+  rcases hbad with ⟨i, j, hij, hbadij⟩
+  rcases exists_adjacent_fin_inversion_of_nonadjacent_inversion
+      x hij hbadij with
+    ⟨m, hm_succ, _him, _hmj, hstep⟩
+  exact ⟨m, hm_succ, hstep⟩
+
+/--
+Set-inclusion form of the adjacent-inversion kernel for outcome-indexed score
+vectors.
+-/
+theorem anyInversionSet_subset_adjacentInversionSet
+    {Ω : Type*} {n : ℕ} (x : Ω → Fin n → ℝ) :
+    {ω : Ω | ∃ i j : Fin n, i.val < j.val ∧ x ω j ≤ x ω i} ⊆
+      {ω : Ω |
+        ∃ (m : Fin n) (hm_succ : m.val + 1 < n),
+          x ω ⟨m.val + 1, hm_succ⟩ ≤ x ω m} := by
+  intro ω hω
+  exact exists_adjacent_fin_inversion_of_any_inversion (x ω) hω
+
 variable {α : Type*} [LinearOrder α] [DecidableEq α]
 
 /-- Lexicographic `(value, tie-breaker)` key used to rank a finite set. -/

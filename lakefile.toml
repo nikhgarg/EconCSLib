@@ -12,6 +12,7 @@ defaultTargets = [
   "GS62CollegeAdmissions",
   "GHW01DigitalGoods",
   "MSVV07AdWords",
+  "GJ18InformativeRatingSystems",
   "LMMS04FairDivision",
   "LOS02CombinatorialAuctions",
 ]
@@ -89,4 +90,8 @@ srcDir = "papers"
 
 [[lean_lib]]
 name = "LOS02CombinatorialAuctions"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "GJ18InformativeRatingSystems"
 srcDir = "papers"

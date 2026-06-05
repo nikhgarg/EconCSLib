@@ -972,6 +972,44 @@ theorem pmfExp_sub {α : Type*} [Fintype α] [DecidableEq α]
           (∑ a : α, (μ a).toReal * g a) := by
           rw [Finset.sum_sub_distrib]
 
+/--
+Expectation of a ternary real-valued random variable taking values
+`1`, `0`, and `-1` equals `Pr[X = 1] - Pr[X = -1]`.
+-/
+theorem pmfExp_ternary_eq_prob_one_sub_prob_neg_one
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (μ : PMF α) (x : α → ℝ)
+    (hx : ∀ a, x a = 1 ∨ x a = 0 ∨ x a = -1) :
+    pmfExp μ x =
+      pmfProb μ (fun a => x a = 1) -
+        pmfProb μ (fun a => x a = -1) := by
+  classical
+  have hpoint :
+      x =
+        fun a =>
+          (if x a = 1 then (1 : ℝ) else 0) -
+            (if x a = -1 then (1 : ℝ) else 0) := by
+    funext a
+    rcases hx a with hpos | hrest
+    · norm_num [hpos]
+    · rcases hrest with hzero | hneg
+      · simp [hzero]
+      · norm_num [hneg]
+  calc
+    pmfExp μ x =
+        pmfExp μ
+          (fun a =>
+            (if x a = 1 then (1 : ℝ) else 0) -
+              (if x a = -1 then (1 : ℝ) else 0)) := by
+          exact congrArg (fun y => pmfExp μ y) hpoint
+    _ =
+        pmfExp μ (fun a => if x a = 1 then (1 : ℝ) else 0) -
+          pmfExp μ (fun a => if x a = -1 then (1 : ℝ) else 0) := by
+          rw [pmfExp_sub]
+    _ =
+        pmfProb μ (fun a => x a = 1) -
+          pmfProb μ (fun a => x a = -1) := rfl
+
 @[simp] theorem pmfExp_neg {α : Type*} [Fintype α] [DecidableEq α]
     (μ : PMF α) (f : α → ℝ) :
     pmfExp μ (fun a => - f a) = - pmfExp μ f := by
@@ -2036,6 +2074,29 @@ theorem pmfProb_pos_of_mass {α : Type*} [Fintype α] [DecidableEq α]
     exact Finset.single_le_sum hnonneg (Finset.mem_univ a₀)
   rw [hterm] at hle
   exact lt_of_lt_of_le hmass hle
+
+/-- A single event atom lower-bounds the finite PMF probability of the event. -/
+theorem pmf_apply_toReal_le_pmfProb_of_mem {α : Type*}
+    [Fintype α] [DecidableEq α]
+    (μ : PMF α) (p : α → Prop) [DecidablePred p] (a₀ : α)
+    (hp : p a₀) :
+    (μ a₀).toReal ≤ pmfProb μ p := by
+  classical
+  unfold pmfProb pmfExp
+  have hnonneg :
+      ∀ a ∈ (Finset.univ : Finset α),
+        0 ≤ (μ a).toReal * if p a then (1 : ℝ) else 0 := by
+    intro a _
+    refine mul_nonneg ENNReal.toReal_nonneg ?_
+    by_cases hpa : p a <;> simp [hpa]
+  have hterm :
+      (μ a₀).toReal * (if p a₀ then (1 : ℝ) else 0) = (μ a₀).toReal := by
+    simp [hp]
+  have hle :
+      (μ a₀).toReal * (if p a₀ then (1 : ℝ) else 0) ≤
+        ∑ a : α, (μ a).toReal * (if p a then (1 : ℝ) else 0) := by
+    exact Finset.single_le_sum hnonneg (Finset.mem_univ a₀)
+  simpa [hterm] using hle
 
 /--
 If a target atom is identified with the probability of a finite preimage event,
@@ -3134,6 +3195,200 @@ theorem pmfExp_finset_sum {α ι : Type*} [Fintype α] [DecidableEq α]
           rw [Finset.mul_sum]
     _ = ∑ i ∈ s, ∑ a : α, (μ a).toReal * f i a := by
           exact Finset.sum_comm
+
+/-- Increment from rating `k` to rating `k + 1`, with a harmless zero value
+outside the intended range. -/
+private noncomputable def finTailCoeff {n : ℕ}
+    (score : Fin (n + 1) → ℝ) (k : ℕ) : ℝ :=
+  if hk : k < n then
+    score ⟨k + 1, Nat.succ_lt_succ hk⟩ -
+      score ⟨k, Nat.lt_trans hk (Nat.lt_succ_self n)⟩
+  else 0
+
+/-- The `k + 1` upper-tail threshold, with a harmless bottom value outside the
+intended range. -/
+private def finTailThreshold {n : ℕ} (k : ℕ) : Fin (n + 1) :=
+  if hk : k < n then ⟨k + 1, Nat.succ_lt_succ hk⟩ else 0
+
+private theorem finTailCoeff_of_lt {n : ℕ} (score : Fin (n + 1) → ℝ)
+    {k : ℕ} (hk : k < n) :
+    finTailCoeff score k =
+      score ⟨k + 1, Nat.succ_lt_succ hk⟩ -
+        score ⟨k, Nat.lt_trans hk (Nat.lt_succ_self n)⟩ := by
+  simp [finTailCoeff, hk]
+
+private theorem finTailThreshold_of_lt {n : ℕ} {k : ℕ} (hk : k < n) :
+    finTailThreshold (n := n) k = ⟨k + 1, Nat.succ_lt_succ hk⟩ := by
+  simp [finTailThreshold, hk]
+
+/-- Pointwise telescoping decomposition of an increasing ordinal score on
+`Fin (n + 1)` into upper-tail indicators. -/
+private theorem fin_tail_score_eq_score_zero_add_sum {n : ℕ}
+    (score : Fin (n + 1) → ℝ) (r : Fin (n + 1)) :
+    score r =
+      score 0 + ∑ k ∈ Finset.range n,
+        if k < r.val then finTailCoeff score k else 0 := by
+  let fNat : ℕ → ℝ := fun k =>
+    if hk : k < n + 1 then score ⟨k, hk⟩ else 0
+  have htel := Finset.sum_range_sub fNat r.val
+  have hr_le_n : r.val ≤ n := Nat.lt_succ_iff.mp r.isLt
+  have hfilter :
+      (Finset.range n).filter (fun k => k < r.val) = Finset.range r.val := by
+    ext k
+    constructor
+    · intro hk
+      exact Finset.mem_range.mpr (Finset.mem_filter.mp hk).2
+    · intro hk
+      have hk_lt_r : k < r.val := Finset.mem_range.mp hk
+      have hk_lt_n : k < n := Nat.lt_of_lt_of_le hk_lt_r hr_le_n
+      exact Finset.mem_filter.mpr ⟨Finset.mem_range.mpr hk_lt_n, hk_lt_r⟩
+  have hsum_filter :
+      (∑ k ∈ Finset.range n, if k < r.val then finTailCoeff score k else 0) =
+        ∑ k ∈ Finset.range r.val, finTailCoeff score k := by
+    calc
+      (∑ k ∈ Finset.range n, if k < r.val then finTailCoeff score k else 0)
+          = ∑ k ∈ (Finset.range n).filter (fun k => k < r.val),
+              finTailCoeff score k := by
+            rw [Finset.sum_filter]
+      _ = ∑ k ∈ Finset.range r.val, finTailCoeff score k := by
+            rw [hfilter]
+  have hcoeff_sum :
+      (∑ k ∈ Finset.range r.val, finTailCoeff score k) =
+        ∑ k ∈ Finset.range r.val, (fNat (k + 1) - fNat k) := by
+    refine Finset.sum_congr rfl ?_
+    intro k hk
+    have hk_lt_r : k < r.val := Finset.mem_range.mp hk
+    have hk_lt_n : k < n := Nat.lt_of_lt_of_le hk_lt_r hr_le_n
+    have hk_succ_lt : k + 1 < n + 1 := Nat.succ_lt_succ hk_lt_n
+    have hk_lt_succ : k < n + 1 := Nat.lt_trans hk_lt_n (Nat.lt_succ_self n)
+    rw [finTailCoeff_of_lt score hk_lt_n]
+    dsimp [fNat]
+    rw [dif_pos hk_succ_lt, dif_pos hk_lt_succ]
+  have hr_f : fNat r.val = score r := by
+    dsimp [fNat]
+    simp [r.isLt]
+  have hzero_f : fNat 0 = score 0 := by
+    simp [fNat]
+  have hsum_eq :
+      (∑ k ∈ Finset.range n, if k < r.val then finTailCoeff score k else 0) =
+        score r - score 0 := by
+    rw [hsum_filter, hcoeff_sum, htel, hr_f, hzero_f]
+  linarith
+
+/-- Finite ordinal expectation as a base score plus increments weighted by
+upper-tail probabilities. -/
+private theorem pmfExp_fin_tail_decomposition {n : ℕ}
+    (μ : PMF (Fin (n + 1))) (score : Fin (n + 1) → ℝ) :
+    pmfExp μ score =
+      score 0 + ∑ k ∈ Finset.range n,
+        finTailCoeff score k *
+          pmfProb μ (fun r : Fin (n + 1) =>
+            finTailThreshold (n := n) k ≤ r) := by
+  classical
+  calc
+    pmfExp μ score =
+        pmfExp μ (fun r : Fin (n + 1) =>
+          score 0 + ∑ k ∈ Finset.range n,
+            if k < r.val then finTailCoeff score k else 0) := by
+          refine pmfExp_congr μ ?_
+          intro r
+          exact fin_tail_score_eq_score_zero_add_sum score r
+    _ = score 0 +
+        pmfExp μ (fun r : Fin (n + 1) =>
+          ∑ k ∈ Finset.range n,
+            if k < r.val then finTailCoeff score k else 0) := by
+          rw [pmfExp_add, pmfExp_const]
+    _ = score 0 + ∑ k ∈ Finset.range n,
+        pmfExp μ (fun r : Fin (n + 1) =>
+          if k < r.val then finTailCoeff score k else 0) := by
+          rw [pmfExp_finset_sum]
+    _ = score 0 + ∑ k ∈ Finset.range n,
+        finTailCoeff score k *
+          pmfProb μ (fun r : Fin (n + 1) =>
+            finTailThreshold (n := n) k ≤ r) := by
+          refine congrArg (fun x => score 0 + x) ?_
+          refine Finset.sum_congr rfl ?_
+          intro k hk_mem
+          have hk : k < n := Finset.mem_range.mp hk_mem
+          have hthreshold :
+              finTailThreshold (n := n) k =
+                (⟨k + 1, Nat.succ_lt_succ hk⟩ : Fin (n + 1)) :=
+            finTailThreshold_of_lt hk
+          calc
+            pmfExp μ (fun r : Fin (n + 1) =>
+                if k < r.val then finTailCoeff score k else 0)
+                =
+                pmfExp μ (fun r : Fin (n + 1) =>
+                  finTailCoeff score k *
+                    (if finTailThreshold (n := n) k ≤ r then (1 : ℝ) else 0)) := by
+                  refine pmfExp_congr μ ?_
+                  intro r
+                  have hevent :
+                      (finTailThreshold (n := n) k ≤ r) ↔ k < r.val := by
+                    rw [hthreshold]
+                    change k + 1 ≤ r.val ↔ k < r.val
+                    exact Nat.succ_le_iff
+                  by_cases hkr : k < r.val
+                  · have htail : finTailThreshold (n := n) k ≤ r := hevent.2 hkr
+                    simp [hkr, htail]
+                  · have htail : ¬ finTailThreshold (n := n) k ≤ r :=
+                      fun hle => hkr (hevent.1 hle)
+                    simp [hkr, htail]
+            _ = finTailCoeff score k *
+                pmfProb μ (fun r : Fin (n + 1) =>
+                  finTailThreshold (n := n) k ≤ r) := by
+                  rw [pmfExp_const_mul]
+                  rfl
+
+private theorem finTailCoeff_nonneg_of_monotone {n : ℕ}
+    {score : Fin (n + 1) → ℝ} (hmono : Monotone score)
+    {k : ℕ} (hk : k < n) :
+    0 ≤ finTailCoeff score k := by
+  rw [finTailCoeff_of_lt score hk]
+  have hle :
+      score ⟨k, Nat.lt_trans hk (Nat.lt_succ_self n)⟩ ≤
+        score ⟨k + 1, Nat.succ_lt_succ hk⟩ := by
+    apply hmono
+    change k ≤ k + 1
+    exact Nat.le_succ k
+  linarith
+
+/--
+Finite first-order stochastic dominance for ordinal ratings.  If every
+upper-tail probability under `lo` is bounded by the corresponding upper-tail
+probability under `hi`, then every monotone real score has weakly smaller
+finite expectation under `lo`.
+-/
+theorem pmfExp_le_pmfExp_of_fin_tail_prob_le
+    {m : ℕ} (lo hi : PMF (Fin m)) (score : Fin m → ℝ)
+    (hmono : Monotone score)
+    (htail : ∀ t : Fin m,
+      pmfProb lo (fun r => t ≤ r) ≤ pmfProb hi (fun r => t ≤ r)) :
+    pmfExp lo score ≤ pmfExp hi score := by
+  classical
+  cases m with
+  | zero =>
+      have hmass := pmfToRealSum lo
+      simp at hmass
+  | succ n =>
+      rw [pmfExp_fin_tail_decomposition lo score,
+        pmfExp_fin_tail_decomposition hi score]
+      have hsum :
+          (∑ k ∈ Finset.range n,
+              finTailCoeff score k *
+                pmfProb lo (fun r : Fin (n + 1) =>
+                  finTailThreshold (n := n) k ≤ r)) ≤
+            ∑ k ∈ Finset.range n,
+              finTailCoeff score k *
+                pmfProb hi (fun r : Fin (n + 1) =>
+                  finTailThreshold (n := n) k ≤ r) := by
+        refine Finset.sum_le_sum ?_
+        intro k hk_mem
+        have hk : k < n := Finset.mem_range.mp hk_mem
+        exact mul_le_mul_of_nonneg_left
+          (htail (finTailThreshold (n := n) k))
+          (finTailCoeff_nonneg_of_monotone hmono hk)
+      simpa [add_comm] using add_le_add_left hsum (score 0)
 
 /--
 The capped function `min 1` is expectation-subadditive in the only form needed

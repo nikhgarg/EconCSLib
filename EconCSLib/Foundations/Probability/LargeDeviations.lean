@@ -32,18 +32,23 @@ This file formalizes the reusable algebra around steps 2 and 3.
 
 - `logDecay`
 - `HasExponentialRate`
+- `HasExtendedExponentialRate`
 - `ExponentialRateCertificate`
 - `HasExpUpperBoundWithConst`
 - `HasExpLowerBoundWithConst`
 - `ExponentialRateCertificate.hasExpUpperBoundWithConst_of_lt`
 - `ExponentialRateCertificate.hasExpLowerBoundWithConst_of_gt`
+- `ExponentialRateCertificate.of_eventually_const_sandwich`
 - `finite_weighted_sum_hasExpUpperBoundWithConst`
 - `finite_weighted_sum_hasExpUpperBoundWithConst_of_rate_certificates`
 - `finite_weighted_sum_hasExpLowerBoundWithConst_of_component`
 - `finite_weighted_sum_hasExpLowerBoundWithConst_of_rate_certificate_component`
 - `FiniteErrorRateCertificate`
+- `FiniteErrorRateCertificate.aggregateError_hasExponentialRate_of_dominating_subfamily`
+- `FiniteErrorRateEnvelopeCertificate`
 - `PairwiseErrorUpperBoundCertificate`
 - `PairwiseErrorRateCertificate`
+- `PairwiseErrorRateEnvelopeCertificate`
 -/
 
 /-- Paper-style negative normalized log sequence, `- log(p n) / n`. -/
@@ -53,6 +58,32 @@ def logDecay (p : ℕ → ℝ) (n : ℕ) : ℝ :=
 /-- `p n` has exponential decay rate `rate`. -/
 def HasExponentialRate (p : ℕ → ℝ) (rate : ℝ) : Prop :=
   Tendsto (logDecay p) atTop (nhds rate)
+
+/--
+Extended paper-style exponential rate.  A finite real rate is the usual
+`HasExponentialRate`; `⊤` records the boundary case where the error
+probability is eventually zero, i.e. has infinite exponential rate in the
+source convention.
+-/
+inductive HasExtendedExponentialRate (p : ℕ → ℝ) : WithTop ℝ → Prop
+  | finite {rate : ℝ} (h : HasExponentialRate p rate) :
+      HasExtendedExponentialRate p rate
+  | infinite (hzero : ∀ᶠ n in atTop, p n = 0) :
+      HasExtendedExponentialRate p ⊤
+
+namespace HasExtendedExponentialRate
+
+/--
+An extended-rate statement at a finite real rate is exactly the ordinary
+real-valued exponential-rate statement.
+-/
+theorem to_finite {p : ℕ → ℝ} {rate : ℝ}
+    (h : HasExtendedExponentialRate p (rate : WithTop ℝ)) :
+    HasExponentialRate p rate := by
+  cases h with
+  | finite hfinite => exact hfinite
+
+end HasExtendedExponentialRate
 
 /--
 Certificate that a nonnegative error probability sequence has a named
@@ -192,6 +223,55 @@ theorem weaken_rate {p : ℕ → ℝ} {rate weakRate : ℝ}
       (neg_nonpos.mpr (Nat.cast_nonneg n))
   exact (mul_le_mul_of_nonneg_left hexp hcpos.le).trans hn
 
+/--
+Compose an exponential lower bound with the deterministic floor scale
+`floor (k * g)`.  If `p_n` is lower bounded at rate `rate`, then
+`p_{floor(k g)}` is lower bounded at every rate strictly above `g * rate`.
+-/
+theorem comp_nat_floor_mul_const
+    {p : ℕ → ℝ} {rate g targetRate : ℝ}
+    (h : HasExpLowerBoundWithConst p rate)
+    (hg : 0 < g)
+    (htarget : g * rate < targetRate) :
+    HasExpLowerBoundWithConst
+      (fun k : ℕ => p (Nat.floor ((k : ℝ) * g))) targetRate := by
+  rcases h with ⟨c, hcpos, hbound⟩
+  have hfloor_atTop :
+      Tendsto (fun k : ℕ => Nat.floor ((k : ℝ) * g)) atTop atTop :=
+    EconCSLib.Math.tendsto_nat_floor_mul_const_atTop hg
+  have hbound_floor :
+      ∀ᶠ k : ℕ in atTop,
+        c * Real.exp (-(Nat.floor ((k : ℝ) * g) : ℝ) * rate) ≤
+          p (Nat.floor ((k : ℝ) * g)) :=
+    hfloor_atTop.eventually hbound
+  have hratio :
+      Tendsto
+        (fun k : ℕ => ((Nat.floor ((k : ℝ) * g) : ℝ) / (k : ℝ)) * rate)
+        atTop (nhds (g * rate)) := by
+    simpa [mul_comm, mul_left_comm, mul_assoc] using
+      (EconCSLib.Math.tendsto_nat_floor_mul_const_div_nat hg.le).mul_const rate
+  have hratio_event :
+      ∀ᶠ k : ℕ in atTop,
+        ((Nat.floor ((k : ℝ) * g) : ℝ) / (k : ℝ)) * rate < targetRate :=
+    hratio.eventually (Iio_mem_nhds htarget)
+  refine ⟨c, hcpos, ?_⟩
+  filter_upwards [hbound_floor, hratio_event, Filter.eventually_gt_atTop 0]
+    with k hbound_k hratio_k hk
+  have hk_pos : 0 < (k : ℝ) := by exact_mod_cast hk
+  have hrate_lt :
+      (Nat.floor ((k : ℝ) * g) : ℝ) * rate < (k : ℝ) * targetRate := by
+    have hmul :=
+      mul_lt_mul_of_pos_right hratio_k hk_pos
+    field_simp [hk_pos.ne'] at hmul
+    simpa [mul_comm, mul_left_comm, mul_assoc] using hmul
+  have hexp_le :
+      Real.exp (-(k : ℝ) * targetRate) ≤
+        Real.exp (-(Nat.floor ((k : ℝ) * g) : ℝ) * rate) := by
+    apply Real.exp_le_exp.mpr
+    linarith
+  exact
+    (mul_le_mul_of_nonneg_left hexp_le hcpos.le).trans hbound_k
+
 theorem const_mul {p : ℕ → ℝ} {rate c : ℝ}
     (h : HasExpLowerBoundWithConst p rate) (hc : 0 < c) :
     HasExpLowerBoundWithConst (fun n => c * p n) rate := by
@@ -202,6 +282,41 @@ theorem const_mul {p : ℕ → ℝ} {rate c : ℝ}
       c * (C * Real.exp (-(n : ℝ) * rate)) ≤ c * p n :=
     mul_le_mul_of_nonneg_left hn hc.le
   simpa [mul_assoc, mul_left_comm, mul_comm] using hmain
+
+/-- Products of two lower exponential bounds have the summed rate. -/
+theorem mul {p q : ℕ → ℝ} {rateP rateQ : ℝ}
+    (hp : HasExpLowerBoundWithConst p rateP)
+    (hq : HasExpLowerBoundWithConst q rateQ) :
+    HasExpLowerBoundWithConst
+      (fun n : ℕ => p n * q n) (rateP + rateQ) := by
+  rcases hp with ⟨cP, hcPpos, hp_bound⟩
+  rcases hq with ⟨cQ, hcQpos, hq_bound⟩
+  refine ⟨cP * cQ, mul_pos hcPpos hcQpos, ?_⟩
+  filter_upwards [hp_bound, hq_bound] with n hp_n hq_n
+  have hleftP_pos : 0 < cP * Real.exp (-(n : ℝ) * rateP) :=
+    mul_pos hcPpos (Real.exp_pos _)
+  have hp_nonneg : 0 ≤ p n :=
+    (le_trans hleftP_pos.le hp_n)
+  have hleftQ_pos : 0 < cQ * Real.exp (-(n : ℝ) * rateQ) :=
+    mul_pos hcQpos (Real.exp_pos _)
+  calc
+    (cP * cQ) * Real.exp (-(n : ℝ) * (rateP + rateQ))
+        =
+        (cP * Real.exp (-(n : ℝ) * rateP)) *
+          (cQ * Real.exp (-(n : ℝ) * rateQ)) := by
+          have hexp :
+              Real.exp (-(n : ℝ) * (rateP + rateQ)) =
+                Real.exp (-(n : ℝ) * rateP) *
+                  Real.exp (-(n : ℝ) * rateQ) := by
+            rw [← Real.exp_add]
+            congr 1
+            ring
+          rw [hexp]
+          ring
+    _ ≤ p n * (cQ * Real.exp (-(n : ℝ) * rateQ)) :=
+        mul_le_mul_of_nonneg_right hp_n hleftQ_pos.le
+    _ ≤ p n * q n :=
+        mul_le_mul_of_nonneg_left hq_n hp_nonneg
 
 /--
 An eventual polynomially corrected geometric lower bound implies every
@@ -492,6 +607,122 @@ theorem tendsto_zero_of_pos_rate
     (h.hasExpUpperBoundWithConst_of_lt hhalf_lt).tendsto_zero_of_pos_rate
       hhalf_pos
 
+/--
+If a certified exact-rate sequence is eventually bounded above at exponential
+rate `upperRate`, then that upper-bound rate cannot exceed the exact rate.
+-/
+theorem rate_ge_of_expUpperBoundWithConst
+    {p : ℕ → ℝ} {rate upperRate : ℝ}
+    (h : ExponentialRateCertificate p rate)
+    (hupper : HasExpUpperBoundWithConst p upperRate) :
+    upperRate ≤ rate := by
+  rcases hupper with ⟨C, hCpos, hCevent⟩
+  have hdiv_tendsto :
+      Tendsto (fun n : ℕ => Real.log C / (n : ℝ)) atTop (nhds 0) :=
+    tendsto_const_div_atTop_nhds_zero_nat (Real.log C)
+  have hleft_tendsto :
+      Tendsto (fun n : ℕ => upperRate - Real.log C / (n : ℝ))
+        atTop (nhds upperRate) := by
+    simpa using tendsto_const_nhds.sub hdiv_tendsto
+  refine le_of_tendsto_of_tendsto hleft_tendsto h.has_rate ?_
+  filter_upwards [h.eventually_pos, hCevent, eventually_gt_atTop 0]
+    with n hp_pos hC hn
+  have hnreal_pos : 0 < (n : ℝ) := by exact_mod_cast hn
+  have hlog_le :
+      Real.log (p n) ≤ Real.log C + (-(n : ℝ) * upperRate) := by
+    have hlog_bound := Real.log_le_log hp_pos hC.2
+    rw [Real.log_mul hCpos.ne' (Real.exp_pos _).ne',
+      Real.log_exp] at hlog_bound
+    exact hlog_bound
+  have hdiv_le :
+      Real.log (p n) / (n : ℝ) ≤
+        (Real.log C + (-(n : ℝ) * upperRate)) / (n : ℝ) :=
+    div_le_div_of_nonneg_right hlog_le hnreal_pos.le
+  have hupper_norm :
+      -((Real.log C + (-(n : ℝ) * upperRate)) / (n : ℝ)) =
+        upperRate - Real.log C / (n : ℝ) := by
+    field_simp [hnreal_pos.ne']
+    ring
+  have hlogDecay_eq :
+      logDecay p n = -(Real.log (p n) / (n : ℝ)) := by
+    dsimp [logDecay]
+    field_simp [hnreal_pos.ne']
+  rw [← hupper_norm, hlogDecay_eq]
+  exact neg_le_neg hdiv_le
+
+/--
+Build an exact exponential-rate certificate from upper bounds at every
+strictly smaller rate and lower bounds at every strictly larger rate.
+-/
+theorem of_expUpperLowerBounds
+    {p : ℕ → ℝ} {rate : ℝ}
+    (hupper : ∀ targetRate, targetRate < rate →
+      HasExpUpperBoundWithConst p targetRate)
+    (hlower : ∀ targetRate, rate < targetRate →
+      HasExpLowerBoundWithConst p targetRate) :
+    ExponentialRateCertificate p rate := by
+  have hpos : ∀ᶠ n in atTop, 0 < p n := by
+    rcases hlower (rate + 1) (by linarith) with ⟨c, hcpos, hc⟩
+    filter_upwards [hc] with n hn
+    have hleft_pos : 0 < c * Real.exp (-(n : ℝ) * (rate + 1)) :=
+      mul_pos hcpos (Real.exp_pos _)
+    exact lt_of_lt_of_le hleft_pos hn
+  exact
+    { eventually_pos := hpos
+      has_rate := hasExponentialRate_of_expUpperLowerBounds
+        hpos hupper hlower }
+
+/--
+Constant-factor equivalent error probabilities have the same exact
+exponential rate.  This packages the common large-deviation step where a
+paper replaces one event probability by another up to fixed positive factors,
+for example after symmetrizing pairwise comparison errors.
+-/
+theorem of_eventually_const_sandwich
+    {p q : ℕ → ℝ} {rate lower upper : ℝ}
+    (h : ExponentialRateCertificate q rate)
+    (hlower : 0 < lower) (hupper : 0 < upper)
+    (hsandwich : ∀ᶠ n in atTop,
+      lower * q n ≤ p n ∧ p n ≤ upper * q n) :
+    ExponentialRateCertificate p rate := by
+  have hpos : ∀ᶠ n in atTop, 0 < p n := by
+    filter_upwards [h.eventually_pos, hsandwich] with n hqpos hsandwich_n
+    exact lt_of_lt_of_le (mul_pos hlower hqpos) hsandwich_n.1
+  refine
+    { eventually_pos := hpos
+      has_rate := ?_ }
+  refine hasExponentialRate_of_expUpperLowerBounds hpos ?_ ?_
+  · intro targetRate htarget
+    rcases h.hasExpUpperBoundWithConst_of_lt htarget with
+      ⟨C, hCpos, hCevent⟩
+    refine HasExpUpperBoundWithConst.of_eventually_le
+      (C := (upper + 1) * C) (mul_pos (by linarith) hCpos) ?_
+    filter_upwards [hpos, hsandwich, hCevent] with n hp_pos hsandwich_n hC_n
+    refine ⟨hp_pos.le, ?_⟩
+    have hq_bound :
+        upper * q n ≤ upper * (C * Real.exp (-(n : ℝ) * targetRate)) :=
+      mul_le_mul_of_nonneg_left hC_n.2 hupper.le
+    have hcoef :
+        upper * C ≤ (upper + 1) * C :=
+      mul_le_mul_of_nonneg_right (by linarith) hCpos.le
+    calc
+      p n ≤ upper * q n := hsandwich_n.2
+      _ ≤ upper * (C * Real.exp (-(n : ℝ) * targetRate)) := hq_bound
+      _ = (upper * C) * Real.exp (-(n : ℝ) * targetRate) := by ring
+      _ ≤ ((upper + 1) * C) * Real.exp (-(n : ℝ) * targetRate) := by
+        exact mul_le_mul_of_nonneg_right hcoef (Real.exp_pos _).le
+  · intro targetRate htarget
+    rcases h.hasExpLowerBoundWithConst_of_gt htarget with
+      ⟨c, hcpos, hcevent⟩
+    refine HasExpLowerBoundWithConst.of_eventually_ge
+      (c := lower * c) (mul_pos hlower hcpos) ?_
+    filter_upwards [hsandwich, hcevent] with n hsandwich_n hc_n
+    calc
+      (lower * c) * Real.exp (-(n : ℝ) * targetRate)
+          = lower * (c * Real.exp (-(n : ℝ) * targetRate)) := by ring
+      _ ≤ lower * q n := mul_le_mul_of_nonneg_left hc_n hlower.le
+      _ ≤ p n := hsandwich_n.1
+
 end ExponentialRateCertificate
 
 theorem finite_weighted_sum_hasExpUpperBoundWithConst
@@ -615,6 +846,105 @@ theorem finite_weighted_sum_hasExpUpperBoundWithConst_of_rate_certificates
     hweight
     (fun i => (hcert i).hasExpUpperBoundWithConst_of_lt (hrate i))
     (fun _ => le_rfl)
+
+/--
+If a certified exact-rate sequence is eventually bounded by a finite sum of
+certified exact-rate components, then at least one component has rate no larger
+than the ambient sequence. This is the rate-theoretic core behind finite
+union-bound dominance arguments.
+-/
+theorem exists_component_rate_le_of_eventually_le_finite_sum
+    {ι : Type*} [Fintype ι] [Nonempty ι]
+    {p : ℕ → ℝ} {q : ι → ℕ → ℝ} {rateP : ℝ} {rate : ι → ℝ}
+    (hp : ExponentialRateCertificate p rateP)
+    (hq : ∀ i : ι, ExponentialRateCertificate (q i) (rate i))
+    (hupper : ∀ᶠ n in atTop, p n ≤ ∑ i : ι, q i n) :
+    ∃ i : ι, rate i ≤ rateP := by
+  classical
+  by_contra hnone
+  have hlt : ∀ i : ι, rateP < rate i := by
+    intro i
+    exact not_le.mp (fun hi => hnone ⟨i, hi⟩)
+  let minRate : ℝ := (Finset.univ : Finset ι).inf' Finset.univ_nonempty rate
+  have hrateP_lt_min : rateP < minRate := by
+    rw [Finset.lt_inf'_iff]
+    intro i _
+    exact hlt i
+  let targetRate : ℝ := (rateP + minRate) / 2
+  have hrateP_lt_target : rateP < targetRate := by
+    dsimp [targetRate]
+    linarith
+  have htarget_lt_min : targetRate < minRate := by
+    dsimp [targetRate]
+    linarith
+  have htarget_lt_rate : ∀ i : ι, targetRate < rate i := by
+    intro i
+    have hmin_le : minRate ≤ rate i := by
+      dsimp [minRate]
+      exact Finset.inf'_le rate (Finset.mem_univ i)
+    exact lt_of_lt_of_le htarget_lt_min hmin_le
+  have hsum_upper :
+      HasExpUpperBoundWithConst
+        (fun n : ℕ => ∑ i : ι, q i n) targetRate := by
+    simpa using
+      finite_weighted_sum_hasExpUpperBoundWithConst_of_rate_certificates
+        (ι := ι) (p := q) (weight := fun _ : ι => (1 : ℝ))
+        (rate := rate) (targetRate := targetRate)
+        (fun _ => by norm_num)
+        hq htarget_lt_rate
+  have hp_upper :
+      HasExpUpperBoundWithConst p targetRate := by
+    rcases hsum_upper with ⟨C, hCpos, hCevent⟩
+    refine HasExpUpperBoundWithConst.of_eventually_le hCpos ?_
+    filter_upwards [hp.eventually_pos, hupper, hCevent] with n hp_pos hp_le hC_n
+    exact ⟨hp_pos.le, hp_le.trans hC_n.2⟩
+  have htarget_le_rateP := hp.rate_ge_of_expUpperBoundWithConst hp_upper
+  linarith
+
+/--
+Exact rate for an event probability squeezed between one certified component
+and the finite sum of certified components.  This packages the common
+large-deviation pattern after an event-inclusion or union-bound reduction.
+-/
+theorem hasExponentialRate_of_event_between_component_and_finite_sum
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {p : ℕ → ℝ} {q : ι → ℕ → ℝ} {rate : ι → ℝ}
+    (hcert : ∀ i : ι, ExponentialRateCertificate (q i) (rate i))
+    (iMin : ι)
+    (hmin : ∀ i : ι, rate iMin ≤ rate i)
+    (hupper : ∀ᶠ n in atTop, 0 ≤ p n ∧ p n ≤ ∑ i : ι, q i n)
+    (hlower : ∀ᶠ n in atTop, q iMin n ≤ p n) :
+    HasExponentialRate p (rate iMin) := by
+  have hpos : ∀ᶠ n in atTop, 0 < p n := by
+    rcases (hcert iMin).hasExpLowerBoundWithConst_of_gt
+        (by linarith : rate iMin < rate iMin + 1) with
+      ⟨c, hcpos, hc⟩
+    filter_upwards [hc, hlower] with n hc_n hlower_n
+    exact lt_of_lt_of_le
+      (mul_pos hcpos (Real.exp_pos (-(n : ℝ) * (rate iMin + 1))))
+      (hc_n.trans hlower_n)
+  refine hasExponentialRate_of_expUpperLowerBounds hpos ?_ ?_
+  · intro targetRate htarget
+    have hsum_upper :
+        HasExpUpperBoundWithConst
+          (fun n : ℕ => ∑ i : ι, q i n) targetRate := by
+      simpa using
+        finite_weighted_sum_hasExpUpperBoundWithConst_of_rate_certificates
+          (ι := ι) (p := q) (weight := fun _ : ι => (1 : ℝ))
+          (rate := rate) (targetRate := targetRate)
+          (fun _ => by norm_num)
+          hcert
+          (fun i => lt_of_lt_of_le htarget (hmin i))
+    rcases hsum_upper with ⟨C, hCpos, hCevent⟩
+    refine HasExpUpperBoundWithConst.of_eventually_le hCpos ?_
+    filter_upwards [hupper, hCevent] with n hp hC_n
+    exact ⟨hp.1, hp.2.trans hC_n.2⟩
+  · intro targetRate htarget
+    rcases (hcert iMin).hasExpLowerBoundWithConst_of_gt htarget with
+      ⟨c, hcpos, hc⟩
+    refine HasExpLowerBoundWithConst.of_eventually_ge hcpos ?_
+    filter_upwards [hc, hlower] with n hc_n hlower_n
+    exact hc_n.trans hlower_n
 
 /--
 If every component in a finite weighted sum is eventually zero, then the
@@ -752,6 +1082,332 @@ theorem finite_weighted_sum_hasExponentialRate_of_min_component_cert_or_eventual
         (hmin.hasExpLowerBoundWithConst_of_gt htarget)
 
 /--
+Automatic finite weighted-sum dichotomy for mixed exact/eventually-zero
+components.  If every component either has some exact finite exponential rate
+or is eventually zero, then a nonnegative finite weighted aggregate with
+positive weights is either eventually zero, or has the exact rate of the
+minimum finite-rate component.
+-/
+theorem finite_weighted_sum_hasExponentialRate_or_eventually_zero_of_cert_or_eventually_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {p : ι → ℕ → ℝ} {weight : ι → ℝ}
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hweight_pos : ∀ i, 0 < weight i)
+    (hcase :
+      ∀ i : ι,
+        (∃ rate_i : ℝ,
+          ExponentialRateCertificate (p i) rate_i) ∨
+          (∀ᶠ n in atTop, p i n = 0)) :
+    (∃ minRate : ℝ,
+      HasExponentialRate
+        (fun n => ∑ i : ι, weight i * p i n) minRate) ∨
+      (∀ᶠ n in atTop, (∑ i : ι, weight i * p i n) = 0) := by
+  classical
+  by_cases hfinite_exists :
+      ∃ i : ι, ∃ rate_i : ℝ,
+        ExponentialRateCertificate (p i) rate_i
+  · let finiteSet : Finset ι :=
+      (Finset.univ : Finset ι).filter
+        (fun i => ∃ rate_i : ℝ,
+          ExponentialRateCertificate (p i) rate_i)
+    have hfiniteSet_nonempty : finiteSet.Nonempty := by
+      rcases hfinite_exists with ⟨i, hcert⟩
+      exact ⟨i, by simp [finiteSet, hcert]⟩
+    let rate : ι → ℝ := fun i =>
+      if h : ∃ rate_i : ℝ,
+          ExponentialRateCertificate (p i) rate_i then
+        Classical.choose h
+      else
+        0
+    rcases Finset.exists_mem_eq_inf'
+        (s := finiteSet) hfiniteSet_nonempty rate with
+      ⟨iMin, hiMin_mem, hmin_eq⟩
+    have hiMin_has :
+        ∃ rate_i : ℝ, ExponentialRateCertificate (p iMin) rate_i := by
+      simpa [finiteSet] using hiMin_mem
+    let minRate : ℝ := rate iMin
+    have hmin_cert :
+        ExponentialRateCertificate (p iMin) minRate := by
+      dsimp [minRate, rate]
+      rw [dif_pos hiMin_has]
+      exact Classical.choose_spec hiMin_has
+    have hcase_ge :
+        ∀ i : ι,
+          (∃ rate_i : ℝ,
+            minRate ≤ rate_i ∧
+              ExponentialRateCertificate (p i) rate_i) ∨
+            (∀ᶠ n in atTop, p i n = 0) := by
+      intro i
+      rcases hcase i with hfinite | hzero
+      · left
+        let rate_i : ℝ := rate i
+        have hcert_i : ExponentialRateCertificate (p i) rate_i := by
+          dsimp [rate_i, rate]
+          rw [dif_pos hfinite]
+          exact Classical.choose_spec hfinite
+        have hi_mem : i ∈ finiteSet := by
+          simp [finiteSet, hfinite]
+        have hmin_le_rate : minRate ≤ rate_i := by
+          dsimp [minRate, rate_i]
+          rw [← hmin_eq]
+          exact Finset.inf'_le rate hi_mem
+        exact ⟨rate_i, hmin_le_rate, hcert_i⟩
+      · right
+        exact hzero
+    left
+    exact
+      ⟨minRate,
+        finite_weighted_sum_hasExponentialRate_of_min_component_cert_or_eventually_zero
+          (p := p) (weight := weight)
+          hweight_nonneg iMin (hweight_pos iMin) hmin_cert hcase_ge⟩
+  · right
+    have hzero_all :
+        ∀ i : ι, ∀ᶠ n in atTop, p i n = 0 := by
+      intro i
+      rcases hcase i with hfinite | hzero
+      · exact False.elim (hfinite_exists ⟨i, hfinite⟩)
+      · exact hzero
+    exact finite_weighted_sum_eventually_zero
+      (p := p) (weight := weight) hzero_all
+
+/--
+Minimizer-returning version of
+`finite_weighted_sum_hasExponentialRate_or_eventually_zero_of_cert_or_eventually_zero`.
+In the finite-rate branch it exposes a component whose certificate realizes
+the aggregate rate, together with the comparison data showing every other
+finite component has rate at least that minimum.
+-/
+theorem finite_weighted_sum_hasExponentialRate_with_min_component_or_eventually_zero_of_cert_or_eventually_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {p : ι → ℕ → ℝ} {weight : ι → ℝ}
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hweight_pos : ∀ i, 0 < weight i)
+    (hcase :
+      ∀ i : ι,
+        (∃ rate_i : ℝ,
+          ExponentialRateCertificate (p i) rate_i) ∨
+          (∀ᶠ n in atTop, p i n = 0)) :
+    (∃ iMin : ι, ∃ minRate : ℝ,
+      ExponentialRateCertificate (p iMin) minRate ∧
+        (∀ i : ι,
+          (∃ rate_i : ℝ,
+            minRate ≤ rate_i ∧
+              ExponentialRateCertificate (p i) rate_i) ∨
+            (∀ᶠ n in atTop, p i n = 0)) ∧
+        HasExponentialRate
+          (fun n => ∑ i : ι, weight i * p i n) minRate) ∨
+      (∀ᶠ n in atTop, (∑ i : ι, weight i * p i n) = 0) := by
+  classical
+  by_cases hfinite_exists :
+      ∃ i : ι, ∃ rate_i : ℝ,
+        ExponentialRateCertificate (p i) rate_i
+  · let finiteSet : Finset ι :=
+      (Finset.univ : Finset ι).filter
+        (fun i => ∃ rate_i : ℝ,
+          ExponentialRateCertificate (p i) rate_i)
+    have hfiniteSet_nonempty : finiteSet.Nonempty := by
+      rcases hfinite_exists with ⟨i, hcert⟩
+      exact ⟨i, by simp [finiteSet, hcert]⟩
+    let rate : ι → ℝ := fun i =>
+      if h : ∃ rate_i : ℝ,
+          ExponentialRateCertificate (p i) rate_i then
+        Classical.choose h
+      else
+        0
+    rcases Finset.exists_mem_eq_inf'
+        (s := finiteSet) hfiniteSet_nonempty rate with
+      ⟨iMin, hiMin_mem, hmin_eq⟩
+    have hiMin_has :
+        ∃ rate_i : ℝ, ExponentialRateCertificate (p iMin) rate_i := by
+      simpa [finiteSet] using hiMin_mem
+    let minRate : ℝ := rate iMin
+    have hmin_cert :
+        ExponentialRateCertificate (p iMin) minRate := by
+      dsimp [minRate, rate]
+      rw [dif_pos hiMin_has]
+      exact Classical.choose_spec hiMin_has
+    have hcase_ge :
+        ∀ i : ι,
+          (∃ rate_i : ℝ,
+            minRate ≤ rate_i ∧
+              ExponentialRateCertificate (p i) rate_i) ∨
+            (∀ᶠ n in atTop, p i n = 0) := by
+      intro i
+      rcases hcase i with hfinite | hzero
+      · left
+        let rate_i : ℝ := rate i
+        have hcert_i : ExponentialRateCertificate (p i) rate_i := by
+          dsimp [rate_i, rate]
+          rw [dif_pos hfinite]
+          exact Classical.choose_spec hfinite
+        have hi_mem : i ∈ finiteSet := by
+          simp [finiteSet, hfinite]
+        have hmin_le_rate : minRate ≤ rate_i := by
+          dsimp [minRate, rate_i]
+          rw [← hmin_eq]
+          exact Finset.inf'_le rate hi_mem
+        exact ⟨rate_i, hmin_le_rate, hcert_i⟩
+      · right
+        exact hzero
+    left
+    refine ⟨iMin, minRate, hmin_cert, hcase_ge, ?_⟩
+    exact
+      finite_weighted_sum_hasExponentialRate_of_min_component_cert_or_eventually_zero
+        (p := p) (weight := weight)
+        hweight_nonneg iMin (hweight_pos iMin) hmin_cert hcase_ge
+  · right
+    have hzero_all :
+        ∀ i : ι, ∀ᶠ n in atTop, p i n = 0 := by
+      intro i
+      rcases hcase i with hfinite | hzero
+      · exact False.elim (hfinite_exists ⟨i, hfinite⟩)
+      · exact hzero
+    exact finite_weighted_sum_eventually_zero
+      (p := p) (weight := weight) hzero_all
+
+/--
+Payload-carrying minimizer version of finite weighted-sum aggregation.  The
+`payload` predicate is ignored by the aggregation proof but preserved for the
+selected finite-rate component.  This is useful when a paper needs additional
+data about the pivotal component, such as a comparison certificate to another
+rate expression.
+-/
+theorem finite_weighted_sum_hasExponentialRate_with_min_component_payload_or_eventually_zero_of_cert_or_eventually_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {p : ι → ℕ → ℝ} {weight : ι → ℝ}
+    (payload : ι → ℝ → Prop)
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hweight_pos : ∀ i, 0 < weight i)
+    (hcase :
+      ∀ i : ι,
+        (∃ rate_i : ℝ,
+          ExponentialRateCertificate (p i) rate_i ∧
+            payload i rate_i) ∨
+          (∀ᶠ n in atTop, p i n = 0)) :
+    (∃ iMin : ι, ∃ minRate : ℝ,
+      ExponentialRateCertificate (p iMin) minRate ∧
+        payload iMin minRate ∧
+        (∀ i : ι,
+          (∃ rate_i : ℝ,
+            minRate ≤ rate_i ∧
+              ExponentialRateCertificate (p i) rate_i) ∨
+            (∀ᶠ n in atTop, p i n = 0)) ∧
+        HasExponentialRate
+          (fun n => ∑ i : ι, weight i * p i n) minRate) ∨
+      (∀ᶠ n in atTop, (∑ i : ι, weight i * p i n) = 0) := by
+  classical
+  by_cases hfinite_exists :
+      ∃ i : ι, ∃ rate_i : ℝ,
+        ExponentialRateCertificate (p i) rate_i ∧
+          payload i rate_i
+  · let finiteSet : Finset ι :=
+      (Finset.univ : Finset ι).filter
+        (fun i => ∃ rate_i : ℝ,
+          ExponentialRateCertificate (p i) rate_i ∧
+            payload i rate_i)
+    have hfiniteSet_nonempty : finiteSet.Nonempty := by
+      rcases hfinite_exists with ⟨i, hcert⟩
+      exact ⟨i, by simp [finiteSet, hcert]⟩
+    let rate : ι → ℝ := fun i =>
+      if h : ∃ rate_i : ℝ,
+          ExponentialRateCertificate (p i) rate_i ∧
+            payload i rate_i then
+        Classical.choose h
+      else
+        0
+    rcases Finset.exists_mem_eq_inf'
+        (s := finiteSet) hfiniteSet_nonempty rate with
+      ⟨iMin, hiMin_mem, hmin_eq⟩
+    have hiMin_has :
+        ∃ rate_i : ℝ,
+          ExponentialRateCertificate (p iMin) rate_i ∧
+            payload iMin rate_i := by
+      simpa [finiteSet] using hiMin_mem
+    let minRate : ℝ := rate iMin
+    have hmin_cert :
+        ExponentialRateCertificate (p iMin) minRate := by
+      dsimp [minRate, rate]
+      rw [dif_pos hiMin_has]
+      exact (Classical.choose_spec hiMin_has).1
+    have hmin_payload : payload iMin minRate := by
+      dsimp [minRate, rate]
+      rw [dif_pos hiMin_has]
+      exact (Classical.choose_spec hiMin_has).2
+    have hcase_ge :
+        ∀ i : ι,
+          (∃ rate_i : ℝ,
+            minRate ≤ rate_i ∧
+              ExponentialRateCertificate (p i) rate_i) ∨
+            (∀ᶠ n in atTop, p i n = 0) := by
+      intro i
+      rcases hcase i with hfinite | hzero
+      · left
+        rcases hfinite with ⟨rate_exists, hcert_exists, hpayload_exists⟩
+        let rate_i : ℝ := rate i
+        have hfinite_payload :
+            ∃ rate_i : ℝ,
+              ExponentialRateCertificate (p i) rate_i ∧
+                payload i rate_i :=
+          ⟨rate_exists, hcert_exists, hpayload_exists⟩
+        have hcert_i : ExponentialRateCertificate (p i) rate_i := by
+          dsimp [rate_i, rate]
+          rw [dif_pos hfinite_payload]
+          exact (Classical.choose_spec hfinite_payload).1
+        have hi_mem : i ∈ finiteSet := by
+          simp [finiteSet, hfinite_payload]
+        have hmin_le_rate : minRate ≤ rate_i := by
+          dsimp [minRate, rate_i]
+          rw [← hmin_eq]
+          exact Finset.inf'_le rate hi_mem
+        exact ⟨rate_i, hmin_le_rate, hcert_i⟩
+      · right
+        exact hzero
+    left
+    refine ⟨iMin, minRate, hmin_cert, hmin_payload, hcase_ge, ?_⟩
+    exact
+      finite_weighted_sum_hasExponentialRate_of_min_component_cert_or_eventually_zero
+        (p := p) (weight := weight)
+        hweight_nonneg iMin (hweight_pos iMin) hmin_cert hcase_ge
+  · right
+    have hzero_all :
+        ∀ i : ι, ∀ᶠ n in atTop, p i n = 0 := by
+      intro i
+      rcases hcase i with hfinite | hzero
+      · exact False.elim (hfinite_exists ⟨i, hfinite⟩)
+      · exact hzero
+    exact finite_weighted_sum_eventually_zero
+      (p := p) (weight := weight) hzero_all
+
+/--
+Extended-rate version of
+`finite_weighted_sum_hasExponentialRate_or_eventually_zero_of_cert_or_eventually_zero`.
+The returned `WithTop ℝ` rate is finite when at least one weighted component has
+a finite exact rate, and `⊤` when all components are eventually zero.
+-/
+theorem finite_weighted_sum_hasExtendedExponentialRate_of_cert_or_eventually_zero
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {p : ι → ℕ → ℝ} {weight : ι → ℝ}
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hweight_pos : ∀ i, 0 < weight i)
+    (hcase :
+      ∀ i : ι,
+        (∃ rate_i : ℝ,
+          ExponentialRateCertificate (p i) rate_i) ∨
+          (∀ᶠ n in atTop, p i n = 0)) :
+    ∃ rate : WithTop ℝ,
+      HasExtendedExponentialRate
+        (fun n => ∑ i : ι, weight i * p i n) rate := by
+  rcases
+      finite_weighted_sum_hasExponentialRate_or_eventually_zero_of_cert_or_eventually_zero
+        (p := p) (weight := weight)
+        hweight_nonneg hweight_pos hcase with
+    hfinite | hzero
+  · rcases hfinite with ⟨minRate, hrate⟩
+    exact ⟨(minRate : WithTop ℝ),
+      HasExtendedExponentialRate.finite hrate⟩
+  · exact ⟨⊤, HasExtendedExponentialRate.infinite hzero⟩
+
+/--
 A positive constant times a pure exponential sequence has exactly the displayed
 exponential rate.  This is the finite-discrete Laplace primitive used when a
 finite sum is reduced to its slowest exponential term.
@@ -809,6 +1465,14 @@ variable {ι : Type*} [Fintype ι]
 def aggregateError (C : FiniteErrorRateCertificate ι)
     (weight : ι → ℝ) (n : ℕ) : ℝ :=
   ∑ i : ι, weight i * C.errorProb i n
+
+/-- Unit-weight finite aggregates are the plain sum of component errors. -/
+@[simp]
+theorem aggregateError_unit (C : FiniteErrorRateCertificate ι) :
+    C.aggregateError (fun _ => (1 : ℝ)) =
+      fun n => ∑ i : ι, C.errorProb i n := by
+  funext n
+  simp [aggregateError]
 
 theorem aggregateError_hasExpUpperBoundWithConst_of_lt
     (C : FiniteErrorRateCertificate ι)
@@ -908,7 +1572,117 @@ theorem aggregateError_hasExponentialRate_of_min_component
       hweight_nonneg iMin hweight_pos
       (by rw [hrate_min]; exact htarget)
 
+/--
+Exact finite-aggregate rate from a dominating subfamily.  The subfamily
+contains a positive-weight component attaining the subfamily minimum, and every
+ambient component has rate at least one subfamily rate.  This is the finite
+large-deviation algebra behind adjacent-pair reductions.
+-/
+theorem aggregateError_hasExponentialRate_of_dominating_subfamily
+    [DecidableEq ι]
+    (C : FiniteErrorRateCertificate ι)
+    {σ : Type*} (select : σ → ι)
+    {weight : ι → ℝ}
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (aMin : σ) (hweight_pos : 0 < weight (select aMin))
+    (hsub_min : ∀ a : σ, C.rate (select aMin) ≤ C.rate (select a))
+    (hdominates : ∀ i : ι, ∃ a : σ, C.rate (select a) ≤ C.rate i) :
+    HasExponentialRate
+      (C.aggregateError weight) (C.rate (select aMin)) := by
+  refine C.aggregateError_hasExponentialRate_of_min_component
+    hweight_nonneg (select aMin) hweight_pos rfl ?_
+  intro i
+  rcases hdominates i with ⟨a, ha⟩
+  exact (hsub_min a).trans ha
+
 end FiniteErrorRateCertificate
+
+/--
+Finite family whose components are known relative to a candidate aggregate
+rate.  Each component either has some exact finite rate at least `minRate`, or
+is eventually zero.  This is the reusable wrapper for mixed finite-rate /
+boundary aggregations where a paper wants a finite real rate for the aggregate
+without choosing a dummy component rate for eventually-zero terms.
+-/
+structure FiniteErrorRateEnvelopeCertificate (ι : Type*) (minRate : ℝ) where
+  errorProb : ι → ℕ → ℝ
+  component :
+    ∀ i : ι,
+      (∃ rate_i : ℝ,
+        minRate ≤ rate_i ∧
+          ExponentialRateCertificate (errorProb i) rate_i) ∨
+        (∀ᶠ n in atTop, errorProb i n = 0)
+
+namespace FiniteErrorRateEnvelopeCertificate
+
+variable {ι : Type*} [Fintype ι] {minRate : ℝ}
+
+/-- Weighted finite aggregate of envelope-certified error probabilities. -/
+def aggregateError (C : FiniteErrorRateEnvelopeCertificate ι minRate)
+    (weight : ι → ℝ) (n : ℕ) : ℝ :=
+  ∑ i : ι, weight i * C.errorProb i n
+
+/-- Unit-weight envelope aggregates are the plain sum of component errors. -/
+@[simp]
+theorem aggregateError_unit
+    (C : FiniteErrorRateEnvelopeCertificate ι minRate) :
+    C.aggregateError (fun _ => (1 : ℝ)) =
+      fun n => ∑ i : ι, C.errorProb i n := by
+  funext n
+  simp [aggregateError]
+
+theorem aggregateError_hasExpUpperBoundWithConst_of_lt
+    (C : FiniteErrorRateEnvelopeCertificate ι minRate)
+    {weight : ι → ℝ} {targetRate : ℝ}
+    (hweight : ∀ i, 0 ≤ weight i)
+    (hrate : targetRate < minRate) :
+    HasExpUpperBoundWithConst
+      (C.aggregateError weight) targetRate := by
+  have hbound :
+      ∀ i : ι, HasExpUpperBoundWithConst (C.errorProb i) targetRate := by
+    intro i
+    rcases C.component i with hfinite | hzero
+    · rcases hfinite with ⟨rate_i, hrate_ge, hcert⟩
+      exact hcert.hasExpUpperBoundWithConst_of_lt
+        (lt_of_lt_of_le hrate hrate_ge)
+    · exact HasExpUpperBoundWithConst.of_eventually_zero hzero
+  simpa [aggregateError] using
+    finite_weighted_sum_hasExpUpperBoundWithConst
+      (ι := ι)
+      (p := fun i n => C.errorProb i n)
+      (weight := weight)
+      (rate := fun _ : ι => targetRate)
+      (targetRate := targetRate)
+      hweight
+      hbound
+      (fun _ => le_rfl)
+
+/--
+Exact finite aggregate rate from a rate envelope: one positive-weight
+component supplies the exact minimum rate, while every other component is
+either exact at a rate no smaller than that minimum or eventually zero.
+-/
+theorem aggregateError_hasExponentialRate_of_min_component
+    [DecidableEq ι]
+    (C : FiniteErrorRateEnvelopeCertificate ι minRate)
+    {weight : ι → ℝ}
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (iMin : ι) (hweight_pos : 0 < weight iMin)
+    (hmin : ExponentialRateCertificate (C.errorProb iMin) minRate) :
+    HasExponentialRate (C.aggregateError weight) minRate := by
+  simpa [aggregateError] using
+    finite_weighted_sum_hasExponentialRate_of_min_component_cert_or_eventually_zero
+      (ι := ι)
+      (p := fun i n => C.errorProb i n)
+      (weight := weight)
+      (minRate := minRate)
+      hweight_nonneg
+      iMin
+      hweight_pos
+      hmin
+      C.component
+
+end FiniteErrorRateEnvelopeCertificate
 
 /--
 Finite discrete Laplace principle for a nonnegative weighted sum of pure
@@ -988,6 +1762,14 @@ def aggregateError (C : PairwiseErrorUpperBoundCertificate θ)
     (pairWeight : θ → θ → ℝ) (n : ℕ) : ℝ :=
   ∑ p : θ × θ, pairWeight p.1 p.2 * C.errorProb p.1 p.2 n
 
+/-- Unit-weight pairwise aggregates are the plain sum of pairwise errors. -/
+@[simp]
+theorem aggregateError_unit (C : PairwiseErrorUpperBoundCertificate θ) :
+    C.aggregateError (fun _ _ => (1 : ℝ)) =
+      fun n => ∑ p : θ × θ, C.errorProb p.1 p.2 n := by
+  funext n
+  simp [aggregateError]
+
 theorem aggregateError_hasExpUpperBoundWithConst
     (C : PairwiseErrorUpperBoundCertificate θ)
     {pairWeight : θ → θ → ℝ} {targetRate : ℝ}
@@ -1034,6 +1816,14 @@ def toFiniteErrorRateCertificate (C : PairwiseErrorRateCertificate θ) :
 def aggregateError (C : PairwiseErrorRateCertificate θ)
     (pairWeight : θ → θ → ℝ) (n : ℕ) : ℝ :=
   ∑ p : θ × θ, pairWeight p.1 p.2 * C.errorProb p.1 p.2 n
+
+/-- Unit-weight pairwise aggregates are the plain sum of pairwise errors. -/
+@[simp]
+theorem aggregateError_unit (C : PairwiseErrorRateCertificate θ) :
+    C.aggregateError (fun _ _ => (1 : ℝ)) =
+      fun n => ∑ p : θ × θ, C.errorProb p.1 p.2 n := by
+  funext n
+  simp [aggregateError]
 
 theorem aggregateError_hasExpUpperBoundWithConst_of_lt
     (C : PairwiseErrorRateCertificate θ)
@@ -1133,6 +1923,80 @@ theorem aggregateError_hasExponentialRate_of_min_pair
       (by rw [hrate_min]; exact htarget)
 
 end PairwiseErrorRateCertificate
+
+/--
+Pairwise version of `FiniteErrorRateEnvelopeCertificate`.  This keeps the
+rating-system and social-choice pairwise APIs aligned with the generic finite
+envelope while preserving the paper-facing `hi lo` indexing.
+-/
+structure PairwiseErrorRateEnvelopeCertificate (θ : Type*) (minRate : ℝ) where
+  errorProb : θ → θ → ℕ → ℝ
+  component :
+    ∀ hi lo : θ,
+      (∃ rate_i : ℝ,
+        minRate ≤ rate_i ∧
+          ExponentialRateCertificate (errorProb hi lo) rate_i) ∨
+        (∀ᶠ n in atTop, errorProb hi lo n = 0)
+
+namespace PairwiseErrorRateEnvelopeCertificate
+
+variable {θ : Type*} [Fintype θ] {minRate : ℝ}
+
+/-- View a pairwise envelope certificate as a generic finite envelope. -/
+def toFiniteErrorRateEnvelopeCertificate
+    (C : PairwiseErrorRateEnvelopeCertificate θ minRate) :
+    FiniteErrorRateEnvelopeCertificate (θ × θ) minRate where
+  errorProb := fun pair n => C.errorProb pair.1 pair.2 n
+  component := fun pair => C.component pair.1 pair.2
+
+/-- Weighted aggregate of finitely many pairwise envelope errors. -/
+def aggregateError (C : PairwiseErrorRateEnvelopeCertificate θ minRate)
+    (pairWeight : θ → θ → ℝ) (n : ℕ) : ℝ :=
+  ∑ p : θ × θ, pairWeight p.1 p.2 * C.errorProb p.1 p.2 n
+
+/-- Unit-weight pairwise envelope aggregates are the plain sum of errors. -/
+@[simp]
+theorem aggregateError_unit
+    (C : PairwiseErrorRateEnvelopeCertificate θ minRate) :
+    C.aggregateError (fun _ _ => (1 : ℝ)) =
+      fun n => ∑ p : θ × θ, C.errorProb p.1 p.2 n := by
+  funext n
+  simp [aggregateError]
+
+theorem aggregateError_hasExpUpperBoundWithConst_of_lt
+    (C : PairwiseErrorRateEnvelopeCertificate θ minRate)
+    {pairWeight : θ → θ → ℝ} {targetRate : ℝ}
+    (hweight : ∀ hi lo, 0 ≤ pairWeight hi lo)
+    (hrate : targetRate < minRate) :
+    HasExpUpperBoundWithConst
+      (C.aggregateError pairWeight) targetRate := by
+  simpa [aggregateError] using
+    C.toFiniteErrorRateEnvelopeCertificate
+      |>.aggregateError_hasExpUpperBoundWithConst_of_lt
+        (weight := fun pair : θ × θ => pairWeight pair.1 pair.2)
+        (fun pair => hweight pair.1 pair.2)
+        hrate
+
+theorem aggregateError_hasExponentialRate_of_min_pair
+    [DecidableEq θ]
+    (C : PairwiseErrorRateEnvelopeCertificate θ minRate)
+    {pairWeight : θ → θ → ℝ}
+    (hweight_nonneg : ∀ hi lo, 0 ≤ pairWeight hi lo)
+    (hiMin loMin : θ) (hweight_pos : 0 < pairWeight hiMin loMin)
+    (hmin :
+      ExponentialRateCertificate
+        (C.errorProb hiMin loMin) minRate) :
+    HasExponentialRate (C.aggregateError pairWeight) minRate := by
+  simpa [aggregateError] using
+    C.toFiniteErrorRateEnvelopeCertificate
+      |>.aggregateError_hasExponentialRate_of_min_component
+        (weight := fun pair : θ × θ => pairWeight pair.1 pair.2)
+        (fun pair => hweight_nonneg pair.1 pair.2)
+        (hiMin, loMin)
+        hweight_pos
+        hmin
+
+end PairwiseErrorRateEnvelopeCertificate
 
 /--
 Certificate boundary for a Laplace-principle or Gartner-Ellis calculation.

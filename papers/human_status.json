@@ -20,6 +20,7 @@
       "lean_loc": 381,
       "main_note": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.",
       "main_note_citation": null,
+      "main_note_review": null,
       "paper_folder": "papers/GS62CollegeAdmissions",
       "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md"
     },
@@ -36,6 +37,7 @@
       "lean_loc": 8877,
       "main_note": "",
       "main_note_citation": null,
+      "main_note_review": null,
       "paper_folder": "papers/Roth82StableMatching",
       "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md"
     },
@@ -55,6 +57,7 @@
         "label": "Goldberg et al. 2006",
         "url": "https://www.sciencedirect.com/science/article/pii/S0899825606000303"
       },
+      "main_note_review": null,
       "paper_folder": "papers/GHW01DigitalGoods",
       "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md"
     },
@@ -71,8 +74,29 @@
       "lean_loc": 13221,
       "main_note": "",
       "main_note_citation": null,
+      "main_note_review": null,
       "paper_folder": "papers/MSVV07AdWords",
       "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md"
+    },
+    {
+      "id": "GJ18InformativeRatingSystems",
+      "title": "Designing Informative Rating Systems: Evidence from an Online Labor Market",
+      "authors": "Nikhil Garg, Ramesh Johari",
+      "publication": "Manufacturing & Service Operations Management 23(3), 2020",
+      "publication_year": 2020,
+      "source_url": "https://doi.org/10.1287/msom.2020.0921",
+      "paper_info": "Designing Informative Rating Systems: Evidence from an Online Labor Market by Nikhil Garg, Ramesh Johari; Manufacturing & Service Operations Management 23(3), 2020.",
+      "status": "Formalized",
+      "human_review": "0/8",
+      "lean_loc": 6921,
+      "main_note": "",
+      "main_note_citation": null,
+      "main_note_review": {
+        "status": "agent_draft",
+        "note": "Public-release draft summary; a human may approve or rewrite it before merge."
+      },
+      "paper_folder": "papers/GJ18InformativeRatingSystems",
+      "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "LG21TestOptionalPolicies",
@@ -87,6 +111,7 @@
       "lean_loc": 125476,
       "main_note": "",
       "main_note_citation": null,
+      "main_note_review": null,
       "paper_folder": "papers/LG21TestOptionalPolicies",
       "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md"
     },
@@ -103,6 +128,7 @@
       "lean_loc": 141928,
       "main_note": "",
       "main_note_citation": null,
+      "main_note_review": null,
       "paper_folder": "papers/GN21DriverSurgePricing",
       "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md"
     },
@@ -119,6 +145,7 @@
       "lean_loc": 45906,
       "main_note": "",
       "main_note_citation": null,
+      "main_note_review": null,
       "paper_folder": "papers/GCG24UserItemFairness",
       "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md"
     },
@@ -135,6 +162,7 @@
       "lean_loc": 26033,
       "main_note": "",
       "main_note_citation": null,
+      "main_note_review": null,
       "paper_folder": "papers/DSWG24DiscretizationBias",
       "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md"
     },
@@ -151,6 +179,7 @@
       "lean_loc": 580,
       "main_note": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
       "main_note_citation": null,
+      "main_note_review": null,
       "paper_folder": "papers/MBJG25ProducerFairness",
       "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md"
     },
@@ -167,6 +196,7 @@
       "lean_loc": 7288,
       "main_note": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external.",
       "main_note_citation": null,
+      "main_note_review": null,
       "paper_folder": "papers/LOS02CombinatorialAuctions",
       "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md"
     },
@@ -183,6 +213,7 @@
       "lean_loc": 80220,
       "main_note": "Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.",
       "main_note_citation": null,
+      "main_note_review": null,
       "paper_folder": "papers/LMMS04FairDivision",
       "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md"
     },
@@ -199,6 +230,10 @@
       "lean_loc": 48366,
       "main_note": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
       "main_note_citation": null,
+      "main_note_review": {
+        "status": "human_approved",
+        "note": "Preserve this human-written public summary unless a human explicitly asks to edit it."
+      },
       "paper_folder": "papers/PRPKG24AccuracyDiversity",
       "review_entrypoint": "papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md"
     }

@@ -51,6 +51,7 @@ ROOT_STATUS_VALUES = {
     "Main endpoints formalized",
     "Main endpoints formalized with documented deviations",
     "Partially formalized",
+    "Scaffold",
     "Not formalized",
     "Active validation",
 }
@@ -79,6 +80,12 @@ PAPER_STATUS_VALUES = {
     "scaffold",
     "not started",
     "not formalized",
+}
+HUMAN_SUMMARY_REVIEW_VALUES = {
+    "draft",
+    "agent_draft",
+    "human_written",
+    "human_approved",
 }
 DAG_REQUIRED_PREAMBLE = "docs/tikz/dag_preamble.tex"
 DAG_STATUS_STYLES = {
@@ -133,7 +140,6 @@ README_STATUS_DETAIL_RE = re.compile(
 README_STATUS_HEADER = ["Paper", "Status", "Review", "Interface", "Human summary"]
 README_REVIEW_COUNT_RE = re.compile(r"^\d+/\d+$")
 README_MAX_STATUS_ROWS = 20
-README_MAX_STATUS_SUMMARY_CHARS = 320
 MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\([^)]+\)")
 README_MAX_LINES = 140
 REPORT_LEAN_LABEL_RE = re.compile(
@@ -874,6 +880,32 @@ def check_machine_paper_status() -> list[Finding]:
         if isinstance(status, str) and status not in PAPER_STATUS_VALUES:
             findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` has unexpected status `{status}`"))
 
+        summary_review = entry.get("human_summary_review")
+        if summary_review is not None:
+            if not isinstance(summary_review, dict):
+                findings.append(
+                    Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}.human_summary_review` should be an object")
+                )
+            else:
+                review_status = summary_review.get("status")
+                if review_status not in HUMAN_SUMMARY_REVIEW_VALUES:
+                    findings.append(
+                        Finding(
+                            "ERROR",
+                            PAPER_STATUS_FILE,
+                            f"`{paper_id}.human_summary_review.status` should be one of "
+                            + ", ".join(sorted(HUMAN_SUMMARY_REVIEW_VALUES)),
+                        )
+                    )
+                if review_status == "human_approved" and not isinstance(entry.get("human_summary"), str):
+                    findings.append(
+                        Finding(
+                            "ERROR",
+                            PAPER_STATUS_FILE,
+                            f"`{paper_id}` has human-approved summary metadata but no `human_summary` string",
+                        )
+                    )
+
         review = entry.get("human_review")
         if not isinstance(review, dict):
             findings.append(Finding("ERROR", PAPER_STATUS_FILE, f"`{paper_id}` has missing `human_review` object"))
@@ -1036,8 +1068,6 @@ def check_root_human_status_table(readme: Path) -> list[Finding]:
             findings.append(Finding("ERROR", readme, f"missing interface health for `{paper}`"))
         if not summary and status != "Formalized":
             findings.append(Finding("ERROR", readme, f"missing human summary for `{paper}`"))
-        elif len(markdown_display_text(summary)) > README_MAX_STATUS_SUMMARY_CHARS:
-            findings.append(Finding("WARN", readme, f"human summary is too long for `{paper}`"))
 
         for cell in row:
             detail = README_STATUS_DETAIL_RE.search(cell)
