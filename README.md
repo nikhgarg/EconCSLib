@@ -33,14 +33,15 @@ Start in the paper folder under `papers/<PaperName>/`.
 
 For a completed or nearly completed paper, read these files in this order:
 
-1. `FINAL_VALIDATION_REPORT.md`: source checked, theorem inventory, proof
-   deviations, remaining assumptions, and final status.
+1. `FINAL_VALIDATION_REPORT.md` or `POST_FORMALIZATION_AUDIT.md`: source
+   checked, deviations, assumptions, and final status.
 2. `PaperInterface.lean`: readable definitions and theorem statements matching
    the paper. This is the main human-facing Lean file.
 3. Dependency graph: visual map of named definitions, lemmas, theorems, and
    remaining caveats. Some paper folders keep only the source graph tracked and
    render the PDF locally.
-4. `README.md`: paper metadata and theorem-status ledger.
+4. `README.md`: paper metadata or implementation notes; if not human-facing, it
+   should say so at the top and link to the report above.
 
 Implementation-level proof files are for maintainers and agents. They should
 not be necessary for a first human audit of what the paper claims and what Lean
@@ -78,15 +79,11 @@ published citation title and year.
 For more detail, use:
 
 - `papers/<PaperName>/status.json` for the paper-local source of truth.
-- [`papers/human_status.json`](papers/human_status.json) for the compact
-  public-facing status summary.
-- [`papers/status.json`](papers/status.json) for the generated aggregate
-  status, review counts, and interface metadata.
-- [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md) for the generated public paper
-  status table.
-- [`site/index.html`](site/index.html) for the generated public website status
-  table.
-- Individual `papers/<PaperName>/README.md` files for paper-specific caveats.
+- Generated public snapshots: [`papers/human_status.json`](papers/human_status.json),
+  [`papers/status.json`](papers/status.json), [docs/PAPER_STATUS.md](docs/PAPER_STATUS.md),
+  and [`site/index.html`](site/index.html).
+- Individual paper validation/audit reports for paper-specific caveats. Some
+  `README.md` files are implementation ledgers and point to those reports.
 
 Partial public formalizations are included when the remaining assumption seam is
 explicit and useful to expose. LMMS04 and LOS02 are the current examples:
