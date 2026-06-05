@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "id": "GJ18InformativeRatingSystems",
+  "title": "Designing Informative Rating Systems: Evidence from an Online Labor Market",
+  "authors": "Nikhil Garg, Ramesh Johari",
+  "source_version": "arXiv 1810.13028 TeX/PDF cache; publication citation: Manufacturing & Service Operations Management 23(3):589-605, published online 2020 (issue 2021)",
+  "build_target": "lake build GJ18InformativeRatingSystems",
+  "status": "formalized",
+  "main_caveat": "Theorem 1 is closed as a source-facing support-safe finite-rate endpoint for finite ordinal ratings. Lean derives the pairwise common-dual witnesses and support-safe LDP certificates from positive match rates, the paper's upper-tail rating dominance, monotone scores, and full finite ordinal rating support; the bottom/top atom support used by the lower-bound route is derived internally. The old all-real real-rate bridge remains only as a compatibility theorem for users who supply stronger real-valued boundedness/domain conditions. Empirical sections are source scope but not Lean theorem targets.",
+  "human_summary": "",
+  "human_summary_review": {
+    "status": "agent_draft",
+    "note": "Public-release draft summary; a human may approve or rewrite it before merge."
+  },
+  "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 8,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
+    "line_count": 2914,
+    "declaration_rows": 85,
+    "review_rows": 8,
+    "oversized": false,
+    "maintainability_issue": null
+  },
+  "artifacts": {
+    "readme": "papers/GJ18InformativeRatingSystems/README.md",
+    "paper_interface": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
+    "final_validation_report": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/GJ18InformativeRatingSystems/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/GJ18InformativeRatingSystems/DependencyDAG.pdf"
+  },
+  "review_surface": {
+    "source_file": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
+    "include_names": [
+      "definition_log_mgf_formula",
+      "definition_rate_function_formula",
+      "lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support",
+      "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives",
+      "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law",
+      "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives",
+      "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support",
+      "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq"
+    ],
+    "slices": [
+      {
+        "id": "source-definitions",
+        "title": "Source definitions",
+        "names": [
+          "definition_log_mgf_formula",
+          "definition_rate_function_formula"
+        ]
+      },
+      {
+        "id": "appendix-c",
+        "title": "Appendix C named large-deviation results",
+        "names": [
+          "lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support",
+          "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives"
+        ]
+      },
+      {
+        "id": "theorem1",
+        "title": "Theorem 1 source-facing endpoints",
+        "names": [
+          "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law",
+          "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives",
+          "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support",
+          "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq"
+        ]
+      }
+    ]
+  }
+}

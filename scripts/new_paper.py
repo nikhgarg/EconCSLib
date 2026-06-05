@@ -201,6 +201,14 @@ def status_text(args: argparse.Namespace, folder: str) -> str:
             "build_target": f"lake build {folder}",
             "status": "not started",
             "main_caveat": "Replace with the public caveat or state that no caveat is known.",
+            "human_summary": "Replace with a concise public-facing note; leave empty for formalized papers unless a source-version or proof-route note matters.",
+            "human_summary_review": {
+                "status": "draft",
+                "note": (
+                    "Set to human_approved only after a human has written or explicitly approved this "
+                    "summary; do not rewrite a human_approved summary without explicit human instruction."
+                ),
+            },
             "review_entrypoint": f"papers/{folder}/FINAL_VALIDATION_REPORT.md",
             "human_review": {
                 "reviewed_rows": 0,
@@ -258,6 +266,13 @@ def dag_text() -> str:
 % - After intake, treat this as a stable topology: update node styles/status/text
 %   as proofs close, but avoid adding boxes or arrows unless the original named
 %   result inventory or dependency map was actually incomplete.
+%
+% Arrow direction rule:
+% Draw edges from prerequisite/source node to dependent/target node.  The
+% `dag_arrow` and `dag_dashed_arrow` styles use an explicit end-arrow (`->`),
+% so the arrowhead should always land on the node that consumes the dependency.
+% Do not reverse the coordinate order just to make routing easier; use anchors
+% or an orthogonal route through empty space instead.
 
 \begin{tikzpicture}[
   x=1cm,
@@ -289,6 +304,9 @@ def dag_text() -> str:
   columns are spaced by 6.4cm and rows by 3.2cm, which is wide enough for the
   default 5cm node text widths. Prefer straight or orthogonal arrows (`--`,
   `|-`, `-|`) and route through empty grid cells when a dependency skips a row.
+  Draw from prerequisite to dependent result so the arrowhead points at the
+  consumer.  For short horizontal gaps, use explicit anchors like `(A.east) --
+  (B.west)` and increase spacing if the arrowhead visually merges with a node.
   After every layout change, render and inspect the PDF; if anything overlaps,
   increase row or column spacing before adding complicated curves. Once the
   initial named-result map is complete, prefer README-status style updates over
@@ -472,6 +490,9 @@ This is a lightweight handoff document for source-to-Lean mapping.
 - [ ] Full named-result inventory copied to the README theorem table.
 - [ ] DAG graph includes all required paper-stage nodes and dependencies.
 - [ ] README status and remaining-assumption notes match proof artifacts.
+- [ ] Post-formalization library elevation pass completed: reusable proof
+      results, techniques, and primitives were moved into `EconCSLib` when
+      local/low-risk, or recorded with destination modules in the final report.
 - [ ] Final status review completed before publishing.
 
 ## Notes
@@ -479,6 +500,7 @@ This is a lightweight handoff document for source-to-Lean mapping.
 - Date reviewed:
 - Last theorem row formalized:
 - Outstanding assumptions / caveats:
+- Reusable library elevation candidates:
 
 """
 

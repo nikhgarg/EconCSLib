@@ -30,7 +30,9 @@ STATUS_LABELS = {
     "formalized": "Formalized",
     "formalized with caveat": "Formalized with caveat",
     "partially formalized": "Partially formalized",
+    "scaffold": "Scaffold",
     "not started": "Not started",
+    "not formalized": "Not formalized",
 }
 
 STATUS_GROUPS = {
@@ -43,6 +45,7 @@ PUBLICATION_OVERRIDES = {
     "DSWG24DiscretizationBias": ("PNAS Nexus, 2025", 2025),
     "GCG24UserItemFairness": ("NeurIPS, 2024", 2024),
     "GHW01DigitalGoods": ("SODA, 2001", 2001),
+    "GJ18InformativeRatingSystems": ("Manufacturing & Service Operations Management 23(3), 2020", 2020),
     "GN21DriverSurgePricing": ("Management Science, 2022", 2022),
     "GS62CollegeAdmissions": ("American Mathematical Monthly, 1962", 1962),
     "LG21TestOptionalPolicies": ("EAAMO, 2021", 2021),
@@ -58,6 +61,7 @@ SOURCE_URL_OVERRIDES = {
     "DSWG24DiscretizationBias": "https://arxiv.org/pdf/2405.16762",
     "GCG24UserItemFairness": "https://openreview.net/pdf?id=ZOZjMs3JTs",
     "GHW01DigitalGoods": "https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf",
+    "GJ18InformativeRatingSystems": "https://doi.org/10.1287/msom.2020.0921",
     "GN21DriverSurgePricing": "https://arxiv.org/pdf/1905.07544",
     "GS62CollegeAdmissions": "http://www.jstor.org/stable/2312726",
     "LG21TestOptionalPolicies": "https://arxiv.org/pdf/2107.08922",
@@ -90,6 +94,7 @@ LIBRARY_COMPONENTS = [
             "LMMS04FairDivision",
             "GN21DriverSurgePricing",
             "LG21TestOptionalPolicies",
+            "GJ18InformativeRatingSystems",
         ],
     },
     {
@@ -107,6 +112,7 @@ LIBRARY_COMPONENTS = [
             "LMMS04FairDivision",
             "GN21DriverSurgePricing",
             "LG21TestOptionalPolicies",
+            "GJ18InformativeRatingSystems",
         ],
     },
     {
@@ -136,7 +142,7 @@ LIBRARY_COMPONENTS = [
             "bias/variance decompositions, monotonicity/correction lemmas, "
             "and minimal bandit-regret interfaces."
         ),
-        "papers": ["MBJG25ProducerFairness"],
+        "papers": ["MBJG25ProducerFairness", "GJ18InformativeRatingSystems"],
     },
     {
         "title": "Matching markets",
@@ -317,6 +323,20 @@ def human_note(payload: dict[str, Any]) -> str:
     return str(payload.get("main_caveat", ""))
 
 
+def human_summary_review(payload: dict[str, Any]) -> dict[str, str] | None:
+    raw = payload.get("human_summary_review")
+    if not isinstance(raw, dict):
+        return None
+    status = raw.get("status")
+    if not isinstance(status, str) or not status.strip():
+        return None
+    review: dict[str, str] = {"status": status.strip()}
+    note = raw.get("note")
+    if isinstance(note, str) and note.strip():
+        review["note"] = note.strip()
+    return review
+
+
 def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for folder, payload in records:
@@ -334,6 +354,7 @@ def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[s
             "lean_loc": lean_loc(folder),
             "main_note": human_note(payload),
             "main_note_citation": note_citation(payload),
+            "main_note_review": human_summary_review(payload),
             "paper_folder": str(folder.relative_to(ROOT)),
             "review_entrypoint": payload["review_entrypoint"],
         }

@@ -16,6 +16,127 @@ namespace EconCSLib
 
 open scoped BigOperators
 
+/-- A finite weighted sum of nonnegative real values is nonnegative. -/
+theorem weightedSum_nonneg {ι : Type*} [Fintype ι]
+    (weight value : ι → ℝ)
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hvalue_nonneg : ∀ i, 0 ≤ value i) :
+    0 ≤ ∑ i : ι, weight i * value i := by
+  exact Finset.sum_nonneg (by
+    intro i _
+    exact mul_nonneg (hweight_nonneg i) (hvalue_nonneg i))
+
+/-- Nonnegative weighted sums preserve pointwise order. -/
+theorem weightedSum_le_weightedSum_of_pointwise_le {ι : Type*} [Fintype ι]
+    (weight lower upper : ι → ℝ)
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hle : ∀ i, lower i ≤ upper i) :
+    (∑ i : ι, weight i * lower i) ≤
+      ∑ i : ι, weight i * upper i := by
+  exact Finset.sum_le_sum (by
+    intro i _
+    exact mul_le_mul_of_nonneg_left (hle i) (hweight_nonneg i))
+
+/-- A nonnegative finite weight vector with total mass one has a positive entry. -/
+theorem exists_positive_weight_of_nonneg_sum_eq_one {ι : Type*} [Fintype ι]
+    (weight : ι → ℝ)
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hweight_sum : (∑ i : ι, weight i) = 1) :
+    ∃ i : ι, 0 < weight i := by
+  by_contra hnone
+  have hzero : ∀ i : ι, weight i = 0 := by
+    intro i
+    exact le_antisymm
+      (not_lt.mp (by
+        intro hpos
+        exact hnone ⟨i, hpos⟩))
+      (hweight_nonneg i)
+  have hsum_zero : (∑ i : ι, weight i) = 0 := by
+    simp [hzero]
+  linarith
+
+/--
+A convex combination of strictly positive values is strictly positive when the
+weights are nonnegative and sum to one.
+-/
+theorem weightedSum_pos_of_nonneg_sum_eq_one {ι : Type*} [Fintype ι]
+    (weight value : ι → ℝ)
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hweight_sum : (∑ i : ι, weight i) = 1)
+    (hvalue_pos : ∀ i, 0 < value i) :
+    0 < ∑ i : ι, weight i * value i := by
+  rcases exists_positive_weight_of_nonneg_sum_eq_one
+      weight hweight_nonneg hweight_sum with
+    ⟨i₀, hpos₀⟩
+  refine Finset.sum_pos' ?_ ?_
+  · intro i _
+    exact mul_nonneg (hweight_nonneg i) (le_of_lt (hvalue_pos i))
+  · exact ⟨i₀, Finset.mem_univ _, mul_pos hpos₀ (hvalue_pos i₀)⟩
+
+/--
+A nonnegative finite weighted sum is positive as soon as one positive-weight
+component has a positive value.
+-/
+theorem weightedSum_pos_of_positive_component {ι : Type*} [Fintype ι]
+    (weight value : ι → ℝ)
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hvalue_nonneg : ∀ i, 0 ≤ value i)
+    {i₀ : ι}
+    (hweight_pos : 0 < weight i₀)
+    (hvalue_pos : 0 < value i₀) :
+    0 < ∑ i : ι, weight i * value i := by
+  refine Finset.sum_pos' ?_ ?_
+  · intro i _
+    exact mul_nonneg (hweight_nonneg i) (hvalue_nonneg i)
+  · exact ⟨i₀, Finset.mem_univ _, mul_pos hweight_pos hvalue_pos⟩
+
+/--
+A finite mixture of two mutually exclusive one-step probabilities is still
+sub-probability valued.
+-/
+theorem weightedPairProb_sum_le_one {ι : Type*} [Fintype ι]
+    (weight p q : ι → ℝ)
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hweight_sum : (∑ i : ι, weight i) = 1)
+    (hpq_le_one : ∀ i, p i + q i ≤ 1) :
+    (∑ i : ι, weight i * p i) +
+      (∑ i : ι, weight i * q i) ≤ 1 := by
+  rw [← Finset.sum_add_distrib]
+  calc
+    (∑ i : ι, (weight i * p i + weight i * q i))
+        = ∑ i : ι, weight i * (p i + q i) := by
+          refine Finset.sum_congr rfl ?_
+          intro i _
+          ring
+    _ ≤ ∑ i : ι, weight i * 1 := by
+          refine Finset.sum_le_sum ?_
+          intro i _
+          exact mul_le_mul_of_nonneg_left
+            (hpq_le_one i) (hweight_nonneg i)
+    _ = 1 := by
+          simpa using hweight_sum
+
+/--
+A finite mixture of valid two-way probabilities is again a valid two-way
+probability pair.
+-/
+theorem weightedPairProb_valid {ι : Type*} [Fintype ι]
+    (weight p q : ι → ℝ)
+    (hweight_nonneg : ∀ i, 0 ≤ weight i)
+    (hweight_sum : (∑ i : ι, weight i) = 1)
+    (hp_nonneg : ∀ i, 0 ≤ p i)
+    (hq_nonneg : ∀ i, 0 ≤ q i)
+    (hpq_le_one : ∀ i, p i + q i ≤ 1) :
+    0 ≤ ∑ i : ι, weight i * p i ∧
+      0 ≤ ∑ i : ι, weight i * q i ∧
+        (∑ i : ι, weight i * p i) +
+          (∑ i : ι, weight i * q i) ≤ 1 := by
+  exact
+    ⟨weightedSum_nonneg weight p hweight_nonneg hp_nonneg,
+      weightedSum_nonneg weight q hweight_nonneg hq_nonneg,
+      weightedPairProb_sum_le_one weight p q
+        hweight_nonneg hweight_sum hpq_le_one⟩
+
 /--
 Normalize a nonnegative finite real weight vector with positive total mass into
 a finite PMF.
@@ -57,6 +178,43 @@ theorem finiteWeightedPMF_apply_toReal {α : Type*} [Fintype α]
     exact div_nonneg (hweight_nonneg a) (le_of_lt htotal_pos)
   rw [PMF.ofFintype_apply]
   exact ENNReal.toReal_ofReal hterm_nonneg
+
+/--
+Expectation under a normalized finite weighted PMF is the normalized weighted
+average of the function values.
+-/
+theorem finiteWeightedPMF_pmfExp_eq_sum_div {α : Type*}
+    [Fintype α] [DecidableEq α]
+    (weight : α → ℝ)
+    (hweight_nonneg : ∀ a, 0 ≤ weight a)
+    (htotal_pos : 0 < ∑ a, weight a)
+    (f : α → ℝ) :
+    pmfExp (finiteWeightedPMF weight hweight_nonneg htotal_pos) f =
+      ∑ a : α, (weight a / ∑ b, weight b) * f a := by
+  unfold pmfExp
+  refine Finset.sum_congr rfl ?_
+  intro a _
+  rw [finiteWeightedPMF_apply_toReal]
+
+/--
+Expectation under a finite weighted PMF whose weights sum to one is the
+un-normalized weighted sum.
+-/
+theorem finiteWeightedPMF_pmfExp_eq_weighted_sum_of_sum_eq_one {α : Type*}
+    [Fintype α] [DecidableEq α]
+    (weight : α → ℝ)
+    (hweight_nonneg : ∀ a, 0 ≤ weight a)
+    (hsum : (∑ a : α, weight a) = 1)
+    (f : α → ℝ) :
+    pmfExp
+        (finiteWeightedPMF weight hweight_nonneg
+          (by simpa [hsum] using zero_lt_one))
+        f =
+      ∑ a : α, weight a * f a := by
+  rw [finiteWeightedPMF_pmfExp_eq_sum_div]
+  refine Finset.sum_congr rfl ?_
+  intro a _
+  rw [hsum, div_one]
 
 /--
 The available mass after excluding a finite forbidden set, written as a full

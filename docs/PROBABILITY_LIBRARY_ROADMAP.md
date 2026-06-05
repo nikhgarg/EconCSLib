@@ -53,6 +53,15 @@ This tracks reusable probability work suggested by the current paper queue.
 - `EconCSLib.Foundations.Probability.FiniteSupportMGF` now provides
   finite-support moment-generating functions, log-MGFs, Legendre objectives,
   rate-function scaffolding, and a finite rating-scale LDP model interface.
+- `EconCSLib.Foundations.Probability.FiniteTypeLogMass`,
+  `FiniteProductMultinomialCounts`, and `FiniteEmpiricalMultinomialCounts` now
+  provide reusable method-of-types infrastructure for finite empirical
+  distributions: multinomial product counts, empirical-count support, and
+  type-log-mass bounds for finite-support iid large-deviation arguments.
+- `EconCSLib.Foundations.Probability.IIDLargeDeviations`,
+  `FiniteProductTernaryCounts`, and `IndependentProduct` now provide finite
+  product-law and iid exact-rate certificate constructors for finite score
+  events, including reusable count reductions for lower-bound witnesses.
 - `EconCSLib.Foundations.Probability.LargeDeviations` now provides reusable
   exponential-rate certificate plumbing: negative normalized log decay,
   exact-rate certificates, eventual exponential upper bounds with constants,
@@ -61,6 +70,15 @@ This tracks reusable probability work suggested by the current paper queue.
   pairwise ranking-error aggregation certificates, including finite-sum lower
   bounds from a single positive-weight component and pairwise aggregate lower
   bounds from one certified pair.
+- `EconCSLib.Foundations.Probability.FiniteRankingEvents` now provides
+  deterministic and PMF adjacent-inversion reductions for aggregating pairwise
+  comparison errors into finite ranking or ordered-chain objective errors.
+- `EconCSLib.Foundations.Probability.FiniteRatingComparison` now provides the
+  reusable finite-rating comparison spine used by rating-system
+  large-deviation proofs: source log-MGF/rate wrappers, support-safe pairwise
+  threshold rates, tilted finite score means, two-sample and floor-count
+  comparison probabilities, `P_k`/`1 - P_k` algebra, and pairwise LDP
+  certificate constructors.
 - `EconCSLib.Foundations.Probability.OrderStatistics` now provides the
   reusable probability-facing interface for diversity-aware recommendation arguments:
   top-`k` expected-value oracles, marginal top-`k` values, diminishing and

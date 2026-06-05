@@ -95,9 +95,11 @@ When bounded, Pareto, or other tail-heavy recommendation proofs duplicate the
 same exact power-law finite-optimality argument, extract the FOC core into a
 generic theorem parameterized by the marginal exponent, target exponent, and
 exact backward/forward marginal formulas. Keep the distribution-specific files
-as thin instantiations, and leave the source theorem rows caveated until the
-probability/order-statistic derivation supplies those exact or asymptotic
-marginals.
+as thin instantiations, and leave the source theorem rows `partially
+formalized` or `conditional` until the probability/order-statistic derivation
+supplies those exact or asymptotic marginals. Use `formalized with caveat` only
+if the final theorem is closed but intentionally differs from the source
+statement.
 Do not derive a scaled first-difference/drop hypothesis merely from a value or
 loss asymptotic such as `A - h(q) ~ C q^(-η)`. That asymptotic alone does not
 control finite differences without a regularity/monotonicity theorem strong
@@ -172,6 +174,11 @@ reader-relevant source-version, proof-route, or caveat note. Human-review counts
 mean saved dashboard rows by a human reviewer: `reviewed_rows / total_rows`.
 Agent source audits, validation reports, and compile checks do not increment
 human review.
+If `status.json` includes `human_summary_review.status = "human_approved"` or
+`"human_written"`, preserve the summary verbatim unless a human explicitly asks
+for that summary to be edited. Automation may require a nonempty summary for
+non-formalized papers, but it should not rewrite approved human prose merely to
+shorten, polish, or normalize it.
 If the user asks for DAG regeneration, commit, or push at the next milestone,
 treat the milestone as a green named theorem seam plus the relevant targeted
 builds and hygiene checks, not as every helper alias. At that milestone, refresh
@@ -366,6 +373,14 @@ and functional: it is a scratchpad for thinking, not a polished deliverable.
 Then start executing the plan in Lean. As the formal proof progresses, edit the
 plan to record strategy changes, patched source gaps, discharged seams, and
 remaining blockers.
+For a post-validation or post-formalization audit pass, keep
+`FORMALIZATION_PLAN.md` as the working scratchpad unless the user explicitly
+asks to retire it. Put the durable human-facing audit in a separate paper-local
+artifact such as `POST_FORMALIZATION_AUDIT.md`, `SOURCE_AUDIT.md`, or
+`FINAL_VALIDATION_REPORT.md`. The audit artifact should distinguish publication
+venue from the exact formalized source version, list source-named results with
+statuses, summarize DAG and review-surface checks, and record library
+extraction outcomes plus any deferred extraction candidates.
 During that initial planning pass, also identify defensible partial
 formalization boundaries. For each candidate boundary, say which named results
 would be fully closed, which source assumptions or analytic layers would remain
@@ -419,7 +434,7 @@ staging device and continue toward the paper's named theorem itself.
 For stable-matching/deferred-acceptance papers, load
 `references/proof-markets-social-choice.md` after the first status pass. It
 contains the matching-specific assumptions, strict-preference notation checks,
-DA infrastructure guidance, manipulation-rank warning, and IM05 repair notes.
+DA infrastructure guidance, manipulation-rank warning, and source-repair notes.
 
 For papers with computational-complexity, hardness, approximation-hardness, or
 randomized-class claims, load `references/proof-algorithms-complexity.md` after
@@ -440,7 +455,7 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 
 - **`papers/` (The Audit Trail):** Each paper-specific folder is a formalization artifact proving that the specific claims in a specific PDF are true.
   - **Notation Fidelity:** Translate paper-specific notation (e.g., exactly matching the paper's index variables like `u`, `j`, `t`) into the shared primitives.
-  - **Paper-Facing Wrappers:** Write theorems whose signatures match the paper *exactly*. These should be thin wrappers that call the generic library theorems. (e.g., `theorem roth82_theorem_1 : ... := EconCSLib.Markets.Matching.da_is_stable`).
+  - **Paper-Facing Wrappers:** Write theorems whose signatures match the paper *exactly*. These should be thin wrappers that call the generic library theorems.
   - **Local Ledger:** Keep the paper's specific narrative flow in `MainTheorems.lean`, `README.md`, and `DependencyDAG.tex`.
   - **Upstreaming Workflow:** It is normal to build everything inside a `papers/` folder initially. Once a proof is stable, **upstream** the generalized math into `EconCSLib`, leaving only the thin wrappers and paper-specific stepping stones behind.
 
@@ -456,6 +471,16 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   cleanup signal is repeated proof construction replaced by shared imports and
   one-line adapters, plus green builds for all papers that import the lifted
   API.
+- After a library extraction pass, update the discoverability surface before
+  calling the pass complete: the reusable module docstring, any aggregate import
+  docstring, `docs/ECONCSLIB_DOMAIN_INDEX.md`, and the relevant roadmap or
+  extraction-plan index. Update this skill only when the extraction creates a
+  general workflow rule or a reusable module family future agents should check
+  first.
+- For domain-specific proof seams, use the proof-reference routing table below
+  instead of adding theorem-family details to this always-loaded workflow file.
+  The relevant reference should name reusable modules and declarations that
+  future proof agents should check first.
 - For LP-heavy papers, prefer a paper-local equality-form, certificate, or BFS-witness interface when that is enough to follow the paper proof and close named results. Build a generic LP/simplex/duality layer only when the current theorem truly needs it or a second paper will immediately reuse it; otherwise keep the optimization boundary narrow and auditable in the paper folder.
 - Keep paper-module imports as narrow as practical. Avoid importing aggregate
   roots such as `EconCSLib` from paper-local proof files when a leaf module like
@@ -525,15 +550,11 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   source of truth.
 - Route paper work by public status. If the requested paper exists only in the
   private incubator, do the work in the private repo unless the user explicitly
-  asks to publish it. For example, `GLM20DroppingStandardizedTesting` is a
-  private/in-progress lane: continue it in `EconCSLib-private` or the current
-  private superset checkout, not in the public repo, and do not add GLM20 rows,
-  DAGs, reports, or source material to public-facing docs without explicit
-  approval. If the requested paper exists in the public repo, use the public
-  repo as the primary worktree for public contributions. For example,
-  `GHW01DigitalGoods` (sometimes referred to informally as `GW01`) is a public
-  formalized lane: edit `papers/GHW01DigitalGoods/`, its root module, reusable
-  public library files, and public status/docs in `EconCSLib-public`.
+  asks to publish it. Do not add private paper rows, DAGs, reports, titles, or
+  source material to public-facing docs without explicit approval. If the
+  requested paper exists in the public repo, use the public repo as the primary
+  worktree for public contributions and update only that public paper folder,
+  its root module, reusable public library files, and public status/docs.
 - For private papers that may later be published, prefer a topic branch forked
   from public `main` and keep the branch scoped to the paper folder, root paper
   module, paper-local `status.json`, and required reusable library changes.
@@ -592,9 +613,9 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   any private paper folder, private-only plan, source cache, scaffold row, or
   unpublished status entry appears.
 - Public-release leakage checks must be path-sensitive. Grep the changed public
-  surface for private paper identifiers and titles such as GLM/KR/PRPKG/new
-  scaffold IDs. Existing historical mentions outside the changed path set do
-  not justify new leakage. Regenerate public status from paper-local
+  surface for private paper identifiers, private paper titles, and new scaffold
+  IDs. Existing historical mentions outside the changed path set do not justify
+  new leakage. Regenerate public status from paper-local
   `status.json`, run `python3 scripts/sync_paper_status.py --check`,
   `python3 scripts/audit_repository.py`, placeholder scans on changed Lean
   paper folders, and the relevant `lake build` targets before pushing. When the
@@ -624,9 +645,9 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   interface alias cannot be resolved this way, treat it as proof-surface loss
   and restore or deliberately replace it before committing.
 - Preservation audits must compile the actual private paper targets, not only
-  the default public aggregate. Explicitly build private/in-progress papers
-  such as GLM, KR, PRPKG, EOS, IM, and any new scaffolds when they are part of
-  the pass. Strip comments before scanning for actual `sorry`, `admit`,
+  the default public aggregate. Explicitly build every private/in-progress
+  paper target and any new scaffolds when they are part of the pass. Strip
+  comments before scanning for actual `sorry`, `admit`,
   `axiom`, or `unsafe` tokens; do not count ordinary arithmetic `by omega` or
   prose comments as proof gaps. Push private and public remotes only after both
   the content-preservation check and the relevant builds/audits pass.
@@ -873,11 +894,9 @@ the Lean statements against the paper.
   `docs/STATUS.md`: `formalized`, `formalized with caveat`,
   `partially formalized`, `conditional`, `scaffold`, `not started`, or
   `not formalized`.
-- **Paper Directory and Namespace Convention:** All new paper folders, modules, and internal namespaces MUST be named using the format `[AuthorInitials][2DigitYear][Descriptor]` in PascalCase (e.g., `MSVV07AdWords`, `LMMS04FairDivision`, `KR21Monoculture`). This guarantees collision-proof Lean namespaces while immediately communicating the citation. All paper implementations sit within the `papers/` directory.
+- **Paper Directory and Namespace Convention:** All new paper folders, modules, and internal namespaces MUST be named using the format `[AuthorInitials][2DigitYear][Descriptor]` in PascalCase (for example, `ABC12RepresentativeTitle`). This guarantees collision-proof Lean namespaces while immediately communicating the citation. All paper implementations sit within the `papers/` directory.
 - **One citation per paper folder:** Do not use aggregate folders for award lists, reading lists, or multi-paper campaigns. Split them into one `[AuthorInitials][2DigitYear][Descriptor]` folder per source paper, each with its own source PDF/text cache, README, DAG, and `MainTheorems.lean`. If an aggregate module already exists, keep it only as a compatibility import or handoff note and move paper-facing status into the citation-specific folders.
 - **Initial Proof Roadmap (Dependency DAG):** At the *very beginning* of formalizing a new paper, before writing any deep proof code, you must create a comprehensive proof roadmap. Read through the paper carefully to identify *every* named result (Definitions, Lemmas, Propositions, Theorems, Corollaries) and map out exactly how they relate to each other. Encode this roadmap as `DependencyDAG.tex` and render `DependencyDAG.pdf` in the paper folder; both files are review artifacts and the rendered PDF should be committed. This ensures no named result is overlooked, helps you understand the overall proof architecture, and gives humans a clear audit of the theorem flow.
-  - **Project pattern in this repo:** for Monoculture, keep the active artifact at
-    `papers/KR21Monoculture/DependencyDAG.tex` and a rendered image alongside it.
   - All paper DAGs MUST `\input` the shared preamble located at `docs/tikz/dag_preamble.tex`.
   - Use the exact node styles defined in the preamble and status vocabulary:
     `formalized` uses `dag_result` (green theorem/result), `dag_lemma`
@@ -929,9 +948,9 @@ the Lean statements against the paper.
   - **DAG status sanity check before committing:** Reread the rendered DAG as a
     skeptical reviewer would. Every source-named proposition, theorem,
     corollary, and major definition from the paper inventory must appear; do
-    not replace a missing named result with a broad "Mallows/randomization" or
-    "finite LDP" bucket. A green node that is fed by a caveat, partial result,
-    or conditional bridge must either state a theorem whose Lean assumptions
+    not replace a missing named result with a broad topical or implementation
+    bucket. A green node that is fed by a caveat, partial result, or
+    conditional bridge must either state a theorem whose Lean assumptions
     visibly include that limitation, or the incoming edge must be dashed and
     clearly non-required. If the downstream source theorem is still only proved
     through certificates, finite analogues, positive-base restrictions,
@@ -948,6 +967,10 @@ the Lean statements against the paper.
   - **Stable Topology Requirement:** The initial DAG should contain the paper's full named-result structure: all named Definitions, Lemmas, Propositions, Theorems, Corollaries, and appendix results, with dependency arrows reflecting the paper proof architecture. After that initial roadmap is created, routine progress updates should normally change only node status/style/text, not add new boxes or arrows. Add or remove boxes/arrows only when the initial named-result inventory was incomplete or a genuine paper dependency was discovered to be missing/wrong; if topology changes, rerender and re-check for overlap.
   - The DAG must encode formalization status and node type explicitly by using the preamble styles.
   - **Node Content:** Node text MUST begin with a bolded header indicating the Theorem/Lemma/Definition name and, if available, its location in the paper (e.g., `\textbf{Theorem 1 (Section 4)} \\ Description` or `\textbf{Lemma 12 (App. E)} \\ Symmetry reduction`). Provide a brief, readable description on the following line(s).
+    Do not include internal source-TeX labels, Lean declaration names, helper
+    theorem names, or citation keys in DAG node text. Labels such as
+    `thm:...`, `lem:...`, and `source_...` belong in `PaperInterface.lean`,
+    README rows, audit ledgers, or final reports, not in the visual DAG.
   - **Closed theorem text stays short:** Once a theorem is closed, the theorem
     node should describe the source theorem's statement, not the Lean proof
     machinery that closed it. Do not fill a closed theorem box with internal
@@ -991,6 +1014,11 @@ the Lean statements against the paper.
   README status table or proof comments, and use the DAG to show how the
   paper's named results relate and which of them are formalized, conditional,
   caveated, or open.
+  Do not include empirical, numerical, simulation, benchmark, data-study, or
+  reproducibility-artifact sections as DAG nodes. The DAG is a proof/theorem
+  roadmap, not a full paper outline. If the source paper has a substantial
+  empirical or numerical section, mention that scope explicitly in the README or
+  final validation/formalization report and say it is not a Lean theorem target.
   If the source has only a few named results, keep the DAG correspondingly
   simple; do not compensate by adding a large set of paper-unnamed Lean helper
   nodes.
@@ -998,6 +1026,11 @@ the Lean statements against the paper.
   still show the corresponding source theorem node with the honest paper-level
   status; finite versions belong in Lean helper names, README rows, or proof
   comments, not as replacement DAG nodes.
+- If a finite analogue, certificate endpoint, or regularity-heavy wrapper is
+  the current strongest Lean result, do not mark the source theorem
+  `formalized with caveat` just because the wrapper compiles. Use `conditional`
+  for the wrapper and `partially formalized` for the source theorem until the
+  extra hypotheses are derived from the paper's primitive assumptions.
 - A downstream theorem node may use the green `dag_result` style only when its
   paper-facing statement is closed without remaining paper assumptions. If Lean
   currently proves only wrappers conditional on certificates, no-gap hypotheses,
@@ -1012,8 +1045,7 @@ the Lean statements against the paper.
   README/DAG and explicitly name the probability-to-integral bridge that remains.
 - For sequential weighted without-replacement or "first distinct draw" models,
   load `references/proof-foundations-probability.md`; for matching-specific
-  Plackett--Luce/IM05 details, also load
-  `references/proof-markets-social-choice.md`.
+  weighted-list details, also load `references/proof-markets-social-choice.md`.
 - When a proof step invokes an external cited analytic theorem that is not in
   Mathlib, encode that input as a named paper-local hypothesis or definition
   (for example, a `Sampford...Bound` assumption), prove the source's downstream
@@ -1649,11 +1681,26 @@ pass:
   - Re-read every node as human prose. Green/formalized nodes should summarize
     the paper claim, not how the Lean proof was implemented. Caveat or
     conditional nodes should name the exact remaining semantic issue.
+    A reviewer should be able to understand the mathematical result from the
+    green box itself without recognizing any paper-internal TeX label or Lean
+    declaration name.
     Do not write status words such as "closed", "proved", "formalized", or
     "verified" inside green node bodies; the node color/style already carries
     that information. Likewise, avoid vague "open" text in partial/conditional
     nodes: name the missing theorem, model construction, or library ingredient
     needed to finish the paper result.
+  - Do not split one source-numbered proposition/theorem/corollary into
+    multiple green boxes merely because the Lean proof has formula, finite,
+    certificate, or boundary helper layers. Use one green paper-facing node for
+    the source result, with its paper number and a short statement of the
+    actual mathematical conclusion. Make helper layers yellow/model nodes only
+    when they are needed to explain real dependencies, and never duplicate the
+    same numbered result across helper, formula, and final-result green boxes.
+  - Before accepting a rendered DAG, run a label/duplication audit: grep the
+    TeX for source labels and Lean names such as `thm:`, `lem:`, `source_`,
+    and long declaration fragments; count occurrences of each numbered
+    result header; and visually confirm every green result node states the
+    paper-facing conclusion rather than the implementation route.
   - Use the shared DAG template's node-type styles, not just status color:
     `dag_model` for definitions/model layers, `dag_lemma` for lemmas/supporting
     lemma clusters, and `dag_result` for theorems, propositions, corollaries,
@@ -1835,7 +1882,7 @@ reference.
 | `EconCSLib/Foundations/Probability/*`, finite PMFs, Markov kernels/chains, CTMCs, renewal-reward, reward-rate, concentration, measure inequalities, continuous densities, RUM/noise laws, order statistics, large deviations | `references/proof-foundations-probability.md` |
 | `EconCSLib/Foundations/Optimization/*`, argmax/existence/objective wrappers | `references/proof-foundations-optimization.md` |
 | `EconCSLib/Applications/RecommenderSystems/*`, accuracy/diversity, producer fairness, count allocation | `references/proof-recommender-systems.md` |
-| `EconCSLib/Algorithms/Online/*`, AdWords/MSVV, online matching, regret/Yao | `references/proof-algorithms-online.md` |
+| `EconCSLib/Algorithms/Online/*`, online allocation/matching, regret/Yao | `references/proof-algorithms-online.md` |
 | `EconCSLib/MechanismDesign/Auctions/*`, digital goods, GSP, combinatorial auctions | `references/proof-mechanism-design.md` |
 | `EconCSLib/Markets/*` or `EconCSLib/SocialChoice/*`, matching, fair division, rankings/Mallows | `references/proof-markets-social-choice.md` |
 

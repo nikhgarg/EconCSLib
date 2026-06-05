@@ -66,6 +66,7 @@ published citation title and year.
 | [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 468 lines |  |
 | [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/19 | OK: 290 lines | The journal version is used as the corrected source for Theorem 8.2 [Goldberg et al. 2006](https://www.sciencedirect.com/science/article/pii/S0899825606000303). |
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines |  |
+| [GJ18 Informative Rating Systems](papers/GJ18InformativeRatingSystems) | Formalized | 0/8 | OK: 2914 lines |  |
 | [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 76 lines |  |
 | [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 160 lines |  |
 | [GCG24 User Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 235 lines |  |

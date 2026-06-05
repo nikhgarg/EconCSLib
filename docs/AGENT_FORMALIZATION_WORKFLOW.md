@@ -66,6 +66,11 @@ Completed papers should also have:
   `docs/PAPER_STATUS.md`, the root `README.md` status table, and the
   `site/index.html` status table. Do not hand-edit those generated status files
   or rows.
+- `status.json` `human_summary`: public-facing prose for the generated tables.
+  If `human_summary_review.status` is `human_approved`, do not rewrite the
+  summary unless a human explicitly asks for that exact edit. Audit scripts may
+  require a nonempty summary for non-formalized papers, but should not pressure
+  edit or shorten human-approved prose.
 - `FORMALIZATION_PLAN.md`: lightweight outside-Lean proof scratchpad.
 - `DependencyDAG.tex`: proof map with every named result and definition-like
   paper object represented; status and caveat text should agree with
@@ -83,6 +88,17 @@ strategy, formalize that strategy, and record the deviation in the validation
 report. It is better to prove a source-faithful theorem by a cleaner route than
 to spend large amounts of time following an informal proof line-by-line, as long
 as the theorem statement and assumptions are explicit.
+
+## Post-Formalization Closeout
+
+Before declaring a paper complete, run a library elevation pass over the
+paper-local proof modules. Check whether any proof results, proof techniques,
+certificate constructors, model-neutral definitions, or reusable primitives
+should move into `EconCSLib` for other papers to reuse. Elevate local/low-risk
+items when the destination module is clear and the build can be checked. If the
+move needs broader API design, keep the paper-facing wrapper in place and record
+the candidate, destination module, and reusable proof idea in
+`FINAL_VALIDATION_REPORT.md`.
 
 ## Human Review Order
 

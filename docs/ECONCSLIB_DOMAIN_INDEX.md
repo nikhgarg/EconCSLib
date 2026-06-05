@@ -73,8 +73,12 @@ when you need material from a domain quickly.
       convexity/Jensen wrappers, threshold policies, minimax/Yao certificates,
       and asymptotic allocation profiles.
   - `EconCSLib.Foundations.Probability`
-    (`FiniteExpectation`, `FiniteMixture`, `FiniteLabel`, `FiniteSupportMGF`, `Kernel`, `Conditional`,
-    `LargeDeviations`, `OrderStatistics`, `RealDistribution`, `MarkovChain`, `CTMC`, `MDP`,
+    (`FiniteExpectation`, `FiniteMixture`, `FiniteLabel`, `FiniteSupportMGF`,
+    `FiniteTypeLogMass`, `FiniteProductMultinomialCounts`,
+    `FiniteEmpiricalMultinomialCounts`, `FiniteProductTernaryCounts`,
+    `IIDLargeDeviations`, `IndependentProduct`, `FiniteRankingEvents`,
+    `FiniteRatingComparison`, `Kernel`, `Conditional`, `LargeDeviations`,
+    `OrderStatistics`, `RealDistribution`, `MarkovChain`, `CTMC`, `MDP`,
     `RenewalReward`, `ContinuousReward`, `Gaussian`, `StochasticDominance`, `MeasureInequalities`,
     `Occupancy`, `Admissions`, `FairCoin`, `Weighted`, `WithoutReplacement`)
     - `FiniteExpectation`: finite PMF expectations/probabilities, relabeling,
@@ -140,6 +144,21 @@ when you need material from a domain quickly.
     - `FiniteSupportMGF`: finite-support MGF/log-MGF algebra, Legendre
       objectives, rate-function scaffolding, and finite rating-scale LDP model
       wrappers for rating-system large-deviation proofs.
+    - `FiniteTypeLogMass`, `FiniteProductMultinomialCounts`, and
+      `FiniteEmpiricalMultinomialCounts`: finite empirical-type and
+      method-of-types support for iid finite-support large-deviation proofs,
+      including multinomial count products and type log-mass bounds.
+    - `FiniteProductTernaryCounts`, `IIDLargeDeviations`, and
+      `IndependentProduct`: finite product laws, ternary event-count
+      reductions, and iid exact-rate certificate constructors for finite
+      support score events.
+    - `FiniteRankingEvents`: deterministic and PMF adjacent-inversion
+      reductions used to aggregate pairwise ranking/comparison errors.
+    - `FiniteRatingComparison`: source-facing finite-rating comparison
+      infrastructure: log-MGF/rate wrappers, support-safe pairwise threshold
+      rates, finite tilted score means, two-sample and floor-count comparison
+      probabilities, `P_k`/`1 - P_k` algebra, and pairwise LDP certificate
+      constructors.
     - `LargeDeviations`: negative normalized log-decay rates, exact
       exponential-rate certificates, eventual exponential upper-bound
       and lower-bound certificates, conversion from exact rates to weaker
