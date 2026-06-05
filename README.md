@@ -63,7 +63,7 @@ published citation title and year.
 |---|---:|---:|---:|---|
 | [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized | 0/7 | OK: 109 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library. |
 | [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 468 lines |  |
-| [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/19 | OK: 290 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared auctions library. The journal version is used as the corrected source for Theorem 8.2 [Goldberg et al. 2006](https://www.sciencedirect.com/science/article/pii/S0899825606000303). |
+| [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/19 | OK: 290 lines | The journal version is used as the corrected source for Theorem 8.2 [Goldberg et al. 2006](https://www.sciencedirect.com/science/article/pii/S0899825606000303). |
 | [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 613 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared auctions library. |
 | [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 76 lines |  |
 | [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 160 lines |  |
@@ -72,7 +72,7 @@ published citation title and year.
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized | 0/17 | OK: 296 lines | Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1. |
 | [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 174 lines | Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external. |
 | [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/33 | OK: 171 lines | Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure. |
-| [PRPKG24 Accuracy Diversity](papers/PRPKG24AccuracyDiversity) | Partially formalized | 0/27 | OK: 138 lines | Proposition 2's printed finite bound appears to miss a factor of 2/type-count shift; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library. |
+| [PRPKG24 Accuracy Diversity](papers/PRPKG24AccuracyDiversity) | Partially formalized | 0/27 | OK: 138 lines | Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library. |
 <!-- END GENERATED PAPER STATUS TABLE -->
 
 For more detail, use:

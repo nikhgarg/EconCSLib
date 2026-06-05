@@ -1698,20 +1698,25 @@ pass:
   source did not number them as "Definition." Examples include bias, aggregate
   posterior, calibration, objective functions, equilibrium notions, allocation
   rules, or any paper-specific named/boxed notation. Give each definition in
-  paper notation plus the Lean declarations that encode it.
+  paper notation plus its single main reader-facing Lean declaration, preferably
+  from `PaperInterface.lean`.
 - Then state each named theorem/proposition/corollary once, matching the paper
   text at theorem-box granularity. Do not expand one source theorem into dozens
-  of auxiliary lemmas in the human report. Put only the direct Lean interface
-  statement declarations under each theorem, ideally from `PaperInterface.lean`.
-  Keep auxiliary implementation inventories in the Lean audit ledger, README,
-  or proof files.
+  of auxiliary lemmas in the human report. Put only one direct Lean interface
+  statement declaration under each paper-facing result, ideally from
+  `PaperInterface.lean`. If a source theorem has separately numbered clauses,
+  list each clause as its own paper-facing result with one declaration. Keep
+  auxiliary implementation inventories in the Lean audit ledger, README, or
+  proof files.
 - The report must summarize: source version checked, named-result completion
   status (including unformalized items), additional assumptions introduced
   beyond the paper, proof-strategy deviations from the paper, and any suspected
   paper errors or inconsistencies found during formalization.
 - Keep Lean declaration inventories out of the final report except for the
-  direct paper-interface declarations needed to identify a source result. Put
-  helper theorem ledgers, alias lists, and proof-seam inventories in
+  single direct paper-interface declaration needed to identify each source
+  result. Do not put comma-separated helper declarations, source declaration
+  lists, theorem aliases, or proof-seam inventories in final-report status
+  tables. Put helper theorem ledgers, alias lists, and proof-seam inventories in
   `PostPaperAudit.lean`, the README theorem ledger, or `SOURCE_AUDIT.md`.
 - If the final report starts reading like an implementation ledger, split it:
   keep the report as a short human assessment of the source claims, proof
@@ -1727,7 +1732,7 @@ pass:
   essential to understanding a caveat. Summarize validation/build checks in prose
   instead. If the report is getting long because it lists every helper theorem,
   stop and replace that section by a short paper-definition/theorem interface
-  plus links or declaration names for the main witnesses.
+  plus one main declaration name for each paper-facing theorem or definition.
 - Avoid wide Markdown tables for definition inventories when the notation or
   declaration names are long. Use a concise bullet checklist instead, with the
   paper notation first and the Lean interface declaration second.
@@ -1770,7 +1775,7 @@ exposed in `PaperInterface.lean`.
 ### Theorem <n>
 **Paper statement.** <one theorem-box-level statement matching the source>
 
-**Lean interface statement(s).**
+**Lean interface statement.**
 - `<PaperInterface.theoremN_part>`: <which paper clause it states>
 
 **Status.** <formalized / conditional / not formalized>. <1-4 lines of caveats only if needed.>

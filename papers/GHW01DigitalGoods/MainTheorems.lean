@@ -1,4 +1,4 @@
-import EconCSLib.MechanismDesign.Auctions.MainTheorems
+import GHW01DigitalGoods.AuctionMainTheorems
 
 /-!
 # Paper-Facing Theorems: Competitive Auctions and Digital Goods

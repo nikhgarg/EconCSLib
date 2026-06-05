@@ -7,10 +7,11 @@ PRPKG is still a partial formalization because the full Proposition 4
 continuous-sphere/Laplace layer remains open. The boundary is otherwise closed
 for the paper-facing results listed in `PaperInterface.lean`.
 
-Source version: arXiv:2307.15142v1. This checkout has the extracted source
-text cache `PRPKG24AccuracyDiversity.txt`; the ignored PDF cache
-`PRPKG24AccuracyDiversity.pdf` is not present locally and should be recreated
-from arXiv only when fresh PDF-line inspection is needed.
+Source version: WWW '24 / The ACM Web Conference 2024, pp. 1318--1329,
+DOI `10.1145/3589334.3645625`; the local source cache is arXiv:2307.15142v1.
+This checkout has the extracted source text cache `PRPKG24AccuracyDiversity.txt`;
+the ignored PDF cache `PRPKG24AccuracyDiversity.pdf` is not present locally and
+should be recreated from arXiv only when fresh PDF-line inspection is needed.
 
 ## Named Source Inventory
 
