@@ -59,6 +59,45 @@ When another agent will pick up later, spend tokens on durable artifacts rather
 than chat: a paper-local handoff note, README/audit links, exact declaration
 names, validation status, and next command. Future agents should start from
 those files instead of reconstructing context from conversation history.
+When reporting Codex token usage for a paper, workflow, or publication table,
+avoid file-level overcounting. Parse only `~/.codex/sessions/**/*.jsonl`;
+ignore prompt history files and plugin/test fixtures. In each rollout file,
+the first `session_meta` is authoritative; later embedded `session_meta`
+records may come from summarized context and must not overwrite the file's
+identity. For unique-session counts, build a parent graph using
+`source.subagent.thread_spawn.parent_thread_id` first and `forked_from_id`
+second, then collapse to root session trees. Exclude guardian/auto-review
+rollouts (`source.subagent.other = "guardian"` or model `codex-auto-review`)
+from human formalization token tables unless explicitly reporting tooling
+overhead. Report top-level/root-only usage separately from subagent-inclusive
+actual API usage; do not mix a root session count with all-descendant token
+totals without saying so. Subagent and resumed rollout files can embed a copied
+parent transcript after the first `session_meta`; those copied records often
+include parent `token_count` events and must not be charged again. For each
+rollout, find the first own turn marker whose `turn_id` shares the session id's
+leading timestamp group, then compute usage as the cumulative
+`total_token_usage` after that boundary minus the last cumulative
+`total_token_usage` before it. Cross-check that delta against summed
+`last_token_usage` records after the same boundary. Cached input tokens are
+already included in input tokens, so compute uncached input as
+`input - cached`; charge reasoning tokens only through the output-token row. Do
+not dedupe repeated parent/resume/subagent prompt context out of a
+billable-usage estimate merely because a human regards it as repeated work:
+each descendant model request still sends input tokens, and prompt caching only
+moves matching prefixes to the cached-input rate. Replayed context in resumed
+or subagent sessions is real API usage when it appears in the rollout's own
+post-boundary usage logs, but if the goal is a human-facing "unique work"
+estimate, label that separately instead of presenting it as raw billable usage.
+For financial reconciliation, prefer the OpenAI Costs/Usage dashboard or Costs
+API over local log reconstruction.
+Sanity-check local counts against known scale. In the June 5, 2026 workshop
+audit, `492` rollout files collapsed to `7` non-guardian root session trees.
+The naive file-level sum over embedded transcripts reported about `$58k`; the
+corrected post-boundary, subagent-inclusive non-guardian estimate was about
+`6.05B` total tokens and `$4.6k`, with subagents contributing about `$775`.
+If a future all-session estimate is an order of magnitude larger than the
+top-level estimate, inspect for embedded parent transcript token events before
+publishing the table.
 When the latest green endpoint is a source-sequence, source-certificate, or
 analytic boundary rather than the actual paper distribution/object, say that
 plainly in the handoff and README. Name the exact identification bridge still
