@@ -305,6 +305,311 @@ theorem eq_of_rankOf_eq {n : ℕ} (π : Ranking n)
   simpa [rankOf] using hπ
 
 /--
+Map an inversion of the ranking with `i` and `j` swapped back to an inversion
+of the original ranking, in center coordinates. The cases are the four ways an
+inversion can involve one of the two swapped labels.
+-/
+def swapInversionMap {n : ℕ} (i j : Candidate n)
+    (p : Candidate n × Candidate n) : Candidate n × Candidate n :=
+  if p.2 = i then
+    (p.1, j)
+  else if p.1 = j then
+    (i, p.2)
+  else if p.1 = i ∧ j < p.2 then
+    (j, p.2)
+  else if p.2 = j ∧ p.1 < i then
+    (p.1, i)
+  else
+    p
+
+/-- Inverse decoder for `swapInversionMap` on its source inversion set. -/
+def swapInversionMapInv {n : ℕ} (i j : Candidate n)
+    (p : Candidate n × Candidate n) : Candidate n × Candidate n :=
+  if p.2 = j ∧ p.1 < i then
+    (p.1, i)
+  else if p.1 = i ∧ j < p.2 then
+    (j, p.2)
+  else if p.1 = j then
+    (i, p.2)
+  else if p.2 = i then
+    (p.1, j)
+  else
+    p
+
+theorem swapInversionMapInv_left
+    {n : ℕ} {i j : Candidate n} (hij : i < j)
+    {p : Candidate n × Candidate n} (hp : p.1 < p.2) :
+    swapInversionMapInv i j (swapInversionMap i j p) = p := by
+  classical
+  rcases p with ⟨a, b⟩
+  dsimp at hp
+  unfold swapInversionMap swapInversionMapInv
+  by_cases hbi : b = i
+  · subst b
+    have hai : a < i := hp
+    have haj : a < j := lt_trans hai hij
+    simp [hai]
+  · rw [if_neg hbi]
+    by_cases haj_eq : a = j
+    · subst a
+      have hjb : j < b := hp
+      have hbj : b ≠ j := ne_of_gt hjb
+      simp [hjb, hbj]
+    · rw [if_neg haj_eq]
+      by_cases hai_jb : a = i ∧ j < b
+      · rcases hai_jb with ⟨hai_eq, hjb⟩
+        subst a
+        have hbj : b ≠ j := ne_of_gt hjb
+        have hji_not : ¬j < i := not_lt_of_gt hij
+        simp [hjb, hbj, hji_not]
+      · rw [if_neg hai_jb]
+        by_cases hbj_ai : b = j ∧ a < i
+        · rcases hbj_ai with ⟨hbj_eq, hai⟩
+          subst b
+          have hai_ne : a ≠ i := ne_of_lt hai
+          have haj_ne : a ≠ j := ne_of_lt (lt_trans hai hij)
+          simp [hai, hai_ne, haj_ne]
+        · rw [if_neg hbj_ai]
+          simp [hbi, haj_eq, hai_jb, hbj_ai]
+
+/--
+For an identity-center ranking, an inversion after swapping the positions of a
+center-ordered inverted pair maps to an inversion of the original ranking.
+-/
+theorem swapInversionMap_mem_inversionFinset_refl
+    {n : ℕ} (τ : Ranking n) {i j : Candidate n}
+    (hij : i < j) (hpos : rankOf τ j < rankOf τ i)
+    {p : Candidate n × Candidate n}
+    (hp : p ∈ inversionFinset (Equiv.refl (Candidate n))
+        (swapCandidatePositions τ i j)) :
+    swapInversionMap i j p ∈
+      inversionFinset (Equiv.refl (Candidate n)) τ := by
+  classical
+  rcases p with ⟨a, b⟩
+  have hinv :
+      invertedPair (Equiv.refl (Candidate n))
+        (swapCandidatePositions τ i j) (a, b) := by
+    simpa [inversionFinset] using hp
+  have hab : a < b := by
+    simpa [invertedPair, rankOf] using hinv.1
+  have hrank :
+      rankOf (swapCandidatePositions τ i j) b <
+        rankOf (swapCandidatePositions τ i j) a := by
+    simpa [invertedPair] using hinv.2
+  unfold swapInversionMap
+  by_cases hbi : b = i
+  · rw [if_pos hbi]
+    subst b
+    have hai : a < i := hab
+    have haj : a < j := lt_trans hai hij
+    have ha_ne_i : a ≠ i := ne_of_lt hai
+    have ha_ne_j : a ≠ j := ne_of_lt haj
+    have hrank_a :
+        rankOf (swapCandidatePositions τ i j) a = rankOf τ a :=
+      rankOf_swapCandidatePositions_of_ne τ ha_ne_i ha_ne_j
+    have hlt_rank : rankOf τ j < rankOf τ a := by
+      simpa [hrank_a] using hrank
+    have htarget :
+        invertedPair (Equiv.refl (Candidate n)) τ (a, j) :=
+      ⟨by simpa [rankOf] using haj, hlt_rank⟩
+    simpa [inversionFinset] using htarget
+  · rw [if_neg hbi]
+    by_cases haj_eq : a = j
+    · rw [if_pos haj_eq]
+      subst a
+      have hjb : j < b := hab
+      have hb_ne_i : b ≠ i := by
+        intro hb
+        subst b
+        exact (not_lt_of_gt hij) hjb
+      have hb_ne_j : b ≠ j := ne_of_gt hjb
+      have hrank_b :
+          rankOf (swapCandidatePositions τ i j) b = rankOf τ b :=
+        rankOf_swapCandidatePositions_of_ne τ hb_ne_i hb_ne_j
+      have hlt_rank : rankOf τ b < rankOf τ i := by
+        simpa [hrank_b] using hrank
+      have htarget :
+          invertedPair (Equiv.refl (Candidate n)) τ (i, b) :=
+        ⟨by simpa [rankOf] using lt_trans hij hjb, hlt_rank⟩
+      simpa [inversionFinset] using htarget
+    · rw [if_neg haj_eq]
+      by_cases hai_jb : a = i ∧ j < b
+      · rw [if_pos hai_jb]
+        rcases hai_jb with ⟨hai_eq, hjb⟩
+        subst a
+        have hb_ne_i : b ≠ i := by
+          intro hb
+          subst b
+          exact (not_lt_of_gt hij) hjb
+        have hb_ne_j : b ≠ j := ne_of_gt hjb
+        have hrank_b :
+            rankOf (swapCandidatePositions τ i j) b = rankOf τ b :=
+          rankOf_swapCandidatePositions_of_ne τ hb_ne_i hb_ne_j
+        have hlt_rank : rankOf τ b < rankOf τ j := by
+          simpa [hrank_b] using hrank
+        have htarget :
+            invertedPair (Equiv.refl (Candidate n)) τ (j, b) :=
+          ⟨by simpa [rankOf] using hjb, hlt_rank⟩
+        simpa [inversionFinset] using htarget
+      · rw [if_neg hai_jb]
+        by_cases hbj_ai : b = j ∧ a < i
+        · rw [if_pos hbj_ai]
+          rcases hbj_ai with ⟨hbj_eq, hai⟩
+          subst b
+          have ha_ne_i : a ≠ i := ne_of_lt hai
+          have ha_ne_j : a ≠ j := ne_of_lt (lt_trans hai hij)
+          have hrank_a :
+              rankOf (swapCandidatePositions τ i j) a = rankOf τ a :=
+            rankOf_swapCandidatePositions_of_ne τ ha_ne_i ha_ne_j
+          have hlt_rank : rankOf τ i < rankOf τ a := by
+            simpa [hrank_a] using hrank
+          have htarget :
+              invertedPair (Equiv.refl (Candidate n)) τ (a, i) :=
+            ⟨by simpa [rankOf] using hai, hlt_rank⟩
+          simpa [inversionFinset] using htarget
+        · rw [if_neg hbj_ai]
+          by_cases hai : a = i
+          · subst a
+            have hib : i < b := hab
+            have hnot_jb : ¬j < b := by
+              intro hjb
+              exact hai_jb ⟨rfl, hjb⟩
+            have hb_ne_j : b ≠ j := by
+              intro hbj
+              subst b
+              have hbad : rankOf τ i < rankOf τ j := by
+                simpa using hrank
+              exact (not_lt_of_gt hpos) hbad
+            have hb_ne_i : b ≠ i := hbi
+            have hrank_b :
+                rankOf (swapCandidatePositions τ i j) b = rankOf τ b :=
+              rankOf_swapCandidatePositions_of_ne τ hb_ne_i hb_ne_j
+            have hlt_rank_bj : rankOf τ b < rankOf τ j := by
+              simpa [hrank_b] using hrank
+            have hlt_rank : rankOf τ b < rankOf τ i :=
+              lt_trans hlt_rank_bj hpos
+            have htarget :
+                invertedPair (Equiv.refl (Candidate n)) τ (i, b) :=
+              ⟨by simpa [rankOf] using hib, hlt_rank⟩
+            simpa [inversionFinset] using htarget
+          · by_cases hbj : b = j
+            · subst b
+              have haj_lt : a < j := hab
+              have hnot_ai : ¬a < i := by
+                intro hai_lt
+                exact hbj_ai ⟨rfl, hai_lt⟩
+              have ha_ne_i : a ≠ i := by
+                intro hai_eq
+                subst a
+                have hbad : rankOf τ i < rankOf τ j := by
+                  simpa using hrank
+                exact (not_lt_of_gt hpos) hbad
+              have ha_ne_j : a ≠ j := haj_eq
+              have hrank_a :
+                  rankOf (swapCandidatePositions τ i j) a = rankOf τ a :=
+                rankOf_swapCandidatePositions_of_ne τ ha_ne_i ha_ne_j
+              have hlt_rank_ia : rankOf τ i < rankOf τ a := by
+                simpa [hrank_a] using hrank
+              have hlt_rank : rankOf τ j < rankOf τ a :=
+                lt_trans hpos hlt_rank_ia
+              have htarget :
+                  invertedPair (Equiv.refl (Candidate n)) τ (a, j) :=
+                ⟨by simpa [rankOf] using haj_lt, hlt_rank⟩
+              simpa [inversionFinset] using htarget
+            · have ha_ne_i : a ≠ i := hai
+              have ha_ne_j : a ≠ j := haj_eq
+              have hb_ne_i : b ≠ i := hbi
+              have hb_ne_j : b ≠ j := hbj
+              have hrank_a :
+                  rankOf (swapCandidatePositions τ i j) a = rankOf τ a :=
+                rankOf_swapCandidatePositions_of_ne τ ha_ne_i ha_ne_j
+              have hrank_b :
+                  rankOf (swapCandidatePositions τ i j) b = rankOf τ b :=
+                rankOf_swapCandidatePositions_of_ne τ hb_ne_i hb_ne_j
+              have hlt_rank : rankOf τ b < rankOf τ a := by
+                simpa [hrank_a, hrank_b] using hrank
+              have htarget :
+                  invertedPair (Equiv.refl (Candidate n)) τ (a, b) :=
+                ⟨by simpa [rankOf] using hab, hlt_rank⟩
+              simpa [inversionFinset] using htarget
+
+/--
+Swapping a center-ordered inverted pair in an identity-center ranking weakly
+lowers Kendall tau.
+-/
+theorem kendallTau_refl_swapCandidatePositions_le
+    {n : ℕ} (τ : Ranking n) {i j : Candidate n}
+    (hij : i < j) (hpos : rankOf τ j < rankOf τ i) :
+    kendallTau (Equiv.refl (Candidate n)) (swapCandidatePositions τ i j) ≤
+      kendallTau (Equiv.refl (Candidate n)) τ := by
+  classical
+  unfold kendallTau
+  refine Finset.card_le_card_of_injOn
+    (swapInversionMap i j) ?hmaps ?hinj
+  · intro p hp
+    exact swapInversionMap_mem_inversionFinset_refl τ hij hpos hp
+  · intro p hp q hq hpq
+    have hp_inv :
+        invertedPair (Equiv.refl (Candidate n))
+          (swapCandidatePositions τ i j) p := by
+      simpa [inversionFinset] using hp
+    have hq_inv :
+        invertedPair (Equiv.refl (Candidate n))
+          (swapCandidatePositions τ i j) q := by
+      simpa [inversionFinset] using hq
+    have hp_order : p.1 < p.2 := by
+      simpa [invertedPair, rankOf] using hp_inv.1
+    have hq_order : q.1 < q.2 := by
+      simpa [invertedPair, rankOf] using hq_inv.1
+    have hp_left :
+        swapInversionMapInv i j (swapInversionMap i j p) = p :=
+      swapInversionMapInv_left hij hp_order
+    have hq_left :
+        swapInversionMapInv i j (swapInversionMap i j q) = q :=
+      swapInversionMapInv_left hij hq_order
+    rw [← hp_left, ← hq_left, hpq]
+
+/--
+Swapping a center-ordered inverted pair weakly lowers Kendall tau for an
+arbitrary center ranking.
+-/
+theorem kendallTau_swapCandidatePositions_le_of_rank_lt_of_rank_gt
+    {n : ℕ} (ρ π : Ranking n) {c d : Candidate n}
+    (hcenter : rankOf ρ c < rankOf ρ d)
+    (hpos : rankOf π d < rankOf π c) :
+    kendallTau ρ (swapCandidatePositions π c d) ≤ kendallTau ρ π := by
+  classical
+  let τ : Ranking n := π.trans ρ.symm
+  let i : Candidate n := rankOf ρ c
+  let j : Candidate n := rankOf ρ d
+  have hij : i < j := by simpa [i, j] using hcenter
+  have hc : ρ i = c := by simp [i, rankOf]
+  have hd : ρ j = d := by simp [j, rankOf]
+  have hposτ : rankOf τ j < rankOf τ i := by
+    simpa [τ, i, j, hc, hd, rankOf] using hpos
+  have hπ : τ.trans ρ = π := by
+    ext x
+    simp [τ]
+  have hswap :
+      swapCandidatePositions π c d =
+        (swapCandidatePositions τ i j).trans ρ := by
+    ext x
+    simp [swapCandidatePositions, τ, i, j, rankOf]
+  calc
+    kendallTau ρ (swapCandidatePositions π c d)
+        = kendallTau ρ ((swapCandidatePositions τ i j).trans ρ) := by
+          rw [hswap]
+    _ = kendallTau (Equiv.refl (Candidate n))
+          (swapCandidatePositions τ i j) := by
+          rw [kendallTau_center_trans]
+    _ ≤ kendallTau (Equiv.refl (Candidate n)) τ :=
+          kendallTau_refl_swapCandidatePositions_le τ hij hposτ
+    _ = kendallTau ρ (τ.trans ρ) := by
+          rw [kendallTau_center_trans]
+    _ = kendallTau ρ π := by
+          rw [hπ]
+
+/--
 If `d` is best in a remaining set containing both `c` and `d`, then swapping
 the positions of `c` and `d` makes `c` best in that same remaining set.
 -/

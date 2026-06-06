@@ -198,6 +198,80 @@
     },
     {
       "schema": 1,
+      "id": "GGSG19TopThree",
+      "title": "Who is in Your Top Three? Optimizing Learning in Elections with Many Candidates",
+      "authors": "Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel",
+      "publication_venue": "HCOMP 2019",
+      "source_version": "arXiv version, 2019",
+      "source_url": "https://arxiv.org/abs/1906.08160",
+      "build_target": "lake build GGSG19TopThree",
+      "status": "formalized",
+      "main_caveat": "",
+      "human_summary": "",
+      "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
+      "human_review": {
+        "reviewed_rows": 0,
+        "total_rows": 10,
+        "stale_rows": 0,
+        "mismatch_rows": 0,
+        "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+      },
+      "paper_interface": {
+        "path": "papers/GGSG19TopThree/PaperInterface.lean",
+        "line_count": 307,
+        "declaration_rows": 10,
+        "review_rows": 10,
+        "oversized": false,
+        "maintainability_issue": null,
+        "proof_interface_path": "papers/GGSG19TopThree/ProofInterface.lean",
+        "proof_interface_line_count": 12771
+      },
+      "artifacts": {
+        "readme": "papers/GGSG19TopThree/README.md",
+        "paper_interface": "papers/GGSG19TopThree/PaperInterface.lean",
+        "source_theorems": "papers/GGSG19TopThree/SourceTheorems.lean",
+        "proof_interface": "papers/GGSG19TopThree/ProofInterface.lean",
+        "final_validation_report": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
+        "post_formalization_audit": "papers/GGSG19TopThree/POST_FORMALIZATION_AUDIT.md",
+        "dependency_dag_tex": "papers/GGSG19TopThree/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/GGSG19TopThree/DependencyDAG.pdf"
+      },
+      "review_surface": {
+        "source_file": "papers/GGSG19TopThree/PaperInterface.lean",
+        "include_names": [
+          "paper_definition_large_deviation_rate",
+          "source_proposition1_thm_consistency_tiered",
+          "source_proposition2_thm_pairwiselearning_finite_support",
+          "source_proposition3_lem_pairwiselearning_approval_finite_ternary",
+          "source_proposition4_thm_goal_learning_finite_support",
+          "source_theorem1_lem_randomizebetterscoring",
+          "source_theorem2_lem_randomizenotbetterapproval_pairwise",
+          "source_theorem_lem_randomizebetterapproval_w_selection_constructed",
+          "source_corollary_lem_mallowsnorando",
+          "source_theorem_lem_mallowsnotWK_counterexample"
+        ],
+        "slices": [
+          {
+            "id": "all",
+            "title": "All source-facing review rows",
+            "names": [
+              "paper_definition_large_deviation_rate",
+              "source_proposition1_thm_consistency_tiered",
+              "source_proposition2_thm_pairwiselearning_finite_support",
+              "source_proposition3_lem_pairwiselearning_approval_finite_ternary",
+              "source_proposition4_thm_goal_learning_finite_support",
+              "source_theorem1_lem_randomizebetterscoring",
+              "source_theorem2_lem_randomizenotbetterapproval_pairwise",
+              "source_theorem_lem_randomizebetterapproval_w_selection_constructed",
+              "source_corollary_lem_mallowsnorando",
+              "source_theorem_lem_mallowsnotWK_counterexample"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "schema": 1,
       "id": "GHW01DigitalGoods",
       "title": "Competitive Auctions and Digital Goods",
       "authors": "Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright",

@@ -46,6 +46,7 @@ PUBLICATION_OVERRIDES = {
     "GCG24UserItemFairness": ("NeurIPS, 2024", 2024),
     "GHW01DigitalGoods": ("SODA, 2001", 2001),
     "GJ18InformativeRatingSystems": ("Manufacturing & Service Operations Management 23(3), 2020", 2020),
+    "GGSG19TopThree": ("HCOMP, 2019", 2019),
     "GN21DriverSurgePricing": ("Management Science, 2022", 2022),
     "GS62CollegeAdmissions": ("American Mathematical Monthly, 1962", 1962),
     "LG21TestOptionalPolicies": ("EAAMO, 2021", 2021),
@@ -62,6 +63,7 @@ SOURCE_URL_OVERRIDES = {
     "GCG24UserItemFairness": "https://openreview.net/pdf?id=ZOZjMs3JTs",
     "GHW01DigitalGoods": "https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf",
     "GJ18InformativeRatingSystems": "https://doi.org/10.1287/msom.2020.0921",
+    "GGSG19TopThree": "https://arxiv.org/abs/1906.08160",
     "GN21DriverSurgePricing": "https://arxiv.org/pdf/1905.07544",
     "GS62CollegeAdmissions": "http://www.jstor.org/stable/2312726",
     "LG21TestOptionalPolicies": "https://arxiv.org/pdf/2107.08922",
@@ -95,6 +97,7 @@ LIBRARY_COMPONENTS = [
             "GN21DriverSurgePricing",
             "LG21TestOptionalPolicies",
             "GJ18InformativeRatingSystems",
+            "GGSG19TopThree",
         ],
     },
     {
@@ -113,6 +116,7 @@ LIBRARY_COMPONENTS = [
             "GN21DriverSurgePricing",
             "LG21TestOptionalPolicies",
             "GJ18InformativeRatingSystems",
+            "GGSG19TopThree",
         ],
     },
     {
@@ -205,7 +209,7 @@ LIBRARY_COMPONENTS = [
             "sequential ranking models, score/payoff interfaces, envy "
             "graphs, and bounded-envy guarantees."
         ),
-        "papers": ["LMMS04FairDivision"],
+        "papers": ["LMMS04FairDivision", "GGSG19TopThree"],
     },
 ]
 
