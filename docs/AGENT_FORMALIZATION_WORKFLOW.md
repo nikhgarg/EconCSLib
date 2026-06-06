@@ -67,10 +67,10 @@ Completed papers should also have:
   `site/index.html` status table. Do not hand-edit those generated status files
   or rows.
 - `status.json` `human_summary`: public-facing prose for the generated tables.
-  If `human_summary_review.status` is `human_approved`, do not rewrite the
-  summary unless a human explicitly asks for that exact edit. Audit scripts may
-  require a nonempty summary for non-formalized papers, but should not pressure
-  edit or shorten human-approved prose.
+  If `human_summary_review.status` is `human_written` or `human_approved`, do
+  not rewrite the summary unless a human explicitly asks for that exact edit.
+  Audit scripts may require a nonempty summary for non-formalized papers, but
+  should not pressure edit or shorten human-written or human-approved prose.
 - `FORMALIZATION_PLAN.md`: lightweight outside-Lean proof scratchpad.
 - `DependencyDAG.tex`: proof map with every named result and definition-like
   paper object represented; status and caveat text should agree with

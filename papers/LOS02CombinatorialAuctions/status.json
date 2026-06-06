@@ -7,7 +7,7 @@
   "build_target": "lake build LOS02CombinatorialAuctions",
   "status": "partially formalized",
   "main_caveat": "Public partial: all auction, greedy approximation, critical-price, and single-minded-truthfulness endpoints are formalized in the current model. The final Theorem 6.1 machine-level NP-hardness/NP = ZPP consequences remain conditional on reusable complexity-class and hardness infrastructure.",
-  "human_summary": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external.",
+  "human_summary": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.",
   "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

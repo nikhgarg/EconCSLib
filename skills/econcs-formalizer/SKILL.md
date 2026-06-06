@@ -177,8 +177,8 @@ human review.
 If `status.json` includes `human_summary_review.status = "human_approved"` or
 `"human_written"`, preserve the summary verbatim unless a human explicitly asks
 for that summary to be edited. Automation may require a nonempty summary for
-non-formalized papers, but it should not rewrite approved human prose merely to
-shorten, polish, or normalize it.
+non-formalized papers, but it should not rewrite human-written or
+human-approved prose merely to shorten, polish, or normalize it.
 If the user asks for DAG regeneration, commit, or push at the next milestone,
 treat the milestone as a green named theorem seam plus the relevant targeted
 builds and hygiene checks, not as every helper alias. At that milestone, refresh

@@ -10,7 +10,7 @@
   "human_summary": "Replace with a concise public-facing note; leave empty for formalized papers unless a source-version or proof-route note matters.",
   "human_summary_review": {
     "status": "draft",
-    "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
+    "note": "Set to human_written after a human writes this summary, or human_approved after explicit human approval; do not rewrite a human_written or human_approved summary without explicit human instruction."
   },
   "review_entrypoint": "papers/TEMPLATE/FINAL_VALIDATION_REPORT.md",
   "human_review": {

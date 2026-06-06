@@ -194,7 +194,7 @@
       "status": "Partially formalized",
       "human_review": "0/30",
       "lean_loc": 7288,
-      "main_note": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are closed; machine-level complexity remains external.",
+      "main_note": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/LOS02CombinatorialAuctions",
