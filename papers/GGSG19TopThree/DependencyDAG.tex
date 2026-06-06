@@ -1,0 +1,104 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={outer sep=5pt, font=\sffamily\small}
+]
+
+\dagPaperMetadata{Who is in Your Top Three?}{Garg, Gelauff, Sakshuwong, Goel}{HCOMP 2019}{2019}{https://arxiv.org/abs/1906.08160}
+
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) at (0,0) {paper\\result};
+\node[dag_lemma, dag_template_legend] (legLem) at (4.2,0) {supporting\\lemma};
+\node[dag_model, dag_template_legend] (legDef) at (8.4,0) {definition /\\formula};
+}
+\daglegend{(legRes)(legLem)(legDef)}{Legend}
+
+\begin{dagPaperBody}
+
+\node[dag_model] (Model) at (0,0) {
+  \textbf{Model and Rate Definition} \\
+  finite ranking laws, goals, and exponential learning rates
+};
+
+\node[dag_lemma] (FiniteRate) at (7.0,0) {
+  \textbf{Finite-Rate Machinery} \\
+  support-aware Chernoff rates and finite aggregation tools
+};
+
+\node[dag_model] (ApprovalModel) at (14.0,0) {
+  \textbf{K-Approval Model} \\
+  ternary score gaps and approval-rate probabilities
+};
+
+\node[dag_result] (Prop1) at (0,-3.5) {
+  \textbf{Proposition 1} \\
+  strict cross-tier top-prefix dominance is equivalent to consistent tiered selection
+};
+
+\node[dag_result] (Prop2) at (7.0,-3.5) {
+  \textbf{Proposition 2} \\
+  pairwise scoring mistakes have the finite-support Chernoff learning rate, with boundary cases explicit
+};
+
+\node[dag_result] (Prop3) at (14.0,-3.5) {
+  \textbf{Proposition 3} \\
+  K-approval pairwise learning has the closed approval rate, or errors eventually vanish at the boundary
+};
+
+\node[dag_result] (Theorem1) at (0,-7.0) {
+  \textbf{Theorem 1} \\
+  a static convex combination of scoring rules is consistent and weakly dominates randomized scoring
+};
+
+\node[dag_result] (Prop4) at (7.0,-7.0) {
+  \textbf{Proposition 4} \\
+  relevant-pair aggregation yields the finite extended outcome-learning rate
+};
+
+\node[dag_result] (Theorem2) at (14.0,-7.0) {
+  \textbf{Theorem 2} \\
+  some static K-approval cutoff weakly dominates every randomized K-approval pairwise rate
+};
+
+\node[dag_lemma] (MallowsSupport) at (21.0,-7.0) {
+  \textbf{Mallows Support} \\
+  boundary-pair pivotality and one-loser approval probability facts
+};
+
+\node[dag_result] (RandHelps) at (0,-10.5) {
+  \textbf{Randomization-Helps Theorem} \\
+  a constructed W-selection law has randomized approval beating every static K cutoff
+};
+
+\node[dag_result] (MallowsNoRandom) at (14.0,-10.5) {
+  \textbf{Mallows Corollary} \\
+  for Mallows $q<1$, an optimal static K-approval rule weakly dominates randomized K-approval
+};
+
+\node[dag_result] (MallowsNotWK) at (21.0,-10.5) {
+  \textbf{Mallows W-Approval Theorem} \\
+  a four-candidate high-noise Mallows instance shows W-approval is not approval-rate optimal
+};
+
+\draw[dag_arrow] (Model.south) -- (Prop1.north);
+\draw[dag_arrow] (Model.east) -- (FiniteRate.west);
+\draw[dag_arrow] (FiniteRate.south) -- (Prop2.north);
+\draw[dag_arrow] (ApprovalModel.south) -- (Prop3.north);
+\draw[dag_arrow] (Prop1.south) -- (Theorem1.north);
+\draw[dag_arrow] (Prop2.south) -- (Prop4.north);
+\draw[dag_arrow] (Prop3.south west) -- (Prop4.north east);
+\draw[dag_arrow] (Prop3.south) -- (Theorem2.north);
+\draw[dag_arrow] (Prop4.west) -- (Theorem1.east);
+\draw[dag_arrow] (Theorem1.south) -- (RandHelps.north);
+\draw[dag_arrow] (Prop4.south west) to[out=-130,in=25,looseness=1.05] (RandHelps.north east);
+\draw[dag_arrow] (Theorem2.south) -- (MallowsNoRandom.north);
+\draw[dag_arrow] (MallowsSupport.south west) to[out=-135,in=20,looseness=1.05] (MallowsNoRandom.north east);
+\draw[dag_arrow] (MallowsSupport.south) -- (MallowsNotWK.north);
+
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

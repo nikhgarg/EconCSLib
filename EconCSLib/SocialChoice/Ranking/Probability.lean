@@ -31,6 +31,32 @@ def firstChoiceProb {n : ℕ}
   EconCSLib.pmfProb μ (fun π => c = firstChoice π)
 
 /--
+First-choice events for distinct candidates are disjoint, so their probabilities
+have total mass at most one.
+-/
+theorem firstChoiceProb_add_le_one {n : ℕ}
+    (μ : PMF (Ranking n)) {c d : Candidate n} (hcd : c ≠ d) :
+    firstChoiceProb μ c + firstChoiceProb μ d ≤ 1 := by
+  classical
+  have hdisjoint :
+      ∀ π : Ranking n,
+        c = firstChoice π → d = firstChoice π → False := by
+    intro π hc hd
+    exact hcd (hc.trans hd.symm)
+  have hunion :
+      EconCSLib.pmfProb μ
+          (fun π : Ranking n => c = firstChoice π ∨ d = firstChoice π) =
+        firstChoiceProb μ c + firstChoiceProb μ d := by
+    simpa [firstChoiceProb] using
+      (EconCSLib.pmfProb_or_eq_add_of_disjoint μ
+        (fun π : Ranking n => c = firstChoice π)
+        (fun π : Ranking n => d = firstChoice π)
+        hdisjoint)
+  rw [← hunion]
+  exact EconCSLib.pmfProb_le_one μ
+    (fun π : Ranking n => c = firstChoice π ∨ d = firstChoice π)
+
+/--
 The ranking PMF induced by pushing a probability measure through a ranking map.
 -/
 def rankingPMFOfMeasure

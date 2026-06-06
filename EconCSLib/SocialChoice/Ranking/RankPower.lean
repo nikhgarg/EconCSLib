@@ -57,6 +57,165 @@ def candidateRankBestAfterRemovalWeight
   else
     0
 
+/-- Rank-only kernel for the K=2 up-event with selected rank `r` and excluded
+rank `s`. -/
+def candidateRankTopTwoPairKernel
+    (n : ℕ) (q : ℝ) (r s : Candidate n) : ℝ :=
+  ∑ t : Candidate n,
+    if t ≠ r ∧ t ≠ s then q ^ ((r : ℕ) + (t : ℕ) - 1) else 0
+
+theorem candidateRankTopTwoPairKernel_nonneg
+    (n : ℕ) {q : ℝ} (hq_nonneg : 0 ≤ q) (r s : Candidate n) :
+    0 ≤ candidateRankTopTwoPairKernel n q r s := by
+  classical
+  unfold candidateRankTopTwoPairKernel
+  refine Finset.sum_nonneg ?_
+  intro t _
+  by_cases ht : t ≠ r ∧ t ≠ s
+  · simp [ht, pow_nonneg hq_nonneg]
+  · simp [ht]
+
+theorem candidateRankTopTwoPairKernel_pos
+    (n : ℕ) {q : ℝ} (hq_pos : 0 < q) (hn : 0 < n)
+    (r s : Candidate n) :
+    0 < candidateRankTopTwoPairKernel n q r s := by
+  classical
+  rcases Fin.exists_ne_and_ne_of_two_lt r s (by omega : 2 < n + 2) with
+    ⟨t, htr, hts⟩
+  unfold candidateRankTopTwoPairKernel
+  apply EconCSLib.sum_univ_pos_of_pos_of_nonneg (a₀ := t)
+  · simp [htr, hts, pow_pos hq_pos]
+  · intro u
+    by_cases hu : u ≠ r ∧ u ≠ s
+    · simp [hu, pow_nonneg hq_pos.le]
+    · simp [hu]
+
+theorem candidateRankTopTwoPairKernel_le_of_first_le
+    (n : ℕ) {q : ℝ} (hq_nonneg : 0 ≤ q) (hq_le_one : q ≤ 1)
+    {r s x : Candidate n} (hrs : r ≤ s) (hxr : x ≠ r) (hxs : x ≠ s) :
+    candidateRankTopTwoPairKernel n q s x ≤
+      candidateRankTopTwoPairKernel n q r x := by
+  classical
+  unfold candidateRankTopTwoPairKernel
+  calc
+    (∑ t : Candidate n,
+      if t ≠ s ∧ t ≠ x then q ^ ((s : ℕ) + (t : ℕ) - 1) else 0)
+        =
+      ∑ t : Candidate n,
+        if Equiv.swap r s t ≠ s ∧ Equiv.swap r s t ≠ x then
+          q ^ ((s : ℕ) + (Equiv.swap r s t : ℕ) - 1)
+        else 0 := by
+          simpa using
+            (Equiv.sum_comp (Equiv.swap r s)
+              (fun t : Candidate n =>
+                if t ≠ s ∧ t ≠ x then
+                  q ^ ((s : ℕ) + (t : ℕ) - 1)
+                else 0)).symm
+    _ ≤ ∑ t : Candidate n,
+        if t ≠ r ∧ t ≠ x then q ^ ((r : ℕ) + (t : ℕ) - 1) else 0 := by
+      refine Finset.sum_le_sum ?_
+      intro t _
+      have hswap_x : Equiv.swap r s x = x :=
+        Equiv.swap_apply_of_ne_of_ne hxr hxs
+      have hswap_ne_s : Equiv.swap r s t ≠ s ↔ t ≠ r := by
+        rw [ne_eq, Equiv.swap_apply_eq_iff]
+        simp
+      have hswap_ne_x : Equiv.swap r s t ≠ x ↔ t ≠ x := by
+        constructor
+        · intro h ht
+          apply h
+          rw [ht, hswap_x]
+        · intro h ht
+          apply h
+          have hswap_swap := congrArg (Equiv.swap r s) ht
+          simpa [hswap_x] using hswap_swap
+      have hcond :
+          (Equiv.swap r s t ≠ s ∧ Equiv.swap r s t ≠ x) ↔
+            (t ≠ r ∧ t ≠ x) := by
+        constructor
+        · intro h
+          exact ⟨hswap_ne_s.1 h.1, hswap_ne_x.1 h.2⟩
+        · intro h
+          exact ⟨hswap_ne_s.2 h.1, hswap_ne_x.2 h.2⟩
+      by_cases ht : t ≠ r ∧ t ≠ x
+      · rw [if_pos (hcond.2 ht), if_pos ht]
+        by_cases hts : t = s
+        · rw [hts, Equiv.swap_apply_right]
+          have hpow_arg :
+              (s : ℕ) + (r : ℕ) - 1 = (r : ℕ) + (s : ℕ) - 1 := by
+            omega
+          rw [hpow_arg]
+        · have hswap_t : Equiv.swap r s t = t :=
+            Equiv.swap_apply_of_ne_of_ne ht.1 hts
+          rw [hswap_t]
+          exact pow_le_pow_of_le_one hq_nonneg hq_le_one (by
+            have hrs_nat : (r : ℕ) ≤ (s : ℕ) := hrs
+            omega)
+      · rw [if_neg (by
+          intro h
+          exact ht (hcond.1 h)), if_neg ht]
+
+theorem candidateRankTopTwoPairKernel_le_of_excluded_le
+    (n : ℕ) {q : ℝ} (hq_nonneg : 0 ≤ q) (hq_le_one : q ≤ 1)
+    {r x y : Candidate n} (hxy : x ≤ y) (hrx : r ≠ x) (hry : r ≠ y) :
+    candidateRankTopTwoPairKernel n q r x ≤
+      candidateRankTopTwoPairKernel n q r y := by
+  classical
+  unfold candidateRankTopTwoPairKernel
+  calc
+    (∑ t : Candidate n,
+      if t ≠ r ∧ t ≠ x then q ^ ((r : ℕ) + (t : ℕ) - 1) else 0)
+        =
+      ∑ t : Candidate n,
+        if Equiv.swap x y t ≠ r ∧ Equiv.swap x y t ≠ x then
+          q ^ ((r : ℕ) + (Equiv.swap x y t : ℕ) - 1)
+        else 0 := by
+          simpa using
+            (Equiv.sum_comp (Equiv.swap x y)
+              (fun t : Candidate n =>
+                if t ≠ r ∧ t ≠ x then
+                  q ^ ((r : ℕ) + (t : ℕ) - 1)
+                else 0)).symm
+    _ ≤ ∑ t : Candidate n,
+        if t ≠ r ∧ t ≠ y then q ^ ((r : ℕ) + (t : ℕ) - 1) else 0 := by
+      refine Finset.sum_le_sum ?_
+      intro t _
+      have hswap_r : Equiv.swap x y r = r :=
+        Equiv.swap_apply_of_ne_of_ne hrx hry
+      have hswap_ne_r : Equiv.swap x y t ≠ r ↔ t ≠ r := by
+        constructor
+        · intro h ht
+          apply h
+          rw [ht, hswap_r]
+        · intro h ht
+          apply h
+          have hswap_swap := congrArg (Equiv.swap x y) ht
+          simpa [hswap_r] using hswap_swap
+      have hswap_ne_x : Equiv.swap x y t ≠ x ↔ t ≠ y := by
+        rw [ne_eq, Equiv.swap_apply_eq_iff]
+        simp
+      have hcond :
+          (Equiv.swap x y t ≠ r ∧ Equiv.swap x y t ≠ x) ↔
+            (t ≠ r ∧ t ≠ y) := by
+        constructor
+        · intro h
+          exact ⟨hswap_ne_r.1 h.1, hswap_ne_x.1 h.2⟩
+        · intro h
+          exact ⟨hswap_ne_r.2 h.1, hswap_ne_x.2 h.2⟩
+      by_cases ht : t ≠ r ∧ t ≠ y
+      · rw [if_pos (hcond.2 ht), if_pos ht]
+        by_cases htx : t = x
+        · rw [htx, Equiv.swap_apply_left]
+          exact pow_le_pow_of_le_one hq_nonneg hq_le_one (by
+            have hxy_nat : (x : ℕ) ≤ (y : ℕ) := hxy
+            omega)
+        · have hswap_t : Equiv.swap x y t = t :=
+            Equiv.swap_apply_of_ne_of_ne htx ht.2
+          rw [hswap_t]
+      · rw [if_neg (by
+          intro h
+          exact ht (hcond.1 h)), if_neg ht]
+
 theorem candidateRankRemovalPowerSum_pos
     (n : ℕ) {q : ℝ} (hq_pos : 0 < q) (k : Candidate n) :
     0 < candidateRankRemovalPowerSum n q k := by
@@ -113,6 +272,76 @@ theorem candidateRankBestAfterRemovalWeight_nonneg
           (candidateRankRemovalPowerSum_nonneg n hq_pos k))
         (pow_nonneg (le_of_lt hq_pos) ((k : ℕ) + (r : ℕ) - 1))
     · rw [if_neg hkr]
+
+theorem candidateRankTopTwoPairKernel_eq_mul_sub_of_pos
+    (n : ℕ) (q : ℝ) {r s : Candidate n}
+    (hr_pos : 0 < (r : ℕ)) (hrs : r ≠ s) :
+    candidateRankTopTwoPairKernel n q r s =
+      q ^ ((r : ℕ) - 1) *
+        (candidateRankPowerSum n q - q ^ (r : ℕ) - q ^ (s : ℕ)) := by
+  classical
+  have hpow :
+      ∀ t : Candidate n,
+        q ^ ((r : ℕ) + (t : ℕ) - 1) =
+          q ^ ((r : ℕ) - 1) * q ^ (t : ℕ) := by
+    intro t
+    have hnat :
+        (r : ℕ) + (t : ℕ) - 1 = ((r : ℕ) - 1) + (t : ℕ) := by
+      omega
+    rw [hnat, pow_add]
+  have hfilter :
+      (∑ t : Candidate n,
+        if t ≠ r ∧ t ≠ s then q ^ (t : ℕ) else 0) =
+        candidateRankPowerSum n q - q ^ (r : ℕ) - q ^ (s : ℕ) := by
+    unfold candidateRankPowerSum
+    have hs_mem : s ∈ (Finset.univ.erase r : Finset (Candidate n)) := by
+      simp [Finset.mem_erase, hrs.symm]
+    have hfilter_set :
+        (Finset.univ.filter
+            (fun t : Candidate n => t ≠ r ∧ t ≠ s)) =
+          (Finset.univ.erase r).erase s := by
+      ext t
+      by_cases htr : t = r
+      · simp [htr]
+      · by_cases hts : t = s <;> simp [htr, hts]
+    calc
+      (∑ t : Candidate n,
+        if t ≠ r ∧ t ≠ s then q ^ (t : ℕ) else 0)
+          = (Finset.univ.filter
+              (fun t : Candidate n => t ≠ r ∧ t ≠ s)).sum
+                (fun t => q ^ (t : ℕ)) := by
+            rw [Finset.sum_filter]
+      _ = ((Finset.univ.erase r).erase s).sum
+            (fun t : Candidate n => q ^ (t : ℕ)) := by
+            rw [hfilter_set]
+      _ = (Finset.univ.erase r).sum
+            (fun t : Candidate n => q ^ (t : ℕ)) - q ^ (s : ℕ) := by
+            rw [Finset.sum_erase_eq_sub hs_mem]
+      _ = (∑ t : Candidate n, q ^ (t : ℕ)) - q ^ (r : ℕ) - q ^ (s : ℕ) := by
+            rw [Finset.sum_erase_eq_sub (Finset.mem_univ r)]
+  unfold candidateRankTopTwoPairKernel
+  calc
+    (∑ t : Candidate n,
+      if t ≠ r ∧ t ≠ s then q ^ ((r : ℕ) + (t : ℕ) - 1) else 0)
+        = ∑ t : Candidate n,
+          if t ≠ r ∧ t ≠ s then
+            q ^ ((r : ℕ) - 1) * q ^ (t : ℕ)
+          else 0 := by
+            refine Finset.sum_congr rfl ?_
+            intro t _
+            by_cases ht : t ≠ r ∧ t ≠ s
+            · rw [if_pos ht, if_pos ht, hpow]
+            · rw [if_neg ht, if_neg ht]
+    _ = q ^ ((r : ℕ) - 1) *
+        (∑ t : Candidate n,
+          if t ≠ r ∧ t ≠ s then q ^ (t : ℕ) else 0) := by
+          rw [Finset.mul_sum]
+          refine Finset.sum_congr rfl ?_
+          intro t _
+          by_cases ht : t ≠ r ∧ t ≠ s <;> simp [ht]
+    _ = q ^ ((r : ℕ) - 1) *
+        (candidateRankPowerSum n q - q ^ (r : ℕ) - q ^ (s : ℕ)) := by
+          rw [hfilter]
 
 theorem candidateRankRemovalPowerSum_eq_range
     (n : ℕ) (q : ℝ) (k : Candidate n) :
@@ -280,6 +509,23 @@ theorem natPower_mul_lt_mul_natPower
   have hmul := mul_lt_mul_of_pos_left hpow hscale
   rw [hd_eq, pow_add, pow_add]
   nlinarith
+
+theorem natPower_cross_nonneg_of_le
+    {q₁ q₂ : ℝ} (hq₁_pos : 0 < q₁) (hq_lt : q₁ < q₂)
+    {a b : ℕ} (hab : a ≤ b) :
+    0 ≤ q₁ ^ a * q₂ ^ b - q₂ ^ a * q₁ ^ b := by
+  by_cases h_eq : a = b
+  · subst b
+    have hzero :
+        q₁ ^ a * q₂ ^ a - q₂ ^ a * q₁ ^ a = 0 := by
+      ring
+    rw [hzero]
+  · have hlt_ab : a < b := lt_of_le_of_ne hab h_eq
+    exact le_of_lt (by
+      have h := natPower_mul_lt_mul_natPower
+        (q₁ := q₁) (q₂ := q₂) hq₁_pos hq_lt hlt_ab
+      exact sub_pos.mpr (by
+        simpa [mul_comm, mul_left_comm, mul_assoc] using h))
 
 theorem candidateRankPowerSum_mul_one_sub (n : ℕ) (q : ℝ) :
     candidateRankPowerSum n q * (1 - q) = 1 - q ^ (n + 2) := by

@@ -13,6 +13,7 @@ defaultTargets = [
   "GHW01DigitalGoods",
   "MSVV07AdWords",
   "GJ18InformativeRatingSystems",
+  "GGSG19TopThree",
   "LMMS04FairDivision",
   "LOS02CombinatorialAuctions",
 ]
@@ -94,4 +95,8 @@ srcDir = "papers"
 
 [[lean_lib]]
 name = "GJ18InformativeRatingSystems"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "GGSG19TopThree"
 srcDir = "papers"

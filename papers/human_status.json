@@ -79,6 +79,23 @@
       "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md"
     },
     {
+      "id": "GGSG19TopThree",
+      "title": "Who is in Your Top Three? Optimizing Learning in Elections with Many Candidates",
+      "authors": "Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel",
+      "publication": "HCOMP, 2019",
+      "publication_year": 2019,
+      "source_url": "https://arxiv.org/abs/1906.08160",
+      "paper_info": "Who is in Your Top Three? Optimizing Learning in Elections with Many Candidates by Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel; HCOMP, 2019.",
+      "status": "Formalized",
+      "human_review": "0/10",
+      "lean_loc": 34984,
+      "main_note": "",
+      "main_note_citation": null,
+      "main_note_review": null,
+      "paper_folder": "papers/GGSG19TopThree",
+      "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md"
+    },
+    {
       "id": "GJ18InformativeRatingSystems",
       "title": "Designing Informative Rating Systems: Evidence from an Online Labor Market",
       "authors": "Nikhil Garg, Ramesh Johari",

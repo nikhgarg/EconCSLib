@@ -7,6 +7,15 @@ import EconCSLib.SocialChoice.Ranking.Sequential
 Reusable finite K-approval primitives for ranking laws.  These definitions are
 probability-level and do not assume a Mallows law; Mallows-specific fiber
 calculations can specialize the pair up/down probabilities.
+
+## Main declarations
+
+- `approvedByK`, `kApprovalScore`
+- `kApprovalPairUpProb`, `kApprovalPairDownProb`, `kApprovalPairZeroProb`
+- `lastRank`
+- `approvedByK_allButOne_iff_rankOf_ne_lastRank`
+- `kApprovalPairUpProb_allButOne_eq_rankOf_lastProb`
+- `kApprovalPairDownProb_allButOne_eq_rankOf_lastProb`
 -/
 
 namespace EconCSLib
@@ -71,6 +80,24 @@ theorem kApprovalPairUpProb_eq_rank_cut {n : ℕ}
         exact ⟨h.1, Nat.le_of_not_gt h.2⟩
       · intro h
         exact ⟨h.1, Nat.not_lt.mpr h.2⟩)
+
+/-- The last rank in a `Candidate n` universe. -/
+def lastRank (n : ℕ) : Candidate n :=
+  ⟨n + 1, by omega⟩
+
+@[simp] theorem lastRank_val (n : ℕ) :
+    (lastRank n).val = n + 1 := rfl
+
+theorem lastRank_pos (n : ℕ) :
+    0 < (lastRank n).val := by
+  simp [lastRank]
+
+theorem zero_ne_lastRank (n : ℕ) :
+    (0 : Candidate n) ≠ lastRank n := by
+  intro h
+  have hval : (0 : ℕ) = n + 1 := by
+    simpa [lastRank] using congrArg Fin.val h
+  omega
 
 @[simp] theorem not_approvedByK_zero {n : ℕ}
     (π : Ranking n) (c : Candidate n) :
@@ -193,6 +220,83 @@ theorem kApprovalPairUpProb_one_eq_firstChoiceProb {n : ℕ}
   unfold kApprovalPairUpProb firstChoiceProb
   exact EconCSLib.pmfProb_congr μ
     (fun π => kApprovalPairUp_one_iff_firstChoice hhi_lo π)
+
+/-- Top-`n + 1` approval is equivalent to not being ranked last. -/
+theorem approvedByK_allButOne_iff_rankOf_ne_lastRank {n : ℕ}
+    (π : Ranking n) (c : Candidate n) :
+    approvedByK (n + 1) π c ↔ rankOf π c ≠ lastRank n := by
+  constructor
+  · intro happroved hlast
+    unfold approvedByK at happroved
+    have hval : (rankOf π c).val = n + 1 := by
+      simpa [lastRank] using congrArg Fin.val hlast
+    omega
+  · intro hnot_last
+    unfold approvedByK
+    by_contra hnot_approved
+    have hval : (rankOf π c).val = n + 1 := by
+      have hlt : (rankOf π c).val < n + 2 := (rankOf π c).isLt
+      omega
+    exact hnot_last (Fin.ext hval)
+
+/-- Failing top-`n + 1` approval is equivalent to being ranked last. -/
+theorem not_approvedByK_allButOne_iff_rankOf_lastRank {n : ℕ}
+    (π : Ranking n) (c : Candidate n) :
+    ¬ approvedByK (n + 1) π c ↔ rankOf π c = lastRank n := by
+  rw [approvedByK_allButOne_iff_rankOf_ne_lastRank]
+  constructor
+  · intro h
+    by_contra hnot_last
+    exact h hnot_last
+  · intro hlast hnot_last
+    exact hnot_last hlast
+
+/--
+For all-but-one approval, the ordered-pair up-event is exactly that the lower
+candidate is ranked last.
+-/
+theorem kApprovalPairUp_allButOne_iff_rankOf_lo_lastRank {n : ℕ}
+    {hi lo : Candidate n} (hhi_lo : hi ≠ lo) (π : Ranking n) :
+    approvedByK (n + 1) π hi ∧ ¬ approvedByK (n + 1) π lo ↔
+      rankOf π lo = lastRank n := by
+  constructor
+  · intro h
+    exact (not_approvedByK_allButOne_iff_rankOf_lastRank π lo).1 h.2
+  · intro hlo_last
+    have hhi_ne_last : rankOf π hi ≠ lastRank n := by
+      intro hhi_last
+      exact hhi_lo (eq_of_rankOf_eq π (hhi_last.trans hlo_last.symm))
+    exact
+      ⟨(approvedByK_allButOne_iff_rankOf_ne_lastRank π hi).2 hhi_ne_last,
+        (not_approvedByK_allButOne_iff_rankOf_lastRank π lo).2 hlo_last⟩
+
+/--
+For all-but-one approval, the ordered-pair down-event is exactly that the higher
+candidate is ranked last.
+-/
+theorem kApprovalPairDown_allButOne_iff_rankOf_hi_lastRank {n : ℕ}
+    {hi lo : Candidate n} (hhi_lo : hi ≠ lo) (π : Ranking n) :
+    approvedByK (n + 1) π lo ∧ ¬ approvedByK (n + 1) π hi ↔
+      rankOf π hi = lastRank n :=
+  kApprovalPairUp_allButOne_iff_rankOf_lo_lastRank (Ne.symm hhi_lo) π
+
+/-- All-but-one ordered-pair up probability as a last-rank probability. -/
+theorem kApprovalPairUpProb_allButOne_eq_rankOf_lastProb {n : ℕ}
+    (μ : PMF (Ranking n)) {hi lo : Candidate n} (hhi_lo : hi ≠ lo) :
+    kApprovalPairUpProb μ (n + 1) hi lo =
+      EconCSLib.pmfProb μ (fun π : Ranking n => rankOf π lo = lastRank n) := by
+  unfold kApprovalPairUpProb
+  exact EconCSLib.pmfProb_congr μ
+    (fun π => kApprovalPairUp_allButOne_iff_rankOf_lo_lastRank hhi_lo π)
+
+/-- All-but-one ordered-pair down probability as a last-rank probability. -/
+theorem kApprovalPairDownProb_allButOne_eq_rankOf_lastProb {n : ℕ}
+    (μ : PMF (Ranking n)) {hi lo : Candidate n} (hhi_lo : hi ≠ lo) :
+    kApprovalPairDownProb μ (n + 1) hi lo =
+      EconCSLib.pmfProb μ (fun π : Ranking n => rankOf π hi = lastRank n) := by
+  unfold kApprovalPairDownProb
+  exact EconCSLib.pmfProb_congr μ
+    (fun π => kApprovalPairDown_allButOne_iff_rankOf_hi_lastRank hhi_lo π)
 
 /-- Two-approval means first or second place in any finite candidate universe. -/
 theorem approvedByK_two_iff_first_or_second {n : ℕ}
