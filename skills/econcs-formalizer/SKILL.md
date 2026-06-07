@@ -1878,7 +1878,43 @@ Summarize the completed proof in paper language, grouping source definitions
 and named results by section. This should read like an executive proof audit,
 not a list of Lean helper lemmas.
 
-## 4. Paper Definitions Checked
+## 4. Additional Assumptions Beyond Paper
+- `<assumption declaration>`: <why needed, where used>
+- If none: `None`
+
+## 5. Proof-Strategy Deviations
+- `<paper result/declaration>`: <what changed qualitatively in strategy and why>
+- If none: `None`
+
+## 6. Proof Tricks Worth Reusing
+- <modeling/proof/library-seam lesson that should inform future papers>
+- If none: `None`
+
+## 7. Library Lift Pass
+- <paper-local component>: <target EconCSLib module and extraction status>
+- If none: `None`
+
+## 8. DAG Audit
+- Rendered artifact: <yes/no, visual inspection method>
+- Topology: <missing/extra boxes fixed or none>
+- Layout: <overlap/routing status>
+
+## 9. Conditional Results and Remaining Gaps
+- `<paper item>`: <exact remaining certificate/assumption declaration name>
+- If none: `None`
+
+## 10. Suspected Paper Errors or Inconsistencies
+- `<location in paper>`: <issue description + Lean/formalization evidence>
+- If none: `None`
+
+## 11. Validation Checks
+- <build/audit/DAG/no-placeholder outcomes in prose>
+
+## 12. Final Verdict
+- Completion status: <formalized / formalized with caveat / partially formalized / not formalized>
+- Summary: <2-5 lines>
+
+## 13. Paper Definitions Checked
 These are the mathematical objects from the paper interface. All should be
 exposed in `PaperInterface.lean`.
 
@@ -1887,7 +1923,7 @@ exposed in `PaperInterface.lean`.
 - <Next paper object>: <paper notation and one-line statement>.
   Lean: `<PaperInterface.definitionName>`.
 
-## 5. Named Theorem Statements Checked
+## 14. Named Theorem Statements Checked
 ### Theorem <n>
 **Paper statement.** <one theorem-box-level statement matching the source>
 
@@ -1896,7 +1932,7 @@ exposed in `PaperInterface.lean`.
 
 **Status.** <formalized / conditional / not formalized>. <1-4 lines of caveats only if needed.>
 
-## 6. Paper-Facing Statement Validator Ledger
+## 15. Paper-Facing Statement Validator Ledger
 This table is one row per `PaperInterface.lean`/review-surface row. Fill it
 from human review logs and tracked statement-audit sidecars, not from memory.
 
@@ -1907,42 +1943,6 @@ from human review logs and tracked statement-audit sidecars, not from memory.
 Human dashboard reviews and model/agent statement checks may both appear here.
 This table records provenance for statement targets; it does not change the
 human-only `human_review.reviewed_rows` counter.
-
-## 7. Additional Assumptions Beyond Paper
-- `<assumption declaration>`: <why needed, where used>
-- If none: `None`
-
-## 8. Proof-Strategy Deviations
-- `<paper result/declaration>`: <what changed qualitatively in strategy and why>
-- If none: `None`
-
-## 9. Proof Tricks Worth Reusing
-- <modeling/proof/library-seam lesson that should inform future papers>
-- If none: `None`
-
-## 10. Library Lift Pass
-- <paper-local component>: <target EconCSLib module and extraction status>
-- If none: `None`
-
-## 11. DAG Audit
-- Rendered artifact: <yes/no, visual inspection method>
-- Topology: <missing/extra boxes fixed or none>
-- Layout: <overlap/routing status>
-
-## 12. Conditional Results and Remaining Gaps
-- `<paper item>`: <exact remaining certificate/assumption declaration name>
-- If none: `None`
-
-## 13. Suspected Paper Errors or Inconsistencies
-- `<location in paper>`: <issue description + Lean/formalization evidence>
-- If none: `None`
-
-## 14. Validation Checks
-- <build/audit/DAG/no-placeholder outcomes in prose>
-
-## 15. Final Verdict
-- Completion status: <formalized / formalized with caveat / partially formalized / not formalized>
-- Summary: <2-5 lines>
 ```
 
 ## Component 2: Proof Reference Routing
