@@ -60,7 +60,7 @@ arXiv, conference, or original working-paper year. Public status tables use the
 published citation title and year.
 
 <!-- BEGIN GENERATED PAPER STATUS TABLE -->
-| Paper | Status | Review | Interface | Human summary |
+| Paper | Status | Human review | PaperInterface size | Public note |
 |---|---:|---:|---:|---|
 | [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized | 0/7 | OK: 116 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library. |
 | [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 468 lines |  |

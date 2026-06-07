@@ -628,7 +628,7 @@ def render_readme_status_block(records: list[tuple[Path, dict[str, Any]]]) -> st
     by_id = {payload["id"]: payload for _folder, payload in records}
     lines = [
         README_STATUS_BEGIN,
-        "| Paper | Status | Review | Interface | Human summary |",
+        "| Paper | Status | Human review | PaperInterface size | Public note |",
         "|---|---:|---:|---:|---|",
     ]
     for row in human_status_rows(records):
@@ -685,7 +685,7 @@ def render_paper_status_md(payload: dict[str, Any]) -> str:
         "an arXiv, conference, or original working-paper year. The table below uses",
         "the published citation title and year.",
         "",
-        "| Paper info | Status | Human review | Lean LOC | Note |",
+        "| Paper, authors, publication | Status | Human review | Lean LOC | Public note |",
         "|---|---|---:|---:|---|",
     ]
     for row in payload["papers"]:
