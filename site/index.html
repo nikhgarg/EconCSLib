@@ -155,15 +155,23 @@
         </div>
 
         <div class="table-wrap" role="region" aria-label="Paper status table" tabindex="0">
-          <table class="status-table">
+          <table class="status-table paper-table">
+            <colgroup>
+              <col class="paper-col">
+              <col class="status-col">
+              <col class="loc-col">
+              <col class="note-col">
+              <col class="human-col">
+              <col class="judge-col">
+            </colgroup>
             <thead>
               <tr>
                 <th>Paper</th>
                 <th>Status</th>
-                <th>Human review</th>
-                <th>Statement check</th>
                 <th>Lines of code</th>
                 <th>Note</th>
+                <th>Human review</th>
+                <th>LLM-as-judge statement translation</th>
               </tr>
             </thead>
             <tbody>
@@ -174,10 +182,10 @@
                   D. Gale and L. S. Shapley; American Mathematical Monthly, 1962.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>0/7 reviewed</td>
-                <td>7/7 match</td>
                 <td>388</td>
                 <td>This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.</td>
+                <td>0/7 reviewed</td>
+                <td>7/7 match</td>
               </tr>
               <tr>
                 <td>
@@ -185,10 +193,10 @@
                   Alvin E. Roth; Mathematics of Operations Research, 1982.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>0/27 reviewed</td>
-                <td>26/27 match; 1 uncertain</td>
                 <td>8,877</td>
                 <td></td>
+                <td>0/27 reviewed</td>
+                <td>26/27 match; 1 uncertain</td>
               </tr>
               <tr>
                 <td>
@@ -196,10 +204,10 @@
                   Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright; SODA, 2001.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>0/19 reviewed</td>
-                <td>19/19 match</td>
                 <td>14,475</td>
                 <td>The journal version is used as the corrected source for Theorem 8.2 <a href="https://www.sciencedirect.com/science/article/pii/S0899825606000303">Goldberg et al. 2006</a>.</td>
+                <td>0/19 reviewed</td>
+                <td>19/19 match</td>
               </tr>
               <tr>
                 <td>
@@ -207,10 +215,10 @@
                   Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V. Vazirani; Journal of the ACM, 2007.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>0/39 reviewed</td>
-                <td>17/39 match; 22 uncertain</td>
                 <td>13,221</td>
                 <td></td>
+                <td>0/39 reviewed</td>
+                <td>17/39 match; 22 uncertain</td>
               </tr>
               <tr>
                 <td>
@@ -218,10 +226,10 @@
                   Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel; HCOMP, 2019.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>0/10 reviewed</td>
-                <td>not run</td>
                 <td>34,984</td>
                 <td></td>
+                <td>0/10 reviewed</td>
+                <td>not run</td>
               </tr>
               <tr>
                 <td>
@@ -229,10 +237,10 @@
                   Nikhil Garg, Ramesh Johari; Manufacturing &amp; Service Operations Management 23(3), 2020.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>0/8 reviewed</td>
-                <td>7/8 match; 1 uncertain</td>
                 <td>6,921</td>
                 <td></td>
+                <td>0/8 reviewed</td>
+                <td>7/8 match; 1 uncertain</td>
               </tr>
               <tr>
                 <td>
@@ -240,10 +248,10 @@
                   Zhi Liu and Nikhil Garg; EAAMO, 2021.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>0/16 reviewed</td>
-                <td>16/16 match</td>
                 <td>125,476</td>
                 <td></td>
+                <td>0/16 reviewed</td>
+                <td>16/16 match</td>
               </tr>
               <tr>
                 <td>
@@ -251,10 +259,10 @@
                   Nikhil Garg and Hamid Nazerzadeh; Management Science, 2022.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>0/24 reviewed</td>
-                <td>21/24 match; 3 uncertain</td>
                 <td>142,061</td>
                 <td></td>
+                <td>0/24 reviewed</td>
+                <td>21/24 match; 3 uncertain</td>
               </tr>
               <tr>
                 <td>
@@ -262,10 +270,10 @@
                   Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg; NeurIPS, 2024.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>0/18 reviewed</td>
-                <td>16/18 match; 2 uncertain</td>
                 <td>45,906</td>
                 <td></td>
+                <td>0/18 reviewed</td>
+                <td>16/18 match; 2 uncertain</td>
               </tr>
               <tr>
                 <td>
@@ -273,10 +281,10 @@
                   Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg; PNAS Nexus, 2025.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>0/32 reviewed</td>
-                <td>30/32 match; 2 mismatch</td>
                 <td>26,044</td>
                 <td></td>
+                <td>0/32 reviewed</td>
+                <td>30/32 match; 2 mismatch</td>
               </tr>
               <tr>
                 <td>
@@ -284,10 +292,10 @@
                   Thomas Ma, Michael S. Bernstein, Ramesh Johari, and Nikhil Garg; ICWSM, 2025.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md">Formalized</a></td>
-                <td>10/17 reviewed; 2 uncertain</td>
-                <td>17/17 match</td>
                 <td>601</td>
                 <td>Formalization required an interior-quality assumption (0 &lt; q_v &lt; 1) for the strict variance-decrease statement.</td>
+                <td>10/17 reviewed; 2 uncertain</td>
+                <td>17/17 match</td>
               </tr>
               <tr>
                 <td>
@@ -295,10 +303,10 @@
                   Daniel Lehmann, Liadan Ita O&#x27;Callaghan, and Yoav Shoham; Journal of the ACM, 2002.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
-                <td>0/30 reviewed</td>
-                <td>17/30 match; 13 uncertain</td>
                 <td>7,288</td>
                 <td>Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.</td>
+                <td>0/30 reviewed</td>
+                <td>17/30 match; 13 uncertain</td>
               </tr>
               <tr>
                 <td>
@@ -306,10 +314,10 @@
                   Richard J. Lipton, Evangelos Markakis, Elchanan Mossel, and Amin Saberi; ACM EC, 2004.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
-                <td>0/33 reviewed</td>
-                <td>29/33 match; 4 uncertain</td>
                 <td>80,220</td>
                 <td>Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.</td>
+                <td>0/33 reviewed</td>
+                <td>29/33 match; 4 uncertain</td>
               </tr>
               <tr>
                 <td>
@@ -317,10 +325,10 @@
                   Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg; WWW &#x27;24 / The ACM Web Conference, 2024.
                 </td>
                 <td><a href="https://github.com/nikhgarg/EconCSLib/blob/main/papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md">Partially formalized</a></td>
-                <td>0/27 reviewed</td>
-                <td>26/27 match; 1 uncertain</td>
                 <td>48,366</td>
                 <td>Proposition 2&#x27;s printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.</td>
+                <td>0/27 reviewed</td>
+                <td>26/27 match; 1 uncertain</td>
               </tr>
               <!-- END GENERATED PAPER STATUS ROWS -->
             </tbody>
