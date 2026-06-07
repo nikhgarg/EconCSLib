@@ -1,0 +1,147 @@
+{
+  "items": {
+    "claim3_4_bounded_optimal_certificate": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "claim3_4_bounded_optimal_of_identical_utilities_model": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "directMechanism": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "envy": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "envyBoundedBy": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "envyFree": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "isAllocationOf": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "lemma2_2_acyclic_reduction": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "maxMarginal": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "randomizedDirectMechanism": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "randomizedTruthful": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem2_1_algorithm_correct_list_toFinset": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem2_1_alpha_bounded_allocation_exists": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem2_1_bounded_envy_allocation_exists": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem2_3_real_interval_supported_atom_bound": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem3_2_graham_certificate_to_envy_ratio_bound": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem3_2_graham_factor_eq_seven_fifths": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem3_3_claim34_fixed_rounding_ratio_endpoint": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem3_3_claim34_min_max_search_certificate_ratio_endpoint": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem4_1_source_goods": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem4_1_source_minimum_envy_not_truthful": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem4_1_source_not_truthful_envy_free_whenever_exists": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem4_1_true_report": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem4_2_uniform_random_max_envy_probability_bound": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem4_2_uniform_random_mechanism_truthful": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "truthful": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    }
+  },
+  "judge": "codex-review-surface-audit",
+  "judgment": "passes",
+  "paper": "LMMS04FairDivision",
+  "reason": "Rows are paper-facing definitions, theorem endpoints, and explicit source objects for the fixed fair-division certificates; the separate statement audit flags four rows whose translations are too opaque.",
+  "review_rows": 33,
+  "review_surface_sha256": "52d9fa7cfe059f6ccff017a24ef7469e624a5e269a81196e1c7a6af5f23f2c7f",
+  "schema": 1,
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-06T20:39:43Z",
+  "comment": "Review-surface validation generated by Codex to check that dashboard rows are paper-facing statements."
+}

@@ -117,6 +117,9 @@ Do not add filename variants for the review surface. If `PaperInterface.lean`
 has hundreds of declarations, it is too broad; move helper/proof endpoints into
 `ProofInterface.lean` or `PostPaperAudit.lean` and keep the dashboard-facing
 file small.
+The review surface should usually be close to the paper's named definitions and
+named results. Slices help reviewers navigate a real source-facing surface; they
+are not a substitute for removing helper endpoints from `PaperInterface.lean`.
 
 ## Validation Commands
 
@@ -165,6 +168,57 @@ you can refresh only the changed theorem checks and avoid re-validating unchange
 The dashboard also shows compact paper-source action links (open PDF/text file) for
 quick jumps back to the source statement when needed.
 Paper-side formulas are rendered with MathJax when they look like LaTeX.
+
+At the beginning of a paper, run a lightweight statement target-setting pass
+before spending much time on proofs:
+
+1. Build the initial source inventory and a compact `PaperInterface.lean`
+   skeleton containing the paper-facing definitions and named statements you
+   intend to formalize.
+2. Generate `lean_to_tex_llm.json` from those Lean statements alone, with no
+   paper context.
+3. Generate `statement_match_llm.json` by asking a separate model or agent to
+   compare only the original paper statement and the Lean-to-TeX draft.
+4. Fix mismatches by editing `PaperInterface.lean` unless the translation is
+   plainly wrong. Treat unresolved uncertainty as an explicit source/target
+   ambiguity before proof work begins.
+
+This initial pass is intentionally smaller than the full review workflow: do not
+update the DAG, final validation report, human-review log, or review-surface
+audit just for this target-setting pass. Its purpose is to make sure the Lean
+statements are the right theorem targets before they become expensive to prove.
+
+At a statement-review boundary, run the independent statement workflow:
+
+1. Curate `PaperInterface.lean` to the paper-facing Lean definitions and named
+   statements that should actually be formalized. If the review surface has more
+   than 30 rows, run a separate no-paper-context row-surface audit and save
+   `review_surface_llm.json`; if it has 50 or more rows, treat that as an
+   oversized-surface warning and curate before broad human review.
+2. Ask a separate model or agent, with no paper context, to translate each
+   current Lean statement into paper-style LaTeX/prose. Save stable outputs in
+   `lean_to_tex_llm.json`. New tracked entries should use
+   `{ "tex_statement": "...", "lean_statement_sha256": "..." }` so stale
+   translation drafts can be detected.
+3. Ask an independent judge, with no Lean/proof context, to compare the original
+   paper statement against the translated LaTeX/prose. Save verdicts and reasons
+   in `statement_match_llm.json`, including current Lean, paper, and TeX
+   statement digests plus validator/model metadata.
+
+If the judge reports mismatch or uncertainty, edit the Lean statement and repeat
+the translation/judgment pass unless the translation itself is plainly wrong.
+These model/agent checks do not count as human review rows.
+
+When updating `FINAL_VALIDATION_REPORT.md`, refresh its paper-facing validator
+ledger from human review logs and tracked statement-audit sidecars. The table
+should include every `PaperInterface.lean`/review-surface row, human/model/agent
+validators, and validator comments; it is provenance for statement targets, not
+a replacement for the human-only dashboard review count.
+
+If nearly every row is `uncertain`, assume a source parser or statement-mapping
+failure until proven otherwise. Fix the source extraction or record a paper-wide
+source-map issue instead of leaving every row individually uncertain as if each
+theorem were separately ambiguous.
 
 For a non-interactive pipeline check (exits non-zero when anything is stale or unreviewed):
 

@@ -1,0 +1,266 @@
+{
+  "items": {
+    "aggregatePosterior": {
+      "judgment": "mismatch",
+      "lean_statement_sha256": "566ec71a0b06bc04411d6fc7429f9fa912f6d51efe0ccaffdd9ce2ad0a4b5832",
+      "matches": false,
+      "paper_statement_sha256": "548a2bce0d378883aabad89d21a3f3721b3cc5098daa0dd7191da9a54d7385d8",
+      "reason": "Paper defines an empirical average over observed x_i; translation gives an expectation over the marginal distribution.",
+      "tex_statement_sha256": "ccff107ef30df33700b9feeffcc4e77e2829476497c7558897eb6e8fc6960be4"
+    },
+    "bias": {
+      "judgment": "matches",
+      "lean_statement_sha256": "6e8bf5a19b45d3175e5ba2b213322a7981cabc37c628681434d77d50706e0f1a",
+      "matches": true,
+      "paper_statement_sha256": "92b19368c593c53a6455e2d7cdd15e3ed1c8cc06d8b59d37f2678485802c2922",
+      "reason": "Both define bias as marginal label share minus the reference probability at y.",
+      "tex_statement_sha256": "16f1c7139112f8480a5e0e35dc2b46a8a480b83bf57c11b7c4c828fa9e6047a2"
+    },
+    "calibrated": {
+      "judgment": "matches",
+      "lean_statement_sha256": "62820718fb5e4ab5cbbe1f90fdbdb8e9e06cf0dc8d626cd8c289fd801d1a462e",
+      "matches": true,
+      "paper_statement_sha256": "283b99e171e80bdda1f7d3968f2380e5a62e536c999fe0f4f7ed6a9c644ad686",
+      "reason": "Translation is the event-preimage integral form described by the paper statement.",
+      "tex_statement_sha256": "554c14a5356fb78f636d23dd1de07c6f3bab879d182f4fabcc79f7d5c4bb0773"
+    },
+    "classifierMAE": {
+      "judgment": "matches",
+      "lean_statement_sha256": "d329fde0263062d717e8da6195a97b2ca1400c5a7c38783cca4e3fa2a6668eaf",
+      "matches": true,
+      "paper_statement_sha256": "66bb4872f6cedefb13037ec23fffedb10685fbcd659a5f14a412d4c7d08bbc5f",
+      "reason": "Both give E_X sum_y q(y,x)(1-q(y,x)), modulo argument-order notation.",
+      "tex_statement_sha256": "d14183135729f47d8370a5036d12ffbc4841b9147bea8211d7fa5a72c778c9bb"
+    },
+    "continuousAggregateBias": {
+      "judgment": "matches",
+      "lean_statement_sha256": "d7bd2ae66035834885fe56c5af5439b883eea04147ed1214b01532e0e480528c",
+      "matches": true,
+      "paper_statement_sha256": "5e71af749171eb18887df60826371e8ad27a2b9537c73c7db5f49c9c43d20f99",
+      "reason": "Translation defines bias against the continuous aggregate-posterior reference, matching the paper label.",
+      "tex_statement_sha256": "e93adbe0723de824d654f4dfe32c7ec3b6523f28bb5151e0b47bd95583b0766e"
+    },
+    "continuousAggregatePosterior": {
+      "judgment": "matches",
+      "lean_statement_sha256": "6f57bddbb406194827e2f086fb48f71bc6e66530e0abd94dd17b55328434bdad",
+      "matches": true,
+      "paper_statement_sha256": "3e04149fc47439a5c58c3f14e69937ecc81c12eca0a4544036dad410bfdefeda",
+      "reason": "Both define the continuous aggregate posterior reference as the integral of q(x,y).",
+      "tex_statement_sha256": "ac9766b24292c3d22e3a06b06a40f18ad89146eff8d4c4f6381bb12e8f4ae8e4"
+    },
+    "continuousBias": {
+      "judgment": "matches",
+      "lean_statement_sha256": "39b898bc757a1cfc985dcf2e05b6e02c1d1b4a4b1bb00c634f9949854dcfcd68",
+      "matches": true,
+      "paper_statement_sha256": "8e079fa1f2430e84d547e6a9af9ab7f662b2a43ac43976f3c24536931993d8b8",
+      "reason": "Translation gives the expected continuous bias relative to a supplied reference distribution.",
+      "tex_statement_sha256": "35f01bbdacf609560d195eadc4cdb8033f9430abdc84667dc790e2be28fc51b9"
+    },
+    "continuousClassifierMAE": {
+      "judgment": "matches",
+      "lean_statement_sha256": "f004aa2a0941febdb2eea819a6ffa81ae56f4e0d66487632d6f95ab686b46c5b",
+      "matches": true,
+      "paper_statement_sha256": "a41063bf1a2fb3948ad30a5587473d4a9a13b1ddaf21a0573e1d8d5ac6f07c3c",
+      "reason": "Translation supplies the continuous integral form of predictive MAE.",
+      "tex_statement_sha256": "d385fbba99f6fa2c49d93f92b7146f8fe773d0b7124012f3db766c714ecdd19d"
+    },
+    "continuousJointClassifierMAE": {
+      "judgment": "matches",
+      "lean_statement_sha256": "1ac50607ddf90e67ccb316d29e6730b2d0ffd164c38a57ae00f7cb6119f5273c",
+      "matches": true,
+      "paper_statement_sha256": "77991f7157b389b0f137f43adc122ca043c232752d597b1472db39a4ec04972b",
+      "reason": "Translation gives the joint-measure integral of the predictive MAE integrand.",
+      "tex_statement_sha256": "10dfea1c85ea34846bde02039df411e8d227a9eff61af1590a800edb96ff48c3"
+    },
+    "continuousJointPriorBias": {
+      "judgment": "matches",
+      "lean_statement_sha256": "c462306edf42b0310809dae3f50c88c7d574f5295f0d3ca6622138ce477e5d61",
+      "matches": true,
+      "paper_statement_sha256": "e581ab91e11dfec1af16577d49b5c31052c4d40fea2d31ea285e711822dedb14",
+      "reason": "Translation states joint prior-reference bias as predicted label mass minus true label prior mass.",
+      "tex_statement_sha256": "ca728c5b780ac0d257d0294c9e13a9aa579f423be86a1ce38bdcde1e87fa7936"
+    },
+    "continuousMarginalLabelShare": {
+      "judgment": "matches",
+      "lean_statement_sha256": "6b96b90304b344beeb12e3fd7c8f6095e9d034cdbf1b0978b29ecdc818a355d3",
+      "matches": true,
+      "paper_statement_sha256": "d13a5c229e69df3de49d50415463af30c2064ce91c8a54ff6d5823d462751b6c",
+      "reason": "Both define the continuous label share as the integral of the indicator that the rule outputs y.",
+      "tex_statement_sha256": "9adcfa313c9310e7407298c4bf6b22a7f1b8a253dc56941bce0acc93e7b6b854"
+    },
+    "expectedObjective": {
+      "judgment": "matches",
+      "lean_statement_sha256": "ceaefffea67a5c56f358e953200f51457ed549f854c5eb23e1a9f10768febce0",
+      "matches": true,
+      "paper_statement_sha256": "886bf2eac3272fa99bdd725f64aa7494360571c8c6e1924d786efb092dbe5f68",
+      "reason": "Translation states the gamma-weighted expected true-label accuracy plus expected fidelity objective.",
+      "tex_statement_sha256": "f0bf1aa69ccaa64991ef71d7403911040aff9c5e9ab1f61538f04933a62d5edb"
+    },
+    "fidelity": {
+      "judgment": "matches",
+      "lean_statement_sha256": "140a00cc746cd6be773a8f6cd79e93a86b4d4b1813dd3c7131d10963810d6849",
+      "matches": true,
+      "paper_statement_sha256": "533c3de082047780b4364bb892e8025cafdc2c5af9e9b5f5df9e4f8904624d44",
+      "reason": "Both define fidelity as the negative sum over labels of absolute bias.",
+      "tex_statement_sha256": "6c2712a9b0c5b9a79f7de56bea04dbd3ea59a99aa3c2764fb37d44d031fa42c7"
+    },
+    "isArgmaxRule": {
+      "judgment": "matches",
+      "lean_statement_sha256": "1c446e9f2abe3f13a5879110792f7180f1cf8e75d8e52489b56f6ab68a8363a3",
+      "matches": true,
+      "paper_statement_sha256": "6638367308f6da27ea0199e39d86e497126295af20c928307b3d746f228acb8a",
+      "reason": "Both require the selected label to have posterior score at least every label's score.",
+      "tex_statement_sha256": "62347ba1e18be282c68e9956d29011086ba8d9f54adc06a3ce1241d254b4a220"
+    },
+    "marginalLabelShare": {
+      "judgment": "mismatch",
+      "lean_statement_sha256": "9cdcec22d8cae20a48020e635b1af00e243f43ce93b46bedb61c62f2c5e859f1",
+      "matches": false,
+      "paper_statement_sha256": "f67a96af0e9156420703cd053352ac412a796e6a011810a8fda7596c80b038aa",
+      "reason": "Paper defines a finite-sample average over predictions; translation defines a population probability under mu_X.",
+      "tex_statement_sha256": "377c4d8757ad55a3c84d0907ba4dc205952a15d8bc17a3b7fb3b4fbae29d83ee"
+    },
+    "objective": {
+      "judgment": "matches",
+      "lean_statement_sha256": "24f01fba48f800547360d4ddb66c62c4055f816884674445b39e62b4f94c2559",
+      "matches": true,
+      "paper_statement_sha256": "30a9732c5e4d38a0a4d873109832a54fbb94c2817c4cb4240237590d4f5f04fe",
+      "reason": "Both define the objective as gamma times average posterior score plus one minus gamma times the fidelity term.",
+      "tex_statement_sha256": "4de9ef527012f91720c6232e07f49f0cfbfedf5d58dd75361273e522d734fa11"
+    },
+    "posteriorSimplex": {
+      "judgment": "matches",
+      "lean_statement_sha256": "2467c0edd1736bc3a1d3aaac6fd143a28feb9e224895b7c5b9450bbdc1c8c399",
+      "matches": true,
+      "paper_statement_sha256": "f1f6d75eea542c330928dace76226e5ba0babf62819432a9b13e16db3f1f7dc7",
+      "reason": "The nonnegativity, upper bound, and unit-sum conditions exactly express that each q(x) is a probability vector.",
+      "tex_statement_sha256": "a246c0a6f07ac4200651b22054430712b9d884bfdda77a3c58c02c7d87b61437"
+    },
+    "prior": {
+      "judgment": "matches",
+      "lean_statement_sha256": "baf224ef2f8a8b7070b168401ba913e8598bf8e647cd0b20b74feaee715c6235",
+      "matches": true,
+      "paper_statement_sha256": "88b62ef37e98fd9e1235bcda622f096718c1c0b9857d1c8ca4cc4c43f3ba9742",
+      "reason": "Both state the prior/marginal class probability for label y.",
+      "tex_statement_sha256": "41b918dd4a8c91ee4574ba3506de661b9d408d0069bfa2b8f48b06aef7e0e2f4"
+    },
+    "sourceSa": {
+      "judgment": "matches",
+      "lean_statement_sha256": "d2012d24d11b071d582e009a874ee15cbeec618b9b83d9a2e83ba6617e38ed4c",
+      "matches": true,
+      "paper_statement_sha256": "a65d04569231d1b7ee93e5ea0e5065be650a4b872d6436808c1b11cd593c6b74",
+      "reason": "Both define S_a as the set where the focal posterior equals 1.",
+      "tex_statement_sha256": "2d9d270a321e3e77aac2911f3cf10d127b236164020af91883279fc8d971491c"
+    },
+    "sourceSb": {
+      "judgment": "matches",
+      "lean_statement_sha256": "a47b21ee6474281a4afc65958218e26b0d6dbde5b524119beae473c04a1089fa",
+      "matches": true,
+      "paper_statement_sha256": "3ff6917c81fc078c19a740cc40c078fa08e071436e898532c202669f4c41abce",
+      "reason": "Both define S_b by focal posterior strictly between 1/K and 1.",
+      "tex_statement_sha256": "8ced7e20ac9230b84e254224d1e84f4aab9950082c820a8f0932052124bbfd39"
+    },
+    "sourceSc": {
+      "judgment": "matches",
+      "lean_statement_sha256": "850fe9c929814a5f1475617178b68afe0211b4b8b548821ba68b926849093a9c",
+      "matches": true,
+      "paper_statement_sha256": "1fd8b6c437b41ebce2f69af5266d61335241d7c5c9c8d01b8b556b202f747493",
+      "reason": "Both define S_c as the set where the focal posterior equals 1/K.",
+      "tex_statement_sha256": "8e8b511e3bce9c74155d2b22d1a532c548e015f1e5bb7f116ebd6816e3ad60db"
+    },
+    "sourceSd": {
+      "judgment": "matches",
+      "lean_statement_sha256": "a5819e0c9928f50e4dff41404f689b4e1883f28d7544297947dd2d2513f59831",
+      "matches": true,
+      "paper_statement_sha256": "48271f3a446bb8464db016c297b5b675bf1ba13e2cc6da33c69b312cfa9029ba",
+      "reason": "Both define S_d by focal posterior strictly between 0 and 1/K.",
+      "tex_statement_sha256": "800d0af819a8a99ef480c7a073b89601e259efd885d84de34bf2a7deb4a164de"
+    },
+    "sourceSe": {
+      "judgment": "matches",
+      "lean_statement_sha256": "ddd20d3a661a993f9f101f9eb60c88a5ef6905dc329c677a0eaddf096035dcb6",
+      "matches": true,
+      "paper_statement_sha256": "6f4539de740d9daed211677a519ed2a1feb91258e45c89259f91922087feace0",
+      "reason": "Both define S_e as the set where the focal posterior equals 0.",
+      "tex_statement_sha256": "f6f1b891be00a01f3950198b292484b6ecacb96ce753b25eeb3099de26833ca6"
+    },
+    "theorem1i_no_information_bias": {
+      "judgment": "matches",
+      "lean_statement_sha256": "6c4e401ece362bf800c5b6382f44d8669a5a6ce4da16f3358297e0234fa695d6",
+      "matches": true,
+      "paper_statement_sha256": "903e51e3a1f394aac062b60a5eed95ae18042920d30faae10c75da82d74d9069",
+      "reason": "Translation gives the plurality-class and non-plurality-class bias formulas for both prior and aggregate-posterior references.",
+      "tex_statement_sha256": "3902cee30bc58a5341d5c4a9d84b477904877bcb7f4daa9866a15c214e5f65f0"
+    },
+    "theorem1ii_perfect_classifier_zero_bias": {
+      "judgment": "matches",
+      "lean_statement_sha256": "8231fde4364fbfc602650a42a2f5ece49995dc97575c5e6c6ebcad337f678ee2",
+      "matches": true,
+      "paper_statement_sha256": "80b9d8cc9aaba24d0fd8cd9d33c682cbad7d81f6219eb2750d57dfe7c4040a25",
+      "reason": "Translation states that perfect classification implies zero prior-reference bias for every label.",
+      "tex_statement_sha256": "54007ea273e48be4e21a6154aca8f6a2bea281b6150c2f778acd904b603c7b6b"
+    },
+    "theorem1iii_argmax_bias_le_mae": {
+      "judgment": "matches",
+      "lean_statement_sha256": "d9560a08b7547cb75aa382af300222e0e8857a60695a9c20e4c8f34fa2bcc04b",
+      "matches": true,
+      "paper_statement_sha256": "772c4bfeaa0dbea9d3b06c97d5112b95c2f6502407324b2ed24626f63e700183",
+      "reason": "Translation states calibrated argmax prior-bias bounded above by predictive MAE, with explicit formal hypotheses.",
+      "tex_statement_sha256": "6ed39691f98909f10eb4399d715785707d71768eac7db891b988f6a6386561b7"
+    },
+    "theorem1iii_tight_binary_example": {
+      "judgment": "matches",
+      "lean_statement_sha256": "ade7ec345d9449f933e5e473ea8d690c32b4eb76954046ce622f8c7b518851c6",
+      "matches": true,
+      "paper_statement_sha256": "a4292cd349410c4a13fabf9d597d1701208870513118725e17cf417aea4aa4ce",
+      "reason": "Both state the tight binary example equality between argmax bias at label 0 and classifier MAE.",
+      "tex_statement_sha256": "d5dd059392a27e65c8657520516b48702d4896f057006eaf40d71645f0ee48c7"
+    },
+    "theorem2i_joint_rule_exists": {
+      "judgment": "matches",
+      "lean_statement_sha256": "b788808059cabf1d7c4e95531c2e7679c9053d4efb485bd2fcf70ff014833936",
+      "matches": true,
+      "paper_statement_sha256": "bcb6546ee9f53b94d86e50b45b5fae679f9027ea0e7d9a9b90a0969f160293a6",
+      "reason": "Translation states existence of an expected-objective maximizer, with formal side conditions.",
+      "tex_statement_sha256": "9e8bb2a9b90e046e0017eca834eab194c3285c0a35e81bef06142ca1523f419c"
+    },
+    "theorem2ii_argmax_accuracy_maximizing": {
+      "judgment": "matches",
+      "lean_statement_sha256": "f1024feb46d3cd6ccc1437c20b7edcd22d2081704535a9246274c4f1c1145f38",
+      "matches": true,
+      "paper_statement_sha256": "c909723efab2b79d1256bb9f7e23d9b465839b5bd14dc4ed5c134df9572554a4",
+      "reason": "Translation states that an argmax rule maximizes expected accuracy under Bayes-optimal score assumptions.",
+      "tex_statement_sha256": "7cb1061af226d7b4b3013f5a932b124413c99903e12f152ae8c5b42f385fc05d"
+    },
+    "theorem2iii_non_argmax_not_pareto": {
+      "judgment": "matches",
+      "lean_statement_sha256": "685071cd3243e352e47a982257f9f33240372f853fc3cd473e9f24ad0b89c721",
+      "matches": true,
+      "paper_statement_sha256": "0d6be016867dfbd14fbff6603327eb92dcd40590405cf14cf4b9ee4156ab714e",
+      "reason": "Translation states non-Pareto-optimality for a positively disagreeing rule under a nontrivial reference distribution.",
+      "tex_statement_sha256": "1286de52d134d9f2f530384a586f1b90aa829539748a4cfca0758dc8fa93433b"
+    },
+    "theorem2iii_strict_disagreement_not_weighted_objective_maximizer": {
+      "judgment": "matches",
+      "lean_statement_sha256": "7dcb93c80be87cfe9a7974a24f27bb10cdf693128c6ce6c70cfb479dc1baef30",
+      "matches": true,
+      "paper_statement_sha256": "567a53af8dacbddb3b387acaa716e7730879b39f49eed7d800669c8321ec278f",
+      "reason": "Translation states strict-disagreement non-maximality for the weighted objective at the accuracy boundary.",
+      "tex_statement_sha256": "4aa70878831723e4487452bf56b3f791b339d35bb56d4d2eb4634f25c9de9790"
+    },
+    "theorem2iii_weighted_objective_maximizer_iff_agrees_argmax": {
+      "judgment": "matches",
+      "lean_statement_sha256": "7962691ad50eaa182a86003d413cbf64a56bb929630ac04901d16e5e5db15fd9",
+      "matches": true,
+      "paper_statement_sha256": "94531f5f4c6ca9126a215f8f14bc87da7e4a6b9ebd771f1b4db23b78ec89adce",
+      "reason": "Translation states the gamma < 1 weighted-objective maximizer iff zero-disagreement with argmax rule.",
+      "tex_statement_sha256": "dd20b79afbef4285263174aa5dd70183cbce463b811c2bc19bceff025944cab8"
+    }
+  },
+  "paper": "DSWG24DiscretizationBias",
+  "schema": 1,
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-06T20:39:21Z",
+  "comment": "Statement-match validation generated by Codex from original paper statements and context-free Lean-to-TeX drafts."
+}

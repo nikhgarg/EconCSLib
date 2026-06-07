@@ -37,6 +37,14 @@
   },
   "review_surface": {
     "source_file": "papers/TEMPLATE/PaperInterface.lean",
+    "llm_statement_review": {
+      "lean_to_tex_file": "papers/TEMPLATE/lean_to_tex_llm.json",
+      "match_judgment_file": "papers/TEMPLATE/statement_match_llm.json",
+      "review_surface_audit_file": "papers/TEMPLATE/review_surface_llm.json",
+      "surface_audit_threshold": 30,
+      "surface_warning_threshold": 50,
+      "policy": "Translate each Lean statement with an LLM that has no paper context; have a separate model/agent compare that TeX/prose translation with the original paper statement, record validator metadata, and iterate on PaperInterface.lean until the target matches. If the review surface has more than 30 rows, run a no-paper-context surface audit; at 50 or more rows, curate the surface before broad human review."
+    },
     "include_names": [],
     "slices": [
       {

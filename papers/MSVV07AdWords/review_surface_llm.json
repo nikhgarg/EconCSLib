@@ -1,0 +1,171 @@
+{
+  "items": {
+    "PaperAssignment": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "PaperFractionalFeasible": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "PaperInstance": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "PaperSmallBidsLimitFamily": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "paperBalanceScore": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "paperCanAssign": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "paperFeasible": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "paperFractionalRevenue": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "paperIsBalanceChoice": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "paperMsvvRatio": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "paperRevenue": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "paperSlotsPerPageDistinct": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "paperSmallBids": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "paperSpend": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "paperTradeoff": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section6_availability_theorem8_finite_explicit_error": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section6_click_through_rates_theorem8_finite_explicit_error": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section6_effective_bids_theorem8_finite_explicit_error": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section6_multiple_slots_distinct_choice_run_assignment_per_page_distinct": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section6_multiple_slots_theorem8_finite_explicit_error": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section6_next_highest_bid_alive": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section6_next_highest_bid_alive_theorem8_finite_explicit_error": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section6_next_highest_bid_all": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section6_next_highest_bid_all_theorem8_finite_explicit_error": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section6_page_top_balance_theorem8_finite_explicit_error": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section8_weighted_bids_theorem8_finite_explicit_error": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem8_balance_msvv_competitive_of_small_bids_limit_family": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem8_finite_explicit_error": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem9CappedNormalizedRevenue": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem9FeasiblePrefixRuleFamily": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem9HardDistribution": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem9IntegralPrefixAlgorithm": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem9RandomizedOnlineAlgorithm": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem9_capped_normalized_revenue_eq_prefix_spend": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem9_no_randomized_feasible_prefix_rule_family_beats_msvv_ratio": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    },
+    "theorem9_no_randomized_online_algorithm_beats_msvv_ratio": {
+      "judgment": "keep",
+      "reason": "Paper-facing dashboard row."
+    }
+  },
+  "judge": "codex-review-surface-audit",
+  "judgment": "passes",
+  "paper": "MSVV07AdWords",
+  "reason": "Rows are paper-facing model definitions, algorithm definitions, and theorem wrappers for the AdWords paper; the separate statement audit flags opaque abbreviation translations that should be improved.",
+  "review_rows": 39,
+  "review_surface_sha256": "475d4a7144914fd02edd17e8c0003dfd03646e16e14e228d6e1ec28e7ef5ff42",
+  "schema": 1,
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-06T20:39:51Z",
+  "comment": "Review-surface validation generated by Codex to check that dashboard rows are paper-facing statements."
+}

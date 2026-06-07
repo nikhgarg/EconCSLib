@@ -23,7 +23,7 @@
       },
       "paper_interface": {
         "path": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
-        "line_count": 406,
+        "line_count": 409,
         "declaration_rows": 32,
         "review_rows": 32,
         "oversized": false,
@@ -555,7 +555,7 @@
       },
       "paper_interface": {
         "path": "papers/GS62CollegeAdmissions/PaperInterface.lean",
-        "line_count": 109,
+        "line_count": 116,
         "declaration_rows": 7,
         "review_rows": 7,
         "oversized": false,
@@ -1119,7 +1119,7 @@
         "status": "human_approved",
         "note": "Preserve this human-written public summary unless a human explicitly asks to edit it."
       },
-      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md",
+      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
         "total_rows": 27,
@@ -1138,7 +1138,7 @@
       "artifacts": {
         "readme": "papers/PRPKG24AccuracyDiversity/README.md",
         "paper_interface": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
-        "final_validation_report": "papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md",
+        "final_validation_report": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/PRPKG24AccuracyDiversity/DependencyDAG.tex",
         "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/DependencyDAG.pdf"
       },

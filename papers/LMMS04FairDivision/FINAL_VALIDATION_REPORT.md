@@ -2,6 +2,10 @@
 
 ## 1. Human Verdict
 
+- Lean formalization status: partially formalized
+- Human dashboard review status: 0/33 rows reviewed; 0 stale; 0 mismatches.
+- Human summary: Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.
+
 - Lean formalization status: partially formalized.
 - Human dashboard review status: 33 source-facing rows from
   `status.json`/`PaperInterface.lean`; no human dashboard review has been
@@ -29,7 +33,55 @@ The previous long implementation ledger has been moved to
 - Human-facing theorem file: `LMMS04FairDivision/PaperInterface.lean`
 - DAG artifact: `LMMS04FairDivision/DependencyDAG.tex`
 
-## 3. Theorem-by-Theorem Validation
+## 3. What Has Been Proven
+
+See the verdict and named-statement sections in this report.
+
+## 4. Paper Definitions Checked
+
+<!-- lean-derived-definitions:start -->
+### Lean-Derived Dashboard Definitions
+
+| Paper-facing item | Lean declaration | Source-facing statement |
+| --- | --- | --- |
+| def envy | `envy` | - Envy of agent `i` toward agent `j`: positive part of the value difference. |
+| def envyFree | `envyFree` | - Envy-free allocations have no positive envy between any ordered pair. |
+| def envyBoundedBy | `envyBoundedBy` | - Bounded-envy predicate used in Theorem 2.1. |
+| def maxMarginal | `maxMarginal` | - Maximum marginal item value. |
+| def isAllocationOf | `isAllocationOf` | - Allocation of exactly the specified finite set of goods. |
+| abbrev lemma2_2_acyclic_reduction | `lemma2_2_acyclic_reduction` | - Lemma 2.2: envy-cycle elimination produces an acyclic envy graph. |
+| abbrev theorem2_1_bounded_envy_allocation_exists | `theorem2_1_bounded_envy_allocation_exists` | - Theorem 2.1: bounded-envy allocation existence. |
+| abbrev theorem2_1_alpha_bounded_allocation_exists | `theorem2_1_alpha_bounded_allocation_exists` | - Theorem 2.1 alpha-bounded form. |
+| abbrev theorem2_1_algorithm_correct_list_toFinset | `theorem2_1_algorithm_correct_list_toFinset` | - Theorem 2.1 constructive list algorithm form. |
+| abbrev theorem2_3_real_interval_supported_atom_bound | `theorem2_3_real_interval_supported_atom_bound` | - Theorem 2.3 real-interval supported atom-bound endpoint. |
+| abbrev theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries | `theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries` | - Theorem 3.1 adaptive-query lower bound. |
+| abbrev theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries | `theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries` | - Theorem 3.1 adaptive-query ratio lower bound. |
+| abbrev theorem3_2_graham_certificate_to_envy_ratio_bound | `theorem3_2_graham_certificate_to_envy_ratio_bound` | - Theorem 3.2 Graham-certificate fair-division consequence. |
+| abbrev theorem3_2_graham_factor_eq_seven_fifths | `theorem3_2_graham_factor_eq_seven_fifths` | - Theorem 3.2 evaluates the Graham factor as seven fifths. |
+| abbrev theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee | `theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee` | - Theorem 3.3 conditional fixed-dimension IP summary. |
+| abbrev theorem3_3_claim34_fixed_rounding_ratio_endpoint | `theorem3_3_claim34_fixed_rounding_ratio_endpoint` | - Claim 3.4 fixed-rounding ratio endpoint. |
+| abbrev theorem3_3_claim34_capped_weighted_supply_ratio_endpoint | `theorem3_3_claim34_capped_weighted_supply_ratio_endpoint` | - Claim 3.4 capped weighted-supply endpoint. |
+| abbrev theorem3_3_claim34_min_max_search_certificate_ratio_endpoint | `theorem3_3_claim34_min_max_search_certificate_ratio_endpoint` | - Claim 3.4 min/max-search certificate endpoint. |
+| abbrev claim3_4_bounded_optimal_certificate | `claim3_4_bounded_optimal_certificate` | - Claim 3.4 bounded-optimal certificate. |
+| abbrev claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods | `claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods` | - Claim 3.4 exact-allocation bounded optimum endpoint. |
+| abbrev claim3_4_bounded_optimal_of_identical_utilities_model | `claim3_4_bounded_optimal_of_identical_utilities_model` | - Claim 3.4 identical-utilities bounded optimum endpoint. |
+| abbrev theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads | `theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads` | - Theorem 3.3 additive-load ratio transfer. |
+| abbrev lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads | `lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads` | - Lemma 3.5 additive transfer endpoint. |
+| abbrev directMechanism | `directMechanism` | uncertain. The current draft reduces the definition to a type-level constructor and does not spell out the no-transfer direct-mechanism content from the paper. |
+| abbrev randomizedDirectMechanism | `randomizedDirectMechanism` | uncertain. The current draft reduces the definition to a type-level constructor and does not spell out the randomized direct-mechanism content from the paper. |
+| def truthful | `truthful` | - Dominant-strategy truthfulness for direct fair-division mechanisms. |
+| def randomizedTruthful | `randomizedTruthful` | - Expected-utility truthfulness for randomized direct mechanisms. |
+| abbrev theorem4_1_source_goods | `theorem4_1_source_goods` | uncertain. The draft only names the source goods object and omits the finite two-player/eight-egg content needed for context-free comparison. |
+| abbrev theorem4_1_true_report | `theorem4_1_true_report` | uncertain. The draft only names the truthful source report object and omits the concrete report content needed for context-free comparison. |
+| abbrev theorem4_1_source_not_truthful_envy_free_whenever_exists | `theorem4_1_source_not_truthful_envy_free_whenever_exists` | - Theorem 4.1 envy-free mechanism impossibility. |
+| abbrev theorem4_1_source_minimum_envy_not_truthful | `theorem4_1_source_minimum_envy_not_truthful` | - Theorem 4.1 minimum-envy mechanism impossibility. |
+| abbrev theorem4_2_uniform_random_mechanism_truthful | `theorem4_2_uniform_random_mechanism_truthful` | - Theorem 4.2 uniform-random mechanism truthfulness. |
+| abbrev theorem4_2_uniform_random_max_envy_probability_bound | `theorem4_2_uniform_random_max_envy_probability_bound` | - Theorem 4.2 uniform-random maximum-envy probability bound. |
+<!-- lean-derived-definitions:end -->
+
+## 5. Named Theorem Statements Checked
+
+### Theorem-by-Theorem Validation
 
 | Paper item | Status | Statement match | Notes |
 |---|---|---|---|
@@ -45,7 +97,51 @@ The previous long implementation ledger has been moved to
 | Theorem 4.1, no truthful minimum-envy mechanism | formalized | proof-strengthening | Lean uses a two-player/eight-egg finite counterexample with the same manipulation structure as the paper's larger example. |
 | Theorem 4.2, randomized truthful allocation bound | formalized | finite explicit bound | Lean proves the independent uniform assignment truthfulness and the explicit Chebyshev/union-bound probability inequality. |
 
-## 4. Additional Assumptions Beyond Paper
+## 6. Paper-Facing Statement Validator Ledger
+
+Generated from dashboard status export:
+
+`python3 scripts/review_dashboard.py --paper LMMS04FairDivision --export-format validators-md`
+
+| Paper-facing statement | Lean declaration | Validators | Validator comments |
+| --- | --- | --- | --- |
+| abbrev claim3_4_bounded_optimal_certificate | `claim3_4_bounded_optimal_certificate` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods | `claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev claim3_4_bounded_optimal_of_identical_utilities_model | `claim3_4_bounded_optimal_of_identical_utilities_model` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev directMechanism | `directMechanism` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:43Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:43Z): The current draft reduces the definition to a type-level constructor and does not spell out the no-transfer direct-mechanism content from the paper. |
+| def envy | `envy` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| def envyBoundedBy | `envyBoundedBy` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| def envyFree | `envyFree` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| def isAllocationOf | `isAllocationOf` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev lemma2_2_acyclic_reduction | `lemma2_2_acyclic_reduction` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads | `lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| def maxMarginal | `maxMarginal` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev randomizedDirectMechanism | `randomizedDirectMechanism` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:43Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:43Z): The current draft reduces the definition to a type-level constructor and does not spell out the randomized direct-mechanism content from the paper. |
+| def randomizedTruthful | `randomizedTruthful` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem2_1_algorithm_correct_list_toFinset | `theorem2_1_algorithm_correct_list_toFinset` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem2_1_alpha_bounded_allocation_exists | `theorem2_1_alpha_bounded_allocation_exists` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem2_1_bounded_envy_allocation_exists | `theorem2_1_bounded_envy_allocation_exists` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem2_3_real_interval_supported_atom_bound | `theorem2_3_real_interval_supported_atom_bound` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries | `theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries | `theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem3_2_graham_certificate_to_envy_ratio_bound | `theorem3_2_graham_certificate_to_envy_ratio_bound` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem3_2_graham_factor_eq_seven_fifths | `theorem3_2_graham_factor_eq_seven_fifths` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem3_3_claim34_capped_weighted_supply_ratio_endpoint | `theorem3_3_claim34_capped_weighted_supply_ratio_endpoint` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem3_3_claim34_fixed_rounding_ratio_endpoint | `theorem3_3_claim34_fixed_rounding_ratio_endpoint` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem3_3_claim34_min_max_search_certificate_ratio_endpoint | `theorem3_3_claim34_min_max_search_certificate_ratio_endpoint` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads | `theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee | `theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem4_1_source_goods | `theorem4_1_source_goods` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:43Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:43Z): The draft only names the source goods object and omits the finite two-player/eight-egg content needed for context-free comparison. |
+| abbrev theorem4_1_source_minimum_envy_not_truthful | `theorem4_1_source_minimum_envy_not_truthful` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem4_1_source_not_truthful_envy_free_whenever_exists | `theorem4_1_source_not_truthful_envy_free_whenever_exists` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem4_1_true_report | `theorem4_1_true_report` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:43Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:43Z): The draft only names the truthful source report object and omits the concrete report content needed for context-free comparison. |
+| abbrev theorem4_2_uniform_random_max_envy_probability_bound | `theorem4_2_uniform_random_max_envy_probability_bound` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem4_2_uniform_random_mechanism_truthful | `theorem4_2_uniform_random_mechanism_truthful` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| def truthful | `truthful` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+
+Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
+
+## 7. Additional Assumptions Beyond Paper
 
 - Theorem 3.3's final PTAS/FPTAS runtime conclusion is conditional on a
   reusable fixed-dimension integer-program runtime theorem. In Lean this is the
@@ -55,7 +151,7 @@ The previous long implementation ledger has been moved to
 - Theorem 2.3 is stated through an explicit real-supported interval model with
   finite measures and atom bounds.
 
-## 5. Proof-Strategy Deviations
+## 8. Proof-Strategy Deviations
 
 - Theorem 4.1 is proved with a smaller finite counterexample than the source
   exposition. This is sufficient for the impossibility theorem.
@@ -65,7 +161,19 @@ The previous long implementation ledger has been moved to
 - Theorem 4.2 is recorded as the finite inequality used by the proof rather
   than a separate asymptotic Big-O wrapper.
 
-## 6. Conditional Results and Remaining Gaps
+## 9. Proof Tricks Worth Reusing
+
+None separately recorded in the existing report.
+
+## 10. Library Lift Pass
+
+None separately recorded in the existing report.
+
+## 11. DAG Audit
+
+No separate DAG audit note is recorded in the existing report.
+
+## 12. Conditional Results and Remaining Gaps
 
 The remaining mathematical gap is not another fair-division lemma. It is the
 general computational-complexity theorem saying that the fixed-dimension IP
@@ -74,14 +182,14 @@ runtime needed for the paper's PTAS/FPTAS conclusion. The preferred next step
 is to discharge `ExternalSolverConsequence` through reusable complexity and
 optimization infrastructure, then expose the final Theorem 3.3 runtime theorem.
 
-## 7. Suspected Paper Errors or Inconsistencies
+## 13. Suspected Paper Errors or Inconsistencies
 
 - The Lemma 2.4 partition discussion contains a source-prose typo around the
   "minimum possible value" wording. The Lean proof uses the corrected
   first-crossing/maximal-cut route.
 - No fatal correctness issue was found.
 
-## 8. Validation Checks
+## 14. Validation Checks
 
 Recent checks built the LMMS paper module, `PaperInterface.lean`, the Section 3
 support modules, the relevant fair-division/probability support, the dependency
@@ -89,10 +197,26 @@ DAG, and the review dashboard. The dashboard reads the 33 source-facing rows
 from `status.json`; it currently reports no mismatched or stale rows, but no
 human review entries have been saved.
 
-## 9. Final Verdict
+### Statement Translation Audit
+
+Audit date: 2026-06-06.
+Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
+
+Summary: 33 rows; 29 match, 4 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: passes (33 rows; digest 52d9fa7cfe05).
+
+Flagged rows:
+- `directMechanism`: uncertain. The current draft reduces the definition to a type-level constructor and does not spell out the no-transfer direct-mechanism content from the paper.
+- `randomizedDirectMechanism`: uncertain. The current draft reduces the definition to a type-level constructor and does not spell out the randomized direct-mechanism content from the paper.
+- `theorem4_1_source_goods`: uncertain. The draft only names the source goods object and omits the finite two-player/eight-egg content needed for context-free comparison.
+- `theorem4_1_true_report`: uncertain. The draft only names the truthful source report object and omits the concrete report content needed for context-free comparison.
+
+## 15. Final Verdict
 
 LMMS04 is suitable as a public partial formalization. Sections 2 and 4 are
 closed in the current paper-facing model, and Section 3 exposes substantial
 verified fair-division and rounded-search infrastructure. The status remains
 partial because the final PTAS/FPTAS runtime claim depends on a reusable
 fixed-dimension IP complexity theorem that is not yet present in the library.
+
+- Completion status: partially formalized.
+- Summary: Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.
