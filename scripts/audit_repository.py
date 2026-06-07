@@ -137,7 +137,7 @@ README_STATUS_DETAIL_RE = re.compile(
     r"DependencyDAG\.tex|MainTheorems\.lean",
     re.I,
 )
-README_STATUS_HEADER = ["Paper", "Status", "Review", "Interface", "Human summary"]
+README_STATUS_HEADER = ["Paper", "Status", "Human review", "PaperInterface size", "Public note"]
 README_REVIEW_COUNT_RE = re.compile(r"^\d+/\d+$")
 README_MAX_STATUS_ROWS = 20
 MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\([^)]+\)")
@@ -1016,7 +1016,7 @@ def check_root_human_status_table(readme: Path) -> list[Finding]:
             Finding(
                 "ERROR",
                 readme,
-                "top-level README should include a concise human status table: `Paper | Status | Review | Interface | Human summary`",
+                "top-level README should include a concise human status table: `Paper | Status | Human review | PaperInterface size | Public note`",
             )
         )
         return findings
@@ -1027,9 +1027,9 @@ def check_root_human_status_table(readme: Path) -> list[Finding]:
     header, rows = matching_tables[0]
     paper_idx = header.index("Paper")
     status_idx = header.index("Status")
-    review_idx = header.index("Review")
-    interface_idx = header.index("Interface")
-    summary_idx = header.index("Human summary")
+    review_idx = header.index("Human review")
+    interface_idx = header.index("PaperInterface size")
+    summary_idx = header.index("Public note")
     seen: set[str] = set()
 
     if len(rows) > README_MAX_STATUS_ROWS:
@@ -1294,7 +1294,7 @@ def check_human_facing_readme() -> list[Finding]:
             Finding(
                 "ERROR",
                 readme,
-                "top-level README should use the concise `Paper | Status | Review | Interface | Human summary` table, not the full paper ledger",
+                "top-level README should use the concise `Paper | Status | Human review | PaperInterface size | Public note` table, not the full paper ledger",
             )
         )
     findings.extend(check_root_human_status_table(readme))
