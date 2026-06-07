@@ -1,0 +1,79 @@
+{
+  "generator": "codex-local-context-free-draft",
+  "items": {
+    "itemFairness": {
+      "lean_statement_sha256": "27ffb87bff30f730bd5e4100c0d98994f43706e08bc75d1d2708951401ee8c41",
+      "tex_statement": "{m n : ℕ} [NeZero n] (W : RecommendationModel m n) (ρ : Policy m n) = EconCSLib.finiteMin (normalizedItemUtility W ρ)"
+    },
+    "itemNormalizer": {
+      "lean_statement_sha256": "597b468785fb5a0abf0a3b60413d792e678b72437cf6dc616305880238a36a4f",
+      "tex_statement": "{m n : ℕ} (W : RecommendationModel m n) (j : Item n) = \\sum u, W.utility u j"
+    },
+    "normalizedItemUtility": {
+      "lean_statement_sha256": "00fcc2a3c98ac915191c7c39bf030fcebe91b21d107771c46d29cf18dfb6c36b",
+      "tex_statement": "{m n : ℕ} (W : RecommendationModel m n) (ρ : Policy m n) (j : Item n) = let denom = itemNormalizer W j if denom = 0 then 0 else rawItemUtility W ρ j / denom"
+    },
+    "normalizedUserUtility": {
+      "lean_statement_sha256": "6d25289cdea8154fe9b7632ddc90082ae7c108cdc8d747299904a9bc0893e2a9",
+      "tex_statement": "{m n : ℕ} [NeZero n] (W : RecommendationModel m n) (ρ : Policy m n) (u : User m) = rawUserUtility W ρ u / RecommendationModel.bestItemUtility W u"
+    },
+    "priceOfFairness": {
+      "lean_statement_sha256": "5c9a981d86763828aeaa1791404340644723470b93ad22f8d2ff9e33729f01cf",
+      "tex_statement": "{m n : ℕ} [NeZero m] [NeZero n] (W : RecommendationModel m n) = priceOfFairnessAt W 1"
+    },
+    "priceOfFairnessAt": {
+      "lean_statement_sha256": "ddb6cf5a9db72f4343dc8ea35e33c4d9a2619f216938f9b109c8288adc4ba63d",
+      "tex_statement": "{m n : ℕ} [NeZero m] [NeZero n] (W : RecommendationModel m n) (\\gamma : ℝ) = let base = RecommendationModel.optimalUserFairnessAtLevel W 0 if base = 0 then 0 else (base - RecommendationModel.optimalUserFairnessAtLevel W \\gamma) / base"
+    },
+    "priceOfMisestimation": {
+      "lean_statement_sha256": "650fd354d6a7028b3fcba10b7f640511984558ecade1dfa4d360fef99a177688",
+      "tex_statement": "{m n : ℕ} [NeZero m] [NeZero n] (E : EstimatedRecommendationModel m n) (\\gamma : ℝ) (ρhat : Policy m n) = let base = RecommendationModel.optimalUserFairnessAtLevel E.trueModel \\gamma if base = 0 then 0 else (base - RecommendationModel.userFairness E.trueModel ρhat) / base"
+    },
+    "proposition1_symmetric_lp_reduction": {
+      "lean_statement_sha256": "f6c791a0eb449ccdeb38feefaeb9c9478d8d9dfde52858d74b312471d47b0721",
+      "tex_statement": "\\forall {m n K : ℕ} [inst : NeZero m] [inst_1 : NeZero n] [NeZero K] (R : ReductionWitness m n K) (reps : TypeRepresentatives types) (\\gamma : ℝ), LPReductionTarget R \\gamma"
+    },
+    "proposition2_symmetric_optimum_exists": {
+      "lean_statement_sha256": "bdfb48ebe4eb7d2901e293356b0d871af21b30efbd84b6996bfb2261eea4aeca",
+      "tex_statement": "\\forall {m n K : ℕ} [inst : NeZero m] [inst_1 : NeZero n] [NeZero K] (S : SymmetricData m n K) (reps : TypeRepresentatives types), Positive \\to \\exists ρsym, IsTypeSymmetric types ρsym \\land IsOptimalAtLevel 1 ρsym"
+    },
+    "rawItemUtility": {
+      "lean_statement_sha256": "d5e1f4c7a0b549166e0dabfb569088c7fcc7eda2127ddc62ef902a12b4a61e03",
+      "tex_statement": "{m n : ℕ} (W : RecommendationModel m n) (ρ : Policy m n) (j : Item n) = \\sum u, W.utility u j * (ρ u j).toReal"
+    },
+    "rawUserUtility": {
+      "lean_statement_sha256": "cd26ce9f137759e2175e1476a553536810bdb87c6c820dc36550fbf9c4d57955",
+      "tex_statement": "{m n : ℕ} (W : RecommendationModel m n) (ρ : Policy m n) (u : User m) = EconCSLib.Policy.agentScore ρ W.utility u"
+    },
+    "recommendationUtility": {
+      "lean_statement_sha256": "d060b0d93b8eb1a936c777bf701fb9e01bc0e85a0398f714322ec4511df54231",
+      "tex_statement": "{m n : ℕ} (W : RecommendationModel m n) (u : User m) (j : Item n) = W.utility u j"
+    },
+    "solvesProblemOne": {
+      "lean_statement_sha256": "f050c265e50b42e5994c0db7ffbcdb5ae397af85b6b1e7885c7941055d4cd465",
+      "tex_statement": "{m n : ℕ} [NeZero m] [NeZero n] (W : RecommendationModel m n) (\\gamma : ℝ) (ρ : Policy m n) = RecommendationModel.IsOptimalAtLevel W \\gamma ρ"
+    },
+    "theorem3_price_of_fairness_decreases": {
+      "lean_statement_sha256": "24f6c3704c27c7951436a2b9f6fcbe780691e47e941eda31da49ee5832db6a4f",
+      "tex_statement": "\\forall {m n : ℕ} [inst : NeZero m] [inst_1 : NeZero n] (W W' : RecommendationModel m n), Nonnegative \\to RowHasPositiveItem \\to Nonnegative \\to RowHasPositiveItem \\to optimalUserFairnessAtLevel 1 \\le optimalUserFairnessAtLevel 1 \\to priceOfFairness \\le priceOfFairness"
+    },
+    "theorem3_price_of_fairness_strictly_decreases": {
+      "lean_statement_sha256": "e4e8a3a585b7789f22a13ccc1677022f9b771ea80d568df069f6817d33c68bd4",
+      "tex_statement": "\\forall {m n : ℕ} [inst : NeZero m] [inst_1 : NeZero n] (W W' : RecommendationModel m n), Nonnegative \\to RowHasPositiveItem \\to Nonnegative \\to RowHasPositiveItem \\to optimalUserFairnessAtLevel 1 < optimalUserFairnessAtLevel 1 \\to priceOfFairness < priceOfFairness"
+    },
+    "theorem4_misestimation_tradeoff_typeOne": {
+      "lean_statement_sha256": "c11950600c0c727d0a67fe284bf4108351595ccca6c5c692e627439f3e2a0ed1",
+      "tex_statement": "\\forall {m n : ℕ} [inst : NeZero m] [inst_1 : NeZero n] (E : EstimatedRecommendationModel m n) (Rtrue : ReductionWitness m n 2) (Rest : ReductionWitness m n 3) (repsTrue : TypeRepresentatives types) (repsEst : TypeRepresentatives types) {beta eps : ℝ} (u : User m), 2 < n \\to trueModel = model \\to estimatedModel = model \\to reduced = twoTypeReducedModel (1 / 2) (theorem4SmallValueVector eps) \\to reduced = theorem4EstimatedReducedModel beta (theorem4SmallValueVector eps) \\to (\\forall (u : User m), toType u = 0 \\to toType u = 0) \\to (\\forall (u : User m), toType u = 1 \\to toType u = 1) \\to toType u = 1 \\to toType u = 2 \\to 0 < eps \\to (↑n)⁻¹ < beta \\to beta < 1 / 2 \\to (have ρ0 := theorem4NoFairnessPolicyCollapsed (theorem4SmallValueVector eps); SolvesEstimatedProblem 0 (liftedPolicy ρ0) \\land priceOfMisestimation 0 (liftedPolicy ρ0) \\le 1 / 2) \\land \\exists ρ1, SolvesEstimatedProblem 1 (liftedPolicy ρ1) \\land 1 - eps < priceOfMisestimation 1 (liftedPolicy ρ1)"
+    },
+    "theorem4_misestimation_tradeoff_typeZero": {
+      "lean_statement_sha256": "3988716239ee6e0505a10ca0f1794ee2b3ae0ff8e82dddf03e6546e5b7bf1a61",
+      "tex_statement": "\\forall {m n : ℕ} [inst : NeZero m] [inst_1 : NeZero n] (E : EstimatedRecommendationModel m n) (Rtrue : ReductionWitness m n 2) (Rest : ReductionWitness m n 3) (repsTrue : TypeRepresentatives types) (repsEst : TypeRepresentatives types) {beta eps : ℝ} (u : User m), 2 < n \\to trueModel = model \\to estimatedModel = model \\to reduced = twoTypeReducedModel (1 / 2) (theorem4SmallValueVector eps) \\to reduced = theorem4EstimatedReducedModel beta (theorem4SmallValueVector eps) \\to (\\forall (u : User m), toType u = 0 \\to toType u = 0) \\to (\\forall (u : User m), toType u = 1 \\to toType u = 1) \\to toType u = 0 \\to toType u = 2 \\to 0 < eps \\to (↑n)⁻¹ < beta \\to beta < 1 / 2 \\to (have ρ0 := theorem4NoFairnessPolicyCollapsed (theorem4SmallValueVector eps); SolvesEstimatedProblem 0 (liftedPolicy ρ0) \\land priceOfMisestimation 0 (liftedPolicy ρ0) \\le 1 / 2) \\land \\exists ρ1, SolvesEstimatedProblem 1 (liftedPolicy ρ1) \\land 1 - eps < priceOfMisestimation 1 (liftedPolicy ρ1)"
+    },
+    "userFairness": {
+      "lean_statement_sha256": "8d986b647ed3a4b0303fc7ea6daed94689a0cc9d2dc83ef2b618196b76249e6c",
+      "tex_statement": "{m n : ℕ} [NeZero m] [NeZero n] (W : RecommendationModel m n) (ρ : Policy m n) = EconCSLib.finiteMin (normalizedUserUtility W ρ)"
+    }
+  },
+  "paper": "GCG24UserItemFairness",
+  "schema": 1
+}

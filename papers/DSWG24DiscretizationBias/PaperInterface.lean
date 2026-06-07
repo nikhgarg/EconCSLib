@@ -52,12 +52,12 @@ def classifierMAE [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
   EconCSLib.pmfExp (Finite.featureMarginal μ)
     (fun x => ∑ y : Y, q x y * (1 - q x y))
 
-/-- Continuous marginal label share. -/
+/-- Continuous marginal label share: `∫ x, 1[rule x = y] dμ(x)`. -/
 def continuousMarginalLabelShare {X Y : Type*} [MeasurableSpace X] [DecidableEq Y]
     (μ : Measure X) (rule : X → Y) (y : Y) : ℝ :=
   ∫ x, (if rule x = y then (1 : ℝ) else 0) ∂μ
 
-/-- Continuous aggregate posterior reference. -/
+/-- Continuous aggregate posterior reference: `∫ x, q x y dμ(x)`. -/
 def continuousAggregatePosterior {X Y : Type*} [MeasurableSpace X]
     (μ : Measure X) (q : X → Y → ℝ) (y : Y) : ℝ :=
   ∫ x, q x y ∂μ
@@ -114,7 +114,10 @@ def calibrated {X Y : Type*} [MeasurableSpace (X × Y)] [DecidableEq Y]
         else 0) ∂μ) =
         ∫ xy, (if q xy.1 y ∈ s then q xy.1 y else 0) ∂μ
 
-/-- Paper objective `O_N^gamma` for one observed dataset. -/
+/--
+Paper objective `O_N^gamma` for one observed dataset: `γ` times average
+posterior score plus `(1 - γ)` times the fidelity term.
+-/
 def objective {N K : ℕ} {σ : Type*}
     (γ : ℝ) (posterior : σ → Fin N → Fin K → ℝ)
     (fidelityTerm : σ → (Fin N → Fin K) → ℝ)

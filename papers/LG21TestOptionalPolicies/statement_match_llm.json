@@ -1,0 +1,138 @@
+{
+  "items": {
+    "definition1_source_equilibrium": {
+      "judgment": "matches",
+      "lean_statement_sha256": "0e38ce47919c84b083d7a12a58cec13717c291e2665759c1fb7cf537679117ac",
+      "matches": true,
+      "paper_statement_sha256": "36ea303dc955c586865ddfd840f6bd308383f4f179c1cdf00b728b67998a739c",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "8cc3ecff9a6e8a8d45f2e51147c9779ae58364ef98f4d765991cb40f9a733f57"
+    },
+    "definition2_latent_skill_fair": {
+      "judgment": "matches",
+      "lean_statement_sha256": "eaa080bd04931684ba7bdbf5a917b890ebdf4deef3b448b6f5af24df346ced9a",
+      "matches": true,
+      "paper_statement_sha256": "2fe7c2312b62e740fdbe94e06102567d7305a0a949c987d679b187e2d185fac4",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "eb36695fdcd5419e860a0e529a443e2614fffd4867f38defe086db4cae583a4b"
+    },
+    "definition3_observable_fair": {
+      "judgment": "matches",
+      "lean_statement_sha256": "ceb8cbd8d21b86e27d2868f68aab22654f1599cb06ef0ecff778119a20c96e16",
+      "matches": true,
+      "paper_statement_sha256": "b431affd238566e48028aef8149dadcdf6abfe0e7571ba588f89f992c49ed3fa",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "4222153047c53fdda68153670f61402fcfebb727038463bcec1a7d785e9db2da"
+    },
+    "definition4_demographic_fair": {
+      "judgment": "matches",
+      "lean_statement_sha256": "3bad6075c34e567ab80fa2ff6c51772b2c4719d77dd4cb53fa7a8aa5d49be08d",
+      "matches": true,
+      "paper_statement_sha256": "2cd0115d3a9c73dc13e2ac9ff5969b07a8abab8c3938dcbb7d5a28bcd0e1bb86",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "3e41007b44c8f990940cbd40849570a856c1f233729ef0c061d28518acb3aeae"
+    },
+    "definition5_test_blank": {
+      "judgment": "matches",
+      "lean_statement_sha256": "3bab47cf42edf8780ec64f303a5eba3c3533ec1b4394ecab0a95cf0d7e6e66a5",
+      "matches": true,
+      "paper_statement_sha256": "32d55c13143d62e410148f3a139fa82fa67c36e1a31564501ebae3565ab3aa06",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "eada8944310a2bd4f00d55f9dbc1ce3c4c000f7506dcb17a0856e7506ab2168e"
+    },
+    "definition6_resampling_policy": {
+      "judgment": "matches",
+      "lean_statement_sha256": "ec51c1afeef3f9932fa9342afc4c699331534485ae954698b70f1a3d0dd25946",
+      "matches": true,
+      "paper_statement_sha256": "ca49374e3b8fd7069fb48d88d6bd8f515322eda8b18f89690dc40884ced4d8f8",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "7a074e8f3e6898638e3ff42fa36cdf7084f15944165f25cdfbcdc809925a1721"
+    },
+    "lemma4_1_observed_access_strategy_proofness": {
+      "judgment": "matches",
+      "lean_statement_sha256": "fd5166edabed032a8006e107fb4322f39aae850ee02ffb262d18fed7200601f5",
+      "matches": true,
+      "paper_statement_sha256": "58dacc6c3421198ccfd999188f101c7a6e85489771fb2df6b220879ad039c48d",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "6f85f374a9e522e82060003c0202a86af1a5b1ed155d225b07f7640a6c9961ea"
+    },
+    "proposition4_2_base_indexed_posterior_surface": {
+      "judgment": "matches",
+      "lean_statement_sha256": "aa1f86664ad039ed2ed3054ab129d6a1f6a3a203d054774cb87aabb75067beab",
+      "matches": true,
+      "paper_statement_sha256": "09c482cfc978d3691a7c1c1af8dcd916cd7ff16d14cd09349dc48250587410cb",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "e3a2346fd4783ac01f7fed3503d94a327b053e7a64014c5ef8ec16d8c63d72f5"
+    },
+    "proposition4_3_base_mixed_extra_signal_surface": {
+      "judgment": "matches",
+      "lean_statement_sha256": "ee433ea7c9cef55a2b1e31aa8616696813522aab9121d8be6bc7d0f0de3564f9",
+      "matches": true,
+      "paper_statement_sha256": "9c39580d0c46e25511cfcf428b024e178620d5bb6b8f0f4c65786805a2778c47",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "c1d6b1859e53bff285670f86d3acbe4ccd69433a4bc6ff235115f15a80eef738"
+    },
+    "theorem3_1_optional_reporting": {
+      "judgment": "matches",
+      "lean_statement_sha256": "a9157a24d6ca3a1db6d719bb0dd5f9ed37d4c9abf63e670203f961af95fd2092",
+      "matches": true,
+      "paper_statement_sha256": "349723cf146d52f95c1ee3228beb543e91f71edccc8b8b07784969d6fe2af2a5",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "5e185198edb80f4821e25f421d1d25fdac75661ed86ba8f6564f9a0c5cd487db"
+    },
+    "theorem3_1_report_required": {
+      "judgment": "matches",
+      "lean_statement_sha256": "4bd146d657aa3fc07eb776d2bc079f226d6dc91a849cce3fe4cce7bb0a88a05f",
+      "matches": true,
+      "paper_statement_sha256": "90642c650d4461a29fdf6a0a816c55dae1f912915ad94f4d26e2e1285ea19fbb",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "7ebf9ec75c43bc88ec2d88e26a5751063078623608d5482f541885dc4ddc63f5"
+    },
+    "theorem3_2_optional_reporting_fairness_impossibility": {
+      "judgment": "matches",
+      "lean_statement_sha256": "4144cebb9dbcb4ed65f363cfb62fae48da996bcc9e796b091b695e16a9540214",
+      "matches": true,
+      "paper_statement_sha256": "d23bb9ce84d40bbaed3089a7ecb8209a68c7097cf6aaab46a064fecaf214a670",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "febea8a523785911116bdc8b53aa4d52e6c3d6e85580bd22a9ce472cc578226b"
+    },
+    "theorem3_2_optional_reporting_no_test_relevance": {
+      "judgment": "matches",
+      "lean_statement_sha256": "f294df7b0d2295b07ca68bfbc76841abef50e69350ddae73b43ba567c8f2a6ce",
+      "matches": true,
+      "paper_statement_sha256": "baa4c54e753fe7cc057e55c97e243a8492fb92f00f08b1e69ccfb39d0a0d4801",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "fe1f9a77ae8658b8656fdbc4d6dd4abab0a7ee88505734b0fecb66a625d48a17"
+    },
+    "theorem3_2_report_required_fairness_impossibility": {
+      "judgment": "matches",
+      "lean_statement_sha256": "027b3f2ee6d98ad1a7462b68dbef1b55e7f5cfc92180ae2d1ffc910da4a2706e",
+      "matches": true,
+      "paper_statement_sha256": "5074c5e6533e11c847fe0169947f37aea3c6f6d2184694e065c0e25a4ebd9c75",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "83ee822b8b674ef625741dcc864f16d2eb973934d0f88ea6d044a1c093af5180"
+    },
+    "theorem3_2_report_required_no_test_relevance": {
+      "judgment": "matches",
+      "lean_statement_sha256": "b0a49935aff411c2c847827be4716da30c8b462d6345d4b2e165673b7855bebb",
+      "matches": true,
+      "paper_statement_sha256": "379ca410e0c2bbde401e29649b5643743f61f96457fef75cad4ae54512eece57",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "cdfab19decd59d40ab48be3cb9269ec590239734747d9c0ce34fe68569955fde"
+    },
+    "theorem4_4_resampling_policy": {
+      "judgment": "matches",
+      "lean_statement_sha256": "e0e0a026652c31e300529ffa711a2e1552638255229d4f433c213fb4e80abcc5",
+      "matches": true,
+      "paper_statement_sha256": "245fa24ceb8729acdcc658d182917ed48b5f4f8e526a4d01a5937472eda228d1",
+      "reason": "The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result.",
+      "tex_statement_sha256": "ad94015254f3adfbd4c485c650cd6c3e775d36bd7a8545df36344a0d9ef58201"
+    }
+  },
+  "paper": "LG21TestOptionalPolicies",
+  "schema": 1,
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-06T20:39:39Z",
+  "comment": "Statement-match validation generated by Codex from original paper statements and context-free Lean-to-TeX drafts."
+}

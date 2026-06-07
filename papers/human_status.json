@@ -17,7 +17,7 @@
       "paper_info": "College Admissions and the Stability of Marriage by D. Gale and L. S. Shapley; American Mathematical Monthly, 1962.",
       "status": "Formalized",
       "human_review": "0/7",
-      "lean_loc": 381,
+      "lean_loc": 388,
       "main_note": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.",
       "main_note_citation": null,
       "main_note_review": null,
@@ -176,7 +176,7 @@
       "paper_info": "Addressing Discretization-Induced Bias in Demographic Prediction by Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg; PNAS Nexus, 2025.",
       "status": "Formalized",
       "human_review": "0/32",
-      "lean_loc": 26033,
+      "lean_loc": 26036,
       "main_note": "",
       "main_note_citation": null,
       "main_note_review": null,
@@ -252,7 +252,7 @@
         "note": "Preserve this human-written public summary unless a human explicitly asks to edit it."
       },
       "paper_folder": "papers/PRPKG24AccuracyDiversity",
-      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md"
+      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md"
     }
   ]
 }

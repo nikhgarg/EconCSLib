@@ -26,11 +26,14 @@ def strictMarriageDomain {M W : Type*}
     WomenStrictPreferenceProfile val_w ∧
     AllPairsAcceptable val_m val_w
 
-/-- Stable marriage: no blocking pair, using the reusable matching API. -/
+/-- Stable marriage: individual rationality for both sides and no blocking pair. -/
 def stableMarriage {M W : Type*}
     (val_m : M → W → ℝ) (val_w : W → M → ℝ)
     (mu : Assignment M W) : Prop :=
-  IsStable val_m val_w mu
+  (∀ m, 0 ≤ valM val_m m (mu.m_match m)) ∧
+    (∀ w, 0 ≤ valW val_w w (mu.w_match w)) ∧
+      (∀ m w, valM val_m m (mu.m_match m) < val_m m w →
+        valW val_w w (mu.w_match w) < val_w w m → False)
 
 /-- Complete marriage: every participant is matched. -/
 def completeMarriage {M W : Type*} (mu : Assignment M W) : Prop :=
@@ -61,15 +64,14 @@ theorem theorem1_stable_marriage_exists
     (hdomain : strictMarriageDomain val_m val_w) :
     ∃ mu : Assignment M W,
       stableMarriage val_m val_w mu ∧ completeMarriage mu := by
-  simpa [strictMarriageDomain, stableMarriage, completeMarriage,
+  simpa [strictMarriageDomain, stableMarriage, completeMarriage, IsStable,
     gs_strict_marriage_domain, gs_stable_marriage, gs_complete_marriage] using
     paper_gs62_theorem1_stable_marriage_exists
       val_m val_w hcard hdomain
 
 /--
-College-admissions theorem: for finite colleges with arbitrary quotas, a stable
-assignment exists.  Lean uses the standard cloned-seat representation of
-responsive college preferences.
+College-admissions theorem: finite applicants and colleges with arbitrary
+quotas and applicant/college utilities admit a stable many-to-one assignment.
 -/
 theorem college_admissions_stable_assignment_exists
     {Applicants Colleges : Type*}
@@ -84,8 +86,9 @@ theorem college_admissions_stable_assignment_exists
     quota val_applicant val_college
 
 /--
-Theorem 2: the applicant-proposing deferred-acceptance assignment is complete
-and applicant-optimal among stable assignments.
+Theorem 2: on the finite equal-cardinality strict marriage domain, the
+applicant-proposing deferred-acceptance assignment is complete and
+applicant-optimal among stable assignments.
 -/
 theorem theorem2_applicant_optimality
     {Applicants Colleges : Type*}
@@ -95,15 +98,19 @@ theorem theorem2_applicant_optimality
     (val_college : Colleges → Applicants → ℝ)
     (hcard : Fintype.card Applicants = Fintype.card Colleges)
     (hdomain : strictMarriageDomain val_applicant val_college) :
-    ∃ mu : Assignment Applicants Colleges,
-      completeMarriage mu ∧
-        applicantOptimalStableMarriage val_applicant val_college mu := by
-  simpa [strictMarriageDomain, stableMarriage, completeMarriage,
-    applicantOptimalStableMarriage, gs_strict_marriage_domain,
-    gs_stable_marriage, gs_complete_marriage,
-    gs_applicant_optimal_stable_marriage] using
-    paper_gs62_theorem2_deferred_acceptance_applicant_optimal
-      val_applicant val_college hcard hdomain
+    completeMarriage (deferredAcceptance val_applicant val_college) ∧
+      applicantOptimalStableMarriage val_applicant val_college
+        (deferredAcceptance val_applicant val_college) := by
+  constructor
+  · simpa [strictMarriageDomain, completeMarriage,
+      gs_strict_marriage_domain, gs_complete_marriage] using
+      gs_deferredAcceptance_complete_on_strict_marriage_domain
+        val_applicant val_college hcard hdomain
+  · simpa [strictMarriageDomain, stableMarriage, IsStable,
+      applicantOptimalStableMarriage, gs_strict_marriage_domain,
+      gs_stable_marriage, gs_applicant_optimal_stable_marriage] using
+      gs_deferredAcceptance_applicant_optimal_on_strict_marriage_domain
+        val_applicant val_college hdomain
 
 end PaperInterface
 end GS62CollegeAdmissions

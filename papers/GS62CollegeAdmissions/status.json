@@ -18,7 +18,7 @@
   },
   "paper_interface": {
     "path": "papers/GS62CollegeAdmissions/PaperInterface.lean",
-    "line_count": 109,
+    "line_count": 116,
     "declaration_rows": 7,
     "review_rows": 7,
     "oversized": false,

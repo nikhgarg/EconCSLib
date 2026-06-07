@@ -1,0 +1,127 @@
+{
+  "generator": "codex-local-context-free-draft",
+  "items": {
+    "averageAmountPerGood": {
+      "lean_statement_sha256": "52dc729ae3543e1664485636431b292c45a273b2227761ac961c78a4254c7d0c",
+      "tex_statement": "{Item : Type u_1} \\to [DecidableEq Item] \\to SingleMindedBid Item \\to ℝ"
+    },
+    "averageGreedyAcceptedSet": {
+      "lean_statement_sha256": "9a21df445591e49db19b905c3a162749a9d8f232a0ffca7f01391fa6a0cfd790",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to [Fintype Bidder] \\to [DecidableEq Bidder] \\to [DecidableEq Item] \\to [LinearOrder Bidder] \\to (Bidder \\to SingleMindedBid Item) \\to Finset Bidder"
+    },
+    "averageGreedyPayment": {
+      "lean_statement_sha256": "da9828ce2ded87a876c4c014c78caf72ad7954fc2342d29980fe9e2fc026eea5",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to [Fintype Bidder] \\to [DecidableEq Bidder] \\to [DecidableEq Item] \\to [LinearOrder Bidder] \\to (Bidder \\to SingleMindedBid Item) \\to Bidder \\to ℝ"
+    },
+    "averageOrderOf": {
+      "lean_statement_sha256": "fc9fda7f7e0392eecc2cfd8068dbeb255a454d76269df4871450211f9f26998d",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to [Fintype Bidder] \\to [DecidableEq Item] \\to [LinearOrder Bidder] \\to (Bidder \\to SingleMindedBid Item) \\to List Bidder"
+    },
+    "complexity_note_np_eq_zpp_implies_randomized_collapse": {
+      "lean_statement_sha256": "8a2f3af1cf0351ff06ba48a9fd8dd64ab6dfc09bf9e4311824ee7abeeb5f995d",
+      "tex_statement": "\\forall {Language : Type u_1} (complexityModel : randomizedComplexityClassModel Language), npEqZPP \\to NP = RP \\land NP = coRP \\land NP = coNP"
+    },
+    "generalizedVickreyAuction": {
+      "lean_statement_sha256": "b79b0caac969e5bbe916470597ec3fd9cfd33852343aa1033fe5bebdc858926d",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to [Fintype Bidder] \\to [DecidableEq Bidder] \\to (CombinatorialReport Bidder Item \\to BundleAllocation Bidder Item) \\to CombinatorialAuction Bidder Item"
+    },
+    "greedyAcceptedFromOrder": {
+      "lean_statement_sha256": "555e7fdc7afae5f9759ea3197829376e58a266535e7cab9c71d9eed080fe0dd2",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to [DecidableEq Bidder] \\to [DecidableEq Item] \\to (Bidder \\to SingleMindedBid Item) \\to List Bidder \\to Finset Bidder"
+    },
+    "lemma9_1_exists_nonnegative_critical_value_of_monotonicity": {
+      "lean_statement_sha256": "f73896a1acb7f0f3f5cbaeac1755058f4e176b648d76c7a3dd14d1b036635248",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to \\forall (reports : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile reports \\to \\forall (i : Bidder) (s : Finset Item), Nonempty \\to (\\exists c, 0 \\le c \\land (\\forall (v : ℝ), 0 \\le v \\to v < c \\to i ∉ accepted (update reports i { desired := s, value := v })) \\land \\forall (v : ℝ), 0 \\le v \\to c < v \\to i \\in accepted (update reports i { desired := s, value := v })) \\lor \\forall (v : ℝ), 0 \\le v \\to i ∉ accepted (update reports i { desired := s, value := v })"
+    },
+    "lemma9_2_denied_bidder_utility_eq_zero": {
+      "lean_statement_sha256": "b7b496813da85958b3684617df51cae653584417cc1224286f554847ff923fb2",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), Participation \\to \\forall (values reports : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile values \\to \\forall {i : Bidder}, i ∉ accepted reports \\to utility values reports i = 0"
+    },
+    "lemma9_3_truthful_utility_nonnegative_of_nonnegative_infinity_certificate": {
+      "lean_statement_sha256": "78a1175f77b0aac2c5de3a8c87922d75b14552d39dbd4e6298ab499fe2a6f8c0",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), Participation \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate) (values : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile values \\to \\forall (i : Bidder), 0 \\le utility values values i"
+    },
+    "lemma9_4_no_profitable_value_only_lie_of_nonnegative_infinity_axioms": {
+      "lean_statement_sha256": "17e2cbadbc7cc3c508ec808b214c794db934c9bd93adcc5da8d34b8ea31b3bcb",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to Participation \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate) (values : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile values \\to \\forall (i : Bidder) {v' : ℝ}, 0 \\le v' \\to utility values (update values i { desired := (values i).desired, value := v' }) i \\le utility values values i"
+    },
+    "lemma9_5_finite_threshold_mono_of_nonnegative_infinity_certificate": {
+      "lean_statement_sha256": "6f052b3629aef684aa929b8e8d2db57a1b17da122aaca2d7524946b177e1a542",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate) (reports : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile reports \\to \\forall (i : Bidder) {sSmall sLarge : Finset Item} {pLarge : ℝ}, Nonempty \\to Nonempty \\to sSmall \\subseteq sLarge \\to threshold reports i sLarge = some pLarge \\to \\exists pSmall, threshold reports i sSmall = some pSmall \\land pSmall \\le pLarge"
+    },
+    "nonnegativeNonemptySingleMindedProfile": {
+      "lean_statement_sha256": "3a16e7c81d995a54794b4c89b7a34615c2d2de8382b41b1a432e8c8521f215ac",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to [DecidableEq Item] \\to (Bidder \\to SingleMindedBid Item) \\to Prop"
+    },
+    "proposition4_2_generalized_vickrey_truthful_utility_nonneg": {
+      "lean_statement_sha256": "d59872c62b374ac10cb60fefe30b46701772c84629bdee23a365ef7e59ac4dae",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] (alloc : CombinatorialReport Bidder Item \\to BundleAllocation Bidder Item), gvaWelfareMaximizingAllocationRule alloc \\to \\forall (values : CombinatorialReport Bidder Item), nonnegativeValues values \\to \\forall (i : Bidder), 0 \\le (generalizedVickreyAuction alloc).utility values values i"
+    },
+    "setPackingSingleMindedBids": {
+      "lean_statement_sha256": "56e19f6d1c19b32d74c40426b41c5c9b08079c64786913b8e9e0120fd9d9f811",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to (Bidder \\to Finset Item) \\to (Bidder \\to ℝ) \\to Bidder \\to SingleMindedBid Item"
+    },
+    "singleMindedAcceptedMechanism": {
+      "lean_statement_sha256": "2ec89faf582a5a41a576eaf8e30e8cad1a2abbad5bc446b78c16f4fd38247006",
+      "tex_statement": "Type u_1 \\to Type u_2 \\to Type (max u_1 u_2)"
+    },
+    "singleMindedTruthfulOn": {
+      "lean_statement_sha256": "9889ff1ce7278d925cc5ae9639fbbb8e736de9a5967ec36944b379069b78fa5c",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to [DecidableEq Bidder] \\to [DecidableEq Item] \\to SingleMindedAcceptedMechanism Bidder Item \\to ((Bidder \\to SingleMindedBid Item) \\to Prop) \\to Prop"
+    },
+    "theorem10_2_averageGreedy_truthful": {
+      "lean_statement_sha256": "766d9c630ca4c6be38244bed03c176f3d463e90c33cdac98e0153459fdb1c176",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Item] [inst_2 : LinearOrder Bidder], singleMindedTruthfulOn averageGreedyAcceptedMechanism nonnegativeNonemptySingleMindedProfile"
+    },
+    "theorem4_1_generalized_vickrey_truthful": {
+      "lean_statement_sha256": "b4b8053bfff524615f65c0730d1de0686ebe7b89d922984d3ffcd641fe2ca152",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] (alloc : CombinatorialReport Bidder Item \\to BundleAllocation Bidder Item), gvaWelfareMaximizingAllocationRule alloc \\to (generalizedVickreyAuction alloc).TruthfulDominantStrategy"
+    },
+    "theorem6_1_clique_decision_single_minded_welfare_reduction": {
+      "lean_statement_sha256": "40fe2f20ed96d9dfc1174a21cd727b18ce992e7cbfcd76a6fc7f148e9b466859",
+      "tex_statement": "\\forall {Vertex : Type u_1} [inst : Fintype Vertex] [inst_1 : DecidableEq Vertex] (problem : graphCliqueDecisionInstance Vertex), graphCliqueDecisionProblem problem \\iff singleMindedWelfareDecisionProblem (graphCliqueDecisionToSingleMindedWelfareDecision problem)"
+    },
+    "theorem6_1_external_approximation_solver_np_eq_zpp": {
+      "lean_statement_sha256": "2e32773bee1b2a1fa42dc21f3f31baeb7f28e84fca60d77468f1472316e31da1",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} {Language : Type u_3} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (factor : ℝ) (complexityModel : ComplexityClassModel Language) (FeasibleSM : ((Bidder \\to SingleMindedBid Item) \\to Finset Bidder) \\to Prop) (FeasibleWSP : ((Bidder \\to Finset Item) \\to (Bidder \\to ℝ) \\to Finset Bidder) \\to Prop) (solver : (Bidder \\to SingleMindedBid Item) \\to Finset Bidder), singleMindedApproximationSolverAtLeast factor solver \\to FeasibleSM solver \\to (FeasibleSM solver \\to FeasibleWSP (setPackingSolverOfSingleMindedSolver solver)) \\to (\\forall (wspSolver : (Bidder \\to Finset Item) \\to (Bidder \\to ℝ) \\to Finset Bidder), weightedSetPackingApproximationSolverAtLeast factor wspSolver \\to FeasibleWSP wspSolver \\to npEqZPP) \\to npEqZPP"
+    },
+    "theorem6_1_external_optimal_solver_np_eq_zpp": {
+      "lean_statement_sha256": "563284e06182191a1e130031fd512dcf687bbee12d7d47dc3a9c9b5c1f33c297",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} {Language : Type u_3} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (complexityModel : ComplexityClassModel Language) (FeasibleSM : ((Bidder \\to SingleMindedBid Item) \\to Finset Bidder) \\to Prop) (FeasibleWSP : ((Bidder \\to Finset Item) \\to (Bidder \\to ℝ) \\to Finset Bidder) \\to Prop) (solver : (Bidder \\to SingleMindedBid Item) \\to Finset Bidder), singleMindedOptimalSolver solver \\to FeasibleSM solver \\to (FeasibleSM solver \\to FeasibleWSP (setPackingSolverOfSingleMindedSolver solver)) \\to (\\forall (wspSolver : (Bidder \\to Finset Item) \\to (Bidder \\to ℝ) \\to Finset Bidder), weightedSetPackingOptimalSolver wspSolver \\to FeasibleWSP wspSolver \\to npEqZPP) \\to npEqZPP"
+    },
+    "theorem6_1_set_packing_feasibility_encoding_correct": {
+      "lean_statement_sha256": "caffc02064765277641ce820111f1db17a0dc3870a082be421ac068c45c57264",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (sets : Bidder \\to Finset Item) (weights : Bidder \\to ℝ) (selected : Finset Bidder), PairwiseDisjointDesired (setPackingSingleMindedBids sets weights) selected \\iff setPackingFeasible sets selected"
+    },
+    "theorem6_1_set_packing_value_encoding_correct": {
+      "lean_statement_sha256": "2ce79b59bbfb14168b2d059507fc8b81faa15a959c01901ef38f789eabbc955f",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] (sets : Bidder \\to Finset Item) (weights : Bidder \\to ℝ) (selected : Finset Bidder), paper_single_minded_total_value (setPackingSingleMindedBids sets weights) selected = weightedSetPackingValue weights selected"
+    },
+    "theorem6_1_weighted_set_packing_reduction": {
+      "lean_statement_sha256": "18bfd05f55694b6d12917623bf3467f86923418bc2ef5397f3406ba8ac9f4210",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (sets : Bidder \\to Finset Item) (weights : Bidder \\to ℝ) (selected : Finset Bidder), weightedSetPackingOptimal sets weights selected \\iff singleMindedOptimalAcceptedSet (setPackingSingleMindedBids sets weights) selected"
+    },
+    "theorem7_2_sqrt_norm_approx_of_sorted_order": {
+      "lean_statement_sha256": "4e0ae9f7e6abec5803683e228a29e09284c735bec60964e10849a986244a2736",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] [Inhabited Bidder] [Inhabited Item] (bids : Bidder \\to SingleMindedBid Item) (optimal : Finset Bidder) (goods : Finset Item) (order : List Bidder), (\\forall i \\in optimal, (bids i).desired \\subseteq goods) \\to PairwiseDisjointDesired bids optimal \\to (\\forall i \\in optimal, Nonempty (bids i).desired) \\to (\\forall i \\in greedyAcceptedFromOrder bids order, Nonempty (bids i).desired) \\to (\\forall i \\in optimal, 0 \\le (bids i).value) \\to (\\forall i \\in greedyAcceptedFromOrder bids order, 0 \\le (bids i).value) \\to SingleMindedSqrtNormDescending bids order \\to (\\forall i \\in optimal, i \\in order) \\to singleMindedTotalValue bids optimal \\le √↑card * singleMindedTotalValue bids (greedyAcceptedFromOrder bids order)"
+    },
+    "theorem9_6_single_minded_truthful_of_nonnegative_infinity_axioms": {
+      "lean_statement_sha256": "62422c5754fe2a5c2fed15baf9570d9d9e17dd4ed90655a124f410162a8e2595",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to Participation \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate), singleMindedTruthfulOn M nonnegativeNonemptySingleMindedProfile"
+    },
+    "truthfulOn": {
+      "lean_statement_sha256": "910ef9a3ed1fa0533f326e0383c04e48b3173877119e9f10017f26a32272e772",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to [DecidableEq Bidder] \\to CombinatorialAuction Bidder Item \\to (CombinatorialReport Bidder Item \\to Prop) \\to Prop"
+    },
+    "utility": {
+      "lean_statement_sha256": "4b39dc302acba8609b3b72549434a219a27eb2b5f238017373273cb06c92cead",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to CombinatorialAuction Bidder Item \\to CombinatorialReport Bidder Item \\to CombinatorialReport Bidder Item \\to Bidder \\to ℝ"
+    },
+    "weightedSetPackingValue": {
+      "lean_statement_sha256": "bd71ba452cc32deb89dd71c88cd459c28f43fcff4f2cb508176e623715a243c7",
+      "tex_statement": "{Bidder : Type u_1} \\to [DecidableEq Bidder] \\to (Bidder \\to ℝ) \\to Finset Bidder \\to ℝ"
+    }
+  },
+  "paper": "LOS02CombinatorialAuctions",
+  "schema": 1
+}

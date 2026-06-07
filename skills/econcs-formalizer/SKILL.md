@@ -903,9 +903,33 @@ the Lean statements against the paper.
   an independent translation check. The dashboard also supports the older
   `.review_traces/lean_to_tex_llm.json` location, but tracked paper-root drafts
   are preferred for handoff and cache invalidation.
-- `./review-dashboard.sh` always regenerates the lightweight Lean→TeX preview from
-  the current declarations on launch, so you do not need a separate “translation”
-  step.
+- Near the beginning of a new paper, run a smaller statement target-setting
+  pass before serious proof work: curate a compact `PaperInterface.lean`, create
+  context-free Lean-to-TeX/prose translations in `lean_to_tex_llm.json`, and
+  create independent paper-vs-translation judgments in
+  `statement_match_llm.json`. Use this pass only to correct theorem targets; do
+  not update the DAG, final validation report, human-review log, or
+  review-surface audit just because the early target check ran.
+- At statement-review boundaries, every review row should have one concrete
+  source statement. If automatic TeX/text extraction is missing, over-broad, or
+  includes surrounding exposition, repair the paper-facing statement text before
+  running a judge. If nearly every row is `uncertain`, assume a parser or
+  source-statement mapping failure until proven otherwise; fix the source
+  extraction or record a paper-wide source-map issue instead of leaving every
+  row individually uncertain.
+- New tracked `lean_to_tex_llm.json` entries should include
+  `lean_statement_sha256`; new `statement_match_llm.json` entries should include
+  Lean, paper, and TeX statement digests plus validator provenance. Put the
+  model or agent name in `validator`, set `validator_type` to `model` or
+  `agent`, record `validated_at`, and use `comment` for any note that should
+  appear in the final validation report.
+- The final validation report should include a paper-facing validator ledger.
+  Human dashboard reviews and model/agent statement checks may both appear
+  there, but `human_review.reviewed_rows` remains human-only.
+- `./review-dashboard.sh` always regenerates the lightweight heuristic
+  Lean-to-TeX preview from the current declarations on launch. Treat that as a
+  fallback preview only; stable review-boundary statement checks should use the
+  tracked sidecars.
 - On WSL2, the launcher binds broadly by default, prints localhost and any
   detected WSL guest-IP fallback, and tries to open the candidate URLs in a
   Windows browser. If one URL fails, keep the terminal running and try the
@@ -1810,10 +1834,11 @@ pass:
   source-line mappings to `SOURCE_AUDIT.md` and declaration inventories to
   `PostPaperAudit.lean` or the README.
 - Point `status.json` `review_entrypoint` at the human-facing status note,
-  normally `FINAL_VALIDATION_REPORT.md` or `POST_FORMALIZATION_AUDIT.md`. If a
-  paper `README.md` is an implementation/source-audit ledger rather than the
-  human-facing note, title it accordingly and add a top-of-file pointer to the
-  human-facing report.
+  normally `FINAL_VALIDATION_REPORT.md`. Use `POST_FORMALIZATION_AUDIT.md` as a
+  supporting audit artifact, not the main public entrypoint, once a final
+  validation report exists. If a paper `README.md` is an implementation/source
+  audit ledger rather than the human-facing note, title it accordingly and add a
+  top-of-file pointer to the human-facing report.
 - Distinguish agent audit from human review. A report may say an agent
   source-audited every row, but it must not say rows were "reviewed" or imply
   dashboard completion unless a human actually saved those dashboard reviews.
@@ -1871,39 +1896,51 @@ exposed in `PaperInterface.lean`.
 
 **Status.** <formalized / conditional / not formalized>. <1-4 lines of caveats only if needed.>
 
-## 6. Additional Assumptions Beyond Paper
+## 6. Paper-Facing Statement Validator Ledger
+This table is one row per `PaperInterface.lean`/review-surface row. Fill it
+from human review logs and tracked statement-audit sidecars, not from memory.
+
+| Paper-facing statement | Lean declaration | Validators | Validator comments |
+| --- | --- | --- | --- |
+| <paper item label> | `<PaperInterface.declaration>` | <human/model/agent validators, judgments, dates, stale flags> | <validator comments or `None`> |
+
+Human dashboard reviews and model/agent statement checks may both appear here.
+This table records provenance for statement targets; it does not change the
+human-only `human_review.reviewed_rows` counter.
+
+## 7. Additional Assumptions Beyond Paper
 - `<assumption declaration>`: <why needed, where used>
 - If none: `None`
 
-## 7. Proof-Strategy Deviations
+## 8. Proof-Strategy Deviations
 - `<paper result/declaration>`: <what changed qualitatively in strategy and why>
 - If none: `None`
 
-## 8. Proof Tricks Worth Reusing
+## 9. Proof Tricks Worth Reusing
 - <modeling/proof/library-seam lesson that should inform future papers>
 - If none: `None`
 
-## 9. Library Lift Pass
+## 10. Library Lift Pass
 - <paper-local component>: <target EconCSLib module and extraction status>
 - If none: `None`
 
-## 10. DAG Audit
+## 11. DAG Audit
 - Rendered artifact: <yes/no, visual inspection method>
 - Topology: <missing/extra boxes fixed or none>
 - Layout: <overlap/routing status>
 
-## 11. Conditional Results and Remaining Gaps
+## 12. Conditional Results and Remaining Gaps
 - `<paper item>`: <exact remaining certificate/assumption declaration name>
 - If none: `None`
 
-## 12. Suspected Paper Errors or Inconsistencies
+## 13. Suspected Paper Errors or Inconsistencies
 - `<location in paper>`: <issue description + Lean/formalization evidence>
 - If none: `None`
 
-## 13. Validation Checks
+## 14. Validation Checks
 - <build/audit/DAG/no-placeholder outcomes in prose>
 
-## 14. Final Verdict
+## 15. Final Verdict
 - Completion status: <formalized / formalized with caveat / partially formalized / not formalized>
 - Summary: <2-5 lines>
 ```
