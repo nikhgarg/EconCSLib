@@ -24,4 +24,7 @@ Aggregate import for reusable recommender-system primitives.
   type-indexed aggregation helpers.
 - `EconCSLib.Applications.RecommenderSystems.PolicyAveraging`: averaging
   finite policy kernels over finite groups.
+- `EconCSLib.Applications.RecommenderSystems.TopKOracle`: bridges
+  probability-side top-`k` expectation oracles to finite count-allocation
+  objectives and marginal-return assumptions.
 -/

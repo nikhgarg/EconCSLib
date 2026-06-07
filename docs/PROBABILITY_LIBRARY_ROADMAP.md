@@ -33,10 +33,20 @@ This tracks reusable probability work suggested by the current paper queue.
   conditional-expectation API: denominator-clearing, constant-one
   normalization, indicator-expectation bounds, nonnegativity, upper bounds,
   and interval preservation.
+- `EconCSLib.Foundations.Probability.FiniteExpectation` now includes generic
+  finite-PMF indicator expectation helpers: pointwise domination by
+  `C * 1_E` bounds an expectation by `C * P(E)`, and independent pair
+  indicator events factor as a product of marginal event probabilities.
 - `EconCSLib.Foundations.Probability.MeasureInequalities` now includes generic
-  GN-inspired continuous-measure helpers for finite subset mass, positivity of
-  real-valued measure from nonzero finite `ENNReal` mass, and positive real
-  mass under positive finite `withDensity` measures.
+  continuous-measure helpers for finite subset mass, positivity of real-valued
+  measure from nonzero finite `ENNReal` mass, positive real mass under positive
+  finite `withDensity` measures, and boundary-null a.e. congruence:
+  properties/functions/predicates that agree off a null set, Boolean and
+  set-indicator congruence, strict-vs-weak real cutoff conversion from a null
+  level set, and generic positive-mass contradiction/zero-mass lemmas for
+  a.e. weak or strict inequalities. It also has null symmetric-difference
+  set-congruence lemmas for adding/removing a common context set and for
+  merging touching open intervals/rays up to a null endpoint.
 - `EconCSLib.Foundations.Probability.Gaussian` now provides the reusable
   algebraic layer needed by GLM/LG-style testing papers: Gaussian
   location-scale standardization, an abstract standard-normal CDF/density API,
@@ -48,20 +58,18 @@ This tracks reusable probability work suggested by the current paper queue.
   pass-probability monotonicity in the cutoff and mean, finite-mixture tail
   mass/capacity certificates, positive-affine location-scale transformations,
   and a hazard-rate certificate boundary with location-scale tail positivity,
-  density/tail hazard conversion, upper-tail conditional mean monotonicity, and
-  finite-mixture admitted-mean accounting.
+  density/tail hazard conversion, upper-tail conditional mean monotonicity,
+  strict upper-tail mean-above-threshold certificates for positive standardized
+  cutoffs, and finite-mixture admitted-mean accounting.
 - `EconCSLib.Foundations.Probability.FiniteSupportMGF` now provides
   finite-support moment-generating functions, log-MGFs, Legendre objectives,
-  rate-function scaffolding, and a finite rating-scale LDP model interface.
-- `EconCSLib.Foundations.Probability.FiniteTypeLogMass`,
-  `FiniteProductMultinomialCounts`, and `FiniteEmpiricalMultinomialCounts` now
-  provide reusable method-of-types infrastructure for finite empirical
-  distributions: multinomial product counts, empirical-count support, and
-  type-log-mass bounds for finite-support iid large-deviation arguments.
-- `EconCSLib.Foundations.Probability.IIDLargeDeviations`,
-  `FiniteProductTernaryCounts`, and `IndependentProduct` now provide finite
-  product-law and iid exact-rate certificate constructors for finite score
-  events, including reusable count reductions for lower-bound witnesses.
+  real and `WithTop` rate-function scaffolding, and a finite rating-scale LDP
+  model interface.  For finite rating-system large-deviation proofs, reuse
+  `withTopRealScale`, `FiniteRatingLDPModel.rateFunctionTop`,
+  `FiniteRatingLDPModel.pairwiseRateObjectiveTop`,
+  `FiniteRatingLDPModel.pairwiseThresholdRate`, and
+  `FiniteRatingLDPModel.pairwiseThresholdRateTop` before adding paper-local
+  pairwise rate wrappers.
 - `EconCSLib.Foundations.Probability.LargeDeviations` now provides reusable
   exponential-rate certificate plumbing: negative normalized log decay,
   exact-rate certificates, eventual exponential upper bounds with constants,
@@ -70,21 +78,19 @@ This tracks reusable probability work suggested by the current paper queue.
   pairwise ranking-error aggregation certificates, including finite-sum lower
   bounds from a single positive-weight component and pairwise aggregate lower
   bounds from one certified pair.
-- `EconCSLib.Foundations.Probability.FiniteRankingEvents` now provides
-  deterministic and PMF adjacent-inversion reductions for aggregating pairwise
-  comparison errors into finite ranking or ordered-chain objective errors.
-- `EconCSLib.Foundations.Probability.FiniteRatingComparison` now provides the
-  reusable finite-rating comparison spine used by rating-system
-  large-deviation proofs: source log-MGF/rate wrappers, support-safe pairwise
-  threshold rates, tilted finite score means, two-sample and floor-count
-  comparison probabilities, `P_k`/`1 - P_k` algebra, and pairwise LDP
-  certificate constructors.
 - `EconCSLib.Foundations.Probability.OrderStatistics` now provides the
   reusable probability-facing interface for diversity-aware recommendation arguments:
   top-`k` expected-value oracles, marginal top-`k` values, diminishing and
   nonnegative marginal predicates, and finite-type scaled-marginal limit
   certificates that yield eventual multiplicative marginal sandwiches and
-  strict marginal comparisons from scaled weight gaps.
+  strict marginal comparisons from scaled weight gaps.  It also now includes
+  the bottom-indexed `μ(rank, sampleSize)` bridge for papers that state
+  expected order-statistic means directly, connecting those means to tuple-level
+  `sampleTopKSum` and reflected endpoint-loss expectations.
+- `EconCSLib.Foundations.Math.Asymptotics` now has the fixed finite-sum
+  asymptotic assembly used by PRPKG-style order-statistic calculations:
+  common-scale summation of finitely many equivalent terms and addition of a
+  negligible remainder on the same scale.
 - `EconCSLib.Foundations.Probability.RealDistribution` now provides thin
   wrappers around Mathlib's real CDF API: lower CDF mass, upper-tail mass,
   monotonicity, `cdf` identification, the upper-tail complement formula, and
@@ -101,28 +107,35 @@ This tracks reusable probability work suggested by the current paper queue.
 - Conditional expectation API for finite labels over arbitrary feature spaces:
   posterior score maps, calibration predicates, aggregate-posterior/tower
   identities, and finite-score/fiber calibration dischargers.
-- Indicator/set-integral automation: standard lemmas for `if p then 1 else 0`,
-  finite sums of indicators, finite partitions, and bounded measurable
-  integrands under finite measures.
+- Indicator/set-integral automation: more standard lemmas for
+  `if p then 1 else 0`, finite sums of indicators, finite partitions, and
+  bounded measurable integrands under finite measures.  The first boundary-null
+  a.e. indicator congruence and null symmetric-difference interval-merging
+  lemmas now live in `MeasureInequalities`; future work should build on those
+  rather than duplicating paper-local cutoff/tie rewrites.
 - PMF-to-measure transfer: wrappers moving finite PMF facts to
   `Measure.toPMF`, `PMF.toMeasure`, and finite measurable pushforwards.
 - Kernel/disintegration bridge: finite and standard-Borel Markov-kernel
   wrappers for joint laws, marginals, posterior kernels, and law-of-total
   probability identities.
-- Order-statistic analytic layer for diversity-aware recommendation papers: prove the concrete bounded,
-  exponential, and Pareto integral/order-statistic asymptotics and instantiate
+- Order-statistic analytic layer for diversity-aware recommendation papers:
+  prove the concrete bounded, exponential, and Pareto integral/order-statistic
+  asymptotics and instantiate
   `TopKExpectationOracle.ScaledMarginalLimitCertificate`; then connect those
   probability certificates to the existing separable optimization/FOC bridges.
+  The generic bottom-indexed order-statistic mean bridge has been promoted, so
+  future work should target distribution-specific finite-sample means and
+  asymptotics rather than rebuilding the `μ(rank,a)` interface.
 - Large-deviation analytic layer: instantiate finite-support log-MGF
   certificates with concrete Cramer/Gartner-Ellis or Laplace-principle proofs
   for rating-system and recommender asymptotic papers. The current library
   handles MGF algebra and finite union/aggregation of rates; the remaining
   work is the analytic theorem that turns a distribution family into an exact
   `ExponentialRateCertificate`.
-- Gaussian testing layer for GLM/LG: instantiate the abstract normal
-  CDF/density/hazard API when a concrete analytic normal-distribution library
-  is available; add true truncated-normal expectation derivations and threshold
-  existence/comparison certificates beyond the current finite-mixture
+- Gaussian testing layer for GLM/LG: extend the mathlib-backed concrete
+  standard-normal CDF/density/hazard layer with true truncated-normal
+  expectation derivations, threshold existence/comparison certificates, and
+  source-facing admission/diversity endpoints beyond the current finite-mixture
   threshold witness interface.
 - Finite-mixture thin wrappers for continuous law families: `FiniteMixture`
   already has extensional-law cancellation, but future papers may need reusable

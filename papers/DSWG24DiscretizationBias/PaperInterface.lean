@@ -26,12 +26,20 @@ def prior [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
     (μ : PMF (X × Y)) (y : Y) : ℝ :=
   ((Finite.labelMarginal μ) y).toReal
 
-/-- Marginal label share `\hat p_marg(y) = (1/N) sum_i 1[\hat y_i = y]`. -/
+/-- Marginal label share `\hat p_marg(y) = (1/N) sum_i 1[\hat y_i = y]`.
+
+Source status: population analogue of source formula
+Source note: The source formula is a finite-sample average over predictions; this Lean definition uses the corresponding PMF probability under `Finite.featureMarginal μ`.
+-/
 def marginalLabelShare [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
     (μ : PMF (X × Y)) (rule : X → Y) (y : Y) : ℝ :=
   EconCSLib.pmfProb (Finite.featureMarginal μ) (fun x => rule x = y)
 
-/-- Aggregate posterior `p_agg^q(y) = (1/N) sum_i q(y,x_i)`. -/
+/-- Aggregate posterior `p_agg^q(y) = (1/N) sum_i q(y,x_i)`.
+
+Source status: population analogue of source formula
+Source note: The source formula is a finite-sample average over observed features; this Lean definition uses the corresponding PMF expectation under `Finite.featureMarginal μ`.
+-/
 def aggregatePosterior [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
     (μ : PMF (X × Y)) (q : X → Y → ℝ) (y : Y) : ℝ :=
   EconCSLib.pmfExp (Finite.featureMarginal μ) (fun x => q x y)

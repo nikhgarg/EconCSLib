@@ -35,8 +35,9 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `EconCSLib.IsChoiceEquilibriumAE` with projections
   `isChoiceEquilibriumAE_feasible_ae`,
   `isChoiceEquilibriumAE_best_response_ae`,
-  `isChoiceEquilibriumAE_consistency`, and the bridge
-  `isChoiceEquilibriumAE_of_pointwise`.
+  `isChoiceEquilibriumAE_consistency`, the pointwise bridge
+  `isChoiceEquilibriumAE_of_pointwise`, and the off-null-set constructor
+  `isChoiceEquilibriumAE_of_forall_not_mem_null`.
 - For binary cutoff strategies with null boundaries, use
   `EconCSLib.NoProfitableBinaryChoiceDeviationAE` and
   `bool_choice_eq_decide_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_no_tie`
@@ -47,6 +48,16 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   `noProfitableBinaryChoiceDeviationAE_of_bool_best_response_ae` and
   `bool_best_response_ae_of_noProfitableBinaryChoiceDeviationAE` to move
   between raw `∀ action : Bool` best-response clauses and the named predicate.
+  If the only discrepancy is strict versus weak cutoff syntax at a null
+  indifference level, use `ae_iff_le_lt_of_level_null`,
+  `ae_iff_lt_le_of_level_null`, `ae_eq_decide_of_ae_iff`, or
+  `ae_eq_if_of_ae_iff` from `MeasureInequalities` instead of adding a
+  paper-local tie-convention field. When the proof already has a null payoff
+  tie set, use
+  `choice_rule_iff_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_null_tie`
+  or
+  `bool_choice_eq_decide_threshold_ae_of_noProfitableBinaryChoiceDeviationAE_null_tie`
+  directly.
 - LG21 is the nearest model for Gaussian reporting/taking games with null
   boundary behavior. Its route defines `lg21SourceEquilibriumAE` in
   `papers/LG21TestOptionalPolicies/Theorem32AEEquilibrium.lean`, exposes
@@ -551,6 +562,17 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
 - Use local envy-freeness as an outcome-level certificate for "no profitable
   assigned-slot deviation" before proving full Nash equilibrium of a sorted GSP
   mechanism.
+- For EOS-style local envy-free/stable-assignment lemmas, do not label missing
+  appendix derivations as caveats when the assumptions are in the paper. If the
+  current Lean wrapper assumes global all-assigned-slot no-rematch but the paper
+  defines adjacent local envy-freeness and derives global no-rematch from
+  equilibrium, assortativity, and telescoping adjacent inequalities, mark the
+  row conditional and name that missing bridge.
+- Likewise, when the paper's stable-assignment-to-GSP converse assumes
+  `N > K`, invokes Shapley-Shubik to get an efficient/assortative assignment,
+  and then constructs bids, a Lean outcome-level `StableAssignment ->
+  SlotEnvyFree` shortcut is conditional, not caveated. The remaining work is
+  the characterization plus bid-construction/static-equilibrium bridge.
 
 ## Combinatorial Auctions
 
@@ -665,6 +687,28 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   certificates to named-strategy PBE, PBE strategy equality, the cutoff/action
   rule, unique PBE, outcome equality, and compact paper conclusions, so audit
   files can cite one theorem from the minimized source obligation.
+- If several paper-facing or audit endpoints repeatedly rebuild the same PBE,
+  terminal-history, or source-completion object, stop adding aliases and move
+  the construction into a source-layer bridge theorem. The interface and audit
+  files should call that strongest bridge with `exact`/`simpa`; repeated
+  schedule, belief, or terminal-record construction belongs in the bridge file.
+- For proof-dependent certificate wrappers, watch inferred result types. If an
+  endpoint's type depends on local proof witnesses or a `Classical.choose`
+  reconstruction, Lean may reject an otherwise obvious wrapper because the
+  expected proposition is not definitionally the same. Prefer routing through a
+  stable theorem whose conclusion is stated with the final paper-facing objects,
+  or introduce such a theorem, instead of fighting positional arguments and
+  proof-dependent metavariables in the wrapper.
+- For belief-explicit state-game variants, prove the source-extensive theorem
+  once and derive the belief-explicit endpoint through the established PBE
+  equivalence and projection lemmas. Do not duplicate the schedule/PBE
+  construction just to add belief, history, or terminal-record fields that are
+  already carried by the source theorem.
+- For cold-start sorted-schedule endpoints, prefer a direct all-scheduled or
+  append-singleton source theorem whose conclusion includes the terminal-record
+  and completion facts needed by the paper. This is usually cleaner than
+  reconstructing source-completion certificates from schedule proofs inside
+  `ProofInterface.lean` or `PostPaperAudit.lean`.
 - For exact finite schedules, expose deterministic-final-state facts:
   scheduled ranks have terminal records equal to their threshold, and from an
   all-active initial state the active ranks are exactly the unscheduled ranks.
@@ -758,6 +802,15 @@ auctions, combinatorial auctions, and generic mechanism-design wrappers.
   finite paper checks, or introduce a finite-active source state whose inactive
   outside ranks already carry exact records. Do not paper over the distinction
   with an all-terminal wrapper.
+- For finite exact-record PBE endpoints, make the finite state explicit rather
+  than pretending a finite schedule completed an infinite cold start. A robust
+  pattern is: displayed active ranks are `List (Fin n)`, internal ranks are the
+  translated natural list, inactive outside ranks start with exact records,
+  complete displayed schedules prove active-to-inactive for every `Fin n` rank,
+  and a canonical price-sorted wrapper discharges threshold-sortedness,
+  no-duplication, and completeness internally. Keep any source-timing or
+  threshold-event premise visible in the final theorem unless the real source
+  transition relation has proved it.
 - For belief-explicit source-extensive PBE checkers, let the belief object carry
   the generated source history and terminality proof. Then expose projection
   theorems that recover generated history, terminality, and exact/no-overshoot

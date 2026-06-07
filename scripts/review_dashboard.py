@@ -38,7 +38,12 @@ DEFAULT_PAPER_LOG_FILE = "paper_theorem_validations.jsonl"
 DEFAULT_PAPER_INTERFACE_CACHE_FILE = "paper_interface_cache.json"
 DEFAULT_PAPER_STATUS_FILE = "status.json"
 DEFAULT_LLM_LEAN_TO_TEX_FILE = "lean_to_tex_llm.json"
-PAPER_INTERFACE_CACHE_SCHEMA = 7
+DEFAULT_LLM_STATEMENT_JUDGE_FILE = "statement_match_llm.json"
+DEFAULT_LLM_REVIEW_SURFACE_FILE = "review_surface_llm.json"
+PAPER_STATEMENT_MAP_FILE = "paper_statement_map.json"
+REVIEW_SURFACE_LLM_AUDIT_THRESHOLD = 30
+REVIEW_SURFACE_WARN_THRESHOLD = 50
+PAPER_INTERFACE_CACHE_SCHEMA = 12
 REVIEW_SURFACE_SCHEMA = 1
 REVIEW_SOURCE_FILENAME = "PaperInterface.lean"
 REVIEW_DECL_KINDS = {"theorem", "lemma", "def", "abbrev"}
@@ -62,11 +67,11 @@ END_SCOPE_RE = re.compile(r"^\s*end\b(?:\s+([A-Za-z_][A-Za-z0-9_']*)\s*)?$")
 REPORT_CLAUSE_RE = re.compile(
     r"^\s*-\s*`(?:[A-Za-z0-9_]+\.)?(?P<name>[A-Za-z_][A-Za-z0-9_']+)`\s*:\s*(?P<text>.*)"
 )
-THEOREM_ENV_OPEN_RE = re.compile(r"^\s*\\begin\{(theorem|lemma|proposition|corollary|claim|definition)\}")
-THEOREM_ENV_CLOSE_RE = re.compile(r"^\s*\\end\{(theorem|lemma|proposition|corollary|claim|definition)\}")
+THEOREM_ENV_OPEN_RE = re.compile(r"^\s*\\begin\{(theorem|lemma|proposition|corollary|claim|definition|remark)\}")
+THEOREM_ENV_CLOSE_RE = re.compile(r"^\s*\\end\{(theorem|lemma|proposition|corollary|claim|definition|remark)\}")
 THEOREM_LABEL_RE = re.compile(r"\\label\{([^}]+)\}")
 PAPER_TEXT_STATEMENT_LABEL_RE = re.compile(
-    r"^\s*\f?\s*(?P<kind>Definition|Theorem|Lemma|Proposition|Corollary|Claim)\s+"
+    r"^\s*\f?\s*(?P<kind>Definition|Theorem|Lemma|Proposition|Corollary|Claim|Remark)\s+"
     r"(?P<number>[A-Za-z]?\d+(?:\.\d+)?)(?:\s*\((?P<title>[^)]*)\))?\."
 )
 PAPER_TEXT_STATEMENT_STOP_RE = re.compile(
@@ -146,12 +151,15 @@ PAPER_PDF_PRIORITY: list[str] = [
 PAPER_TXT_PRIORITY: list[str] = [
     "source.txt",
     "paper.txt",
+    "{name}.txt",
 ]
 DEFAULT_USER_ENV_VARS = [
     "GITHUB_ACTOR",
     "GITHUB_USER",
     "GITHUB_USERNAME",
     "GITHUB_REPOSITORY_OWNER",
+]
+OS_USER_ENV_VARS = [
     "USER",
     "USERNAME",
 ]
@@ -229,6 +237,24 @@ def _read_gh_cli_user() -> str:
     return ""
 
 
+def _read_gh_api_user() -> str:
+    """Return the authenticated GitHub login from `gh`, if available."""
+
+    try:
+        proc = subprocess.run(
+            ["gh", "api", "user", "--jq", ".login"],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=3,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+    if proc.returncode != 0:
+        return ""
+    return (proc.stdout or "").strip()
+
+
 def detect_reviewer_username(explicit_user: str | None, env_vars: list[str]) -> str:
     """Choose the best available reviewer username with sensible fallbacks."""
 
@@ -241,6 +267,10 @@ def detect_reviewer_username(explicit_user: str | None, env_vars: list[str]) -> 
         if env_user and env_user.strip():
             return env_user.strip()
 
+    authed = _read_gh_api_user()
+    if authed:
+        return authed
+
     cached = _read_gh_cli_user()
     if cached:
         return cached
@@ -249,6 +279,11 @@ def detect_reviewer_username(explicit_user: str | None, env_vars: list[str]) -> 
         git_user = _read_git_config_value(key)
         if git_user:
             return git_user.strip()
+
+    for env_var in OS_USER_ENV_VARS:
+        env_user = os.environ.get(env_var)
+        if env_user and env_user.strip():
+            return env_user.strip()
 
     return getpass.getuser()
 
@@ -260,6 +295,16 @@ class ReviewItem:
     lean_statement: str
     paper_statement: str
     agent_statement: str
+    interface_source: str = ""
+    source_status: str = ""
+    source_note: str = ""
+    llm_match_judgment: str = ""
+    llm_match_reason: str = ""
+    llm_match_stale: bool = False
+    llm_match_source: str = ""
+    llm_match_validator: str = ""
+    llm_match_validator_type: str = ""
+    llm_match_validated_at: str = ""
     paper_statement_image_url: str = ""
     line_number: int = 0
     slice_id: str = "all"
@@ -314,16 +359,9 @@ def find_paper_text(folder: Path) -> Path | None:
     """Find a compact text fallback for paper-source viewing."""
 
     for rel in PAPER_TXT_PRIORITY:
-        candidate = folder / rel
+        candidate = folder / rel.format(name=folder.name)
         if candidate.exists() and candidate.is_file():
             return candidate
-
-    for candidate in sorted(
-        p
-        for p in folder.glob("*.txt")
-        if p.is_file() and p.name.lower() != "readme.txt"
-    ):
-        return candidate
     return None
 
 
@@ -384,6 +422,26 @@ def clean_comment(raw: str) -> str:
     return "\n".join(line.strip() for line in lines).strip()
 
 
+def split_source_metadata(text: str) -> tuple[str, str, str]:
+    """Extract dashboard-only source provenance lines from a docstring."""
+
+    kept: list[str] = []
+    source_status = ""
+    source_notes: list[str] = []
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        status_match = re.match(r"^Source status:\s*(.+)$", line, flags=re.IGNORECASE)
+        if status_match:
+            source_status = status_match.group(1).strip()
+            continue
+        note_match = re.match(r"^Source note:\s*(.+)$", line, flags=re.IGNORECASE)
+        if note_match:
+            source_notes.append(note_match.group(1).strip())
+            continue
+        kept.append(raw_line)
+    return "\n".join(kept).strip(), source_status, " ".join(source_notes).strip()
+
+
 def normalize_statement(text: str) -> str:
     """Normalize statement text for drift comparisons."""
 
@@ -394,6 +452,25 @@ def statement_digest(text: str) -> str:
     """Generate a stable digest for a statement snapshot."""
 
     return hashlib.sha256(normalize_statement(text).encode("utf-8")).hexdigest()
+
+
+def source_metadata_digest(source_status: str, source_note: str) -> str:
+    """Digest source-provenance metadata that should invalidate old reviews."""
+
+    status = normalize_statement(source_status)
+    note = normalize_statement(source_note)
+    if not status and not note:
+        return ""
+    direct_statuses = {
+        "direct paper definition",
+        "direct paper statement",
+        "direct paper formula",
+        "direct source text",
+        "direct source formula",
+    }
+    if status.lower() in direct_statuses and not note:
+        return ""
+    return statement_digest(f"{status}\n{note}")
 
 
 def strip_qualified_identifiers(value: str) -> str:
@@ -557,9 +634,19 @@ def parse_report_texts(report_path: Path) -> dict[str, str]:
 
     statements: dict[str, str] = {}
     lines = report_path.read_text(encoding="utf-8").splitlines()
+    ignored_sections = {"statement translation audit"}
+    active_section = ""
     i = 0
     while i < len(lines):
         line = lines[i]
+        heading = re.match(r"^##\s+(.+?)\s*$", line)
+        if heading:
+            active_section = heading.group(1).strip().lower()
+            i += 1
+            continue
+        if active_section in ignored_sections:
+            i += 1
+            continue
         match = REPORT_CLAUSE_RE.match(line)
         if not match:
             i += 1
@@ -743,6 +830,61 @@ def parse_paper_text_statements(folder: Path) -> dict[str, str]:
     return statements
 
 
+def parse_paper_statement_map(folder: Path) -> dict[str, str]:
+    """Load explicit paper-source line ranges for dashboard statements."""
+
+    map_path = folder / PAPER_STATEMENT_MAP_FILE
+    if not map_path.exists() or not map_path.is_file():
+        return {}
+
+    try:
+        payload = json.loads(map_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+    raw_items = payload.get("items", payload) if isinstance(payload, dict) else {}
+    if not isinstance(raw_items, dict):
+        return {}
+
+    statements: dict[str, str] = {}
+    text_cache: dict[str, list[str]] = {}
+    for key, raw_item in raw_items.items():
+        if not isinstance(key, str) or not key.strip() or not isinstance(raw_item, dict):
+            continue
+        source_text_file = str(raw_item.get("source_text_file") or "source.txt").strip()
+        if not source_text_file or "/" in source_text_file or "\\" in source_text_file:
+            continue
+        try:
+            start_line = int(raw_item.get("start_line"))
+            end_line = int(raw_item.get("end_line"))
+        except (TypeError, ValueError):
+            continue
+        if start_line <= 0 or end_line < start_line:
+            continue
+
+        source_path = folder / source_text_file
+        try:
+            lines = text_cache[source_text_file]
+        except KeyError:
+            try:
+                lines = source_path.read_text(encoding="utf-8").splitlines()
+            except OSError:
+                continue
+            text_cache[source_text_file] = lines
+
+        if start_line > len(lines):
+            continue
+        selected = lines[start_line - 1 : min(end_line, len(lines))]
+        text = _clean_paper_text_statement(selected)
+        if not text:
+            continue
+        _add_statement_variant(statements, key.strip(), text)
+        for alias in raw_item.get("aliases", []) or []:
+            if isinstance(alias, str) and alias.strip():
+                _add_statement_variant(statements, alias.strip(), text)
+    return statements
+
+
 def parse_paper_text_statement_locations(folder: Path) -> list[dict[str, Any]]:
     """Extract first source-text locations for numbered paper statements."""
 
@@ -784,8 +926,8 @@ def parse_paper_text_statement_locations(folder: Path) -> list[dict[str, Any]]:
     return out
 
 
-def load_llm_lean_to_tex_drafts(folder: Path) -> dict[str, str]:
-    """Load optional context-free LLM TeX drafts for expanded Lean statements."""
+def load_llm_lean_to_tex_draft_entries(folder: Path) -> dict[str, dict[str, str]]:
+    """Load optional context-free LLM TeX draft entries with metadata."""
 
     path = llm_lean_to_tex_drafts_file(folder)
     if not path.exists() or not path.is_file():
@@ -801,13 +943,249 @@ def load_llm_lean_to_tex_drafts(folder: Path) -> dict[str, str]:
     items = payload.get("items")
     if not isinstance(items, dict):
         return {}
-    out: dict[str, str] = {}
+    out: dict[str, dict[str, str]] = {}
+    source = path.name
     for raw_name, raw_value in items.items():
         name = str(raw_name).strip()
-        value = str(raw_value).strip()
+        if isinstance(raw_value, dict):
+            value = str(
+                raw_value.get("tex_statement")
+                or raw_value.get("statement")
+                or raw_value.get("latex")
+                or raw_value.get("translation")
+                or raw_value.get("draft")
+                or ""
+            ).strip()
+            lean_digest = str(raw_value.get("lean_statement_sha256") or "").strip()
+        else:
+            value = str(raw_value).strip()
+            lean_digest = ""
         if name and value:
-            out[name] = value
+            out[name] = {
+                "statement": value,
+                "lean_statement_sha256": lean_digest,
+                "source": source,
+            }
     return out
+
+
+def load_llm_lean_to_tex_drafts(folder: Path) -> dict[str, str]:
+    """Load optional context-free LLM TeX drafts for expanded Lean statements."""
+
+    return {
+        name: entry["statement"]
+        for name, entry in load_llm_lean_to_tex_draft_entries(folder).items()
+        if entry.get("statement")
+    }
+
+
+def llm_statement_judgments_file(folder: Path) -> Path:
+    """Return the preferred LLM statement-match judgment sidecar for a paper."""
+
+    tracked_path = folder / DEFAULT_LLM_STATEMENT_JUDGE_FILE
+    if tracked_path.exists() and tracked_path.is_file():
+        return tracked_path
+    return folder / ".review_traces" / DEFAULT_LLM_STATEMENT_JUDGE_FILE
+
+
+def _normalize_llm_match_judgment(raw: Any) -> str:
+    """Normalize LLM match verdicts for dashboard display."""
+
+    if isinstance(raw, bool):
+        return "matches" if raw else "mismatch"
+    value = str(raw or "").strip().lower()
+    if value in {"match", "matches", "yes", "true", "equivalent", "same"}:
+        return "matches"
+    if value in {"mismatch", "does_not_match", "does not match", "no", "false", "different"}:
+        return "mismatch"
+    if value in {"uncertain", "unknown", "unsure", "partial", "needs_review"}:
+        return "uncertain"
+    return value
+
+
+def load_llm_statement_judgments(folder: Path) -> dict[str, dict[str, str]]:
+    """Load optional third-LLM judgments comparing paper text and Lean-to-TeX drafts."""
+
+    path = llm_statement_judgments_file(folder)
+    if not path.exists() or not path.is_file():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if payload.get("schema") != 1:
+        return {}
+    if payload.get("paper") not in {None, folder.name}:
+        return {}
+    items = payload.get("items")
+    if not isinstance(items, dict):
+        return {}
+    out: dict[str, dict[str, str]] = {}
+    source = path.name
+    payload_validator = str(
+        payload.get("validator")
+        or payload.get("model")
+        or payload.get("judge")
+        or payload.get("agent")
+        or source
+    ).strip()
+    payload_validator_type = str(
+        payload.get("validator_type")
+        or ("model" if payload.get("model") else "agent" if payload.get("judge") else "")
+    ).strip()
+    payload_validated_at = str(
+        payload.get("validated_at")
+        or payload.get("timestamp")
+        or payload.get("generated_at")
+        or ""
+    ).strip()
+    payload_comment = str(
+        payload.get("comment")
+        or payload.get("notes")
+        or payload.get("reason")
+        or payload.get("explanation")
+        or ""
+    ).strip()
+    for raw_name, raw_value in items.items():
+        name = str(raw_name).strip()
+        if not name:
+            continue
+        if isinstance(raw_value, dict):
+            raw_judgment = (
+                raw_value.get("judgment")
+                or raw_value.get("verdict")
+                or raw_value.get("status")
+                or raw_value.get("matches")
+            )
+            judgment = _normalize_llm_match_judgment(raw_judgment)
+            reason = str(
+                raw_value.get("reason")
+                or raw_value.get("notes")
+                or raw_value.get("explanation")
+                or ""
+            ).strip()
+            validator = str(
+                raw_value.get("validator")
+                or raw_value.get("model")
+                or raw_value.get("judge")
+                or raw_value.get("agent")
+                or payload_validator
+            ).strip()
+            validator_type = str(
+                raw_value.get("validator_type")
+                or ("model" if raw_value.get("model") else "agent" if raw_value.get("judge") else "")
+                or payload_validator_type
+            ).strip()
+            validated_at = str(
+                raw_value.get("validated_at")
+                or raw_value.get("timestamp")
+                or raw_value.get("generated_at")
+                or payload_validated_at
+            ).strip()
+            comment = str(
+                raw_value.get("comment")
+                or raw_value.get("notes")
+                or raw_value.get("reason")
+                or raw_value.get("explanation")
+                or payload_comment
+                or ""
+            ).strip()
+            out[name] = {
+                "judgment": judgment,
+                "reason": reason,
+                "source": source,
+                "validator": validator,
+                "validator_type": validator_type,
+                "validated_at": validated_at,
+                "comment": comment,
+                "lean_statement_sha256": str(raw_value.get("lean_statement_sha256") or "").strip(),
+                "paper_statement_sha256": str(raw_value.get("paper_statement_sha256") or "").strip(),
+                "tex_statement_sha256": str(raw_value.get("tex_statement_sha256") or "").strip(),
+            }
+        else:
+            judgment = _normalize_llm_match_judgment(raw_value)
+            if judgment:
+                out[name] = {
+                    "judgment": judgment,
+                    "reason": "",
+                    "source": source,
+                    "validator": payload_validator,
+                    "validator_type": payload_validator_type,
+                    "validated_at": payload_validated_at,
+                    "comment": payload_comment,
+                }
+    return out
+
+
+def llm_review_surface_file(folder: Path) -> Path:
+    """Return the preferred LLM review-surface audit sidecar for a paper."""
+
+    tracked_path = folder / DEFAULT_LLM_REVIEW_SURFACE_FILE
+    if tracked_path.exists() and tracked_path.is_file():
+        return tracked_path
+    return folder / ".review_traces" / DEFAULT_LLM_REVIEW_SURFACE_FILE
+
+
+def _normalize_surface_audit_judgment(raw: Any) -> str:
+    """Normalize review-surface audit verdicts for dashboard display."""
+
+    if isinstance(raw, bool):
+        return "passes" if raw else "needs_curation"
+    value = str(raw or "").strip().lower()
+    if value in {
+        "pass",
+        "passes",
+        "ok",
+        "good",
+        "paper_facing",
+        "paper-facing",
+        "only_paper_facing",
+        "only paper facing",
+    }:
+        return "passes"
+    if value in {
+        "fail",
+        "fails",
+        "needs_curation",
+        "needs curation",
+        "too_broad",
+        "too broad",
+        "not_paper_facing",
+        "not paper facing",
+    }:
+        return "needs_curation"
+    if value in {"uncertain", "unknown", "unsure", "needs_review", "needs review"}:
+        return "uncertain"
+    return value
+
+
+def load_llm_review_surface_audit(folder: Path) -> dict[str, Any]:
+    """Load optional LLM audit of whether dashboard rows are paper-facing."""
+
+    path = llm_review_surface_file(folder)
+    if not path.exists() or not path.is_file():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if payload.get("schema") != 1:
+        return {}
+    if payload.get("paper") not in {None, folder.name}:
+        return {}
+    raw_judgment = (
+        payload.get("judgment")
+        or payload.get("verdict")
+        or payload.get("status")
+        or payload.get("paper_facing")
+    )
+    return {
+        "judgment": _normalize_surface_audit_judgment(raw_judgment),
+        "reason": str(payload.get("reason") or payload.get("notes") or "").strip(),
+        "source": path.name,
+        "review_rows": payload.get("review_rows"),
+        "review_surface_sha256": str(payload.get("review_surface_sha256") or "").strip(),
+    }
 
 
 def llm_lean_to_tex_drafts_file(folder: Path) -> Path:
@@ -1116,7 +1494,7 @@ def paper_statement_candidate_keys(name: str, full_name: str) -> list[str]:
         _normalize_name_key(full_name),
     ]
     for base in [name, full_name.split(".")[-1]]:
-        for kind in ("definition", "theorem", "lemma", "proposition", "corollary", "claim"):
+        for kind in ("definition", "theorem", "lemma", "proposition", "corollary", "claim", "remark"):
             match = re.search(rf"(?:^|_){kind}([A-Za-z]?\d+(?:_\d+)*)", base, flags=re.IGNORECASE)
             if match:
                 raw_candidates.append(f"{kind}{match.group(1).lower()}")
@@ -1351,7 +1729,7 @@ def collect_review_decl_text(lines: list[str], start: int, kind: str) -> tuple[s
         sig_lines.append(sig_line)
         if ":=" in sig_line:
             idx = sig_line.find(":=")
-            if kind == "def":
+            if kind in {"def", "abbrev"}:
                 while j + 1 < len(lines) and not _is_interface_decl_boundary(lines[j + 1]):
                     j += 1
                     sig_lines.append(lines[j])
@@ -1375,7 +1753,9 @@ def parse_interface_items(
     if not source_statements:
         source_statements = parse_paper_text_statements(paper_folder)
     paper_statements.update(source_statements)
+    paper_statements.update(parse_paper_statement_map(paper_folder))
     llm_tex_drafts = load_llm_lean_to_tex_drafts(paper_folder)
+    llm_judgments = load_llm_statement_judgments(paper_folder)
 
     # Keep declaration names first.
     parsed: list[tuple[str, str, str, str, str | None, int]] = []
@@ -1480,21 +1860,52 @@ def parse_interface_items(
             if candidate and candidate in paper_statements:
                 paper_text = paper_statements[candidate]
                 break
+        comment_text, source_status, source_note = split_source_metadata(doc_comment or "")
+        if paper_text:
+            displayed_paper_statement = paper_text
+            source_status = source_status or "direct source text"
+        else:
+            displayed_paper_statement = comment_text
+        agent_statement = (
+            llm_tex_drafts.get(name)
+            or llm_tex_drafts.get(full_name)
+            or agent_preview_comment(
+                doc_comment,
+                lean_statement,
+                None if kind == "def" else check_statement,
+            )
+        )
+        judgment = llm_judgments.get(name) or llm_judgments.get(full_name) or {}
+        llm_match_stale = False
+        if judgment:
+            recorded_lean = judgment.get("lean_statement_sha256", "")
+            recorded_paper = judgment.get("paper_statement_sha256", "")
+            recorded_tex = judgment.get("tex_statement_sha256", "")
+            llm_match_stale = (
+                (bool(recorded_lean) and recorded_lean != statement_digest(lean_statement))
+                or (
+                    bool(recorded_paper)
+                    and recorded_paper != statement_digest(displayed_paper_statement)
+                )
+                or (bool(recorded_tex) and recorded_tex != statement_digest(agent_statement))
+            )
         out.append(
             ReviewItem(
                 name=name,
                 kind=kind,
                 lean_statement=lean_statement,
-                paper_statement=paper_text
-                if paper_text
-                else (doc_comment if doc_comment else ""),
-                agent_statement=llm_tex_drafts.get(name)
-                or llm_tex_drafts.get(full_name)
-                or agent_preview_comment(
-                    doc_comment,
-                    lean_statement,
-                    None if kind == "def" else check_statement,
-                ),
+                paper_statement=displayed_paper_statement,
+                agent_statement=agent_statement,
+                interface_source=raw_sig,
+                source_status=source_status,
+                source_note=source_note,
+                llm_match_judgment=judgment.get("judgment", ""),
+                llm_match_reason=judgment.get("reason", "") or judgment.get("comment", ""),
+                llm_match_stale=llm_match_stale,
+                llm_match_source=judgment.get("source", ""),
+                llm_match_validator=judgment.get("validator", ""),
+                llm_match_validator_type=judgment.get("validator_type", ""),
+                llm_match_validated_at=judgment.get("validated_at", ""),
                 line_number=line_number,
             )
         )
@@ -1555,14 +1966,24 @@ def _cache_source_hashes(folder: Path) -> dict[str, str]:
     tex_path = find_paper_tex_source(folder)
     text_path = find_paper_text(folder)
     pdf_path = find_paper_pdf(folder)
+    statement_map_path = folder / PAPER_STATEMENT_MAP_FILE
     llm_tex_path = llm_lean_to_tex_drafts_file(folder)
+    llm_judge_path = llm_statement_judgments_file(folder)
+    llm_surface_path = llm_review_surface_file(folder)
     status_path = folder / DEFAULT_PAPER_STATUS_FILE
 
     interface_source = interface_path.read_text(encoding="utf-8") if interface_path.exists() else ""
     report_source = report_path.read_text(encoding="utf-8") if report_path.exists() else ""
     tex_source = tex_path.read_text(encoding="utf-8") if tex_path and tex_path.exists() else ""
     text_source = text_path.read_text(encoding="utf-8") if text_path and text_path.exists() else ""
+    statement_map_source = (
+        statement_map_path.read_text(encoding="utf-8") if statement_map_path.exists() else ""
+    )
     llm_tex_source = llm_tex_path.read_text(encoding="utf-8") if llm_tex_path.exists() else ""
+    llm_judge_source = llm_judge_path.read_text(encoding="utf-8") if llm_judge_path.exists() else ""
+    llm_surface_source = (
+        llm_surface_path.read_text(encoding="utf-8") if llm_surface_path.exists() else ""
+    )
     status_source = status_path.read_text(encoding="utf-8") if status_path.exists() else ""
 
     return {
@@ -1572,7 +1993,10 @@ def _cache_source_hashes(folder: Path) -> dict[str, str]:
         "tex_sha256": statement_digest(tex_source),
         "text_sha256": statement_digest(text_source),
         "pdf_sha256": _file_sha256(pdf_path),
+        "paper_statement_map_sha256": statement_digest(statement_map_source),
         "llm_tex_sha256": statement_digest(llm_tex_source),
+        "llm_statement_judge_sha256": statement_digest(llm_judge_source),
+        "llm_review_surface_sha256": statement_digest(llm_surface_source),
         "status_json_sha256": statement_digest(status_source),
     }
 
@@ -1607,7 +2031,13 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
         return None
     if payload.get("hashes", {}).get("pdf_sha256") != hashes["pdf_sha256"]:
         return None
+    if payload.get("hashes", {}).get("paper_statement_map_sha256") != hashes["paper_statement_map_sha256"]:
+        return None
     if payload.get("hashes", {}).get("llm_tex_sha256") != hashes["llm_tex_sha256"]:
+        return None
+    if payload.get("hashes", {}).get("llm_statement_judge_sha256") != hashes["llm_statement_judge_sha256"]:
+        return None
+    if payload.get("hashes", {}).get("llm_review_surface_sha256") != hashes["llm_review_surface_sha256"]:
         return None
     if payload.get("hashes", {}).get("status_json_sha256") != hashes["status_json_sha256"]:
         return None
@@ -1625,6 +2055,16 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
         lean_statement = str(raw_row.get("lean_statement") or "").strip()
         paper_statement = str(raw_row.get("paper_statement") or "").strip()
         agent_statement = str(raw_row.get("agent_statement") or "").strip()
+        interface_source = str(raw_row.get("interface_source") or "").strip()
+        source_status = str(raw_row.get("source_status") or "").strip()
+        source_note = str(raw_row.get("source_note") or "").strip()
+        llm_match_judgment = str(raw_row.get("llm_match_judgment") or "").strip()
+        llm_match_reason = str(raw_row.get("llm_match_reason") or "").strip()
+        llm_match_stale = bool(raw_row.get("llm_match_stale") or False)
+        llm_match_source = str(raw_row.get("llm_match_source") or "").strip()
+        llm_match_validator = str(raw_row.get("llm_match_validator") or "").strip()
+        llm_match_validator_type = str(raw_row.get("llm_match_validator_type") or "").strip()
+        llm_match_validated_at = str(raw_row.get("llm_match_validated_at") or "").strip()
         paper_statement_image_url = str(raw_row.get("paper_statement_image_url") or "").strip()
         line_number = int(raw_row.get("line_number") or 0)
         slice_id = _safe_slice_id(str(raw_row.get("slice_id") or "all"))
@@ -1638,6 +2078,16 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
                 lean_statement=lean_statement,
                 paper_statement=paper_statement,
                 agent_statement=agent_statement,
+                interface_source=interface_source,
+                source_status=source_status,
+                source_note=source_note,
+                llm_match_judgment=llm_match_judgment,
+                llm_match_reason=llm_match_reason,
+                llm_match_stale=llm_match_stale,
+                llm_match_source=llm_match_source,
+                llm_match_validator=llm_match_validator,
+                llm_match_validator_type=llm_match_validator_type,
+                llm_match_validated_at=llm_match_validated_at,
                 paper_statement_image_url=paper_statement_image_url,
                 line_number=line_number,
                 slice_id=slice_id,
@@ -1685,6 +2135,149 @@ def refresh_cached_review_rows(folder: Path) -> None:
 
     items = review_items_for_paper(folder, use_cache=False)
     write_cached_review_rows(folder, items)
+
+
+def review_surface_digest(items: list[ReviewItem]) -> str:
+    """Return a stable digest of the human-facing dashboard row surface."""
+
+    payload = [
+        {
+            "name": item.name,
+            "kind": item.kind,
+            "lean_statement": normalize_statement(item.lean_statement),
+            "paper_statement": normalize_statement(item.paper_statement),
+            "source_status": normalize_statement(item.source_status),
+            "source_note": normalize_statement(item.source_note),
+        }
+        for item in sorted(items, key=lambda row: row.name)
+    ]
+    return hashlib.sha256(
+        json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode(
+            "utf-8"
+        )
+    ).hexdigest()
+
+
+def review_surface_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[str, Any]:
+    """Summarize row-count thresholds and optional LLM review-surface audit status."""
+
+    row_count = len(items)
+    surface_hash = review_surface_digest(items)
+    audit = load_llm_review_surface_audit(folder)
+    recorded_rows = audit.get("review_rows")
+    recorded_hash = str(audit.get("review_surface_sha256") or "").strip()
+    judgment = str(audit.get("judgment") or "").strip()
+    has_completed_audit = bool(
+        judgment
+        or audit.get("reason")
+        or recorded_hash
+        or (isinstance(recorded_rows, int) and recorded_rows > 0)
+    )
+    stale = False
+    if audit and has_completed_audit:
+        if isinstance(recorded_rows, int) and recorded_rows != row_count:
+            stale = True
+        if recorded_hash and recorded_hash != surface_hash:
+            stale = True
+    audit_required = row_count > REVIEW_SURFACE_LLM_AUDIT_THRESHOLD
+    missing_required = audit_required and not has_completed_audit
+    needs_curation = judgment == "needs_curation"
+    uncertain = judgment == "uncertain"
+    oversize = row_count >= REVIEW_SURFACE_WARN_THRESHOLD
+    needs_attention = missing_required or stale or needs_curation or uncertain
+    return {
+        "row_count": row_count,
+        "llm_threshold": REVIEW_SURFACE_LLM_AUDIT_THRESHOLD,
+        "warn_threshold": REVIEW_SURFACE_WARN_THRESHOLD,
+        "audit_required": audit_required,
+        "oversize": oversize,
+        "missing_required": missing_required,
+        "stale": stale,
+        "judgment": judgment,
+        "reason": str(audit.get("reason") or "").strip(),
+        "source": str(audit.get("source") or "").strip() if has_completed_audit else "",
+        "has_completed_audit": has_completed_audit,
+        "review_surface_sha256": surface_hash,
+        "recorded_review_surface_sha256": recorded_hash,
+        "recorded_review_rows": recorded_rows if isinstance(recorded_rows, int) else None,
+        "needs_attention": needs_attention,
+        "has_warning": needs_attention or oversize,
+    }
+
+
+def statement_translation_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[str, Any]:
+    """Summarize context-free Lean-to-TeX and third-LLM statement-match coverage."""
+
+    draft_entries = load_llm_lean_to_tex_draft_entries(folder)
+    judgments = load_llm_statement_judgments(folder)
+    missing_draft: list[str] = []
+    stale_draft: list[str] = []
+    missing_judgment: list[str] = []
+    stale_judgment: list[str] = []
+    mismatch: list[str] = []
+    uncertain: list[str] = []
+    unknown: list[str] = []
+    matches = 0
+
+    for item in items:
+        draft = draft_entries.get(item.name)
+        if not draft:
+            missing_draft.append(item.name)
+        else:
+            recorded_lean = str(draft.get("lean_statement_sha256") or "").strip()
+            if recorded_lean and recorded_lean != statement_digest(item.lean_statement):
+                stale_draft.append(item.name)
+
+        judgment = judgments.get(item.name)
+        if not judgment:
+            missing_judgment.append(item.name)
+            continue
+
+        value = str(judgment.get("judgment") or "").strip()
+        if value == "matches":
+            matches += 1
+        elif value == "mismatch":
+            mismatch.append(item.name)
+        elif value == "uncertain":
+            uncertain.append(item.name)
+        else:
+            unknown.append(item.name)
+        if item.llm_match_stale:
+            stale_judgment.append(item.name)
+
+    all_uncertain = bool(items) and len(uncertain) == len(items)
+    needs_attention = bool(
+        missing_draft
+        or stale_draft
+        or missing_judgment
+        or stale_judgment
+        or mismatch
+        or uncertain
+        or unknown
+    )
+    return {
+        "row_count": len(items),
+        "draft_count": len(draft_entries),
+        "judgment_count": len(judgments),
+        "matches": matches,
+        "mismatch_count": len(mismatch),
+        "uncertain_count": len(uncertain),
+        "unknown_count": len(unknown),
+        "missing_draft_count": len(missing_draft),
+        "stale_draft_count": len(stale_draft),
+        "missing_judgment_count": len(missing_judgment),
+        "stale_judgment_count": len(stale_judgment),
+        "mismatch": mismatch,
+        "uncertain": uncertain,
+        "unknown": unknown,
+        "missing_draft": missing_draft,
+        "stale_draft": stale_draft,
+        "missing_judgment": missing_judgment,
+        "stale_judgment": stale_judgment,
+        "has_completed_audit": bool(draft_entries and judgments),
+        "all_uncertain": all_uncertain,
+        "needs_attention": needs_attention,
+    }
 
 
 def describe_log_target(log_file: Path | None, paper: str | None = None) -> str:
@@ -1747,13 +2340,15 @@ def gather_paper_data(
                 "slices": summarize_review_slices(all_items),
                 "active_slice": slice_filter or "",
                 "assets": assets,
+                "surface_audit": review_surface_audit_summary(folder, all_items),
+                "statement_audit": statement_translation_audit_summary(folder, all_items),
             }
         )
     return papers
 
 
-def get_item_statements(paper: str, theorem: str) -> tuple[str, str, str]:
-    """Lookup the current Lean, paper, and agent preview statements for one theorem."""
+def get_item_statements(paper: str, theorem: str) -> tuple[str, str, str, str, str]:
+    """Lookup the current statements and source metadata for one theorem."""
 
     for paper_data in gather_paper_data(paper):
         if paper_data.get("name") != paper:
@@ -1764,8 +2359,10 @@ def get_item_statements(paper: str, theorem: str) -> tuple[str, str, str]:
                     str(item.get("lean_statement") or ""),
                     str(item.get("paper_statement") or ""),
                     str(item.get("agent_statement") or ""),
+                    str(item.get("source_status") or ""),
+                    str(item.get("source_note") or ""),
                 )
-    return "", "", ""
+    return "", "", "", "", ""
 
 
 def read_log_entries(log_file: Path, paper: str | None = None) -> list[dict[str, Any]]:
@@ -1796,18 +2393,99 @@ def item_digest(item: dict[str, Any], key: str) -> str:
 
 def review_is_stale(
     entry: dict[str, Any], item: dict[str, Any]
-) -> tuple[bool, bool]:
-    """Return `(lean_stale, paper_stale)` relative to current item snapshot."""
+) -> tuple[bool, bool, bool]:
+    """Return `(lean_stale, paper_stale, source_stale)` for current item snapshot."""
 
     if not item:
-        return False, False
+        return False, False, False
 
     current_lean = item_digest(item, "lean_statement")
     current_paper = item_digest(item, "paper_statement")
+    current_source = source_metadata_digest(
+        str(item.get("source_status") or ""),
+        str(item.get("source_note") or ""),
+    )
     reviewed_lean = str(entry.get("lean_statement_sha256") or statement_digest(str(entry.get("lean_statement", "")))).strip()
     reviewed_paper = str(entry.get("paper_statement_sha256") or statement_digest(str(entry.get("paper_statement", "")))).strip()
+    reviewed_source = str(entry.get("source_metadata_sha256") or "").strip()
 
-    return current_lean != reviewed_lean and bool(current_lean), current_paper != reviewed_paper and bool(current_paper)
+    return (
+        current_lean != reviewed_lean and bool(current_lean),
+        current_paper != reviewed_paper and bool(current_paper),
+        current_source != reviewed_source and bool(current_source),
+    )
+
+
+def _review_judgment(matches: Any) -> str:
+    """Normalize a saved human review decision for validator exports."""
+
+    if matches is True:
+        return "matches"
+    if matches is False:
+        return "mismatch"
+    if matches is None:
+        return ""
+    text = str(matches).strip().lower()
+    if text in {"matches", "match", "true", "t", "yes", "y"}:
+        return "matches"
+    if text in {"mismatch", "does_not_match", "does not match", "false", "f", "no", "n"}:
+        return "mismatch"
+    if text in {"uncertain", "unknown", "unsure", "needs_review", "needs review"}:
+        return "uncertain"
+    return ""
+
+
+def _review_matches_value(judgment: str) -> bool | None:
+    """Return the backward-compatible matches field for a normalized judgment."""
+
+    if judgment == "matches":
+        return True
+    if judgment == "mismatch":
+        return False
+    return None
+
+
+def _validator_entry(
+    validator: str,
+    validator_type: str,
+    validated_at: str,
+    judgment: str,
+    comment: str,
+    source: str,
+    stale: bool,
+) -> dict[str, Any] | None:
+    """Build a compact validator ledger entry for status exports."""
+
+    name = str(validator or "").strip()
+    if not name:
+        return None
+    return {
+        "validator": name,
+        "validator_type": str(validator_type or "").strip(),
+        "validated_at": str(validated_at or "").strip(),
+        "judgment": str(judgment or "").strip(),
+        "comment": str(comment or "").strip(),
+        "source": str(source or "").strip(),
+        "stale": bool(stale),
+    }
+
+
+def _validator_names(validators: list[dict[str, Any]]) -> str:
+    """Return stable unique validator labels for compact table columns."""
+
+    labels: list[str] = []
+    seen: set[str] = set()
+    for entry in validators:
+        name = str(entry.get("validator") or "").strip()
+        if not name:
+            continue
+        validator_type = str(entry.get("validator_type") or "").strip()
+        label = f"{name} ({validator_type})" if validator_type else name
+        if label in seen:
+            continue
+        seen.add(label)
+        labels.append(label)
+    return ", ".join(labels)
 
 
 def build_review_status(papers: list[dict[str, Any]], reviews: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -1831,12 +2509,49 @@ def build_review_status(papers: list[dict[str, Any]], reviews: list[dict[str, An
             latest = history[-1] if history else None
             stale_lean = False
             stale_paper = False
+            stale_source = False
             if latest:
-                stale_lean, stale_paper = review_is_stale(latest, item)
+                stale_lean, stale_paper, stale_source = review_is_stale(latest, item)
 
             latest_user = latest.get("user") if latest else ""
             latest_ts = latest.get("timestamp") if latest else ""
-            latest_matches = latest.get("matches") if latest else None
+            latest_judgment = _review_judgment(
+                latest.get("judgment") if latest and "judgment" in latest else latest.get("matches") if latest else None
+            )
+            latest_matches = _review_matches_value(latest_judgment) if latest else None
+            validators: list[dict[str, Any]] = []
+            for entry in history:
+                entry_stale_lean, entry_stale_paper, entry_stale_source = review_is_stale(entry, item)
+                entry_judgment = _review_judgment(
+                    entry.get("judgment") if "judgment" in entry else entry.get("matches")
+                )
+                validator_entry = _validator_entry(
+                    validator=str(entry.get("user") or "").strip(),
+                    validator_type="human",
+                    validated_at=str(entry.get("timestamp") or "").strip(),
+                    judgment=entry_judgment,
+                    comment=str(entry.get("notes") or "").strip(),
+                    source="paper_theorem_validations.jsonl",
+                    stale=entry_stale_lean or entry_stale_paper or entry_stale_source,
+                )
+                if validator_entry is not None:
+                    validators.append(validator_entry)
+            if item.get("llm_match_judgment"):
+                validator_entry = _validator_entry(
+                    validator=str(
+                        item.get("llm_match_validator")
+                        or item.get("llm_match_source")
+                        or DEFAULT_LLM_STATEMENT_JUDGE_FILE
+                    ).strip(),
+                    validator_type=str(item.get("llm_match_validator_type") or "").strip(),
+                    validated_at=str(item.get("llm_match_validated_at") or "").strip(),
+                    judgment=str(item.get("llm_match_judgment") or "").strip(),
+                    comment=str(item.get("llm_match_reason") or "").strip(),
+                    source=str(item.get("llm_match_source") or "").strip(),
+                    stale=bool(item.get("llm_match_stale", False)),
+                )
+                if validator_entry is not None:
+                    validators.append(validator_entry)
             rows.append(
                 {
                     "paper": paper_name,
@@ -1850,13 +2565,27 @@ def build_review_status(papers: list[dict[str, Any]], reviews: list[dict[str, An
                     "needs_attention": latest is None
                     or stale_lean
                     or stale_paper
-                    or latest_matches is False,
+                    or stale_source
+                    or latest_judgment in {"mismatch", "uncertain"},
                     "latest_user": latest_user,
                     "latest_timestamp": latest_ts,
+                    "latest_judgment": latest_judgment,
                     "latest_matches": latest_matches,
                     "latest_notes": latest.get("notes") if latest else "",
                     "lean_stale": stale_lean,
                     "paper_stale": stale_paper,
+                    "source_stale": stale_source,
+                    "source_status": item.get("source_status", ""),
+                    "source_note": item.get("source_note", ""),
+                    "validators": validators,
+                    "validator_names": _validator_names(validators),
+                    "llm_match_judgment": item.get("llm_match_judgment", ""),
+                    "llm_match_reason": item.get("llm_match_reason", ""),
+                    "llm_match_stale": bool(item.get("llm_match_stale", False)),
+                    "llm_match_source": item.get("llm_match_source", ""),
+                    "llm_match_validator": item.get("llm_match_validator", ""),
+                    "llm_match_validator_type": item.get("llm_match_validator_type", ""),
+                    "llm_match_validated_at": item.get("llm_match_validated_at", ""),
                 }
             )
     rows.sort(key=lambda row: (row["paper"], row["theorem"]))
@@ -1893,8 +2622,14 @@ def render_csv_summary(rows: list[dict[str, Any]]) -> str:
         "latest_user",
         "latest_timestamp",
         "latest_matches",
+        "validators",
         "lean_stale",
         "paper_stale",
+        "source_stale",
+        "source_status",
+        "source_note",
+        "llm_match_judgment",
+        "llm_match_stale",
     ]
     out = io.StringIO()
     writer = csv.writer(out)
@@ -1913,8 +2648,14 @@ def render_csv_summary(rows: list[dict[str, Any]]) -> str:
                 row.get("latest_user", ""),
                 row.get("latest_timestamp", ""),
                 "true" if row.get("latest_matches") else "false",
+                row.get("validator_names", ""),
                 "true" if row.get("lean_stale") else "false",
                 "true" if row.get("paper_stale") else "false",
+                "true" if row.get("source_stale") else "false",
+                row.get("source_status", ""),
+                row.get("source_note", ""),
+                row.get("llm_match_judgment", ""),
+                "true" if row.get("llm_match_stale") else "false",
             ]
         )
     rendered = out.getvalue()
@@ -1928,8 +2669,8 @@ def _escape_md(value: Any) -> str:
 
 def render_markdown_summary(rows: list[dict[str, Any]]) -> str:
     lines = [
-        "| Paper | Slice | Theorem | Kind | Line | Reviewed | Reviews | Needs attention | Latest | Latest timestamp | Matches | Lean stale | Paper stale | Notes |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| Paper | Slice | Theorem | Kind | Line | Reviewed | Reviews | Needs attention | Latest | Latest timestamp | Matches | Validators | Lean stale | Paper stale | Source stale | Source status | Source note | LLM judgment | LLM stale | Notes |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for row in rows:
         lines.append(
@@ -1946,9 +2687,72 @@ def render_markdown_summary(rows: list[dict[str, Any]]) -> str:
                     _escape_md(row.get("latest_user") or "—"),
                     _escape_md(row.get("latest_timestamp", "")),
                     "yes" if row.get("latest_matches") else "no",
+                    _escape_md(row.get("validator_names", "")),
                     "yes" if row.get("lean_stale") else "no",
                     "yes" if row.get("paper_stale") else "no",
+                    "yes" if row.get("source_stale") else "no",
+                    _escape_md(row.get("source_status", "")),
+                    _escape_md(row.get("source_note", "")),
+                    _escape_md(row.get("llm_match_judgment", "")),
+                    "yes" if row.get("llm_match_stale") else "no",
                     _escape_md(row.get("latest_notes", "")),
+                ]
+            )
+            + " |"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def _validator_report_label(entry: dict[str, Any]) -> str:
+    name = str(entry.get("validator") or "").strip()
+    if not name:
+        return ""
+    validator_type = str(entry.get("validator_type") or "").strip()
+    judgment = str(entry.get("judgment") or "").strip()
+    validated_at = str(entry.get("validated_at") or "").strip()
+    stale = bool(entry.get("stale"))
+    details: list[str] = []
+    if validator_type:
+        details.append(validator_type)
+    if judgment:
+        details.append(judgment)
+    if validated_at:
+        details.append(validated_at)
+    if stale:
+        details.append("stale")
+    if not details:
+        return name
+    return f"{name} ({'; '.join(details)})"
+
+
+def render_validator_markdown_summary(rows: list[dict[str, Any]]) -> str:
+    """Render the compact validator table intended for final validation reports."""
+
+    lines = [
+        "| Paper-facing statement | Lean declaration | Validators | Validator comments |",
+        "| --- | --- | --- | --- |",
+    ]
+    for row in rows:
+        validators = row.get("validators") if isinstance(row.get("validators"), list) else []
+        labels = [_validator_report_label(entry) for entry in validators if isinstance(entry, dict)]
+        labels = [label for label in labels if label]
+        comments: list[str] = []
+        for entry in validators:
+            if not isinstance(entry, dict):
+                continue
+            comment = str(entry.get("comment") or "").strip()
+            if not comment:
+                continue
+            label = _validator_report_label(entry) or str(entry.get("validator") or "").strip()
+            comments.append(f"{label}: {comment}" if label else comment)
+        paper_item = f"{row.get('kind', '')} {row.get('theorem', '')}".strip()
+        lines.append(
+            "| " + " | ".join(
+                [
+                    _escape_md(paper_item),
+                    _escape_md(f"`{row.get('theorem', '')}`" if row.get("theorem") else ""),
+                    _escape_md("<br/>".join(labels) if labels else "None recorded"),
+                    _escape_md("<br/>".join(comments) if comments else "None"),
                 ]
             )
             + " |"
@@ -1962,6 +2766,7 @@ def status_totals(rows: list[dict[str, Any]]) -> dict[str, Any]:
     stale = sum(1 for row in rows if row.get("needs_attention"))
     lean_stale = sum(1 for row in rows if row.get("lean_stale"))
     paper_stale = sum(1 for row in rows if row.get("paper_stale"))
+    source_stale = sum(1 for row in rows if row.get("source_stale"))
     no_review = total - reviewed
     return {
         "total_items": total,
@@ -1970,13 +2775,39 @@ def status_totals(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "needs_attention_items": stale,
         "lean_stale_items": lean_stale,
         "paper_stale_items": paper_stale,
+        "source_stale_items": source_stale,
     }
+
+
+def surface_audit_rows(papers: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Return paper-level review-surface audit rows for API/export/precheck use."""
+
+    rows: list[dict[str, Any]] = []
+    for paper in papers:
+        audit = paper.get("surface_audit") or {}
+        rows.append({"paper": paper.get("name", ""), **audit})
+    return rows
+
+
+def statement_audit_rows(papers: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Return paper-level statement-translation audit rows for API/export/precheck."""
+
+    rows: list[dict[str, Any]] = []
+    for paper in papers:
+        audit = paper.get("statement_audit") or {}
+        rows.append({"paper": paper.get("name", ""), **audit})
+    return rows
 
 
 def stale_review_rows(rows: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
     """Partition rows into stale and unreviewed buckets for launch-time diagnostics."""
 
-    stale = [row for row in rows if row.get("has_review") and (row.get("lean_stale") or row.get("paper_stale"))]
+    stale = [
+        row
+        for row in rows
+        if row.get("has_review")
+        and (row.get("lean_stale") or row.get("paper_stale") or row.get("source_stale"))
+    ]
     unreviewed = [row for row in rows if not row.get("has_review")]
     mismatch = [
         row
@@ -1984,6 +2815,7 @@ def stale_review_rows(rows: list[dict[str, Any]]) -> dict[str, list[dict[str, An
         if row.get("has_review")
         and not row.get("lean_stale")
         and not row.get("paper_stale")
+        and not row.get("source_stale")
         and row.get("latest_matches") is False
     ]
     return {"stale": stale, "unreviewed": unreviewed, "mismatch": mismatch}
@@ -2002,20 +2834,28 @@ def append_review(log_file: Path, payload: dict[str, Any], default_user: str) ->
     theorem = str(payload.get("theorem") or "").strip()
     user = str(payload.get("user") or default_user).strip() or default_user
     notes = str(payload.get("notes", "")).strip()
-    raw_matches = payload.get("matches", False)
-    if isinstance(raw_matches, bool):
-        matches = raw_matches
-    elif isinstance(raw_matches, str):
-        matches = parse_bool_flag(raw_matches)
-    else:
-        matches = bool(raw_matches)
+    raw_judgment = payload.get("judgment")
+    if raw_judgment is None:
+        raw_judgment = payload.get("matches")
+    judgment = _review_judgment(raw_judgment)
+    if not judgment:
+        raise ValueError("missing review judgment")
+    matches = _review_matches_value(judgment)
     lean_statement = str(payload.get("lean_statement") or "").strip()
     paper_statement = str(payload.get("paper_statement") or "").strip()
     agent_statement = str(payload.get("agent_statement") or "").strip()
+    source_status = str(payload.get("source_status") or "").strip()
+    source_note = str(payload.get("source_note") or "").strip()
     if not paper or not theorem:
         raise ValueError("missing paper/theorem")
-    if not lean_statement or not paper_statement or not agent_statement:
-        current_lean_statement, current_paper_statement, current_agent_statement = get_item_statements(
+    if not lean_statement or not paper_statement or not agent_statement or not source_status or not source_note:
+        (
+            current_lean_statement,
+            current_paper_statement,
+            current_agent_statement,
+            current_source_status,
+            current_source_note,
+        ) = get_item_statements(
             paper, theorem
         )
         if not lean_statement:
@@ -2024,6 +2864,10 @@ def append_review(log_file: Path, payload: dict[str, Any], default_user: str) ->
             paper_statement = current_paper_statement
         if not agent_statement:
             agent_statement = current_agent_statement
+        if not source_status:
+            source_status = current_source_status
+        if not source_note:
+            source_note = current_source_note
 
     entry = {
         "paper": paper,
@@ -2032,9 +2876,13 @@ def append_review(log_file: Path, payload: dict[str, Any], default_user: str) ->
         "paper_statement": paper_statement,
         "lean_statement": lean_statement,
         "agent_statement": agent_statement,
+        "source_status": source_status,
+        "source_note": source_note,
         "lean_statement_sha256": statement_digest(lean_statement),
         "paper_statement_sha256": statement_digest(paper_statement),
         "agent_statement_sha256": statement_digest(agent_statement),
+        "source_metadata_sha256": source_metadata_digest(source_status, source_note),
+        "judgment": judgment,
         "matches": matches,
         "notes": notes,
         "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
@@ -2182,6 +3030,40 @@ HTML_PAGE = """
     .paper-source-subtle {
       color: #334155;
       margin-bottom: 6px;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .surface-audit-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: #fff;
+      margin-bottom: 10px;
+      display: grid;
+      gap: 5px;
+    }
+    .surface-audit-panel.ok {
+      border-color: #b8dec8;
+      background: var(--ok-soft);
+    }
+    .surface-audit-panel.warn {
+      border-color: #f0cf91;
+      background: var(--warn-soft);
+    }
+    .surface-audit-panel.bad {
+      border-color: #efb6b6;
+      background: var(--bad-soft);
+    }
+    .surface-audit-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      font-weight: 650;
+      font-size: 13px;
+    }
+    .surface-audit-body {
+      color: #334155;
       font-size: 12px;
       line-height: 1.35;
     }
@@ -2335,6 +3217,26 @@ HTML_PAGE = """
       white-space: pre-wrap;
       word-break: break-word;
     }
+    .llm-judge-panel {
+      margin-top: 9px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      padding: 8px 9px;
+    }
+    .llm-judge-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .llm-judge-reason {
+      color: #334155;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
     .col-review { width: 18%; min-width: 220px; }
     .paper-title { font-weight: 600; margin-bottom: 8px; }
     .slice-meta {
@@ -2342,6 +3244,25 @@ HTML_PAGE = """
       color: var(--muted);
       font-size: 12px;
       line-height: 1.3;
+    }
+    .source-provenance {
+      border: 1px solid #f0cf91;
+      border-radius: 7px;
+      background: var(--warn-soft);
+      color: #6f4e07;
+      padding: 7px 9px;
+      font-size: 12px;
+      line-height: 1.35;
+      font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .source-provenance.direct {
+      border-color: #b8dec8;
+      background: var(--ok-soft);
+      color: var(--ok);
+    }
+    .source-provenance-label {
+      font-weight: 650;
+      margin-right: 4px;
     }
     .row-note {
       width: 100%;
@@ -2394,6 +3315,10 @@ HTML_PAGE = """
     .btn[disabled] {
       cursor: wait;
       opacity: 0.72;
+    }
+    .toolbar .btn {
+      margin-top: 0;
+      padding: 7px 10px;
     }
     .status-pill {
       display: inline-block;
@@ -2499,6 +3424,7 @@ HTML_PAGE = """
           <option value='unreviewed'>Unreviewed</option>
           <option value='stale'>Stale</option>
           <option value='mismatch'>Marked mismatch</option>
+          <option value='uncertain'>Marked uncertain</option>
           <option value='reviewed'>Reviewed</option>
         </select>
       </label>
@@ -2510,8 +3436,10 @@ HTML_PAGE = """
       </label>
       <label class='toolbar-toggle'>
         <input id='hideAgentDraft' type='checkbox' />
-        Hide Lean draft
+        Hide LLM checks
       </label>
+      <button id='saveAllReviews' class='btn' type='button'>Save all review</button>
+      <span id='saveAllStatus' class='save-status small muted'></span>
       <span id='summary' class='summary small muted'></span>
       <span id='count' class='small muted'></span>
       <span id='logPath' class='small muted'></span>
@@ -2608,6 +3536,76 @@ HTML_PAGE = """
     function renderTexDraft(value) {
       const text = escapeHtml(value || "No auto-generated preview available.");
       return text.replace(/\\n/g, "<br/>");
+    }
+
+    function llmJudgmentLabel(item) {
+      const value = String(item.llm_match_judgment || "").toLowerCase();
+      if (item.llm_match_stale) {
+        return "Stale LLM judgment";
+      }
+      if (value === "matches") {
+        return "LLM: matches";
+      }
+      if (value === "mismatch") {
+        return "LLM: mismatch";
+      }
+      if (value === "uncertain") {
+        return "LLM: uncertain";
+      }
+      return "No LLM judgment";
+    }
+
+    function llmJudgmentClass(item) {
+      const value = String(item.llm_match_judgment || "").toLowerCase();
+      if (item.llm_match_stale) {
+        return "warn";
+      }
+      if (value === "matches") {
+        return "ok";
+      }
+      if (value === "mismatch") {
+        return "bad";
+      }
+      if (value === "uncertain") {
+        return "warn";
+      }
+      return "";
+    }
+
+    function makeLlmJudgePanel(item) {
+      const panel = document.createElement("div");
+      panel.className = "llm-judge-panel";
+      const heading = document.createElement("div");
+      heading.className = "llm-judge-heading";
+      const title = document.createElement("span");
+      title.className = "small muted";
+      title.textContent = "LLM statement-match note";
+      const badge = document.createElement("span");
+      badge.className = `status-pill ${llmJudgmentClass(item)}`.trim();
+      badge.textContent = llmJudgmentLabel(item);
+      heading.appendChild(title);
+      heading.appendChild(badge);
+      panel.appendChild(heading);
+      const reason = document.createElement("div");
+      reason.className = "llm-judge-reason";
+      const bits = [];
+      if (item.llm_match_reason) {
+        bits.push(String(item.llm_match_reason));
+      }
+      if (item.llm_match_stale) {
+        bits.push("The saved judgment predates the current Lean, paper, or TeX statement.");
+      }
+      if (!bits.length) {
+        bits.push(item.llm_match_judgment
+          ? "No reason recorded."
+          : "Run the third-LLM paper-vs-TeX statement check and save statement_match_llm.json.");
+      }
+      if (item.llm_match_source) {
+        bits.push(`Source: ${item.llm_match_source}`);
+      }
+      reason.textContent = bits.join("\\n");
+      panel.appendChild(reason);
+      return panel;
     }
 
     function softWrapLeanSegment(segment) {
@@ -2736,6 +3734,13 @@ HTML_PAGE = """
       return details;
     }
 
+    function makeReviewSectionLabel(text) {
+      const label = document.createElement("div");
+      label.className = "review-section-label";
+      label.textContent = text;
+      return label;
+    }
+
     function typesetMath() {
       if (typeof window.MathJax === "undefined") {
         return;
@@ -2809,15 +3814,36 @@ HTML_PAGE = """
       return buildStatusMap(state.statusRows).get(statusKey(paper, theorem)) || null;
     }
 
+    function reviewJudgment(entry) {
+      if (!entry) {
+        return "";
+      }
+      const explicit = String(entry.judgment || entry.latest_judgment || "").toLowerCase();
+      if (["matches", "mismatch", "uncertain"].includes(explicit)) {
+        return explicit;
+      }
+      if (entry.matches === true || entry.latest_matches === true) {
+        return "matches";
+      }
+      if (entry.matches === false || entry.latest_matches === false) {
+        return "mismatch";
+      }
+      return "";
+    }
+
     function statusLabel(row) {
       if (!row || !row.has_review) {
         return "Unreviewed";
       }
-      if (row.lean_stale || row.paper_stale) {
+      if (row.lean_stale || row.paper_stale || row.source_stale) {
         return "Stale";
       }
-      if (row.latest_matches === false) {
+      const judgment = reviewJudgment(row);
+      if (judgment === "mismatch") {
         return "Mismatch";
+      }
+      if (judgment === "uncertain") {
+        return "Uncertain";
       }
       return "Reviewed";
     }
@@ -2830,7 +3856,7 @@ HTML_PAGE = """
       if (label === "Mismatch") {
         return "bad";
       }
-      if (label === "Stale") {
+      if (label === "Stale" || label === "Uncertain") {
         return "warn";
       }
       return "";
@@ -2843,7 +3869,30 @@ HTML_PAGE = """
       const reasons = [];
       if (row.lean_stale) reasons.push("Lean changed");
       if (row.paper_stale) reasons.push("paper text changed");
+      if (row.source_stale) reasons.push("source provenance changed");
       return reasons.join(", ");
+    }
+
+    function sourceMetadataDigestInput(itemOrEntry) {
+      if (!itemOrEntry) {
+        return "";
+      }
+      const status = normalizeStatement(itemOrEntry.source_status || "");
+      const note = normalizeStatement(itemOrEntry.source_note || "");
+      if (!status && !note) {
+        return "";
+      }
+      const directStatuses = new Set([
+        "direct paper definition",
+        "direct paper statement",
+        "direct paper formula",
+        "direct source text",
+        "direct source formula",
+      ]);
+      if (directStatuses.has(status.toLowerCase()) && !note) {
+        return "";
+      }
+      return `${status}\n${note}`;
     }
 
     function isOutdated(entry, paper, theorem) {
@@ -2857,7 +3906,10 @@ HTML_PAGE = """
       const currentPaper = normalizeStatement(current.paper_statement || "");
       const leanOutdated = reviewed && currentLean && reviewed !== currentLean;
       const paperOutdated = reviewedPaper && currentPaper && reviewedPaper !== currentPaper;
-      return leanOutdated || paperOutdated;
+      const sourceOutdated =
+        sourceMetadataDigestInput(current) &&
+        sourceMetadataDigestInput(current) !== sourceMetadataDigestInput(entry);
+      return leanOutdated || paperOutdated || sourceOutdated;
     }
 
     function latestEntryForItem(entries, paper, theorem) {
@@ -2915,6 +3967,88 @@ HTML_PAGE = """
       return panel;
     }
 
+    function surfaceAuditClass(audit) {
+      if (!audit || !audit.audit_required) {
+        return "";
+      }
+      if (audit.judgment === "needs_curation") {
+        return "bad";
+      }
+      if (audit.needs_attention || audit.oversize) {
+        return "warn";
+      }
+      return "ok";
+    }
+
+    function surfaceAuditLabel(audit) {
+      if (!audit || !audit.audit_required) {
+        return "";
+      }
+      if (audit.judgment === "needs_curation") {
+        return "Needs curation";
+      }
+      if (audit.missing_required) {
+        return "LLM audit required";
+      }
+      if (audit.stale) {
+        return "LLM audit stale";
+      }
+      if (audit.judgment === "uncertain") {
+        return "LLM audit uncertain";
+      }
+      if (audit.oversize) {
+        return "50+ row warning";
+      }
+      return "LLM audit current";
+    }
+
+    function makeSurfaceAuditPanel(paper) {
+      const audit = paper.surface_audit || {};
+      if (!audit.audit_required && !audit.oversize && !audit.source) {
+        const empty = document.createElement("div");
+        empty.style.display = "none";
+        return empty;
+      }
+      const panel = document.createElement("section");
+      const cls = surfaceAuditClass(audit);
+      panel.className = `surface-audit-panel ${cls}`.trim();
+
+      const heading = document.createElement("div");
+      heading.className = "surface-audit-heading";
+      const title = document.createElement("span");
+      title.textContent = `Review surface: ${audit.row_count || paper.items.length} rows`;
+      const badge = document.createElement("span");
+      badge.className = `status-pill ${cls}`.trim();
+      badge.textContent = surfaceAuditLabel(audit);
+      heading.appendChild(title);
+      heading.appendChild(badge);
+      panel.appendChild(heading);
+
+      const body = document.createElement("div");
+      body.className = "surface-audit-body";
+      const notes = [];
+      if (audit.oversize) {
+        notes.push(`At or above ${audit.warn_threshold} rows, so this surface should be curated before broad human review.`);
+      }
+      if (audit.missing_required) {
+        notes.push(`Above ${audit.llm_threshold} rows, so run an independent LLM pass checking that every dashboard row is paper-facing and save review_surface_llm.json.`);
+      } else if (audit.stale) {
+        notes.push("The saved review_surface_llm.json no longer matches the current dashboard rows.");
+      } else if (audit.judgment === "needs_curation") {
+        notes.push("The saved LLM audit says helper or non-paper-facing rows may be present.");
+      } else if (audit.judgment === "uncertain") {
+        notes.push("The saved LLM audit could not determine whether the surface is fully paper-facing.");
+      } else if (audit.audit_required && audit.source) {
+        notes.push(`Current surface audit loaded from ${audit.source}.`);
+      }
+      if (audit.reason) {
+        notes.push(audit.reason);
+      }
+      body.textContent = notes.join(" ");
+      panel.appendChild(body);
+      return panel;
+    }
+
     function refreshSummary(entries, statusRows) {
       const summary = document.getElementById("summary");
       if (!state.papers.length) {
@@ -2930,9 +4064,9 @@ HTML_PAGE = """
 
       if (statusRows && statusRows.length) {
         reviewed = statusRows.filter((row) => row.has_review).length;
-        stale = statusRows.filter((row) => row.lean_stale || row.paper_stale).length;
-        mismatch = statusRows.filter((row) => row.has_review && row.latest_matches === false).length;
-        needsAttention = statusRows.filter((row) => row.needs_attention || row.latest_matches === false).length;
+        stale = statusRows.filter((row) => row.lean_stale || row.paper_stale || row.source_stale).length;
+        mismatch = statusRows.filter((row) => row.has_review && reviewJudgment(row) === "mismatch").length;
+        needsAttention = statusRows.filter((row) => row.needs_attention || reviewJudgment(row) === "mismatch").length;
       } else {
         for (const paper of state.papers) {
           for (const item of paper.items) {
@@ -2944,13 +4078,17 @@ HTML_PAGE = """
             if (isOutdated(latest, paper.name, item.name)) {
               stale++;
             }
-            if (latest.matches === false) {
+            const judgment = reviewJudgment(latest);
+            if (judgment === "mismatch") {
               mismatch++;
+            }
+            if (judgment === "mismatch" || judgment === "uncertain") {
+              needsAttention++;
             }
           }
         }
         const unreviewed = allItems - reviewed;
-        needsAttention = stale + unreviewed + mismatch;
+        needsAttention = stale + unreviewed + needsAttention;
       }
 
       const unreviewed = allItems - reviewed;
@@ -2967,8 +4105,13 @@ HTML_PAGE = """
       byLatest(related);
       const lines = [];
       for (const e of related.slice(0, 5)) {
-        const cls = e.matches ? "ok" : "bad";
-        const status = e.matches ? "matches" : "does not match";
+        const judgment = reviewJudgment(e);
+        const cls = judgment === "matches" ? "ok" : judgment === "mismatch" ? "bad" : "warn";
+        const status = judgment === "matches"
+          ? "matches"
+          : judgment === "mismatch"
+            ? "does not match"
+            : "uncertain";
         const outdated = isOutdated(e, paper, theorem);
         const outdatedMark = outdated
           ? " <span class='warn'>(statement snapshot is out of date)</span>"
@@ -2981,6 +4124,189 @@ HTML_PAGE = """
       return `<div class='history'><div class='small'><strong>Latest checks</strong></div>${lines.join("")}</div>`;
     }
 
+    function validatorLabel(entry) {
+      if (!entry || !entry.validator) return "";
+      const type = entry.validator_type ? ` (${entry.validator_type})` : "";
+      return `${entry.validator}${type}`;
+    }
+
+    function validatorSummary(rowStatus) {
+      const validators = rowStatus && Array.isArray(rowStatus.validators) ? rowStatus.validators : [];
+      if (!validators.length) return "Validators: none recorded";
+      const labels = [];
+      const seen = new Set();
+      for (const entry of validators) {
+        const label = validatorLabel(entry);
+        if (!label || seen.has(label)) continue;
+        seen.add(label);
+        labels.push(label);
+      }
+      return `Validators: ${labels.join(", ")}`;
+    }
+
+    function validatorDetails(rowStatus) {
+      const validators = rowStatus && Array.isArray(rowStatus.validators) ? rowStatus.validators : [];
+      if (!validators.length) return "";
+      return validators.map((entry) => {
+        const label = validatorLabel(entry);
+        const judgment = entry.judgment ? ` ${entry.judgment}` : "";
+        const timestamp = entry.validated_at ? ` @ ${entry.validated_at}` : "";
+        const stale = entry.stale ? " (stale)" : "";
+        const comment = entry.comment ? `: ${entry.comment}` : "";
+        return `${label}${judgment}${timestamp}${stale}${comment}`.trim();
+      }).join("\\n");
+    }
+
+    function rowElementId(paper, theorem) {
+      return `${safeId(paper)}_${safeId(theorem)}`;
+    }
+
+    function selectedReviewJudgment(rowId) {
+      const match = document.getElementById(`match-${rowId}`);
+      const mismatch = document.getElementById(`mismatch-${rowId}`);
+      const uncertain = document.getElementById(`uncertain-${rowId}`);
+      if (match && match.checked) {
+        return "matches";
+      }
+      if (mismatch && mismatch.checked) {
+        return "mismatch";
+      }
+      if (uncertain && uncertain.checked) {
+        return "uncertain";
+      }
+      return "";
+    }
+
+    function matchesValueForJudgment(judgment) {
+      if (judgment === "matches") {
+        return true;
+      }
+      if (judgment === "mismatch") {
+        return false;
+      }
+      return null;
+    }
+
+    function reviewPayload(paper, item, judgment) {
+      const rowId = rowElementId(paper, item.name);
+      const note = document.getElementById(`note-${rowId}`);
+      const user = document.getElementById("userHandle").value.trim() || state.user;
+      return {
+        paper: paper,
+        theorem: item.name,
+        user: user,
+        judgment: judgment,
+        matches: matchesValueForJudgment(judgment),
+        notes: note ? note.value.trim() : "",
+        lean_statement: item.lean_statement,
+        paper_statement: item.paper_statement,
+        agent_statement: item.agent_statement,
+        source_status: item.source_status || "",
+        source_note: item.source_note || "",
+      };
+    }
+
+    async function postReviewPayload(payload) {
+      const response = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to save.");
+      }
+      return data;
+    }
+
+    async function saveAllSelectedReviews() {
+      const btn = document.getElementById("saveAllReviews");
+      const status = document.getElementById("saveAllStatus");
+      const selected = [];
+      for (const row of document.querySelectorAll("tr[data-paper][data-theorem]")) {
+        const paper = row.dataset.paper;
+        const theorem = row.dataset.theorem;
+        const rowId = rowElementId(paper, theorem);
+        const judgment = selectedReviewJudgment(rowId);
+        if (!judgment) {
+          continue;
+        }
+        const item = findCurrentItem(paper, theorem);
+        if (!item) {
+          continue;
+        }
+        selected.push({ paper, theorem, item, judgment, rowId });
+      }
+      if (!selected.length) {
+        status.textContent = "No selected review decisions.";
+        status.className = "save-status small warn";
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = "Saving...";
+      status.textContent = `Saving ${selected.length} review${selected.length === 1 ? "" : "s"}...`;
+      status.className = "save-status small muted";
+      let saved = 0;
+      let failed = 0;
+      for (const entry of selected) {
+        const rowStatus = document.getElementById(`save-status-${entry.rowId}`);
+        if (rowStatus) {
+          rowStatus.textContent = "";
+          rowStatus.className = "save-status small muted";
+        }
+        try {
+          await postReviewPayload(reviewPayload(entry.paper, entry.item, entry.judgment));
+          saved++;
+          if (rowStatus) {
+            rowStatus.textContent = "Saved";
+            rowStatus.className = "save-status small ok";
+          }
+        } catch (err) {
+          failed++;
+          if (rowStatus) {
+            rowStatus.textContent = err.message || "Save failed";
+            rowStatus.className = "save-status small bad";
+          }
+        }
+      }
+      await refreshReviews();
+      status.textContent = failed
+        ? `Saved ${saved}; ${failed} failed.`
+        : `Saved ${saved} review${saved === 1 ? "" : "s"}.`;
+      status.className = failed ? "save-status small bad" : "save-status small ok";
+      btn.disabled = false;
+      btn.textContent = "Save all review";
+    }
+
+    function isDirectSourceStatus(status) {
+      const normalized = String(status || "").trim().toLowerCase();
+      return [
+        "direct paper definition",
+        "direct paper statement",
+        "direct paper formula",
+        "direct source text",
+        "direct source formula",
+      ].includes(normalized);
+    }
+
+    function makeSourceProvenancePanel(item) {
+      const status = String(item.source_status || "").trim();
+      const note = String(item.source_note || "").trim();
+      if (!status && !note) {
+        return null;
+      }
+      const panel = document.createElement("div");
+      panel.className = `source-provenance${isDirectSourceStatus(status) && !note ? " direct" : ""}`;
+      const label = document.createElement("span");
+      label.className = "source-provenance-label";
+      label.textContent = status || "Source note";
+      panel.appendChild(label);
+      if (note) {
+        panel.appendChild(document.createTextNode(note));
+      }
+      return panel;
+    }
+
     function makeRow(paper, item) {
       const row = document.createElement("tr");
       row.dataset.paper = paper;
@@ -2989,7 +4315,7 @@ HTML_PAGE = """
       row.dataset.sliceKey = sliceKey(paper, item.slice_id || "all");
       row.dataset.sliceId = item.slice_id || "all";
       row.dataset.sliceTitle = item.slice_title || "All statements";
-      row.dataset.searchText = `${paper} ${item.kind || ""} ${item.name} ${item.paper_statement || ""} ${item.lean_statement || ""}`.toLowerCase();
+      row.dataset.searchText = `${paper} ${item.kind || ""} ${item.name} ${item.paper_statement || ""} ${item.lean_statement || ""} ${item.source_status || ""} ${item.source_note || ""}`.toLowerCase();
       const itemCell = document.createElement("td");
       const itemShell = document.createElement("div");
       itemShell.className = "review-item";
@@ -3000,6 +4326,7 @@ HTML_PAGE = """
       paperCell.className = "review-section col-paper";
       const paperHtml = renderPaperStatement(item.paper_statement);
       if (item.paper_statement_image_url) {
+        paperCell.appendChild(makeReviewSectionLabel("Paper source image"));
         const image = document.createElement("img");
         image.className = "paper-statement-image";
         image.src = item.paper_statement_image_url;
@@ -3012,33 +4339,45 @@ HTML_PAGE = """
             previewLength: 160,
           })
         );
-      } else if ((item.paper_statement || "").length > 650) {
+      } else {
         paperCell.appendChild(
           makeStatementBox("Paper source statement", item.paper_statement, {
             html: paperHtml,
-            previewLength: 180,
+            previewLength: (item.paper_statement || "").length > 650 ? 180 : 220,
+            open: true,
           })
         );
-      } else {
-        paperCell.innerHTML = paperHtml;
       }
 
       const leanCell = document.createElement("section");
       leanCell.className = "review-section col-lean";
-      leanCell.appendChild(
-        makeStatementBox("Expanded Lean statement", item.lean_statement, {
-          html: `<code>${escapeHtml(prettyLeanStatement(item.lean_statement))}</code>`,
-          previewLength: 170,
-          open: true,
-        })
-      );
+      const interfaceSource = String(item.interface_source || "").trim();
+      const leanStatement = String(item.lean_statement || "").trim();
+      if (interfaceSource && (item.kind === "def" || item.kind === "abbrev")) {
+        leanCell.appendChild(
+          makeStatementBox(item.kind === "def" ? "Lean definition code" : "Lean alias code", interfaceSource, {
+            html: `<code>${escapeHtml(prettyLeanStatement(interfaceSource))}</code>`,
+            previewLength: 170,
+            open: true,
+          })
+        );
+      }
+      if (!interfaceSource || normalizeStatement(interfaceSource) !== normalizeStatement(leanStatement)) {
+        leanCell.appendChild(
+          makeStatementBox("Expanded Lean statement", item.lean_statement, {
+            html: `<code>${escapeHtml(prettyLeanStatement(item.lean_statement))}</code>`,
+            previewLength: 170,
+            open: true,
+          })
+        );
+      }
 
       const agentCell = document.createElement("section");
       agentCell.className = "review-section col-agent agent-column";
       const agentHeader = document.createElement("div");
       agentHeader.className = "small muted";
       agentHeader.textContent =
-        "Context-free Lean-to-TeX draft";
+        "LLM Lean-to-TeX draft";
       const agentText = document.createElement("div");
       agentText.className = "agent-statement";
       agentText.appendChild(
@@ -3051,10 +4390,11 @@ HTML_PAGE = """
       agentText.style.margin = "0";
       agentCell.appendChild(agentHeader);
       agentCell.appendChild(agentText);
+      agentCell.appendChild(makeLlmJudgePanel(item));
 
       const reviewCell = document.createElement("aside");
       reviewCell.className = "review-controls col-review";
-      const rowId = `${safeId(paper)}_${safeId(item.name)}`;
+      const rowId = rowElementId(paper, item.name);
 
       const statusLine = document.createElement("div");
       statusLine.className = "status-line";
@@ -3068,6 +4408,11 @@ HTML_PAGE = """
       staleBadge.style.display = "none";
       statusLine.appendChild(statusBadge);
       statusLine.appendChild(staleBadge);
+
+      const validatorsLine = document.createElement("div");
+      validatorsLine.className = "small muted";
+      validatorsLine.id = `validators-${rowId}`;
+      validatorsLine.textContent = "Validators: none recorded";
 
       const decision = document.createElement("fieldset");
       decision.className = "review-decision";
@@ -3102,6 +4447,19 @@ HTML_PAGE = """
       mismatchLabel.appendChild(document.createTextNode("Mismatch"));
       decision.appendChild(mismatchLabel);
 
+      const uncertainLabel = document.createElement("label");
+      uncertainLabel.className = "review-decision-option";
+      const uncertainRadio = document.createElement("input");
+      uncertainRadio.type = "radio";
+      uncertainRadio.name = decisionName;
+      uncertainRadio.value = "uncertain";
+      uncertainRadio.dataset.paper = paper;
+      uncertainRadio.dataset.theorem = item.name;
+      uncertainRadio.id = `uncertain-${rowId}`;
+      uncertainLabel.appendChild(uncertainRadio);
+      uncertainLabel.appendChild(document.createTextNode("Uncertain"));
+      decision.appendChild(uncertainLabel);
+
       const text = document.createElement("textarea");
       text.className = "row-note";
       text.placeholder = "Reviewer notes";
@@ -3115,43 +4473,24 @@ HTML_PAGE = """
       btn.textContent = "Save review";
       const saveStatus = document.createElement("span");
       saveStatus.className = "save-status small muted";
+      saveStatus.id = `save-status-${rowId}`;
       btn.addEventListener("click", async () => {
-        if (!matchRadio.checked && !mismatchRadio.checked) {
-          saveStatus.textContent = "Choose Matches or Mismatch.";
+        const judgment = selectedReviewJudgment(rowId);
+        if (!judgment) {
+          saveStatus.textContent = "Choose Matches, Mismatch, or Uncertain.";
           saveStatus.className = "save-status small bad";
           return;
         }
-        const user = document.getElementById("userHandle").value.trim() || state.user;
-        const payload = {
-          paper: paper,
-          theorem: item.name,
-          user: user,
-          matches: matchRadio.checked,
-          notes: text.value.trim(),
-          lean_statement: item.lean_statement,
-          paper_statement: item.paper_statement,
-          agent_statement: item.agent_statement,
-        };
         btn.disabled = true;
         btn.textContent = "Saving...";
         saveStatus.textContent = "";
         try {
-          const response = await fetch("/api/reviews", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          const data = await response.json();
-          if (!response.ok) {
-            saveStatus.textContent = data.error || "Failed to save.";
-            saveStatus.className = "save-status small bad";
-            return;
-          }
+          await postReviewPayload(reviewPayload(paper, item, judgment));
           saveStatus.textContent = "Saved";
           saveStatus.className = "save-status small ok";
           await refreshReviews();
-        } catch (_err) {
-          saveStatus.textContent = "Save failed";
+        } catch (err) {
+          saveStatus.textContent = err.message || "Save failed";
           saveStatus.className = "save-status small bad";
         } finally {
           btn.disabled = false;
@@ -3172,9 +4511,15 @@ HTML_PAGE = """
       const lineText = item.line_number ? `line ${item.line_number}` : "line unavailable";
       sliceMeta.textContent = `${item.slice_title || "All statements"} · ${lineText}`;
 
+      const sourceBadge = document.createElement("span");
+      sourceBadge.className = `status-pill ${isDirectSourceStatus(item.source_status) && !item.source_note ? "ok" : item.source_status || item.source_note ? "warn" : ""}`;
+      sourceBadge.textContent = item.source_status || "Source status not labeled";
+
       reviewCell.appendChild(header);
       reviewCell.appendChild(sliceMeta);
+      reviewCell.appendChild(sourceBadge);
       reviewCell.appendChild(statusLine);
+      reviewCell.appendChild(validatorsLine);
       reviewCell.appendChild(decision);
       reviewCell.appendChild(text);
       reviewCell.appendChild(document.createElement("br"));
@@ -3183,6 +4528,10 @@ HTML_PAGE = """
       reviewCell.appendChild(status);
 
       // Populate with existing review history
+      const sourcePanel = makeSourceProvenancePanel(item);
+      if (sourcePanel) {
+        mainCell.appendChild(sourcePanel);
+      }
       mainCell.appendChild(paperCell);
       mainCell.appendChild(leanCell);
       mainCell.appendChild(agentCell);
@@ -3202,11 +4551,13 @@ HTML_PAGE = """
         const badge = document.getElementById(`status-${rowId}`);
         const stale = document.getElementById(`stale-${rowId}`);
         const label = statusLabel(rowStatus);
+        const judgment = reviewJudgment(rowStatus);
         row.dataset.status = label.toLowerCase();
         row.dataset.needsAttention = rowStatus && rowStatus.needs_attention ? "true" : "false";
-        row.dataset.latestMatches = rowStatus && rowStatus.latest_matches === false ? "false" : "true";
+        row.dataset.latestJudgment = judgment;
+        row.dataset.latestMatches = judgment === "mismatch" ? "false" : "true";
         row.dataset.hasReview = rowStatus && rowStatus.has_review ? "true" : "false";
-        row.dataset.isStale = rowStatus && (rowStatus.lean_stale || rowStatus.paper_stale) ? "true" : "false";
+        row.dataset.isStale = rowStatus && (rowStatus.lean_stale || rowStatus.paper_stale || rowStatus.source_stale) ? "true" : "false";
         if (badge) {
           badge.textContent = label;
           badge.className = `status-pill ${statusClass(rowStatus)}`.trim();
@@ -3215,6 +4566,11 @@ HTML_PAGE = """
           const reason = staleReason(rowStatus);
           stale.textContent = reason;
           stale.style.display = reason ? "" : "none";
+        }
+        const validators = document.getElementById(`validators-${rowId}`);
+        if (validators) {
+          validators.textContent = validatorSummary(rowStatus);
+          validators.title = validatorDetails(rowStatus);
         }
       }
     }
@@ -3251,7 +4607,9 @@ HTML_PAGE = """
           } else if (statusFilter === "stale") {
             matchesStatus = row.dataset.isStale === "true";
           } else if (statusFilter === "mismatch") {
-            matchesStatus = row.dataset.latestMatches === "false";
+            matchesStatus = row.dataset.latestJudgment === "mismatch";
+          } else if (statusFilter === "uncertain") {
+            matchesStatus = row.dataset.latestJudgment === "uncertain";
           } else if (statusFilter === "reviewed") {
             matchesStatus = row.dataset.hasReview === "true";
           }
@@ -3311,12 +4669,17 @@ HTML_PAGE = """
           const rowId = `${safeId(paper)}_${safeId(theorem)}`;
           const match = document.getElementById(`match-${rowId}`);
           const mismatch = document.getElementById(`mismatch-${rowId}`);
+          const uncertain = document.getElementById(`uncertain-${rowId}`);
           const ta = document.getElementById(`note-${rowId}`);
+          const judgment = reviewJudgment(latest);
           if (match) {
-            match.checked = latest.matches === true;
+            match.checked = judgment === "matches";
           }
           if (mismatch) {
-            mismatch.checked = latest.matches === false;
+            mismatch.checked = judgment === "mismatch";
+          }
+          if (uncertain) {
+            uncertain.checked = judgment === "uncertain";
           }
           if (ta) {
             ta.value = latest.notes || "";
@@ -3354,11 +4717,12 @@ HTML_PAGE = """
         header.appendChild(progress);
         summary.appendChild(header);
         block.appendChild(summary);
+        block.appendChild(makeSurfaceAuditPanel(paper));
         block.appendChild(makeSourcePanel(paper));
         const table = document.createElement("table");
         const head = document.createElement("thead");
         head.innerHTML =
-          "<tr><th>Paper statement, expanded Lean statement, and review</th></tr>";
+          "<tr><th>Paper statement, expanded Lean statement, LLM checks, and review</th></tr>";
         table.appendChild(head);
         const body = document.createElement("tbody");
         for (const item of paper.items) {
@@ -3383,6 +4747,7 @@ HTML_PAGE = """
     document.getElementById("hideAgentDraft").addEventListener("change", (event) => {
       document.body.classList.toggle("hide-agent", event.target.checked);
     });
+    document.getElementById("saveAllReviews").addEventListener("click", saveAllSelectedReviews);
     const mathjaxTag = document.getElementById("mathjax-script");
     if (mathjaxTag) {
       mathjaxTag.addEventListener("load", typesetMath);
@@ -3421,10 +4786,143 @@ def stale_review_summary(
     return {
         "rows": rows,
         "totals": status_totals(rows),
+        "surface_audits": surface_audit_rows(papers),
+        "statement_audits": statement_audit_rows(papers),
         "stale": buckets["stale"],
         "unreviewed": buckets["unreviewed"],
         "mismatch": buckets["mismatch"],
     }
+
+
+def print_surface_audit_warnings(rows: list[dict[str, Any]], label: str) -> bool:
+    """Print paper-level review-surface warnings and return whether any need attention."""
+
+    warnings = [row for row in rows if row.get("has_warning") or row.get("needs_attention")]
+    if not warnings:
+        return False
+    needs_attention = any(row.get("needs_attention") for row in warnings)
+    print(f"\nReview-surface audit warnings for {label}:")
+    for row in warnings:
+        paper = row.get("paper") or "unknown paper"
+        count = int(row.get("row_count") or 0)
+        reasons: list[str] = []
+        if row.get("oversize"):
+            reasons.append(
+                f"{count} rows is at or above the {row.get('warn_threshold')} row warning threshold"
+            )
+        if row.get("missing_required"):
+            reasons.append(
+                f"{count} rows is above {row.get('llm_threshold')} and needs review_surface_llm.json"
+            )
+        if row.get("stale"):
+            reasons.append("the saved review_surface_llm.json audit is stale")
+        if row.get("judgment") == "needs_curation":
+            reasons.append("the LLM audit says the surface needs curation")
+        if row.get("judgment") == "uncertain":
+            reasons.append("the LLM audit is uncertain")
+        if not reasons:
+            reasons.append("the review surface needs attention")
+        print(f" - {paper}: {'; '.join(reasons)}.")
+        if row.get("reason"):
+            print(f"   audit note: {row['reason']}")
+    print(
+        "For papers above 30 dashboard rows, run a no-paper-context LLM pass that "
+        "checks whether every row is genuinely paper-facing, then save "
+        "review_surface_llm.json."
+    )
+    return needs_attention
+
+
+def _format_name_sample(names: list[str], limit: int = 8) -> str:
+    """Format a compact sample of dashboard row names."""
+
+    if not names:
+        return ""
+    shown = ", ".join(f"`{name}`" for name in names[:limit])
+    if len(names) > limit:
+        shown += f", ... {len(names) - limit} more"
+    return shown
+
+
+def print_statement_audit_warnings(rows: list[dict[str, Any]], label: str) -> bool:
+    """Print paper-level statement-translation audit warnings."""
+
+    warnings = [row for row in rows if row.get("needs_attention")]
+    if not warnings:
+        return False
+    print(f"\nStatement-translation audit warnings for {label}:")
+    for row in warnings:
+        paper = row.get("paper") or "unknown paper"
+        reasons: list[str] = []
+        if row.get("missing_draft_count"):
+            reasons.append(f"{row['missing_draft_count']} missing Lean-to-TeX draft(s)")
+        if row.get("stale_draft_count"):
+            reasons.append(f"{row['stale_draft_count']} stale Lean-to-TeX draft(s)")
+        if row.get("missing_judgment_count"):
+            reasons.append(f"{row['missing_judgment_count']} missing statement-judge row(s)")
+        if row.get("stale_judgment_count"):
+            reasons.append(f"{row['stale_judgment_count']} stale statement-judge row(s)")
+        if row.get("mismatch_count"):
+            reasons.append(f"{row['mismatch_count']} mismatch judgment(s)")
+        if row.get("uncertain_count"):
+            reasons.append(f"{row['uncertain_count']} uncertain judgment(s)")
+        if row.get("unknown_count"):
+            reasons.append(f"{row['unknown_count']} unknown judgment value(s)")
+        if row.get("all_uncertain"):
+            reasons.append("all rows are uncertain, suggesting a source-statement extraction or parser issue")
+        if not reasons:
+            reasons.append("statement audit needs attention")
+        print(f" - {paper}: {'; '.join(str(reason) for reason in reasons)}.")
+        if row.get("all_uncertain"):
+            print(
+                "   fix the extracted source statements or parser first; do not "
+                "leave a paper-wide parser failure as row-by-row uncertainty."
+            )
+        samples: list[str] = []
+        for key, label_text in [
+            ("mismatch", "mismatch"),
+            ("uncertain", "uncertain"),
+            ("stale_judgment", "stale judgment"),
+            ("stale_draft", "stale draft"),
+            ("missing_judgment", "missing judgment"),
+            ("missing_draft", "missing draft"),
+            ("unknown", "unknown"),
+        ]:
+            sample = _format_name_sample(list(row.get(key) or []))
+            if sample:
+                samples.append(f"{label_text}: {sample}")
+        for sample in samples[:3]:
+            print(f"   {sample}")
+    print(
+        "At statement-review boundaries, regenerate lean_to_tex_llm.json from the "
+        "Lean statements alone, then regenerate statement_match_llm.json from only "
+        "the paper statement and that translation. If all rows are uncertain, "
+        "treat that as a likely source extraction problem and fix the source map "
+        "before accepting row-level judgments."
+    )
+    return True
+
+
+def print_statement_audit_status(paper: str | None, slice_filter: str | None = None) -> bool:
+    """Print only statement-translation audit diagnostics."""
+
+    papers = gather_paper_data(paper, slice_filter)
+    rows = statement_audit_rows(papers)
+    label = paper or "all papers"
+    if slice_filter:
+        label = f"{label} slice {slice_filter}"
+    has_attention = print_statement_audit_warnings(rows, label)
+    if has_attention:
+        return True
+    total_rows = sum(int(row.get("row_count") or 0) for row in rows)
+    total_drafts = sum(int(row.get("draft_count") or 0) for row in rows)
+    total_judgments = sum(int(row.get("judgment_count") or 0) for row in rows)
+    print(
+        f"Statement-translation audits for {label} are current: "
+        f"{total_rows} row(s), {total_drafts} Lean-to-TeX draft(s), "
+        f"{total_judgments} statement-judge row(s), no missing/stale/flagged items."
+    )
+    return False
 
 
 def print_stale_review_warning(
@@ -3436,6 +4934,8 @@ def print_stale_review_warning(
     stale_rows = summary["stale"]
     unreviewed_rows = summary["unreviewed"]
     mismatch_rows = summary["mismatch"]
+    surface_audits = summary["surface_audits"]
+    statement_audits = summary["statement_audits"]
     totals = summary["totals"]
     label = paper or "all papers"
     if slice_filter:
@@ -3448,11 +4948,13 @@ def print_stale_review_warning(
         f"{needs_attention} need attention ({len(stale_rows)} stale, "
         f"{len(unreviewed_rows)} unreviewed, {len(mismatch_rows)} mismatch)."
     )
+    surface_needs_attention = print_surface_audit_warnings(surface_audits, label)
+    statement_needs_attention = print_statement_audit_warnings(statement_audits, label)
 
     if not stale_rows:
         if not unreviewed_rows and not mismatch_rows:
             print(f"Review checks for {label} are currently up to date.")
-            return False
+            return surface_needs_attention or statement_needs_attention
         else:
             print(
                 f"Review checks for {label}: no stale checks, but "
@@ -3644,7 +5146,15 @@ class ReviewHTTPHandler(BaseHTTPRequestHandler):
                 reviews = read_all_log_entries(self.paper_filter, None)
             rows = build_review_status(papers, reviews)
             rows = filter_review_rows(rows, user_filter=user_filter, stale_only=stale_only)
-            self._json_response(200, {"status": rows, "totals": status_totals(rows)})
+            self._json_response(
+                200,
+                {
+                    "status": rows,
+                    "totals": status_totals(rows),
+                    "surface_audits": surface_audit_rows(papers),
+                    "statement_audits": statement_audit_rows(papers),
+                },
+            )
             return
         self.send_error(404, "not found")
 
@@ -3700,7 +5210,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--export-format",
-        choices=("json", "csv", "md"),
+        choices=("json", "csv", "md", "validators-md"),
         help="Generate a review status export instead of static HTML when not in server mode.",
     )
     parser.add_argument("--export-file", default="", help="Optional path for exported report output.")
@@ -3721,6 +5231,16 @@ def main() -> None:
         help="Like --precheck, but return non-zero if any item needs review or is stale.",
     )
     parser.add_argument(
+        "--statement-precheck",
+        action="store_true",
+        help="Print only Lean-to-TeX and statement-judge audit diagnostics, then exit.",
+    )
+    parser.add_argument(
+        "--statement-check",
+        action="store_true",
+        help="Like --statement-precheck, but return non-zero for missing/stale/flagged statement-audit rows.",
+    )
+    parser.add_argument(
         "--refresh-cache",
         action="store_true",
         help="Regenerate cached paper-interface rows and exit.",
@@ -3739,6 +5259,12 @@ def main() -> None:
     if args.precheck or args.check:
         has_attention = print_stale_review_warning(args.paper, log_file, args.slice_filter)
         if args.check and has_attention:
+            sys.exit(1)
+        return
+
+    if args.statement_precheck or args.statement_check:
+        has_attention = print_statement_audit_status(args.paper, args.slice_filter)
+        if args.statement_check and has_attention:
             sys.exit(1)
         return
 
@@ -3800,11 +5326,18 @@ def main() -> None:
         rows = filter_review_rows(rows, user_filter=(args.status_user or "").strip() or None, stale_only=args.stale_only)
         if args.export_format == "json":
             payload = json.dumps(
-                {"status": rows, "totals": status_totals(rows)},
+                {
+                    "status": rows,
+                    "totals": status_totals(rows),
+                    "surface_audits": surface_audit_rows(papers),
+                    "statement_audits": statement_audit_rows(papers),
+                },
                 indent=2,
             )
         elif args.export_format == "csv":
             payload = render_csv_summary(rows)
+        elif args.export_format == "validators-md":
+            payload = render_validator_markdown_summary(rows)
         else:
             payload = render_markdown_summary(rows)
         if args.export_file:

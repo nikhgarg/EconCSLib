@@ -11,6 +11,7 @@ import EconCSLib.Foundations.Probability.FiniteExpectation
 import EconCSLib.Foundations.Probability.FiniteEmpiricalMultinomialCounts
 import EconCSLib.Foundations.Probability.FiniteLabel
 import EconCSLib.Foundations.Probability.FiniteMixture
+import EconCSLib.Foundations.Probability.FiniteMultinomialEntropy
 import EconCSLib.Foundations.Probability.FiniteProductMultinomialCounts
 import EconCSLib.Foundations.Probability.FiniteProductTernaryCounts
 import EconCSLib.Foundations.Probability.FiniteRatingComparison
@@ -71,6 +72,7 @@ Aggregate import for reusable probability infrastructure.
   `EconCSLib.Foundations.Probability.FinsetVariance`.
 - Large-deviation scaffolding:
   `EconCSLib.Foundations.Probability.FiniteSupportMGF`,
+  `EconCSLib.Foundations.Probability.FiniteMultinomialEntropy`,
   `EconCSLib.Foundations.Probability.FiniteProductMultinomialCounts`,
   `EconCSLib.Foundations.Probability.IIDLargeDeviations`, and
   `EconCSLib.Foundations.Probability.LargeDeviations`.

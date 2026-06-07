@@ -5,7 +5,6 @@
   "authors": "Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel",
   "publication_venue": "HCOMP 2019",
   "source_version": "arXiv version, 2019",
-  "source_url": "https://arxiv.org/abs/1906.08160",
   "build_target": "lake build GGSG19TopThree",
   "status": "formalized",
   "main_caveat": "",
@@ -70,5 +69,6 @@
         ]
       }
     ]
-  }
+  },
+  "source_url": "https://arxiv.org/abs/1906.08160"
 }

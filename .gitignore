@@ -27,7 +27,12 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-.review_traces/
+
+# Keep dashboard caches/logs local, but let human theorem-validation logs be
+# committed when reviewers intentionally save them from the dashboard.
+**/.review_traces/*
+!**/.review_traces/
+!**/.review_traces/paper_theorem_validations.jsonl
 
 # Local source-paper extraction caches. Keep extracted paper text out of the
 # public repository unless redistribution rights have been checked. Planning,

@@ -1,38 +1,136 @@
 {
-  "schema": 1,
-  "paper": "DSWG24DiscretizationBias",
+  "generated_at": "2026-06-07T00:00:39Z",
+  "generator": "codex-refresh-current-lean-statements",
   "items": {
-    "prior": "$prior_\\mu(y)$ is the real-valued marginal probability of label $y$ under the label marginal of $\\mu$.",
-    "marginalLabelShare": "$marginalLabelShare_\\mu(rule,y)=\\Pr_{x\\sim \\mu_X}[rule(x)=y]$.",
-    "aggregatePosterior": "$aggregatePosterior_\\mu(q,y)=\\mathbb{E}_{x\\sim \\mu_X}[q(x,y)]$.",
-    "bias": "$bias_\\mu(rule,pref,y)=marginalLabelShare_\\mu(rule,y)-pref(y)$.",
-    "fidelity": "$fidelity_\\mu(rule,pref)=-\\sum_{y\\in Y}|bias_\\mu(rule,pref,y)|$.",
-    "classifierMAE": "$classifierMAE_\\mu(q)=\\mathbb{E}_{x\\sim \\mu_X}\\left[\\sum_{y\\in Y}q(x,y)(1-q(x,y))\\right]$.",
-    "continuousMarginalLabelShare": "$continuousMarginalLabelShare_\\mu(rule,y)=\\int 1\\{rule(x)=y\\}\\,d\\mu(x)$.",
-    "continuousAggregatePosterior": "$continuousAggregatePosterior_\\mu(q,y)=\\int q(x,y)\\,d\\mu(x)$.",
-    "continuousBias": "$continuousBias_\\mu(rule,pref,y)=continuousMarginalLabelShare_\\mu(rule,y)-pref(y)$.",
-    "continuousAggregateBias": "$continuousAggregateBias_\\mu(q,rule,y)=continuousMarginalLabelShare_\\mu(rule,y)-continuousAggregatePosterior_\\mu(q,y)$.",
-    "continuousClassifierMAE": "$continuousClassifierMAE_\\mu(q)=\\int \\sum_{y\\in Y}q(x,y)(1-q(x,y))\\,d\\mu(x)$.",
-    "continuousJointPriorBias": "$continuousJointPriorBias_\\mu(rule,y)=\\int 1\\{rule(x)=y\\}\\,d\\mu(x,y')-\\int 1\\{y'=y\\}\\,d\\mu(x,y')$.",
-    "continuousJointClassifierMAE": "$continuousJointClassifierMAE_\\mu(q)=\\int \\sum_{y\\in Y}q(x,y)(1-q(x,y))\\,d\\mu(x,y')$.",
-    "posteriorSimplex": "$q$ lies in the posterior simplex iff for every $x$, $\\sum_y q(x,y)=1$, and for every $x,y$, $0\\le q(x,y)\\le 1$.",
-    "isArgmaxRule": "$rule$ is an argmax rule for $q$ iff for every $x,y$, $q(x,y)\\le q(x,rule(x))$.",
-    "calibrated": "$q$ is calibrated under joint measure $\\mu$ iff for every label $y$ and measurable set $S\\subseteq\\mathbb{R}$, $\\int 1\\{q(x,y)\\in S\\}1\\{y'=y\\}\\,d\\mu(x,y')=\\int 1\\{q(x,y)\\in S\\}q(x,y)\\,d\\mu(x,y')$.",
-    "objective": "$objective_\\gamma(xs,decision)=\\gamma\\,averageScore(posterior(xs),decision)+(1-\\gamma)\\,fidelityTerm(xs,decision)$.",
-    "expectedObjective": "$expectedObjective_\\gamma(rule)=\\gamma\\,expectedDecisionAccuracy(expect,observedDataset,trueLabels,rule)+(1-\\gamma)\\,expectedObjective(expect,observedDataset,fidelityTerm,rule)$.",
-    "sourceSa": "$S_a(z)=\\{x:q(x,z)=1\\}$.",
-    "sourceSb": "$S_b(z)=\\{x:|Y|^{-1}<q(x,z)<1\\}$.",
-    "sourceSc": "$S_c(z)=\\{x:q(x,z)=|Y|^{-1}\\}$.",
-    "sourceSd": "$S_d(z)=\\{x:0<q(x,z)<|Y|^{-1}\\}$.",
-    "sourceSe": "$S_e(z)=\\{x:q(x,z)=0\\}$.",
-    "theorem1i_no_information_bias": "If $q(x,a)=prior_\\mu(a)$ for all $x,a$ and $z$ has maximal prior probability, then for every label $y$, both $bias_\\mu(x\\mapsto z,prior_\\mu,y)$ and $bias_\\mu(x\\mapsto z,aggregatePosterior_\\mu(q),y)$ equal $1-prior_\\mu(y)$ if $z=y$, and $-prior_\\mu(y)$ otherwise.",
-    "theorem1ii_perfect_classifier_zero_bias": "If $rule(x)=y$ for every joint outcome $(x,y)$ in $\\mu$, then for every label $y$, $bias_\\mu(rule,prior_\\mu,y)=0$.",
-    "theorem1iii_argmax_bias_le_mae": "For finite-label finite-measure spaces, if $argmaxRule$ is measurable, is an argmax rule for $q$, $q$ is a posterior simplex, each $q(\\cdot,y)$ is measurable, and $q$ is calibrated under $\\mu$, then for every label $y$, $continuousJointPriorBias_\\mu(argmaxRule,y)\\le continuousJointClassifierMAE_\\mu(q)$.",
-    "theorem1iii_tight_binary_example": "In the specified tight binary example, the bias of the argmax rule at label $0$ relative to the aggregate posterior equals the classifier MAE.",
-    "theorem2i_joint_rule_exists": "If $2\\le K<N$, $expect$ is a finite linear expectation, and expected 0-1 accuracy for each coordinate equals the expected posterior score for every choice rule, then for every $\\gamma$, posterior, and fidelity term, there exists an optimal rule $optRule$ maximizing the expected objective over all rules.",
-    "theorem2ii_argmax_accuracy_maximizing": "If $2\\le K<N$, $expect$ is a finite linear expectation, $argmaxRule$ is pointwise maximizing for every observed dataset, and expected 0-1 accuracy equals expected posterior score for each coordinate and choice rule, then every decision rule has expected accuracy at most that of $argmaxRule$.",
-    "theorem2iii_non_argmax_not_pareto": "For finite $X$, if $\\Pr_\\mu[rule\\ne argmaxRule]>0$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, and $argmaxRule$ weakly maximizes $posterior(x,\\cdot)$ for every $x$, then the sampled decision induced by $rule$ is not Pareto optimal for expected dataset accuracy and expected dataset fidelity.",
-    "theorem2iii_weighted_objective_maximizer_iff_agrees_argmax": "For finite $X$, if $0\\le\\gamma<1$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, $argmaxRule$ weakly maximizes $posterior(x,\\cdot)$, and the sampled argmax decision maximizes the weighted objective, then the sampled decision from $rule$ maximizes the weighted objective iff $\\Pr_\\mu[rule\\ne argmaxRule]=0$.",
-    "theorem2iii_strict_disagreement_not_weighted_objective_maximizer": "For finite $X$, if $0<\\gamma\\le 1$, $\\Pr_\\mu[rule\\ne argmaxRule]>0$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, and every disagreement satisfies $posterior(x,rule(x))<posterior(x,argmaxRule(x))$, then the sampled decision from $rule$ does not maximize the weighted objective."
-  }
+    "aggregatePosterior": {
+      "lean_statement_sha256": "566ec71a0b06bc04411d6fc7429f9fa912f6d51efe0ccaffdd9ce2ad0a4b5832",
+      "statement": "$aggregatePosterior_\\mu(q,y)=\\mathbb{E}_{x\\sim \\mu_X}[q(x,y)]$."
+    },
+    "bias": {
+      "lean_statement_sha256": "6e8bf5a19b45d3175e5ba2b213322a7981cabc37c628681434d77d50706e0f1a",
+      "statement": "$bias_\\mu(rule,pref,y)=marginalLabelShare_\\mu(rule,y)-pref(y)$."
+    },
+    "calibrated": {
+      "lean_statement_sha256": "62820718fb5e4ab5cbbe1f90fdbdb8e9e06cf0dc8d626cd8c289fd801d1a462e",
+      "statement": "$q$ is calibrated under joint measure $\\mu$ iff for every label $y$ and measurable set $S\\subseteq\\mathbb{R}$, $\\int 1\\{q(x,y)\\in S\\}1\\{y'=y\\}\\,d\\mu(x,y')=\\int 1\\{q(x,y)\\in S\\}q(x,y)\\,d\\mu(x,y')$."
+    },
+    "classifierMAE": {
+      "lean_statement_sha256": "d329fde0263062d717e8da6195a97b2ca1400c5a7c38783cca4e3fa2a6668eaf",
+      "statement": "$classifierMAE_\\mu(q)=\\mathbb{E}_{x\\sim \\mu_X}\\left[\\sum_{y\\in Y}q(x,y)(1-q(x,y))\\right]$."
+    },
+    "continuousAggregateBias": {
+      "lean_statement_sha256": "d7bd2ae66035834885fe56c5af5439b883eea04147ed1214b01532e0e480528c",
+      "statement": "$continuousAggregateBias_\\mu(q,rule,y)=continuousMarginalLabelShare_\\mu(rule,y)-continuousAggregatePosterior_\\mu(q,y)$."
+    },
+    "continuousAggregatePosterior": {
+      "lean_statement_sha256": "6f57bddbb406194827e2f086fb48f71bc6e66530e0abd94dd17b55328434bdad",
+      "statement": "$continuousAggregatePosterior_\\mu(q,y)=\\int q(x,y)\\,d\\mu(x)$."
+    },
+    "continuousBias": {
+      "lean_statement_sha256": "39b898bc757a1cfc985dcf2e05b6e02c1d1b4a4b1bb00c634f9949854dcfcd68",
+      "statement": "$continuousBias_\\mu(rule,pref,y)=continuousMarginalLabelShare_\\mu(rule,y)-pref(y)$."
+    },
+    "continuousClassifierMAE": {
+      "lean_statement_sha256": "f004aa2a0941febdb2eea819a6ffa81ae56f4e0d66487632d6f95ab686b46c5b",
+      "statement": "$continuousClassifierMAE_\\mu(q)=\\int \\sum_{y\\in Y}q(x,y)(1-q(x,y))\\,d\\mu(x)$."
+    },
+    "continuousJointClassifierMAE": {
+      "lean_statement_sha256": "1ac50607ddf90e67ccb316d29e6730b2d0ffd164c38a57ae00f7cb6119f5273c",
+      "statement": "$continuousJointClassifierMAE_\\mu(q)=\\int \\sum_{y\\in Y}q(x,y)(1-q(x,y))\\,d\\mu(x,y')$."
+    },
+    "continuousJointPriorBias": {
+      "lean_statement_sha256": "c462306edf42b0310809dae3f50c88c7d574f5295f0d3ca6622138ce477e5d61",
+      "statement": "$continuousJointPriorBias_\\mu(rule,y)=\\int 1\\{rule(x)=y\\}\\,d\\mu(x,y')-\\int 1\\{y'=y\\}\\,d\\mu(x,y')$."
+    },
+    "continuousMarginalLabelShare": {
+      "lean_statement_sha256": "6b96b90304b344beeb12e3fd7c8f6095e9d034cdbf1b0978b29ecdc818a355d3",
+      "statement": "$continuousMarginalLabelShare_\\mu(rule,y)=\\int 1\\{rule(x)=y\\}\\,d\\mu(x)$."
+    },
+    "expectedObjective": {
+      "lean_statement_sha256": "ceaefffea67a5c56f358e953200f51457ed549f854c5eb23e1a9f10768febce0",
+      "statement": "$expectedObjective_\\gamma(rule)=\\gamma\\,expectedDecisionAccuracy(expect,observedDataset,trueLabels,rule)+(1-\\gamma)\\,expectedObjective(expect,observedDataset,fidelityTerm,rule)$."
+    },
+    "fidelity": {
+      "lean_statement_sha256": "140a00cc746cd6be773a8f6cd79e93a86b4d4b1813dd3c7131d10963810d6849",
+      "statement": "$fidelity_\\mu(rule,pref)=-\\sum_{y\\in Y}|bias_\\mu(rule,pref,y)|$."
+    },
+    "isArgmaxRule": {
+      "lean_statement_sha256": "1c446e9f2abe3f13a5879110792f7180f1cf8e75d8e52489b56f6ab68a8363a3",
+      "statement": "$rule$ is an argmax rule for $q$ iff for every $x,y$, $q(x,y)\\le q(x,rule(x))$."
+    },
+    "marginalLabelShare": {
+      "lean_statement_sha256": "9cdcec22d8cae20a48020e635b1af00e243f43ce93b46bedb61c62f2c5e859f1",
+      "statement": "$marginalLabelShare_\\mu(rule,y)=\\Pr_{x\\sim \\mu_X}[rule(x)=y]$."
+    },
+    "objective": {
+      "lean_statement_sha256": "24f01fba48f800547360d4ddb66c62c4055f816884674445b39e62b4f94c2559",
+      "statement": "$objective_\\gamma(xs,decision)=\\gamma\\,averageScore(posterior(xs),decision)+(1-\\gamma)\\,fidelityTerm(xs,decision)$."
+    },
+    "posteriorSimplex": {
+      "lean_statement_sha256": "2467c0edd1736bc3a1d3aaac6fd143a28feb9e224895b7c5b9450bbdc1c8c399",
+      "statement": "$q$ lies in the posterior simplex iff for every $x$, $\\sum_y q(x,y)=1$, and for every $x,y$, $0\\le q(x,y)\\le 1$."
+    },
+    "prior": {
+      "lean_statement_sha256": "baf224ef2f8a8b7070b168401ba913e8598bf8e647cd0b20b74feaee715c6235",
+      "statement": "$prior_\\mu(y)$ is the real-valued marginal probability of label $y$ under the label marginal of $\\mu$."
+    },
+    "sourceSa": {
+      "lean_statement_sha256": "d2012d24d11b071d582e009a874ee15cbeec618b9b83d9a2e83ba6617e38ed4c",
+      "statement": "$S_a(z)=\\{x:q(x,z)=1\\}$."
+    },
+    "sourceSb": {
+      "lean_statement_sha256": "a47b21ee6474281a4afc65958218e26b0d6dbde5b524119beae473c04a1089fa",
+      "statement": "$S_b(z)=\\{x:|Y|^{-1}<q(x,z)<1\\}$."
+    },
+    "sourceSc": {
+      "lean_statement_sha256": "850fe9c929814a5f1475617178b68afe0211b4b8b548821ba68b926849093a9c",
+      "statement": "$S_c(z)=\\{x:q(x,z)=|Y|^{-1}\\}$."
+    },
+    "sourceSd": {
+      "lean_statement_sha256": "a5819e0c9928f50e4dff41404f689b4e1883f28d7544297947dd2d2513f59831",
+      "statement": "$S_d(z)=\\{x:0<q(x,z)<|Y|^{-1}\\}$."
+    },
+    "sourceSe": {
+      "lean_statement_sha256": "ddd20d3a661a993f9f101f9eb60c88a5ef6905dc329c677a0eaddf096035dcb6",
+      "statement": "$S_e(z)=\\{x:q(x,z)=0\\}$."
+    },
+    "theorem1i_no_information_bias": {
+      "lean_statement_sha256": "550ec56263da0800d76a755cbfb223f094d339d3d9d509dabd6468f4105325df",
+      "statement": "If $q(x,a)=prior_\\mu(a)$ for all $x,a$ and $z$ has maximal prior probability, then for every label $y$, both $bias_\\mu(x\\mapsto z,prior_\\mu,y)$ and $bias_\\mu(x\\mapsto z,aggregatePosterior_\\mu(q),y)$ equal $1-prior_\\mu(y)$ if $z=y$, and $-prior_\\mu(y)$ otherwise."
+    },
+    "theorem1ii_perfect_classifier_zero_bias": {
+      "lean_statement_sha256": "84d792a1549d325d4d06ab50666fc3c08cd709cd062fad027f1d923347baaa37",
+      "statement": "If $rule(x)=y$ for every joint outcome $(x,y)$ in $\\mu$, then for every label $y$, $bias_\\mu(rule,prior_\\mu,y)=0$."
+    },
+    "theorem1iii_argmax_bias_le_mae": {
+      "lean_statement_sha256": "9857801422254598bc3711b496f6b2bf4c52df3186d32f4ca0ae5490ae8b009e",
+      "statement": "For finite-label finite-measure spaces, if $argmaxRule$ is measurable, is an argmax rule for $q$, $q$ is a posterior simplex, each $q(\\cdot,y)$ is measurable, and $q$ is calibrated under $\\mu$, then for every label $y$, $continuousJointPriorBias_\\mu(argmaxRule,y)\\le continuousJointClassifierMAE_\\mu(q)$."
+    },
+    "theorem1iii_tight_binary_example": {
+      "lean_statement_sha256": "db6d6f9e2e132f90574817d325e13c1c19df928c3b4327cc77653d4cbf73e70d",
+      "statement": "In the specified tight binary example, the bias of the argmax rule at label $0$ relative to the aggregate posterior equals the classifier MAE."
+    },
+    "theorem2i_joint_rule_exists": {
+      "lean_statement_sha256": "0003599e3b003fd7c3bb7cf8e1bdd7b4fb1afb9f9783d80d7d503046c609c659",
+      "statement": "If $2\\le K<N$, $expect$ is a finite linear expectation, and expected 0-1 accuracy for each coordinate equals the expected posterior score for every choice rule, then for every $\\gamma$, posterior, and fidelity term, there exists an optimal rule $optRule$ maximizing the expected objective over all rules."
+    },
+    "theorem2ii_argmax_accuracy_maximizing": {
+      "lean_statement_sha256": "09ab4ebb579d26a5b21704067f5fd582aa7ffcdbcf1d8c09ae8c31c974fc4789",
+      "statement": "If $2\\le K<N$, $expect$ is a finite linear expectation, $argmaxRule$ is pointwise maximizing for every observed dataset, and expected 0-1 accuracy equals expected posterior score for each coordinate and choice rule, then every decision rule has expected accuracy at most that of $argmaxRule$."
+    },
+    "theorem2iii_non_argmax_not_pareto": {
+      "lean_statement_sha256": "9ad99f07323c5da50e7ad8a9e102698e04bc4a545ba480e00e9f0c3140452731",
+      "statement": "For finite $X$, if $\\Pr_\\mu[rule\\ne argmaxRule]>0$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, and $argmaxRule$ weakly maximizes $posterior(x,\\cdot)$ for every $x$, then the sampled decision induced by $rule$ is not Pareto optimal for expected dataset accuracy and expected dataset fidelity."
+    },
+    "theorem2iii_strict_disagreement_not_weighted_objective_maximizer": {
+      "lean_statement_sha256": "d0aa2169136ab63403af13e247cfcb065b72196e43590d5d8f3147e5a213d308",
+      "statement": "For finite $X$, if $0<\\gamma\\le 1$, $\\Pr_\\mu[rule\\ne argmaxRule]>0$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, and every disagreement satisfies $posterior(x,rule(x))<posterior(x,argmaxRule(x))$, then the sampled decision from $rule$ does not maximize the weighted objective."
+    },
+    "theorem2iii_weighted_objective_maximizer_iff_agrees_argmax": {
+      "lean_statement_sha256": "7edb8e12bea8b5b86289b843e0b3ad05451746738db495cca6e64e4efd511d62",
+      "statement": "For finite $X$, if $0\\le\\gamma<1$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, $argmaxRule$ weakly maximizes $posterior(x,\\cdot)$, and the sampled argmax decision maximizes the weighted objective, then the sampled decision from $rule$ maximizes the weighted objective iff $\\Pr_\\mu[rule\\ne argmaxRule]=0$."
+    }
+  },
+  "paper": "DSWG24DiscretizationBias",
+  "schema": 1
 }

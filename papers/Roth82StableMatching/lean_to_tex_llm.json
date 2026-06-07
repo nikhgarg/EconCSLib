@@ -1,113 +1,114 @@
 {
-  "generator": "codex-local-context-free-draft",
+  "generated_at": "2026-06-07T00:00:39Z",
+  "generator": "codex-refresh-current-lean-statements",
   "items": {
     "completeMarriageOutcome": {
       "lean_statement_sha256": "71323429a7fe7a4d081d16275ce60015e83707634f8660ba5cffb690d23b0792",
-      "tex_statement": "{M W : Type*} (mu : Assignment M W) = (\\forall m, \\exists w, mu.m_match m = some w) \\land (\\forall w, \\exists m, mu.w_match w = some m)"
+      "statement": "{M W : Type*} (mu : Assignment M W) = (\\forall m, \\exists w, mu.m_match m = some w) \\land (\\forall w, \\exists m, mu.w_match w = some m)"
     },
     "corollary5_1_no_need_to_misrepresent_first_choice": {
-      "lean_statement_sha256": "83ab3a3d824ec89cbcef6cf5228029fbc880915b89550b8895792a693817fbb0",
-      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] [Nonempty M] [Nonempty W], (\\forall (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), strictMarriageDomain val_m val_w \\to \\forall (w : W) (report_w : M \\to ℝ), \\exists report_w', (\\forall (mstar : M), (\\forall (m : M), m \\ne mstar \\to val_w w m < val_w w mstar) \\to \\forall (m : M), m \\ne mstar \\to report_w' m < report_w' mstar) \\land (match (menDeferredAcceptance val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (menDeferredAcceptance val_m (update val_w w report_w')).w_match w with | none  =>  0 | some m  =>  val_w w m) \\land \\forall (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), strictMarriageDomain val_m val_w \\to \\forall (m : M) (report_m : W \\to ℝ), \\exists report_m', (\\forall (wstar : W), (\\forall (w : W), w \\ne wstar \\to val_m m w < val_m m wstar) \\to \\forall (w : W), w \\ne wstar \\to report_m' w < report_m' wstar) \\land (match (womenDeferredAcceptance (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (womenDeferredAcceptance (update val_m m report_m') val_w).m_match m with | none  =>  0 | some w  =>  val_m m w"
+      "lean_statement_sha256": "a49dad3d1d01e5b388b39184f237283d88991a51ab3fa31483146961d641f380",
+      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] [Nonempty M] [Nonempty W], (\\forall (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), strictMarriageDomain val_m val_w \\to \\forall (w : W) (report_w : M \\to ℝ), \\exists report_w', (\\forall (mstar : M), (\\forall (m : M), m \\ne mstar \\to val_w w m < val_w w mstar) \\to \\forall (m : M), m \\ne mstar \\to report_w' m < report_w' mstar) \\land (match (menDeferredAcceptance val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (menDeferredAcceptance val_m (update val_w w report_w')).w_match w with | none  =>  0 | some m  =>  val_w w m) \\land \\forall (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), strictMarriageDomain val_m val_w \\to \\forall (m : M) (report_m : W \\to ℝ), \\exists report_m', (\\forall (wstar : W), (\\forall (w : W), w \\ne wstar \\to val_m m w < val_m m wstar) \\to \\forall (w : W), w \\ne wstar \\to report_m' w < report_m' wstar) \\land (match (womenDeferredAcceptance (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (womenDeferredAcceptance (update val_m m report_m') val_w).m_match m with | none  =>  0 | some w  =>  val_m m w"
     },
     "efficientMatchingProcedure": {
       "lean_statement_sha256": "2d8414ae636a5f85069901ec480a583fd1aa721a32359fcaaad8bfd32e2c95ee",
-      "tex_statement": "{M W : Type*} (mechanism : (M \\to W \\to ℝ) \\to (W \\to M \\to ℝ) \\to Assignment M W) = \\forall val_m val_w, paretoOptimal val_m val_w (mechanism val_m val_w)"
+      "statement": "{M W : Type*} (mechanism : (M \\to W \\to ℝ) \\to (W \\to M \\to ℝ) \\to Assignment M W) = \\forall val_m val_w, paretoOptimal val_m val_w (mechanism val_m val_w)"
     },
     "lemma1_strict_simple_misrepresentation_same_partner": {
-      "lean_statement_sha256": "b2f1a0a3177f4badc917d1e46b27491f86cc869cb9221f15463a13065786d774",
-      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (m : M) (report_m simple_report_m : W \\to ℝ) (wstar : W), strictMarriageDomain (update val_m m simple_report_m) val_w \\to (menDeferredAcceptance (update val_m m report_m) val_w).m_match m = some wstar \\to (\\forall (w : W), w \\ne wstar \\to simple_report_m w < simple_report_m wstar) \\to (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m = (menDeferredAcceptance (update val_m m report_m) val_w).m_match m"
+      "lean_statement_sha256": "2476390704d7f13ef141de1d7691c31ed114dda961fb35d68e32961ddaec862e",
+      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (m : M) (report_m simple_report_m : W \\to ℝ) (wstar : W), strictMarriageDomain (update val_m m simple_report_m) val_w \\to (menDeferredAcceptance (update val_m m report_m) val_w).m_match m = some wstar \\to (\\forall (w : W), w \\ne wstar \\to simple_report_m w < simple_report_m wstar) \\to (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m = (menDeferredAcceptance (update val_m m report_m) val_w).m_match m"
     },
     "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain": {
-      "lean_statement_sha256": "fa0ce495ad5752dedfdfed7534eebd67bb26eead5fe6e42873dfc497dcf523cd",
-      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (m : M) (simple_report_m : W \\to ℝ) (ystar : W), card M = card W \\to strictMarriageDomain val_m val_w \\to strictMarriageDomain (update val_m m simple_report_m) val_w \\to (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m = some ystar \\to ((match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\to manReportStrictlyRanksPartnerFirst simple_report_m (some ystar) \\to \\forall (m' : M), (match (menDeferredAcceptance val_m val_w).m_match m' with | none  =>  0 | some w  =>  val_m m' w) \\le match (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m' with | none  =>  0 | some w  =>  val_m m' w"
+      "lean_statement_sha256": "282f1a997d2e4c97fb918046224fcde294894163355a03a05052e1b29503cf90",
+      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (m : M) (simple_report_m : W \\to ℝ) (ystar : W), card M = card W \\to strictMarriageDomain val_m val_w \\to strictMarriageDomain (update val_m m simple_report_m) val_w \\to (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m = some ystar \\to ((match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\to manReportStrictlyRanksPartnerFirst simple_report_m (some ystar) \\to \\forall (m' : M), (match (menDeferredAcceptance val_m val_w).m_match m' with | none  =>  0 | some w  =>  val_m m' w) \\le match (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m' with | none  =>  0 | some w  =>  val_m m' w"
     },
     "manReportStrictlyRanksPartnerFirst": {
       "lean_statement_sha256": "aec2628597e13c09f775b82df536904fdd4608342e545501c8fe48fd787fa4c9",
-      "tex_statement": "{W : Type*} (report_m : W \\to ℝ) (partner : Option W) = match partner with | none  =>  \\forall w, report_m w < 0 | some wstar  =>  \\forall w, w \\ne wstar \\to report_m w < report_m wstar"
+      "statement": "{W : Type*} (report_m : W \\to ℝ) (partner : Option W) = match partner with | none  =>  \\forall w, report_m w < 0 | some wstar  =>  \\forall w, w \\ne wstar \\to report_m w < report_m wstar"
     },
     "menDeferredAcceptance": {
       "lean_statement_sha256": "27d696f59e01ff14f2ba835e7054ccbe199c4947536bc857f9eb01e8f596a64f",
-      "tex_statement": "{M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = deferredAcceptance val_m val_w"
+      "statement": "{M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = deferredAcceptance val_m val_w"
     },
     "menOptimal": {
       "lean_statement_sha256": "29117a9de888b5f833acb4a6082adb25d36ddcf280b77c7b2ee86bfb80f12563",
-      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = stable val_m val_w mu \\land \\forall mu', stable val_m val_w mu' \\to \\forall m, (match mu'.m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w)"
+      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = stable val_m val_w mu \\land \\forall mu', stable val_m val_w mu' \\to \\forall m, (match mu'.m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w)"
     },
     "paretoOptimal": {
       "lean_statement_sha256": "5da482be8c82c347af197408b0861162af3b999bea22143192774cb7fdfa87b6",
-      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = completeMarriageOutcome mu \\land \\lnot \\exists nu, completeMarriageOutcome nu \\land (\\forall m, (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match nu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall w, (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match nu.w_match w with | none  =>  0 | some m  =>  val_w w m)) \\land ((\\exists m, (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w) < (match nu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\lor (\\exists w, (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m) < (match nu.w_match w with | none  =>  0 | some m  =>  val_w w m)))"
+      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = completeMarriageOutcome mu \\land \\lnot \\exists nu, completeMarriageOutcome nu \\land (\\forall m, (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match nu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall w, (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match nu.w_match w with | none  =>  0 | some m  =>  val_w w m)) \\land ((\\exists m, (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w) < (match nu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\lor (\\exists w, (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m) < (match nu.w_match w with | none  =>  0 | some m  =>  val_w w m)))"
     },
     "possibleForMan": {
       "lean_statement_sha256": "29b0f25ee33daebd36a23b41eab53ffbcf5d98759353e39ff664c108b727c801",
-      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (m : M) (w : W) = \\exists mu, stable val_m val_w mu \\land mu.m_match m = some w"
+      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (m : M) (w : W) = \\exists mu, stable val_m val_w mu \\land mu.m_match m = some w"
     },
     "preferenceProfile": {
       "lean_statement_sha256": "017bdc1acf6b99a5c6f630ae9eea74bba606f258fd5abe42851fb420bb565f27",
-      "tex_statement": "(M : Type u) (W : Type v) = (M \\to W \\to ℝ) × (W \\to M \\to ℝ)"
+      "statement": "(M : Type u) (W : Type v) = (M \\to W \\to ℝ) × (W \\to M \\to ℝ)"
     },
     "reportMisrepresentsKthChoice": {
       "lean_statement_sha256": "39c6b90a0ec0156bbce4c7fbe89d8c9fbf99a26231ae6f1bb4a6b4b8db4115da",
-      "tex_statement": "{A : Type*} [Fintype A] [DecidableEq A] (true_score report_score : A \\to ℝ) (k : ℕ) = \\exists a, ((Finset.univ : Finset A).filter fun b  =>  true_score a < true_score b).card + 1 = k \\land ((Finset.univ : Finset A).filter fun b  =>  report_score a < report_score b).card + 1 \\ne k"
+      "statement": "{A : Type*} [Fintype A] [DecidableEq A] (true_score report_score : A \\to ℝ) (k : ℕ) = \\exists a, ((Finset.univ : Finset A).filter fun b  =>  true_score a < true_score b).card + 1 = k \\land ((Finset.univ : Finset A).filter fun b  =>  report_score a < report_score b).card + 1 \\ne k"
     },
     "serialDictatorshipMechanism": {
       "lean_statement_sha256": "167df3878175c38918fbe37a7f23b6b9f20eaee385517324806c6cbce59db7c8",
-      "tex_statement": "{n : ℕ} = paper_serial_dictatorship_mechanism (n = n)"
+      "statement": "{n : ℕ} = paper_serial_dictatorship_mechanism (n = n)"
     },
     "stable": {
       "lean_statement_sha256": "07447f3facd7062a7049aa30a4b74af8af395f24f8bf911589ae0e96a79ac2e6",
-      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = (\\forall m, 0 \\le (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall w, 0 \\le (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m)) \\land (\\forall m w, (match mu.m_match m with | none  =>  0 | some w'  =>  val_m m w') < val_m m w \\to val_w w m \\le (match mu.w_match w with | none  =>  0 | some m'  =>  val_w w m'))"
+      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = (\\forall m, 0 \\le (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall w, 0 \\le (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m)) \\land (\\forall m w, (match mu.m_match m with | none  =>  0 | some w'  =>  val_m m w') < val_m m w \\to val_w w m \\le (match mu.w_match w with | none  =>  0 | some m'  =>  val_w w m'))"
     },
     "stableMatchingProcedure": {
       "lean_statement_sha256": "021a4453bc8dfba697c5335db182137718a5c69ad30f6d494992044dc22ae31f",
-      "tex_statement": "{M W : Type*} (mechanism : (M \\to W \\to ℝ) \\to (W \\to M \\to ℝ) \\to Assignment M W) = \\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to stable val_m val_w (mechanism val_m val_w)"
+      "statement": "{M W : Type*} (mechanism : (M \\to W \\to ℝ) \\to (W \\to M \\to ℝ) \\to Assignment M W) = \\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to stable val_m val_w (mechanism val_m val_w)"
     },
     "stableOutcomes": {
       "lean_statement_sha256": "daa4eb0dfcabfc8d4b6908cbef48ba3910738d7632bc45030a3da75a20d5dbd3",
-      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = {mu | stable val_m val_w mu}"
+      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = {mu | stable val_m val_w mu}"
     },
     "strictMarriageDomain": {
       "lean_statement_sha256": "5cb6e305592b9cb58f5419592f2cf3201aedaafac6cc88494e6aba1979e16ef1",
-      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\land (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\land (\\forall m w, 0 < val_m m w) \\land (\\forall w m, 0 < val_w w m)"
+      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\land (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\land (\\forall m w, 0 < val_m m w) \\land (\\forall w m, 0 < val_w w m)"
     },
     "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain": {
-      "lean_statement_sha256": "5f1f623923456b8eba42857a5fae2456db1e2a73ee6031e46bf5c91c450fd65e",
-      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), card M = card W \\to strictMarriageDomain val_m val_w \\to \\exists mu, stable val_m val_w mu \\land completeMarriageOutcome mu"
+      "lean_statement_sha256": "b1f976bf4f8bf8b2b03723800faee6401c498550d63f29d224db60a24d55cba8",
+      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), card M = card W \\to strictMarriageDomain val_m val_w \\to \\exists mu, stable val_m val_w mu \\land completeMarriageOutcome mu"
     },
     "theorem2_optimal_stable_outcomes_on_strict_marriage_domain": {
-      "lean_statement_sha256": "e2171754b7e44ca85ca84ee7f39b55bd51b7190786bb7e693324e7b20b23770e",
-      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), strictMarriageDomain val_m val_w \\to (\\exists mu, menOptimal val_m val_w mu) \\land \\exists nu, womenOptimal val_m val_w nu"
+      "lean_statement_sha256": "9d303205e2acae1acaa40133cf7c08a532b68536aee204e7b102bff3cbd75efd",
+      "statement": "\\forall {M : Type u_1} {W : Type u_2} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), strictMarriageDomain val_m val_w \\to (\\exists mu, menOptimal val_m val_w mu) \\land \\exists nu, womenOptimal val_m val_w nu"
     },
     "theorem3_no_stable_truthful_procedure_on_strict_profiles": {
-      "lean_statement_sha256": "288cc389ce08dba2fa75503e637dee27945edba77797c2176c41b9ec04d0d6b7",
-      "tex_statement": "\\lnot\\exists mechanism, stableMatchingProcedure mechanism \\land truthfulForAllAgents mechanism"
+      "lean_statement_sha256": "49f56330db3825b414a45b9087fd7e301eac6b398d92a4b84163d346602c86e7",
+      "statement": "\\lnot\\exists mechanism, stableMatchingProcedure mechanism \\land truthfulForAllAgents mechanism"
     },
     "theorem4_serial_dictatorship_constructed": {
-      "lean_statement_sha256": "151f841330f1ce1cdb53acdfbf84a0bd0ebe759106225aac8d4d2d753a988f2e",
-      "tex_statement": "\\forall {n : ℕ}, (\\forall (val_m val_w : Fin n \\to Fin n \\to ℝ), (\\forall (m w w' : Fin n), val_m m w = val_m m w' \\to w = w') \\to paretoOptimal val_m val_w (serialDictatorshipMechanism val_m val_w)) \\land (\\forall (val_m val_w : Fin n \\to Fin n \\to ℝ), (\\forall (m w w' : Fin n), val_m m w = val_m m w' \\to w = w') \\to \\forall (m : Fin n) (report_m : Fin n \\to ℝ), (match (serialDictatorshipMechanism (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (serialDictatorshipMechanism val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\land \\forall (val_m val_w : Fin n \\to Fin n \\to ℝ) (w : Fin n) (report_w : Fin n \\to ℝ), (match (serialDictatorshipMechanism val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (serialDictatorshipMechanism val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m"
+      "lean_statement_sha256": "572d18bc0f8b9325dcff779a992173e2be2b9c68a5c8ffbbe401ecee8edcf556",
+      "statement": "\\forall {n : ℕ}, (\\forall (val_m val_w : Fin n \\to Fin n \\to ℝ), (\\forall (m w w' : Fin n), val_m m w = val_m m w' \\to w = w') \\to paretoOptimal val_m val_w (serialDictatorshipMechanism val_m val_w)) \\land (\\forall (val_m val_w : Fin n \\to Fin n \\to ℝ), (\\forall (m w w' : Fin n), val_m m w = val_m m w' \\to w = w') \\to \\forall (m : Fin n) (report_m : Fin n \\to ℝ), (match (serialDictatorshipMechanism (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (serialDictatorshipMechanism val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\land \\forall (val_m val_w : Fin n \\to Fin n \\to ℝ) (w : Fin n) (report_w : Fin n \\to ℝ), (match (serialDictatorshipMechanism val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (serialDictatorshipMechanism val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m"
     },
     "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq": {
-      "lean_statement_sha256": "d844bd05dcac996033528f30b9bd50c41c1026acbcd0f707c46e18770a0d5938",
-      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), card M = card W \\to strictMarriageDomain val_m val_w \\to (\\forall (m : M) (report_m : W \\to ℝ), (match (menDeferredAcceptance (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\land \\forall (w : W) (report_w : M \\to ℝ), (match (womenDeferredAcceptance val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (womenDeferredAcceptance val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m"
+      "lean_statement_sha256": "af6b9d09c92813f8d8061ae1666ee921acd1fdfccbeed5bbe58959cb815a034c",
+      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), card M = card W \\to strictMarriageDomain val_m val_w \\to (\\forall (m : M) (report_m : W \\to ℝ), (match (menDeferredAcceptance (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\land \\forall (w : W) (report_w : M \\to ℝ), (match (womenDeferredAcceptance val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (womenDeferredAcceptance val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m"
     },
     "theorem6_weak_pareto_for_men_on_strict_marriage_domain": {
-      "lean_statement_sha256": "5f2043f7796ca48ece29862be11ceb21055abfb2deec5fd1217619df83bf10dd",
-      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] [Nonempty M] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), card M = card W \\to strictMarriageDomain val_m val_w \\to \\lnot\\exists nu, completeMarriageOutcome nu \\land \\forall (m : M), (match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) < match m_match m with | none  =>  0 | some w  =>  val_m m w"
+      "lean_statement_sha256": "c93eb81a09a86e6d6097836d713369ae565397782ddf72ab9301cfff7ebfcc14",
+      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] [Nonempty M] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), card M = card W \\to strictMarriageDomain val_m val_w \\to \\lnot\\exists nu, completeMarriageOutcome nu \\land \\forall (m : M), (match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) < match m_match m with | none  =>  0 | some w  =>  val_m m w"
     },
     "theorem7_arbitrary_k_on_strict_profiles": {
-      "lean_statement_sha256": "f00abd669c891c2a37acf15c7bcc46e9c3834122503ac7adc00e2a179bb5b220",
-      "tex_statement": "\\forall (k : ℕ), 1 < k \\to \\exists n, paper_no_stable_procedure_avoids_strict_kth_choice_manipulation_on (Fin n) (Fin n) k"
+      "lean_statement_sha256": "1685a3c764a25af011349e1b93ba2189260aee3d7e8e06f9b9369598760bd534",
+      "statement": "\\forall (k : ℕ), 1 < k \\to \\exists n, paper_no_stable_procedure_avoids_strict_kth_choice_manipulation_on (Fin n) (Fin n) k"
     },
     "truthfulForAllAgents": {
       "lean_statement_sha256": "6567d54a32ba493be524d8e4bb2a582c50a7c16744ee430533ad4eb4c8eecfdd",
-      "tex_statement": "{M W : Type*} [DecidableEq M] [DecidableEq W] (mechanism : (M \\to W \\to ℝ) \\to (W \\to M \\to ℝ) \\to Assignment M W) = (\\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to \\forall m report_m, (\\forall i w w', ((Function.update val_m m report_m) i) w = ((Function.update val_m m report_m) i) w' \\to w = w') \\to (match (mechanism (Function.update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match (mechanism val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to \\forall w report_w, (\\forall j m m', ((Function.update val_w w report_w) j) m = ((Function.update val_w w report_w) j) m' \\to m = m') \\to (match (mechanism val_m (Function.update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match (mechanism val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m))"
+      "statement": "{M W : Type*} [DecidableEq M] [DecidableEq W] (mechanism : (M \\to W \\to ℝ) \\to (W \\to M \\to ℝ) \\to Assignment M W) = (\\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to \\forall m report_m, (\\forall i w w', ((Function.update val_m m report_m) i) w = ((Function.update val_m m report_m) i) w' \\to w = w') \\to (match (mechanism (Function.update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match (mechanism val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to \\forall w report_w, (\\forall j m m', ((Function.update val_w w report_w) j) m = ((Function.update val_w w report_w) j) m' \\to m = m') \\to (match (mechanism val_m (Function.update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match (mechanism val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m))"
     },
     "womenDeferredAcceptance": {
       "lean_statement_sha256": "0dbf3fce8009d0646fadb6c24d7485acf2d7a62a777f5c9cde5702e17953e52d",
-      "tex_statement": "{M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = (deferredAcceptance (M = W) (W = M) val_w val_m).swap"
+      "statement": "{M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = (deferredAcceptance (M = W) (W = M) val_w val_m).swap"
     },
     "womenOptimal": {
       "lean_statement_sha256": "bcc516fba52a2fd37879ea1dea183733d6e589cb94401b7fc7a6e91c26e1daa8",
-      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = stable val_m val_w mu \\land \\forall mu', stable val_m val_w mu' \\to \\forall w, (match mu'.w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m)"
+      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = stable val_m val_w mu \\land \\forall mu', stable val_m val_w mu' \\to \\forall w, (match mu'.w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m)"
     }
   },
   "paper": "Roth82StableMatching",

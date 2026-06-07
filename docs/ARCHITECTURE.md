@@ -20,7 +20,7 @@ Current top-level areas:
 - `Foundations/`: finite math, graph/counting tools, probability, econometrics,
   optimization, asymptotics, and reusable proof infrastructure.
 - `MechanismDesign/`: auctions and mechanism primitives.
-- `SocialChoice/`: fair division and voting-style primitives.
+- `SocialChoice/`: fair division, finite ranking, and voting-style primitives.
 - `Markets/`: matching and platform/market primitives.
 - `Learning/`: bandits and learning models.
 - `Algorithms/`: online algorithms, complexity, and algorithmic proof tools.
@@ -63,6 +63,14 @@ or tail arguments should use
 upper-tail mass, monotonicity, and complement identities before adding
 paper-specific distribution-family asymptotics.
 
+Social-choice and ranking papers should start with
+`EconCSLib.SocialChoice.Ranking` for finite full rankings, first/second choice
+projections, top-two swaps, rank lookup, best-remaining-after-one-removal facts,
+inversion finsets, Kendall tau distance, and deletion/relabeling formulas.
+The base Mallows law/weight layer also lives there. Paper folders should keep
+source-facing theorem names as wrappers where useful, while delegating generic
+ranking, Kendall, Mallows, and payoff algebra to the shared modules.
+
 Optimization foundations currently include finite pointwise argmax/existence
 lemmas, abstract expected-objective wrappers, feasible-set optimality
 certificates, finite feasible-search wrappers, move-graph exchange optimality,
@@ -75,13 +83,12 @@ searches, or endpoint/current-bound optimality proofs should start with
 
 ## Library Maintenance TODOs
 
-- Longer-term import-boundary cleanup: remove the broad
-  `EconCSLib.MechanismDesign.Auctions.MainTheorems` import from
-  `EconCSLib.Basic` and keep paper-facing auction theorem aggregators imported
-  directly by paper modules. This is a maintainability and build-latency
-  cleanup, not a current public-build blocker. The auction theorem aggregate
-  remains a heavy import, so future paper-facing auction modules should import
-  narrower wrappers where practical.
+- Auction import boundary: reusable auction primitives live under
+  `EconCSLib.MechanismDesign.Auctions`, while paper-facing auction theorem
+  aggregators live in their paper folders and should be imported directly by
+  paper modules or examples that need those theorem surfaces. Keep this
+  boundary intact so shared-library builds do not depend on large paper-local
+  theorem files.
 - Build status: as of 2026-06-01, the public branch validates with
   `lake build EconCSLib`. Earlier auction-local theorem-name drift has been
   resolved on the public branch; future public commits should keep this

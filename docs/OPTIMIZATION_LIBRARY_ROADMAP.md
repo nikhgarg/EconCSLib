@@ -203,9 +203,11 @@ Useful for:
 Reusable target:
 
 - done: generic static equilibrium projection to one-sided and two-sided
-  binary no-deviation predicates.
+  binary no-deviation predicates, plus a.e. equilibrium constructors from
+  pointwise feasibility/best-response facts outside a null exception set.
 - done: contradiction lemmas for chosen/unchosen profitable deviations and a
-  threshold/tiebreak iff rule.
+  threshold/tiebreak iff rule, with null-tie wrappers for continuous-law
+  cutoff games.
 - next: variants for multi-action menus whose proof only needs a named pair of
   deviation actions.
 

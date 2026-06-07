@@ -8,10 +8,6 @@
   "status": "formalized",
   "main_caveat": "Theorem 1 is closed as a source-facing support-safe finite-rate endpoint for finite ordinal ratings. Lean derives the pairwise common-dual witnesses and support-safe LDP certificates from positive match rates, the paper's upper-tail rating dominance, monotone scores, and full finite ordinal rating support; the bottom/top atom support used by the lower-bound route is derived internally. The old all-real real-rate bridge remains only as a compatibility theorem for users who supply stronger real-valued boundedness/domain conditions. Empirical sections are source scope but not Lean theorem targets.",
   "human_summary": "",
-  "human_summary_review": {
-    "status": "agent_draft",
-    "note": "Public-release draft summary; a human may approve or rewrite it before merge."
-  },
   "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

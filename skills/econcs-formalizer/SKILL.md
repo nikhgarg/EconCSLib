@@ -366,8 +366,8 @@ report together.
 Keep theorem-specific proof tactics out of this always-loaded file. Use the
 reference routing table at the end: CTMC/reward-rate details live in
 `references/proof-foundations-probability.md`; dynamic-game/PBE certificate
-details live in `references/proof-mechanism-design.md`; matching and
-Plackett--Luce details live in `references/proof-markets-social-choice.md`.
+details live in `references/proof-mechanism-design.md`; market and social
+choice details live in `references/proof-markets-social-choice.md`.
 When updating the skill, treat this as an invariant, not a preference: if the
 new lesson names a specific paper, theorem number, counterexample, proof
 recipe, or declaration family, it belongs in a reference file unless it is only
@@ -494,7 +494,7 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 
 - **`papers/` (The Audit Trail):** Each paper-specific folder is a formalization artifact proving that the specific claims in a specific PDF are true.
   - **Notation Fidelity:** Translate paper-specific notation (e.g., exactly matching the paper's index variables like `u`, `j`, `t`) into the shared primitives.
-  - **Paper-Facing Wrappers:** Write theorems whose signatures match the paper *exactly*. These should be thin wrappers that call the generic library theorems.
+  - **Paper-Facing Wrappers:** Write theorems whose signatures match the paper *exactly*. These should be thin wrappers that call the generic library theorems. (e.g., `theorem roth82_theorem_1 : ... := EconCSLib.Markets.Matching.da_is_stable`).
   - **Local Ledger:** Keep the paper's specific narrative flow in `MainTheorems.lean`, `README.md`, and `DependencyDAG.tex`.
   - **Upstreaming Workflow:** It is normal to build everything inside a `papers/` folder initially. Once a proof is stable, **upstream** the generalized math into `EconCSLib`, leaving only the thin wrappers and paper-specific stepping stones behind.
 
@@ -513,9 +513,8 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
 - After a library extraction pass, update the discoverability surface before
   calling the pass complete: the reusable module docstring, any aggregate import
   docstring, `docs/ECONCSLIB_DOMAIN_INDEX.md`, and the relevant roadmap or
-  extraction-plan index. Update this skill only when the extraction creates a
-  general workflow rule or a reusable module family future agents should check
-  first.
+  extraction-plan index. Update this skill when the extraction creates a new
+  workflow rule or a module future agents should check first.
 - For domain-specific proof seams, use the proof-reference routing table below
   instead of adding theorem-family details to this always-loaded workflow file.
   The relevant reference should name reusable modules and declarations that
@@ -842,6 +841,12 @@ the Lean statements against the paper.
   If a proof pass makes `PaperInterface.lean` grow far beyond the source's
   named result list, trim it before refreshing the dashboard or calling the
   paper ready for review.
+  As a concrete dashboard rule, more than 30 rows requires a no-paper-context
+  LLM review-surface audit saved as `review_surface_llm.json`, checking whether
+  every row is genuinely paper-facing and should be present. At 50 or more rows,
+  the dashboard should warn even if an audit exists; treat that as a prompt to
+  curate `PaperInterface.lean` or `status.json` `review_surface.include_names`
+  before broad human review.
   A dashboard with hundreds of rows is almost always a sign that implementation
   endpoints leaked into the human interface. Curate the source-facing
   definitions/results in the paper-local `status.json` `review_surface`, and
@@ -851,12 +856,32 @@ the Lean statements against the paper.
   Final reports should cite the post-filter human-review row count. If the
   count is still in the hundreds, stop and curate the dashboard surface before
   publishing the report.
+- Before asking for dashboard review, run a statement-surface audit: every
+  dashboard row should be a paper-facing definition, formula, or named source
+  statement; the total should be close to the paper's named result inventory.
+  If there are more than 30 rows, perform the independent LLM surface audit and
+  save the verdict, row count, and dashboard digest in `review_surface_llm.json`.
+  Include validator provenance in that sidecar: `validator`, `validator_type`,
+  `validated_at`, and `comment`, using the same conventions as
+  `statement_match_llm.json`.
+  If there are many extra rows or the LLM says `needs_curation`, first trim
+  `PaperInterface.lean`, then narrow `status.json` `review_surface.include_names`;
+  do not use slices to legitimize a bloated human review file.
 - Paper-facing definitions in `PaperInterface.lean` must show their actual
   Lean definition bodies, not only their function types or an opaque imported
   library name. If a dashboard row for a definition renders as only
   `A -> B -> ...` or `ℝ -> ...`, stop and fix the interface/dashboard before
   asking a human to review it. A reviewer should be able to compare the paper's
   displayed formula directly against the Lean formula in that row.
+- Every dashboard row should label source provenance in the `PaperInterface.lean`
+  docstring. Use dashboard-only lines such as `Source status: direct paper
+  statement`, `Source status: direct paper formula`, `Source status: corrected
+  source statement`, or `Source status: added audit row`; for any corrected,
+  edited, weakened, strengthened, or added row, include a `Source note: ...`
+  line that states exactly how it differs from the paper. The dashboard strips
+  those lines from the statement text and displays them as badges/notes. Treat a
+  missing source-deviation note as a review-surface bug, not as a harmless
+  documentation omission.
 - Keep proof-linkage declarations such as `paper_definition_eq_library_name`,
   bare aliases for generic predicates, and other implementation checks out of
   `PaperInterface.lean`. Put them in `ProofInterface.lean` or another
@@ -892,44 +917,110 @@ the Lean statements against the paper.
   For agent validation, write a tracked source-audit artifact such as
   `SOURCE_AUDIT.md`, label it clearly as an agent audit, and report the
   dashboard human-review state separately.
+- Human review logs are intentionally commit-eligible: `.gitignore` should keep
+  `.review_traces` caches/logs local while unignoring
+  `.review_traces/paper_theorem_validations.jsonl`. After an actual human
+  review pass, inspect and commit the paper-local JSONL log if those judgments
+  should become part of repository history; do not commit generated dashboard
+  HTML, cache JSON, rendered statement images, or `review-dashboard.log`.
+- The human review-log `user` field should default to the authenticated GitHub
+  username, while remaining editable in the browser. Preserve the default order:
+  explicit `--user`, GitHub environment variables, authenticated `gh` username,
+  git config, then OS username.
 - It also shows compact paper-source action links (open PDF/text file), so the
   reviewer can quickly jump back to source wording when needed.
 - Paper-facing formulas that look like LaTeX are rendered in the dashboard so
   theorem statements are easier to read without full Lean familiarity.
-- When improving the dashboard's Lean-to-TeX draft column, save stable
-  context-free drafts in the paper root as `lean_to_tex_llm.json` with one
-  entry per `PaperInterface.lean` declaration. Generate these drafts from the
-  Lean statement alone, without using the source paper text, so the column stays
-  an independent translation check. The dashboard also supports the older
-  `.review_traces/lean_to_tex_llm.json` location, but tracked paper-root drafts
-  are preferred for handoff and cache invalidation.
-- Near the beginning of a new paper, run a smaller statement target-setting
-  pass before serious proof work: curate a compact `PaperInterface.lean`, create
-  context-free Lean-to-TeX/prose translations in `lean_to_tex_llm.json`, and
-  create independent paper-vs-translation judgments in
-  `statement_match_llm.json`. Use this pass only to correct theorem targets; do
-  not update the DAG, final validation report, human-review log, or
-  review-surface audit just because the early target check ran.
-- At statement-review boundaries, every review row should have one concrete
-  source statement. If automatic TeX/text extraction is missing, over-broad, or
-  includes surrounding exposition, repair the paper-facing statement text before
-  running a judge. If nearly every row is `uncertain`, assume a parser or
-  source-statement mapping failure until proven otherwise; fix the source
-  extraction or record a paper-wide source-map issue instead of leaving every
-  row individually uncertain.
-- New tracked `lean_to_tex_llm.json` entries should include
-  `lean_statement_sha256`; new `statement_match_llm.json` entries should include
-  Lean, paper, and TeX statement digests plus validator provenance. Put the
-  model or agent name in `validator`, set `validator_type` to `model` or
-  `agent`, record `validated_at`, and use `comment` for any note that should
-  appear in the final validation report.
-- The final validation report should include a paper-facing validator ledger.
-  Human dashboard reviews and model/agent statement checks may both appear
-  there, but `human_review.reviewed_rows` remains human-only.
+- Near the beginning of a new paper, run the smaller statement target-setting
+  pass before serious proof work. After the source inventory and first compact
+  `PaperInterface.lean` skeleton exist, generate `lean_to_tex_llm.json` from
+  Lean statements alone, generate `statement_match_llm.json` from only the
+  source statement plus that translation, then run
+  `python3 scripts/review_dashboard.py --paper <paper-folder> --statement-precheck`.
+  Use `--statement-check` instead when a nonzero exit is useful for automation.
+  If `--statement-check` fails here, treat it as target-setting feedback: fix
+  `PaperInterface.lean` or the extracted source statement before building long
+  proofs around that row.
+  This early pass deliberately skips workflow scaffolding: do not update the
+  DAG, final validation report, human-review log, or review-surface audit just
+  because the target-setting pass ran. Its purpose is to catch wrong theorem
+  targets before proofs are built around them.
+- For both the early target-setting pass and the full review-boundary pass, make
+  sure each dashboard row has one concrete source statement. If automatic
+  TeX/text extraction is missing, over-broad, or includes surrounding
+  exposition, repair the paper-facing statement text before running the judge.
+  Put declaration-keyed source statements in a source-inventory/report section,
+  not in generated audit output. `Statement Translation Audit` is downstream
+  evidence and must never become the source text for a later judge pass.
+  If nearly every row is `uncertain`, assume a parser/source-statement mapping
+  failure until proven otherwise: fix the source extraction or record a
+  paper-wide source-map issue, instead of leaving every row individually
+  uncertain as if each theorem were separately ambiguous.
+  A judge result of `uncertain` means the statement target is not certified yet;
+  do not rewrite it as "formalized with caveat" or "partial formalization"
+  unless the mathematical formalization itself has that status.
+- Use the dashboard's normalized `statement_digest` values for sidecar digests,
+  not raw SHA-256 of unnormalized strings. New tracked `lean_to_tex_llm.json`
+  entries should include `lean_statement_sha256`; new
+  `statement_match_llm.json` entries should include Lean, paper, and TeX
+  statement digests so stale target checks work.
+- At a statement-review boundary, run the exact statement-translation workflow:
+  1. Curate `PaperInterface.lean` first. It should contain only paper-facing
+     definitions, formulas, and named source results that a reviewer should
+     inspect. Do not include proof plumbing, empirical sections, helper lemmas,
+     or library-internal facts unless they are explicitly paper-facing.
+  2. If the dashboard has more than 30 rows, run a no-paper-context surface
+     pass over the row list and save `review_surface_llm.json`. The pass asks
+     only whether each row belongs on the human-facing paper surface. At 50 or
+     more rows, treat the surface as a warning even if an audit exists; shrink
+     it unless there is a concrete paper-facing reason for every row.
+  3. Generate `lean_to_tex_llm.json` from the Lean statements alone, with no
+     paper text and no proof context. Use one item per current dashboard row.
+     For new tracked sidecars, use object entries:
+     `{ "tex_statement": "...", "lean_statement_sha256": "..." }`. Legacy plain
+     string entries are accepted, but object entries make stale-draft checks
+     possible.
+  4. Generate `statement_match_llm.json` with a separate judge that sees only
+     the original paper statement and the Lean-to-TeX draft, not the Lean proof
+     or surrounding paper. Each entry should include `judgment`, `reason`,
+     `lean_statement_sha256`, `paper_statement_sha256`, and
+     `tex_statement_sha256`. Valid judgments are `matches`, `uncertain`, and
+     `mismatch`. The sidecar should also record validator provenance: put the
+     model or agent name in `validator` (for example `gpt-5-codex`), set
+     `validator_type` to `model` or `agent`, record `validated_at`, and use
+     `comment` for any validator-facing note that should appear in the status
+     export. Top-level validator/comment fields are defaults; item entries can
+     override them when a different model or agent checked a specific row.
+  5. Treat `mismatch` or `uncertain` as a problem with the formalized statement
+     unless the translation is plainly wrong. Usually the fix is to make the
+     `PaperInterface.lean` declaration more paper-facing and self-contained,
+     then rerun both LLM passes.
+  6. Add or refresh the `Statement Translation Audit` section in
+     `FINAL_VALIDATION_REPORT.md`. It should give row counts, match/uncertain/
+     mismatch counts, stale status, surface-audit status, and every flagged
+     row. This is agent audit evidence, not human review.
+  7. Run `python3 scripts/review_dashboard.py --paper <paper-folder> --precheck`
+     before handoff. The precheck should report no stale LLM sidecars. Remaining
+     `uncertain` or `mismatch` rows must be explicitly listed in the final
+     validation report.
+- Command recipe: use `--statement-precheck` or `--statement-check` for the
+  beginning-of-paper target-setting pass; use `--precheck` or `--check` for the
+  full review-boundary pass. The statement-only commands intentionally ignore
+  human-review counters and review-surface row-count warnings.
+- The dashboard displays the current Lean statement, the Lean-to-TeX draft, and
+  the independent LLM match judgment. These LLM checks are pre-human-review
+  evidence only; they do not increment `human_review.reviewed_rows`, and they
+  do not replace a saved human dashboard review. Status exports include a
+  `validators` ledger per row: human dashboard reviews use the saved GitHub/user
+  handle with `validator_type: human`, while model/agent statement-match checks
+  use the model or agent name from `statement_match_llm.json`. Keep the human
+  review counter human-only; use the validator ledger for mixed human/model
+  provenance, dates, judgments, stale flags, and comments.
 - `./review-dashboard.sh` always regenerates the lightweight heuristic
   Lean-to-TeX preview from the current declarations on launch. Treat that as a
-  fallback preview only; stable review-boundary statement checks should use the
-  tracked sidecars.
+  fallback preview only. The independent statement-review workflow still
+  requires stable tracked `lean_to_tex_llm.json` and `statement_match_llm.json`
+  sidecars.
 - On WSL2, the launcher binds broadly by default, prints localhost and any
   detected WSL guest-IP fallback, and tries to open the candidate URLs in a
   Windows browser. If one URL fails, keep the terminal running and try the
@@ -1394,11 +1485,8 @@ search.
    directly: measures, Bochner or Lebesgue integrals, almost-everywhere claims,
    densities, stopping/renewal assumptions, CTMC transition probabilities, and
    long-run reward limits should be first-class Lean targets rather than
-   deferred prose. For proof-specific tactics such as LP certificates,
-   continuous-density bridges, RUM support witnesses, symmetric recommendation
-   pivots, renewal-reward reductions, CTMC bridges, or ranking/Mallows algebra,
-   load the relevant reference in Component 2 instead of putting those
-   techniques in this main workflow file.
+   deferred prose. For proof-specific tactics, load the relevant reference in
+   Component 2 instead of putting those techniques in this main workflow file.
    The priority order is: close the paper-facing theorem faithfully, choose the
    quickest model level that makes the proof work, and extract reusable tools
    only when they clearly help this proof or a near-term second paper. A finite
@@ -1833,12 +1921,6 @@ pass:
   deviations, findings, reusable lessons, DAG, and validation checks; move
   source-line mappings to `SOURCE_AUDIT.md` and declaration inventories to
   `PostPaperAudit.lean` or the README.
-- Point `status.json` `review_entrypoint` at the human-facing status note,
-  normally `FINAL_VALIDATION_REPORT.md`. Use `POST_FORMALIZATION_AUDIT.md` as a
-  supporting audit artifact, not the main public entrypoint, once a final
-  validation report exists. If a paper `README.md` is an implementation/source
-  audit ledger rather than the human-facing note, title it accordingly and add a
-  top-of-file pointer to the human-facing report.
 - Distinguish agent audit from human review. A report may say an agent
   source-audited every row, but it must not say rows were "reviewed" or imply
   dashboard completion unless a human actually saved those dashboard reviews.
@@ -1933,15 +2015,17 @@ exposed in `PaperInterface.lean`.
 **Status.** <formalized / conditional / not formalized>. <1-4 lines of caveats only if needed.>
 
 ## 15. Paper-Facing Statement Validator Ledger
-This table is one row per `PaperInterface.lean`/review-surface row. Fill it
-from human review logs and tracked statement-audit sidecars, not from memory.
+This table is one row per dashboard/PaperInterface row. Fill it from the
+validator ledger, not from memory:
+
+`python3 scripts/review_dashboard.py --paper <paper-folder> --export-format validators-md`
 
 | Paper-facing statement | Lean declaration | Validators | Validator comments |
 | --- | --- | --- | --- |
 | <paper item label> | `<PaperInterface.declaration>` | <human/model/agent validators, judgments, dates, stale flags> | <validator comments or `None`> |
 
 Human dashboard reviews and model/agent statement checks may both appear here.
-This table records provenance for statement targets; it does not change the
+This table is provenance for the statement targets; it does not change the
 human-only `human_review.reviewed_rows` counter.
 ```
 
@@ -1960,7 +2044,7 @@ reference.
 | `EconCSLib/Applications/RecommenderSystems/*`, accuracy/diversity, producer fairness, count allocation | `references/proof-recommender-systems.md` |
 | `EconCSLib/Algorithms/Online/*`, online allocation/matching, regret/Yao | `references/proof-algorithms-online.md` |
 | `EconCSLib/MechanismDesign/Auctions/*`, digital goods, GSP, combinatorial auctions | `references/proof-mechanism-design.md` |
-| `EconCSLib/Markets/*` or `EconCSLib/SocialChoice/*`, matching, fair division, rankings/Mallows | `references/proof-markets-social-choice.md` |
+| `EconCSLib/Markets/*` or `EconCSLib/SocialChoice/*`, matching, fair division, rankings, social choice | `references/proof-markets-social-choice.md` |
 
 `references/proof-strategies.md` is only a short router/index for these files.
 Do not load detailed proof references for routine README/DAG/status edits or

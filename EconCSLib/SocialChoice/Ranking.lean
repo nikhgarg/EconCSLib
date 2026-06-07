@@ -3,6 +3,7 @@ import EconCSLib.SocialChoice.Ranking.Kendall
 import EconCSLib.SocialChoice.Ranking.Probability
 import EconCSLib.SocialChoice.Ranking.Mallows
 import EconCSLib.SocialChoice.Ranking.Payoff
+import EconCSLib.SocialChoice.Ranking.MallowsPayoff
 import EconCSLib.SocialChoice.Ranking.RankPower
 import EconCSLib.SocialChoice.Ranking.Approval
 import EconCSLib.SocialChoice.Ranking.MallowsRankFactorization
@@ -17,8 +18,9 @@ import EconCSLib.SocialChoice.Ranking.MallowsSequential
 Aggregate import for finite ranking primitives.
 
 Includes base ranking operations, Kendall distance, probability-law bridges,
-Mallows laws and rank-factorization algebra, Mallows best-in-set payoff
-decompositions, first-choice payoff decompositions, pure score-induced
-three-candidate ranking maps, probability-free sequential choice helpers, and
-expected best-feasible-candidate payoffs.
+K-approval score/event probabilities, Mallows laws and rank-factorization
+algebra, Mallows first-choice payoff denominators, Mallows best-in-set payoff
+decompositions, first-choice payoff decompositions, pure score-induced three-candidate ranking maps,
+probability-free sequential choice helpers, and expected best-feasible-candidate
+payoffs.
 -/

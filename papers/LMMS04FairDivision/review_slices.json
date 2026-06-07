@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "include_names": [
+    "envy",
+    "envyFree",
+    "envyBoundedBy",
+    "maxMarginal",
+    "isAllocationOf",
+    "lemma2_2_acyclic_reduction",
+    "theorem2_1_bounded_envy_allocation_exists",
+    "theorem2_1_alpha_bounded_allocation_exists",
+    "theorem2_1_algorithm_correct_list_toFinset",
+    "theorem2_3_real_interval_supported_atom_bound",
+    "theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries",
+    "theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries",
+    "theorem3_2_graham_certificate_to_envy_ratio_bound",
+    "theorem3_2_graham_factor_eq_seven_fifths",
+    "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee",
+    "theorem3_3_claim34_fixed_rounding_ratio_endpoint",
+    "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint",
+    "theorem3_3_claim34_min_max_search_certificate_ratio_endpoint",
+    "claim3_4_bounded_optimal_certificate",
+    "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods",
+    "claim3_4_bounded_optimal_of_identical_utilities_model",
+    "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads",
+    "lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads",
+    "directMechanism",
+    "randomizedDirectMechanism",
+    "truthful",
+    "randomizedTruthful",
+    "theorem4_1_source_goods",
+    "theorem4_1_true_report",
+    "theorem4_1_source_not_truthful_envy_free_whenever_exists",
+    "theorem4_1_source_minimum_envy_not_truthful",
+    "theorem4_2_uniform_random_mechanism_truthful",
+    "theorem4_2_uniform_random_max_envy_probability_bound"
+  ],
+  "slices": [
+    {
+      "id": "definitions-and-section-2",
+      "title": "Definitions and Section 2",
+      "names": [
+        "envy",
+        "envyFree",
+        "envyBoundedBy",
+        "maxMarginal",
+        "isAllocationOf",
+        "lemma2_2_acyclic_reduction",
+        "theorem2_1_bounded_envy_allocation_exists",
+        "theorem2_1_alpha_bounded_allocation_exists",
+        "theorem2_1_algorithm_correct_list_toFinset",
+        "theorem2_3_real_interval_supported_atom_bound"
+      ]
+    },
+    {
+      "id": "section-3-lower-bound-and-scheduling",
+      "title": "Section 3 Lower Bound and Scheduling",
+      "names": [
+        "theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries",
+        "theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries",
+        "theorem3_2_graham_certificate_to_envy_ratio_bound",
+        "theorem3_2_graham_factor_eq_seven_fifths"
+      ]
+    },
+    {
+      "id": "section-3-ptas-boundary",
+      "title": "Section 3 PTAS Boundary",
+      "names": [
+        "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee",
+        "theorem3_3_claim34_fixed_rounding_ratio_endpoint",
+        "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint",
+        "theorem3_3_claim34_min_max_search_certificate_ratio_endpoint",
+        "claim3_4_bounded_optimal_certificate",
+        "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods",
+        "claim3_4_bounded_optimal_of_identical_utilities_model",
+        "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads",
+        "lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads"
+      ]
+    },
+    {
+      "id": "section-4-truthfulness",
+      "title": "Section 4 Truthfulness",
+      "names": [
+        "directMechanism",
+        "randomizedDirectMechanism",
+        "truthful",
+        "randomizedTruthful",
+        "theorem4_1_source_goods",
+        "theorem4_1_true_report",
+        "theorem4_1_source_not_truthful_envy_free_whenever_exists",
+        "theorem4_1_source_minimum_envy_not_truthful",
+        "theorem4_2_uniform_random_mechanism_truthful",
+        "theorem4_2_uniform_random_max_envy_probability_bound"
+      ]
+    }
+  ]
+}

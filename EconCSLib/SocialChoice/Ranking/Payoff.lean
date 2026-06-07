@@ -1,4 +1,5 @@
 import EconCSLib.Foundations.Math.FiniteSigns
+import EconCSLib.Foundations.Probability.Conditional
 import EconCSLib.SocialChoice.Ranking.Kendall
 import EconCSLib.SocialChoice.Ranking.Probability
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
@@ -24,6 +25,11 @@ and theorem-number wrappers should remain in paper folders and call this layer.
 - `expectedSecondMoverIndependent`
 - `rerankingGainOnPair`
 - `expectedRerankingGain`
+- `PrefersIndependentReranking`
+- `weakerCompetitionGain`
+- `PrefersWeakerCompetition`
+- `expectedWelfareShared`
+- `disagreementConditionalGain`
 - `secondMoverFirstLawSwitchGain`
 - `sum_firstChoiceProb_eq_one`
 - `sum_firstChoiceGapMass_eq_expectedGap`
@@ -1141,6 +1147,334 @@ theorem expectedSecondMoverIndependent_le_of_collisionProb_le_and_gap_nonneg
       (μSecond := μSecond) (μFrom := μFrom) (μTo := μTo) (value := value)
       hprob hgap
   unfold secondMoverFirstLawSwitchGain at hgain
+  linarith
+
+/-- Utility-side preference for independent reranking over sharing one realized ranking. -/
+def PrefersIndependentReranking {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) : Prop :=
+  expectedSecondMoverShared μ value < expectedSecondMoverIndependent μ μ value
+
+/--
+The utility-side independent-reranking preference is exactly positivity of the
+expected reranking gain.
+-/
+theorem prefersIndependentReranking_iff_expectedRerankingGain_pos {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    PrefersIndependentReranking μ value ↔ 0 < expectedRerankingGain μ value := by
+  unfold PrefersIndependentReranking
+  have h := expectedSecondMoverIndependent_sub_shared_eq_expectedRerankingGain
+    (μ := μ) (value := value)
+  constructor <;> intro hmain <;> linarith
+
+/-- The second mover's gain from facing `μWorse` rather than `μBetter`. -/
+def weakerCompetitionGain {n : ℕ}
+    (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
+  expectedSecondMoverIndependent μWorse μWorse value -
+    expectedSecondMoverIndependent μWorse μBetter value
+
+/--
+Utility-side preference for weaker competition: the second mover does better
+when the first mover uses the weaker law.
+-/
+def PrefersWeakerCompetition {n : ℕ}
+    (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ) : Prop :=
+  expectedSecondMoverIndependent μWorse μBetter value <
+    expectedSecondMoverIndependent μWorse μWorse value
+
+/-- Preference for weaker competition is positivity of the weaker-competition gain. -/
+theorem prefersWeakerCompetition_iff_weakerCompetitionGain_pos {n : ℕ}
+    (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    PrefersWeakerCompetition μBetter μWorse value ↔
+      0 < weakerCompetitionGain μBetter μWorse value := by
+  unfold PrefersWeakerCompetition weakerCompetitionGain
+  constructor <;> intro h <;> linarith
+
+/--
+First-choice-probability decomposition of weaker-competition gain.
+-/
+theorem weakerCompetitionGain_eq_expected_collision_loss_diff {n : ℕ}
+    (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    weakerCompetitionGain μBetter μWorse value =
+      pmfExp μWorse
+        (fun π =>
+          (firstChoiceProb μBetter (firstChoice π) -
+              firstChoiceProb μWorse (firstChoice π)) * valueGap value π) := by
+  simpa [weakerCompetitionGain, secondMoverFirstLawSwitchGain] using
+    secondMoverFirstLawSwitchGain_eq_expected_collision_loss_diff
+      (μSecond := μWorse) (μFrom := μBetter) (μTo := μWorse) (value := value)
+
+/-- Weaker-competition preference through the collision-loss decomposition. -/
+theorem prefersWeakerCompetition_iff_expected_collision_loss_diff_pos {n : ℕ}
+    (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    PrefersWeakerCompetition μBetter μWorse value ↔
+      0 < pmfExp μWorse
+        (fun π =>
+          (firstChoiceProb μBetter (firstChoice π) -
+              firstChoiceProb μWorse (firstChoice π)) * valueGap value π) := by
+  rw [prefersWeakerCompetition_iff_weakerCompetitionGain_pos]
+  rw [weakerCompetitionGain_eq_expected_collision_loss_diff]
+
+/--
+If the better first-mover law collides at least as often with every relevant top
+choice and all top-second gaps are nonnegative, then facing the worse law weakly
+improves second-mover utility.
+-/
+theorem weakerCompetitionGain_nonneg_of_collisionProb_le_and_gap_nonneg {n : ℕ}
+    (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hprob : ∀ π : Ranking n,
+      firstChoiceProb μWorse (firstChoice π) ≤ firstChoiceProb μBetter (firstChoice π))
+    (hgap : ∀ π : Ranking n, 0 ≤ valueGap value π) :
+    0 ≤ weakerCompetitionGain μBetter μWorse value := by
+  simpa [weakerCompetitionGain, secondMoverFirstLawSwitchGain] using
+    secondMoverFirstLawSwitchGain_nonneg_of_collisionProb_le_and_gap_nonneg
+      (μSecond := μWorse) (μFrom := μBetter) (μTo := μWorse) (value := value)
+      hprob hgap
+
+/-- Utility-side weaker-competition monotonicity corollary. -/
+theorem expectedSecondMoverIndependent_le_self_of_collisionProb_le_and_gap_nonneg {n : ℕ}
+    (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hprob : ∀ π : Ranking n,
+      firstChoiceProb μWorse (firstChoice π) ≤ firstChoiceProb μBetter (firstChoice π))
+    (hgap : ∀ π : Ranking n, 0 ≤ valueGap value π) :
+    expectedSecondMoverIndependent μWorse μBetter value ≤
+      expectedSecondMoverIndependent μWorse μWorse value :=
+  expectedSecondMoverIndependent_le_of_collisionProb_le_and_gap_nonneg
+    (μSecond := μWorse) (μFrom := μBetter) (μTo := μWorse) (value := value)
+    hprob hgap
+
+/-- Candidate-sum version of the independent-reranking preference. -/
+theorem prefersIndependentReranking_iff_firstChoiceGapMassSum_pos {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    PrefersIndependentReranking μ value ↔
+      0 < ∑ c : Candidate n,
+        firstChoiceMissProb μ c * firstChoiceGapMass μ value c := by
+  rw [prefersIndependentReranking_iff_expectedRerankingGain_pos]
+  rw [expectedRerankingGain_eq_sum_firstChoiceMissProb_mul_firstChoiceGapMass]
+
+/-- Weaker-competition gain grouped by first-choice candidate. -/
+theorem weakerCompetitionGain_eq_sum_collisionDiff_mul_firstChoiceGapMass
+    {n : ℕ} (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    weakerCompetitionGain μBetter μWorse value =
+      ∑ c : Candidate n,
+        firstChoiceCollisionDiff μBetter μWorse c *
+          firstChoiceGapMass μWorse value c := by
+  rw [weakerCompetitionGain_eq_expected_collision_loss_diff]
+  exact expectedCollisionLossDiff_eq_sum_collisionDiff_mul_firstChoiceGapMass
+    (μBetter := μBetter) (μWorse := μWorse) (value := value)
+
+/-- Candidate-sum version of weaker-competition preference. -/
+theorem prefersWeakerCompetition_iff_firstChoiceCollisionDiffSum_pos {n : ℕ}
+    (μBetter μWorse : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    PrefersWeakerCompetition μBetter μWorse value ↔
+      0 < ∑ c : Candidate n,
+        firstChoiceCollisionDiff μBetter μWorse c *
+          firstChoiceGapMass μWorse value c := by
+  rw [prefersWeakerCompetition_iff_weakerCompetitionGain_pos]
+  rw [weakerCompetitionGain_eq_sum_collisionDiff_mul_firstChoiceGapMass]
+
+/-- Expected welfare when both firms are forced to use the same ranking draw. -/
+def expectedWelfareShared {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
+  pmfExp μ (fun π => welfareOrdered value π π)
+
+/-- Shared-ranking welfare is first-position utility plus second-position utility. -/
+theorem expectedWelfareShared_eq_firstMover_add_secondMoverShared {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    expectedWelfareShared μ value =
+      expectedFirstMoverUtility μ value + expectedSecondMoverShared μ value := by
+  unfold expectedWelfareShared expectedFirstMoverUtility expectedSecondMoverShared
+  rw [← pmfExp_add]
+  congr 1
+  funext π
+  simp [welfareOrdered]
+
+/--
+Ordered independent welfare decomposes into first-mover expected utility plus
+second-mover independent-ranking utility.
+-/
+theorem expectedWelfareOrdered_eq_firstMover_add_secondMoverIndependent {n : ℕ}
+    (μ₂ μ₁ : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    expectedWelfareOrdered μ₂ μ₁ value =
+      expectedFirstMoverUtility μ₁ value + expectedSecondMoverIndependent μ₂ μ₁ value := by
+  unfold expectedWelfareOrdered welfareOrdered expectedFirstMoverUtility
+    expectedSecondMoverIndependent
+  rw [pmfPairExp_add]
+  rw [pmfPairExp_ignore_left]
+
+/--
+For a single ranking law, the welfare gain from independent reranking over a
+shared ranking is exactly expected reranking gain.
+-/
+theorem expectedWelfareOrdered_self_sub_expectedWelfareShared_eq_expectedRerankingGain
+    {n : ℕ} (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    expectedWelfareOrdered μ μ value - expectedWelfareShared μ value =
+      expectedRerankingGain μ value := by
+  rw [expectedWelfareOrdered_eq_firstMover_add_secondMoverIndependent]
+  rw [expectedWelfareShared_eq_firstMover_add_secondMoverShared]
+  have h := expectedSecondMoverIndependent_sub_shared_eq_expectedRerankingGain
+    (μ := μ) (value := value)
+  linarith
+
+/-- Additive version of the shared-vs-independent welfare decomposition. -/
+theorem expectedWelfareOrdered_self_eq_expectedWelfareShared_add_expectedRerankingGain
+    {n : ℕ} (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    expectedWelfareOrdered μ μ value =
+      expectedWelfareShared μ value + expectedRerankingGain μ value := by
+  have h := expectedWelfareOrdered_self_sub_expectedWelfareShared_eq_expectedRerankingGain
+    (μ := μ) (value := value)
+  linarith
+
+/-- A pair of ranking draws. -/
+abbrev RankingPair (n : ℕ) := Ranking n × Ranking n
+
+/-- The event that two rankings disagree on the first-position candidate. -/
+def disagreementEvent {n : ℕ} : RankingPair n → Prop :=
+  fun p => firstChoice p.1 ≠ firstChoice p.2
+
+instance decidableDisagreementEvent {n : ℕ} :
+    DecidablePred (@disagreementEvent n) := by
+  intro p
+  unfold disagreementEvent
+  infer_instance
+
+/-- The reranking-gain integrand viewed as a function on ranking pairs. -/
+def pairRerankingGain {n : ℕ} (value : Candidate n → ℝ) :
+    RankingPair n → ℝ :=
+  fun p => rerankingGainOnPair value p.1 p.2
+
+/-- Probability that two i.i.d. ranking draws disagree on the first choice. -/
+def disagreementProb {n : ℕ} (μ : PMF (Ranking n)) : ℝ :=
+  pmfPairProb μ μ disagreementEvent
+
+/-- Conditional expected reranking gain given first-choice disagreement. -/
+def disagreementConditionalGain {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) : ℝ :=
+  pmfPairConditionalExp μ μ disagreementEvent (pairRerankingGain value)
+
+@[simp] theorem pairRerankingGain_apply {n : ℕ} (value : Candidate n → ℝ)
+    (π σ : Ranking n) :
+    pairRerankingGain value (π, σ) = rerankingGainOnPair value π σ := rfl
+
+/-- Since reranking gain is zero on agreement, the disagreement indicator is exact. -/
+theorem expectedRerankingGain_eq_pairIndicatorExp {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ) :
+    expectedRerankingGain μ value =
+      pmfPairIndicatorExp μ μ disagreementEvent (pairRerankingGain value) := by
+  unfold expectedRerankingGain pmfPairIndicatorExp pmfPairExp pmfExp
+    disagreementEvent pairRerankingGain
+  refine Finset.sum_congr rfl ?_
+  intro π _
+  congr 1
+  refine Finset.sum_congr rfl ?_
+  intro σ _
+  by_cases h : firstChoice π = firstChoice σ
+  · have h' : π 0 = σ 0 := by simpa [firstChoice] using h
+    simp [rerankingGainOnPair, firstChoice, h']
+  · have h' : π 0 ≠ σ 0 := by simpa [firstChoice] using h
+    simp [rerankingGainOnPair, firstChoice, secondChoice, h']
+
+/-- On a positive-probability disagreement event, conditional gain is a ratio. -/
+theorem disagreementConditionalGain_eq_expectedRerankingGain_div_of_pos {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (h : 0 < disagreementProb μ) :
+    disagreementConditionalGain μ value =
+      expectedRerankingGain μ value / disagreementProb μ := by
+  unfold disagreementConditionalGain disagreementProb at *
+  rw [pmfPairConditionalExp_eq_div_of_pos (μ := μ) (ν := μ)
+    (p := disagreementEvent) (f := pairRerankingGain value) h]
+  rw [← expectedRerankingGain_eq_pairIndicatorExp (μ := μ) (value := value)]
+
+/--
+Positive independent-reranking preference is equivalent to positive conditional
+gain on disagreement, when disagreement has positive probability.
+-/
+theorem prefersIndependentReranking_iff_conditionalGain_pos_of_disagreementPos {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (h : 0 < disagreementProb μ) :
+    PrefersIndependentReranking μ value ↔ 0 < disagreementConditionalGain μ value := by
+  rw [prefersIndependentReranking_iff_expectedRerankingGain_pos]
+  rw [disagreementConditionalGain_eq_expectedRerankingGain_div_of_pos
+    (μ := μ) (value := value) h]
+  exact (zero_lt_div_iff_pos_right h).symm
+
+@[simp] theorem disagreementProb_pure {n : ℕ} (π : Ranking n) :
+    disagreementProb (PMF.pure π) = 0 := by
+  unfold disagreementProb pmfPairProb disagreementEvent
+  simp [firstChoice]
+
+@[simp] theorem disagreementConditionalGain_pure {n : ℕ}
+    (π : Ranking n) (value : Candidate n → ℝ) :
+    disagreementConditionalGain (PMF.pure π) value = 0 := by
+  unfold disagreementConditionalGain
+  rw [pmfPairConditionalExp_of_prob_zero]
+  exact disagreementProb_pure (π := π)
+
+/-- Independent reranking has zero gain if all relevant miss probabilities vanish. -/
+theorem expectedRerankingGain_eq_zero_of_all_missProb_zero {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hmiss : ∀ π : Ranking n, firstChoiceMissProb μ (firstChoice π) = 0) :
+    expectedRerankingGain μ value = 0 := by
+  classical
+  rw [expectedRerankingGain_eq_expect_missProb_mul_gap]
+  unfold pmfExp
+  refine Finset.sum_eq_zero ?_
+  intro π _
+  have hπ : firstChoiceMissProb μ (π 0) = 0 := by
+    simpa [firstChoice] using hmiss π
+  simp [hπ]
+
+/-- Independent reranking has zero gain if all top-vs-runner-up value gaps vanish. -/
+theorem expectedRerankingGain_eq_zero_of_all_valueGap_zero {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hgap : ∀ π : Ranking n, valueGap value π = 0) :
+    expectedRerankingGain μ value = 0 := by
+  classical
+  rw [expectedRerankingGain_eq_expect_missProb_mul_gap]
+  unfold pmfExp
+  simp [hgap]
+
+/-- Zero miss probability collapses independent and shared second-mover utility. -/
+theorem expectedSecondMoverIndependent_eq_shared_of_all_missProb_zero {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hmiss : ∀ π : Ranking n, firstChoiceMissProb μ (firstChoice π) = 0) :
+    expectedSecondMoverIndependent μ μ value = expectedSecondMoverShared μ value := by
+  have hgain := expectedRerankingGain_eq_zero_of_all_missProb_zero
+    (μ := μ) (value := value) hmiss
+  have hmain := expectedSecondMoverIndependent_sub_shared_eq_expectedRerankingGain
+    (μ := μ) (value := value)
+  linarith
+
+/-- Zero value gaps collapse independent and shared second-mover utility. -/
+theorem expectedSecondMoverIndependent_eq_shared_of_all_valueGap_zero {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hgap : ∀ π : Ranking n, valueGap value π = 0) :
+    expectedSecondMoverIndependent μ μ value = expectedSecondMoverShared μ value := by
+  have hgain := expectedRerankingGain_eq_zero_of_all_valueGap_zero
+    (μ := μ) (value := value) hgap
+  have hmain := expectedSecondMoverIndependent_sub_shared_eq_expectedRerankingGain
+    (μ := μ) (value := value)
+  linarith
+
+/-- No independent-reranking preference is possible when miss probabilities vanish. -/
+theorem not_prefersIndependentReranking_of_all_missProb_zero {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hmiss : ∀ π : Ranking n, firstChoiceMissProb μ (firstChoice π) = 0) :
+    ¬ PrefersIndependentReranking μ value := by
+  intro hpref
+  rw [prefersIndependentReranking_iff_expectedRerankingGain_pos] at hpref
+  have hgain := expectedRerankingGain_eq_zero_of_all_missProb_zero
+    (μ := μ) (value := value) hmiss
+  linarith
+
+/-- No independent-reranking preference is possible when every top-second gap is zero. -/
+theorem not_prefersIndependentReranking_of_all_valueGap_zero {n : ℕ}
+    (μ : PMF (Ranking n)) (value : Candidate n → ℝ)
+    (hgap : ∀ π : Ranking n, valueGap value π = 0) :
+    ¬ PrefersIndependentReranking μ value := by
+  intro hpref
+  rw [prefersIndependentReranking_iff_expectedRerankingGain_pos] at hpref
+  have hgain := expectedRerankingGain_eq_zero_of_all_valueGap_zero
+    (μ := μ) (value := value) hgap
   linarith
 
 end

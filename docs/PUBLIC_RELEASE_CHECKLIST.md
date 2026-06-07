@@ -54,13 +54,10 @@ Each public paper folder should have:
 ## Importing A Completed Private Paper
 
 - [ ] Confirm the paper is ready for public review.
-- [ ] Create a public topic branch from current public `main`.
-- [ ] Apply an allowlisted patch containing only the approved paper folder,
-      root paper module, required reusable library changes, public-safe tooling
-      or workflow updates, and regenerated public status/site artifacts.
-- [ ] If the work only exists in older standalone private history, decide
-      whether paper-local development history should be preserved by a filtered
-      import.
+- [ ] Decide whether paper-local development history should be preserved.
+- [ ] Filter the private history to the completed paper folder and any reusable
+      library changes that are public-safe.
+- [ ] Merge the filtered history into the public repository.
 - [ ] Update paper-local `status.json`, run `python3 scripts/sync_paper_status.py`,
       and then update surrounding README/site prose, roadmap, or release notes
       only if needed.

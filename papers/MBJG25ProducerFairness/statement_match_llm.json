@@ -29,7 +29,7 @@
       "lean_statement_sha256": "002a2f8e3c296ad211cb96ecfef17d08dbbccaf916015a0bd03a9f022729ce02",
       "matches": true,
       "paper_statement_sha256": "eb19cfbcf3ffd9d8c68c03a899b7eb4805fa4366588aa4090967d63893ef1a3a",
-      "reason": "Translation states expected MSE equals expected squared bias plus expected variance conditional on the random review count, with explicit statewise assumptions.",
+      "reason": "Translation matches: it states the responsive expected MSE decomposition as expected squared bias plus expected variance, conditional on statewise bias and variance identities for the random review count N.",
       "tex_statement_sha256": "df69b1bb2f906c9d521384cf7af32bd29b073724bf634b443544047e3060fed4"
     },
     "paper_facing_theorem3_1_squared_bias_nondecreasing": {
@@ -37,7 +37,7 @@
       "lean_statement_sha256": "a33e61c943cad9822ca6497b49dcf6c873a506d2611b1862f8660b9307948c36",
       "matches": true,
       "paper_statement_sha256": "dbd5329cbde0c3fdf5db2fd8f2d6a54e60db6a03d3b08826e5184811b4b1f480",
-      "reason": "Same monotonic direction: squared bias at low prior strength is no larger than at high strength.",
+      "reason": "Translation matches: it preserves the Theorem 3.1 direction that squared bias at lower prior strength is no larger than squared bias at higher prior strength, under the explicit regularity assumptions.",
       "tex_statement_sha256": "9de4e83e8b4abf12ed20d367295ab2957dcf8717a7810a8e16e4839293a7de19"
     },
     "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one": {
@@ -45,7 +45,7 @@
       "lean_statement_sha256": "e674048a3a2467b9385fc29598a621f720273bbed9d50841db704e8599c93a69",
       "matches": true,
       "paper_statement_sha256": "8f5d3289ec2f9b30b7bbb4d361843ea63c9e70994c5a18a168159b25e445e8b2",
-      "reason": "Translation captures the boundary caveat that strict decrease fails at q=1 because variance is zero.",
+      "reason": "Translation matches: it records the q = 1 boundary case where strict variance decrease cannot hold because the variance term is zero.",
       "tex_statement_sha256": "4fd60e9290788be0be04215562deab7927b120af85d8e49d4cbdb33ed16d7050"
     },
     "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero": {
@@ -53,7 +53,7 @@
       "lean_statement_sha256": "86f07e5853f213e8c8d533b6d18b4f0438dca3518c385f20a8c982eccd71c6ee",
       "matches": true,
       "paper_statement_sha256": "8ed50675d3504052d690a11b47c6ad60057730c9272da5e073216db06a79103e",
-      "reason": "Translation captures the boundary caveat that strict decrease fails at q=0 because variance is zero.",
+      "reason": "Translation matches: it records the q = 0 boundary case where strict variance decrease cannot hold because the variance term is zero.",
       "tex_statement_sha256": "919a6ccea0ca6eab5a3ffd3c0d342c8256c2d9c36eff5098e2c4cdd8c1850cd2"
     },
     "paper_facing_theorem3_1_variance_strict_decrease_interior": {
@@ -61,7 +61,7 @@
       "lean_statement_sha256": "81b22edf48ac4706b1b60a4640f3a76e151c4ec63151b9f307f02583d5968a9f",
       "matches": true,
       "paper_statement_sha256": "6e33f96c2e07ba1032eea32e01aff79fe91fa9f9424e09f640607b621af84b58",
-      "reason": "Same strict decrease conclusion under interior quality, positive mass/sample, and eta_high > eta_low.",
+      "reason": "Translation matches: it states strict variance decrease under etaLow < etaHigh on the interior quality range 0 < q < 1, with the Lean statement making the paper boundary condition explicit.",
       "tex_statement_sha256": "d9b7af55288d6f73cecf458fb2ae17f8402b414943d4e581ab2813b9dba5ca76"
     },
     "paper_facing_theorem3_1_variance_weak_decrease": {
@@ -69,7 +69,7 @@
       "lean_statement_sha256": "54d37051d2e76e658da9fe44056f37f2c9d94861b2e6eeeb666cc8c0c3ab9412",
       "matches": true,
       "paper_statement_sha256": "8fdcd5d6275285696170b2a8ce842252d23edb7fae26e7842fec92b490f00672",
-      "reason": "Same nonincreasing conclusion for eta_high >= eta_low on 0 <= q <= 1, with explicit regularity assumptions.",
+      "reason": "Translation matches: it states that increasing prior strength weakly decreases the posterior-mean variance on 0 <= q <= 1, with the Lean statement making the positive shape mass, positive t, nonnegative low prior strength, and etaLow <= etaHigh assumptions explicit.",
       "tex_statement_sha256": "745831eaaf6ab03088e2d7739b6ce5e496965f0877f1dd6802263c55847acad6"
     },
     "paper_facing_theorem3_2_squared_bias_convex_in_quality": {
@@ -77,7 +77,7 @@
       "lean_statement_sha256": "9e375ca916106d7799f9fbd2b4cc087dac5d97d45e886d4d216c67137799bf85",
       "matches": true,
       "paper_statement_sha256": "2fe88dfe9995fbb1be2fa24c30695f5b744b3d17ddd8269995fea666108e107a",
-      "reason": "Translation states Jensen convexity of the squared-bias function in quality, matching the paper statement.",
+      "reason": "Translation matches: the Lean statement says the squared-bias function of q is Jensen-convex, matching the paper-facing convexity claim, with a nonzero-denominator side condition.",
       "tex_statement_sha256": "e3cf56c62abe0be6fd40075b2ba77363ddf7a6fcf7736273428693f91c70fb33"
     },
     "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean": {
@@ -85,7 +85,7 @@
       "lean_statement_sha256": "aad6adb90f76821c2571b01b6e82011b4293bb1ce473a9de681f99f6591862e9",
       "matches": true,
       "paper_statement_sha256": "f41cac6b1de2719b0e07dc9a28fa9f7c72bcb96a3210ed9b658c71c23c5e26a8",
-      "reason": "Same global minimizer at alpha/(alpha+beta) on the quality interval, with explicit positivity assumptions.",
+      "reason": "Translation matches: it states that squared bias is globally minimized at alpha/(alpha+beta), under positive shape mass, nonnegative eta, and positive sample weight.",
       "tex_statement_sha256": "fc916657ab75bf81b08f4c5c06ff4fbc91c47462a5d2e5bb14bfd2e3b02b2f20"
     },
     "paper_facing_theorem3_2_variance_concave_in_quality": {
@@ -93,7 +93,7 @@
       "lean_statement_sha256": "809c49e34b0a2546a0de7d4651c236711d01327584369565c27da89870112cd0",
       "matches": true,
       "paper_statement_sha256": "9ede64b9229841cd19d7df522338f63410a3b71762e9ea2a2d5b907301f866a6",
-      "reason": "Translation states Jensen concavity of the variance function with t >= 0, matching the paper-facing statement.",
+      "reason": "Translation matches: it states Jensen concavity of the posterior-mean variance as a function of q for nonnegative sample mass t.",
       "tex_statement_sha256": "8b529dd1275078cda350746cb103655b5bd6b6d024c0105ee0e05366b59b3b80"
     },
     "paper_facing_theorem3_2_variance_global_max_at_half": {
@@ -101,7 +101,7 @@
       "lean_statement_sha256": "98485918ed11053544b36d41ad424c90416de9db6d49e1ae412ac26c047a5749",
       "matches": true,
       "paper_statement_sha256": "e93c55fa90618724f5750c2b40c1f00edc82e711890e679e7ed0797ec480b09c",
-      "reason": "Same global maximum at q=1/2 for nonnegative sample mass.",
+      "reason": "Translation matches: it states the variance function is globally maximized at q = 1/2 when t is nonnegative.",
       "tex_statement_sha256": "71f41e13487f8aa5f0b8c157f6db11534d425583f6791546d4b9b005fbc8ba86"
     },
     "paper_facing_thompson_sampling_mechanism": {
@@ -141,6 +141,6 @@
   "schema": 1,
   "validator": "gpt-5-codex",
   "validator_type": "model",
-  "validated_at": "2026-06-06T20:39:48Z",
-  "comment": "Statement-match validation generated by Codex from original paper statements and context-free Lean-to-TeX drafts."
+  "validated_at": "2026-06-06T23:19:54Z",
+  "comment": "Statement-match validation refreshed by Codex from current dashboard Lean statements, paper statements, and context-free Lean-to-TeX drafts."
 }

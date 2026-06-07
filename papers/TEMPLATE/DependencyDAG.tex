@@ -19,6 +19,13 @@
 % Use `\dagPaperMetadata`, `\dagPaperLegendRightOfMetadata`, and
 % `\begin{dagPaperBody}` so metadata stays top-left, the legend sits to its
 % right, and the graph starts below them from the diagram left edge.
+%
+% Arrow direction rule:
+% Draw edges from prerequisite/source node to dependent/target node.  The
+% `dag_arrow` and `dag_dashed_arrow` styles use an explicit end-arrow (`->`),
+% so the arrowhead should always land on the node that consumes the dependency.
+% Do not reverse the coordinate order just to make routing easier; use anchors
+% or an orthogonal route through empty space instead.
 
 \begin{tikzpicture}[
   x=1cm,
@@ -49,6 +56,9 @@
   columns are spaced by 6.4cm and rows by 3.2cm, which is wide enough for the
   default 5cm node text widths. Prefer straight or orthogonal arrows (`--`,
   `|-`, `-|`) and route through empty grid cells when a dependency skips a row.
+  Draw from prerequisite to dependent result so the arrowhead points at the
+  consumer.  For short horizontal gaps, use explicit anchors like `(A.east) --
+  (B.west)` and increase spacing if the arrowhead visually merges with a node.
   After every layout change, render and inspect the PDF; if anything overlaps,
   increase row or column spacing before adding complicated curves. Once the
   initial named-result map is complete, prefer README-status style updates over

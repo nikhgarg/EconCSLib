@@ -139,12 +139,134 @@ division, rankings, Mallows models, and social-choice/ranking papers.
 - For rank-weight monotonicity, first prove the PMF/fiber decomposition, convert
   to a pure rank-only weight formula, then prove a generic cleared
   weighted-average lemma from pairwise cross-ratio or prefix dominance.
+- Use `EconCSLib.SocialChoice.Ranking.Basic` for paper-independent finite
+  ranking primitives before adding paper-local notation. It provides
+  `Candidate`, `Ranking`, `firstChoice`, `secondChoice`, `rankOf`,
+  `swapTopTwo`, `bestRemainingAfter`, and the standard top-two/rank simp
+  lemmas. Paper-local ranking modules should usually be compatibility layers
+  over these shared primitives.
+- Use `EconCSLib.SocialChoice.Ranking.Kendall` for inversion predicates,
+  inversion finsets, `kendallTau`, deletion/relabeling formulas through
+  `cycleRange` and `cycleIcc`, and center-transposition invariance. Keep
+  paper-local Kendall modules as naming wrappers around these shared facts.
+- Use `EconCSLib.SocialChoice.Ranking.Probability` when a continuous random
+  ranking map must be turned into a finite ranking law. It provides the
+  discrete measurable-space instance, `firstChoiceProb`,
+  `rankingPMFOfMeasure`, `rankingPMFOfMeasure_eventProb`,
+  `bestRemainingAfterProb_rankingPMFOfMeasure`, and
+  `firstChoiceProb_rankingPMFOfMeasure`. In paper files, keep theorem-number
+  names such as `rumRankingPMFOfMeasure`, but implement them as wrappers around
+  the shared pushforward and event-probability bridge.
+- Use `EconCSLib.SocialChoice.Ranking.Approval` before adding local K-approval
+  or top-tier scoring notation. It owns `approvedByK`, pair-up/down
+  probabilities, score-gap equivalences, `lastRank`,
+  `approvedByK_allButOne_iff_rankOf_ne_lastRank`,
+  `kApprovalPairUpProb_allButOne_eq_rankOf_lastProb`, and
+  `kApprovalPairDownProb_allButOne_eq_rankOf_lastProb`. For one-loser or
+  all-but-one approval papers, keep paper-local terminology as thin wrappers
+  over the shared last-rank and all-but-one lemmas.
+- For top-tier K-approval under Mallows-style laws, separate the reusable proof
+  route into three layers: finite-support pairwise rate or score-gap algebra,
+  the K-approval ternary/all-but-one specialization, and the paper's
+  relevant-pair aggregation. Boundary or no-randomization statements often
+  reduce to a pivotal pair plus a last-rank probability formula; make those
+  library wrappers reusable when a second paper needs the same fact, but keep
+  paper-specific top-window or goal-language wrappers local.
+- Use `EconCSLib.SocialChoice.Ranking.Mallows` for the paper-independent
+  finite Mallows law/weight layer: `mallowsWeight`, `mallowsPartition`,
+  `MallowsSpec`, first/first-second/pair-correct/pair-wrong weights and
+  probabilities, and finite normalization identities. If a paper already has a
+  source-facing local Mallows structure, prefer an explicit adapter to the
+  shared structure over a broad rewrite that breaks existing field projections.
+- Use `EconCSLib.SocialChoice.Ranking.MallowsSequential` for Mallows laws over
+  a feasible remaining set before copying paper-local sequential finite sums. It owns
+  `MallowsSpec.bestInSetWeight`, pair best-in-set/correct-wrong fiber
+  identities, swap-reindexed best-in-set fiber sums, nonnegativity/zero-mass
+  and partition lemmas, expected-best normalization by unnormalized fibers, and
+  `expectedBestInSet_le_of_bestInSetWeight_cross`. Bridge paper-local
+  definitions with small `[simp]` adapter lemmas rather than importing a paper
+  module from the shared library.
+- Use `EconCSLib.SocialChoice.Ranking.RankPower` before copying finite
+  geometric rank-sum algebra from a paper file. It owns `candidateRankPowerSum`,
+  `candidateRankReversePowerSum`, `candidateRankPrefixPowerSum`,
+  `candidateRankRemovalPowerSum`, `candidateRankBestAfterRemovalWeight`,
+  the removal-sum closed form and `(1 - q)` identity, best-after-removal
+  below/above/self simplifications, rank-power positivity/monotonicity, and
+  the inner nonnegativity/strictness helpers used in Mallows
+  rank-factorization proofs. Keep paper-facing theorem names as wrappers around
+  this module when they are source-facing.
+- Use `EconCSLib.SocialChoice.Ranking.MallowsRankFactorization` when a paper
+  has already established first/top-two Mallows fiber factorization. It owns
+  the assumption package `MallowsSpec.RankFactorization`, the first-tail versus
+  removal-sum identity, and first-weight prefix algebra. Keep paper-facing
+  factorization structures stable and call shared lemmas through adapters;
+  leave concrete fiber-decomposition constructors paper-local until a second
+  paper needs the same decomposition.
+- Use `EconCSLib.SocialChoice.Ranking.Payoff` for paper-neutral finite
+  ranking-law payoff algebra before proving paper-local versions. It
+  provides `firstChoiceMissProb`, `valueGap`, `expectedFirstMoverUtility`,
+  `expectedSecondMoverShared`, `secondMoverUtility`,
+  `expectedSecondMoverIndependent`, `expectedWelfareOrdered`,
+  `rerankingGainOnPair`, `expectedRerankingGain`,
+  `secondMoverFirstLawSwitchGain`, first-choice probability bounds and
+  sum-to-one, miss-probability complement and positivity,
+  `firstChoiceGapMass`, `firstChoiceCollisionDiff`,
+  `sum_firstChoiceGapMass_eq_expectedGap`,
+  `expectedFirstMoverUtility_eq_sum_firstChoiceProb`,
+  `expectedSecondMoverShared_eq_sum_secondChoiceProb`,
+  `innerRerankingGain_eq_missProb_mul_gap`,
+  `expectedRerankingGain_eq_expect_missProb_mul_gap`,
+  `expectedRerankingGain_eq_sum_firstChoiceMissProb_mul_firstChoiceGapMass`,
+  `expectedCollisionLossDiff_eq_sum_collisionDiff_mul_firstChoiceGapMass`, and
+  `secondMoverFirstLawSwitchGain_eq_expected_collision_loss_diff`. Preserve
+  paper-facing names, but delegate generic finite-sum proofs to this shared
+  module.
+- Use `EconCSLib.SocialChoice.Ranking.Score` for three-score ranking
+  maps before writing paper-local case splits. It provides `rum3RankByScores`,
+  `rum3RankByScoreFns`, the six concrete three-candidate rankings, no-tie and
+  top/middle/bottom score predicates, first/second-choice simp lemmas,
+  `bestRemainingAfter_rum3RankByScores_remove*`, and the score-order
+  consequences from first-choice or best-remaining outcomes. Keep measurability
+  of score functions in the RUM/probability file; the score module is pure
+  finite social-choice code.
+- Use `EconCSLib.SocialChoice.Ranking.Sequential` for probability-free
+  sequential choice primitives before adding paper-local definitions. It owns
+  `bestInSet`, rank-minimality and membership lemmas, full-set/
+  removed-singleton/singleton/pair simplifications, center-rank relabeling,
+  candidate-position swaps, swap rank simp lemmas, rank extensionality helpers,
+  deterministic best-in-set value improvement after correcting an inverted
+  pair, adjacent-correction reachability/monotonicity predicates, and bounded
+  prefix-cut indicators:
+  `deleteFirstChoicePrefixCut`, `bestInSetPrefixCutIndicator`,
+  `centerPrefixCutValue`, `weaklyOrderedBy_centerPrefixCutValue`,
+  `bestInSetPrefixCutIndicator_eq_centerPrefixCutValue`, and
+  `adjacentSwapImproves_bestInSetPrefixCutIndicator`. Keep theorem-facing
+  definitions reducible when later proofs unfold them, but prove generic lemmas
+  by delegating to the shared module.
+- Use `EconCSLib.SocialChoice.Ranking.SequentialPayoff` for PMF expectations of
+  the best feasible candidate. It provides `expectedBestInSet`,
+  `expectedBestAfterRemoval`, and full-set/singleton/removed-singleton
+  simplifications. Paper-local expected-best-after-removal names should be
+  wrappers around this shared definition when possible.
+- Use the library finite-sum layer before writing Mallows-local algebra:
+  `EconCSLib.FiniteSum.pair_sum_eq_ordered_swap_sum_of_injective_key`
+  performs the `(i,j)`/`(j,i)` regrouping by a reference rank key, and
+  `EconCSLib.FiniteSum.weighted_average_cross_nonneg_of_pairwise` /
+  `EconCSLib.FiniteSum.weighted_average_cross_pos_of_pairwise` discharge the
+  weak/strict pairwise-cross-ratio weighted-average comparison. Paper-local
+  ordered-pair regrouping lemmas should usually be compatibility wrappers
+  around these shared lemmas.
 - If conditioning or deleting a rank creates piecewise weights, prove small
   closed-form below/above/self lemmas and a deletion-sum geometric identity
   before attempting the all-cases theorem.
 - For Mallows/ranking proofs, match pairwise decompositions when the paper
   compares `(i,j)` and `(j,i)` top-two events. Prove the top-two expansion,
   define ordered-pair terms, then prove antisymmetric swap identities.
+- Use the shared adjacent-order and bounded prefix-cut APIs before
+  recursive prefix-cut proofs. The generic declarations now live in
+  `EconCSLib.SocialChoice.Ranking.Sequential`; keep the recursive
+  identity-center Mallows dominance stack paper-local until a second paper
+  needs the same subset-marginal recursion.
 - Keep three Mallows layers separate: denominator-cleared paper sum, top-two
   pair/bracket regrouping, and rank-factorization formulas for first/top-two
   fibers.
@@ -185,150 +307,18 @@ division, rankings, Mallows models, and social-choice/ranking papers.
   conditional until the top-of-remaining-set lift is formalized (often via
   subset/restriction rank-factorization or another explicit stochastic
   dominance bridge).
-- For KR21-style nonconvex remaining-set lifts, prefer the prefix first-hit
-  layer-cake target over broad "all monotone payoff" Kendall-layer averages.
-  Broad uniform Kendall-layer average antitonicity is only a sufficient
-  condition and can be too strong for arbitrary weak-Bruhat monotone payoffs;
-  the narrower active target is the prefix-event condition
-  `ReflKendallPrefixLayerAverageAnti` or its consecutive-layer form
-  `ReflKendallAdjacentPrefixLayerAverageAnti`.
-- In KR21 prefix-event peel-best recurrences, do not require each fixed
-  before-insert branch to satisfy Mallows dominance. That branchwise statement
-  is false in small cases, e.g. a worse first choice can increase a
-  `cut = 0` before-insert event. Sum over insertion positions first, using an
-  aggregate payoff such as `bestInSetPrefixCutTailInsertPositionValue`, then
-  split the proof into the geometric insertion-prefix comparison and the
-  remaining fixed-tail-payoff dominance obligation.
-- For KR21 arbitrary first-choice decompositions, do not assume the branch sums
-  are antitone in the first-choice rank; arbitrary nonconvex prefix events can
-  violate that monotonicity. Use the explicit branch-bracket layer instead:
-  `firstChoiceBranchPayoffSum`, `firstChoiceBranchBracket`,
-  `candidateRankBranchCross_nonneg_of_diag_pair`, and
-  `reflMallowsPayoffSum_cross_of_firstChoice_pair_brackets`. For arbitrary
-  prefix first-hit events, do not insist that every individual two-branch
-  bracket is nonnegative; that pairwise sufficient condition can be too strong.
-  Prefer the aggregate off-diagonal target
-  `candidateRankBranchCross_nonneg_of_diag_pair_sum` and its wrappers
-  `firstChoiceBranchPayoffSum_prefixCut`,
-  `firstChoiceBranchPayoffSum_prefixCut_diag_nonneg_of_tail`,
-  `firstChoiceBranchBracketSum`,
-  `reflMallowsPayoffSum_cross_of_firstChoice_pair_bracket_sum`, and
-  `reflMallowsBestInSetPrefixCutSum_cross_of_firstChoice_pair_bracket_sum`.
-  The wrapper
-  `reflMallowsBestInSetPrefixCutSum_cross_of_firstChoice_tail_pair_bracket_sum`
-  packages the diagonal terms from smaller tail prefix-cut dominance, leaving
-  the aggregate bracket sum as the main new arbitrary induction target. Use the
-  recursive interface `ReflMallowsBestInSetPrefixCutDominance`,
-  `ReflMallowsBestInSetPrefixCutFirstChoiceBracketSum`,
-  `ReflMallowsBestInSetPrefixCutDominance.succ`,
-  `ReflMallowsBestInSetPrefixCutDominance.zero`, and
-  `ReflMallowsBestInSetPrefixCutDominance.of_firstChoiceBracketSums`, then
-  bridge to expected utility with
-  `reflMallowsBestInSetPrefixSum_cross_of_firstChoiceBracketSums` and
-  `expectedBestInSet_le_of_mallows_firstChoiceBracketSums`. This keeps the
-  induction target arbitrary-size while allowing negative first-choice pair
-  brackets to cancel in the total recurrence, instead of adding more finite
-  candidate classifications.
-- For KR21 aggregate first-choice brackets, prefer the diagonal-plus-weighted
-  regrouping before trying more raw pair algebra. Use
-  `firstChoiceBranchBracketSum_eq_complementPower` to collapse the unordered
-  pair sum, then `firstChoiceBranchBracketSum_eq_diag_add_weighted` and
-  `firstChoiceBranchBracketSum_nonneg_of_diag_weighted` to split the proof into
-  smaller tail prefix-cut dominance plus the weighted first-choice target
-  `ReflMallowsBestInSetPrefixCutFirstChoiceWeighted`. The bridge
-  `ReflMallowsBestInSetPrefixCutFirstChoiceBracketSum.of_dominance_weighted`
-  and induction wrapper
-  `ReflMallowsBestInSetPrefixCutDominance.of_firstChoiceWeighted` are the
-  current narrowest arbitrary route; the full-remaining-set bracket case is
-  already closed by `firstChoiceBranchBracketSum_univ_cut_nonneg`, and the
-  corresponding full-remaining weighted target by
-  `firstChoiceBranchWeighted_univ_cut_nonneg`. Boundary weighted targets are
-  zero by `firstChoiceBranchWeighted_prefixCut_eq_zero_of_forall_remaining_lt`
-  and `firstChoiceBranchWeighted_prefixCut_eq_zero_of_forall_remaining_ge`.
-  For the remaining nonconvex weighted target, use
-  `candidateRankWeightedAverage_cross_eq_pair_sum` /
-  `firstChoiceBranchWeighted_eq_pair_sum` to expose aggregate cancellation over
-  first-choice pairs.
-- For the KR21 weighted first-choice recursion, remember the indexing
-  convention: `ReflMallowsBestInSetPrefixCutFirstChoiceWeighted 0` is already
-  the three-candidate first-choice universe (`Candidate 1`), not a two-candidate
-  problem. Close that base by classifying cuts `0`, `1`, `2`, and `>2`,
-  dispatching boundary/singleton/full cases with the existing zero/full
-  weighted lemmas, and proving the three nontrivial two-element remaining-set
-  branch patterns as small algebra facts (`Z01`, `Z10`, `1Z0`) before doing the
-  finite case split.
-- For KR21 weighted first-choice successor work, keep both equivalent
-  decompositions available. The pair-sum identity is best for membership-class
-  cancellation, while `candidateRankWeightedAverage_cross_eq_adjacent_gap_sum`
-  / `firstChoiceBranchWeighted_eq_adjacent_gap_sum` is best when adjacent branch
-  differences telescope. The adjacent-gap coefficients are the existing
-  nonnegative prefix-power crosses, so the hard part is only the signed branch
-  gap/cancellation structure. In this layer, "prefix cut" means the center rank
-  of `bestInSet`, not the position of that candidate in the sampled ranking.
-  Adjacent outside/outside first-choice branches can be made literally equal by
-  proving the corresponding deleted tail remaining sets and adjacent cuts are
-  equal. Keep the boundary normal form: outside/outside adjacent gaps are zero,
-  left-good and right-bad adjacent terms are nonnegative, and only
-  outside-before-good / bad-before-outside boundary orientations need aggregate
-  cancellation. For those hard orientations, first rewrite the term exactly to
-  a tail prefix sum minus the tail partition, respectively the negative tail
-  prefix sum (`firstChoiceBranchWeighted_adjacentGapTerm_eq_tail_sub_partition`
-  and `firstChoiceBranchWeighted_adjacentGapTerm_eq_neg_tail`), before looking
-  for the aggregate cancellation. Also expose
-  `reflMallowsBestInSetPrefixCutSum_eq_sum_bestInSetWeight` so prefix-cut
-  statements can be translated back to best-in-set fiber weights when useful.
-- For the latest KR21 arbitrary prefix-cut reduction, delete absent center
-  extremes before attacking same-size first-choice weights. The verified
-  deletion recurrences reduce the successor to remaining sets containing both
-  center endpoints and a nontrivial cut; package this as
-  `ReflMallowsBestInSetPrefixCutFirstChoiceWeightedExtremes` plus
-  `ReflMallowsBestInSetPrefixCutDominance.succ_of_extremeWeighted` and
-  `ReflMallowsBestInSetPrefixCutDominance.of_extremeWeighted`. The hard proof
-  should then focus on hole/block cancellation in the adjacent-boundary form,
-  not on finite candidate casework or pointwise monotonicity of branch values.
-- For KR21 arbitrary remaining-set Mallows dominance, keep the exact
-  best-in-set fiber MLR target separate from broader weak-Bruhat or prefix
-  dominance targets. Define an identity-center unnormalised fiber such as
-  `reflMallowsBestInSetWeight`, prove its center-relabeling bridge to
-  `MallowsSpec.bestInSetWeight`, and use the candidatewise weighted-average
-  bridge before attempting the stronger all-payoff adjacent stochastic
-  dominance theorem. The two-candidate base case and full-remaining-set case
-  reduce to first-choice weights; arbitrary nonconvex sets need the dedicated
-  fiber recurrence/MLR proof.
-- For KR21 arbitrary remaining sets, do not shortcut by assuming the Kendall
-  Mallows marginal on an arbitrary nonconsecutive subset is the same-q Mallows
-  law on that subset. Direct checks show the relative-order weights acquire
-  gap-dependent factors. The existing common-scale deletion formulas are valid
-  for absent center extremes (`0` or the last candidate), but arbitrary absent
-  candidates require an explicit tilted/deletion or weighted first-choice
-  argument.
-- For the two-candidate part of that KR21 fiber route, do not reprove Mallows
-  pairwise monotonicity from scratch. First prove that `bestInSetWeight {c,d} c`
-  and `bestInSetWeight {c,d} d` are exactly `pairCorrectWeight` and
-  `pairWrongWeight` for the center-ordered pair, then call the existing
-  `PairPositionReduction` / `pairWeight_cross_pos_of_pairPositionReduction`
-  machinery. This gives a clean `card <= 2` fiber-MLR milestone while leaving
-  only arbitrary-size nonconvex remaining sets open. In a three-candidate
-  universe, combine this pair case with the full-set first-choice cross theorem
-  to close the whole fiber-MLR target, since every nonempty remaining set has
-  cardinality one, two, or all three candidates.
-- For KR21 center-convex remaining sets, the stronger fiber-MLR theorem can be
-  proved by deleting absent extremes, not by opening ranking sums. Prove exact
-  common-scale deletion formulas for `reflMallowsBestInSetWeight` when `0` or
-  the last center candidate is not remaining; lift a single tail/initial cross
-  inequality through those common positive scales; then induct until the
-  interval is the full set and use first-choice fiber MLR.
-- For KR21 co-singleton remaining sets, do not develop a new best-in-set
-  recurrence. Rewrite `bestInSetWeight (univ \ {removed})` to the existing
-  `bestAfterRemovalWeight` fiber using `bestInSet_univ_sdiff_singleton`, then
-  call the rank-factorized `candidateRankBestAfterRemovalWeight` MLR theorem.
-  Preserve the theorem's geometric side condition (`qLess < 1`) in
-  paper-facing wrappers unless a separate proof removes it.
-- In a four-candidate KR21 wrapper, classify a nonempty remaining finset by
-  cardinality: `card <= 2` uses pairwise dominance, `card = 4` is the full
-  center-convex case, and `card = 3` is a co-singleton by taking the singleton
-  complement `univ \ remaining`. This can close the full finite universe from
-  existing local routes without proving arbitrary-size dominance.
+- For nonconvex remaining-set Mallows dominance, keep the exact best-in-set
+  fiber target separate from broader weak-Bruhat or prefix-dominance targets.
+  Do not assume the Mallows marginal on an arbitrary nonconsecutive subset is a
+  same-parameter Mallows law on that subset; gap-dependent factors can appear.
+  Start with the two-candidate and full-remaining-set cases, then decide
+  whether center-convex, co-singleton, or explicit deletion/tilting recurrences
+  are the right reusable layer for the paper.
+- For arbitrary first-choice or prefix-cut decompositions, avoid pointwise
+  monotonicity assumptions on every branch. Sum over the finite insertion or
+  first-choice branches first, expose aggregate brackets or pair-sums, and use
+  diagonal-plus-weighted regrouping when individual two-branch brackets can be
+  negative but the total recurrence should cancel.
 - When using loose Kendall-layer index bounds, prove and reuse no-gap support
   lemmas before chaining adjacent layer inequalities: if a higher identity
   Kendall layer is nonempty, every lower layer is nonempty. This lets adjacent
@@ -340,9 +330,12 @@ division, rankings, Mallows models, and social-choice/ranking papers.
 
 ## Social Choice Probability Bridges
 
-- When only a ranking law changes, rewrite payoff differences as candidatewise
-  probability deltas times conditional continuation values. This often turns a
-  game/probability theorem into the scalar inequality written in the paper.
+- When only a ranking law changes, first try
+  `Ranking.Payoff.secondMoverFirstLawSwitchGain_eq_expected_collision_loss_diff`
+  or `expectedSecondMoverIndependent_le_of_collisionProb_le_and_gap_nonneg`.
+  These rewrite second-mover payoff differences as candidatewise collision
+  probability deltas times value gaps and often turn a game/probability theorem
+  into the scalar inequality written in the paper.
 - For finite conditional utilities with exactly two possible continuation
   values, use a generic two-outcome expectation lemma
   (`E[f] = Pr[event] * x + (1 - Pr[event]) * y`) before specializing notation.
