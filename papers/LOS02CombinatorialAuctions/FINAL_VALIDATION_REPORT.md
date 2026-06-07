@@ -2,25 +2,13 @@
 
 ## 1. Human Verdict
 
-- Lean formalization status: partially formalized
-- Human dashboard review status: 0/30 rows reviewed; 0 stale; 0 mismatches.
-- Human summary: Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.
-
 - Lean formalization status: partially formalized.
-- Human dashboard review status: 30 source-facing rows from
-  `status.json`/`PaperInterface.lean`; no human dashboard review has been
-  recorded yet.
+- Human dashboard review status: 0/30 rows reviewed; 0 stale; 0 mismatches.
+- LLM statement-translation audit: 17/30 LLM-as-judge statement rows match; 13 are uncertain; 0 stale, missing, or mismatch rows.
 - Paper correctness verdict: no auction-theoretic error found.
-- Qualitative proof verdict: the auction, greedy, critical-price, and
-  single-minded truthfulness arguments are formalized in the paper-facing
-  model. The final native complexity claims are intentionally stopped at a
-  reusable computational-complexity boundary.
-- Lean footprint: 7,288 paper-local Lean lines across 3 files;
-  `PaperInterface.lean` has 174 lines. The previous broad compatibility
-  surface is now `ProofInterface.lean`.
-
-The previous detailed implementation and command ledger has been moved to
-`POST_FORMALIZATION_AUDIT.md`.
+- Qualitative proof verdict: The auction, greedy, critical-price, and single-minded truthfulness arguments are formalized in the paper-facing model. The final native complexity claims are intentionally stopped at a reusable computational-complexity boundary.
+- Lean footprint: 7,288 paper-local Lean lines across 3 files; `PaperInterface.lean` has 174 lines and 30 review rows.
+- Human summary: Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.
 
 ## 2. Source and Scope
 
@@ -28,15 +16,97 @@ The previous detailed implementation and command ledger has been moved to
 - Authors: Daniel Lehmann, Liadan Ita O'Callaghan, and Yoav Shoham
 - Source version: Journal of the ACM 49(5), 2002
 - Lean folder: `LOS02CombinatorialAuctions/`
-- Human-facing theorem file:
-  `LOS02CombinatorialAuctions/PaperInterface.lean`
-- DAG artifact: `LOS02CombinatorialAuctions/DependencyDAG.tex`
+- Human-facing theorem file: `LOS02CombinatorialAuctions/PaperInterface.lean`
+- DAG artifacts: `LOS02CombinatorialAuctions/DependencyDAG.tex`, `LOS02CombinatorialAuctions/DependencyDAG.pdf`
+- Supporting audit ledger: `LOS02CombinatorialAuctions/POST_FORMALIZATION_AUDIT.md`
 
 ## 3. What Has Been Proven
 
-See the verdict and named-statement sections in this report.
+The formalization closes the finite combinatorial-auction core used by the paper: utility and truthfulness predicates, generalized Vickrey auction truthfulness and nonnegative truthful utility, the single-minded welfare/set-packing encodings, the greedy square-root approximation, the critical-value lemmas, and the average-greedy mechanism truthfulness theorem.
 
-## 4. Paper Definitions Checked
+The theorem endpoints involving native computational complexity are intentionally partial. Lean exposes exact and approximation-preserving solver consequences through abstract class and external-consequence interfaces, but it does not yet contain a reusable machine-level theory of polynomial-time reductions, NP-hardness/inapproximability, ZPP, or the cited clique/set-packing hardness facts.
+
+## 4. Additional Assumptions Beyond Paper
+
+- The final Theorem 6.1 complexity conclusions assume external Karp/Hastad-style
+  hardness facts and polynomial-time preservation facts.
+- Randomized and deterministic complexity classes are represented by abstract
+  class-model fields rather than native machine-level semantics.
+
+These assumptions are the reason the paper remains partially formalized.
+
+## 5. Proof-Strategy Deviations
+
+- The source complexity claims are represented by abstract consequence
+  interfaces rather than a native computational model.
+- The auction-mechanism portions otherwise follow the paper's finite
+  combinatorial-auction and single-minded-bidder proof structure.
+
+## 6. Proof Tricks Worth Reusing
+
+None separately recorded in the existing report.
+
+## 7. Library Lift Pass
+
+None separately recorded in the existing report.
+
+## 8. DAG Audit
+
+No separate DAG audit note is recorded in the existing report.
+
+## 9. Conditional Results and Remaining Gaps
+
+No paper-facing auction, greedy approximation, critical-price, or
+single-minded-truthfulness endpoint is left open in the current model. The
+remaining gap is reusable library infrastructure: polynomial-time many-one
+reductions, NP-hardness/inapproximability facts for the cited clique/set-packing
+route, randomized classes such as ZPP, and the machine-level meaning of
+polynomial-time algorithms.
+
+## 10. Suspected Paper Errors or Inconsistencies
+
+- None found.
+
+## 11. Validation Checks
+
+Recent checks built the LOS02 paper target, the reusable complexity-class
+module, the full `EconCSLib` target, and the dependency DAG. The repository
+audit records the LOS02 dashboard surface as informational; unrelated warnings
+remain elsewhere in the private repository.
+
+### Statement Translation Audit
+
+Audit date: 2026-06-06.
+Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
+
+Summary: 30 rows; 17 match, 13 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
+
+Flagged rows:
+- `utility`: uncertain. The draft is mostly a Lean function signature and does not state the utility formula in paper language.
+- `truthfulOn`: uncertain. The draft is mostly a Lean predicate signature and does not state the truthfulness condition in paper language.
+- `generalizedVickreyAuction`: uncertain. The draft is mostly a Lean function signature and does not state the generalized Vickrey allocation/payment rule in paper language.
+- `singleMindedAcceptedMechanism`: uncertain. The draft is mostly a Lean function signature and does not state the accepted-bid mechanism in paper language.
+- `singleMindedTruthfulOn`: uncertain. The draft is mostly a Lean predicate signature and does not state the single-minded truthfulness condition in paper language.
+- `nonnegativeNonemptySingleMindedProfile`: uncertain. The draft is mostly a Lean predicate signature and does not spell out the nonnegative/nonempty profile condition.
+- `weightedSetPackingValue`: uncertain. The draft is mostly a Lean function signature and does not state the weighted set-packing objective formula.
+- `setPackingSingleMindedBids`: uncertain. The draft is mostly a Lean function signature and does not state the set-packing construction from bids.
+- `averageAmountPerGood`: uncertain. The draft is mostly a Lean function signature and does not state the average-demand quantity in paper language.
+- `averageOrderOf`: uncertain. The draft is mostly a Lean function signature and does not state the average ordering rule in paper language.
+- `greedyAcceptedFromOrder`: uncertain. The draft is mostly a Lean function signature and does not state the greedy acceptance rule in paper language.
+- `averageGreedyAcceptedSet`: uncertain. The draft is mostly a Lean function signature and does not state the average-greedy accepted set in paper language.
+- `averageGreedyPayment`: uncertain. The draft is mostly a Lean function signature and does not state the payment formula in paper language.
+
+## 12. Final Verdict
+
+LOS02 is suitable as a public partial formalization. The EconCS auction and
+truthfulness content is formalized in the current model, while the final
+machine-level complexity conclusions remain conditional on reusable complexity
+infrastructure that is not yet in the library.
+
+- Completion status: partially formalized.
+- Summary: Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.
+
+## 13. Paper Definitions Checked
 
 <!-- lean-derived-definitions:start -->
 ### Lean-Derived Dashboard Definitions
@@ -75,7 +145,7 @@ See the verdict and named-statement sections in this report.
 | abbrev theorem10_2_averageGreedy_truthful | `theorem10_2_averageGreedy_truthful` | - Theorem 10.2 average-order greedy mechanism truthfulness. |
 <!-- lean-derived-definitions:end -->
 
-## 5. Named Theorem Statements Checked
+## 14. Named Theorem Statements Checked
 
 ### Theorem-by-Theorem Validation
 
@@ -95,11 +165,7 @@ See the verdict and named-statement sections in this report.
 | Definition 10.1, greedy payment scheme | formalized | exact finite model | Represents denied/no-next/next payment cases and accepted-bid criticality. |
 | Theorem 10.2, average-order greedy mechanism truthfulness | formalized | exact source domain | Concrete allocation and payment rule are truthful on nonempty nonnegative single-minded profiles. |
 
-## 6. Paper-Facing Statement Validator Ledger
-
-Generated from dashboard status export:
-
-`python3 scripts/review_dashboard.py --paper LOS02CombinatorialAuctions --export-format validators-md`
+## 15. Paper-Facing Statement Validator Ledger
 
 | Paper-facing statement | Lean declaration | Validators | Validator comments |
 | --- | --- | --- | --- |
@@ -135,83 +201,3 @@ Generated from dashboard status export:
 | abbrev weightedSetPackingValue | `weightedSetPackingValue` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:45Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:45Z): The draft is mostly a Lean function signature and does not state the weighted set-packing objective formula. |
 
 Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
-
-## 7. Additional Assumptions Beyond Paper
-
-- The final Theorem 6.1 complexity conclusions assume external Karp/Hastad-style
-  hardness facts and polynomial-time preservation facts.
-- Randomized and deterministic complexity classes are represented by abstract
-  class-model fields rather than native machine-level semantics.
-
-These assumptions are the reason the paper remains partially formalized.
-
-## 8. Proof-Strategy Deviations
-
-- The source complexity claims are represented by abstract consequence
-  interfaces rather than a native computational model.
-- The auction-mechanism portions otherwise follow the paper's finite
-  combinatorial-auction and single-minded-bidder proof structure.
-
-## 9. Proof Tricks Worth Reusing
-
-None separately recorded in the existing report.
-
-## 10. Library Lift Pass
-
-None separately recorded in the existing report.
-
-## 11. DAG Audit
-
-No separate DAG audit note is recorded in the existing report.
-
-## 12. Conditional Results and Remaining Gaps
-
-No paper-facing auction, greedy approximation, critical-price, or
-single-minded-truthfulness endpoint is left open in the current model. The
-remaining gap is reusable library infrastructure: polynomial-time many-one
-reductions, NP-hardness/inapproximability facts for the cited clique/set-packing
-route, randomized classes such as ZPP, and the machine-level meaning of
-polynomial-time algorithms.
-
-## 13. Suspected Paper Errors or Inconsistencies
-
-- None found.
-
-## 14. Validation Checks
-
-Recent checks built the LOS02 paper target, the reusable complexity-class
-module, the full `EconCSLib` target, and the dependency DAG. The repository
-audit records the LOS02 dashboard surface as informational; unrelated warnings
-remain elsewhere in the private repository.
-
-### Statement Translation Audit
-
-Audit date: 2026-06-06.
-Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
-
-Summary: 30 rows; 17 match, 13 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
-
-Flagged rows:
-- `utility`: uncertain. The draft is mostly a Lean function signature and does not state the utility formula in paper language.
-- `truthfulOn`: uncertain. The draft is mostly a Lean predicate signature and does not state the truthfulness condition in paper language.
-- `generalizedVickreyAuction`: uncertain. The draft is mostly a Lean function signature and does not state the generalized Vickrey allocation/payment rule in paper language.
-- `singleMindedAcceptedMechanism`: uncertain. The draft is mostly a Lean function signature and does not state the accepted-bid mechanism in paper language.
-- `singleMindedTruthfulOn`: uncertain. The draft is mostly a Lean predicate signature and does not state the single-minded truthfulness condition in paper language.
-- `nonnegativeNonemptySingleMindedProfile`: uncertain. The draft is mostly a Lean predicate signature and does not spell out the nonnegative/nonempty profile condition.
-- `weightedSetPackingValue`: uncertain. The draft is mostly a Lean function signature and does not state the weighted set-packing objective formula.
-- `setPackingSingleMindedBids`: uncertain. The draft is mostly a Lean function signature and does not state the set-packing construction from bids.
-- `averageAmountPerGood`: uncertain. The draft is mostly a Lean function signature and does not state the average-demand quantity in paper language.
-- `averageOrderOf`: uncertain. The draft is mostly a Lean function signature and does not state the average ordering rule in paper language.
-- `greedyAcceptedFromOrder`: uncertain. The draft is mostly a Lean function signature and does not state the greedy acceptance rule in paper language.
-- `averageGreedyAcceptedSet`: uncertain. The draft is mostly a Lean function signature and does not state the average-greedy accepted set in paper language.
-- `averageGreedyPayment`: uncertain. The draft is mostly a Lean function signature and does not state the payment formula in paper language.
-
-## 15. Final Verdict
-
-LOS02 is suitable as a public partial formalization. The EconCS auction and
-truthfulness content is formalized in the current model, while the final
-machine-level complexity conclusions remain conditional on reusable complexity
-infrastructure that is not yet in the library.
-
-- Completion status: partially formalized.
-- Summary: Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.

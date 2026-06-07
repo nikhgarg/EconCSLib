@@ -2,42 +2,111 @@
 
 ## 1. Human Verdict
 
-- Lean formalization status: partially formalized
-- Human dashboard review status: 0/33 rows reviewed; 0 stale; 0 mismatches.
-- Human summary: Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.
-
 - Lean formalization status: partially formalized.
-- Human dashboard review status: 33 source-facing rows from
-  `status.json`/`PaperInterface.lean`; no human dashboard review has been
-  recorded yet.
-- Paper correctness verdict: no fatal error found. Formalization exposed several
-  implicit modeling choices and one source-prose typo in the Lemma 2.4
-  partition argument.
-- Qualitative proof verdict: Sections 2 and 4 follow the paper-level proof
-  structure. Section 3 is intentionally stopped at a reusable complexity
-  boundary.
-- Lean footprint: 80,220 paper-local Lean lines across 23 files;
-  `PaperInterface.lean` has 171 lines. The previous broad compatibility
-  surface is now `ProofInterface.lean`.
-
-The previous long implementation ledger has been moved to
-`POST_FORMALIZATION_AUDIT.md`.
+- Human dashboard review status: 0/33 rows reviewed; 0 stale; 0 mismatches.
+- LLM statement-translation audit: 29/33 LLM-as-judge statement rows match; 4 are uncertain; 0 stale, missing, or mismatch rows.
+- Paper correctness verdict: no fatal error found. Formalization exposed several implicit modeling choices and one source-prose typo in the Lemma 2.4 partition argument.
+- Qualitative proof verdict: Sections 2 and 4 follow the paper-level proof structure. Section 3 is intentionally stopped at a reusable complexity boundary.
+- Lean footprint: 80,220 paper-local Lean lines across 23 files; `PaperInterface.lean` has 171 lines and 33 review rows.
+- Human summary: Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.
 
 ## 2. Source and Scope
 
 - Paper: *On Approximately Fair Allocations of Indivisible Goods*
-- Authors: Richard J. Lipton, Evangelos Markakis, Elchanan Mossel, and Amin
-  Saberi
+- Authors: Richard J. Lipton, Evangelos Markakis, Elchanan Mossel, and Amin Saberi
 - Source version: EC 2004 paper, ACM DOI 10.1145/988772.988792
 - Lean folder: `LMMS04FairDivision/`
 - Human-facing theorem file: `LMMS04FairDivision/PaperInterface.lean`
-- DAG artifact: `LMMS04FairDivision/DependencyDAG.tex`
+- DAG artifacts: `LMMS04FairDivision/DependencyDAG.tex`, `LMMS04FairDivision/DependencyDAG.pdf`
+- Supporting audit ledger: `LMMS04FairDivision/POST_FORMALIZATION_AUDIT.md`
 
 ## 3. What Has Been Proven
 
-See the verdict and named-statement sections in this report.
+The formalization closes the Section 2 finite-allocation envy interface, the envy-cycle reduction, the bounded-envy allocation theorem, and the real-interval/atom-bound route used for the measure-valued allocation theorem. It also closes the Section 4 finite truthfulness results: the no-truthful-envy-free/minimum-envy counterexample route and the uniform randomized mechanism with its explicit probability bound.
 
-## 4. Paper Definitions Checked
+Section 3 has substantial formal content but remains partial at the runtime boundary. The Lean development includes adaptive-query lower-bound wrappers, the Graham-scheduling consequence used by the paper, rounded type/value-pair search infrastructure, bounded-optimal allocation certificates, and ratio-transfer lemmas. The final PTAS/FPTAS theorem is not closed because the reusable fixed-dimension integer-program runtime theorem is not yet in the library.
+
+## 4. Additional Assumptions Beyond Paper
+
+- Theorem 3.3's final PTAS/FPTAS runtime conclusion is conditional on a
+  reusable fixed-dimension integer-program runtime theorem. In Lean this is the
+  `EconCSLib.Complexity.ExternalSolverConsequence` boundary.
+- Theorem 3.2 uses the paper's citation to Graham's scheduling theorem as an
+  external certificate.
+- Theorem 2.3 is stated through an explicit real-supported interval model with
+  finite measures and atom bounds.
+
+## 5. Proof-Strategy Deviations
+
+- Theorem 4.1 is proved with a smaller finite counterexample than the source
+  exposition. This is sufficient for the impossibility theorem.
+- Claim 3.4 required a more explicit finite-descent proof than the prose
+  presentation. The formal proof separates high-source moves from low-only
+  tie-breaking moves.
+- Theorem 4.2 is recorded as the finite inequality used by the proof rather
+  than a separate asymptotic Big-O wrapper.
+
+## 6. Proof Tricks Worth Reusing
+
+None separately recorded in the existing report.
+
+## 7. Library Lift Pass
+
+None separately recorded in the existing report.
+
+## 8. DAG Audit
+
+No separate DAG audit note is recorded in the existing report.
+
+## 9. Conditional Results and Remaining Gaps
+
+The remaining mathematical gap is not another fair-division lemma. It is the
+general computational-complexity theorem saying that the fixed-dimension IP
+instances generated by the formalized rounded search can be solved within the
+runtime needed for the paper's PTAS/FPTAS conclusion. The preferred next step
+is to discharge `ExternalSolverConsequence` through reusable complexity and
+optimization infrastructure, then expose the final Theorem 3.3 runtime theorem.
+
+## 10. Suspected Paper Errors or Inconsistencies
+
+- The Lemma 2.4 partition discussion contains a source-prose typo around the
+  "minimum possible value" wording. The Lean proof uses the corrected
+  first-crossing/maximal-cut route.
+- No fatal correctness issue was found.
+
+## 11. Validation Checks
+
+Recent checks built the LMMS paper module, `PaperInterface.lean`, the Section 3
+support modules, the relevant fair-division/probability support, the dependency
+DAG, and the review dashboard. The dashboard reads the 33 source-facing rows
+from `status.json`; it currently reports no mismatched or stale rows, but no
+human review entries have been saved.
+
+### Statement Translation Audit
+
+Audit date: 2026-06-06.
+Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
+
+Summary: 33 rows; 29 match, 4 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: passes (33 rows; digest 52d9fa7cfe05).
+
+Flagged rows:
+- `directMechanism`: uncertain. The current draft reduces the definition to a type-level constructor and does not spell out the no-transfer direct-mechanism content from the paper.
+- `randomizedDirectMechanism`: uncertain. The current draft reduces the definition to a type-level constructor and does not spell out the randomized direct-mechanism content from the paper.
+- `theorem4_1_source_goods`: uncertain. The draft only names the source goods object and omits the finite two-player/eight-egg content needed for context-free comparison.
+- `theorem4_1_true_report`: uncertain. The draft only names the truthful source report object and omits the concrete report content needed for context-free comparison.
+
+## 12. Final Verdict
+
+LMMS04 is suitable as a public partial formalization. Sections 2 and 4 are
+closed in the current paper-facing model, and Section 3 exposes substantial
+verified fair-division and rounded-search infrastructure. The status remains
+partial because the final PTAS/FPTAS runtime claim depends on a reusable
+fixed-dimension IP complexity theorem that is not yet present in the library.
+
+- Completion status: partially formalized.
+- Summary: Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.
+
+## 13. Paper Definitions Checked
 
 <!-- lean-derived-definitions:start -->
 ### Lean-Derived Dashboard Definitions
@@ -79,7 +148,7 @@ See the verdict and named-statement sections in this report.
 | abbrev theorem4_2_uniform_random_max_envy_probability_bound | `theorem4_2_uniform_random_max_envy_probability_bound` | - Theorem 4.2 uniform-random maximum-envy probability bound. |
 <!-- lean-derived-definitions:end -->
 
-## 5. Named Theorem Statements Checked
+## 14. Named Theorem Statements Checked
 
 ### Theorem-by-Theorem Validation
 
@@ -97,11 +166,7 @@ See the verdict and named-statement sections in this report.
 | Theorem 4.1, no truthful minimum-envy mechanism | formalized | proof-strengthening | Lean uses a two-player/eight-egg finite counterexample with the same manipulation structure as the paper's larger example. |
 | Theorem 4.2, randomized truthful allocation bound | formalized | finite explicit bound | Lean proves the independent uniform assignment truthfulness and the explicit Chebyshev/union-bound probability inequality. |
 
-## 6. Paper-Facing Statement Validator Ledger
-
-Generated from dashboard status export:
-
-`python3 scripts/review_dashboard.py --paper LMMS04FairDivision --export-format validators-md`
+## 15. Paper-Facing Statement Validator Ledger
 
 | Paper-facing statement | Lean declaration | Validators | Validator comments |
 | --- | --- | --- | --- |
@@ -140,83 +205,3 @@ Generated from dashboard status export:
 | def truthful | `truthful` | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:43Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
 
 Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
-
-## 7. Additional Assumptions Beyond Paper
-
-- Theorem 3.3's final PTAS/FPTAS runtime conclusion is conditional on a
-  reusable fixed-dimension integer-program runtime theorem. In Lean this is the
-  `EconCSLib.Complexity.ExternalSolverConsequence` boundary.
-- Theorem 3.2 uses the paper's citation to Graham's scheduling theorem as an
-  external certificate.
-- Theorem 2.3 is stated through an explicit real-supported interval model with
-  finite measures and atom bounds.
-
-## 8. Proof-Strategy Deviations
-
-- Theorem 4.1 is proved with a smaller finite counterexample than the source
-  exposition. This is sufficient for the impossibility theorem.
-- Claim 3.4 required a more explicit finite-descent proof than the prose
-  presentation. The formal proof separates high-source moves from low-only
-  tie-breaking moves.
-- Theorem 4.2 is recorded as the finite inequality used by the proof rather
-  than a separate asymptotic Big-O wrapper.
-
-## 9. Proof Tricks Worth Reusing
-
-None separately recorded in the existing report.
-
-## 10. Library Lift Pass
-
-None separately recorded in the existing report.
-
-## 11. DAG Audit
-
-No separate DAG audit note is recorded in the existing report.
-
-## 12. Conditional Results and Remaining Gaps
-
-The remaining mathematical gap is not another fair-division lemma. It is the
-general computational-complexity theorem saying that the fixed-dimension IP
-instances generated by the formalized rounded search can be solved within the
-runtime needed for the paper's PTAS/FPTAS conclusion. The preferred next step
-is to discharge `ExternalSolverConsequence` through reusable complexity and
-optimization infrastructure, then expose the final Theorem 3.3 runtime theorem.
-
-## 13. Suspected Paper Errors or Inconsistencies
-
-- The Lemma 2.4 partition discussion contains a source-prose typo around the
-  "minimum possible value" wording. The Lean proof uses the corrected
-  first-crossing/maximal-cut route.
-- No fatal correctness issue was found.
-
-## 14. Validation Checks
-
-Recent checks built the LMMS paper module, `PaperInterface.lean`, the Section 3
-support modules, the relevant fair-division/probability support, the dependency
-DAG, and the review dashboard. The dashboard reads the 33 source-facing rows
-from `status.json`; it currently reports no mismatched or stale rows, but no
-human review entries have been saved.
-
-### Statement Translation Audit
-
-Audit date: 2026-06-06.
-Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
-
-Summary: 33 rows; 29 match, 4 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: passes (33 rows; digest 52d9fa7cfe05).
-
-Flagged rows:
-- `directMechanism`: uncertain. The current draft reduces the definition to a type-level constructor and does not spell out the no-transfer direct-mechanism content from the paper.
-- `randomizedDirectMechanism`: uncertain. The current draft reduces the definition to a type-level constructor and does not spell out the randomized direct-mechanism content from the paper.
-- `theorem4_1_source_goods`: uncertain. The draft only names the source goods object and omits the finite two-player/eight-egg content needed for context-free comparison.
-- `theorem4_1_true_report`: uncertain. The draft only names the truthful source report object and omits the concrete report content needed for context-free comparison.
-
-## 15. Final Verdict
-
-LMMS04 is suitable as a public partial formalization. Sections 2 and 4 are
-closed in the current paper-facing model, and Section 3 exposes substantial
-verified fair-division and rounded-search infrastructure. The status remains
-partial because the final PTAS/FPTAS runtime claim depends on a reusable
-fixed-dimension IP complexity theorem that is not yet present in the library.
-
-- Completion status: partially formalized.
-- Summary: Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.
