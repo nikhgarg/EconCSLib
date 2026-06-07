@@ -92,9 +92,9 @@ LIBRARY_COMPONENTS = [
             "EconCSLib/Foundations/Graph",
         ],
         "examples": (
-            "Finite sums and rankings, sign and rounding lemmas, threshold "
-            "and interval characterizations, asymptotic/exponential bounds, "
-            "and directed-cycle extraction."
+            "Finite-sum rewrites, order/rank lemmas, threshold and interval "
+            "characterizations, asymptotic/exponential estimates, and cycle "
+            "extraction in finite directed graphs."
         ),
         "papers": [
             "DSWG24DiscretizationBias",
@@ -107,10 +107,10 @@ LIBRARY_COMPONENTS = [
         "title": "Foundations: probability and stochastic processes",
         "paths": ["EconCSLib/Foundations/Probability"],
         "examples": (
-            "Finite-support expectations and conditioning, kernels and "
-            "distributions, atoms and variance, Gaussian/exponential facts, "
-            "stochastic dominance, Markov chains, MDPs, CTMCs, and renewal "
-            "reward."
+            "Finite distributions, conditional expectations, kernels, atom "
+            "and variance lemmas, Gaussian and exponential calculations, "
+            "stochastic dominance, Markov chains, MDPs, CTMCs, and "
+            "renewal-reward identities."
         ),
         "papers": [
             "DSWG24DiscretizationBias",
@@ -126,9 +126,10 @@ LIBRARY_COMPONENTS = [
         "title": "Foundations: optimization and certificates",
         "paths": ["EconCSLib/Foundations/Optimization"],
         "examples": (
-            "Argmax and endpoint principles, finite-search and certificate "
-            "patterns, approximation statements, linear programs, binary "
-            "choice, move graphs, and choice equilibria."
+            "Argmax and endpoint principles, finite-search certificates, "
+            "approximation guarantees, linear-program certificates, "
+            "binary-choice optimality, move-graph descent, and "
+            "choice-equilibrium existence."
         ),
         "papers": [
             "DSWG24DiscretizationBias",
@@ -145,9 +146,10 @@ LIBRARY_COMPONENTS = [
             "EconCSLib/Learning/Bandits",
         ],
         "examples": (
-            "Binary and ordinal rating-model definitions, posterior means, "
-            "bias/variance decompositions, monotonicity/correction lemmas, "
-            "and minimal bandit-regret interfaces."
+            "Binary and ordinal signal models, posterior-mean ratings, "
+            "bias/variance decompositions, prior-weighted updates, "
+            "monotonicity/correction lemmas, and minimal bandit-regret "
+            "interfaces."
         ),
         "papers": [
             "MBJG25ProducerFairness",
@@ -158,9 +160,9 @@ LIBRARY_COMPONENTS = [
         "title": "Matching markets",
         "paths": ["EconCSLib/Markets/Matching"],
         "examples": (
-            "Agents and preferences, matching functions, blocking pairs and "
-            "stability, deferred acceptance, incentives, and many-to-one "
-            "admissions."
+            "Preference profiles, blocking pairs and stable matchings, "
+            "deferred-acceptance invariants, proposer incentives, and "
+            "many-to-one admissions models."
         ),
         "papers": ["GS62CollegeAdmissions", "Roth82StableMatching"],
     },
@@ -168,9 +170,9 @@ LIBRARY_COMPONENTS = [
         "title": "Auctions and mechanisms",
         "paths": ["EconCSLib/MechanismDesign/Auctions"],
         "examples": (
-            "Bids, allocations and payments, truthfulness, benchmarks and "
-            "competitiveness, position auctions, and combinatorial "
-            "set-packing mechanisms."
+            "Allocation and payment rules, dominant-strategy truthfulness, "
+            "benchmark-competitive digital-goods auctions, VCG-style welfare "
+            "maximization, and single-minded set-packing mechanisms."
         ),
         "papers": ["GHW01DigitalGoods", "LOS02CombinatorialAuctions"],
     },
@@ -178,9 +180,9 @@ LIBRARY_COMPONENTS = [
         "title": "Online algorithms and regret",
         "paths": ["EconCSLib/Algorithms/Online"],
         "examples": (
-            "Online allocation and matching states, primal-dual accounting, "
-            "competitive-ratio and regret interfaces, and learning-platform "
-            "abstractions."
+            "Online matching/allocation state machines, primal-dual "
+            "accounting, competitive-ratio certificates, regret interfaces, "
+            "and platform-learning abstractions."
         ),
         "papers": ["MSVV07AdWords", "MBJG25ProducerFairness"],
     },
@@ -188,9 +190,9 @@ LIBRARY_COMPONENTS = [
         "title": "Complexity abstractions",
         "paths": ["EconCSLib/Algorithms/Complexity"],
         "examples": (
-            "Decision and search classes, reductions, randomized and "
-            "expectation consequences, Yao-style minimax interfaces, and "
-            "external solver assumptions."
+            "Decision/search problem interfaces, reductions, NP/ZPP-style "
+            "class consequences, Yao-style minimax wrappers, and explicit "
+            "external-solver assumptions."
         ),
         "papers": [
             "LOS02CombinatorialAuctions",
@@ -202,8 +204,9 @@ LIBRARY_COMPONENTS = [
         "title": "Applications: recommender systems",
         "paths": ["EconCSLib/Applications/RecommenderSystems"],
         "examples": (
-            "Policies and allocations, classwise exposure and fairness "
-            "constraints, top-k surfaces, and policy-averaging lemmas."
+            "Exposure and allocation policies, classwise fairness "
+            "constraints, top-k recommendation surfaces, policy averaging, "
+            "and accuracy/diversity trade-off statements."
         ),
         "papers": ["GCG24UserItemFairness"],
     },
@@ -211,9 +214,10 @@ LIBRARY_COMPONENTS = [
         "title": "Social choice, rankings, and fair division",
         "paths": ["EconCSLib/SocialChoice"],
         "examples": (
-            "Rankings and pairwise orders, Kendall distance, Mallows-style "
-            "sequential ranking models, score/payoff interfaces, envy "
-            "graphs, and bounded-envy guarantees."
+            "Ranking profiles, Kendall distance and Mallows-style sequential "
+            "ranking models, score/payoff interfaces, envy graphs, "
+            "bounded-envy allocations, and indivisible-goods fairness "
+            "statements."
         ),
         "papers": ["LMMS04FairDivision", "GGSG19TopThree"],
     },

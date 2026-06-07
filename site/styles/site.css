@@ -212,26 +212,42 @@ a:focus-visible {
 
 .status-table {
   width: 100%;
-  min-width: 1080px;
+  min-width: 0;
   border-collapse: collapse;
   font-size: 0.92rem;
 }
 
 .library-table {
-  min-width: 900px;
+  table-layout: fixed;
+}
+
+.library-table th:nth-child(1),
+.library-table td:nth-child(1) {
+  width: 24%;
+}
+
+.library-table th:nth-child(2),
+.library-table td:nth-child(2) {
+  width: 62%;
+  overflow-wrap: anywhere;
+}
+
+.library-table th:nth-child(3),
+.library-table td:nth-child(3) {
+  width: 14%;
+  white-space: nowrap;
 }
 
 .paper-table {
-  min-width: 1120px;
   table-layout: fixed;
 }
 
 .paper-table .paper-col {
-  width: 30%;
+  width: 33%;
 }
 
 .paper-table .status-col {
-  width: 11%;
+  width: 10%;
 }
 
 .paper-table .loc-col {
@@ -239,15 +255,15 @@ a:focus-visible {
 }
 
 .paper-table .note-col {
-  width: 34%;
+  width: 27%;
 }
 
 .paper-table .human-col {
-  width: 8%;
+  width: 9%;
 }
 
 .paper-table .judge-col {
-  width: 9%;
+  width: 13%;
 }
 
 .status-table th,
@@ -286,13 +302,13 @@ a:focus-visible {
   font-style: italic;
 }
 
-.paper-table td:nth-child(2),
 .paper-table td:nth-child(3) {
   white-space: nowrap;
 }
 
 .paper-table th:nth-child(5),
 .paper-table th:nth-child(6),
+.paper-table td:nth-child(4),
 .paper-table td:nth-child(5),
 .paper-table td:nth-child(6) {
   font-size: 0.84rem;
