@@ -9,6 +9,11 @@ import json
 from pathlib import Path
 from typing import Any
 
+try:
+    import review_dashboard
+except Exception:  # pragma: no cover - status sync should still work without dashboard helpers.
+    review_dashboard = None  # type: ignore[assignment]
+
 
 ROOT = Path(__file__).resolve().parents[1]
 PAPERS = ROOT / "papers"
@@ -44,9 +49,9 @@ STATUS_GROUPS = {
 PUBLICATION_OVERRIDES = {
     "DSWG24DiscretizationBias": ("PNAS Nexus, 2025", 2025),
     "GCG24UserItemFairness": ("NeurIPS, 2024", 2024),
+    "GGSG19TopThree": ("HCOMP, 2019", 2019),
     "GHW01DigitalGoods": ("SODA, 2001", 2001),
     "GJ18InformativeRatingSystems": ("Manufacturing & Service Operations Management 23(3), 2020", 2020),
-    "GGSG19TopThree": ("HCOMP, 2019", 2019),
     "GN21DriverSurgePricing": ("Management Science, 2022", 2022),
     "GS62CollegeAdmissions": ("American Mathematical Monthly, 1962", 1962),
     "LG21TestOptionalPolicies": ("EAAMO, 2021", 2021),
@@ -61,9 +66,9 @@ PUBLICATION_OVERRIDES = {
 SOURCE_URL_OVERRIDES = {
     "DSWG24DiscretizationBias": "https://arxiv.org/pdf/2405.16762",
     "GCG24UserItemFairness": "https://openreview.net/pdf?id=ZOZjMs3JTs",
+    "GGSG19TopThree": "https://arxiv.org/abs/1906.08160",
     "GHW01DigitalGoods": "https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf",
     "GJ18InformativeRatingSystems": "https://doi.org/10.1287/msom.2020.0921",
-    "GGSG19TopThree": "https://arxiv.org/abs/1906.08160",
     "GN21DriverSurgePricing": "https://arxiv.org/pdf/1905.07544",
     "GS62CollegeAdmissions": "http://www.jstor.org/stable/2312726",
     "LG21TestOptionalPolicies": "https://arxiv.org/pdf/2107.08922",
@@ -96,8 +101,6 @@ LIBRARY_COMPONENTS = [
             "LMMS04FairDivision",
             "GN21DriverSurgePricing",
             "LG21TestOptionalPolicies",
-            "GJ18InformativeRatingSystems",
-            "GGSG19TopThree",
         ],
     },
     {
@@ -115,8 +118,8 @@ LIBRARY_COMPONENTS = [
             "LMMS04FairDivision",
             "GN21DriverSurgePricing",
             "LG21TestOptionalPolicies",
-            "GJ18InformativeRatingSystems",
             "GGSG19TopThree",
+            "GJ18InformativeRatingSystems",
         ],
     },
     {
@@ -146,7 +149,10 @@ LIBRARY_COMPONENTS = [
             "bias/variance decompositions, monotonicity/correction lemmas, "
             "and minimal bandit-regret interfaces."
         ),
-        "papers": ["MBJG25ProducerFairness", "GJ18InformativeRatingSystems"],
+        "papers": [
+            "MBJG25ProducerFairness",
+            "GJ18InformativeRatingSystems",
+        ],
     },
     {
         "title": "Matching markets",
@@ -295,6 +301,157 @@ def human_review_label(payload: dict[str, Any]) -> str:
     return f"{int(review.get('reviewed_rows', 0))}/{int(review.get('total_rows', 0))}"
 
 
+def human_translation_label(payload: dict[str, Any]) -> str:
+    review = payload.get("human_review", {})
+    reviewed = int(review.get("reviewed_rows", 0))
+    total = int(review.get("total_rows", 0))
+    stale = int(review.get("stale_rows", 0))
+    mismatch = int(review.get("mismatch_rows", 0))
+    uncertain = int(review.get("uncertain_rows", 0))
+    parts = [f"{reviewed}/{total} reviewed"]
+    if mismatch:
+        parts.append(f"{mismatch} mismatch")
+    if uncertain:
+        parts.append(f"{uncertain} uncertain")
+    if stale:
+        parts.append(f"{stale} needs refresh")
+    return "; ".join(parts)
+
+
+def llm_statement_judgments_file(folder: Path) -> Path | None:
+    tracked = folder / "statement_match_llm.json"
+    if tracked.exists() and tracked.is_file():
+        return tracked
+    traced = folder / ".review_traces" / "statement_match_llm.json"
+    if traced.exists() and traced.is_file():
+        return traced
+    return None
+
+
+def normalize_llm_judgment(raw: Any) -> str:
+    if isinstance(raw, bool):
+        return "matches" if raw else "mismatch"
+    value = str(raw or "").strip().lower()
+    if value in {"match", "matches", "yes", "true", "equivalent", "same"}:
+        return "matches"
+    if value in {"mismatch", "does_not_match", "does not match", "no", "false", "different"}:
+        return "mismatch"
+    if value in {"uncertain", "unknown", "unsure", "partial", "needs_review"}:
+        return "uncertain"
+    return value
+
+
+def load_llm_statement_judgments(folder: Path) -> dict[str, dict[str, Any]]:
+    path = llm_statement_judgments_file(folder)
+    if path is None:
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if not isinstance(payload, dict) or payload.get("schema") != 1:
+        return {}
+    if payload.get("paper") not in {None, folder.name}:
+        return {}
+    items = payload.get("items")
+    if not isinstance(items, dict):
+        return {}
+    out: dict[str, dict[str, Any]] = {}
+    for raw_name, raw_value in items.items():
+        name = str(raw_name).strip()
+        if not name:
+            continue
+        if isinstance(raw_value, dict):
+            out[name] = dict(raw_value)
+        else:
+            out[name] = {"judgment": raw_value}
+    return out
+
+
+def llm_translation_label_from_counts(
+    *,
+    total: int,
+    matches: int,
+    mismatch: int = 0,
+    uncertain: int = 0,
+    unknown: int = 0,
+    missing: int = 0,
+    stale: int = 0,
+) -> str:
+    if total <= 0:
+        return "not run"
+    if not any([matches, mismatch, uncertain, unknown, stale]) and missing >= total:
+        return "not run"
+    parts = [f"{matches}/{total} match"]
+    if mismatch:
+        parts.append(f"{mismatch} mismatch")
+    if uncertain:
+        parts.append(f"{uncertain} uncertain")
+    if unknown:
+        parts.append(f"{unknown} unknown")
+    if missing:
+        parts.append(f"{missing} missing")
+    if stale:
+        parts.append(f"{stale} stale")
+    return "; ".join(parts)
+
+
+def llm_translation_label(folder: Path, payload: dict[str, Any]) -> str:
+    if review_dashboard is not None:
+        try:
+            cached = review_dashboard.load_cached_review_rows(folder)
+            if cached is not None:
+                summary = review_dashboard.statement_translation_audit_summary(folder, cached)
+                return llm_translation_label_from_counts(
+                    total=int(summary.get("row_count", 0)),
+                    matches=int(summary.get("matches", 0)),
+                    mismatch=int(summary.get("mismatch_count", 0)),
+                    uncertain=int(summary.get("uncertain_count", 0)),
+                    unknown=int(summary.get("unknown_count", 0)),
+                    missing=int(summary.get("missing_judgment_count", 0)),
+                    stale=int(summary.get("stale_judgment_count", 0)),
+                )
+        except Exception:
+            pass
+
+    review_surface = payload.get("review_surface", {})
+    include_names = review_surface.get("include_names") if isinstance(review_surface, dict) else None
+    names = [str(name).strip() for name in include_names if str(name).strip()] if isinstance(include_names, list) else []
+    judgments = load_llm_statement_judgments(folder)
+    if not names:
+        total = int(payload.get("human_review", {}).get("total_rows", 0))
+        names = list(judgments)
+    else:
+        total = len(names)
+    if not judgments:
+        return "not run"
+
+    matches = mismatch = uncertain = unknown = missing = 0
+    for name in names:
+        judgment = judgments.get(name)
+        if judgment is None:
+            missing += 1
+            continue
+        value = normalize_llm_judgment(judgment.get("judgment") or judgment.get("matches"))
+        if value == "matches":
+            matches += 1
+        elif value == "mismatch":
+            mismatch += 1
+        elif value == "uncertain":
+            uncertain += 1
+        else:
+            unknown += 1
+
+    return llm_translation_label_from_counts(
+        total=total,
+        matches=matches,
+        mismatch=mismatch,
+        uncertain=uncertain,
+        unknown=unknown,
+        missing=missing,
+    )
+
+
 def lean_loc(folder: Path) -> int:
     total = 0
     for path in folder.rglob("*.lean"):
@@ -355,6 +512,8 @@ def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[s
             "paper_info": f"{payload['title']} by {payload['authors']}; {publication}.",
             "status": status_label(str(payload["status"])),
             "human_review": human_review_label(payload),
+            "human_translation": human_translation_label(payload),
+            "llm_as_judge_translation": llm_translation_label(folder, payload),
             "lean_loc": lean_loc(folder),
             "main_note": human_note(payload),
             "main_note_citation": note_citation(payload),
@@ -384,7 +543,7 @@ def human_payload(records: list[tuple[Path, dict[str, Any]]]) -> dict[str, Any]:
         "generated_by": "python3 scripts/sync_paper_status.py",
         "sort_policy": (
             "Formalized papers first, including formalized-with-caveat rows, ordered by "
-            "publication year; partially formalized public papers follow in publication-year order."
+            "publication year; partially formalized papers follow in publication-year order."
         ),
         "note_policy": (
             "main_note is intentionally sparse. Fully formalized papers have a blank note unless "
@@ -393,6 +552,12 @@ def human_payload(records: list[tuple[Path, dict[str, Any]]]) -> dict[str, Any]:
         "review_count_policy": (
             "human_review counts saved human dashboard rows as reviewed/total. Agent audits are "
             "not counted as human review."
+        ),
+        "translation_status_policy": (
+            "human_translation reports saved human dashboard judgments. "
+            "llm_as_judge_translation reports context-free Lean-to-TeX plus "
+            "paper-vs-translation LLM-judge counts, including stale/missing/uncertain "
+            "flags when available."
         ),
         "identifier_policy": (
             "Paper IDs and folder names are stable artifact identifiers and may track an arXiv, "
@@ -501,7 +666,7 @@ def render_readme(records: list[tuple[Path, dict[str, Any]]]) -> str:
 
 def render_paper_status_md(payload: dict[str, Any]) -> str:
     lines = [
-        "# Public Paper Status",
+        "# Paper Status",
         "",
         "This file is generated by `python3 scripts/sync_paper_status.py` from",
         "paper-local `papers/<PaperName>/status.json` files. Edit those sources",
@@ -619,6 +784,8 @@ def render_site_status_block(payload: dict[str, Any]) -> str:
                     f'{indent}  <td><a href="{html_escape(status_href)}">'
                     f"{html_escape(row['status'])}</a></td>"
                 ),
+                f"{indent}  <td>{html_escape(row['human_translation'])}</td>",
+                f"{indent}  <td>{html_escape(row['llm_as_judge_translation'])}</td>",
                 f"{indent}  <td>{int(row['lean_loc']):,}</td>",
                 f"{indent}  <td>{note}</td>",
                 f"{indent}</tr>",

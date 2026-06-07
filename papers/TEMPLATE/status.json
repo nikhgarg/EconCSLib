@@ -43,7 +43,7 @@
       "review_surface_audit_file": "papers/TEMPLATE/review_surface_llm.json",
       "surface_audit_threshold": 30,
       "surface_warning_threshold": 50,
-      "policy": "Translate each Lean statement with an LLM that has no paper context; have a separate model/agent compare that TeX/prose translation with the original paper statement, record validator metadata, and iterate on PaperInterface.lean until the target matches. If the review surface has more than 30 rows, run a no-paper-context surface audit; at 50 or more rows, curate the surface before broad human review."
+      "policy": "Translate each Lean statement with an LLM that has no paper context; have a third LLM compare that TeX/prose translation with the original paper statement, record the model/agent validator metadata, and iterate on PaperInterface.lean until they match. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 50 or more rows, curate the surface before broad human review."
     },
     "include_names": [],
     "slices": [

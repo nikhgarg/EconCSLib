@@ -26,6 +26,7 @@ open scoped BigOperators
 /-! ## 1) Binary-rating model primitives - -/
 
 /-- The posterior mean estimated quality in the fixed binary rating model.
+    Source status: direct paper formula
     Paper Definition:
     $\frac{\eta \widetilde{\alpha} + t q_v}
             {\eta(\widetilde{\alpha}+\widetilde{\beta}) + t}$
@@ -34,12 +35,14 @@ noncomputable def paper_posterior_mean (alpha beta eta t q_v : ℝ) : ℝ :=
   (eta * alpha + t * q_v) / (eta * alpha + eta * beta + t)
 
 /-- The bias of the estimated quality.
+    Source status: direct paper formula
     Paper Definition: $E[\hat{q}_v] - q_v$
 -/
 noncomputable def paper_bias (alpha beta eta t q_v : ℝ) : ℝ :=
   paper_posterior_mean alpha beta eta t q_v - q_v
 
 /-- The variance of the estimated quality.
+    Source status: direct paper formula
     Paper Definition:
     $\frac{t q_v (1 - q_v)}
             {(\eta(\widetilde{\alpha}+\widetilde{\beta}) + t)^2}$
@@ -48,6 +51,7 @@ noncomputable def paper_variance (alpha beta eta t q_v : ℝ) : ℝ :=
   t * q_v * (1 - q_v) / (eta * alpha + eta * beta + t) ^ 2
 
 /-- The squared bias of the estimated quality.
+    Source status: direct paper formula
     Paper Definition: $(E[\hat{q}_v] - q_v)^2$
 -/
 noncomputable def paper_squared_bias (alpha beta eta t q_v : ℝ) : ℝ :=
@@ -59,6 +63,8 @@ noncomputable def paper_squared_bias (alpha beta eta t q_v : ℝ) : ℝ :=
 Theorem 3.1, variance weakly decreases in prior strength:
 for full quality interval `0 ≤ q_v ≤ 1`, if prior strength increases the
 posterior-mean variance is nonincreasing.
+Source status: corrected source statement
+Source note: The paper's Theorem 3.1 variance monotonicity claim is split here into a weak full-interval statement and a strict interior statement because the unqualified strict statement fails at `q_v = 0` and `q_v = 1`.
 -/
 theorem paper_facing_theorem3_1_variance_weak_decrease
     {alpha beta t q etaLow etaHigh : ℝ}
@@ -78,6 +84,8 @@ theorem paper_facing_theorem3_1_variance_weak_decrease
 Theorem 3.1, strict decrease on interior quality values.
 For `0 < q_v < 1`, positive prior-shape mass, positive number of prior samples,
 and stronger prior strength `η_high > η_low`, variance is strictly decreasing.
+Source status: corrected source statement
+Source note: The paper states strict variance decrease without excluding boundary qualities; this formal statement adds `0 < q_v < 1` because variance is identically zero at `q_v = 0` and `q_v = 1`.
 -/
 theorem paper_facing_theorem3_1_variance_strict_decrease_interior
     {alpha beta t q etaLow etaHigh : ℝ}
@@ -97,6 +105,7 @@ theorem paper_facing_theorem3_1_variance_strict_decrease_interior
 Theorem 3.1, squared posterior-mean bias is nondecreasing in prior strength.
 With stronger prior (`η_high ≥ η_low`) and basic nonnegativity assumptions,
 the squared bias term does not decrease.
+Source status: direct paper statement
 -/
 theorem paper_facing_theorem3_1_squared_bias_nondecreasing
     {alpha beta t q etaLow etaHigh : ℝ}
@@ -118,6 +127,7 @@ theorem paper_facing_theorem3_1_squared_bias_nondecreasing
 /--
 Theorem 3.2, squared-bias Jensen convexity in true quality.
 The squared bias is Jensen-convex as a function of quality.
+Source status: direct paper statement
 -/
 theorem paper_facing_theorem3_2_squared_bias_convex_in_quality
     {alpha beta eta t : ℝ}
@@ -134,6 +144,7 @@ theorem paper_facing_theorem3_2_squared_bias_convex_in_quality
 Theorem 3.2, squared-bias global minimizer.
 On the full quality interval, squared bias is minimized at the prior mean
 `alpha / (alpha + beta)` under positive shape mass and positive sample weight.
+Source status: direct paper statement
 -/
 theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean
     {alpha beta eta t : ℝ}
@@ -153,6 +164,7 @@ theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean
 /--
 Theorem 3.2, posterior-mean variance Jensen concavity in true quality.
 This holds when the prior-weighted sample mass is nonnegative (`t ≥ 0`).
+Source status: direct paper statement
 -/
 theorem paper_facing_theorem3_2_variance_concave_in_quality
     {alpha beta eta t : ℝ}
@@ -167,6 +179,7 @@ theorem paper_facing_theorem3_2_variance_concave_in_quality
 Theorem 3.2, posterior-mean variance global maximum at `q = 1/2`.
 For nonnegative prior-weighted sample mass, variance is globally maximized at
 `q_v = 1/2`.
+Source status: direct paper statement
 -/
 theorem paper_facing_theorem3_2_variance_global_max_at_half
     {alpha beta eta t : ℝ}
@@ -184,6 +197,8 @@ theorem paper_facing_theorem3_2_variance_global_max_at_half
 Boundary caution for Theorem 3.1 strict decrease:
 at `q_v = 0`, posterior-mean variance is identically zero for any prior strength,
 so strict decrease cannot hold unconditionally.
+Source status: added audit row
+Source note: This is not a source theorem; it is included to make the Theorem 3.1 strict-decrease source deviation reviewable.
 -/
 theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero
     (alpha beta t etaLow etaHigh : ℝ) :
@@ -197,6 +212,8 @@ theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_
 Boundary caution for Theorem 3.1 strict decrease:
 at `q_v = 1`, posterior-mean variance is identically zero for any prior strength,
 so strict decrease cannot hold unconditionally.
+Source status: added audit row
+Source note: This is not a source theorem; it is included to make the Theorem 3.1 strict-decrease source deviation reviewable.
 -/
 theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one
     (alpha beta t etaLow etaHigh : ℝ) :
@@ -211,6 +228,7 @@ theorem paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_
 /-- Section 4: Individual Producer Unfairness.
 Defined as the standard deviation in Selection Rate (SR) among producers with
 the same true quality `q`.
+Source status: direct paper definition
 -/
 noncomputable def paper_facing_individual_producer_unfairness
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -226,6 +244,7 @@ noncomputable def paper_facing_individual_producer_unfairness
 /-- Section 4: Thompson Sampling.
 A dynamic policy that selects an arm by drawing from a belief distribution
 and picking the argmax.
+Source status: direct paper definition
 -/
 def paper_facing_thompson_sampling_mechanism
     {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
@@ -237,6 +256,7 @@ def paper_facing_thompson_sampling_mechanism
 
 /-- Section 4: Expected Regret (Efficiency).
 The total expected regret across a finite time horizon.
+Source status: direct paper definition
 -/
 noncomputable def paper_facing_expected_regret
     {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
@@ -250,6 +270,7 @@ noncomputable def paper_facing_expected_regret
 /-- Appendix C: MSE Decomposition in the responsive setting.
 When the number of reviews $N$ is a random variable, the expected mean squared error
 conditional on true quality decomposes into the expected squared bias and the expected variance.
+Source status: direct paper statement
 -/
 theorem paper_facing_responsive_mse_decomposition
     {α : Type*} [Fintype α] [DecidableEq α]

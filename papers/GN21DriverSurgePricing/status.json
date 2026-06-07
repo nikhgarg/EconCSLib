@@ -17,7 +17,7 @@
   },
   "paper_interface": {
     "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
-    "line_count": 160,
+    "line_count": 293,
     "declaration_rows": 24,
     "review_rows": 24,
     "oversized": false,

@@ -1,22 +1,72 @@
 {
-  "schema": 1,
-  "paper": "LG21TestOptionalPolicies",
+  "generated_at": "2026-06-07T00:00:39Z",
+  "generator": "codex-refresh-current-lean-statements",
   "items": {
-    "definition1_source_equilibrium": "For any source-equilibrium data $E$, $E$ is a source equilibrium iff: every chosen access action is feasible under $E.requirement$; for every student information state and every feasible action $a$, $u(info,a) \\le u(info,a^*(info))$ for the chosen action $a^*$; and $E.estimationConsistent$ holds.",
-    "definition2_latent_skill_fair": "A policy surface $S$ is latent-skill fair iff for every equilibrium $e$, skill $q$, and base group $b$, $S.latentAccessEstimate(e,q,b)=S.latentNoAccessEstimate(e,q,b)$.",
-    "definition3_observable_fair": "A policy surface $S$ is observably fair iff for every equilibrium $e$ and base group $b$, $S.observableAccessEstimate(e,b)=S.observableNoAccessEstimate(e,b)$.",
-    "definition4_demographic_fair": "A policy surface $S$ is demographically fair iff for every equilibrium $e$, $S.demographicAccessEstimate(e)=S.demographicNoAccessEstimate(e)$.",
-    "definition5_test_blank": "A policy surface $S$ is test-blank iff for every equilibrium $e$, base group $b$, and test value $t$, $S.baseOnlyEstimate(e,b)=S.fullFeatureEstimate(e,b,t)$.",
-    "theorem3_1_optional_reporting": "Assume each access fraction satisfies $0 \\le \\alpha_e(b)<1$. Then the school information set from access action with observed access set to false always has access status none. Moreover, for every equilibrium $e$ there is a strategy $W$ such that everyone takes the test, some base-score pair is not reported, reporting in each base group is by a score cutoff, and the base-mixed Gaussian posterior-law surface for $e$ is not latent-skill fair, not observably fair, and not demographically fair.",
-    "theorem3_1_report_required": "Assume slopes are positive and each access fraction satisfies $0 \\le \\alpha_e(b)<1$. Then the school information set from access action with observed access set to false always has access status none. Moreover, for every equilibrium $e$ there is a strategy $W$ such that some base-skill pair does not take the test, taking in each base group is by a skill cutoff, and the base-mixed affine-skill posterior-law surface for $e$ is not latent-skill fair, not observably fair, and not demographically fair.",
-    "theorem3_2_optional_reporting_fairness_impossibility": "In the optional-reporting model, assume every $e$ is a source equilibrium with posterior-mean payoff, reporting is exactly the threshold rule $report(e,b,a)=true \\iff d_e(b) \\le a$, and if no positive-mass student in base $b$ reports then $baseOnlyEstimate(e,b)=fullFeatureEstimate(e,b,t)$ for all tests $t$. For the event-share binary-mixture estimate surface $S$, the observed-access information status is always none, and latent-skill fairness or observable fairness of $S$ implies test-blankness of $S$.",
-    "theorem3_2_optional_reporting_no_test_relevance": "Under the same optional-reporting equilibrium, threshold-reporting, and no-reporter hypotheses, if the event-share binary-mixture surface $S$ is latent-skill fair or observably fair, then the observed-access information status is always none and there is no triple $(e,b,t)$ with $baseOnlyEstimate(e,b) \\ne fullFeatureEstimate(e,b,t)$.",
-    "theorem3_2_report_required_fairness_impossibility": "In the report-required model, assume every $e$ is a source equilibrium with payoff $1/2-\\operatorname{UTM}(actorLaw_e(b),d_e(b))+actor$, taking is exactly the threshold rule $take(e,a,b)=true \\iff d_e(b) \\le a$, and if no positive-mass student in base $b$ takes then $baseOnlyEstimate(e,b)=fullFeatureEstimate(e,b,t)$ for all tests $t$. For the event-share binary-mixture estimate surface $S$, the observed-access information status is always none, and latent-skill fairness or observable fairness of $S$ implies test-blankness of $S$.",
-    "theorem3_2_report_required_no_test_relevance": "Under the same report-required equilibrium, threshold-taking, and no-taker hypotheses, if the event-share binary-mixture surface $S$ is latent-skill fair or observably fair, then the observed-access information status is always none and there is no triple $(e,b,t)$ with $baseOnlyEstimate(e,b) \\ne fullFeatureEstimate(e,b,t)$.",
-    "lemma4_1_observed_access_strategy_proofness": "If the fully specified optional-reporting data and fully specified report-required data are both source equilibria, with $testScale>0$, then in both models the chosen access action is $takeAndReport$ for every student information state.",
-    "proposition4_2_base_indexed_posterior_surface": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for any base-indexed one-test posterior-law surface with positive slope and positive law test scale, both models choose $takeAndReport$ for every information state, and that surface is not latent-skill fair.",
-    "proposition4_3_base_mixed_extra_signal_surface": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for any base-mixed extra-signal posterior-law surface with positive extra-noise variance, both models choose $takeAndReport$ for every information state, and that surface is not observably fair and not demographically fair.",
-    "definition6_resampling_policy": "For any resampling experiment $e$, the resampling policy kernel is exactly $e.signalGivenBase$.",
-    "theorem4_4_resampling_policy": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for every resampling experiment $e$, both models choose $takeAndReport$ for every information state, and the access-estimate kernel and resampling-estimate kernel are observably fair and demographically fair with respect to $e.baseProfile$."
-  }
+    "definition1_source_equilibrium": {
+      "lean_statement_sha256": "7b38688cb0d587d1388fc8ae5f71d81d1a71ed2d276c17d9c603ca36a5dbabca",
+      "statement": "For any source-equilibrium data $E$, $E$ is a source equilibrium iff: every chosen access action is feasible under $E.requirement$; for every student information state and every feasible action $a$, $u(info,a) \\le u(info,a^*(info))$ for the chosen action $a^*$; and $E.estimationConsistent$ holds."
+    },
+    "definition2_latent_skill_fair": {
+      "lean_statement_sha256": "a8d4fb633a60b3d15605e8eb7e316af940b953b558698f1f980d075db0e05d90",
+      "statement": "A policy surface $S$ is latent-skill fair iff for every equilibrium $e$, skill $q$, and base group $b$, $S.latentAccessEstimate(e,q,b)=S.latentNoAccessEstimate(e,q,b)$."
+    },
+    "definition3_observable_fair": {
+      "lean_statement_sha256": "f759bf6a59ae5dc36728c5844347993da1f4e97abb875300ec8718d06538a261",
+      "statement": "A policy surface $S$ is observably fair iff for every equilibrium $e$ and base group $b$, $S.observableAccessEstimate(e,b)=S.observableNoAccessEstimate(e,b)$."
+    },
+    "definition4_demographic_fair": {
+      "lean_statement_sha256": "26a0535dc54f9f30ded19fbb027b3add543a82070d47ba3868f8d83b40f6e5cd",
+      "statement": "A policy surface $S$ is demographically fair iff for every equilibrium $e$, $S.demographicAccessEstimate(e)=S.demographicNoAccessEstimate(e)$."
+    },
+    "definition5_test_blank": {
+      "lean_statement_sha256": "b62fd0ca29bebe201cec8d4faf777ae5b8d5ae61ac218a2c92c7b8038eaa79f3",
+      "statement": "A policy surface $S$ is test-blank iff for every equilibrium $e$, base group $b$, and test value $t$, $S.baseOnlyEstimate(e,b)=S.fullFeatureEstimate(e,b,t)$."
+    },
+    "definition6_resampling_policy": {
+      "lean_statement_sha256": "f3a178a994e0b2b6c0a621f0852125533c62230dcb727c80b4d88251b6dd477f",
+      "statement": "For any resampling experiment $e$, the resampling policy kernel is exactly $e.signalGivenBase$."
+    },
+    "lemma4_1_observed_access_strategy_proofness": {
+      "lean_statement_sha256": "23edcbebcbc1fd61cb546ebe95284049dba24de0c3dfdde31f5e096076a62bc4",
+      "statement": "If the fully specified optional-reporting data and fully specified report-required data are both source equilibria, with $testScale>0$, then in both models the chosen access action is $takeAndReport$ for every student information state."
+    },
+    "proposition4_2_base_indexed_posterior_surface": {
+      "lean_statement_sha256": "ddc47f86e1ab127853652e9cfea8198693d881158d26d8225c39fe3313110516",
+      "statement": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for any base-indexed one-test posterior-law surface with positive slope and positive law test scale, both models choose $takeAndReport$ for every information state, and that surface is not latent-skill fair."
+    },
+    "proposition4_3_base_mixed_extra_signal_surface": {
+      "lean_statement_sha256": "0e5b950c378561c4e2dfa80df04651a0f1a6ebec4edb67223fd93178cfb5fb6c",
+      "statement": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for any base-mixed extra-signal posterior-law surface with positive extra-noise variance, both models choose $takeAndReport$ for every information state, and that surface is not observably fair and not demographically fair."
+    },
+    "theorem3_1_optional_reporting": {
+      "lean_statement_sha256": "729fc402c52d1d006c821d9a19244b2c9b1faf11ee2a6294dd50fba4297d6687",
+      "statement": "Assume each access fraction satisfies $0 \\le \\alpha_e(b)<1$. Then the school information set from access action with observed access set to false always has access status none. Moreover, for every equilibrium $e$ there is a strategy $W$ such that everyone takes the test, some base-score pair is not reported, reporting in each base group is by a score cutoff, and the base-mixed Gaussian posterior-law surface for $e$ is not latent-skill fair, not observably fair, and not demographically fair."
+    },
+    "theorem3_1_report_required": {
+      "lean_statement_sha256": "390583bc233b4bc5cbfbdc07aaa24f54c007c321b478b28edd4c956af0574fb8",
+      "statement": "Assume slopes are positive and each access fraction satisfies $0 \\le \\alpha_e(b)<1$. Then the school information set from access action with observed access set to false always has access status none. Moreover, for every equilibrium $e$ there is a strategy $W$ such that some base-skill pair does not take the test, taking in each base group is by a skill cutoff, and the base-mixed affine-skill posterior-law surface for $e$ is not latent-skill fair, not observably fair, and not demographically fair."
+    },
+    "theorem3_2_optional_reporting_fairness_impossibility": {
+      "lean_statement_sha256": "adbea179ae79f312154c35f16263e956b9679a5cac4f189c02ea1ce2a496b3cc",
+      "statement": "In the optional-reporting model, assume every $e$ is a source equilibrium with posterior-mean payoff, reporting is exactly the threshold rule $report(e,b,a)=true \\iff d_e(b) \\le a$, and if no positive-mass student in base $b$ reports then $baseOnlyEstimate(e,b)=fullFeatureEstimate(e,b,t)$ for all tests $t$. For the event-share binary-mixture estimate surface $S$, the observed-access information status is always none, and latent-skill fairness or observable fairness of $S$ implies test-blankness of $S$."
+    },
+    "theorem3_2_optional_reporting_no_test_relevance": {
+      "lean_statement_sha256": "438f0150b0141e20605961d58ea06309bca19b4922722446722dfaab3e9cf337",
+      "statement": "Under the same optional-reporting equilibrium, threshold-reporting, and no-reporter hypotheses, if the event-share binary-mixture surface $S$ is latent-skill fair or observably fair, then the observed-access information status is always none and there is no triple $(e,b,t)$ with $baseOnlyEstimate(e,b) \\ne fullFeatureEstimate(e,b,t)$."
+    },
+    "theorem3_2_report_required_fairness_impossibility": {
+      "lean_statement_sha256": "cb2fb4719c34e8e2030457fdad64c5f4a4100eba4c4e804470ce785b46923921",
+      "statement": "In the report-required model, assume every $e$ is a source equilibrium with payoff $1/2-\\operatorname{UTM}(actorLaw_e(b),d_e(b))+actor$, taking is exactly the threshold rule $take(e,a,b)=true \\iff d_e(b) \\le a$, and if no positive-mass student in base $b$ takes then $baseOnlyEstimate(e,b)=fullFeatureEstimate(e,b,t)$ for all tests $t$. For the event-share binary-mixture estimate surface $S$, the observed-access information status is always none, and latent-skill fairness or observable fairness of $S$ implies test-blankness of $S$."
+    },
+    "theorem3_2_report_required_no_test_relevance": {
+      "lean_statement_sha256": "f25df00808a1b9ebb5755fbf5f72df9b1cc43324f516784b00f87deef22f6e23",
+      "statement": "Under the same report-required equilibrium, threshold-taking, and no-taker hypotheses, if the event-share binary-mixture surface $S$ is latent-skill fair or observably fair, then the observed-access information status is always none and there is no triple $(e,b,t)$ with $baseOnlyEstimate(e,b) \\ne fullFeatureEstimate(e,b,t)$."
+    },
+    "theorem4_4_resampling_policy": {
+      "lean_statement_sha256": "fe0324a83543be3944c375b7c719709d0c02c84664d6cfd65d72b249554a6aef",
+      "statement": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for every resampling experiment $e$, both models choose $takeAndReport$ for every information state, and the access-estimate kernel and resampling-estimate kernel are observably fair and demographically fair with respect to $e.baseProfile$."
+    }
+  },
+  "paper": "LG21TestOptionalPolicies",
+  "schema": 1
 }

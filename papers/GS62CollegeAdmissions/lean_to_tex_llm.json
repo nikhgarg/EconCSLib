@@ -1,13 +1,36 @@
 {
-  "schema": 1,
-  "paper": "GS62CollegeAdmissions",
+  "generated_at": "2026-06-07T00:00:39Z",
+  "generator": "codex-refresh-current-lean-statements",
   "items": {
-    "strictMarriageDomain": "For sets of men $M$ and women $W$ with utilities $v_m:M\\to W\\to\\mathbb{R}$ and $v_w:W\\to M\\to\\mathbb{R}$, the strict marriage domain is the condition that men's preferences are strict, women's preferences are strict, and every man-woman pair is acceptable.",
-    "stableMarriage": "An assignment $\\mu$ is stable for utilities $v_m,v_w$ if every man and every woman weakly prefers their assigned match to being unmatched, and there is no pair $(m,w)$ such that $m$ strictly prefers $w$ to $\\mu(m)$ and $w$ strictly prefers $m$ to $\\mu(w)$.",
-    "completeMarriage": "An assignment $\\mu$ is complete if every man is matched to some woman and every woman is matched to some man.",
-    "applicantOptimalStableMarriage": "A matching $\\mu$ is applicant-optimal stable if it is stable and, for every stable matching $\\mu'$, every applicant/man weakly prefers their match under $\\mu$ to their match under $\\mu'$.",
-    "theorem1_stable_marriage_exists": "For finite sets $M$ and $W$ with decidable equality, if $|M|=|W|$ and utilities $v_m,v_w$ satisfy the strict marriage domain, then there exists an assignment $\\mu$ that is stable and complete.",
-    "college_admissions_stable_assignment_exists": "For finite applicant and college sets with decidable equality, any college quotas and applicant/college utilities admit an assignment $\\mu$ that is stable for the many-to-one college-admissions problem.",
-    "theorem2_applicant_optimality": "For finite applicant and college sets with decidable equality, if the two sides have equal cardinality and the utilities satisfy the strict marriage domain, then deferred acceptance produces a complete matching that is applicant-optimal among stable matchings."
-  }
+    "applicantOptimalStableMarriage": {
+      "lean_statement_sha256": "59583c25c51eb4243c998c0a9b4d40f44791e57b96021283ef7b8fd4a6135a4b",
+      "statement": "A matching $\\mu$ is applicant-optimal stable if it is stable and, for every stable matching $\\mu'$, every applicant/man weakly prefers their match under $\\mu$ to their match under $\\mu'$."
+    },
+    "college_admissions_stable_assignment_exists": {
+      "lean_statement_sha256": "c19cf30c007d6862fba9c3bd685f218f050e623466ba70bca09be18c6532efbc",
+      "statement": "For finite applicant and college sets with decidable equality, any college quotas and applicant/college utilities admit an assignment $\\mu$ that is stable for the many-to-one college-admissions problem."
+    },
+    "completeMarriage": {
+      "lean_statement_sha256": "62bbc58547ae1a6d8b80a95aa79f249bade4d89426550970f66f52b744b9600a",
+      "statement": "An assignment $\\mu$ is complete if every man is matched to some woman and every woman is matched to some man."
+    },
+    "stableMarriage": {
+      "lean_statement_sha256": "f736bdbd24995f3c33307d859f6d4eb84bd875212d02d1a92df9fb465e4cb5f7",
+      "statement": "An assignment $\\mu$ is stable for utilities $v_m,v_w$ if every man and every woman weakly prefers their assigned match to being unmatched, and there is no pair $(m,w)$ such that $m$ strictly prefers $w$ to $\\mu(m)$ and $w$ strictly prefers $m$ to $\\mu(w)$."
+    },
+    "strictMarriageDomain": {
+      "lean_statement_sha256": "94efe8a728756d6287527085774ea3cbd9e9fc26d657c3526eb3e55cb4ef4e98",
+      "statement": "For sets of men $M$ and women $W$ with utilities $v_m:M\\to W\\to\\mathbb{R}$ and $v_w:W\\to M\\to\\mathbb{R}$, the strict marriage domain is the condition that men's preferences are strict, women's preferences are strict, and every man-woman pair is acceptable."
+    },
+    "theorem1_stable_marriage_exists": {
+      "lean_statement_sha256": "2e534f0649dac33ab06e0cc5bd1a5f5e34f5be444f3604c55bed82662265390b",
+      "statement": "For finite sets $M$ and $W$ with decidable equality, if $|M|=|W|$ and utilities $v_m,v_w$ satisfy the strict marriage domain, then there exists an assignment $\\mu$ that is stable and complete."
+    },
+    "theorem2_applicant_optimality": {
+      "lean_statement_sha256": "54360695e5bf8229d8904c6a6a0377fe97d263adb45e2a939f7255e8b06df21a",
+      "statement": "For finite applicant and college sets with decidable equality, if the two sides have equal cardinality and the utilities satisfy the strict marriage domain, then deferred acceptance produces a complete matching that is applicant-optimal among stable matchings."
+    }
+  },
+  "paper": "GS62CollegeAdmissions",
+  "schema": 1
 }

@@ -12,6 +12,10 @@ For `PaperInterface.lean` and `MainTheorems.lean`-style files:
   paper text.
 - Put implementation-level source wrappers and proof plumbing in
   `MainTheorems.lean`.
+- Keep the dashboard surface small: one row per paper-facing definition or
+  named result, plus only genuinely source-facing auxiliary definitions. Move
+  helper variants, certificates, proof-seam aliases, and diagnostic endpoints
+  to `ProofInterface.lean`, `PostPaperAudit.lean`, or implementation modules.
 - Keep source notation explicit, even when generic wrappers exist in `EconCSLib`.
 - Prefer source names in docstrings and comments:
   - “Lemma X”, “Theorem 3.1”, “Proposition A”, etc.
@@ -62,9 +66,14 @@ Before claiming progress:
 3. Update `MainTheorems.lean` source wrappers.
 4. Update `PaperInterface.lean` so a human can verify source definitions and
    named theorem statements without opening proof files.
-5. Update `README.md` theorem table with matching declaration names.
-6. Compile the paper folder and the shared `smoke check` file.
-7. Run the repository audit with strict style when declarations are finalized.
+5. At review boundaries, run the independent statement check: translate each
+   current Lean statement to LaTeX/prose using an LLM with no paper context,
+   then have a third LLM compare that translation against the original paper
+   statement with no Lean context. If it does not match, iterate on the Lean
+   statement before treating the declaration as the target theorem.
+6. Update `README.md` theorem table with matching declaration names.
+7. Compile the paper folder and the shared `smoke check` file.
+8. Run the repository audit with strict style when declarations are finalized.
 
 ## 6) Reusable declaration discoverability
 

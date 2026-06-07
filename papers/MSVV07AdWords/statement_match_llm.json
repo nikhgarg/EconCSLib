@@ -1,323 +1,440 @@
 {
+  "comment": "Regenerated against current Lean statements, paper statements, and Lean-to-TeX statements; human review records were not modified.",
   "items": {
     "PaperAssignment": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "46c81a54acfdd489dd9c0c6ffc5be3334e76b11e12c35ee0b4f384e381898f06",
+      "lean_statement_sha256": "028147f96b11cd19705cc80dd628948b64e4d1a36a63434d20d7ba8c8e7bbb46",
       "matches": null,
-      "paper_statement_sha256": "a75589fc97494e03f1abd33efc0cb2e8fe7285c7bfa1260ffc9c15f06ef3b658",
+      "paper_statement_sha256": "5df74b08696022f1ba3aacfc797cbd71454d79688fb24bc5aba921077128cd6d",
       "reason": "The draft exposes a Lean structure name but does not spell out the assignment object in paper language.",
-      "tex_statement_sha256": "3cc5fc4f41a2693ba5e6ac31e63b17271115ff8f28ba682b78540a88a5f8d548"
+      "tex_statement_sha256": "3cc5fc4f41a2693ba5e6ac31e63b17271115ff8f28ba682b78540a88a5f8d548",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "PaperFractionalFeasible": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "e51ebbba6a9119c60f4d78c3bb37e40ac6df01ad2aaf26b385f37dc605d248a5",
+      "lean_statement_sha256": "95fcf737bf56448d853b50117483a635dcbf097c3e45b5990a41e9286369fdd3",
       "matches": null,
-      "paper_statement_sha256": "e28ce5b8cdee25cafe1b1952b96f72de52836ad20e222aacc6d9536fd3263a91",
+      "paper_statement_sha256": "244341a2b5f299ef16f15f4e97ebe280f3d7a4ed869ccf93073a7d7f873a3252",
       "reason": "The draft exposes a Lean predicate name but does not spell out the fractional feasibility constraints.",
-      "tex_statement_sha256": "5012a8b24bfe08403b13d9a387bbd7b5c6a057a75591b3b1ba5d6e1a6f87b8f0"
+      "tex_statement_sha256": "5012a8b24bfe08403b13d9a387bbd7b5c6a057a75591b3b1ba5d6e1a6f87b8f0",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "PaperInstance": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "f0c441d79d97646fbb3d884dbb0642a87688b122eb1bc740e2f4f41efa4d9372",
+      "lean_statement_sha256": "8eaa1c535cd17724876604260a140f3f3c8e9e995cd2f9a0e6ce3de6f8548a2e",
       "matches": null,
-      "paper_statement_sha256": "3ab061d29484bee9016509ca05b9fc9296ef3a1768d5a7797e5ae9fbd789ee6c",
+      "paper_statement_sha256": "bf91ca85273e50ed961ca24089b4f915773c71b9746cde66b8e269c10f422fb2",
       "reason": "The draft exposes a Lean structure name but does not spell out the AdWords instance fields in paper language.",
-      "tex_statement_sha256": "eee93b8755a524dd2c66a3cefed548cb7ed371b00c648a27fa6c8ae70dc88c68"
+      "tex_statement_sha256": "eee93b8755a524dd2c66a3cefed548cb7ed371b00c648a27fa6c8ae70dc88c68",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "PaperSmallBidsLimitFamily": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "9bab2cccd32620c44ca7b70eca838add211fe5c477c4f9f63e2727fb249e44cb",
+      "lean_statement_sha256": "55b7e04ede0aecde71f80255ada25f6c779b269402f8460b79b56c085699509a",
       "matches": null,
-      "paper_statement_sha256": "d5e1abdac742ce93ba1f4492b731929579a27721821f25ae688f33be6b22a4a8",
+      "paper_statement_sha256": "9807c8892f8f40ed4aeac56570b78154a493d33bc6af2257d2c616e63e9e0bbe",
       "reason": "The draft exposes a Lean structure name but does not spell out the asymptotic small-bids family.",
-      "tex_statement_sha256": "f7a6483ca1593875254c33063c87d49e2ac4a71ccbd746a6724957406235260a"
+      "tex_statement_sha256": "f7a6483ca1593875254c33063c87d49e2ac4a71ccbd746a6724957406235260a",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "paperBalanceScore": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "9ef8a434bbb1aa080f30cfd2c219a860d173d6ec42a76fa1e56c9fd02a4f55d5",
+      "lean_statement_sha256": "d0774faf7d8db855fa54ebd00a2d7339d2b129df8e05b78fb94aae8ef4dde7e4",
       "matches": null,
-      "paper_statement_sha256": "395e6b48a20abb93d38cce0930c49a9cc2f510ce2105fb863becfe2c5a96b283",
+      "paper_statement_sha256": "8049a0405083eab9c351cc9071cbdada2c6f19328a70f47d48fd7c6b7038e836",
       "reason": "The draft is mostly a function signature and does not state the balance-score formula.",
-      "tex_statement_sha256": "1bb203486df27492b80248c0c433fef1efc167f4b2281cbae4755ed1e50b8caf"
+      "tex_statement_sha256": "1bb203486df27492b80248c0c433fef1efc167f4b2281cbae4755ed1e50b8caf",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "paperCanAssign": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "1f164b80d480750e08a3c8ed88158ef3f5d141c497bd9d5d3c00d51c85b004f7",
+      "lean_statement_sha256": "61a27b88b7375e11ae3e28b06886a8c6ba9f43fdec3e90dfb4aad68aae0b23cc",
       "matches": null,
-      "paper_statement_sha256": "98cffece1bde6f6efd2b1153e551f6e614333c7db1c12d9c4b56ec68f4657fb9",
+      "paper_statement_sha256": "b543b0bbc5af783fdaa6c388fd0b472851b3183d47170a0dbeae65ce1523436f",
       "reason": "The draft is mostly a predicate signature and does not state the admissibility condition.",
-      "tex_statement_sha256": "79c0e319f33dbb1e28df01cc7b14cfb0062e035e1fafcf6a3638177782cbf9cd"
+      "tex_statement_sha256": "79c0e319f33dbb1e28df01cc7b14cfb0062e035e1fafcf6a3638177782cbf9cd",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "paperFeasible": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "fda4789516d7f8e2bd151af890276ff4290c0d0259d7030a1d0ae281bf7e07a7",
+      "lean_statement_sha256": "d26208a3b539a089e9bc49f6ecb4516134dcabb011502246a674aa144ce0402f",
       "matches": null,
-      "paper_statement_sha256": "84a5fe99aababc80ecd00e2c252421d680e319f952f0adf037bbd223ee3cb074",
+      "paper_statement_sha256": "faf2c6730c23f2b0bbcf3ede26069113af5fc5a6dd15569f2225e2f5f23bb222",
       "reason": "The draft is mostly a predicate signature and does not state the feasibility constraints.",
-      "tex_statement_sha256": "c2ac6e97a7d1eb426d278c62dd99fcf356c32850fbb411c0f84f23c123050f19"
+      "tex_statement_sha256": "c2ac6e97a7d1eb426d278c62dd99fcf356c32850fbb411c0f84f23c123050f19",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "paperFractionalRevenue": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "9a931247af046aed80a7df5a4398809a2999844d0e9a7d6a222814a7290d77a4",
+      "lean_statement_sha256": "3543314b78299c7b9f7c2ca4c9c99ada6515cf0226f1eb3b7051a7dacfcd35ef",
       "matches": null,
-      "paper_statement_sha256": "bdf1fec1c513c39f77df8cbd8fca620740f722133c854462f56f05d93a6e9edc",
+      "paper_statement_sha256": "ff5bf6a97a0b58457c9e6f2a1810dedaed2c8d0f67bd2b4221bf843c4b85c29a",
       "reason": "The draft is mostly a function signature and does not state the fractional revenue formula.",
-      "tex_statement_sha256": "a007c6380951e6b9e6799c663d27890a3d55d691b88a743834d509d01590d463"
+      "tex_statement_sha256": "a007c6380951e6b9e6799c663d27890a3d55d691b88a743834d509d01590d463",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "paperIsBalanceChoice": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "2db6ed24f328fa2fac1c524639320329e489a3c0bebe85f73dbce931ff73ed76",
+      "lean_statement_sha256": "720a2f46ff4ceb7356bdf50be475abd5fb6e9d43a65a199c02a0a81d45f5ae3f",
       "matches": null,
-      "paper_statement_sha256": "c36a8a3d61bd19c1a209ec7b2be359973d791895f0a57de9ca79c54fc2c8292d",
+      "paper_statement_sha256": "fa6241a9a485ea5d0a843f8f6eda7efed2ab174c8ea0830d702e57871e2e708f",
       "reason": "The draft is mostly a predicate signature and does not state the balance-choice rule.",
-      "tex_statement_sha256": "6145903bd82149ec593bce6269c27eff89c1fe055e8746f0b0b8bfb5c8c7d86b"
+      "tex_statement_sha256": "6145903bd82149ec593bce6269c27eff89c1fe055e8746f0b0b8bfb5c8c7d86b",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "paperMsvvRatio": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "d1af60ca5ddb95fe3cc052aff6021d9a3d90d69fe8fc34888a545d7a2b0ec45a",
+      "lean_statement_sha256": "81fdb09c9eef55e159bcb5f08ce94361a0a34f3a27cd75588f07591520751130",
       "matches": null,
-      "paper_statement_sha256": "bae4213b720d54fee7ec2f69ed3345a0673d8475b229def8645e72d2a34ce2be",
+      "paper_statement_sha256": "9a0c0cec4fc0142926a0f0d6910e89ada52160cf163a738874a85225fb4813ee",
       "reason": "The draft is mostly a function signature and does not state the MSVV ratio expression.",
-      "tex_statement_sha256": "a48500d38d09f76a8aff05df70e933c3a72bef97816bc33b7b8035f268e843f8"
+      "tex_statement_sha256": "a48500d38d09f76a8aff05df70e933c3a72bef97816bc33b7b8035f268e843f8",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "paperRevenue": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "c2e2b3f36e3483e3e5914180ca022066b4e4e1cf605dd2106cd92a8c51881973",
+      "lean_statement_sha256": "306fafcddf7227782f49755b2ef8e32eeaef4b51d62388c224b193de2b550a5b",
       "matches": null,
-      "paper_statement_sha256": "e1136bfc18a7f30dbc3c28bc27f06aa3432175aaaabd43d93e7342ebca0dd44d",
+      "paper_statement_sha256": "38ad4ccaa8a5b7cf338fc0cdb06b5645cf26c3e3e65ed15561084abe8e418294",
       "reason": "The draft is mostly a function signature and does not state the revenue formula.",
-      "tex_statement_sha256": "4e58e9982b62b45225f85e8a0641d2688e0fdf0ad4f61ee7d8bb6b1d49d81fc9"
+      "tex_statement_sha256": "4e58e9982b62b45225f85e8a0641d2688e0fdf0ad4f61ee7d8bb6b1d49d81fc9",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "paperSlotsPerPageDistinct": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "43b67d84f3bfcec20ea9e2f9f2ff6474b4e7969ca70029254370b31c217d9731",
+      "lean_statement_sha256": "4c21494f1ea091d02587bab6e6526315dfda238ca16267ce6a3d5cd33ff13f12",
       "matches": null,
-      "paper_statement_sha256": "a78916231b1ea3a22137165661e909176826eb2e86baef932f1d911f1e1d2730",
+      "paper_statement_sha256": "d8ffd305523dc1f2d455cea023ba02c734d3b1bc87a07a6c038075470cb98b2f",
       "reason": "The draft is mostly a predicate signature and does not spell out the distinct-slot condition.",
-      "tex_statement_sha256": "21435f6d2e8fabd4c5feca2d87860440c168110ce6e1a1cc3d858f5b10ab8b75"
+      "tex_statement_sha256": "21435f6d2e8fabd4c5feca2d87860440c168110ce6e1a1cc3d858f5b10ab8b75",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "paperSmallBids": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "8f65a809e40a5cea6217db7d667f67a81cd9bddc93160a7258562f7bd6fadb88",
+      "lean_statement_sha256": "162969edcb4a35bd30032891f7c592bbd484935a4581d0254160e92754195a61",
       "matches": null,
-      "paper_statement_sha256": "be4f216a813324ae2e1b48bc861859dfe40be6c346fd10f63c33e806aff49666",
+      "paper_statement_sha256": "652486df1ec7d74c79b7fab84863f3d23fc12df41582df226ef554547605434b",
       "reason": "The draft is mostly a predicate signature and does not state the small-bids condition.",
-      "tex_statement_sha256": "281c309875521a15411e22aa656f2fa51e0191795b30f7359948e2c15e2595ed"
+      "tex_statement_sha256": "281c309875521a15411e22aa656f2fa51e0191795b30f7359948e2c15e2595ed",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "paperSpend": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "c05473fbae7dd77f27d64a054f441353acc411165a23ecfbe589c77d2a53bbcf",
+      "lean_statement_sha256": "5dad10f7ff6f584645642ccbad0a0bf42852d1c8430f3a546ce2c0d559c9fe76",
       "matches": null,
-      "paper_statement_sha256": "b248d226d731f63ea15fa2a5aef4ec1b2c19e5300c61cc9e62568980c983ba6f",
+      "paper_statement_sha256": "ce1a463052cf08f4bb3eba5adc3d2f70037e3c55a1365c6bb25eadb77cd4a236",
       "reason": "The draft is mostly a function signature and does not state the spend formula.",
-      "tex_statement_sha256": "910182027289d637a7712ef56249e4186b5979fb2b2149b59bc3e5db709b1a90"
+      "tex_statement_sha256": "910182027289d637a7712ef56249e4186b5979fb2b2149b59bc3e5db709b1a90",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "paperTradeoff": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "b538806989c696cc5edd5b8cdedad7c20a65e8c91b602821371ef466e62ae893",
+      "lean_statement_sha256": "69eb984a06c58170953a62e9704963e7098c9df72a4253da4b92824fe20e8fd8",
       "matches": null,
-      "paper_statement_sha256": "5c4792e13a51e446b4ee1337b88bd8da79c53e5297cd6244d37c5ffc2adfe0d7",
+      "paper_statement_sha256": "45d93fe4ab7517c253e8931891220ce543b9498adff241b78d507217d554af03",
       "reason": "The draft is mostly a function signature and does not state the tradeoff expression.",
-      "tex_statement_sha256": "b0dc1a742dce1de9135b8818061330d257916b988ab776c4ae8f6b8b2b433729"
+      "tex_statement_sha256": "b0dc1a742dce1de9135b8818061330d257916b988ab776c4ae8f6b8b2b433729",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section6_availability_theorem8_finite_explicit_error": {
       "judgment": "matches",
-      "lean_statement_sha256": "5eb3668a8c66bcdd155735ecd87608bdacf31c13b27c8c69f6a26b601293c22c",
+      "lean_statement_sha256": "f788eb8f27f8061902cf5c5a1b455efa821c4984df327f18c5a6aaa959453d8c",
       "matches": true,
       "paper_statement_sha256": "88b8baa33c95123b42403f2316fc2603669de65deedacd69e9e17011f674eee5",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "cb0abcf8784efa11f4da9f0dd525bed1e00735a28ca301cf52bda7fbe55de7b5"
+      "tex_statement_sha256": "cb0abcf8784efa11f4da9f0dd525bed1e00735a28ca301cf52bda7fbe55de7b5",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section6_click_through_rates_theorem8_finite_explicit_error": {
       "judgment": "matches",
-      "lean_statement_sha256": "c90048abdc4a03fb2d772072f02b86f223bba32d0a0e93860d49e4902fb6fc0d",
+      "lean_statement_sha256": "a32eb56f53df120ae6d7db86da97771528b8aa9020aa3d28dc2eef88e1b070ab",
       "matches": true,
       "paper_statement_sha256": "3242b4c2b841018f4caa8b266783484d163c9979e21352a9a2631a86f3413055",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "86f7a11c49adab6e79ea37399d79470f1fab0acd8117f1f2fb981c9becbfad12"
+      "tex_statement_sha256": "86f7a11c49adab6e79ea37399d79470f1fab0acd8117f1f2fb981c9becbfad12",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error": {
       "judgment": "matches",
-      "lean_statement_sha256": "580ead48bea390c4f0fb78a40a9c6c51b5479925c901eb735b0473a6a87021c2",
+      "lean_statement_sha256": "16ee595f179dd7b80dc18a9fd88e479fe97a41a145fc8ace388074970faa896a",
       "matches": true,
       "paper_statement_sha256": "320d032d558c848ce0c2b01e27cd6456b2c677481c31ba37f171d13462bdc88b",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "2c2d5739df3b417b7e35f023b2531f6e1a834c79be17c06dc1f6ce47855dc33f"
+      "tex_statement_sha256": "2c2d5739df3b417b7e35f023b2531f6e1a834c79be17c06dc1f6ce47855dc33f",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section6_effective_bids_theorem8_finite_explicit_error": {
       "judgment": "matches",
-      "lean_statement_sha256": "6cbd9069a176b619d800b78c97105330e247a8ec9aba05a4fe8d01946ba7b462",
+      "lean_statement_sha256": "93ce2d374211353e02160b9e70ba49b33893eb3b0f105753a7172ab8b7af9cd0",
       "matches": true,
       "paper_statement_sha256": "c4883f2b42aa6cfacbb4db82604589911a38c234865c0eab459cf69ea80244c7",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "292158d09914a5b5f3fd59867a1d1885e9b73c1214b0000bb537f87259c7d329"
+      "tex_statement_sha256": "292158d09914a5b5f3fd59867a1d1885e9b73c1214b0000bb537f87259c7d329",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section6_multiple_slots_distinct_choice_run_assignment_per_page_distinct": {
       "judgment": "matches",
-      "lean_statement_sha256": "1e82dc9e984a522cfceaaeed25cddd0542ab23d427e505314d244d51022dd335",
+      "lean_statement_sha256": "b755a879ac3b69e68b2213cbf80f4ec224e7358e824de816691d7d182e6a5734",
       "matches": true,
       "paper_statement_sha256": "7e36e14c92c43547527c0b266e73114ba680e1d6b868387df42c75d4ac737c89",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "1eed87b6b60e30bbbf8d8f93766add856fe888f569075fb0acdce22d91457528"
+      "tex_statement_sha256": "1eed87b6b60e30bbbf8d8f93766add856fe888f569075fb0acdce22d91457528",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section6_multiple_slots_theorem8_finite_explicit_error": {
       "judgment": "matches",
-      "lean_statement_sha256": "90e7c1c4405465d151b5cbe60327b69d07272998c0976cf2c2a13f27b6ceff16",
+      "lean_statement_sha256": "cd82ab3a58234641b5dd6f5ab20147afe430e1b5f794a8adee3b7d376dec3253",
       "matches": true,
       "paper_statement_sha256": "8fe1150b3734ad947053dfd0e7ddaee620b286d70b50104f1440610966afb58b",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "4c5fe58e51751aab4498c1d10e25e1cba4edaf823cb229e0f66510a90672b6ca"
+      "tex_statement_sha256": "4c5fe58e51751aab4498c1d10e25e1cba4edaf823cb229e0f66510a90672b6ca",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section6_next_highest_bid_alive": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "e91fb85ef8f4aa961e31fba5d708e65c09a61e7a61d7351f94c7109a053362e2",
+      "lean_statement_sha256": "183ce25ce4407d17a705cff541da55d0de055561bf09ebb9ad1b126099f85263",
       "matches": null,
-      "paper_statement_sha256": "9bc07f04adab5f131ed5e600dda41919fce3236539d37abb5df34863cc00159d",
+      "paper_statement_sha256": "28dfbc62ee879e860ee69c06cc960f8307d94f4d7964e2bac66d922ec6109343",
       "reason": "The draft is mostly a function signature and does not state the alive-bid construction in paper language.",
-      "tex_statement_sha256": "6d2b7199e57d7dd452d5a72ee26842db4561aad82937986164e7477cf3858cce"
+      "tex_statement_sha256": "6d2b7199e57d7dd452d5a72ee26842db4561aad82937986164e7477cf3858cce",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section6_next_highest_bid_alive_theorem8_finite_explicit_error": {
       "judgment": "matches",
-      "lean_statement_sha256": "22f20b3a8953cf646bd5c222d11e1b1ee07c3fb77cf7b52d0ea4390737618e57",
+      "lean_statement_sha256": "cdb07b57afa5e453b72108d8ff3d005896a77eed003b58429421c7588e20fbb4",
       "matches": true,
       "paper_statement_sha256": "55ca76afa4e54230f54a60e91983500c520433d1aea8a7e83924350672f83860",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "28eeb3de7e4d2b8a2e33fe0a4300564516d2c84f483eff5598b8779e953eeb56"
+      "tex_statement_sha256": "28eeb3de7e4d2b8a2e33fe0a4300564516d2c84f483eff5598b8779e953eeb56",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section6_next_highest_bid_all": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "f6000ca89bcdbbb3033f8bff60a4073e74792431e4d7a46bc10ac4f2b41911cd",
+      "lean_statement_sha256": "8d9c6fb798f01afc9e4104ea03639b47d2bdbb31c12a3d8e268de71a6c7a2678",
       "matches": null,
-      "paper_statement_sha256": "c99d32ae75c4ecb39b1203b39d617b06049a297bfd2a31eaf159ad128d064c7d",
+      "paper_statement_sha256": "66ce27c5eeedb85a8a679490c0c099e18f56cbe2b9253f25008d5ca12eedb18b",
       "reason": "The draft is mostly a function signature and does not state the next-highest-bid construction in paper language.",
-      "tex_statement_sha256": "50be8fa5153523a3165e71d6f47ed4e6a4f1b627f5d851815b3a11fe20bbf304"
+      "tex_statement_sha256": "50be8fa5153523a3165e71d6f47ed4e6a4f1b627f5d851815b3a11fe20bbf304",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section6_next_highest_bid_all_theorem8_finite_explicit_error": {
       "judgment": "matches",
-      "lean_statement_sha256": "2fdbbee4b32828961eef3abb585780cdac78695a2d39daaf772334cacb86720d",
+      "lean_statement_sha256": "463d007c596d083b101774ec9ad805b1baa52d78474190bc1ce07d983dd55ce0",
       "matches": true,
       "paper_statement_sha256": "25f32ef9eb013b7a135229db4b374ce8b7e53e1e5fd5194275b5bc71ed0f7529",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "51e3ce618a6f465a88c1b3e8f95c28fc85eeb6e0f841aa54436ded1028d587eb"
+      "tex_statement_sha256": "51e3ce618a6f465a88c1b3e8f95c28fc85eeb6e0f841aa54436ded1028d587eb",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section6_page_top_balance_theorem8_finite_explicit_error": {
       "judgment": "matches",
-      "lean_statement_sha256": "4be57273b7da506ce056a3abb9f8cb920e713f187f6d0e7c6c91b2606d198e14",
+      "lean_statement_sha256": "31782a82f8350758ed9f56da93b0fea2548c72e4fa8df4e22d5f6bd06ffb9b82",
       "matches": true,
       "paper_statement_sha256": "816ba031fca719556c9fdfee8cdb93ef747d2f1b35704d20db90a87a5f4e2b62",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "3ae3721d19f1e4ab024b4883edaec5acb54b14e726c581bc3e8df0b0b91c0601"
+      "tex_statement_sha256": "3ae3721d19f1e4ab024b4883edaec5acb54b14e726c581bc3e8df0b0b91c0601",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section8_weighted_bids_theorem8_finite_explicit_error": {
       "judgment": "matches",
-      "lean_statement_sha256": "95c6b166260c269a16d360c63095d9ea74a6a8cf0035989982adf2b55f4ba9d5",
+      "lean_statement_sha256": "c0eb6bb96b5c0364755a95ea6ebadf1bd42ed4c23f0c31fff9e89414aa9b02e8",
       "matches": true,
       "paper_statement_sha256": "a4bea970cb33dcdc17b7f055060cbcba911c4755e4daa08ccc8a6abe92c2de53",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "c923c93b6ebb6093b9789474d3365ad04d5a6601c1e11d0c039de5eeed7576f2"
+      "tex_statement_sha256": "c923c93b6ebb6093b9789474d3365ad04d5a6601c1e11d0c039de5eeed7576f2",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids": {
       "judgment": "matches",
-      "lean_statement_sha256": "84b26bcf5a3b821c884f3a4098c006563e84a78aa0f84ccf31bec496cacbd0a4",
+      "lean_statement_sha256": "10a15a2a6cc9d7256611f76539acd3413340a95649ef9d132f8228ed1b036310",
       "matches": true,
       "paper_statement_sha256": "3b3261240cd78c6ddc8fd3e0bfcf9ff3aa0bf6a72b402ff8373d8f2a4b7a2786",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "265584ea57274a97886e91fb6a62c544ec33eb0b75ad83f628a4f7f173d0ea06"
+      "tex_statement_sha256": "265584ea57274a97886e91fb6a62c544ec33eb0b75ad83f628a4f7f173d0ea06",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem8_balance_msvv_competitive_of_small_bids_limit_family": {
       "judgment": "matches",
-      "lean_statement_sha256": "13f9676b65d7c8c90edb4653345429e9af8f1c35e483934a79e2ac1aae3077fe",
+      "lean_statement_sha256": "95a72f34c9dc6c29a1df0b42d84c394487c38f6103ffa71095a65231d3028e4c",
       "matches": true,
       "paper_statement_sha256": "811d6b86bc71343f5c960407a0a98264e51bddb7868f12eee87dc443559a51ae",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "e0a3ea9ba5c463786f604096f7c572f83a68980e9385dc30cc5a5d224dc869b3"
+      "tex_statement_sha256": "e0a3ea9ba5c463786f604096f7c572f83a68980e9385dc30cc5a5d224dc869b3",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem8_finite_explicit_error": {
       "judgment": "matches",
-      "lean_statement_sha256": "0f6c27d0ec52954c4dd2119758b9565e08d3f6c3d6536d2a47c4adc3b446d1c7",
+      "lean_statement_sha256": "a76703166a24b4f7e883a8b79f980546792b207e78ed1ab02604cd14d461e5a4",
       "matches": true,
       "paper_statement_sha256": "503bf2edf104044202950a83caa918fc9acfd4157939dad22a8fe35bed81106e",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "2c2d5739df3b417b7e35f023b2531f6e1a834c79be17c06dc1f6ce47855dc33f"
+      "tex_statement_sha256": "2c2d5739df3b417b7e35f023b2531f6e1a834c79be17c06dc1f6ce47855dc33f",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem9CappedNormalizedRevenue": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "02f4b102507d254ad22624c4ca9a58274e4d05742b5082e2ce0accbd0c05acc7",
+      "lean_statement_sha256": "f06341e07ebb139b6a5c10c5406204b16a9382f4098a1a1430b8c2e6fcddde53",
       "matches": null,
-      "paper_statement_sha256": "f2e522c4142d169af9cf1fe8b9bf3ce0dad8c23749169965e2befffa2a66f829",
+      "paper_statement_sha256": "a6d61b82c4f9aaccc433a8fc8525ee64ad057032c587016ae100b60c538b4c01",
       "reason": "The draft exposes a Lean structure name but does not spell out the capped normalized revenue expression.",
-      "tex_statement_sha256": "22d044a09f1e27f4f6495508f8ceec05ffcd5118994d05180fc15d64770410f4"
+      "tex_statement_sha256": "22d044a09f1e27f4f6495508f8ceec05ffcd5118994d05180fc15d64770410f4",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem9FeasiblePrefixRuleFamily": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "967e8104608909566a88a006b9ce573491b99f6248d06ba64f0662751e0c0549",
+      "lean_statement_sha256": "00f33ba07eacb5e548030e24cb4f24250521b3d7e43c3f22ce777f2fa5821d63",
       "matches": null,
-      "paper_statement_sha256": "23bf8d33a8bc1011255c0eb5ec6261968d7fd7bdb22d8cfb7a7cba588b839bdf",
+      "paper_statement_sha256": "90b42ec61847967ba2405d96ff689d4747c3cee0b9656cfad0285996ec572fe1",
       "reason": "The draft exposes a Lean structure name but does not spell out the feasible prefix-rule family.",
-      "tex_statement_sha256": "745d64ae71e12fec27e68e04a0d3b4b16883e699c1c17b15bc9bb51aab5d3abe"
+      "tex_statement_sha256": "745d64ae71e12fec27e68e04a0d3b4b16883e699c1c17b15bc9bb51aab5d3abe",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem9HardDistribution": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "d4f548ca6617f423cfed1fc1e44b2524d5af037e5c8c2fc714b68d00f04b1e48",
+      "lean_statement_sha256": "b5f0014bc3c04b60d56d67a7129a0a3509b0975810f704bda46ee8a8ae584c9c",
       "matches": null,
-      "paper_statement_sha256": "2b3473368866d77a76e7e22749d15e2594fe9bca42d02a10670cb160c775473a",
+      "paper_statement_sha256": "12d4b03a96656ea8d5cbb5ba84f7e1a12072939baa5aeef8070070a305abade0",
       "reason": "The draft exposes a Lean structure name but does not spell out the hard distribution family.",
-      "tex_statement_sha256": "0d69e36c6ad16ca1b655f90afa89dd54b9946f3a9db5c701c0985ffeae135a61"
+      "tex_statement_sha256": "0d69e36c6ad16ca1b655f90afa89dd54b9946f3a9db5c701c0985ffeae135a61",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem9IntegralPrefixAlgorithm": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "9665a3940539633ba3046b2c2c20a9c9cc34cfb75e0cad2c26338241d7c6fe30",
+      "lean_statement_sha256": "ceea0c42ce6ddac65302169735542ec5ce219ba76c8bbc8335909f52b14fdf9b",
       "matches": null,
-      "paper_statement_sha256": "906279af2f0f166ba0a510330d96518edfd67a019552c2a13a2aabaa75f56ade",
+      "paper_statement_sha256": "f1d32248ae23385dab4212fd7710084251b3eac0a2203d5eb773ed4e79668160",
       "reason": "The draft exposes a Lean structure name but does not spell out the integral-prefix algorithm family.",
-      "tex_statement_sha256": "0c1339755e21cceb92dfa8019423a4bab195eb0c3c1ff2cafc2e96466348d29f"
+      "tex_statement_sha256": "0c1339755e21cceb92dfa8019423a4bab195eb0c3c1ff2cafc2e96466348d29f",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem9RandomizedOnlineAlgorithm": {
       "judgment": "uncertain",
-      "lean_statement_sha256": "e778b329737900bf55bcad2d3652d1a6b2b5a69f16aba3769fc52d6d5b0887a0",
+      "lean_statement_sha256": "f91ae1c1030f249f0664000fcda1568c4fb26b6861ac698b3212a1357065ac45",
       "matches": null,
-      "paper_statement_sha256": "87fd6e52af5988dd85fa194746c30075128a27d37598fb7eee04cc6e4b15c0d9",
+      "paper_statement_sha256": "1744ff32848f020091e761268d49110bc4a2cb3f52d228689dc3dc34c5807f27",
       "reason": "The draft exposes a Lean structure name but does not spell out the randomized online algorithm family.",
-      "tex_statement_sha256": "0c1339755e21cceb92dfa8019423a4bab195eb0c3c1ff2cafc2e96466348d29f"
+      "tex_statement_sha256": "0c1339755e21cceb92dfa8019423a4bab195eb0c3c1ff2cafc2e96466348d29f",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem9_capped_normalized_revenue_eq_prefix_spend": {
       "judgment": "matches",
-      "lean_statement_sha256": "261766b01d306cbaa204a0c3a0b315d3dcee26aeb236bf9188d6f8784cbc089a",
+      "lean_statement_sha256": "f979469f74c34e3555cfa416c61993611a68f5af0eed63ae71eaf91f416e089f",
       "matches": true,
       "paper_statement_sha256": "848e083100c0ff401f0ada2143c92905c5f213425ceb9248f80e19e494c6d72a",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "eebedb742cceec92a85220240659a240cc83c8352d7a40546e489308d654454a"
+      "tex_statement_sha256": "eebedb742cceec92a85220240659a240cc83c8352d7a40546e489308d654454a",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem9_no_randomized_feasible_prefix_rule_family_beats_msvv_ratio": {
       "judgment": "matches",
-      "lean_statement_sha256": "0011581b7d85cd695b521f11d5b97e59b2d17e17720de581c5c2a9009e19c069",
+      "lean_statement_sha256": "dc4f161d31bee11bbe6545a7360d72761701bb4c2f90ec00243ee8f196ac19cb",
       "matches": true,
       "paper_statement_sha256": "76bedd27947cb106105d97d30bf17e4de8dee6a7e3654b32bb11fdb9e1160187",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "919ba28cc8508d26d93ebc2f2ee9aa2ee9e1f8b93e824f2b214bc734ac12b603"
+      "tex_statement_sha256": "919ba28cc8508d26d93ebc2f2ee9aa2ee9e1f8b93e824f2b214bc734ac12b603",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio": {
       "judgment": "matches",
-      "lean_statement_sha256": "24ffe0485493d8f38f68f6f546943b48b4c75c266356dff7fe38afb35bb919a9",
+      "lean_statement_sha256": "2dd794cf95addce22d0025d9cccb3467770678d457f1e05593a603527fa04222",
       "matches": true,
       "paper_statement_sha256": "c886692024e6c69946350824ace44cb2edc3e3602f138b9bcc57f126c9bcc4d2",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "f25096db00ac38b5a5222877a8cc254f10344bdb56a67263a18624e92984128a"
+      "tex_statement_sha256": "f25096db00ac38b5a5222877a8cc254f10344bdb56a67263a18624e92984128a",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem9_no_randomized_online_algorithm_beats_msvv_ratio": {
       "judgment": "matches",
-      "lean_statement_sha256": "e00c2366e6075a7c96751fa898cf6fe8b6a4b1cf2e056af9913548b552bb7798",
+      "lean_statement_sha256": "62755f7019c00d1e6686eb38a244b32c490a9149a6221b5d6e6836412480feb3",
       "matches": true,
       "paper_statement_sha256": "6cd6d9e9638b593a3d6f4c1300a90ff539e79afb2455bcbf213d678b36b59a7d",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "fcc20f23c8e43eba75f621d0c1f366b90b73ca85ab8704933028a6acf00b41f4"
+      "tex_statement_sha256": "fcc20f23c8e43eba75f621d0c1f366b90b73ca85ab8704933028a6acf00b41f4",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     }
   },
   "judge": "codex-statement-translation-audit",
   "paper": "MSVV07AdWords",
   "schema": 1,
+  "validated_at": "2026-06-07T00:00:39Z",
   "validator": "gpt-5-codex",
-  "validator_type": "model",
-  "validated_at": "2026-06-06T20:39:51Z",
-  "comment": "Statement-match validation generated by Codex from original paper statements and context-free Lean-to-TeX drafts."
+  "validator_type": "model"
 }

@@ -10,8 +10,8 @@ or what a completed formalization proves without reading proof internals.
 - [../README.md](../README.md): short project overview and review path.
 - [REVIEW_DASHBOARD.md](REVIEW_DASHBOARD.md): theorem-statement review
   dashboard workflow.
-- [PAPER_STATUS.md](PAPER_STATUS.md): generated public paper citation, status
-  labels linked to validation reports, human-review, Lean LOC, and note table.
+- [PAPER_STATUS.md](PAPER_STATUS.md): generated paper citation, status labels
+  linked to validation reports, human-review, Lean LOC, and note table.
 - `../papers/<PaperName>/status.json`: paper-local machine-readable source of
   truth for status, review rows, and artifact paths.
 - [../papers/human_status.json](../papers/human_status.json): generated compact
@@ -50,6 +50,5 @@ They may assume Lean familiarity and may be more detailed.
 - [PROBABILITY_LIBRARY_ROADMAP.md](PROBABILITY_LIBRARY_ROADMAP.md) and
   [OPTIMIZATION_LIBRARY_ROADMAP.md](OPTIMIZATION_LIBRARY_ROADMAP.md): reusable
   library roadmaps.
-
 Detailed proof-strategy rules for agents live in
 [`skills/econcs-formalizer/`](../skills/econcs-formalizer/).

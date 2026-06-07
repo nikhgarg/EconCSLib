@@ -1,4 +1,5 @@
 {
+  "comment": "Regenerated against current Lean statements, paper statements, and Lean-to-TeX statements; human review records were not modified.",
   "items": {
     "applicantOptimalStableMarriage": {
       "judgment": "matches",
@@ -6,15 +7,21 @@
       "matches": true,
       "paper_statement_sha256": "ef3667040636fe2adb4d0e0b1262ebb3e49f4910cbc9af25504ac7b44c21757e",
       "reason": "Translation preserves stability and the universal weak-preference comparison for every proposer against any stable marriage.",
-      "tex_statement_sha256": "3df9cf286e3a5f720e3b359c7f1ff7c6bd367821ca3d4ba9167e14048272355f"
+      "tex_statement_sha256": "3df9cf286e3a5f720e3b359c7f1ff7c6bd367821ca3d4ba9167e14048272355f",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "college_admissions_stable_assignment_exists": {
       "judgment": "matches",
-      "lean_statement_sha256": "bf9b19433b76b27ac6082a611418f40a56809b1a7b157af555aab8410d8ef8eb",
+      "lean_statement_sha256": "c19cf30c007d6862fba9c3bd685f218f050e623466ba70bca09be18c6532efbc",
       "matches": true,
       "paper_statement_sha256": "c5b6b154030e8b9835926d0f73662296c20c7fa2ee27ad5eff826522ab731c7e",
       "reason": "Translation preserves finite applicants and colleges, arbitrary quotas and utilities, and existence of a stable many-to-one assignment.",
-      "tex_statement_sha256": "c5639f42ad79b489833aa68a21f7bb2ef81548260beb844d10a3566382420d86"
+      "tex_statement_sha256": "c5639f42ad79b489833aa68a21f7bb2ef81548260beb844d10a3566382420d86",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "completeMarriage": {
       "judgment": "matches",
@@ -22,7 +29,10 @@
       "matches": true,
       "paper_statement_sha256": "8de216e58e249b7f4ed25bb821e21031e530d92b1f68df9b2fee3c39c30ad7ea",
       "reason": "Translation preserves that every participant on both sides is matched.",
-      "tex_statement_sha256": "d5e37956ab61921753b43eb51fc246cde6f40e7a426d7a2d206fbe6417b214f8"
+      "tex_statement_sha256": "d5e37956ab61921753b43eb51fc246cde6f40e7a426d7a2d206fbe6417b214f8",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "stableMarriage": {
       "judgment": "matches",
@@ -30,7 +40,10 @@
       "matches": true,
       "paper_statement_sha256": "bb38fb8823aa7c84d187190b3cbf079ece3deeef7f3f0316110e9241064fcd98",
       "reason": "Translation states individual rationality for both sides and excludes blocking pairs with strict mutual preference.",
-      "tex_statement_sha256": "f100cda3d7cba57b770865d17aaa7ae3b2191b2540f5b486b734b59c19ec28fa"
+      "tex_statement_sha256": "f100cda3d7cba57b770865d17aaa7ae3b2191b2540f5b486b734b59c19ec28fa",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "strictMarriageDomain": {
       "judgment": "matches",
@@ -38,29 +51,37 @@
       "matches": true,
       "paper_statement_sha256": "6050f7957d7e8956cee1412ee5f51097d2ed262f75e71ff2e5b9ca3b47aa4c9a",
       "reason": "Translation preserves strict preferences on both sides and universal acceptability of all man-woman pairs.",
-      "tex_statement_sha256": "51f680b582fbe2dd26cc187760618564fe3c372281b9a007dd26adced4ef72f3"
+      "tex_statement_sha256": "51f680b582fbe2dd26cc187760618564fe3c372281b9a007dd26adced4ef72f3",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem1_stable_marriage_exists": {
       "judgment": "matches",
-      "lean_statement_sha256": "bd9105e1105935f812dbb11289bc320230f490a6bc47e47058bda0bf0a29f85f",
+      "lean_statement_sha256": "2e534f0649dac33ab06e0cc5bd1a5f5e34f5be444f3604c55bed82662265390b",
       "matches": true,
       "paper_statement_sha256": "e36348b35e1cf1b6ed110dca15eea4979fd3bd8c30106288fb07dec27dca185c",
       "reason": "Translation preserves finite equal-cardinality strict marriage-domain hypotheses and existence of a stable complete marriage.",
-      "tex_statement_sha256": "0520c9c8097215b42b34bb2e49ca4092aa041b4de909180b7297df45f478c0a7"
+      "tex_statement_sha256": "0520c9c8097215b42b34bb2e49ca4092aa041b4de909180b7297df45f478c0a7",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     },
     "theorem2_applicant_optimality": {
       "judgment": "matches",
-      "lean_statement_sha256": "5f86881b4ff3d56186a4b86f67c40cd938416a840d62eaf3234f00f2509c3172",
+      "lean_statement_sha256": "54360695e5bf8229d8904c6a6a0377fe97d263adb45e2a939f7255e8b06df21a",
       "matches": true,
       "paper_statement_sha256": "04750f18e782d3d38540ca8e90ebb63baa06ebf0dfb99cebc8ce185611016c04",
       "reason": "Translation preserves equal-cardinality strict-domain hypotheses and that the deferred-acceptance output is complete and applicant-optimal among stable matchings.",
-      "tex_statement_sha256": "9d9dba18309b522dc748d61a8bbd36579bd267591283793ac3ecfde668d2f21d"
+      "tex_statement_sha256": "9d9dba18309b522dc748d61a8bbd36579bd267591283793ac3ecfde668d2f21d",
+      "validated_at": "2026-06-07T00:00:39Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
     }
   },
   "paper": "GS62CollegeAdmissions",
   "schema": 1,
+  "validated_at": "2026-06-07T00:00:39Z",
   "validator": "gpt-5-codex",
-  "validator_type": "model",
-  "validated_at": "2026-06-06T20:39:36Z",
-  "comment": "Statement-match validation generated by Codex from original paper statements and context-free Lean-to-TeX drafts."
+  "validator_type": "model"
 }

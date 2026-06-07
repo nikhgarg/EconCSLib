@@ -10,7 +10,7 @@
   "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
   "human_summary_review": {
     "status": "human_approved",
-    "note": "Preserve this human-written public summary unless a human explicitly asks to edit it."
+    "note": "Do not rewrite this summary without explicit human instruction."
   },
   "review_entrypoint": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
   "human_review": {
@@ -32,6 +32,7 @@
     "readme": "papers/PRPKG24AccuracyDiversity/README.md",
     "paper_interface": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
     "final_validation_report": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
+    "post_formalization_audit": "papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md",
     "dependency_dag_tex": "papers/PRPKG24AccuracyDiversity/DependencyDAG.tex",
     "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/DependencyDAG.pdf"
   },

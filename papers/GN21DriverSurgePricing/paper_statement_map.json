@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "source_text_note": "Line numbers are 1-indexed inclusive ranges into the local extracted paper text cache, source.txt. The text cache is intentionally ignored by git.",
+  "items": {
+    "review_definition_single_state_ic": {
+      "source_text_file": "source.txt",
+      "start_line": 269,
+      "end_line": 275
+    },
+    "review_definition_dynamic_ic": {
+      "source_text_file": "source.txt",
+      "start_line": 269,
+      "end_line": 275
+    },
+    "review_definition_threshold_policy": {
+      "source_text_file": "source.txt",
+      "start_line": 2149,
+      "end_line": 2152
+    },
+    "review_definition_dynamic_defined_reward": {
+      "source_text_file": "source.txt",
+      "start_line": 308,
+      "end_line": 319
+    },
+    "review_section2_single_state_renewal_reward_iid_bridge": {
+      "source_text_file": "source.txt",
+      "start_line": 279,
+      "end_line": 292
+    },
+    "review_proposition3_1_affine_single_state_ic": {
+      "source_text_file": "source.txt",
+      "start_line": 499,
+      "end_line": 499
+    },
+    "review_theorem1_single_state_threshold_best_response": {
+      "source_text_file": "source.txt",
+      "start_line": 455,
+      "end_line": 459
+    },
+    "review_lemma4_single_state_threshold_uniqueness": {
+      "source_text_file": "source.txt",
+      "start_line": 2375,
+      "end_line": 2379
+    },
+    "review_lemma1_measured_dynamic_reward_decomposition": {
+      "source_text_file": "source.txt",
+      "start_line": 2492,
+      "end_line": 2502
+    },
+    "review_lemma2_switch_probability_formula": {
+      "source_text_file": "source.txt",
+      "start_line": 2470,
+      "end_line": 2474
+    },
+    "review_lemma3_measured_time_fraction_formula": {
+      "source_text_file": "source.txt",
+      "start_line": 2503,
+      "end_line": 2510
+    },
+    "review_remark1_switch_probability_per_time_strictAntiOn": {
+      "source_text_file": "source.txt",
+      "start_line": 3050,
+      "end_line": 3068
+    },
+    "review_remark3_switch_probability_per_time_tendsto_at_zero": {
+      "source_text_file": "source.txt",
+      "start_line": 3089,
+      "end_line": 3089
+    },
+    "review_remark4_switch_time_minus_switch_probability_nonneg": {
+      "source_text_file": "source.txt",
+      "start_line": 3091,
+      "end_line": 3092
+    },
+    "review_lemma5_fixed_response_policy_form": {
+      "source_text_file": "source.txt",
+      "start_line": 2689,
+      "end_line": 2720
+    },
+    "review_lemma6_upper_endpoint_derivative_formula": {
+      "source_text_file": "source.txt",
+      "start_line": 3042,
+      "end_line": 3049
+    },
+    "review_lemma7_affine_positive_additive_response_quasi_convex": {
+      "source_text_file": "source.txt",
+      "start_line": 3072,
+      "end_line": 3073
+    },
+    "review_lemma8_affine_negative_additive_response_quasi_concave": {
+      "source_text_file": "source.txt",
+      "start_line": 3075,
+      "end_line": 3076
+    },
+    "review_lemma9_surge_derivative_positive_of_acceptAll_bounds": {
+      "source_text_file": "source.txt",
+      "start_line": 3099,
+      "end_line": 3108
+    },
+    "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds": {
+      "source_text_file": "source.txt",
+      "start_line": 3114,
+      "end_line": 3123
+    },
+    "review_theorem2_multiplicative_policy_shape_ae": {
+      "source_text_file": "source.txt",
+      "start_line": 516,
+      "end_line": 539
+    },
+    "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states": {
+      "source_text_file": "source.txt",
+      "start_line": 516,
+      "end_line": 539
+    },
+    "review_theorem4_structural_policy_representatives": {
+      "source_text_file": "source.txt",
+      "start_line": 3128,
+      "end_line": 3148
+    },
+    "review_theorem3_feasible_sequential_current_bounds_source_data_statement": {
+      "source_text_file": "source.txt",
+      "start_line": 3216,
+      "end_line": 3232
+    }
+  }
+}

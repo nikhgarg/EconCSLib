@@ -23,7 +23,7 @@
       },
       "paper_interface": {
         "path": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
-        "line_count": 409,
+        "line_count": 417,
         "declaration_rows": 32,
         "review_rows": 32,
         "oversized": false,
@@ -203,7 +203,6 @@
       "authors": "Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel",
       "publication_venue": "HCOMP 2019",
       "source_version": "arXiv version, 2019",
-      "source_url": "https://arxiv.org/abs/1906.08160",
       "build_target": "lake build GGSG19TopThree",
       "status": "formalized",
       "main_caveat": "",
@@ -268,7 +267,8 @@
             ]
           }
         ]
-      }
+      },
+      "source_url": "https://arxiv.org/abs/1906.08160"
     },
     {
       "schema": 1,
@@ -369,10 +369,6 @@
       "status": "formalized",
       "main_caveat": "Theorem 1 is closed as a source-facing support-safe finite-rate endpoint for finite ordinal ratings. Lean derives the pairwise common-dual witnesses and support-safe LDP certificates from positive match rates, the paper's upper-tail rating dominance, monotone scores, and full finite ordinal rating support; the bottom/top atom support used by the lower-bound route is derived internally. The old all-real real-rate bridge remains only as a compatibility theorem for users who supply stronger real-valued boundedness/domain conditions. Empirical sections are source scope but not Lean theorem targets.",
       "human_summary": "",
-      "human_summary_review": {
-        "status": "agent_draft",
-        "note": "Public-release draft summary; a human may approve or rewrite it before merge."
-      },
       "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -457,7 +453,7 @@
       },
       "paper_interface": {
         "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
-        "line_count": 160,
+        "line_count": 293,
         "declaration_rows": 24,
         "review_rows": 24,
         "oversized": false,
@@ -941,19 +937,20 @@
       "source_version": "ICWSM 2025 / arXiv:2207.04369",
       "build_target": "lake build MBJG25ProducerFairness",
       "status": "formalized",
-      "main_caveat": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
-      "human_summary": "Formalization required an additional assumption that Bernoulli success probability was strictly bounded away from 0 and 1.",
+      "main_caveat": "Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement.",
+      "human_summary": "Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement.",
       "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
       "human_review": {
-        "reviewed_rows": 0,
+        "reviewed_rows": 10,
         "total_rows": 17,
         "stale_rows": 0,
         "mismatch_rows": 0,
+        "uncertain_rows": 2,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
         "path": "papers/MBJG25ProducerFairness/PaperInterface.lean",
-        "line_count": 296,
+        "line_count": 317,
         "declaration_rows": 17,
         "review_rows": 17,
         "oversized": false,
@@ -1117,7 +1114,7 @@
       "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
       "human_summary_review": {
         "status": "human_approved",
-        "note": "Preserve this human-written public summary unless a human explicitly asks to edit it."
+        "note": "Do not rewrite this summary without explicit human instruction."
       },
       "review_entrypoint": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
       "human_review": {
@@ -1139,6 +1136,7 @@
         "readme": "papers/PRPKG24AccuracyDiversity/README.md",
         "paper_interface": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
         "final_validation_report": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
+        "post_formalization_audit": "papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md",
         "dependency_dag_tex": "papers/PRPKG24AccuracyDiversity/DependencyDAG.tex",
         "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/DependencyDAG.pdf"
       },

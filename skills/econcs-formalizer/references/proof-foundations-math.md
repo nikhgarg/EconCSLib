@@ -21,6 +21,28 @@ finite signs, asymptotics, and interval-crossing arguments.
   the selected index type into the full index type and use
   `FiniteSum.sum_le_sum_of_injective_nonneg`, with nonnegativity of the full
   summands, to compare the selected sum to the full sum.
+- For finite double sums over ordered pairs, use
+  `FiniteSum.pair_sum_eq_ordered_swap_sum_of_injective_key` when a paper pairs
+  `(i,j)` with `(j,i)` according to a reference ranking or score key. If the
+  index type itself is linearly ordered, `FiniteSum.pair_sum_eq_ordered_swap_sum`
+  is the shorter wrapper.
+- For denominator-cleared weighted averages, use
+  `FiniteSum.weighted_average_cross_nonneg_of_pairwise` and
+  `FiniteSum.weighted_average_cross_pos_of_pairwise`: pairwise cross-ratio
+  dominance plus a weakly or strictly decreasing payoff gives the cleared
+  average comparison. This is the generic core behind Mallows MLR comparisons,
+  rank-layer stochastic dominance, and many finite scoring-rule/rate
+  comparisons.
+- For two-component pooled estimates over real values, use
+  `EconCSLib.Foundations.Math.ConvexCombination` instead of rebuilding
+  denominator-cleared algebra. Define paper notation locally, then prove
+  comparisons through `twoPointWeightedAverage` with
+  `lt_twoPointWeightedAverage_of_lt_components`,
+  `twoPointWeightedAverage_lt_of_components_lt`,
+  `lt_twoPointWeightedAverage_of_weighted_gap_pos`, or
+  `twoPointWeightedAverage_lt_of_weighted_gap_neg`. For parameterized pooled
+  estimates, use `continuous_twoPointWeightedAverage` after proving the
+  denominator is nonzero or positive.
 - For finset-to-finset mass comparisons, use
   `FiniteSum.finset_sum_le_sum_of_injOn_nonneg`: provide an injection from the
   source finset into the target finset, prove pointwise domination along the
@@ -60,6 +82,13 @@ finite signs, asymptotics, and interval-crossing arguments.
 - For analytic crossing proofs, first prove the finite algebra conditionally
   from a named crossing certificate. Then instantiate continuity/limit facts in
   small generic interval modules.
+- For unbounded decreasing capacity equations, use
+  `existsUnique_eq_and_upper_region_of_continuous_strictAnti_tendsto_atBot_atTop`.
+  It packages both the unique cutoff `f cutoff = level` and the source-facing
+  upper-region characterization `f z <= level ↔ cutoff <= z`. GLM-style
+  school-cutoff and Gaussian-mixture capacity proofs should be thin wrappers
+  around this lemma once continuity, strict antitonicity, and endpoint limits
+  are available.
 - For probability or count sequences bounded by `C / n`, use
   `TendsToZero_of_nonneg_le_const_div` when the sequence is nonnegative, and
   `TendsToZero_of_eventually_abs_le_inv` when you already have an eventual
