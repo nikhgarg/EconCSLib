@@ -118,11 +118,13 @@ set-of-bids/masked-vector behavior for Section 9.3.
 
 ## 10. Library Lift Pass
 
-Reusable auction material already lives in
-`EconCSLib/MechanismDesign/Auctions/MainTheorems.lean`. A future second-paper
-use case could factor the finite PMF layer-cake surplus lemmas behind Theorem
-8.2 into a smaller stochastic-ordering API; no risky extraction is needed for
-this closeout.
+Reusable digital-goods auction material now lives in
+`EconCSLib/MechanismDesign/Auctions/DigitalGoods.lean`, alongside the
+`Position.lean` and `Combinatorial.lean` auction modules. The GHW
+paper-local `MainTheorems.lean` is a re-export layer over the paper-facing
+endpoints. A future second-paper use case could factor the finite PMF
+layer-cake surplus lemmas behind Theorem 8.2 into a smaller stochastic-ordering
+API; no risky extraction is needed for this closeout.
 
 ## 11. DAG Audit
 
