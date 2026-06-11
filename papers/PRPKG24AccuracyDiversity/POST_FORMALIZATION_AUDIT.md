@@ -6,7 +6,7 @@ This is the human-facing status note for the current PRPKG partial
 formalization boundary. The implementation README is a source-audit/work ledger;
 this file is the concise public summary.
 
-Source version: WWW '24 / The ACM Web Conference 2024, pp. 1318--1329,
+Source version: The ACM Web Conference, 2024, pp. 1318--1329,
 DOI `10.1145/3589334.3645625`; the local source cache is
 arXiv:2307.15142v1. The ignored PDF cache is not present in this checkout and
 should be recreated from arXiv only when fresh line-level source inspection is

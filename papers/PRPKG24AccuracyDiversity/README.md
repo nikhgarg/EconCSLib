@@ -8,7 +8,7 @@ ledger and may contain proof-planning or declaration-level detail.
 
 - Paper: *Reconciling the accuracy-diversity trade-off in recommendations*
 - Authors: Kenny Peng, Manish Raghavan, Emma Pierson, Jon Kleinberg, and Nikhil Garg
-- Version checked locally: WWW '24 / The ACM Web Conference 2024, pp.
+- Version checked locally: The ACM Web Conference, 2024, pp.
   1318--1329; DOI `10.1145/3589334.3645625`. The local source cache is
   arXiv:2307.15142v1, dated 2023-07-27 in the cached PDF.
 - arXiv URL: https://arxiv.org/abs/2307.15142

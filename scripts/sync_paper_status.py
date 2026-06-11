@@ -59,7 +59,7 @@ PUBLICATION_OVERRIDES = {
     "LOS02CombinatorialAuctions": ("Journal of the ACM, 2002", 2002),
     "MBJG25ProducerFairness": ("ICWSM, 2025", 2025),
     "MSVV07AdWords": ("Journal of the ACM, 2007", 2007),
-    "PRPKG24AccuracyDiversity": ("WWW '24 / The ACM Web Conference, 2024", 2024),
+    "PRPKG24AccuracyDiversity": ("The ACM Web Conference, 2024", 2024),
     "Roth82StableMatching": ("Mathematics of Operations Research, 1982", 1982),
 }
 

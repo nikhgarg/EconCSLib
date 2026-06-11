@@ -15,8 +15,8 @@
 ## 2. Source and Scope
 
 - Paper: *Reconciling the Accuracy-Diversity Trade-off in Recommendations*.
-- Publication venue: WWW '24 / The ACM Web Conference 2024.
-- Source version: WWW '24 proceedings metadata plus arXiv:2307.15142v1 source cache.
+- Publication venue: The ACM Web Conference, 2024.
+- Source version: The ACM Web Conference, 2024 metadata plus arXiv:2307.15142v1 source cache.
 - Lean folder: `papers/PRPKG24AccuracyDiversity`.
 - Human-facing theorem file: `papers/PRPKG24AccuracyDiversity/PaperInterface.lean`.
 - Detailed post-boundary audit: `papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md`.
