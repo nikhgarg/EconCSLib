@@ -112,9 +112,6 @@ set-of-bids/masked-vector behavior for Section 9.3.
 
 ## 9. Proof Tricks Worth Reusing
 
-- Prefer source-shaped final models over proof-adapter structures in
-  `PaperInterface.lean`, then audit broad paper-module exports so old adapters
-  do not reappear as public endpoints.
 - For finite randomized digital-goods auctions, raw CDF monotonicity can often
   be pushed directly to acceptance probabilities and surplus recursions using
   finite PMF layer-cake sums.

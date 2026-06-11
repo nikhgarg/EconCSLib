@@ -835,6 +835,9 @@ the Lean statements against the paper.
   contain helper families, proof-seam checks, algebraic plumbing, or endpoint
   changelogs; put those in `MainTheorems.lean`, `ProofInterface.lean`, or
   `PostPaperAudit.lean`.
+- Prefer source-shaped final models over proof-adapter structures in
+  `PaperInterface.lean`, then audit broad paper-module exports so old adapters
+  do not reappear as public endpoints.
 - Keep the interface row count close to the paper's named definitions and
   results. Do not expose every theorem-route variant, support wrapper,
   diagnostic, certificate, or PMF/law specialization as its own dashboard row.
