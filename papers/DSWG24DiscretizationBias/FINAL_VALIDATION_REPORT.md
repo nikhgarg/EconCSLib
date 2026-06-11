@@ -4,7 +4,7 @@
 
 - Lean formalization status: formalized
 - Human dashboard review status: 0/32 rows reviewed; 0 stale; 0 mismatches.
-- Main caveat: Main theorem route differs from the paper proof in places; the validation report records the proof-route deviation.
+- Scope note: Main theorem route differs from the paper proof in places; the validation report records the proof-route deviation.
 
 ## 2. Source and Scope
 

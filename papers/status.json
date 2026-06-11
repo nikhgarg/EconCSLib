@@ -12,7 +12,7 @@
       "source_version": "ACM FAccT 2024 / PNAS Nexus 2025 published version",
       "build_target": "lake build DSWG24DiscretizationBias",
       "status": "formalized",
-      "main_caveat": "Main theorem route differs from the paper proof in places; the validation report records the proof-route deviation.",
+      "main_caveat": "",
       "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,

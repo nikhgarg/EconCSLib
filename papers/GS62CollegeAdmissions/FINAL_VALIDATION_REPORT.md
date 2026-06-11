@@ -108,8 +108,7 @@ Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json`
 
 Summary: 7 rows; 7 match, 0 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
 
-Flagged rows:
-- None.
+No flagged rows remain after the current statement check.
 
 ## 12. Final Verdict
 

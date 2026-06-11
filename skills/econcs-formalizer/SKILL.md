@@ -177,6 +177,17 @@ be faithful but some derivation remains undischarged.
 Do not use `formalized with caveat` for source-quality notes, poor OCR, or an
 audit observation that does not change the closed paper-facing theorem. Put that
 note in the final report and leave the status `formalized`.
+Before finalizing a public README, DAG, generated status surface, or validation
+report, audit every `formalized with caveat` row. Run a focused grep such as
+`rg -n "formalized with caveat|Formalized with caveat|dag_caveat|Caveat:"`
+over the changed public paper/report/status files, then classify each hit. If
+the issue is an unfinished theorem, external theorem import, runtime layer,
+analytic derivation, missing library component, or other proof boundary that
+does not change the final paper statement, use `partially formalized` or
+`conditional` and describe the remaining boundary. Keep `formalized with
+caveat` only when the closed Lean endpoint intentionally differs from the paper
+because of an added non-paper assumption, a corrected/repair statement, or a
+real source mismatch.
 If any named source endpoint still exposes an explicit certificate, witness,
 external theorem, or paper-model hypothesis that has not been derived from the
 paper's primitive assumptions, the whole paper is `partially formalized`, even
