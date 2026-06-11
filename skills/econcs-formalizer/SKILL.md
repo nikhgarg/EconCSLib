@@ -879,6 +879,14 @@ the Lean statements against the paper.
   that wrapper in `status.json` `review_surface.include_names` instead of the
   opaque alias. The repository audit checks this failure mode when an included
   alias has an available source-equation wrapper.
+  When an LLM-as-judge row is `uncertain`, inspect the actual Lean statement
+  before accepting the uncertainty. If the Lean row is only a function
+  signature, imported alias, structure name, or conclusion predicate, fix
+  `PaperInterface.lean` by exposing the equation, fields, iff, or theorem
+  conclusion. If the Lean row is already source-shaped but the TeX draft erased
+  binder context such as `W` versus `W'`, regenerate the Lean-to-TeX draft and
+  then rerun the judge; do not change a correct Lean statement to satisfy a bad
+  draft.
 - Every dashboard row should label source provenance in the `PaperInterface.lean`
   docstring. Use dashboard-only lines such as `Source status: direct paper
   statement`, `Source status: direct paper formula`, `Source status: corrected
@@ -958,6 +966,11 @@ the Lean statements against the paper.
   Put declaration-keyed source statements in a source-inventory/report section,
   not in generated audit output. `Statement Translation Audit` is downstream
   evidence and must never become the source text for a later judge pass.
+  Report parsers should treat all Markdown heading levels (`##` through
+  `######`) as section boundaries and ignore generated audit sections such as
+  `Statement Translation Audit`; if source statements start looking like
+  validator rows, stale flags, or `uncertain` comments, fix the parser or final
+  report section order before regenerating LLM sidecars.
   If nearly every row is `uncertain`, assume a parser/source-statement mapping
   failure until proven otherwise: fix the source extraction or record a
   paper-wide source-map issue, instead of leaving every row individually
@@ -1001,6 +1014,11 @@ the Lean statements against the paper.
      unless the translation is plainly wrong. Usually the fix is to make the
      `PaperInterface.lean` declaration more paper-facing and self-contained,
      then rerun both LLM passes.
+     When refreshing stale sidecars after editing `PaperInterface.lean`, build
+     the affected paper target before taking final digests if the dashboard
+     obtains theorem previews from compiled Lean state. A stale row immediately
+     after a hash refresh often means the Lean preview cache still reflects the
+     previous build.
   6. Add or refresh the `Statement Translation Audit` section in
      `FINAL_VALIDATION_REPORT.md`. It should give row counts, match/uncertain/
      mismatch counts, stale status, surface-audit status, and every flagged
@@ -1737,6 +1755,12 @@ pass:
   stale blocked-command language. If it reads like a helper-theorem ledger,
   proof-script changelog, or shell transcript, rewrite it before claiming
   post-validation is complete.
+  Follow the current report template order, not an older partially reorganized
+  report. In particular, keep the paper-interface review sections at the end:
+  `Paper Definitions Checked`, `Named Theorem Statements Checked`, and
+  `Paper-Facing Statement Validator Ledger`. Do not leave placeholders or
+  pointers saying where those sections belong; move the text into template
+  order and fill the validator ledger from the dashboard export.
 - Write the final validation report in paper language, not Lean-internal
   implementation language. Near the top it must answer four questions directly:
   what has been proved, whether formalization found anything wrong or ambiguous
@@ -1746,6 +1770,11 @@ pass:
   paper-local `.lean` files, the line count of `PaperInterface.lean`, and the
   number of human-review rows/declarations exposed there. Use this to make the
   scale of the proof and the size of the review surface clear to humans.
+  The total paper-local `.lean` line count is the full proof footprint and is
+  the value exported as `lean_loc`/`Full proof LOC`; it is intentionally
+  different from the smaller `PaperInterface.lean` line count. Never use the
+  interface line count as the paper proof LOC in generated manuscript, docs, or
+  website tables.
 - Include a short "proof tricks worth reusing" section in the final report.
   This should be a durable engineering summary, not theorem-specific proof
   chatter: name the modeling choices, proof decomposition, and Lean tactics or
@@ -1896,6 +1925,12 @@ pass:
   section `verification status`; use `Formalized`, `Formalized with caveat`,
   `Partially formalized`, or the paper-local lowercase equivalents from
   `docs/STATUS.md`.
+- For source-version differences, make the primary paper target explicit and
+  describe later-version wording as a refinement or correction to a specific
+  result. Avoid blended labels such as `conference/journal` when they obscure
+  the target, and avoid process jargon such as `crosswalk` in public-facing
+  reports; say directly that the folder formalizes the source paper, with the
+  named theorem checked against the refined wording from the later version.
 - **CRITICAL MANDATE: Never lie by omission.** Your validation report MUST list all major theorems, propositions, and sections from the paper. If a result or section was deferred, skipped, or is otherwise unformalized, you MUST list it in the report, mark its status as `not formalized`, and explain why it was deferred. Always be honest and complete regarding the paper's contents.
 - The report must first present the paper interface: the definitions and
   formatted mathematical objects the reader needs to inspect, even when the
