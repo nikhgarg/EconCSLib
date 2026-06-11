@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-07T00:00:39Z",
+  "generated_at": "2026-06-11T03:38:38Z",
   "generator": "codex-refresh-current-lean-statements",
   "items": {
     "applicantOptimalStableMarriage": {
@@ -7,7 +7,7 @@
       "statement": "A matching $\\mu$ is applicant-optimal stable if it is stable and, for every stable matching $\\mu'$, every applicant/man weakly prefers their match under $\\mu$ to their match under $\\mu'$."
     },
     "college_admissions_stable_assignment_exists": {
-      "lean_statement_sha256": "c19cf30c007d6862fba9c3bd685f218f050e623466ba70bca09be18c6532efbc",
+      "lean_statement_sha256": "bf9b19433b76b27ac6082a611418f40a56809b1a7b157af555aab8410d8ef8eb",
       "statement": "For finite applicant and college sets with decidable equality, any college quotas and applicant/college utilities admit an assignment $\\mu$ that is stable for the many-to-one college-admissions problem."
     },
     "completeMarriage": {
@@ -23,14 +23,15 @@
       "statement": "For sets of men $M$ and women $W$ with utilities $v_m:M\\to W\\to\\mathbb{R}$ and $v_w:W\\to M\\to\\mathbb{R}$, the strict marriage domain is the condition that men's preferences are strict, women's preferences are strict, and every man-woman pair is acceptable."
     },
     "theorem1_stable_marriage_exists": {
-      "lean_statement_sha256": "2e534f0649dac33ab06e0cc5bd1a5f5e34f5be444f3604c55bed82662265390b",
+      "lean_statement_sha256": "bd9105e1105935f812dbb11289bc320230f490a6bc47e47058bda0bf0a29f85f",
       "statement": "For finite sets $M$ and $W$ with decidable equality, if $|M|=|W|$ and utilities $v_m,v_w$ satisfy the strict marriage domain, then there exists an assignment $\\mu$ that is stable and complete."
     },
     "theorem2_applicant_optimality": {
-      "lean_statement_sha256": "54360695e5bf8229d8904c6a6a0377fe97d263adb45e2a939f7255e8b06df21a",
+      "lean_statement_sha256": "e3085275e469f9addcfeef41921e1251a3f8a3d9344b70fbc6c011c59968b082",
       "statement": "For finite applicant and college sets with decidable equality, if the two sides have equal cardinality and the utilities satisfy the strict marriage domain, then deferred acceptance produces a complete matching that is applicant-optimal among stable matchings."
     }
   },
   "paper": "GS62CollegeAdmissions",
-  "schema": 1
+  "schema": 1,
+  "comment": "Refreshed Lean statement digests against current PaperInterface.lean rows; existing Lean-to-TeX/prose drafts were preserved."
 }

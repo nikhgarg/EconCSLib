@@ -18,8 +18,9 @@ Cached source text inventory checked by this audit:
 - Theorem 7.1, line 563: weighted pairing gets `Omega(T / log h)` when `4h <= T`.
 - Theorem 7.2, line 626: weighted pairing gets `Omega(F / log h)` when `F >= 2h`.
 - Lemma 8.1, line 747: truthfulness implies monotone win probabilities.
-- Theorem 8.2, line 833: the broad technical-report statement is audited
-  against the later journal monotone-auction statement.
+- Theorem 8.2, line 833: Section 8.2 is checked against the later journal
+  monotone-auction formulation; the preliminary unrestricted wording is
+  recorded only as a source-version audit note.
 - Theorem 9.1, line 979: bid-independent lower-bound witness.
 - Lemma 9.2, line 1105: truthful deterministic auctions are bid-independent.
 - Theorem 9.3, line 1100: deterministic truthful lower-bound witness.
@@ -166,9 +167,12 @@ theorem audit_theorem8_2_truthful_revenue_upper_bound
       model
 
 /--
-Audit boundary for GHW Theorem 8.2: the weak primitive reading is false. A
-truthful IR/NPT binary threshold auction can earn strictly more than `F`.
--/
+Source-version audit endpoint for Section 8.2.
+
+This declaration is not part of the paper-facing theorem inventory. It records
+why the public Section 8.2 endpoint is checked against the later journal
+monotone-auction formulation rather than against the preliminary unrestricted
+wording. -/
 theorem audit_theorem8_2_weak_truthful_counterexample :
     finiteCandidateFixedPriceBenchmark paper_theorem8_2_counterexample_values 1 <
       paper_theorem8_2_counterexample_auction.revenue

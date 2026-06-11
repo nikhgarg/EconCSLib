@@ -29,6 +29,16 @@ abbrev definition2 :=
 noncomputable abbrev definition3 :=
   @definition3_topk_value_oracle_from_order_statistic_mean
 
+/--
+Definition 3: the expected top-`k` value from order-statistic means is the sum
+of the upper `min k a` order-statistic means.
+-/
+theorem definition3_expectedTopSum_formula
+    (T : ℕ) (mu : ℕ → ℕ → ℝ) (k : ℕ) (t : ItemType T) (a : ℕ) :
+    (definition3 T mu).expectedTopSum k t a =
+      ∑ i ∈ Finset.range (min k a), mu (a - i) a := by
+  rfl
+
 /-- Example 1: exact calibrated top-one exponential sequence. -/
 abbrev example1 :=
   @example1_top_one_exponential_harmonic_sequence_formula

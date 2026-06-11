@@ -17,7 +17,7 @@
   },
   "paper_interface": {
     "path": "papers/Roth82StableMatching/PaperInterface.lean",
-    "line_count": 468,
+    "line_count": 481,
     "declaration_rows": 27,
     "review_rows": 27,
     "oversized": false,
@@ -47,7 +47,7 @@
       "womenDeferredAcceptance",
       "paretoOptimal",
       "efficientMatchingProcedure",
-      "serialDictatorshipMechanism",
+      "serialDictatorshipMechanism_matches",
       "manReportStrictlyRanksPartnerFirst",
       "reportMisrepresentsKthChoice",
       "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain",

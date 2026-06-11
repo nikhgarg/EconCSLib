@@ -22,7 +22,7 @@
   },
   "paper_interface": {
     "path": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
-    "line_count": 138,
+    "line_count": 148,
     "declaration_rows": 27,
     "review_rows": 27,
     "oversized": false,
@@ -41,7 +41,7 @@
     "include_names": [
       "definition1",
       "definition2",
-      "definition3",
+      "definition3_expectedTopSum_formula",
       "example1",
       "theorem1_i",
       "theorem1_ii",

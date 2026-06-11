@@ -873,6 +873,12 @@ the Lean statements against the paper.
   `A -> B -> ...` or `ℝ -> ...`, stop and fix the interface/dashboard before
   asking a human to review it. A reviewer should be able to compare the paper's
   displayed formula directly against the Lean formula in that row.
+  When the reusable implementation must remain an imported definition or short
+  alias, add a source-equation wrapper theorem in `PaperInterface.lean` such as
+  `_formula`, `_iff`, `_fields`, `_rule`, `_content`, or `_matches`, and include
+  that wrapper in `status.json` `review_surface.include_names` instead of the
+  opaque alias. The repository audit checks this failure mode when an included
+  alias has an available source-equation wrapper.
 - Every dashboard row should label source provenance in the `PaperInterface.lean`
   docstring. Use dashboard-only lines such as `Source status: direct paper
   statement`, `Source status: direct paper formula`, `Source status: corrected

@@ -106,10 +106,30 @@ REVIEW_DECL_RE = re.compile(
     r"(?:theorem|lemma|def|abbrev)\s+([A-Za-z_][A-Za-z0-9_']*)\b",
     re.M,
 )
+REVIEW_DECL_KIND_RE = re.compile(
+    r"^\s*(?:(?:@[A-Za-z_][A-Za-z0-9_]*(?:\([^)]*\))?\s+)*)?"
+    r"(?:(?:noncomputable|private|protected)\s+)*"
+    r"(theorem|lemma|def|abbrev)\s+([A-Za-z_][A-Za-z0-9_']*)\b",
+    re.M,
+)
 REVIEW_EXPORT_OPEN_RE = re.compile(
     r"^\s*export\s+[A-Za-z_][A-Za-z0-9_']*(?:\.[A-Za-z_][A-Za-z0-9_']*)*\s+\((.*)$"
 )
 REVIEW_EXPORT_NAME_RE = re.compile(r"\b[A-Za-z_][A-Za-z0-9_']*\b")
+SOURCE_EQUATION_WRAPPER_MARKERS = (
+    "_formula",
+    "_iff",
+    "_fields",
+    "_rule",
+    "_content",
+    "_matches",
+    "_allocation_payment",
+    "_uniform",
+    "_pmf",
+    "_choice_feasible",
+    "_query_choice",
+    "_has_",
+)
 LEDGER_PLACEHOLDER_RE = re.compile(
     r"\[Paper Title\]|\bnamespace TEMPLATE\b|\bpaperDefinition1\b|\bpaper_theorem_1\b|Replace before claiming progress",
 )
@@ -382,6 +402,77 @@ def review_rows_from_interface_text(interface_text: str) -> list[tuple[int, str]
             continue
         line_number += 1
     return decls
+
+
+def review_declaration_blocks(interface_text: str) -> dict[str, tuple[int, str, str]]:
+    """Return paper-interface declarations keyed by name.
+
+    Values are `(line_number, kind, declaration_source)`.  The parser mirrors
+    the lightweight dashboard row parser; it is intentionally syntactic and
+    only needs enough structure for review-surface hygiene checks.
+    """
+
+    lines = interface_text.splitlines()
+    starts: list[tuple[int, str, str]] = []
+    block_depth = 0
+    for line_number, line in enumerate(lines, start=1):
+        stripped = line.strip()
+        if block_depth > 0:
+            block_depth += line.count("/-")
+            block_depth -= line.count("-/")
+            block_depth = max(block_depth, 0)
+            continue
+        if stripped.startswith("/-"):
+            block_depth += line.count("/-")
+            block_depth -= line.count("-/")
+            block_depth = max(block_depth, 0)
+            continue
+        if stripped.startswith("--"):
+            continue
+        match = REVIEW_DECL_KIND_RE.match(line)
+        if match:
+            starts.append((line_number, match.group(1), match.group(2)))
+
+    out: dict[str, tuple[int, str, str]] = {}
+    for index, (line_number, kind, name) in enumerate(starts):
+        next_line = starts[index + 1][0] if index + 1 < len(starts) else len(lines) + 1
+        source = "\n".join(lines[line_number - 1 : next_line - 1]).strip()
+        out[name] = (line_number, kind, source)
+    return out
+
+
+def _lower_initial(name: str) -> str:
+    return name[:1].lower() + name[1:] if name else name
+
+
+def source_equation_wrapper_candidates(name: str, decl_names: set[str]) -> list[str]:
+    """Find likely source-equation wrappers that should replace an opaque alias row."""
+
+    prefixes = {f"{name}_", f"{_lower_initial(name)}_"}
+    candidates = []
+    for candidate in decl_names:
+        if candidate == name or not any(candidate.startswith(prefix) for prefix in prefixes):
+            continue
+        if any(marker in candidate for marker in SOURCE_EQUATION_WRAPPER_MARKERS):
+            candidates.append(candidate)
+    return sorted(candidates)
+
+
+def is_signature_only_review_alias(kind: str, source: str) -> bool:
+    """Heuristic for review rows that expose only an imported function/type alias."""
+
+    if kind not in {"abbrev", "def"} or ":=" not in source:
+        return False
+    body = re.sub(r"\s+", " ", source.split(":=", 1)[1].strip())
+    if not body:
+        return False
+    if body.startswith("@"):
+        return True
+    if re.match(r"(?:[A-Z][A-Za-z0-9_']*|[A-Za-z_][A-Za-z0-9_']*\.)", body):
+        return True
+    if re.match(r"paper_[A-Za-z0-9_']+\b", body):
+        return True
+    return False
 
 
 def review_surface_slice_counts(interface_text: str, status_file: Path) -> tuple[list[str], dict[str, int]]:
@@ -949,7 +1040,9 @@ def check_machine_paper_status() -> list[Finding]:
             continue
 
         actual_line_count = len(interface_path.read_text(encoding="utf-8").splitlines())
-        actual_review_names = [name for _line, name in review_rows_from_interface_text(interface_path.read_text(encoding="utf-8"))]
+        interface_text = interface_path.read_text(encoding="utf-8")
+        actual_review_names = [name for _line, name in review_rows_from_interface_text(interface_text)]
+        declaration_blocks = review_declaration_blocks(interface_text)
         recorded_line_count = interface.get("line_count")
         if recorded_line_count != actual_line_count:
             findings.append(
@@ -959,6 +1052,23 @@ def check_machine_paper_status() -> list[Finding]:
                     f"`{paper_id}` line_count is {recorded_line_count}, expected {actual_line_count}",
                 )
             )
+        for name in include_names:
+            declaration = declaration_blocks.get(name)
+            if not declaration:
+                continue
+            line_no, kind, source = declaration
+            if not is_signature_only_review_alias(kind, source):
+                continue
+            candidates = source_equation_wrapper_candidates(name, set(declaration_blocks))
+            if candidates:
+                findings.append(
+                    Finding(
+                        "ERROR",
+                        interface_path,
+                        f"`{paper_id}` review row `{name}` at line {line_no} is an opaque signature/alias; "
+                        f"use source-equation wrapper `{candidates[0]}` in `status.json` `review_surface.include_names`",
+                    )
+                )
 
         total_rows = review.get("total_rows") if isinstance(review, dict) else None
         review_rows = interface.get("review_rows")

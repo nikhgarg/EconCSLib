@@ -639,9 +639,11 @@ def parse_report_texts(report_path: Path) -> dict[str, str]:
     i = 0
     while i < len(lines):
         line = lines[i]
-        heading = re.match(r"^##\s+(.+?)\s*$", line)
+        heading = re.match(r"^#{2,6}\s+(.+?)\s*$", line)
         if heading:
-            active_section = heading.group(1).strip().lower()
+            active_section = re.sub(
+                r"^\d+\.\s*", "", heading.group(1).strip().lower()
+            )
             i += 1
             continue
         if active_section in ignored_sections:

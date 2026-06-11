@@ -193,11 +193,15 @@ theorem lemma8_1_truthful_monotone
     paper_lemma8_1_allocation_mono_own_bid_of_truthful M hM bids i hlt
 
 /--
-Theorem 8.2, journal version: every monotone truthful randomized offer
-auction's expected revenue is bounded by `F`. The source model records the
-journal CDF monotonicity condition on raw marginal offer laws; Lean discharges
-the finite adjacent-surplus recursion directly from those CDF inequalities.
--/
+Theorem 8.2 source-version endpoint.
+
+For Section 8.2, the paper-facing formalization follows the journal version's
+refined monotone truthful randomized offer-auction wording. Every such auction
+has expected revenue at most the fixed-price benchmark `F`.
+
+This is the Theorem 8.2 endpoint used for the SODA paper. The preliminary
+unrestricted wording is tracked separately as source-version audit material,
+not as a paper-facing theorem. -/
 theorem theorem8_2_truthful_revenue_upper_bound
     {Agent Price : Type*} [Fintype Agent] [Nonempty Agent]
     [DecidableEq Agent] [Fintype Price] [DecidableEq Price]
@@ -214,20 +218,6 @@ theorem theorem8_2_truthful_revenue_upper_bound
   exact
     paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_offer_source_model
       model
-
-/--
-Source-audit boundary for Theorem 8.2: weak truthfulness plus ordinary
-threshold pricing alone does not imply the paper's revenue upper bound.
--/
-theorem theorem8_2_weak_truthful_counterexample :
-    fixedPriceBenchmark paper_theorem8_2_counterexample_values 1 <
-      paper_theorem8_2_counterexample_auction.revenue
-        paper_theorem8_2_counterexample_values := by
-  change
-    finiteCandidateFixedPriceBenchmark paper_theorem8_2_counterexample_values 1 <
-      paper_theorem8_2_counterexample_auction.revenue
-        paper_theorem8_2_counterexample_values
-  exact paper_theorem8_2_counterexample_revenue_gt_benchmark
 
 /-- Theorem 9.1: bid-independent auctions have a lower-bound witness. -/
 theorem theorem9_1_bid_independent_lower_bound

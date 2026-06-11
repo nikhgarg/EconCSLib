@@ -196,6 +196,19 @@ noncomputable def serialDictatorshipMechanism {n : ℕ} :
     (Fin n → Fin n → ℝ) → (Fin n → Fin n → ℝ) → Assignment (Fin n) (Fin n) :=
   paper_serial_dictatorship_mechanism (n := n)
 
+/--
+The serial-dictatorship mechanism chooses its permutation from the men's
+reported preferences and matches each man to `p m` and each woman to `p.symm w`.
+-/
+theorem serialDictatorshipMechanism_matches {n : ℕ}
+    (val_m : Fin n → Fin n → ℝ) (val_w : Fin n → Fin n → ℝ)
+    (m w : Fin n) :
+    (serialDictatorshipMechanism val_m val_w).m_match m =
+        some (paper_serial_dictatorship_perm val_m m) ∧
+      (serialDictatorshipMechanism val_m val_w).w_match w =
+        some ((paper_serial_dictatorship_perm val_m).symm w) := by
+  exact ⟨rfl, rfl⟩
+
 /-- A report strictly ranks the optional partner first. -/
 def manReportStrictlyRanksPartnerFirst {W : Type*} (report_m : W → ℝ)
     (partner : Option W) : Prop :=

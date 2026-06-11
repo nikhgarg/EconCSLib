@@ -1,14 +1,14 @@
 {
-  "comment": "Regenerated against current Lean statements, paper statements, and Lean-to-TeX statements; human review records were not modified.",
+  "comment": "Refreshed statement digests after report-parser cleanup; existing judge verdicts were preserved.",
   "items": {
     "aggregatePosterior": {
       "judgment": "mismatch",
       "lean_statement_sha256": "566ec71a0b06bc04411d6fc7429f9fa912f6d51efe0ccaffdd9ce2ad0a4b5832",
       "matches": false,
-      "paper_statement_sha256": "ee083fcb634f841ac201076e4425c2ead1e0b624616ec9268e286e089e2f2489",
+      "paper_statement_sha256": "548a2bce0d378883aabad89d21a3f3721b3cc5098daa0dd7191da9a54d7385d8",
       "reason": "Paper defines an empirical average over observed x_i; translation gives an expectation over the marginal distribution.",
       "tex_statement_sha256": "ccff107ef30df33700b9feeffcc4e77e2829476497c7558897eb6e8fc6960be4",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -19,7 +19,7 @@
       "paper_statement_sha256": "92b19368c593c53a6455e2d7cdd15e3ed1c8cc06d8b59d37f2678485802c2922",
       "reason": "Both define bias as marginal label share minus the reference probability at y.",
       "tex_statement_sha256": "16f1c7139112f8480a5e0e35dc2b46a8a480b83bf57c11b7c4c828fa9e6047a2",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -30,7 +30,7 @@
       "paper_statement_sha256": "283b99e171e80bdda1f7d3968f2380e5a62e536c999fe0f4f7ed6a9c644ad686",
       "reason": "Translation is the event-preimage integral form described by the paper statement.",
       "tex_statement_sha256": "554c14a5356fb78f636d23dd1de07c6f3bab879d182f4fabcc79f7d5c4bb0773",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -41,7 +41,7 @@
       "paper_statement_sha256": "66bb4872f6cedefb13037ec23fffedb10685fbcd659a5f14a412d4c7d08bbc5f",
       "reason": "Both give E_X sum_y q(y,x)(1-q(y,x)), modulo argument-order notation.",
       "tex_statement_sha256": "d14183135729f47d8370a5036d12ffbc4841b9147bea8211d7fa5a72c778c9bb",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -52,7 +52,7 @@
       "paper_statement_sha256": "5e71af749171eb18887df60826371e8ad27a2b9537c73c7db5f49c9c43d20f99",
       "reason": "Translation defines bias against the continuous aggregate-posterior reference, matching the paper label.",
       "tex_statement_sha256": "e93adbe0723de824d654f4dfe32c7ec3b6523f28bb5151e0b47bd95583b0766e",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -63,7 +63,7 @@
       "paper_statement_sha256": "3e04149fc47439a5c58c3f14e69937ecc81c12eca0a4544036dad410bfdefeda",
       "reason": "Both define the continuous aggregate posterior reference as the integral of q(x,y).",
       "tex_statement_sha256": "ac9766b24292c3d22e3a06b06a40f18ad89146eff8d4c4f6381bb12e8f4ae8e4",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -74,7 +74,7 @@
       "paper_statement_sha256": "8e079fa1f2430e84d547e6a9af9ab7f662b2a43ac43976f3c24536931993d8b8",
       "reason": "Translation gives the expected continuous bias relative to a supplied reference distribution.",
       "tex_statement_sha256": "35f01bbdacf609560d195eadc4cdb8033f9430abdc84667dc790e2be28fc51b9",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -85,7 +85,7 @@
       "paper_statement_sha256": "a41063bf1a2fb3948ad30a5587473d4a9a13b1ddaf21a0573e1d8d5ac6f07c3c",
       "reason": "Translation supplies the continuous integral form of predictive MAE.",
       "tex_statement_sha256": "d385fbba99f6fa2c49d93f92b7146f8fe773d0b7124012f3db766c714ecdd19d",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -96,7 +96,7 @@
       "paper_statement_sha256": "77991f7157b389b0f137f43adc122ca043c232752d597b1472db39a4ec04972b",
       "reason": "Translation gives the joint-measure integral of the predictive MAE integrand.",
       "tex_statement_sha256": "10dfea1c85ea34846bde02039df411e8d227a9eff61af1590a800edb96ff48c3",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -107,7 +107,7 @@
       "paper_statement_sha256": "e581ab91e11dfec1af16577d49b5c31052c4d40fea2d31ea285e711822dedb14",
       "reason": "Translation states joint prior-reference bias as predicted label mass minus true label prior mass.",
       "tex_statement_sha256": "ca728c5b780ac0d257d0294c9e13a9aa579f423be86a1ce38bdcde1e87fa7936",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -118,7 +118,7 @@
       "paper_statement_sha256": "d13a5c229e69df3de49d50415463af30c2064ce91c8a54ff6d5823d462751b6c",
       "reason": "Both define the continuous label share as the integral of the indicator that the rule outputs y.",
       "tex_statement_sha256": "9adcfa313c9310e7407298c4bf6b22a7f1b8a253dc56941bce0acc93e7b6b854",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -129,7 +129,7 @@
       "paper_statement_sha256": "886bf2eac3272fa99bdd725f64aa7494360571c8c6e1924d786efb092dbe5f68",
       "reason": "Translation states the gamma-weighted expected true-label accuracy plus expected fidelity objective.",
       "tex_statement_sha256": "f0bf1aa69ccaa64991ef71d7403911040aff9c5e9ab1f61538f04933a62d5edb",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -140,7 +140,7 @@
       "paper_statement_sha256": "533c3de082047780b4364bb892e8025cafdc2c5af9e9b5f5df9e4f8904624d44",
       "reason": "Both define fidelity as the negative sum over labels of absolute bias.",
       "tex_statement_sha256": "6c2712a9b0c5b9a79f7de56bea04dbd3ea59a99aa3c2764fb37d44d031fa42c7",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -151,7 +151,7 @@
       "paper_statement_sha256": "6638367308f6da27ea0199e39d86e497126295af20c928307b3d746f228acb8a",
       "reason": "Both require the selected label to have posterior score at least every label's score.",
       "tex_statement_sha256": "62347ba1e18be282c68e9956d29011086ba8d9f54adc06a3ce1241d254b4a220",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -159,10 +159,10 @@
       "judgment": "mismatch",
       "lean_statement_sha256": "9cdcec22d8cae20a48020e635b1af00e243f43ce93b46bedb61c62f2c5e859f1",
       "matches": false,
-      "paper_statement_sha256": "2f0ff713a7f7037ce3930240e315df93c9453f129cd0ea05209d87845844246d",
+      "paper_statement_sha256": "f67a96af0e9156420703cd053352ac412a796e6a011810a8fda7596c80b038aa",
       "reason": "Paper defines a finite-sample average over predictions; translation defines a population probability under mu_X.",
       "tex_statement_sha256": "377c4d8757ad55a3c84d0907ba4dc205952a15d8bc17a3b7fb3b4fbae29d83ee",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -173,7 +173,7 @@
       "paper_statement_sha256": "30a9732c5e4d38a0a4d873109832a54fbb94c2817c4cb4240237590d4f5f04fe",
       "reason": "Both define the objective as gamma times average posterior score plus one minus gamma times the fidelity term.",
       "tex_statement_sha256": "4de9ef527012f91720c6232e07f49f0cfbfedf5d58dd75361273e522d734fa11",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -184,7 +184,7 @@
       "paper_statement_sha256": "f1f6d75eea542c330928dace76226e5ba0babf62819432a9b13e16db3f1f7dc7",
       "reason": "The nonnegativity, upper bound, and unit-sum conditions exactly express that each q(x) is a probability vector.",
       "tex_statement_sha256": "a246c0a6f07ac4200651b22054430712b9d884bfdda77a3c58c02c7d87b61437",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -195,7 +195,7 @@
       "paper_statement_sha256": "88b62ef37e98fd9e1235bcda622f096718c1c0b9857d1c8ca4cc4c43f3ba9742",
       "reason": "Both state the prior/marginal class probability for label y.",
       "tex_statement_sha256": "41b918dd4a8c91ee4574ba3506de661b9d408d0069bfa2b8f48b06aef7e0e2f4",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -206,7 +206,7 @@
       "paper_statement_sha256": "a65d04569231d1b7ee93e5ea0e5065be650a4b872d6436808c1b11cd593c6b74",
       "reason": "Both define S_a as the set where the focal posterior equals 1.",
       "tex_statement_sha256": "2d9d270a321e3e77aac2911f3cf10d127b236164020af91883279fc8d971491c",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -217,7 +217,7 @@
       "paper_statement_sha256": "3ff6917c81fc078c19a740cc40c078fa08e071436e898532c202669f4c41abce",
       "reason": "Both define S_b by focal posterior strictly between 1/K and 1.",
       "tex_statement_sha256": "8ced7e20ac9230b84e254224d1e84f4aab9950082c820a8f0932052124bbfd39",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -228,7 +228,7 @@
       "paper_statement_sha256": "1fd8b6c437b41ebce2f69af5266d61335241d7c5c9c8d01b8b556b202f747493",
       "reason": "Both define S_c as the set where the focal posterior equals 1/K.",
       "tex_statement_sha256": "8e8b511e3bce9c74155d2b22d1a532c548e015f1e5bb7f116ebd6816e3ad60db",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -239,7 +239,7 @@
       "paper_statement_sha256": "48271f3a446bb8464db016c297b5b675bf1ba13e2cc6da33c69b312cfa9029ba",
       "reason": "Both define S_d by focal posterior strictly between 0 and 1/K.",
       "tex_statement_sha256": "800d0af819a8a99ef480c7a073b89601e259efd885d84de34bf2a7deb4a164de",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -250,7 +250,7 @@
       "paper_statement_sha256": "6f4539de740d9daed211677a519ed2a1feb91258e45c89259f91922087feace0",
       "reason": "Both define S_e as the set where the focal posterior equals 0.",
       "tex_statement_sha256": "f6f1b891be00a01f3950198b292484b6ecacb96ce753b25eeb3099de26833ca6",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -261,7 +261,7 @@
       "paper_statement_sha256": "903e51e3a1f394aac062b60a5eed95ae18042920d30faae10c75da82d74d9069",
       "reason": "Translation gives the plurality-class and non-plurality-class bias formulas for both prior and aggregate-posterior references.",
       "tex_statement_sha256": "3902cee30bc58a5341d5c4a9d84b477904877bcb7f4daa9866a15c214e5f65f0",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -272,7 +272,7 @@
       "paper_statement_sha256": "80b9d8cc9aaba24d0fd8cd9d33c682cbad7d81f6219eb2750d57dfe7c4040a25",
       "reason": "Translation states that perfect classification implies zero prior-reference bias for every label.",
       "tex_statement_sha256": "54007ea273e48be4e21a6154aca8f6a2bea281b6150c2f778acd904b603c7b6b",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -283,7 +283,7 @@
       "paper_statement_sha256": "772c4bfeaa0dbea9d3b06c97d5112b95c2f6502407324b2ed24626f63e700183",
       "reason": "Translation states calibrated argmax prior-bias bounded above by predictive MAE, with explicit formal hypotheses.",
       "tex_statement_sha256": "6ed39691f98909f10eb4399d715785707d71768eac7db891b988f6a6386561b7",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -294,7 +294,7 @@
       "paper_statement_sha256": "a4292cd349410c4a13fabf9d597d1701208870513118725e17cf417aea4aa4ce",
       "reason": "Both state the tight binary example equality between argmax bias at label 0 and classifier MAE.",
       "tex_statement_sha256": "d5dd059392a27e65c8657520516b48702d4896f057006eaf40d71645f0ee48c7",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -305,7 +305,7 @@
       "paper_statement_sha256": "bcb6546ee9f53b94d86e50b45b5fae679f9027ea0e7d9a9b90a0969f160293a6",
       "reason": "Translation states existence of an expected-objective maximizer, with formal side conditions.",
       "tex_statement_sha256": "9e8bb2a9b90e046e0017eca834eab194c3285c0a35e81bef06142ca1523f419c",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -316,7 +316,7 @@
       "paper_statement_sha256": "c909723efab2b79d1256bb9f7e23d9b465839b5bd14dc4ed5c134df9572554a4",
       "reason": "Translation states that an argmax rule maximizes expected accuracy under Bayes-optimal score assumptions.",
       "tex_statement_sha256": "7cb1061af226d7b4b3013f5a932b124413c99903e12f152ae8c5b42f385fc05d",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -327,7 +327,7 @@
       "paper_statement_sha256": "0d6be016867dfbd14fbff6603327eb92dcd40590405cf14cf4b9ee4156ab714e",
       "reason": "Translation states non-Pareto-optimality for a positively disagreeing rule under a nontrivial reference distribution.",
       "tex_statement_sha256": "1286de52d134d9f2f530384a586f1b90aa829539748a4cfca0758dc8fa93433b",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -338,7 +338,7 @@
       "paper_statement_sha256": "567a53af8dacbddb3b387acaa716e7730879b39f49eed7d800669c8321ec278f",
       "reason": "Translation states strict-disagreement non-maximality for the weighted objective at the accuracy boundary.",
       "tex_statement_sha256": "4aa70878831723e4487452bf56b3f791b339d35bb56d4d2eb4634f25c9de9790",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -349,14 +349,14 @@
       "paper_statement_sha256": "94531f5f4c6ca9126a215f8f14bc87da7e4a6b9ebd771f1b4db23b78ec89adce",
       "reason": "Translation states the gamma < 1 weighted-objective maximizer iff zero-disagreement with argmax rule.",
       "tex_statement_sha256": "dd20b79afbef4285263174aa5dd70183cbce463b811c2bc19bceff025944cab8",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "validated_at": "2026-06-11T03:46:12Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     }
   },
   "paper": "DSWG24DiscretizationBias",
   "schema": 1,
-  "validated_at": "2026-06-07T00:00:39Z",
+  "validated_at": "2026-06-11T03:46:12Z",
   "validator": "gpt-5-codex",
   "validator_type": "model"
 }

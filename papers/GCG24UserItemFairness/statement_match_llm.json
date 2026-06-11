@@ -1,5 +1,5 @@
 {
-  "comment": "Regenerated against current Lean statements, paper statements, and Lean-to-TeX statements; human review records were not modified.",
+  "comment": "Regenerated GCG Theorem 3 statement-match judgments after report-parser cleanup; human review records were not modified.",
   "items": {
     "itemFairness": {
       "judgment": "matches",
@@ -145,24 +145,24 @@
       "validator_type": "model"
     },
     "theorem3_price_of_fairness_decreases": {
-      "judgment": "uncertain",
+      "judgment": "matches",
+      "matches": true,
       "lean_statement_sha256": "d17da16cf10d7e9a62e3197ea3bfad45d8d8888deae34c130ecd9ff391aa1653",
-      "matches": null,
-      "paper_statement_sha256": "248e99f59ca28048c6548e13f128cadb04591d95ef4332610b63e7116698487d",
-      "reason": "The Lean-to-TeX draft captures the monotonicity direction, but pretty-printing erases enough W/W-prime context that the statement is not self-contained for a context-free judge.",
-      "tex_statement_sha256": "387a6bbb0733ed8af5ca9b354811114a27f547b35ed4007f1d808115650b76d7",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "paper_statement_sha256": "1b69c0c98aa75e73feec7cd352ebd4dd2a8c94d36c1ca9b0b9c53fbc44848567",
+      "tex_statement_sha256": "1c029c320fe765d1b65434026d3e56bd817f33bdd78d35b047d82a42348194a8",
+      "reason": "The refreshed draft keeps W and W-prime explicit and matches the paper-facing Theorem 3 monotonicity statement.",
+      "validated_at": "2026-06-11T03:45:07Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
     "theorem3_price_of_fairness_strictly_decreases": {
-      "judgment": "uncertain",
+      "judgment": "matches",
+      "matches": true,
       "lean_statement_sha256": "86c2667fb818d0d68079899374cb057c1f0b255f55946a01edffc60825f351f9",
-      "matches": null,
-      "paper_statement_sha256": "0ee076e4ba83b1522c8745128d62444badfe7e268bd79dfa8f1484c10a9d8d61",
-      "reason": "The Lean-to-TeX draft captures the strict monotonicity direction, but pretty-printing erases enough W/W-prime context that the statement is not self-contained for a context-free judge.",
-      "tex_statement_sha256": "80aadb18a8c70e280b5d7e1d3c3940c95cb0a26d592b3d55bebd77c35512bb1b",
-      "validated_at": "2026-06-07T00:00:39Z",
+      "paper_statement_sha256": "19e1b005221cc47c723502d5e7deb2f223390d3cc043ce5dddf964cf2d98ad49",
+      "tex_statement_sha256": "d4d05a66a145ee484e4be9e2f9e17e4cf92eb07b15d42dc60c1d2dc02dcf40d9",
+      "reason": "The refreshed draft keeps W and W-prime explicit and matches the paper-facing Theorem 3 monotonicity statement.",
+      "validated_at": "2026-06-11T03:45:07Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -203,7 +203,7 @@
   "judge": "codex-statement-translation-audit",
   "paper": "GCG24UserItemFairness",
   "schema": 1,
-  "validated_at": "2026-06-07T00:00:39Z",
+  "validated_at": "2026-06-11T03:45:07Z",
   "validator": "gpt-5-codex",
   "validator_type": "model"
 }

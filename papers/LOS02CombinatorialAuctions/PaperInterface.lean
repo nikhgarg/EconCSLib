@@ -21,11 +21,33 @@ abbrev utility {Bidder Item : Type*}
     (values reports : CombinatorialReport Bidder Item) (i : Bidder) : ℝ :=
   LOS02CombinatorialAuctions.paper_combinatorial_utility M values reports i
 
+/-- Utility is value for the allocated bundle minus the bidder's payment. -/
+theorem utility_formula {Bidder Item : Type*}
+    (M : CombinatorialAuction Bidder Item)
+    (values reports : CombinatorialReport Bidder Item) (i : Bidder) :
+    utility M values reports i =
+      values i (M.allocation reports i) - M.payment reports i := by
+  rfl
+
 /-- Paper dominant-strategy truthfulness predicate on an admissible domain. -/
 abbrev truthfulOn {Bidder Item : Type*} [DecidableEq Bidder]
     (M : CombinatorialAuction Bidder Item)
     (admissible : CombinatorialReport Bidder Item → Prop) : Prop :=
   LOS02CombinatorialAuctions.paper_combinatorial_truthful_on M admissible
+
+/--
+Truthfulness means every admissible value profile weakly prefers reporting
+truthfully to replacing bidder `i`'s report by any alternative bundle valuation.
+-/
+theorem truthfulOn_iff {Bidder Item : Type*} [DecidableEq Bidder]
+    (M : CombinatorialAuction Bidder Item)
+    (admissible : CombinatorialReport Bidder Item → Prop) :
+    truthfulOn M admissible ↔
+      ∀ values, admissible values →
+        ∀ (i : Bidder) (report : Bundle Item → ℝ),
+          utility M values (Function.update values i report) i ≤
+            utility M values values i := by
+  rfl
 
 /-- Section 4 generalized Vickrey auction from a supplied allocation rule. -/
 noncomputable abbrev generalizedVickreyAuction
@@ -34,9 +56,33 @@ noncomputable abbrev generalizedVickreyAuction
     CombinatorialAuction Bidder Item :=
   LOS02CombinatorialAuctions.paper_generalized_vickrey_auction alloc
 
+/--
+The generalized Vickrey auction uses the supplied allocation rule and Clarke
+pivot payments.
+-/
+theorem generalizedVickreyAuction_allocation_payment
+    {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Bidder]
+    (alloc : CombinatorialReport Bidder Item → BundleAllocation Bidder Item)
+    (reports : CombinatorialReport Bidder Item) (i : Bidder) :
+    (generalizedVickreyAuction alloc).allocation reports = alloc reports ∧
+      (generalizedVickreyAuction alloc).payment reports i =
+        allocationValueExcept reports (alloc (reportsWithoutBidder reports i)) i -
+          allocationValueExcept reports (alloc reports) i := by
+  exact ⟨rfl, rfl⟩
+
 /-- Paper-facing accepted-set mechanism for single-minded bid profiles. -/
 abbrev singleMindedAcceptedMechanism (Bidder Item : Type*) :=
   SingleMindedAcceptedMechanism Bidder Item
+
+/--
+A single-minded accepted-set mechanism consists of an accepted-bidder rule and
+a payment rule.
+-/
+theorem singleMindedAcceptedMechanism_fields
+    (Bidder Item : Type*) (M : singleMindedAcceptedMechanism Bidder Item) :
+    M = { accepted := M.accepted, payment := M.payment } := by
+  cases M
+  rfl
 
 /-- Truthfulness predicate for single-minded bid-profile mechanisms. -/
 abbrev singleMindedTruthfulOn
@@ -45,17 +91,49 @@ abbrev singleMindedTruthfulOn
     (admissible : (Bidder → SingleMindedBid Item) → Prop) : Prop :=
   M.TruthfulOn admissible
 
+/--
+Single-minded truthfulness allows no admissible single-bidder deviation to
+raise the true single-minded utility.
+-/
+theorem singleMindedTruthfulOn_iff
+    {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
+    (M : SingleMindedAcceptedMechanism Bidder Item)
+    (admissible : (Bidder → SingleMindedBid Item) → Prop) :
+    singleMindedTruthfulOn M admissible ↔
+      ∀ values, admissible values →
+        ∀ i report,
+          admissible (Function.update values i report) →
+            M.utility values (Function.update values i report) i ≤
+              M.utility values values i := by
+  rfl
+
 /-- Nonempty, nonnegative single-minded bid profiles. -/
 abbrev nonnegativeNonemptySingleMindedProfile
     {Bidder Item : Type*} [DecidableEq Item]
     (bids : Bidder → SingleMindedBid Item) : Prop :=
   SingleMindedAcceptedMechanism.NonnegativeNonemptyProfile bids
 
+/-- Every single-minded bid has a nonempty desired bundle and nonnegative value. -/
+theorem nonnegativeNonemptySingleMindedProfile_iff
+    {Bidder Item : Type*} [DecidableEq Item]
+    (bids : Bidder → SingleMindedBid Item) :
+    nonnegativeNonemptySingleMindedProfile bids ↔
+      ∀ i, (bids i).desired.Nonempty ∧ 0 ≤ (bids i).value := by
+  rfl
+
 /-- Weighted set-packing objective used in Theorem 6.1's reduction. -/
 noncomputable abbrev weightedSetPackingValue
     {Bidder : Type*} [DecidableEq Bidder]
     (weights : Bidder → ℝ) (selected : Finset Bidder) : ℝ :=
   LOS02CombinatorialAuctions.paper_weighted_set_packing_value weights selected
+
+/-- The weighted set-packing objective sums the selected bidders' weights. -/
+theorem weightedSetPackingValue_formula
+    {Bidder : Type*} [DecidableEq Bidder]
+    (weights : Bidder → ℝ) (selected : Finset Bidder) :
+    weightedSetPackingValue weights selected =
+      ∑ i ∈ selected, weights i := by
+  rfl
 
 /-- Encode a weighted set-packing instance as single-minded bids. -/
 abbrev setPackingSingleMindedBids
@@ -64,10 +142,24 @@ abbrev setPackingSingleMindedBids
     Bidder → SingleMindedBid Item :=
   LOS02CombinatorialAuctions.paper_set_packing_single_minded_bids sets weights
 
+/-- The set-packing encoding gives bidder `i` desired set `sets i` and value `weights i`. -/
+theorem setPackingSingleMindedBids_formula
+    {Bidder Item : Type*}
+    (sets : Bidder → Finset Item) (weights : Bidder → ℝ) (i : Bidder) :
+    setPackingSingleMindedBids sets weights i =
+      { desired := sets i, value := weights i } := by
+  rfl
+
 /-- Definition 7.1: average amount per good for a single-minded bid. -/
 noncomputable abbrev averageAmountPerGood {Item : Type*} [DecidableEq Item]
     (b : SingleMindedBid Item) : ℝ :=
   LOS02CombinatorialAuctions.paper_average_amount_per_good b
+
+/-- Average amount per good is the bid value divided by the desired-bundle size. -/
+theorem averageAmountPerGood_formula {Item : Type*} [DecidableEq Item]
+    (b : SingleMindedBid Item) :
+    averageAmountPerGood b = b.value / b.bundleSize := by
+  rfl
 
 /-- Concrete LOS02 order: decreasing average amount per good with deterministic tie-breaks. -/
 noncomputable abbrev averageOrderOf
@@ -75,6 +167,22 @@ noncomputable abbrev averageOrderOf
     [LinearOrder Bidder]
     (bids : Bidder → SingleMindedBid Item) : List Bidder :=
   LOS02CombinatorialAuctions.paper_average_order_of bids
+
+/--
+The concrete average order lists every bidder exactly once and is weakly
+descending in average amount per good.
+-/
+theorem averageOrderOf_rule
+    {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Item]
+    [LinearOrder Bidder]
+    (bids : Bidder → SingleMindedBid Item) :
+    (averageOrderOf bids).Nodup ∧
+      (∀ i : Bidder, i ∈ averageOrderOf bids) ∧
+        SingleMindedAverageAmountDescending bids (averageOrderOf bids) := by
+  exact
+    ⟨LOS02CombinatorialAuctions.paper_average_order_of_nodup bids,
+      LOS02CombinatorialAuctions.paper_average_order_of_mem bids,
+      LOS02CombinatorialAuctions.paper_average_order_of_average_descending bids⟩
 
 /-- Greedy accepted set from an explicit bid order. -/
 abbrev greedyAcceptedFromOrder
@@ -84,6 +192,17 @@ abbrev greedyAcceptedFromOrder
   LOS02CombinatorialAuctions.paper_single_minded_greedy_accepted_from_order
     bids order
 
+/--
+The greedy accepted set starts empty and folds through the order, accepting a
+bid iff it conflicts with no already accepted bid.
+-/
+theorem greedyAcceptedFromOrder_formula
+    {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
+    (bids : Bidder → SingleMindedBid Item) (order : List Bidder) :
+    greedyAcceptedFromOrder bids order =
+      order.foldl (singleMindedGreedyStep bids) ∅ := by
+  rfl
+
 /-- The paper's concrete average-order greedy accepted set. -/
 noncomputable abbrev averageGreedyAcceptedSet
     {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Bidder]
@@ -91,12 +210,41 @@ noncomputable abbrev averageGreedyAcceptedSet
     (bids : Bidder → SingleMindedBid Item) : Finset Bidder :=
   LOS02CombinatorialAuctions.paper_average_greedy_accepted_set bids
 
+/-- Average-greedy accepts the greedy set from the concrete average order. -/
+theorem averageGreedyAcceptedSet_formula
+    {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Bidder]
+    [DecidableEq Item] [LinearOrder Bidder]
+    (bids : Bidder → SingleMindedBid Item) :
+    averageGreedyAcceptedSet bids =
+      greedyAcceptedFromOrder bids (averageOrderOf bids) := by
+  rfl
+
 /-- The paper's concrete average-order Definition 10.1 payment rule. -/
 noncomputable abbrev averageGreedyPayment
     {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Bidder]
     [DecidableEq Item] [LinearOrder Bidder]
     (bids : Bidder → SingleMindedBid Item) (j : Bidder) : ℝ :=
   LOS02CombinatorialAuctions.paper_average_greedy_payment bids j
+
+/--
+Definition 10.1 payment: denied bidders pay zero; accepted bidders pay zero
+when there is no later denied blocker, and otherwise pay their bundle size
+times that blocker bid's average amount per good.
+-/
+theorem averageGreedyPayment_formula
+    {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Bidder]
+    [DecidableEq Item] [LinearOrder Bidder]
+    (bids : Bidder → SingleMindedBid Item) (j : Bidder) :
+    averageGreedyPayment bids j =
+      if j ∈ averageGreedyAcceptedSet bids then
+        match
+          LOS02CombinatorialAuctions.paper_greedy_next_denied_from_order
+            bids (averageOrderOf bids) j with
+        | none => 0
+        | some n => (bids j).bundleSize * (bids n).averageAmountPerGood
+      else
+        0 := by
+  rfl
 
 /-! ## Sections 4--6 -/
 

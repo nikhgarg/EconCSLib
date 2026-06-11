@@ -3,28 +3,28 @@
   "id": "GHW01DigitalGoods",
   "title": "Competitive Auctions and Digital Goods",
   "authors": "Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright",
-  "source_version": "SODA 2001 / InterTrust numbering crosswalk; journal version is the corrected source for Theorem 8.2",
+  "source_version": "SODA 2001 paper; Theorem 8.2 is checked against the later Goldberg-Hartline-Karlin-Saks-Wright journal monotone-auction formulation.",
   "build_target": "lake build GHW01DigitalGoods",
   "status": "formalized",
-  "main_caveat": "Theorem 8.2 is formalized against the journal version's monotone truthful randomized-auction statement; Lean records a two-bidder 101 > 100 counterexample to the broader InterTrust/SODA reading. Theorem 9.3 is closed against the paper's focused set-of-bids deterministic auction convention.",
-  "human_summary": "The journal version is used as the corrected source for Theorem 8.2.",
+  "main_caveat": "This folder formalizes the SODA paper, not a full inventory of all named results in the 2006 journal article. Theorem 8.2 uses the later journal version's refined monotone truthful randomized-auction wording. The preliminary unrestricted Section 8 wording is retained only as a source-version audit note. Theorem 9.3 is closed against the paper's focused set-of-bids deterministic auction convention.",
+  "human_summary": "Formalizes the SODA paper; Theorem 8.2 uses the refined monotone-auction wording from the journal version.",
   "human_summary_citation": {
-    "label": "Goldberg et al. 2006",
+    "label": "Goldberg-Hartline-Karlin-Saks-Wright 2006",
     "url": "https://www.sciencedirect.com/science/article/pii/S0899825606000303"
   },
   "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 19,
+    "total_rows": 18,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
   },
   "paper_interface": {
     "path": "papers/GHW01DigitalGoods/PaperInterface.lean",
-    "line_count": 290,
-    "declaration_rows": 19,
-    "review_rows": 19,
+    "line_count": 280,
+    "declaration_rows": 18,
+    "review_rows": 18,
     "oversized": false,
     "maintainability_issue": null
   },
@@ -53,7 +53,6 @@
       "theorem7_2_weighted_pairing_benchmark",
       "lemma8_1_truthful_monotone",
       "theorem8_2_truthful_revenue_upper_bound",
-      "theorem8_2_weak_truthful_counterexample",
       "theorem9_1_bid_independent_lower_bound",
       "lemma9_2_threshold_domination",
       "theorem9_3_deterministic_truthful_lower_bound"
@@ -78,7 +77,6 @@
           "theorem7_2_weighted_pairing_benchmark",
           "lemma8_1_truthful_monotone",
           "theorem8_2_truthful_revenue_upper_bound",
-          "theorem8_2_weak_truthful_counterexample",
           "theorem9_1_bid_independent_lower_bound",
           "lemma9_2_threshold_domination",
           "theorem9_3_deterministic_truthful_lower_bound"

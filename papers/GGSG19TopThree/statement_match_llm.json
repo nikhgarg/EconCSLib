@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "paper": "GGSG19TopThree",
+  "validated_at": "2026-06-11T03:33:49Z",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "judge": "codex-statement-translation-audit",
+  "comment": "Generated for GGSG against current Lean statements, paper statements, and context-free Lean-to-TeX/prose drafts; human review records were not modified.",
+  "items": {
+    "paper_definition_large_deviation_rate": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "386fb05ef5d8773b36d583a42776d1770b9400fa588af20571562aabcf907426",
+      "paper_statement_sha256": "55f8f598fa3ad4d4fd4f37854b64934d764d44d904c22059e75ec38e8a70dd68",
+      "tex_statement_sha256": "d8b2d3deb9b37e9307e370d731c0a7482dfa721b2eda1f5cc4ea9543f92b2e7c",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "validated_at": "2026-06-11T03:33:49Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_proposition1_thm_consistency_tiered": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "8fb204d38c2c54d33ad13b7d4bb646c2923ae6592dc7cdc77f5e829982249395",
+      "paper_statement_sha256": "e67fafd5c22525c5f7265196a7ae82be80067fbf8ad0aa2af6c817d1bb3ca7cf",
+      "tex_statement_sha256": "eacadd5a9f45c9182794bd38ff660642a644ad0d5e1bfcb5d9d1f6c5d417dcc3",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "validated_at": "2026-06-11T03:33:49Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_proposition2_thm_pairwiselearning_finite_support": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "f0cac9695820eaec11495277f3fb6dfccd32aa7bec923910d9e23b180fea7dad",
+      "paper_statement_sha256": "6b8c2a16a415fbadd8518dbbc79f9208c1740f57664108d67c6b2aae6adb09d2",
+      "tex_statement_sha256": "ee066919a567954dfe19bbc92653bbc7c5c27f4c470f0756c24e1be762d4fb06",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "validated_at": "2026-06-11T03:33:49Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_proposition3_lem_pairwiselearning_approval_finite_ternary": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "614beddf6226ea3217f4a248cab7798310a92271612420f9270d329547d2fae4",
+      "paper_statement_sha256": "d7232c3fd2da45ef75b48e304c696947bfe9b52af53155f71d5b69ece2304c19",
+      "tex_statement_sha256": "dafc14a4cc2d42d3d9121502feef4d77517a4b3cdebfcb904efc158517e23996",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "validated_at": "2026-06-11T03:33:49Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_proposition4_thm_goal_learning_finite_support": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "3f3d303fd4540cc9b889993e9a479a3e3986534558694eadd98ff59a009703fb",
+      "paper_statement_sha256": "1a17ea4a9bdab1e2b50f6f551bb91151cdf997bfea1375b3c461ca055b5243b2",
+      "tex_statement_sha256": "9f83aa7c5f361ae3b0140079442f4794f3208d0e53c28a8012764efea412245b",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "validated_at": "2026-06-11T03:33:49Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_theorem1_lem_randomizebetterscoring": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "80beef6814a6f23ff8cdcc36fe79c56882f99c5c3dab57bbb2f342ab409c999d",
+      "paper_statement_sha256": "fe5440e9a614f024eb99f548d8064d099ca86bf1a7476b860bf63f5fc181d351",
+      "tex_statement_sha256": "fc11b5d9d7e1a2730efd6eb3ade99942552dade58ebb79bf484f099fe911dc5d",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "validated_at": "2026-06-11T03:33:49Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_theorem2_lem_randomizenotbetterapproval_pairwise": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "bb66a30cb22cfb7b0441ffdfd384899ddd717edb2356478d65fb3ee5fbbaeea9",
+      "paper_statement_sha256": "67eea6b1e1e77f54c462c6978f1c24cab48fc679ae482b073268dec63f6e1d7e",
+      "tex_statement_sha256": "d3dd5bf48d59e8037cf1bdeccf5e8c363a41a89dc1bcf3eea6f4f5826598e993",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "validated_at": "2026-06-11T03:33:49Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_theorem_lem_randomizebetterapproval_w_selection_constructed": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "f24b64f4a853770dba3f52e01f68fcf4080edd4cca995ed490f6ede663d64fea",
+      "paper_statement_sha256": "e2c398d7405e9da007c11b62a9ef18771737fbb0bb2ce4307f86955ea5c224e3",
+      "tex_statement_sha256": "310c6ca540f9dc7067117867796c5fcc267d6dccddaf5437da47cf09d54fbfd0",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "validated_at": "2026-06-11T03:33:49Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_corollary_lem_mallowsnorando": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "e8da7a4c959db9a9ff8818e074a3c549740cee5db3023b0d5fa65610e7055a42",
+      "paper_statement_sha256": "8cc072e404ce51ec91ce0e417d823fd8baeb14cd4d6fc02988cafaaf985d5245",
+      "tex_statement_sha256": "1353ade53e95c4eb5603d992e483e88bb57c148f4cf3cab84163e093a6754209",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "validated_at": "2026-06-11T03:33:49Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_theorem_lem_mallowsnotWK_counterexample": {
+      "judgment": "matches",
+      "matches": true,
+      "lean_statement_sha256": "345c1004708f1a5569122416775302259271ded724f74eeaeedefde1d4f6e420",
+      "paper_statement_sha256": "4451ab20640966f9c8d01596e28dfc82050b10eb575d997fca5f0157edacc8c5",
+      "tex_statement_sha256": "1918c923bd7eb5c8a954b63d5b5dc7d55e3d26ef3fac310a24f32f50d5034692",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "validated_at": "2026-06-11T03:33:49Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    }
+  }
+}

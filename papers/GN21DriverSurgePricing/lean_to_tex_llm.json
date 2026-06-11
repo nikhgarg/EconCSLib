@@ -1,5 +1,6 @@
 {
-  "generated_at": "2026-06-06T23:59:15Z",
+  "comment": "Refreshed Theorem 3 draft after expanding the PaperInterface statement and parser cleanup; other drafts preserved.",
+  "generated_at": "2026-06-11T03:55:30Z",
   "generator": "codex-refresh-current-lean-statements",
   "items": {
     "review_definition_dynamic_defined_reward": {
@@ -91,8 +92,8 @@
       "statement": "For the explicit atomic multiplicative-pricing instance with switch rates $1/4$ and $1/4$, there is a positive cutoff $2$ nonsurge deviation rejecting long trips that is profitable, there is a positive cutoff $2$ surge deviation rejecting short trips that is profitable, and the resulting measured dynamic reward functional is not dynamically incentive compatible."
     },
     "review_theorem3_feasible_sequential_current_bounds_source_data_statement": {
-      "lean_statement_sha256": "adb847c762f2cbb6ef223cb91a969fd15c731ebfd8b6a5183640dabef4771ef0",
-      "statement": "For measures $\\mu$, arrivals, $\\rho,R_1,R_2$, and switch rates $q_{12},q_{21}$, the Theorem 3 feasible sequential current-bounds source-data assumptions imply the measured structured IC and almost-everywhere uniqueness conclusion $\\mathrm{theorem3MeasuredStructuredMeasurableICAEUniqueConclusion}(\\mu,\\mathrm{arrival},R_1,R_2,q_{12},q_{21})$."
+      "lean_statement_sha256": "20a5ead734c6c83370a8fc2e5ccd5c7915cae4ac7e784f37166e221c2c7e4082",
+      "statement": "Under the Theorem 3 feasible sequential current-bounds assumptions (R1 = rho * R2, 0 < R1 < R2, 0 < R2, C < rho < 1, positive arrivals and switch rates, integrability of trip time and switch probabilities, positive accept-all masses, and feasible sequential current-bound source certificates), there exist structured price parameters m and z with 0 <= m_0, 0 <= m_1, and 0 <= z_1 such that the measured CTMC structured dynamic reward is dynamically measurable incentive compatible, every measurable optimum agrees with accept-all almost everywhere, the prices have the structured surge-price form, and the Theorem 3 parameter evidence holds."
     },
     "review_theorem4_structural_policy_representatives": {
       "lean_statement_sha256": "830878b532cca1e117791869d3b88685584bea7c4270c723e7e1bf679de1b0da",

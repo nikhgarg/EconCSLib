@@ -1,161 +1,161 @@
 {
-  "generated_at": "2026-06-07T00:00:39Z",
-  "generator": "codex-refresh-current-lean-statements",
+  "generated_at": "2026-06-11T03:15:56Z",
+  "generator": "codex-current-dashboard-statement-digest-refresh",
   "items": {
-    "PaperAssignment": {
-      "lean_statement_sha256": "028147f96b11cd19705cc80dd628948b64e4d1a36a63434d20d7ba8c8e7bbb46",
-      "statement": "Type u_1 \\to Type u_2 \\to Type (max u_2 u_1)"
+    "paperInstance_has_budget_and_bid": {
+      "lean_statement_sha256": "819ad376af6d263e360c55aa76984676242fb1b9eeabbd3ccf5ef2f7defa9418",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} (I : PaperInstance Advertiser Query), I = I"
     },
-    "PaperFractionalFeasible": {
-      "lean_statement_sha256": "95fcf737bf56448d853b50117483a635dcbf097c3e45b5990a41e9286369fdd3",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Advertiser] \\to [Fintype Query] \\to PaperInstance Advertiser Query \\to (Advertiser \\to Query \\to ℝ) \\to Prop"
+    "paperAssignment_query_choice": {
+      "lean_statement_sha256": "725901d6da3e164af9d237df2121d68f96f9ce899518004340897217c90d51ea",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} (A : PaperAssignment Advertiser Query) (q : Query), A q = none \\lor \\exists a, A q = some a"
     },
-    "PaperInstance": {
-      "lean_statement_sha256": "8eaa1c535cd17724876604260a140f3f3c8e9e995cd2f9a0e6ce3de6f8548a2e",
-      "statement": "Type u_1 \\to Type u_2 \\to Type (max u_1 u_2)"
+    "paperSlotsPerPageDistinct_iff": {
+      "lean_statement_sha256": "fecacecc3c3c482fb41448fe9f2892d3e2feb4fdceca8d6f231691cfcd6fa03d",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} (Slot : Query \\to Type u_3) (A : PaperAssignment Advertiser ((q : Query) × Slot q)), paperSlotsPerPageDistinct Slot A \\iff \\forall (q : Query) (s₁ s₂ : Slot q) (a : Advertiser), A ⟨q, s₁⟩ = some a \\to A ⟨q, s₂⟩ = some a \\to s₁ = s₂"
     },
-    "PaperSmallBidsLimitFamily": {
-      "lean_statement_sha256": "55b7e04ede0aecde71f80255ada25f6c779b269402f8460b79b56c085699509a",
-      "statement": "(Advertiser : Type u_1) \\to [Fintype Advertiser] \\to [Nonempty Advertiser] \\to [DecidableEq Advertiser] \\to Type u_1"
+    "paperSpend_formula": {
+      "lean_statement_sha256": "d3305cdbe23d4c840ed2af9e7eeeb93f12e3dcaecae3cce62f4ac3bf4b2dcbd6",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (a : Advertiser), paperSpend I A a = \\sum q, match A q with | none  =>  0 | some a'  =>  if a' = a then bid a q else 0"
     },
-    "paperBalanceScore": {
-      "lean_statement_sha256": "d0774faf7d8db855fa54ebd00a2d7339d2b129df8e05b78fb94aae8ef4dde7e4",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Query] \\to [DecidableEq Advertiser] \\to PaperInstance Advertiser Query \\to PaperAssignment Advertiser Query \\to Advertiser \\to Query \\to ℝ"
+    "paperRevenue_formula": {
+      "lean_statement_sha256": "fc49d0395ebf9f63aa9df30f0fdb80e277c721ac8ee954a37b587c2cb3f8bcd5",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query), paperRevenue I A = \\sum q, match A q with | none  =>  0 | some a  =>  bid a q"
     },
-    "paperCanAssign": {
-      "lean_statement_sha256": "61a27b88b7375e11ae3e28b06886a8c6ba9f43fdec3e90dfb4aad68aae0b23cc",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Query] \\to [DecidableEq Advertiser] \\to PaperInstance Advertiser Query \\to PaperAssignment Advertiser Query \\to Query \\to Advertiser \\to Prop"
+    "paperFeasible_iff": {
+      "lean_statement_sha256": "60335f0b8d975fa0fd6ce5ec6021ac2d0a7b5fe616880e83f60f0556e9ecf51f",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query), paperFeasible I A \\iff \\forall (a : Advertiser), paperSpend I A a \\le budget a"
     },
-    "paperFeasible": {
-      "lean_statement_sha256": "d26208a3b539a089e9bc49f6ecb4516134dcabb011502246a674aa144ce0402f",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Query] \\to [DecidableEq Advertiser] \\to PaperInstance Advertiser Query \\to PaperAssignment Advertiser Query \\to Prop"
+    "paperSmallBids_iff": {
+      "lean_statement_sha256": "c3f543828b4962a85c559e78dc2431231d9daf4d8555c636aaa4c90293225fb2",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} (I : PaperInstance Advertiser Query) (epsilon : ℝ), paperSmallBids I epsilon \\iff \\forall (a : Advertiser) (q : Query), bid a q \\le epsilon * budget a"
     },
-    "paperFractionalRevenue": {
-      "lean_statement_sha256": "3543314b78299c7b9f7c2ca4c9c99ada6515cf0226f1eb3b7051a7dacfcd35ef",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Advertiser] \\to [Fintype Query] \\to PaperInstance Advertiser Query \\to (Advertiser \\to Query \\to ℝ) \\to ℝ"
+    "paperFractionalRevenue_formula": {
+      "lean_statement_sha256": "34350affe920424bcbf8f1fe915f1019abf6df5e0779b7fd8e537cf9ebd673d5",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] (I : PaperInstance Advertiser Query) (x : Advertiser \\to Query \\to ℝ), paperFractionalRevenue I x = \\sum q, \\sum a, bid a q * x a q"
     },
-    "paperIsBalanceChoice": {
-      "lean_statement_sha256": "720a2f46ff4ceb7356bdf50be475abd5fb6e9d43a65a199c02a0a81d45f5ae3f",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Advertiser] \\to [Fintype Query] \\to [DecidableEq Advertiser] \\to PaperInstance Advertiser Query \\to PaperAssignment Advertiser Query \\to Query \\to Advertiser \\to Prop"
+    "paperFractionalFeasible_iff": {
+      "lean_statement_sha256": "fc1d5d16c11fabc8b9cadf3ac328494e94af3276512e11cbde8bfab949f91e14",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] (I : PaperInstance Advertiser Query) (x : Advertiser \\to Query \\to ℝ), PaperFractionalFeasible I x \\iff (\\forall (a : Advertiser) (q : Query), 0 \\le x a q) \\land (\\forall (q : Query), \\sum a, x a q \\le 1) \\land \\forall (a : Advertiser), \\sum q, bid a q * x a q \\le budget a"
     },
-    "paperMsvvRatio": {
-      "lean_statement_sha256": "81fdb09c9eef55e159bcb5f08ce94361a0a34f3a27cd75588f07591520751130",
-      "statement": "ℝ"
+    "paperTradeoff_formula": {
+      "lean_statement_sha256": "37c6ed0998fa6953d269672c9844e72938966a99d37e0c6ddf469559097f7dd1",
+      "statement": "\\forall (s : ℝ), paperTradeoff s = 1 - exp (s - 1)"
     },
-    "paperRevenue": {
-      "lean_statement_sha256": "306fafcddf7227782f49755b2ef8e32eeaef4b51d62388c224b193de2b550a5b",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Query] \\to PaperInstance Advertiser Query \\to PaperAssignment Advertiser Query \\to ℝ"
+    "paperMsvvRatio_formula": {
+      "lean_statement_sha256": "0dad2735b53871db0fac0c2da3198e1043e3734d1ab5a852163c6cb407a134e1",
+      "statement": "paperMsvvRatio = 1 - 1 / exp 1"
     },
-    "paperSlotsPerPageDistinct": {
-      "lean_statement_sha256": "4c21494f1ea091d02587bab6e6526315dfda238ca16267ce6a3d5cd33ff13f12",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to (Slot : Query \\to Type u_3) \\to PaperAssignment Advertiser ((q : Query) × Slot q) \\to Prop"
+    "paperBalanceScore_formula": {
+      "lean_statement_sha256": "d1e71deeff0a5f3eefbd5240b378653a31c3519157a63329be434f0feadda3ff",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (a : Advertiser) (q : Query), paperBalanceScore I A a q = bid a q * paperTradeoff (paperSpend I A a / budget a)"
     },
-    "paperSmallBids": {
-      "lean_statement_sha256": "162969edcb4a35bd30032891f7c592bbd484935a4581d0254160e92754195a61",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to PaperInstance Advertiser Query \\to ℝ \\to Prop"
+    "paperCanAssign_iff": {
+      "lean_statement_sha256": "7579e406b05cb53dd152eab225a7507aa1f66b86e5e104df586018111b19650b",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser), paperCanAssign I A q a \\iff paperSpend I A a + bid a q \\le budget a"
     },
-    "paperSpend": {
-      "lean_statement_sha256": "5dad10f7ff6f584645642ccbad0a0bf42852d1c8430f3a546ce2c0d559c9fe76",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Query] \\to [DecidableEq Advertiser] \\to PaperInstance Advertiser Query \\to PaperAssignment Advertiser Query \\to Advertiser \\to ℝ"
+    "paperIsBalanceChoice_iff": {
+      "lean_statement_sha256": "350d66678cff4cf8ada7a28bb93ff83f4099102746e08f789556bd18bd0a5825",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] [inst_2 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser), paperIsBalanceChoice I A q a \\iff paperCanAssign I A q a \\land \\forall (b : Advertiser), paperCanAssign I A q b \\to paperBalanceScore I A b q \\le paperBalanceScore I A a q"
     },
-    "paperTradeoff": {
-      "lean_statement_sha256": "69eb984a06c58170953a62e9704963e7098c9df72a4253da4b92824fe20e8fd8",
-      "statement": "ℝ \\to ℝ"
+    "paperSmallBidsLimitFamily_fields": {
+      "lean_statement_sha256": "672fb596eb77c9f9beebad6ca6c80aceff4603bc63a2ce93c96935c1da2079c8",
+      "statement": "\\forall {Advertiser : Type u_1} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : DecidableEq Advertiser] (F : PaperSmallBidsLimitFamily Advertiser), (\\forall (k : ℕ), NonnegativeBids (instanceAt k)) \\land (\\forall (k : ℕ), PositiveBudgets (instanceAt k)) \\land (\\forall (k : ℕ), 0 < \\sum q, maxBidForQuery (instanceAt k) q) \\land (\\forall (delta : ℝ), 0 < delta \\to \\exists N, \\forall (k : ℕ), N \\le k \\to paperSmallBids (instanceAt k) (min 1 (delta / ((exp 1 + 1) * \\sum q, maxBidForQuery (instanceAt k) q)))) \\land SeqTendsTo (fun k  =>  offlineOptimumValue (instanceAt k) ⋯) optLimit \\land SeqTendsTo (fun k  =>  revenue (instanceAt k) (runAssignment (instanceAt k) (balanceChoiceRule (instanceAt k)) (finRange (queryCount k)))) revenueLimit"
     },
-    "section6_availability_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "f788eb8f27f8061902cf5c5a1b455efa821c4984df327f18c5a6aaa959453d8c",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (available : Advertiser \\to Query \\to Prop) [inst_5 : (a : Advertiser) \\to (q : Query) \\to Decidable (available a q)], NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withAvailability I available).offlineOptimumValue ⋯ \\le (withAvailability I available).revenue ((withAvailability I available).runAssignment (withAvailability I available).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withAvailability I available).maxBidForQuery q"
-    },
-    "section6_click_through_rates_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "a32eb56f53df120ae6d7db86da97771528b8aa9020aa3d28dc2eef88e1b070ab",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (ctr : Advertiser \\to Query \\to ℝ), (\\forall (a : Advertiser) (q : Query), 0 \\le ctr a q) \\to (\\forall (a : Advertiser) (q : Query), ctr a q \\le 1) \\to NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withClickThroughRates I ctr).offlineOptimumValue ⋯ \\le (withClickThroughRates I ctr).revenue ((withClickThroughRates I ctr).runAssignment (withClickThroughRates I ctr).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withClickThroughRates I ctr).maxBidForQuery q"
-    },
-    "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "16ee595f179dd7b80dc18a9fd88e479fe97a41a145fc8ace388074970faa896a",
+    "theorem8_finite_explicit_error": {
+      "lean_statement_sha256": "0f6c27d0ec52954c4dd2119758b9565e08d3f6c3d6536d2a47c4adc3b446d1c7",
       "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * offlineOptimumValue I ⋯ \\le paperRevenue I (runAssignment I (balanceChoiceRule I) history) + epsilon * (exp 1 + 1) * \\sum q, maxBidForQuery I q"
     },
+    "theorem8_balance_msvv_competitive_of_small_bids_limit_family": {
+      "lean_statement_sha256": "13f9676b65d7c8c90edb4653345429e9af8f1c35e483934a79e2ac1aae3077fe",
+      "statement": "\\forall {Advertiser : Type u_1} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : DecidableEq Advertiser] (F : PaperSmallBidsLimitFamily Advertiser), paperMsvvRatio * optLimit \\le revenueLimit"
+    },
+    "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error": {
+      "lean_statement_sha256": "580ead48bea390c4f0fb78a40a9c6c51b5479925c901eb735b0473a6a87021c2",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * offlineOptimumValue I ⋯ \\le paperRevenue I (runAssignment I (balanceChoiceRule I) history) + epsilon * (exp 1 + 1) * \\sum q, maxBidForQuery I q"
+    },
+    "section6_next_highest_bid_all_formula": {
+      "lean_statement_sha256": "a06253da179f90c389b62df59559ac2ab8c812ba9b8dd24a28972c817b77d1bc",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (a : Advertiser) (q : Query), section6_next_highest_bid_all I a q = have others := erase a; if h : Nonempty then max 0 (sup' h fun b  =>  bid b q) else 0"
+    },
+    "section6_next_highest_bid_alive_formula": {
+      "lean_statement_sha256": "8d4049e71ea7a59982aa462836ee16afa572542157f7d6902d87a56b898526ab",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (alive : Advertiser \\to Query \\to Prop) [inst_2 : (a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] (a : Advertiser) (q : Query), section6_next_highest_bid_alive I alive a q = have others := {b \\in erase a | alive b q}; if h : Nonempty then max 0 (sup' h fun b  =>  bid b q) else 0"
+    },
     "section6_effective_bids_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "93ce2d374211353e02160b9e70ba49b33893eb3b0f105753a7172ab8b7af9cd0",
+      "lean_statement_sha256": "6cbd9069a176b619d800b78c97105330e247a8ec9aba05a4fe8d01946ba7b462",
       "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (effectiveBid : Advertiser \\to Query \\to ℝ), (\\forall (a : Advertiser) (q : Query), 0 \\le effectiveBid a q) \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), effectiveBid a q \\le epsilon * budget a) \\to paperMsvvRatio * (withEffectiveBids I effectiveBid).offlineOptimumValue ⋯ \\le (withEffectiveBids I effectiveBid).revenue ((withEffectiveBids I effectiveBid).runAssignment (withEffectiveBids I effectiveBid).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withEffectiveBids I effectiveBid).maxBidForQuery q"
     },
-    "section6_multiple_slots_distinct_choice_run_assignment_per_page_distinct": {
-      "lean_statement_sha256": "b755a879ac3b69e68b2213cbf80f4ec224e7358e824de816691d7d182e6a5734",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} {Slot : Query \\to Type u_3} [inst : Fintype Advertiser] [inst_1 : Fintype ((q : Query) × Slot q)] [inst_2 : DecidableEq Advertiser] [inst_3 : DecidableEq ((q : Query) × Slot q)] (I : PaperInstance Advertiser Query) (history : List ((q : Query) × Slot q)), paperSlotsPerPageDistinct Slot ((withSlots I Slot).runAssignment (withSlotsDistinctChoice Slot (withSlots I Slot).balanceChoiceRule) history)"
-    },
-    "section6_multiple_slots_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "cd82ab3a58234641b5dd6f5ab20147afe430e1b5f794a8adee3b7d376dec3253",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} {Slot : Query \\to Type u_3} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype ((q : Query) × Slot q)] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq ((q : Query) × Slot q)] (I : PaperInstance Advertiser Query), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List ((q : Query) × Slot q)), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withSlots I Slot).offlineOptimumValue ⋯ \\le paperRevenue (withSlots I Slot) ((withSlots I Slot).runAssignment (withSlots I Slot).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withSlots I Slot).maxBidForQuery q"
-    },
-    "section6_next_highest_bid_alive": {
-      "lean_statement_sha256": "183ce25ce4407d17a705cff541da55d0de055561bf09ebb9ad1b126099f85263",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Advertiser] \\to [DecidableEq Advertiser] \\to PaperInstance Advertiser Query \\to (alive : Advertiser \\to Query \\to Prop) \\to [(a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] \\to Advertiser \\to Query \\to ℝ"
-    },
-    "section6_next_highest_bid_alive_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "cdb07b57afa5e453b72108d8ff3d005896a77eed003b58429421c7588e20fbb4",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (alive : Advertiser \\to Query \\to Prop) [inst_5 : (a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), section6_next_highest_bid_alive I alive a q \\le epsilon * budget a) \\to paperMsvvRatio * (withEffectiveBids I (section6_next_highest_bid_alive I alive)).offlineOptimumValue ⋯ \\le paperRevenue (withEffectiveBids I (section6_next_highest_bid_alive I alive)) ((withEffectiveBids I (section6_next_highest_bid_alive I alive)).runAssignment (withEffectiveBids I (section6_next_highest_bid_alive I alive)).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withEffectiveBids I (section6_next_highest_bid_alive I alive)).maxBidForQuery q"
-    },
-    "section6_next_highest_bid_all": {
-      "lean_statement_sha256": "8d9c6fb798f01afc9e4104ea03639b47d2bdbb31c12a3d8e268de71a6c7a2678",
-      "statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Advertiser] \\to [DecidableEq Advertiser] \\to PaperInstance Advertiser Query \\to Advertiser \\to Query \\to ℝ"
-    },
     "section6_next_highest_bid_all_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "463d007c596d083b101774ec9ad805b1baa52d78474190bc1ce07d983dd55ce0",
+      "lean_statement_sha256": "2fdbbee4b32828961eef3abb585780cdac78695a2d39daaf772334cacb86720d",
       "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), section6_next_highest_bid_all I a q \\le epsilon * budget a) \\to paperMsvvRatio * (withEffectiveBids I (section6_next_highest_bid_all I)).offlineOptimumValue ⋯ \\le paperRevenue (withEffectiveBids I (section6_next_highest_bid_all I)) ((withEffectiveBids I (section6_next_highest_bid_all I)).runAssignment (withEffectiveBids I (section6_next_highest_bid_all I)).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withEffectiveBids I (section6_next_highest_bid_all I)).maxBidForQuery q"
     },
+    "section6_next_highest_bid_alive_theorem8_finite_explicit_error": {
+      "lean_statement_sha256": "22f20b3a8953cf646bd5c222d11e1b1ee07c3fb77cf7b52d0ea4390737618e57",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (alive : Advertiser \\to Query \\to Prop) [inst_5 : (a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), section6_next_highest_bid_alive I alive a q \\le epsilon * budget a) \\to paperMsvvRatio * (withEffectiveBids I (section6_next_highest_bid_alive I alive)).offlineOptimumValue ⋯ \\le paperRevenue (withEffectiveBids I (section6_next_highest_bid_alive I alive)) ((withEffectiveBids I (section6_next_highest_bid_alive I alive)).runAssignment (withEffectiveBids I (section6_next_highest_bid_alive I alive)).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withEffectiveBids I (section6_next_highest_bid_alive I alive)).maxBidForQuery q"
+    },
+    "section6_click_through_rates_theorem8_finite_explicit_error": {
+      "lean_statement_sha256": "c90048abdc4a03fb2d772072f02b86f223bba32d0a0e93860d49e4902fb6fc0d",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (ctr : Advertiser \\to Query \\to ℝ), (\\forall (a : Advertiser) (q : Query), 0 \\le ctr a q) \\to (\\forall (a : Advertiser) (q : Query), ctr a q \\le 1) \\to NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withClickThroughRates I ctr).offlineOptimumValue ⋯ \\le (withClickThroughRates I ctr).revenue ((withClickThroughRates I ctr).runAssignment (withClickThroughRates I ctr).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withClickThroughRates I ctr).maxBidForQuery q"
+    },
+    "section6_availability_theorem8_finite_explicit_error": {
+      "lean_statement_sha256": "5eb3668a8c66bcdd155735ecd87608bdacf31c13b27c8c69f6a26b601293c22c",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (available : Advertiser \\to Query \\to Prop) [inst_5 : (a : Advertiser) \\to (q : Query) \\to Decidable (available a q)], NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withAvailability I available).offlineOptimumValue ⋯ \\le (withAvailability I available).revenue ((withAvailability I available).runAssignment (withAvailability I available).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withAvailability I available).maxBidForQuery q"
+    },
+    "section6_multiple_slots_theorem8_finite_explicit_error": {
+      "lean_statement_sha256": "90e7c1c4405465d151b5cbe60327b69d07272998c0976cf2c2a13f27b6ceff16",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} {Slot : Query \\to Type u_3} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype ((q : Query) × Slot q)] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq ((q : Query) × Slot q)] (I : PaperInstance Advertiser Query), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List ((q : Query) × Slot q)), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withSlots I Slot).offlineOptimumValue ⋯ \\le paperRevenue (withSlots I Slot) ((withSlots I Slot).runAssignment (withSlots I Slot).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withSlots I Slot).maxBidForQuery q"
+    },
     "section6_page_top_balance_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "31782a82f8350758ed9f56da93b0fea2548c72e4fa8df4e22d5f6bd06ffb9b82",
+      "lean_statement_sha256": "4be57273b7da506ce056a3abb9f8cb920e713f187f6d0e7c6c91b2606d198e14",
       "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (slots : Query \\to ℕ), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * pageOfflineOptimumValue I slots ⋯ \\le pageRevenue I (runPageAssignment I slots (pageTopBalanceRule I slots) history) + epsilon * (exp 1 + 1) * pageHistoryMaxBidSum I slots history"
     },
+    "section6_multiple_slots_distinct_choice_run_assignment_per_page_distinct": {
+      "lean_statement_sha256": "1e82dc9e984a522cfceaaeed25cddd0542ab23d427e505314d244d51022dd335",
+      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} {Slot : Query \\to Type u_3} [inst : Fintype Advertiser] [inst_1 : Fintype ((q : Query) × Slot q)] [inst_2 : DecidableEq Advertiser] [inst_3 : DecidableEq ((q : Query) × Slot q)] (I : PaperInstance Advertiser Query) (history : List ((q : Query) × Slot q)), paperSlotsPerPageDistinct Slot ((withSlots I Slot).runAssignment (withSlotsDistinctChoice Slot (withSlots I Slot).balanceChoiceRule) history)"
+    },
     "section8_weighted_bids_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "c0eb6bb96b5c0364755a95ea6ebadf1bd42ed4c23f0c31fff9e89414aa9b02e8",
+      "lean_statement_sha256": "95c6b166260c269a16d360c63095d9ea74a6a8cf0035989982adf2b55f4ba9d5",
       "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (weight : Advertiser \\to ℝ), (\\forall (a : Advertiser), 0 \\le weight a) \\to (\\forall (a : Advertiser), weight a \\le 1) \\to NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withAdvertiserWeights I weight).offlineOptimumValue ⋯ \\le (withAdvertiserWeights I weight).revenue ((withAdvertiserWeights I weight).runAssignment (withAdvertiserWeights I weight).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withAdvertiserWeights I weight).maxBidForQuery q"
     },
     "section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids": {
-      "lean_statement_sha256": "10a15a2a6cc9d7256611f76539acd3413340a95649ef9d132f8228ed1b036310",
+      "lean_statement_sha256": "84b26bcf5a3b821c884f3a4098c006563e84a78aa0f84ccf31bec496cacbd0a4",
       "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (weight : Advertiser \\to ℝ), (\\forall (a : Advertiser), 0 \\le weight a) \\to NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), weight a * bid a q \\le epsilon * budget a) \\to paperMsvvRatio * (withAdvertiserWeights I weight).offlineOptimumValue ⋯ \\le (withAdvertiserWeights I weight).revenue ((withAdvertiserWeights I weight).runAssignment (withAdvertiserWeights I weight).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withAdvertiserWeights I weight).maxBidForQuery q"
     },
-    "theorem8_balance_msvv_competitive_of_small_bids_limit_family": {
-      "lean_statement_sha256": "95a72f34c9dc6c29a1df0b42d84c394487c38f6103ffa71095a65231d3028e4c",
-      "statement": "\\forall {Advertiser : Type u_1} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : DecidableEq Advertiser] (F : PaperSmallBidsLimitFamily Advertiser), paperMsvvRatio * optLimit \\le revenueLimit"
+    "theorem9HardDistribution_uniform": {
+      "lean_statement_sha256": "33efe7295a20b956bbb0b84549e27d5edae84a80891d3eac758d9cd971734dc4",
+      "statement": "\\forall (N : ℕ), theorem9HardDistribution N = uniformPermutationDistribution N"
     },
-    "theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "a76703166a24b4f7e883a8b79f980546792b207e78ed1ab02604cd14d461e5a4",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * offlineOptimumValue I ⋯ \\le paperRevenue I (runAssignment I (balanceChoiceRule I) history) + epsilon * (exp 1 + 1) * \\sum q, maxBidForQuery I q"
+    "theorem9IntegralPrefixAlgorithm_choice_feasible": {
+      "lean_statement_sha256": "42db961ffbd4f1c6afa5f3b34213d849f2944a73ef89500e1149dff917f29462",
+      "statement": "\\forall {N : ℕ} (algorithm : theorem9IntegralPrefixAlgorithm N) (obs : Fin N \\to Finset (Fin N)) (round bidder : Fin N), ↑algorithm obs round = some bidder \\to bidder \\in obs round"
     },
-    "theorem9CappedNormalizedRevenue": {
-      "lean_statement_sha256": "f06341e07ebb139b6a5c10c5406204b16a9382f4098a1a1430b8c2e6fcddde53",
-      "statement": "(N : ℕ) \\to theorem9IntegralPrefixAlgorithm N \\to Perm (Fin N) \\to ℝ"
+    "theorem9RandomizedOnlineAlgorithm_pmf": {
+      "lean_statement_sha256": "8ebf06b432e16cfa49925aaaa171138ef61b4ee28a370b9c960358fc2da87d17",
+      "statement": "\\forall (N : ℕ), theorem9RandomizedOnlineAlgorithm N = PMF (theorem9IntegralPrefixAlgorithm N)"
     },
-    "theorem9FeasiblePrefixRuleFamily": {
-      "lean_statement_sha256": "00f33ba07eacb5e548030e24cb4f24250521b3d7e43c3f22ce777f2fa5821d63",
-      "statement": "(Algorithm : ℕ \\to Type u_1) \\to [(N : ℕ) \\to Fintype (Algorithm N)] \\to [(N : ℕ) \\to DecidableEq (Algorithm N)] \\to Type u_1"
+    "theorem9FeasiblePrefixRuleFamily_fields": {
+      "lean_statement_sha256": "ac7b84f1036c801dc04022097d5709f757b0dcf3cea6766f65bc00eedadaa208",
+      "statement": "\\forall {Algorithm : ℕ \\to Type u_1} [inst : (N : ℕ) \\to Fintype (Algorithm N)] [inst_1 : (N : ℕ) \\to DecidableEq (Algorithm N)] (C : theorem9FeasiblePrefixRuleFamily Algorithm), (\\forall (N : ℕ) (algorithm : Algorithm N) (obs : Fin N \\to Finset (Fin N)) (round bidder : Fin N), bidder ∉ obs round \\to prefixAllocation N algorithm obs round bidder = 0) \\land \\forall (N : ℕ) (algorithm : Algorithm N) (obs : Fin N \\to Finset (Fin N)) (round : Fin N), \\sum bidder \\in obs round, prefixAllocation N algorithm obs round bidder \\le 1"
     },
-    "theorem9HardDistribution": {
-      "lean_statement_sha256": "b5f0014bc3c04b60d56d67a7129a0a3509b0975810f704bda46ee8a8ae584c9c",
-      "statement": "(N : ℕ) \\to PMF (Perm (Fin N))"
-    },
-    "theorem9IntegralPrefixAlgorithm": {
-      "lean_statement_sha256": "ceea0c42ce6ddac65302169735542ec5ce219ba76c8bbc8335909f52b14fdf9b",
-      "statement": "ℕ \\to Type"
-    },
-    "theorem9RandomizedOnlineAlgorithm": {
-      "lean_statement_sha256": "f91ae1c1030f249f0664000fcda1568c4fb26b6861ac698b3212a1357065ac45",
-      "statement": "ℕ \\to Type"
+    "theorem9CappedNormalizedRevenue_formula": {
+      "lean_statement_sha256": "096f80d9a7054decb3a819ae9217a7285016ecfa66f73b1c73e5ac2b04a8765a",
+      "statement": "\\forall (N : ℕ) (algorithm : theorem9IntegralPrefixAlgorithm N) (permutation : Perm (Fin N)), theorem9CappedNormalizedRevenue N algorithm permutation = (\\sum bidder, min 1 (\\sum round, prefixAllocation algorithm (theorem9ObservedPrefix N permutation round) round (permutation bidder))) / ↑N"
     },
     "theorem9_capped_normalized_revenue_eq_prefix_spend": {
-      "lean_statement_sha256": "f979469f74c34e3555cfa416c61993611a68f5af0eed63ae71eaf91f416e089f",
+      "lean_statement_sha256": "261766b01d306cbaa204a0c3a0b315d3dcee26aeb236bf9188d6f8784cbc089a",
       "statement": "\\forall (N : ℕ) (algorithm : theorem9IntegralPrefixAlgorithm N) (permutation : Perm (Fin N)), theorem9CappedNormalizedRevenue N algorithm permutation = (\\sum bidder, min 1 (\\sum round, prefixAllocation algorithm (theorem9ObservedPrefix N permutation round) round (permutation bidder))) / ↑N"
     },
     "theorem9_no_randomized_feasible_prefix_rule_family_beats_msvv_ratio": {
-      "lean_statement_sha256": "dc4f161d31bee11bbe6545a7360d72761701bb4c2f90ec00243ee8f196ac19cb",
+      "lean_statement_sha256": "0011581b7d85cd695b521f11d5b97e59b2d17e17720de581c5c2a9009e19c069",
       "statement": "\\forall {Algorithm : ℕ \\to Type u_1} [inst : (N : ℕ) \\to Fintype (Algorithm N)] [inst_1 : (N : ℕ) \\to DecidableEq (Algorithm N)] (C : theorem9FeasiblePrefixRuleFamily Algorithm) (delta : ℝ), 0 < delta \\to \\exists N0, \\forall (N : ℕ), N0 \\le N \\to \\forall (randomizedAlgorithm : PMF (Algorithm N)), \\lnot\\forall (permutation : Perm (Fin N)), paperMsvvRatio + delta < pmfExp randomizedAlgorithm fun algorithm  =>  normalizedRevenue C N algorithm permutation"
     },
     "theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio": {
-      "lean_statement_sha256": "2dd794cf95addce22d0025d9cccb3467770678d457f1e05593a603527fa04222",
+      "lean_statement_sha256": "24ffe0485493d8f38f68f6f546943b48b4c75c266356dff7fe38afb35bb919a9",
       "statement": "\\forall (delta : ℝ), 0 < delta \\to \\exists N0, \\forall (N : ℕ), N0 \\le N \\to \\forall (randomizedAlgorithm : PMF (theorem9IntegralPrefixAlgorithm N)), \\lnot\\forall (permutation : Perm (Fin N)), paperMsvvRatio + delta < pmfExp randomizedAlgorithm fun algorithm  =>  theorem9CappedNormalizedRevenue N algorithm permutation"
     },
     "theorem9_no_randomized_online_algorithm_beats_msvv_ratio": {
-      "lean_statement_sha256": "62755f7019c00d1e6686eb38a244b32c490a9149a6221b5d6e6836412480feb3",
+      "lean_statement_sha256": "e00c2366e6075a7c96751fa898cf6fe8b6a4b1cf2e056af9913548b552bb7798",
       "statement": "\\forall (delta : ℝ), 0 < delta \\to \\exists N0, \\forall (N : ℕ), N0 \\le N \\to \\forall (randomizedAlgorithm : theorem9RandomizedOnlineAlgorithm N), \\lnot\\forall (permutation : Perm (Fin N)), paperMsvvRatio + delta < pmfExp randomizedAlgorithm fun algorithm  =>  theorem9CappedNormalizedRevenue N algorithm permutation"
     }
   },

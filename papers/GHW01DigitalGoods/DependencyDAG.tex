@@ -5,7 +5,7 @@
 \begin{tikzpicture}[node distance=1.15cm and 1.55cm,
   every node/.style={font=\sffamily\small}]
 
-  \dagPaperMetadata{Competitive Auctions}{Andrew V. Goldberg, Jason D. Hartline, Anna R. Karlin, Michael Saks, and Andrew Wright}{Journal version; InterTrust/SODA numbering crosswalk}{2006 journal / 2000 report}{https://users.eecs.northwestern.edu/~hartline/papers/auctions-journal.pdf}
+  \dagPaperMetadata{Competitive Auctions and Digital Goods}{Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright}{SODA paper; journal refinement for Section 8.2}{SODA 2001; 2006 Section 8.2 refinement}{https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf}
 \dagPaperLegendRightOfMetadata{
 \node[dag_result, dag_template_legend] (legRes)
   {\textbf{Theorem}\\corollary};
@@ -51,7 +51,7 @@
 \node[dag_lemma, below=of RandomTruthful, text width=3.8cm] (Lemma81)
   {\textbf{Lemma 8.1 (Section 8)}\\truthfulness implies monotone win probabilities};
 \node[dag_result, below=of Lemma81, text width=3.8cm] (Thm82)
-  {\textbf{Theorem 8.2 (Section 8)}\\journal monotone truthful randomized auctions satisfy $E[R] \le F$; the weak preliminary reading has a counterexample};
+  {\textbf{Theorem 8.2 (Section 8)}\\journal Section 8.2 monotone truthful randomized auctions satisfy $E[R] \le F(b)$};
 
 \node[dag_model, below=of Benchmark, text width=3.8cm] (DetModel)
   {\textbf{Deterministic Models (Section 9)}\\optimal threshold and deterministic bid-independent auctions};

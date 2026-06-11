@@ -281,11 +281,81 @@ Source note: Paper source map uses `source.txt` lines 3216--3232; Lean exposes t
 theorem review_theorem3_feasible_sequential_current_bounds_source_data_statement
     (mu : Fin 2 → MeasureTheory.Measure TripLength) (arrival : Fin 2 → ℝ)
     (rho R1 R2 switch12 switch21 : ℝ)
-    (A :
+    (hR1_eq : R1 = rho * R2)
+    (hR1_pos : 0 < R1)
+    (hR1_lt_R2 : R1 < R2)
+    (hR2_pos : 0 < R2)
+    (hC_lt_rho :
+      theorem3FeasibilityThresholdC
+          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))
+          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))
+          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)
+          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)
+          switch12 < rho)
+    (hrho_lt_one : rho < 1)
+    (harrival1_pos : 0 < arrival 0)
+    (harrival2_pos : 0 < arrival 1)
+    (hswitch12_pos : 0 < switch12)
+    (hswitch21_pos : 0 < switch21)
+    (htime1_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (mu 0))
+    (htime2_integrable :
+      IntegrableOn (fun τ : TripLength => τ) acceptAllPolicy (mu 1))
+    (hq1_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch12 switch21 τ)
+        acceptAllPolicy (mu 0))
+    (hq2_integrable :
+      IntegrableOn
+        (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
+        acceptAllPolicy (mu 1))
+    (hmeasure1_pos : 0 < mu 0 acceptAllPolicy)
+    (hmeasure2_pos : 0 < mu 1 acceptAllPolicy)
+    (feasible_sequential_current_bounds_source :
+      ∀ m z : Fin 2 → ℝ,
+        (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
+          theorem3AcceptAllStructuredParameterEvidence
+            mu arrival R1 R2 switch12 switch21 m z →
+          Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate
+            mu arrival R2 switch12 switch21 m z) :
+    ∃ m z : Fin 2 → ℝ,
+      (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
+        dynamicMeasurableIncentiveCompatible
+          (gn21MeasuredCTMCStructuredDynamicReward
+            mu arrival switch12 switch21 m z) ∧
+        (∀ ρ : Fin 2 → TripPolicy,
+          dynamicMeasurableOptimal
+            (gn21MeasuredCTMCStructuredDynamicReward
+              mu arrival switch12 switch21 m z) ρ →
+            dynamicAcceptAllAlmostEverywhere mu ρ) ∧
+        (∃ q : Fin 2 → TripLength → ℝ,
+          ∀ i τ,
+            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i τ =
+              structuredSurgePrice (m i) (z i) (q i) τ) ∧
+        theorem3AcceptAllStructuredParameterEvidence
+          mu arrival R1 R2 switch12 switch21 m z := by
+  let A :
       Theorem3AcceptAllStructuredFeasibleSequentialCurrentBoundsSourceDataAssumptions
-        mu arrival rho R1 R2 switch12 switch21) :
-    theorem3MeasuredStructuredMeasurableICAEUniqueConclusion
-      mu arrival R1 R2 switch12 switch21 :=
+        mu arrival rho R1 R2 switch12 switch21 :=
+    { hR1_eq := hR1_eq
+      hR1_pos := hR1_pos
+      hR1_lt_R2 := hR1_lt_R2
+      hR2_pos := hR2_pos
+      hC_lt_rho := hC_lt_rho
+      hrho_lt_one := hrho_lt_one
+      harrival1_pos := harrival1_pos
+      harrival2_pos := harrival2_pos
+      hswitch12_pos := hswitch12_pos
+      hswitch21_pos := hswitch21_pos
+      htime1_integrable := htime1_integrable
+      htime2_integrable := htime2_integrable
+      hq1_integrable := hq1_integrable
+      hq2_integrable := hq2_integrable
+      hmeasure1_pos := hmeasure1_pos
+      hmeasure2_pos := hmeasure2_pos
+      feasible_sequential_current_bounds_source :=
+        feasible_sequential_current_bounds_source }
+  simpa [theorem3MeasuredStructuredMeasurableICAEUniqueConclusion] using
     theorem3_feasible_sequential_current_bounds_source_data
       mu arrival rho R1 R2 switch12 switch21 A
 

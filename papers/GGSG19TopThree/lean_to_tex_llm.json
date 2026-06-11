@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "paper": "GGSG19TopThree",
+  "generated_at": "2026-06-11T03:33:49Z",
+  "generator": "gpt-5-codex",
+  "items": {
+    "paper_definition_large_deviation_rate": {
+      "lean_statement_sha256": "386fb05ef5d8773b36d583a42776d1770b9400fa588af20571562aabcf907426",
+      "statement": "For a real sequence A indexed by sample size and a real number r, paper_definition_large_deviation_rate A r is exactly the paper large-deviation-rate predicate definition_large_deviation_rate A r."
+    },
+    "source_proposition1_thm_consistency_tiered": {
+      "lean_statement_sha256": "8fb204d38c2c54d33ad13b7d4bb646c2923ae6592dc7cdc77f5e829982249395",
+      "statement": "For a finite ranking law and staged target prefix sets, assuming every stage has a cross-tier pair and no cross-tier top-prefix probabilities tie, strict top-prefix dominance of every target member over every nonmember at every cut is equivalent to every reasonable prefix-score rule learning the staged target sets, meaning the selection error probability tends to 0."
+    },
+    "source_proposition2_thm_pairwiselearning_finite_support": {
+      "lean_statement_sha256": "f0cac9695820eaec11495277f3fb6dfccd32aa7bec923910d9e23b180fea7dad",
+      "statement": "For a finite signal law and two score functions with nonnegative expected score gap, the pairwise scoring error probability either has exponential rate pairwiseScoringRate, or has exponential rate -log pZero for a positive zero-gap probability pZero, or is eventually zero."
+    },
+    "source_proposition3_lem_pairwiselearning_approval_finite_ternary": {
+      "lean_statement_sha256": "614beddf6226ea3217f4a248cab7798310a92271612420f9270d329547d2fae4",
+      "statement": "For finite ternary approval score gaps taking values 1, 0, and -1 with probabilities pUp, pZero, and pDown and pDown <= pUp, the pairwise scoring error probability either has exponential rate approvalPairwiseRate pUp pDown or is eventually zero."
+    },
+    "source_proposition4_thm_goal_learning_finite_support": {
+      "lean_statement_sha256": "3f3d303fd4540cc9b889993e9a479a3e3986534558694eadd98ff59a009703fb",
+      "statement": "For finitely many relevant pairs under a finite signal law, if every pair has nonnegative expected score gap and each pair has a positive nonnegative weight, then the weighted sum of the pairwise finite-score-gap error probabilities has some extended exponential rate."
+    },
+    "source_theorem1_lem_randomizebetterscoring": {
+      "lean_statement_sha256": "80beef6814a6f23ff8cdcc36fe79c56882f99c5c3dab57bbb2f342ab409c999d",
+      "statement": "For any finite randomized family of reasonable prefix scoring rules whose weights are nonnegative and sum to 1, if the target winner set satisfies strict top-prefix dominance, then the weight-averaged static scoring rule is reasonable, learns the winner set with error probability tending to 0, and has a static finite outcome-learning rate at least as large as the randomized scoring rule rate."
+    },
+    "source_theorem2_lem_randomizenotbetterapproval_pairwise": {
+      "lean_statement_sha256": "bb66a30cb22cfb7b0441ffdfd384899ddd717edb2356478d65fb3ee5fbbaeea9",
+      "statement": "For any finite randomized K-approval rule with nonnegative weights summing to 1 and any candidate pair, there exists a static component rule whose extended approval pairwise rate weakly dominates the randomized rule pairwise rate."
+    },
+    "source_theorem_lem_randomizebetterapproval_w_selection_constructed": {
+      "lean_statement_sha256": "f24b64f4a853770dba3f52e01f68fcf4080edd4cca995ed490f6ede663d64fea",
+      "statement": "In the constructed four-candidate W-selection ranking law, strict top-prefix dominance holds for the relevant cross-tier pairs, and the 50/50 randomized approval rule has finite outcome-learning rate strictly larger than the best static K-approval cutoff among the finite static family."
+    },
+    "source_corollary_lem_mallowsnorando": {
+      "lean_statement_sha256": "e8da7a4c959db9a9ff8818e074a3c549740cee5db3023b0d5fa65610e7055a42",
+      "statement": "For a finite Mallows model with q < 1 and a target W candidate, any finite randomized family of nontrivial K-approval rules is weakly dominated by some static proper-prefix cutoff, and that cutoff is optimal among static cutoffs for the Mallows top-W K-approval outcome rate."
+    },
+    "source_theorem_lem_mallowsnotWK_counterexample": {
+      "lean_statement_sha256": "345c1004708f1a5569122416775302259271ded724f74eeaeedefde1d4f6e420",
+      "statement": "There exists a high-noise Mallows instance centered at the identity in the four-candidate setting such that the W-approval cutoff is not approval-rate optimal: some different cutoff has strictly larger finite outcome-learning rate."
+    }
+  }
+}
