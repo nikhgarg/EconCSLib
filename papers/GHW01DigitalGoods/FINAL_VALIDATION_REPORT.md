@@ -4,9 +4,7 @@
 
 - Lean formalization status: formalized.
 - Human dashboard review status: 0/18 rows reviewed; 0 stale; 0 mismatches.
-- LLM statement-translation audit: 18/18 rows match, assuming the current
-  non-audit paper-facing surface remains unchanged after removing the
-  Section 8.2 audit row.
+- LLM statement-translation audit: 18/18 rows match.
 - Human summary: Formalizes the SODA paper; Theorem 8.2 uses the
   refined monotone-auction wording from the journal version.
 - Paper correctness verdict: no inconsistency is reported for the formalized
