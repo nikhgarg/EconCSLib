@@ -31,9 +31,95 @@ found.
 
 ## 3. What Has Been Proven
 
-See the verdict and named-statement sections in this report.
+The paper-facing definitions, Theorem 1 discretization-bias bound, and Theorem
+2 weighted-objective characterization are formalized. Lean also records the
+Bayes-identity assumptions and coordinate-sweep proof route needed to make the
+source proof precise.
 
-## 4. Paper Definitions Checked
+## 4. Additional Assumptions Beyond Paper
+
+None separately recorded in the existing report.
+
+## 5. Proof-Strategy Deviations
+
+### Proof Deviations and Assumptions
+
+- **Theorem 1 proof deviation.** The paper's continuous source-transformation
+  proof sketch is underspecified at the measurable transformation step and in
+  the multiclass `S_b/S_d` mass accounting. Lean proves the same paper-facing
+  bound directly from calibration, and formalizes the source-transformation
+  route using an explicit real-coordinate sweep with coordinate pushforward and
+  pullback. This is a proof-strategy deviation, not a theorem-statement change.
+- **Theorem 2 Bayes assumption.** The paper phrase "Bayes optimal `q`" is
+  represented by row-wise Bayes identities. A finite Bayes dataset model is
+  provided as a reusable discharger for those identities.
+- **Standard formal assumptions.** Lean exposes finite type, decidable equality,
+  posterior-simplex, measurability, integrability, finite-measure, and
+  non-trivial-reference assumptions where the paper leaves them implicit.
+- **Optional future strengthening.** The accepted Theorem 1 source route uses a
+  concrete coordinate sweep. A fully abstract arbitrary nonatomic transport
+  theorem could later replace this proof seam. More automatic arbitrary-measure
+  conditional-expectation dischargers and randomized-rule measurability wrappers
+  would be reusable conveniences, not missing theorem endpoints.
+
+## 6. Proof Tricks Worth Reusing
+
+None separately recorded in the existing report.
+
+## 7. Library Lift Pass
+
+None separately recorded in the existing report.
+
+## 8. DAG Audit
+
+No separate DAG audit note is recorded in the existing report.
+
+## 9. Conditional Results and Remaining Gaps
+
+None separately recorded in the existing report.
+
+## 10. Suspected Paper Errors or Inconsistencies
+
+None separately recorded in the existing report.
+
+## 11. Validation Checks
+
+### Verification Checks
+
+- The paper target `DSWG24DiscretizationBias` builds successfully.
+- The human-facing Lean interface `DSWG24DiscretizationBias.PaperInterface`
+  builds successfully.
+- The post-paper audit ledger builds successfully.
+- The DSWG Lean files contain no `sorry`, `admit`, or `axiom` placeholders.
+- The dependency DAG renders successfully and was visually inspected after the
+  final layout update.
+- The final report and repository status files no longer contain obsolete
+  Theorem 2(i)--(ii) restriction caveats or raw command logs.
+
+### Statement Translation Audit
+
+Audit date: 2026-06-06.
+Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
+
+Summary: 32 rows; 30 match, 0 uncertain, 2 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: passes (32 rows; digest 2944f9d9c293).
+
+Flagged rows:
+- `marginalLabelShare`: mismatch. Paper defines a finite-sample average over predictions; translation defines a population probability under mu_X.
+- `aggregatePosterior`: mismatch. Paper defines an empirical average over observed x_i; translation gives an expectation over the marginal distribution.
+
+## 12. Final Verdict
+
+Completion status: complete.
+
+The paper-facing definitions, Theorem 1, and Theorem 2 are represented by
+compiling Lean declarations. The main theorem statements match the source text;
+where Lean differs, it is by making assumptions explicit or replacing an
+underspecified proof sketch with a precise coordinate-sweep proof strategy.
+
+- Completion status: formalized.
+- Summary: Main theorem route differs from the paper proof in places; the validation report records the proof-route deviation.
+
+## 13. Paper Definitions Checked
 
 These are the mathematical objects from the paper interface. All are exposed in
 `PaperInterface.lean`.
@@ -100,7 +186,7 @@ These are the mathematical objects from the paper interface. All are exposed in
 | def sourceSe | `sourceSe` | - Source proof region `S_e`: focal posterior is `0`. |
 <!-- lean-derived-definitions:end -->
 
-## 5. Named Theorem Statements Checked
+## 14. Named Theorem Statements Checked
 
 ### Theorem 1
 
@@ -184,7 +270,7 @@ interfaces for independent deterministic and randomized rules.
 | theorem theorem2iii_strict_disagreement_not_weighted_objective_maximizer | `theorem2iii_strict_disagreement_not_weighted_objective_maximizer` | states the accuracy-boundary strict-disagreement non-maximality claim. |
 <!-- lean-derived-statements:end -->
 
-## 6. Paper-Facing Statement Validator Ledger
+## 15. Paper-Facing Statement Validator Ledger
 
 Generated from dashboard status export:
 
@@ -226,86 +312,3 @@ Generated from dashboard status export:
 | theorem theorem2iii_weighted_objective_maximizer_iff_agrees_argmax | `theorem2iii_weighted_objective_maximizer_iff_agrees_argmax` | gpt-5-codex (model; matches; 2026-06-06T20:39:21Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:21Z): Translation states the gamma < 1 weighted-objective maximizer iff zero-disagreement with argmax rule. |
 
 Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
-
-## 7. Additional Assumptions Beyond Paper
-
-None separately recorded in the existing report.
-
-## 8. Proof-Strategy Deviations
-
-### Proof Deviations and Assumptions
-
-- **Theorem 1 proof deviation.** The paper's continuous source-transformation
-  proof sketch is underspecified at the measurable transformation step and in
-  the multiclass `S_b/S_d` mass accounting. Lean proves the same paper-facing
-  bound directly from calibration, and formalizes the source-transformation
-  route using an explicit real-coordinate sweep with coordinate pushforward and
-  pullback. This is a proof-strategy deviation, not a theorem-statement change.
-- **Theorem 2 Bayes assumption.** The paper phrase "Bayes optimal `q`" is
-  represented by row-wise Bayes identities. A finite Bayes dataset model is
-  provided as a reusable discharger for those identities.
-- **Standard formal assumptions.** Lean exposes finite type, decidable equality,
-  posterior-simplex, measurability, integrability, finite-measure, and
-  non-trivial-reference assumptions where the paper leaves them implicit.
-- **Optional future strengthening.** The accepted Theorem 1 source route uses a
-  concrete coordinate sweep. A fully abstract arbitrary nonatomic transport
-  theorem could later replace this proof seam. More automatic arbitrary-measure
-  conditional-expectation dischargers and randomized-rule measurability wrappers
-  would be reusable conveniences, not missing theorem endpoints.
-
-## 9. Proof Tricks Worth Reusing
-
-None separately recorded in the existing report.
-
-## 10. Library Lift Pass
-
-None separately recorded in the existing report.
-
-## 11. DAG Audit
-
-No separate DAG audit note is recorded in the existing report.
-
-## 12. Conditional Results and Remaining Gaps
-
-None separately recorded in the existing report.
-
-## 13. Suspected Paper Errors or Inconsistencies
-
-None separately recorded in the existing report.
-
-## 14. Validation Checks
-
-### Verification Checks
-
-- The paper target `DSWG24DiscretizationBias` builds successfully.
-- The human-facing Lean interface `DSWG24DiscretizationBias.PaperInterface`
-  builds successfully.
-- The post-paper audit ledger builds successfully.
-- The DSWG Lean files contain no `sorry`, `admit`, or `axiom` placeholders.
-- The dependency DAG renders successfully and was visually inspected after the
-  final layout update.
-- The final report and repository status files no longer contain obsolete
-  Theorem 2(i)--(ii) restriction caveats or raw command logs.
-
-### Statement Translation Audit
-
-Audit date: 2026-06-06.
-Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
-
-Summary: 32 rows; 30 match, 0 uncertain, 2 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: passes (32 rows; digest 2944f9d9c293).
-
-Flagged rows:
-- `marginalLabelShare`: mismatch. Paper defines a finite-sample average over predictions; translation defines a population probability under mu_X.
-- `aggregatePosterior`: mismatch. Paper defines an empirical average over observed x_i; translation gives an expectation over the marginal distribution.
-
-## 15. Final Verdict
-
-Completion status: complete.
-
-The paper-facing definitions, Theorem 1, and Theorem 2 are represented by
-compiling Lean declarations. The main theorem statements match the source text;
-where Lean differs, it is by making assumptions explicit or replacing an
-underspecified proof sketch with a precise coordinate-sweep proof strategy.
-
-- Completion status: formalized.
-- Summary: Main theorem route differs from the paper proof in places; the validation report records the proof-route deviation.

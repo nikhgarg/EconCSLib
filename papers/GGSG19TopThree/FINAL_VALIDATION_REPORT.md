@@ -36,7 +36,64 @@ proof obligations.
 The paper's empirical and numerical sections are treated as reproducibility
 artifacts rather than Lean theorem targets.
 
-## 4. Paper Definitions Checked
+## 4. Additional Assumptions Beyond Paper
+
+None.
+
+## 5. Proof-Strategy Deviations
+
+- Propositions 2-4: Lean states finite-support boundary branches explicitly
+  rather than folding them into prose.
+- Empirical/numerical sections: treated as reproducibility artifacts outside
+  the Lean theorem surface.
+
+## 6. Proof Tricks Worth Reusing
+
+- Use `WithTop` rates for finite-support large-deviation boundary cases.
+- Split ranking-learning proofs into pairwise finite-support rates, K-approval
+  ternary specialization, and finite relevant-pair aggregation.
+- Keep one-loser/all-but-one K-approval facts in the shared social-choice
+  library and paper-specific terminology as thin wrappers.
+
+## 7. Library Lift Pass
+
+- `EconCSLib.Foundations.Probability.FiniteSupportMGF`: finite-support
+  log-MGF, rate, extended-rate, and pairwise threshold-rate APIs.
+- `EconCSLib.Foundations.Probability.LargeDeviations`: finite weighted-sum and
+  pairwise aggregation certificates.
+- `EconCSLib.SocialChoice.Ranking.Approval`: all-but-one K-approval last-rank
+  probability facts.
+- `EconCSLib.SocialChoice.Ranking.MallowsRankFactorization`: reusable Mallows
+  rank-factorization algebra.
+
+Further candidates are recorded in `POST_FORMALIZATION_AUDIT.md`.
+
+## 8. DAG Audit
+
+- Rendered artifact: yes, `DependencyDAG.pdf`.
+- Topology: source-facing named-result topology; empirical sections omitted.
+- Layout: visually inspected after rerendering; no known overlap or unintended
+  dashed-edge semantics.
+
+## 9. Conditional Results and Remaining Gaps
+
+None for the source-facing finite-candidate theorem surface.
+
+## 10. Suspected Paper Errors or Inconsistencies
+
+None.
+
+## 11. Validation Checks
+
+The targeted paper build passed for `lake build GGSG19TopThree`. The DAG was
+rendered from the paper folder with `latexmk`, converted to PNG, and visually
+inspected. Targeted `git diff --check` passed for the changed GGSG documents.
+
+## 12. Final Verdict
+
+- Completion status: formalized.
+
+## 13. Paper Definitions Checked
 
 - Large-deviation rate: `r = -lim_N (1 / N) log A_N`.
   Lean: `paper_definition_large_deviation_rate`.
@@ -49,7 +106,7 @@ artifacts rather than Lean theorem targets.
 | abbrev paper_definition_large_deviation_rate | `paper_definition_large_deviation_rate` | - Paper definition of an exponential large-deviation rate. |
 <!-- lean-derived-definitions:end -->
 
-## 5. Named Theorem Statements Checked
+## 14. Named Theorem Statements Checked
 
 ### Proposition 1
 
@@ -104,7 +161,7 @@ claims.
 | theorem source_theorem_lem_mallowsnotWK_counterexample | `source_theorem_lem_mallowsnotWK_counterexample` | - Source Theorem `lem:mallowsnotWK`: a four-candidate high-noise Mallows counterexample where W-approval is not approval-rate optimal. |
 <!-- lean-derived-statements:end -->
 
-## 6. Paper-Facing Statement Validator Ledger
+## 15. Paper-Facing Statement Validator Ledger
 
 Generated from dashboard status export:
 
@@ -124,60 +181,3 @@ Generated from dashboard status export:
 | theorem source_theorem_lem_randomizebetterapproval_w_selection_constructed | `source_theorem_lem_randomizebetterapproval_w_selection_constructed` | None recorded | None |
 
 Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
-
-## 7. Additional Assumptions Beyond Paper
-
-None.
-
-## 8. Proof-Strategy Deviations
-
-- Propositions 2-4: Lean states finite-support boundary branches explicitly
-  rather than folding them into prose.
-- Empirical/numerical sections: treated as reproducibility artifacts outside
-  the Lean theorem surface.
-
-## 9. Proof Tricks Worth Reusing
-
-- Use `WithTop` rates for finite-support large-deviation boundary cases.
-- Split ranking-learning proofs into pairwise finite-support rates, K-approval
-  ternary specialization, and finite relevant-pair aggregation.
-- Keep one-loser/all-but-one K-approval facts in the shared social-choice
-  library and paper-specific terminology as thin wrappers.
-
-## 10. Library Lift Pass
-
-- `EconCSLib.Foundations.Probability.FiniteSupportMGF`: finite-support
-  log-MGF, rate, extended-rate, and pairwise threshold-rate APIs.
-- `EconCSLib.Foundations.Probability.LargeDeviations`: finite weighted-sum and
-  pairwise aggregation certificates.
-- `EconCSLib.SocialChoice.Ranking.Approval`: all-but-one K-approval last-rank
-  probability facts.
-- `EconCSLib.SocialChoice.Ranking.MallowsRankFactorization`: reusable Mallows
-  rank-factorization algebra.
-
-Further candidates are recorded in `POST_FORMALIZATION_AUDIT.md`.
-
-## 11. DAG Audit
-
-- Rendered artifact: yes, `DependencyDAG.pdf`.
-- Topology: source-facing named-result topology; empirical sections omitted.
-- Layout: visually inspected after rerendering; no known overlap or unintended
-  dashed-edge semantics.
-
-## 12. Conditional Results and Remaining Gaps
-
-None for the source-facing finite-candidate theorem surface.
-
-## 13. Suspected Paper Errors or Inconsistencies
-
-None.
-
-## 14. Validation Checks
-
-The targeted paper build passed for `lake build GGSG19TopThree`. The DAG was
-rendered from the paper folder with `latexmk`, converted to PNG, and visually
-inspected. Targeted `git diff --check` passed for the changed GGSG documents.
-
-## 15. Final Verdict
-
-- Completion status: formalized.

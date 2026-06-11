@@ -68,88 +68,11 @@ Not separately recorded in the existing report.
   measurable incentive compatibility, and proves accept-all uniqueness up to
   null sets on the feasible-current-bounds source-data assumptions.
 
-## 4. Paper Definitions Checked
-
-<!-- lean-derived-definitions:start -->
-### Lean-Derived Dashboard Definitions
-
-| Paper-facing item | Lean declaration | Source-facing statement |
-| --- | --- | --- |
-| def review_definition_single_state_ic | `review_definition_single_state_ic` | uncertain. Paper-facing statement only names the definition; the translation is tautological and too compressed to verify contents. |
-| def review_definition_dynamic_ic | `review_definition_dynamic_ic` | uncertain. Paper-facing statement only names the definition; the translation does not expose the dynamic IC condition. |
-| def review_definition_threshold_policy | `review_definition_threshold_policy` | uncertain. Paper-facing statement only names threshold policies; the translation references a predicate without enough content to judge. |
-| def review_definition_dynamic_defined_reward | `review_definition_dynamic_defined_reward` | uncertain. Paper-facing statement only names positive-mass denominators; the translation is a type-level description without details. |
-| abbrev review_section2_single_state_renewal_reward_iid_bridge | `review_section2_single_state_renewal_reward_iid_bridge` | - Section 2.2: IID renewal-reward bridge for the single-state formula. |
-| abbrev review_proposition3_1_affine_single_state_ic | `review_proposition3_1_affine_single_state_ic` | - Proposition 3.1: affine single-state pricing is incentive compatible. |
-| abbrev review_theorem1_single_state_threshold_best_response | `review_theorem1_single_state_threshold_best_response` | - Theorem 1: optimal single-state policies are threshold policies. |
-| abbrev review_lemma4_single_state_threshold_uniqueness | `review_lemma4_single_state_threshold_uniqueness` | - Lemma 4: threshold optimizer uniqueness up to null sets. |
-| abbrev review_lemma1_measured_dynamic_reward_decomposition | `review_lemma1_measured_dynamic_reward_decomposition` | - Lemma 1: dynamic reward decomposition. |
-| abbrev review_lemma2_switch_probability_formula | `review_lemma2_switch_probability_formula` | - Lemma 2: CTMC switch-probability formula. |
-| abbrev review_lemma3_measured_time_fraction_formula | `review_lemma3_measured_time_fraction_formula` | - Lemma 3: state time-fraction formula. |
-| abbrev review_remark1_switch_probability_per_time_strictAntiOn | `review_remark1_switch_probability_per_time_strictAntiOn` | - Remark 1: switch probability per unit time is strictly decreasing. |
-| abbrev review_remark3_switch_probability_per_time_tendsto_at_zero | `review_remark3_switch_probability_per_time_tendsto_at_zero` | - Remark 3: small-time switch probability per unit time tends to the switch rate. |
-| abbrev review_remark4_switch_time_minus_switch_probability_nonneg | `review_remark4_switch_time_minus_switch_probability_nonneg` | - Remark 4: `lambda * t - q(t)` is nonnegative. |
-| abbrev review_lemma5_fixed_response_policy_form | `review_lemma5_fixed_response_policy_form` | - Lemma 5: fixed-response feasible policy form almost everywhere. |
-| abbrev review_lemma6_upper_endpoint_derivative_formula | `review_lemma6_upper_endpoint_derivative_formula` | - Lemma 6: upper-endpoint derivative formula. |
-| abbrev review_lemma7_affine_positive_additive_response_quasi_convex | `review_lemma7_affine_positive_additive_response_quasi_convex` | - Lemma 7: positive-additive affine response is quasi-convex. |
-| abbrev review_lemma8_affine_negative_additive_response_quasi_concave | `review_lemma8_affine_negative_additive_response_quasi_concave` | - Lemma 8: negative-additive affine response is quasi-concave. |
-| abbrev review_lemma9_surge_derivative_positive_of_acceptAll_bounds | `review_lemma9_surge_derivative_positive_of_acceptAll_bounds` | - Lemma 9: surge-state derivative positivity under accept-all bounds. |
-| abbrev review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds | `review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds` | - Lemma 10: non-surge-state derivative positivity under accept-all bounds. |
-| abbrev review_theorem4_structural_policy_representatives | `review_theorem4_structural_policy_representatives` | - Theorem 4: structural representatives for optimal policies. |
-<!-- lean-derived-definitions:end -->
-
-## 5. Named Theorem Statements Checked
-
-<!-- lean-derived-statements:start -->
-### Lean-Derived Dashboard Named Statements
-
-| Paper-facing item | Lean declaration | Source-facing statement |
-| --- | --- | --- |
-| theorem review_theorem2_multiplicative_policy_shape_ae | `review_theorem2_multiplicative_policy_shape_ae` | - Theorem 2: multiplicative-pricing optimal-policy shape handoff. Lean states the policy-shape clause separately from the explicit non-IC counterexample because the paper's theorem combines a structural statement with an existential exam... |
-| theorem review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states | `review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states` | - Theorem 2: explicit multiplicative-pricing instance with positive finite cutoff deviations in both states, and hence measured dynamic non-IC. |
-| theorem review_theorem3_feasible_sequential_current_bounds_source_data_statement | `review_theorem3_feasible_sequential_current_bounds_source_data_statement` | uncertain. The paper-facing text is a long workflow note about source-boundary routes, while the translation is a compressed theorem-wrapper implication; faithful matching cannot be judged from the provided statement alone. |
-<!-- lean-derived-statements:end -->
-
-## 6. Paper-Facing Statement Validator Ledger
-
-Generated from dashboard status export:
-
-`python3 scripts/review_dashboard.py --paper GN21DriverSurgePricing --export-format validators-md`
-
-| Paper-facing statement | Lean declaration | Validators | Validator comments |
-| --- | --- | --- | --- |
-| def review_definition_dynamic_defined_reward | `review_definition_dynamic_defined_reward` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z): Paper-facing statement only names positive-mass denominators; the translation is a type-level description without details. |
-| def review_definition_dynamic_ic | `review_definition_dynamic_ic` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z): Paper-facing statement only names the definition; the translation does not expose the dynamic IC condition. |
-| def review_definition_single_state_ic | `review_definition_single_state_ic` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z): Paper-facing statement only names the definition; the translation is tautological and too compressed to verify contents. |
-| def review_definition_threshold_policy | `review_definition_threshold_policy` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z): Paper-facing statement only names threshold policies; the translation references a predicate without enough content to judge. |
-| abbrev review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds | `review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states derivative positivity under non-surge accept-all bounds and related assumptions. |
-| abbrev review_lemma1_measured_dynamic_reward_decomposition | `review_lemma1_measured_dynamic_reward_decomposition` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states the dynamic reward as a time-fraction weighted sum of state reward rates. |
-| abbrev review_lemma2_switch_probability_formula | `review_lemma2_switch_probability_formula` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation gives the CTMC switch probability formula named in the paper statement. |
-| abbrev review_lemma3_measured_time_fraction_formula | `review_lemma3_measured_time_fraction_formula` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states the time-fraction expression equals the measured time-fraction formula, with nonzero denominator caveats. |
-| abbrev review_lemma4_single_state_threshold_uniqueness | `review_lemma4_single_state_threshold_uniqueness` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation captures threshold optimizer existence and uniqueness up to null sets. |
-| abbrev review_lemma5_fixed_response_policy_form | `review_lemma5_fixed_response_policy_form` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation captures that an optimal fixed-response feasible policy has the specified form almost everywhere. |
-| abbrev review_lemma6_upper_endpoint_derivative_formula | `review_lemma6_upper_endpoint_derivative_formula` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation captures the derivative formula and sign correspondence, though it compresses the displayed derivative. |
-| abbrev review_lemma7_affine_positive_additive_response_quasi_convex | `review_lemma7_affine_positive_additive_response_quasi_convex` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states positive-additive affine response is strictly quasi-convex with explicit sign assumptions. |
-| abbrev review_lemma8_affine_negative_additive_response_quasi_concave | `review_lemma8_affine_negative_additive_response_quasi_concave` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states negative-additive affine response is strictly quasi-concave with explicit sign assumptions. |
-| abbrev review_lemma9_surge_derivative_positive_of_acceptAll_bounds | `review_lemma9_surge_derivative_positive_of_acceptAll_bounds` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states derivative positivity under surge accept-all bounds and related assumptions. |
-| abbrev review_proposition3_1_affine_single_state_ic | `review_proposition3_1_affine_single_state_ic` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states affine single-state renewal reward is incentive compatible under parameter bounds and assumptions. |
-| abbrev review_remark1_switch_probability_per_time_strictAntiOn | `review_remark1_switch_probability_per_time_strictAntiOn` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states strict decrease of switch probability per unit time on positive times. |
-| abbrev review_remark3_switch_probability_per_time_tendsto_at_zero | `review_remark3_switch_probability_per_time_tendsto_at_zero` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states the small-time per-unit switch probability limit equals the switch rate. |
-| abbrev review_remark4_switch_time_minus_switch_probability_nonneg | `review_remark4_switch_time_minus_switch_probability_nonneg` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states lambda*tau minus switch probability is nonnegative under nonnegative time/rate assumptions. |
-| abbrev review_section2_single_state_renewal_reward_iid_bridge | `review_section2_single_state_renewal_reward_iid_bridge` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states the IID renewal-reward convergence bridge to the single-state formula. |
-| abbrev review_theorem1_single_state_threshold_best_response | `review_theorem1_single_state_threshold_best_response` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation captures existence of an optimal threshold policy, adding explicit measurability and positivity assumptions. |
-| theorem review_theorem2_multiplicative_policy_shape_ae | `review_theorem2_multiplicative_policy_shape_ae` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation matches the stated structural handoff: optimal policies have the described almost-everywhere rejection shapes. |
-| theorem review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states | `review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation captures the explicit multiplicative instance with profitable finite cutoff deviations in both states and non-IC. |
-| theorem review_theorem3_feasible_sequential_current_bounds_source_data_statement | `review_theorem3_feasible_sequential_current_bounds_source_data_statement` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z): The paper-facing text is a long workflow note about source-boundary routes, while the translation is a compressed theorem-wrapper implication; faithful matching cannot be judged from the provided statement alone. |
-| abbrev review_theorem4_structural_policy_representatives | `review_theorem4_structural_policy_representatives` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states existence of structural representatives for optimal policies and that every optimum admits them. |
-
-Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
-
-## 7. Additional Assumptions Beyond Paper
+## 4. Additional Assumptions Beyond Paper
 
 None separately recorded in the existing report.
 
-## 8. Proof-Strategy Deviations
+## 5. Proof-Strategy Deviations
 
 ### Did Lean Need a Different Qualitative Proof?
 
@@ -174,7 +97,7 @@ measure-theoretic shorthand that Lean cannot leave implicit:
 - Theorem 2's "not incentive compatible" clause is witnessed by a concrete
   measured atomic instance, so the existential counterexample is inspectable.
 
-## 9. Proof Tricks Worth Reusing
+## 6. Proof Tricks Worth Reusing
 
 - Work directly in the continuous/measure-theoretic model when the source proof
   is continuous.  The finite-support model was useful as support, but the paper
@@ -203,7 +126,7 @@ measure-theoretic shorthand that Lean cannot leave implicit:
   This avoided large symbolic expressions involving exponentials in the main
   proof path.
 
-## 10. Library Lift Pass
+## 7. Library Lift Pass
 
 The post-closeout lift moved the reusable pieces that passed the "second paper"
 test without disturbing the paper-facing GN21 definitions.
@@ -240,7 +163,7 @@ aliases to generic library constants; instead the paper wrappers call the
 library lemmas with `simpa` compatibility bridges.  This preserves the human
 review surface and avoids destabilizing the long compiled proof.
 
-## 11. DAG Audit
+## 8. DAG Audit
 
 I rerendered and visually inspected `DependencyDAG.pdf` after this pass.  The
 current DAG uses the shared preamble, has visible spacing between nodes, and no
@@ -254,11 +177,11 @@ this report rather than shown in the DAG.  The remaining boxes correspond to the
 paper-facing model, Section 2.2 renewal-reward bridge, named
 lemmas/proposition/theorems, and the paper proof flow.
 
-## 12. Conditional Results and Remaining Gaps
+## 9. Conditional Results and Remaining Gaps
 
 None separately recorded in the existing report.
 
-## 13. Suspected Paper Errors or Inconsistencies
+## 10. Suspected Paper Errors or Inconsistencies
 
 ### Is Anything in the Paper Wrong?
 
@@ -280,7 +203,7 @@ The paper also reuses symbols such as `R1` and `R2` locally in Appendix lemmas.
 The Lean development renames those local quantities where needed; this was a
 disambiguation step, not a paper error.
 
-## 14. Validation Checks
+## 11. Validation Checks
 
 ### Human Review Status
 
@@ -318,7 +241,7 @@ Flagged rows:
 - `review_definition_dynamic_defined_reward`: uncertain. Paper-facing statement only names positive-mass denominators; the translation is a type-level description without details.
 - `review_theorem3_feasible_sequential_current_bounds_source_data_statement`: uncertain. The paper-facing text is a long workflow note about source-boundary routes, while the translation is a compressed theorem-wrapper implication; faithful matching cannot be judged from the provided statement alone.
 
-## 15. Final Verdict
+## 12. Final Verdict
 
 ### Final Status
 
@@ -330,3 +253,80 @@ Human validation: pending.  The next step is dashboard review of the 24
 
 - Completion status: formalized.
 - Summary: Named CTMC lemmas and Theorems 1--4 are exposed; zero-mass boundary behavior is audited separately.
+
+## 13. Paper Definitions Checked
+
+<!-- lean-derived-definitions:start -->
+### Lean-Derived Dashboard Definitions
+
+| Paper-facing item | Lean declaration | Source-facing statement |
+| --- | --- | --- |
+| def review_definition_single_state_ic | `review_definition_single_state_ic` | uncertain. Paper-facing statement only names the definition; the translation is tautological and too compressed to verify contents. |
+| def review_definition_dynamic_ic | `review_definition_dynamic_ic` | uncertain. Paper-facing statement only names the definition; the translation does not expose the dynamic IC condition. |
+| def review_definition_threshold_policy | `review_definition_threshold_policy` | uncertain. Paper-facing statement only names threshold policies; the translation references a predicate without enough content to judge. |
+| def review_definition_dynamic_defined_reward | `review_definition_dynamic_defined_reward` | uncertain. Paper-facing statement only names positive-mass denominators; the translation is a type-level description without details. |
+| abbrev review_section2_single_state_renewal_reward_iid_bridge | `review_section2_single_state_renewal_reward_iid_bridge` | - Section 2.2: IID renewal-reward bridge for the single-state formula. |
+| abbrev review_proposition3_1_affine_single_state_ic | `review_proposition3_1_affine_single_state_ic` | - Proposition 3.1: affine single-state pricing is incentive compatible. |
+| abbrev review_theorem1_single_state_threshold_best_response | `review_theorem1_single_state_threshold_best_response` | - Theorem 1: optimal single-state policies are threshold policies. |
+| abbrev review_lemma4_single_state_threshold_uniqueness | `review_lemma4_single_state_threshold_uniqueness` | - Lemma 4: threshold optimizer uniqueness up to null sets. |
+| abbrev review_lemma1_measured_dynamic_reward_decomposition | `review_lemma1_measured_dynamic_reward_decomposition` | - Lemma 1: dynamic reward decomposition. |
+| abbrev review_lemma2_switch_probability_formula | `review_lemma2_switch_probability_formula` | - Lemma 2: CTMC switch-probability formula. |
+| abbrev review_lemma3_measured_time_fraction_formula | `review_lemma3_measured_time_fraction_formula` | - Lemma 3: state time-fraction formula. |
+| abbrev review_remark1_switch_probability_per_time_strictAntiOn | `review_remark1_switch_probability_per_time_strictAntiOn` | - Remark 1: switch probability per unit time is strictly decreasing. |
+| abbrev review_remark3_switch_probability_per_time_tendsto_at_zero | `review_remark3_switch_probability_per_time_tendsto_at_zero` | - Remark 3: small-time switch probability per unit time tends to the switch rate. |
+| abbrev review_remark4_switch_time_minus_switch_probability_nonneg | `review_remark4_switch_time_minus_switch_probability_nonneg` | - Remark 4: `lambda * t - q(t)` is nonnegative. |
+| abbrev review_lemma5_fixed_response_policy_form | `review_lemma5_fixed_response_policy_form` | - Lemma 5: fixed-response feasible policy form almost everywhere. |
+| abbrev review_lemma6_upper_endpoint_derivative_formula | `review_lemma6_upper_endpoint_derivative_formula` | - Lemma 6: upper-endpoint derivative formula. |
+| abbrev review_lemma7_affine_positive_additive_response_quasi_convex | `review_lemma7_affine_positive_additive_response_quasi_convex` | - Lemma 7: positive-additive affine response is quasi-convex. |
+| abbrev review_lemma8_affine_negative_additive_response_quasi_concave | `review_lemma8_affine_negative_additive_response_quasi_concave` | - Lemma 8: negative-additive affine response is quasi-concave. |
+| abbrev review_lemma9_surge_derivative_positive_of_acceptAll_bounds | `review_lemma9_surge_derivative_positive_of_acceptAll_bounds` | - Lemma 9: surge-state derivative positivity under accept-all bounds. |
+| abbrev review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds | `review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds` | - Lemma 10: non-surge-state derivative positivity under accept-all bounds. |
+| abbrev review_theorem4_structural_policy_representatives | `review_theorem4_structural_policy_representatives` | - Theorem 4: structural representatives for optimal policies. |
+<!-- lean-derived-definitions:end -->
+
+## 14. Named Theorem Statements Checked
+
+<!-- lean-derived-statements:start -->
+### Lean-Derived Dashboard Named Statements
+
+| Paper-facing item | Lean declaration | Source-facing statement |
+| --- | --- | --- |
+| theorem review_theorem2_multiplicative_policy_shape_ae | `review_theorem2_multiplicative_policy_shape_ae` | - Theorem 2: multiplicative-pricing optimal-policy shape handoff. Lean states the policy-shape clause separately from the explicit non-IC counterexample because the paper's theorem combines a structural statement with an existential exam... |
+| theorem review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states | `review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states` | - Theorem 2: explicit multiplicative-pricing instance with positive finite cutoff deviations in both states, and hence measured dynamic non-IC. |
+| theorem review_theorem3_feasible_sequential_current_bounds_source_data_statement | `review_theorem3_feasible_sequential_current_bounds_source_data_statement` | uncertain. The paper-facing text is a long workflow note about source-boundary routes, while the translation is a compressed theorem-wrapper implication; faithful matching cannot be judged from the provided statement alone. |
+<!-- lean-derived-statements:end -->
+
+## 15. Paper-Facing Statement Validator Ledger
+
+Generated from dashboard status export:
+
+`python3 scripts/review_dashboard.py --paper GN21DriverSurgePricing --export-format validators-md`
+
+| Paper-facing statement | Lean declaration | Validators | Validator comments |
+| --- | --- | --- | --- |
+| def review_definition_dynamic_defined_reward | `review_definition_dynamic_defined_reward` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z): Paper-facing statement only names positive-mass denominators; the translation is a type-level description without details. |
+| def review_definition_dynamic_ic | `review_definition_dynamic_ic` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z): Paper-facing statement only names the definition; the translation does not expose the dynamic IC condition. |
+| def review_definition_single_state_ic | `review_definition_single_state_ic` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z): Paper-facing statement only names the definition; the translation is tautological and too compressed to verify contents. |
+| def review_definition_threshold_policy | `review_definition_threshold_policy` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z): Paper-facing statement only names threshold policies; the translation references a predicate without enough content to judge. |
+| abbrev review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds | `review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states derivative positivity under non-surge accept-all bounds and related assumptions. |
+| abbrev review_lemma1_measured_dynamic_reward_decomposition | `review_lemma1_measured_dynamic_reward_decomposition` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states the dynamic reward as a time-fraction weighted sum of state reward rates. |
+| abbrev review_lemma2_switch_probability_formula | `review_lemma2_switch_probability_formula` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation gives the CTMC switch probability formula named in the paper statement. |
+| abbrev review_lemma3_measured_time_fraction_formula | `review_lemma3_measured_time_fraction_formula` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states the time-fraction expression equals the measured time-fraction formula, with nonzero denominator caveats. |
+| abbrev review_lemma4_single_state_threshold_uniqueness | `review_lemma4_single_state_threshold_uniqueness` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation captures threshold optimizer existence and uniqueness up to null sets. |
+| abbrev review_lemma5_fixed_response_policy_form | `review_lemma5_fixed_response_policy_form` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation captures that an optimal fixed-response feasible policy has the specified form almost everywhere. |
+| abbrev review_lemma6_upper_endpoint_derivative_formula | `review_lemma6_upper_endpoint_derivative_formula` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation captures the derivative formula and sign correspondence, though it compresses the displayed derivative. |
+| abbrev review_lemma7_affine_positive_additive_response_quasi_convex | `review_lemma7_affine_positive_additive_response_quasi_convex` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states positive-additive affine response is strictly quasi-convex with explicit sign assumptions. |
+| abbrev review_lemma8_affine_negative_additive_response_quasi_concave | `review_lemma8_affine_negative_additive_response_quasi_concave` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states negative-additive affine response is strictly quasi-concave with explicit sign assumptions. |
+| abbrev review_lemma9_surge_derivative_positive_of_acceptAll_bounds | `review_lemma9_surge_derivative_positive_of_acceptAll_bounds` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states derivative positivity under surge accept-all bounds and related assumptions. |
+| abbrev review_proposition3_1_affine_single_state_ic | `review_proposition3_1_affine_single_state_ic` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states affine single-state renewal reward is incentive compatible under parameter bounds and assumptions. |
+| abbrev review_remark1_switch_probability_per_time_strictAntiOn | `review_remark1_switch_probability_per_time_strictAntiOn` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states strict decrease of switch probability per unit time on positive times. |
+| abbrev review_remark3_switch_probability_per_time_tendsto_at_zero | `review_remark3_switch_probability_per_time_tendsto_at_zero` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states the small-time per-unit switch probability limit equals the switch rate. |
+| abbrev review_remark4_switch_time_minus_switch_probability_nonneg | `review_remark4_switch_time_minus_switch_probability_nonneg` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states lambda*tau minus switch probability is nonnegative under nonnegative time/rate assumptions. |
+| abbrev review_section2_single_state_renewal_reward_iid_bridge | `review_section2_single_state_renewal_reward_iid_bridge` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states the IID renewal-reward convergence bridge to the single-state formula. |
+| abbrev review_theorem1_single_state_threshold_best_response | `review_theorem1_single_state_threshold_best_response` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation captures existence of an optimal threshold policy, adding explicit measurability and positivity assumptions. |
+| theorem review_theorem2_multiplicative_policy_shape_ae | `review_theorem2_multiplicative_policy_shape_ae` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation matches the stated structural handoff: optimal policies have the described almost-everywhere rejection shapes. |
+| theorem review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states | `review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation captures the explicit multiplicative instance with profitable finite cutoff deviations in both states and non-IC. |
+| theorem review_theorem3_feasible_sequential_current_bounds_source_data_statement | `review_theorem3_feasible_sequential_current_bounds_source_data_statement` | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z) | gpt-5-codex (model; uncertain; 2026-06-06T20:39:34Z): The paper-facing text is a long workflow note about source-boundary routes, while the translation is a compressed theorem-wrapper implication; faithful matching cannot be judged from the provided statement alone. |
+| abbrev review_theorem4_structural_policy_representatives | `review_theorem4_structural_policy_representatives` | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:34Z): Translation states existence of structural representatives for optimal policies and that every optimum admits them. |
+
+Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.

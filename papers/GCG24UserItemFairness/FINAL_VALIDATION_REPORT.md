@@ -59,7 +59,101 @@ including:
 - Theorem 4 misestimation/no-fairness and with-fairness source wrappers for both
   possible true cold-start rows.
 
-## 4. Paper Definitions Checked
+## 4. Additional Assumptions Beyond Paper
+
+### Additional Assumptions
+
+No additional unverified assumptions remain for the final source Theorem 3 and
+Theorem 4 wrappers tracked by the paper README/DAG.
+
+Some declarations expose ordinary mathematical hypotheses that are part of the
+formal statement or its intended model, for example finite type representatives,
+positive row normalizers, nonnegative or strictly positive utilities, and
+compatibility assumptions identifying estimated known rows with the true rows.
+These are not proof gaps; they are explicit hypotheses in the formalized model.
+
+The main modeling caveat is that the paper's general "finding reduces to an LP"
+claim is encoded through paper-local equality-form LP and certificate interfaces
+rather than a generic solver-level LP syntax. The final paper-facing wrappers
+construct or discharge the needed certificates internally. Auxiliary
+selected-BFS/certificate variants that still take explicit inputs are retained
+as helper interfaces and are not the closed source theorem wrappers.
+
+## 5. Proof-Strategy Deviations
+
+### Paper-Proof Fidelity
+
+The Lean development follows the paper's named proof architecture closely:
+symmetry reduction, sparse support and opposing-types reductions, canonical
+pivot/closed-form constructions for Problem 6, mirror symmetry for the second
+half of Theorem 3, and the Appendix E Problem 11/cold-start construction for
+Theorem 4.
+
+Where the Lean proof differs, the difference is mainly organizational: LP
+arguments are factored through auditable certificate structures, and parity,
+center, and mirror cases are made explicit as separate lemmas before being
+recombined by the final source wrappers.
+
+## 6. Proof Tricks Worth Reusing
+
+None separately recorded in the existing report.
+
+## 7. Library Lift Pass
+
+None separately recorded in the existing report.
+
+## 8. DAG Audit
+
+No separate DAG audit note is recorded in the existing report.
+
+## 9. Conditional Results and Remaining Gaps
+
+### Residual Risk
+
+The residual risk is statement-audit risk, not Lean proof risk: a human should
+still compare the paper-facing declarations in `MainTheorems.lean` against the
+source PDF to confirm that the intended modeling conventions are exactly the
+ones desired. The compiled Lean proof itself has no remaining placeholders for
+the tracked paper-facing results.
+
+## 10. Suspected Paper Errors or Inconsistencies
+
+### Mistakes or Deviations Found
+
+The main deviation from a literal paper proof is the LP boundary. Instead of
+formalizing a general-purpose LP solver/simplex theorem, the proof uses
+paper-local equality-form primal/dual certificates, closed-form witnesses,
+finite pivot existence, and complementary-slackness-style uniqueness arguments.
+This is a proof-method deviation, not an open assumption.
+
+The center-pivot Lemma 15 formula required an explicit convention split: the
+source displayed center formula is formalized under a half-LP center-item
+convention, while the executable full Problem 11 proof uses the mirrored-policy
+identity. The distinction is documented in the README and represented by
+separate paper-facing declarations.
+
+Older author-wide status notes were stale for this paper. The paper-local README
+and DAG correctly indicate that the final wrappers are closed.
+
+## 11. Validation Checks
+
+### Statement Translation Audit
+
+Audit date: 2026-06-06.
+Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
+
+Summary: 18 rows; 16 match, 2 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
+
+Flagged rows:
+- `theorem3_price_of_fairness_decreases`: uncertain. The Lean-to-TeX draft captures the monotonicity direction, but pretty-printing erases enough W/W-prime context that the statement is not self-contained for a context-free judge.
+- `theorem3_price_of_fairness_strictly_decreases`: uncertain. The Lean-to-TeX draft captures the strict monotonicity direction, but pretty-printing erases enough W/W-prime context that the statement is not self-contained for a context-free judge.
+
+## 12. Final Verdict
+
+- Completion status: formalized.
+- Summary: Recommendation fairness propositions and theorem statements are closed under the formal source model.
+
+## 13. Paper Definitions Checked
 
 <!-- lean-derived-definitions:start -->
 ### Lean-Derived Dashboard Definitions
@@ -80,7 +174,7 @@ including:
 | def priceOfMisestimation | `priceOfMisestimation` | - Price of misestimation for a policy selected on an estimated utility matrix. |
 <!-- lean-derived-definitions:end -->
 
-## 5. Named Theorem Statements Checked
+## 14. Named Theorem Statements Checked
 
 <!-- lean-derived-statements:start -->
 ### Lean-Derived Dashboard Named Statements
@@ -95,7 +189,7 @@ including:
 | theorem theorem4_misestimation_tradeoff_typeOne | `theorem4_misestimation_tradeoff_typeOne` | - Theorem 4 final tradeoff for the second opposing true type. |
 <!-- lean-derived-statements:end -->
 
-## 6. Paper-Facing Statement Validator Ledger
+## 15. Paper-Facing Statement Validator Ledger
 
 Generated from dashboard status export:
 
@@ -123,97 +217,3 @@ Generated from dashboard status export:
 | def userFairness | `userFairness` | gpt-5-codex (model; matches; 2026-06-06T20:39:24Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:24Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
 
 Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
-
-## 7. Additional Assumptions Beyond Paper
-
-### Additional Assumptions
-
-No additional unverified assumptions remain for the final source Theorem 3 and
-Theorem 4 wrappers tracked by the paper README/DAG.
-
-Some declarations expose ordinary mathematical hypotheses that are part of the
-formal statement or its intended model, for example finite type representatives,
-positive row normalizers, nonnegative or strictly positive utilities, and
-compatibility assumptions identifying estimated known rows with the true rows.
-These are not proof gaps; they are explicit hypotheses in the formalized model.
-
-The main modeling caveat is that the paper's general "finding reduces to an LP"
-claim is encoded through paper-local equality-form LP and certificate interfaces
-rather than a generic solver-level LP syntax. The final paper-facing wrappers
-construct or discharge the needed certificates internally. Auxiliary
-selected-BFS/certificate variants that still take explicit inputs are retained
-as helper interfaces and are not the closed source theorem wrappers.
-
-## 8. Proof-Strategy Deviations
-
-### Paper-Proof Fidelity
-
-The Lean development follows the paper's named proof architecture closely:
-symmetry reduction, sparse support and opposing-types reductions, canonical
-pivot/closed-form constructions for Problem 6, mirror symmetry for the second
-half of Theorem 3, and the Appendix E Problem 11/cold-start construction for
-Theorem 4.
-
-Where the Lean proof differs, the difference is mainly organizational: LP
-arguments are factored through auditable certificate structures, and parity,
-center, and mirror cases are made explicit as separate lemmas before being
-recombined by the final source wrappers.
-
-## 9. Proof Tricks Worth Reusing
-
-None separately recorded in the existing report.
-
-## 10. Library Lift Pass
-
-None separately recorded in the existing report.
-
-## 11. DAG Audit
-
-No separate DAG audit note is recorded in the existing report.
-
-## 12. Conditional Results and Remaining Gaps
-
-### Residual Risk
-
-The residual risk is statement-audit risk, not Lean proof risk: a human should
-still compare the paper-facing declarations in `MainTheorems.lean` against the
-source PDF to confirm that the intended modeling conventions are exactly the
-ones desired. The compiled Lean proof itself has no remaining placeholders for
-the tracked paper-facing results.
-
-## 13. Suspected Paper Errors or Inconsistencies
-
-### Mistakes or Deviations Found
-
-The main deviation from a literal paper proof is the LP boundary. Instead of
-formalizing a general-purpose LP solver/simplex theorem, the proof uses
-paper-local equality-form primal/dual certificates, closed-form witnesses,
-finite pivot existence, and complementary-slackness-style uniqueness arguments.
-This is a proof-method deviation, not an open assumption.
-
-The center-pivot Lemma 15 formula required an explicit convention split: the
-source displayed center formula is formalized under a half-LP center-item
-convention, while the executable full Problem 11 proof uses the mirrored-policy
-identity. The distinction is documented in the README and represented by
-separate paper-facing declarations.
-
-Older author-wide status notes were stale for this paper. The paper-local README
-and DAG correctly indicate that the final wrappers are closed.
-
-## 14. Validation Checks
-
-### Statement Translation Audit
-
-Audit date: 2026-06-06.
-Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
-
-Summary: 18 rows; 16 match, 2 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
-
-Flagged rows:
-- `theorem3_price_of_fairness_decreases`: uncertain. The Lean-to-TeX draft captures the monotonicity direction, but pretty-printing erases enough W/W-prime context that the statement is not self-contained for a context-free judge.
-- `theorem3_price_of_fairness_strictly_decreases`: uncertain. The Lean-to-TeX draft captures the strict monotonicity direction, but pretty-printing erases enough W/W-prime context that the statement is not self-contained for a context-free judge.
-
-## 15. Final Verdict
-
-- Completion status: formalized.
-- Summary: Recommendation fairness propositions and theorem statements are closed under the formal source model.

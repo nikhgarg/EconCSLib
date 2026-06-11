@@ -22,64 +22,13 @@
 
 ## 3. What Has Been Proven
 
-See the verdict and named-statement sections in this report.
+The Gale-Shapley deferred-acceptance model, stability definitions, and the
+paper-facing stable-matching existence and optimality endpoints are formalized
+for finite strict preference profiles. The named-statement section lists the
+exact Lean interface declarations checked against the source theorem
+statements.
 
-## 4. Paper Definitions Checked
-
-<!-- lean-derived-definitions:start -->
-### Lean-Derived Dashboard Definitions
-
-| Paper-facing item | Lean declaration | Source-facing statement |
-| --- | --- | --- |
-| def strictMarriageDomain | `strictMarriageDomain` | - Strict marriage domain: both sides have strict preferences and every possible man-woman pair is acceptable. |
-| def stableMarriage | `stableMarriage` | - Stable marriage: individual rationality for both sides and no blocking pair. |
-| def completeMarriage | `completeMarriage` | - Complete marriage: every participant is matched. |
-| def applicantOptimalStableMarriage | `applicantOptimalStableMarriage` | - Applicant/proposer optimal stable marriage: every proposer weakly prefers this stable marriage to any other stable marriage. |
-<!-- lean-derived-definitions:end -->
-
-## 5. Named Theorem Statements Checked
-
-### Theorem-by-Theorem Validation
-
-| Paper item | Lean declaration | Status | Statement match | Notes |
-|---|---|---|---|---|
-| Stable marriage definition | `gs_stable_marriage` | fully formalized | exact up to explicit source-domain assumptions | The Lean model makes the source stability condition explicit over finite sides and outside option value `0`. |
-| Complete marriage definition | `gs_complete_marriage` | fully formalized | exact up to explicit source-domain assumptions | Completeness represents the paper's no-unmatched marriage convention. |
-| Applicant-optimal stable assignment definition | `gs_applicant_optimal_stable_marriage` | fully formalized | exact up to explicit source-domain assumptions | The definition states applicant-side weak optimality among stable assignments. |
-| Strict marriage-domain convention | `gs_strict_marriage_domain` | fully formalized | minor deviation | Lean packages strict rankings and all-pairs acceptability explicitly. |
-| Theorem 1: stable marriages exist | `audit_theorem1_stable_marriage_exists` | fully formalized | exact up to explicit source-domain assumptions | Closed by `paper_gs62_theorem1_stable_marriage_exists`, using deferred-acceptance stability and equal-cardinality completeness. |
-| College-admissions stable assignment with finite quotas | `audit_college_admissions_stable_assignment_exists` | fully formalized | minor deviation | Closed by cloning each college into `quota c` identical one-to-one seats, then collapsing the stable one-to-one assignment into college rosters. This represents the paper's responsive college ranking over individual applicants. |
-| Theorem 2: applicants are at least as well off under the procedure as under any other stable assignment | `audit_theorem2_deferred_acceptance_applicant_optimal` | fully formalized | exact up to explicit source-domain assumptions | Closed by the reusable proposer-optimality theorem from the Roth/deferred-acceptance infrastructure. |
-
-<!-- lean-derived-statements:start -->
-### Lean-Derived Dashboard Named Statements
-
-| Paper-facing item | Lean declaration | Source-facing statement |
-| --- | --- | --- |
-| theorem theorem1_stable_marriage_exists | `theorem1_stable_marriage_exists` | - Theorem 1: on the strict equal-cardinality marriage domain, a stable complete marriage exists. |
-| theorem college_admissions_stable_assignment_exists | `college_admissions_stable_assignment_exists` | - College-admissions theorem: finite applicants and colleges with arbitrary quotas and applicant/college utilities admit a stable many-to-one assignment. |
-| theorem theorem2_applicant_optimality | `theorem2_applicant_optimality` | - Theorem 2: on the finite equal-cardinality strict marriage domain, the applicant-proposing deferred-acceptance assignment is complete and applicant-optimal among stable assignments. |
-<!-- lean-derived-statements:end -->
-
-## 6. Paper-Facing Statement Validator Ledger
-
-Generated from dashboard status export:
-
-`python3 scripts/review_dashboard.py --paper GS62CollegeAdmissions --export-format validators-md`
-
-| Paper-facing statement | Lean declaration | Validators | Validator comments |
-| --- | --- | --- | --- |
-| def applicantOptimalStableMarriage | `applicantOptimalStableMarriage` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves stability and the universal weak-preference comparison for every proposer against any stable marriage. |
-| theorem college_admissions_stable_assignment_exists | `college_admissions_stable_assignment_exists` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves finite applicants and colleges, arbitrary quotas and utilities, and existence of a stable many-to-one assignment. |
-| def completeMarriage | `completeMarriage` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves that every participant on both sides is matched. |
-| def stableMarriage | `stableMarriage` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation states individual rationality for both sides and excludes blocking pairs with strict mutual preference. |
-| def strictMarriageDomain | `strictMarriageDomain` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves strict preferences on both sides and universal acceptability of all man-woman pairs. |
-| theorem theorem1_stable_marriage_exists | `theorem1_stable_marriage_exists` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves finite equal-cardinality strict marriage-domain hypotheses and existence of a stable complete marriage. |
-| theorem theorem2_applicant_optimality | `theorem2_applicant_optimality` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves equal-cardinality strict-domain hypotheses and that the deferred-acceptance output is complete and applicant-optimal among stable matchings. |
-
-Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
-
-## 7. Additional Assumptions Beyond Paper
+## 4. Additional Assumptions Beyond Paper
 
 - `gs_strict_marriage_domain`: packages strict rankings, all-pairs
   acceptability, and outside-option value `0`. These are explicit Lean
@@ -92,7 +41,7 @@ Human dashboard reviews and model/agent statement checks may both appear here. T
   college's quota as identical seats with the same applicant ranking. This is
   the standard cloned-seat formalization of the paper's college quota model.
 
-## 8. Proof-Strategy Deviations
+## 5. Proof-Strategy Deviations
 
 - Theorem 1 is not re-proved from the printed prose. It is discharged through
   the reusable deferred-acceptance stability theorem plus a finite
@@ -102,19 +51,19 @@ Human dashboard reviews and model/agent statement checks may both appear here. T
 - Theorem 2 uses the reusable DA proposer-optimality theorem already developed
   for Roth's matching paper.
 
-## 9. Proof Tricks Worth Reusing
+## 6. Proof Tricks Worth Reusing
 
 None separately recorded in the existing report.
 
-## 10. Library Lift Pass
+## 7. Library Lift Pass
 
 None separately recorded in the existing report.
 
-## 11. DAG Audit
+## 8. DAG Audit
 
 No separate DAG audit note is recorded in the existing report.
 
-## 12. Conditional Results and Remaining Gaps
+## 9. Conditional Results and Remaining Gaps
 
 - None for the Lean endpoints claimed above.
 - No claimed theorem endpoint relies on an extra model certificate; finite
@@ -125,11 +74,11 @@ No separate DAG audit note is recorded in the existing report.
   inventory was therefore cross-checked against the cached scan and public OCR
   snippets rather than local text-cache line numbers.
 
-## 13. Suspected Paper Errors or Inconsistencies
+## 10. Suspected Paper Errors or Inconsistencies
 
 - None found.
 
-## 14. Validation Checks
+## 11. Validation Checks
 
 ### Cross-Artifact Checks
 
@@ -162,7 +111,62 @@ Summary: 7 rows; 7 match, 0 uncertain, 0 mismatch, 0 missing. Stale sidecar rows
 Flagged rows:
 - None.
 
-## 15. Final Verdict
+## 12. Final Verdict
 
 - Completion status: formalized.
 - Summary: This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.
+
+## 13. Paper Definitions Checked
+
+<!-- lean-derived-definitions:start -->
+### Lean-Derived Dashboard Definitions
+
+| Paper-facing item | Lean declaration | Source-facing statement |
+| --- | --- | --- |
+| def strictMarriageDomain | `strictMarriageDomain` | - Strict marriage domain: both sides have strict preferences and every possible man-woman pair is acceptable. |
+| def stableMarriage | `stableMarriage` | - Stable marriage: individual rationality for both sides and no blocking pair. |
+| def completeMarriage | `completeMarriage` | - Complete marriage: every participant is matched. |
+| def applicantOptimalStableMarriage | `applicantOptimalStableMarriage` | - Applicant/proposer optimal stable marriage: every proposer weakly prefers this stable marriage to any other stable marriage. |
+<!-- lean-derived-definitions:end -->
+
+## 14. Named Theorem Statements Checked
+
+### Theorem-by-Theorem Validation
+
+| Paper item | Lean declaration | Status | Statement match | Notes |
+|---|---|---|---|---|
+| Stable marriage definition | `gs_stable_marriage` | fully formalized | exact up to explicit source-domain assumptions | The Lean model makes the source stability condition explicit over finite sides and outside option value `0`. |
+| Complete marriage definition | `gs_complete_marriage` | fully formalized | exact up to explicit source-domain assumptions | Completeness represents the paper's no-unmatched marriage convention. |
+| Applicant-optimal stable assignment definition | `gs_applicant_optimal_stable_marriage` | fully formalized | exact up to explicit source-domain assumptions | The definition states applicant-side weak optimality among stable assignments. |
+| Strict marriage-domain convention | `gs_strict_marriage_domain` | fully formalized | minor deviation | Lean packages strict rankings and all-pairs acceptability explicitly. |
+| Theorem 1: stable marriages exist | `audit_theorem1_stable_marriage_exists` | fully formalized | exact up to explicit source-domain assumptions | Closed by `paper_gs62_theorem1_stable_marriage_exists`, using deferred-acceptance stability and equal-cardinality completeness. |
+| College-admissions stable assignment with finite quotas | `audit_college_admissions_stable_assignment_exists` | fully formalized | minor deviation | Closed by cloning each college into `quota c` identical one-to-one seats, then collapsing the stable one-to-one assignment into college rosters. This represents the paper's responsive college ranking over individual applicants. |
+| Theorem 2: applicants are at least as well off under the procedure as under any other stable assignment | `audit_theorem2_deferred_acceptance_applicant_optimal` | fully formalized | exact up to explicit source-domain assumptions | Closed by the reusable proposer-optimality theorem from the Roth/deferred-acceptance infrastructure. |
+
+<!-- lean-derived-statements:start -->
+### Lean-Derived Dashboard Named Statements
+
+| Paper-facing item | Lean declaration | Source-facing statement |
+| --- | --- | --- |
+| theorem theorem1_stable_marriage_exists | `theorem1_stable_marriage_exists` | - Theorem 1: on the strict equal-cardinality marriage domain, a stable complete marriage exists. |
+| theorem college_admissions_stable_assignment_exists | `college_admissions_stable_assignment_exists` | - College-admissions theorem: finite applicants and colleges with arbitrary quotas and applicant/college utilities admit a stable many-to-one assignment. |
+| theorem theorem2_applicant_optimality | `theorem2_applicant_optimality` | - Theorem 2: on the finite equal-cardinality strict marriage domain, the applicant-proposing deferred-acceptance assignment is complete and applicant-optimal among stable assignments. |
+<!-- lean-derived-statements:end -->
+
+## 15. Paper-Facing Statement Validator Ledger
+
+Generated from dashboard status export:
+
+`python3 scripts/review_dashboard.py --paper GS62CollegeAdmissions --export-format validators-md`
+
+| Paper-facing statement | Lean declaration | Validators | Validator comments |
+| --- | --- | --- | --- |
+| def applicantOptimalStableMarriage | `applicantOptimalStableMarriage` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves stability and the universal weak-preference comparison for every proposer against any stable marriage. |
+| theorem college_admissions_stable_assignment_exists | `college_admissions_stable_assignment_exists` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves finite applicants and colleges, arbitrary quotas and utilities, and existence of a stable many-to-one assignment. |
+| def completeMarriage | `completeMarriage` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves that every participant on both sides is matched. |
+| def stableMarriage | `stableMarriage` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation states individual rationality for both sides and excludes blocking pairs with strict mutual preference. |
+| def strictMarriageDomain | `strictMarriageDomain` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves strict preferences on both sides and universal acceptability of all man-woman pairs. |
+| theorem theorem1_stable_marriage_exists | `theorem1_stable_marriage_exists` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves finite equal-cardinality strict marriage-domain hypotheses and existence of a stable complete marriage. |
+| theorem theorem2_applicant_optimality | `theorem2_applicant_optimality` | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:36Z): Translation preserves equal-cardinality strict-domain hypotheses and that the deferred-acceptance output is complete and applicant-optimal among stable matchings. |
+
+Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.

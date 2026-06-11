@@ -49,7 +49,124 @@ supply stronger real-valued boundedness or domain hypotheses.
 Empirical, simulation, and data-analysis sections are source scope notes, not
 Lean theorem targets.
 
-## 4. Paper Definitions Checked
+## 4. Additional Assumptions Beyond Paper
+
+- Positive match rates for the compared seller types.
+- Full finite ordinal rating support. The bottom/top positive-mass facts needed
+  by the finite-support lower-bound route are derived from this source-shaped
+  support condition.
+
+Finite seller types, finite rating levels, and floor-count sample sizes are not
+additional assumptions; they are part of the source model.
+
+## 5. Proof-Strategy Deviations
+
+- Lean uses finite-support MGF/Cramer certificates and method-of-types support
+  machinery rather than treating the appendix's large-deviation and Laplace
+  principle steps as a single black-box calculation.
+- The adjacent-pair dominance step is proved through a concrete joint
+  floor-rating law, dependent product marginals, and finite adjacent-inversion
+  union bounds.
+- The support-safe finite-support rate convention is treated as the canonical
+  statement, not as a caveat in the finite model or adjacent aggregation.
+
+## 6. Proof Tricks Worth Reusing
+
+- Separate pairwise LDP certificates from finite aggregation and objective
+  transfer.
+- Use displayed pairwise-objective endpoints to isolate the finite LDP work
+  from the source threshold-rate identification problem.
+- Use support-safe extended rates for finite-support threshold-rate
+  identification; the real-valued source `sInf` route is unsafe outside the
+  finite score hull without extra domain work.
+- Use concrete joint laws plus two-coordinate marginal lemmas to keep dependent
+  finite-product event proofs auditable.
+- Represent source floor counts directly, then use normalization/equality
+  lemmas only where the proof route needs them.
+
+## 7. Library Lift Pass
+
+- `EconCSLib.Foundations.Probability.FiniteRatingComparison`: extracted the
+  generic finite-rating comparison spine from this paper's implementation file:
+  source-facing log-MGF/rate wrappers, support-safe pairwise threshold rates,
+  finite tilted score means, two-sample and floor-count comparison
+  probabilities, `P_k`/`1 - P_k` algebra, integer-rate block comparisons, and
+  pairwise LDP certificate constructors. `MainTheorems.lean` now keeps the
+  paper-specific finite-chain aggregation and theorem endpoints.
+- `EconCSLib.Foundations.Probability.FiniteSupportMGF`: finite-support MGFs,
+  log-MGFs, Legendre/rate-function wrappers, and shifted score algebra.
+- `EconCSLib.Foundations.Probability.LargeDeviations`: exact-rate,
+  upper/lower-bound, finite weighted-sum, and aggregation certificates.
+- `EconCSLib.Foundations.Probability.IndependentProduct`: finite product PMF
+  and marginal infrastructure.
+- `EconCSLib.Foundations.Probability.FiniteRankingEvents`: adjacent-inversion
+  deterministic and PMF union-bound kernels.
+- `EconCSLib.Foundations.Probability.IIDLargeDeviations` and
+  `FiniteTypeLogMass`: reusable finite iid Cramer/method-of-types support.
+- `EconCSLib.Foundations.Probability.FiniteExpectation`:
+  `pmfExp_le_pmfExp_of_fin_tail_prob_le`, a reusable finite ordinal
+  first-order stochastic dominance theorem.
+
+The old real-valued threshold-minimum equality can remain as an optional
+compatibility theorem for users who choose a stronger all-real domain
+convention.
+
+## 8. DAG Audit
+
+- Rendered artifact: `DependencyDAG.pdf`.
+- Topology: source-facing model, finite FOSD/tail-dominance bridge, Appendix
+  Lemma C support, `P_k` transfer, and one formalized Theorem 1 endpoint.
+- Layout: rendered and visually inspected after the formalized-status change.
+- Status: no partial/caveat node remains on the main Theorem 1 path.
+
+## 9. Conditional Results and Remaining Gaps
+
+### Conditional Helper Results
+
+- `lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support`: auxiliary derivative/minimizer route retained for reuse.
+- `theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_objective_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds`: finite objective layer is closed at the displayed adjacent-objective minimum.
+- `theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives`: support-safe extended source-rate identification is closed.
+- `theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_pairwise_threshold_rate_regularity`: source-facing extended-rate Theorem 1 endpoint is closed from the compact pairwise regularity package.
+- `theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support`: main source-facing Theorem 1 endpoint.
+- `theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq`: optional real-rate compatibility statement for stronger all-real domain conventions.
+- Optional strengthening: remove or prove the bounded-rate side condition in
+  the Fenchel-derived all-threshold variant.
+
+## 10. Suspected Paper Errors or Inconsistencies
+
+None identified. Lean uses the support-safe finite-rate convention for the
+paper's finite rating model and records full finite ordinal rating support as
+the source-shaped finite-support regularity condition.
+
+## 11. Validation Checks
+
+The GJ18 paper build passes. The DAG was regenerated from the paper folder,
+converted to PNG, and visually inspected. Generated status artifacts were
+refreshed with `scripts/sync_paper_status.py`, and the sync check passed.
+
+### Statement Translation Audit
+
+Audit date: 2026-06-06.
+Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
+
+Summary: 8 rows; 7 match, 1 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
+
+Flagged rows:
+- `lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support`: uncertain. The translation matches the auxiliary lemma, but the row is a reusable proof-route lemma rather than a named paper statement; it should remain flagged for surface review.
+
+## 12. Final Verdict
+
+- Completion status: formalized.
+- Summary: GJ18's finite model and Theorem 1 are formalized through the
+  support-safe threshold-rate minimum. The main endpoint derives the necessary
+  pairwise LDP certificates from ordinal upper-tail dominance and full finite
+  ordinal rating support; auxiliary real-rate wrappers remain for stronger
+  conventions.
+
+- Completion status: formalized.
+- Summary: Theorem 1 is formalized under the support-safe finite-rate convention from ordinal upper-tail dominance and full finite ordinal rating support.
+
+## 13. Paper Definitions Checked
 
 - Log-MGF `Lambda(z | theta) = log sum_y rho(theta,y|Y) exp(z phi(y))`.
   Lean: `definition_log_mgf_formula`.
@@ -65,7 +182,7 @@ Lean theorem targets.
 - Kendall-style objective `W_k` through finite weighted pair aggregation.
   Lean: `theorem1_floor_pk_complement_error_eq_one_sub_weighted_objective`.
 
-## 5. Named Theorem Statements Checked
+## 14. Named Theorem Statements Checked
 
 ### Appendix Lemma `problessthan`
 
@@ -129,7 +246,7 @@ real-rate compatibility wrapper for stronger all-real domain conventions.
 | theorem theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq | `theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq` | optional real-rate compatibility statement for stronger all-real domain conventions. |
 <!-- lean-derived-statements:end -->
 
-## 6. Paper-Facing Statement Validator Ledger
+## 15. Paper-Facing Statement Validator Ledger
 
 Generated from dashboard status export:
 
@@ -147,120 +264,3 @@ Generated from dashboard status export:
 | theorem theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support | `theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support` | gpt-5-codex (model; matches; 2026-06-06T20:39:31Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:31Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
 
 Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
-
-## 7. Additional Assumptions Beyond Paper
-
-- Positive match rates for the compared seller types.
-- Full finite ordinal rating support. The bottom/top positive-mass facts needed
-  by the finite-support lower-bound route are derived from this source-shaped
-  support condition.
-
-Finite seller types, finite rating levels, and floor-count sample sizes are not
-additional assumptions; they are part of the source model.
-
-## 8. Proof-Strategy Deviations
-
-- Lean uses finite-support MGF/Cramer certificates and method-of-types support
-  machinery rather than treating the appendix's large-deviation and Laplace
-  principle steps as a single black-box calculation.
-- The adjacent-pair dominance step is proved through a concrete joint
-  floor-rating law, dependent product marginals, and finite adjacent-inversion
-  union bounds.
-- The support-safe finite-support rate convention is treated as the canonical
-  statement, not as a caveat in the finite model or adjacent aggregation.
-
-## 9. Proof Tricks Worth Reusing
-
-- Separate pairwise LDP certificates from finite aggregation and objective
-  transfer.
-- Use displayed pairwise-objective endpoints to isolate the finite LDP work
-  from the source threshold-rate identification problem.
-- Use support-safe extended rates for finite-support threshold-rate
-  identification; the real-valued source `sInf` route is unsafe outside the
-  finite score hull without extra domain work.
-- Use concrete joint laws plus two-coordinate marginal lemmas to keep dependent
-  finite-product event proofs auditable.
-- Represent source floor counts directly, then use normalization/equality
-  lemmas only where the proof route needs them.
-
-## 10. Library Lift Pass
-
-- `EconCSLib.Foundations.Probability.FiniteRatingComparison`: extracted the
-  generic finite-rating comparison spine from this paper's implementation file:
-  source-facing log-MGF/rate wrappers, support-safe pairwise threshold rates,
-  finite tilted score means, two-sample and floor-count comparison
-  probabilities, `P_k`/`1 - P_k` algebra, integer-rate block comparisons, and
-  pairwise LDP certificate constructors. `MainTheorems.lean` now keeps the
-  paper-specific finite-chain aggregation and theorem endpoints.
-- `EconCSLib.Foundations.Probability.FiniteSupportMGF`: finite-support MGFs,
-  log-MGFs, Legendre/rate-function wrappers, and shifted score algebra.
-- `EconCSLib.Foundations.Probability.LargeDeviations`: exact-rate,
-  upper/lower-bound, finite weighted-sum, and aggregation certificates.
-- `EconCSLib.Foundations.Probability.IndependentProduct`: finite product PMF
-  and marginal infrastructure.
-- `EconCSLib.Foundations.Probability.FiniteRankingEvents`: adjacent-inversion
-  deterministic and PMF union-bound kernels.
-- `EconCSLib.Foundations.Probability.IIDLargeDeviations` and
-  `FiniteTypeLogMass`: reusable finite iid Cramer/method-of-types support.
-- `EconCSLib.Foundations.Probability.FiniteExpectation`:
-  `pmfExp_le_pmfExp_of_fin_tail_prob_le`, a reusable finite ordinal
-  first-order stochastic dominance theorem.
-
-The old real-valued threshold-minimum equality can remain as an optional
-compatibility theorem for users who choose a stronger all-real domain
-convention.
-
-## 11. DAG Audit
-
-- Rendered artifact: `DependencyDAG.pdf`.
-- Topology: source-facing model, finite FOSD/tail-dominance bridge, Appendix
-  Lemma C support, `P_k` transfer, and one formalized Theorem 1 endpoint.
-- Layout: rendered and visually inspected after the formalized-status change.
-- Status: no partial/caveat node remains on the main Theorem 1 path.
-
-## 12. Conditional Results and Remaining Gaps
-
-### Conditional Helper Results
-
-- `lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support`: auxiliary derivative/minimizer route retained for reuse.
-- `theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_objective_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds`: finite objective layer is closed at the displayed adjacent-objective minimum.
-- `theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives`: support-safe extended source-rate identification is closed.
-- `theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_pairwise_threshold_rate_regularity`: source-facing extended-rate Theorem 1 endpoint is closed from the compact pairwise regularity package.
-- `theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support`: main source-facing Theorem 1 endpoint.
-- `theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq`: optional real-rate compatibility statement for stronger all-real domain conventions.
-- Optional strengthening: remove or prove the bounded-rate side condition in
-  the Fenchel-derived all-threshold variant.
-
-## 13. Suspected Paper Errors or Inconsistencies
-
-None identified. Lean uses the support-safe finite-rate convention for the
-paper's finite rating model and records full finite ordinal rating support as
-the source-shaped finite-support regularity condition.
-
-## 14. Validation Checks
-
-The GJ18 paper build passes. The DAG was regenerated from the paper folder,
-converted to PNG, and visually inspected. Generated status artifacts were
-refreshed with `scripts/sync_paper_status.py`, and the sync check passed.
-
-### Statement Translation Audit
-
-Audit date: 2026-06-06.
-Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
-
-Summary: 8 rows; 7 match, 1 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
-
-Flagged rows:
-- `lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support`: uncertain. The translation matches the auxiliary lemma, but the row is a reusable proof-route lemma rather than a named paper statement; it should remain flagged for surface review.
-
-## 15. Final Verdict
-
-- Completion status: formalized.
-- Summary: GJ18's finite model and Theorem 1 are formalized through the
-  support-safe threshold-rate minimum. The main endpoint derives the necessary
-  pairwise LDP certificates from ordinal upper-tail dominance and full finite
-  ordinal rating support; auxiliary real-rate wrappers remain for stronger
-  conventions.
-
-- Completion status: formalized.
-- Summary: Theorem 1 is formalized under the support-safe finite-rate convention from ordinal upper-tail dominance and full finite ordinal rating support.

@@ -34,7 +34,66 @@ The remaining literal source gap is the continuous sphere profile space,
 uniform measure, cosine-kernel/Fubini/symmetry, and Laplace analytic
 instantiation needed for the full source proposition.
 
-## 4. Paper Definitions Checked
+## 4. Additional Assumptions Beyond Paper
+
+- Proposition 4 currently stops at an explicit kernel-symmetry checkpoint rather than instantiating the paper's continuous sphere model.
+- Auxiliary asymptotic and finite-routing endpoints are certificate-gated when the source proof needs a reusable analytic or rounding boundary.
+
+## 5. Proof-Strategy Deviations
+
+### Source Deviations
+
+- Proposition 2: Lean proves the corrected finite error `(2m+1)/N` and derives the paper's asymptotic `1/2`-homogeneity conclusion. The printed sharper finite constant appears to miss a factor of 2.
+- Lemma D.1(i): the printed sign convention conflicts with the proof route and downstream exponential-decay use. Lean closes the downstream routes under the source-appropriate positive-rate/decay conventions.
+
+## 6. Proof Tricks Worth Reusing
+
+None separately recorded in the existing report.
+
+## 7. Library Lift Pass
+
+Reusable infrastructure already lives in shared recommender, finite-rounding,
+asymptotics, order-statistics, exponential, Pareto, real-distribution, and
+symmetry modules. Remaining candidates for future library work are generic
+separable concave apportionment rounding, compact-group/Haar action APIs, and a
+continuous Laplace-principle scaffold.
+
+## 8. DAG Audit
+
+The DAG records the paper-facing theorem boundary. Full Proposition 4 remains
+non-green; the separate averaging/kernel checkpoint is green and should not be
+read as closing the continuous sphere/Laplace source layer.
+
+## 9. Conditional Results and Remaining Gaps
+
+None separately recorded in the existing report.
+
+## 10. Suspected Paper Errors or Inconsistencies
+
+None separately recorded in the existing report.
+
+## 11. Validation Checks
+
+The closeout audit records passing checks for `lake build PRPKG24AccuracyDiversity`,
+`python3 scripts/sync_paper_status.py --check`, `python3 scripts/audit_repository.py`,
+and `git diff --check`.
+
+### Statement Translation Audit
+
+Audit date: 2026-06-06.
+Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
+
+Summary: 27 rows; 26 match, 1 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
+
+Flagged rows:
+- `definition3`: uncertain. The draft exposes the oracle type name but does not spell out the order-statistic/value-oracle content of Definition 3.
+
+## 12. Final Verdict
+
+- Completion status: partially formalized.
+- Summary: Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.
+
+## 13. Paper Definitions Checked
 
 <!-- lean-derived-definitions:start -->
 ### Lean-Derived Dashboard Definitions
@@ -70,7 +129,7 @@ instantiation needed for the full source proposition.
 | abbrev lemmaD5 | `lemmaD5` | - Lemma D.5: real-to-integer rounding bridge. |
 <!-- lean-derived-definitions:end -->
 
-## 5. Named Theorem Statements Checked
+## 14. Named Theorem Statements Checked
 
 <!-- lean-derived-statements:start -->
 ### Lean-Derived Dashboard Named Statements
@@ -78,7 +137,7 @@ instantiation needed for the full source proposition.
 None exposed in the current dashboard surface.
 <!-- lean-derived-statements:end -->
 
-## 6. Paper-Facing Statement Validator Ledger
+## 15. Paper-Facing Statement Validator Ledger
 
 Generated from dashboard status export:
 
@@ -115,62 +174,3 @@ Generated from dashboard status export:
 | abbrev theorem3 | `theorem3` | gpt-5-codex (model; matches; 2026-06-06T20:39:54Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:54Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
 
 Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
-
-## 7. Additional Assumptions Beyond Paper
-
-- Proposition 4 currently stops at an explicit kernel-symmetry checkpoint rather than instantiating the paper's continuous sphere model.
-- Auxiliary asymptotic and finite-routing endpoints are certificate-gated when the source proof needs a reusable analytic or rounding boundary.
-
-## 8. Proof-Strategy Deviations
-
-### Source Deviations
-
-- Proposition 2: Lean proves the corrected finite error `(2m+1)/N` and derives the paper's asymptotic `1/2`-homogeneity conclusion. The printed sharper finite constant appears to miss a factor of 2.
-- Lemma D.1(i): the printed sign convention conflicts with the proof route and downstream exponential-decay use. Lean closes the downstream routes under the source-appropriate positive-rate/decay conventions.
-
-## 9. Proof Tricks Worth Reusing
-
-None separately recorded in the existing report.
-
-## 10. Library Lift Pass
-
-Reusable infrastructure already lives in shared recommender, finite-rounding,
-asymptotics, order-statistics, exponential, Pareto, real-distribution, and
-symmetry modules. Remaining candidates for future library work are generic
-separable concave apportionment rounding, compact-group/Haar action APIs, and a
-continuous Laplace-principle scaffold.
-
-## 11. DAG Audit
-
-The DAG records the paper-facing theorem boundary. Full Proposition 4 remains
-non-green; the separate averaging/kernel checkpoint is green and should not be
-read as closing the continuous sphere/Laplace source layer.
-
-## 12. Conditional Results and Remaining Gaps
-
-None separately recorded in the existing report.
-
-## 13. Suspected Paper Errors or Inconsistencies
-
-None separately recorded in the existing report.
-
-## 14. Validation Checks
-
-The closeout audit records passing checks for `lake build PRPKG24AccuracyDiversity`,
-`python3 scripts/sync_paper_status.py --check`, `python3 scripts/audit_repository.py`,
-and `git diff --check`.
-
-### Statement Translation Audit
-
-Audit date: 2026-06-06.
-Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
-
-Summary: 27 rows; 26 match, 1 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
-
-Flagged rows:
-- `definition3`: uncertain. The draft exposes the oracle type name but does not spell out the order-statistic/value-oracle content of Definition 3.
-
-## 15. Final Verdict
-
-- Completion status: partially formalized.
-- Summary: Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.
