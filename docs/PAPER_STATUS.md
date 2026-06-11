@@ -17,7 +17,7 @@ Paper IDs and folder names are stable artifact identifiers and may track
 an arXiv, conference, or original working-paper year. The table below uses
 the published citation title and year.
 
-| Paper, authors, publication | Status | Human review | Lean LOC | Public note |
+| Paper info | Status | Human review | Full proof LOC | Note |
 |---|---|---:|---:|---|
 | [College Admissions and the Stability of Marriage](http://www.jstor.org/stable/2312726) by D. Gale and L. S. Shapley; American Mathematical Monthly, 1962. | [Formalized](../papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md) | 0/7 | 388 | This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library. |
 | [The Economics of Matching: Stability and Incentives](https://pubsonline.informs.org/doi/epdf/10.1287/moor.7.4.617) by Alvin E. Roth; Mathematics of Operations Research, 1982. | [Formalized](../papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md) | 0/27 | 8,890 |  |

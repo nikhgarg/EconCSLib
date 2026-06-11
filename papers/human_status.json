@@ -6,6 +6,7 @@
   "note_policy": "main_note is intentionally sparse. Fully formalized papers have a blank note unless a source-version or proof-route note is important for a public reader.",
   "review_count_policy": "human_review counts saved human dashboard rows as reviewed/total. Agent audits are not counted as human review.",
   "translation_status_policy": "human_translation reports saved human dashboard judgments. llm_as_judge_translation reports context-free Lean-to-TeX plus paper-vs-translation LLM-judge counts, including stale/missing/uncertain flags when available.",
+  "lean_loc_policy": "lean_loc sums all .lean files under each paper folder, including proof modules. It is not the PaperInterface.lean line count.",
   "identifier_policy": "Paper IDs and folder names are stable artifact identifiers and may track an arXiv, conference, or original working-paper year. Publication fields use the published citation title and year.",
   "papers": [
     {

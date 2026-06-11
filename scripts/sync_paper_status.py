@@ -457,6 +457,8 @@ def llm_translation_label(folder: Path, payload: dict[str, Any]) -> str:
 
 
 def lean_loc(folder: Path) -> int:
+    """Count all Lean lines in one paper folder, including proof modules."""
+
     total = 0
     for path in folder.rglob("*.lean"):
         with path.open(encoding="utf-8") as handle:
@@ -562,6 +564,10 @@ def human_payload(records: list[tuple[Path, dict[str, Any]]]) -> dict[str, Any]:
             "llm_as_judge_translation reports context-free Lean-to-TeX plus "
             "paper-vs-translation LLM-judge counts, including stale/missing/uncertain "
             "flags when available."
+        ),
+        "lean_loc_policy": (
+            "lean_loc sums all .lean files under each paper folder, including proof "
+            "modules. It is not the PaperInterface.lean line count."
         ),
         "identifier_policy": (
             "Paper IDs and folder names are stable artifact identifiers and may track an arXiv, "
@@ -689,7 +695,7 @@ def render_paper_status_md(payload: dict[str, Any]) -> str:
         "an arXiv, conference, or original working-paper year. The table below uses",
         "the published citation title and year.",
         "",
-        "| Paper, authors, publication | Status | Human review | Lean LOC | Public note |",
+        "| Paper info | Status | Human review | Full proof LOC | Note |",
         "|---|---|---:|---:|---|",
     ]
     for row in payload["papers"]:
