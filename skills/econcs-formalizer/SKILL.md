@@ -1766,6 +1766,12 @@ pass:
   what has been proved, whether formalization found anything wrong or ambiguous
   in the paper, whether any qualitatively different proof/modeling route was
   needed, and what remains for Lean versus human review.
+  Keep the "what has been proved" answer outcome-focused. If every source
+  definition and named result is closed, say concisely that the paper is fully
+  formalized. Do not fill this section with process statements such as
+  `Theorem X no longer takes external witnesses` or `the representation is now
+  derived internally`; those are implementation-route notes, not final
+  human-facing proof claims.
 - Include a Lean footprint in every final validation report: total lines across
   paper-local `.lean` files, the line count of `PaperInterface.lean`, and the
   number of human-review rows/declarations exposed there. Use this to make the
