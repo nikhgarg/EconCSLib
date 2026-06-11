@@ -1022,6 +1022,11 @@ the Lean statements against the paper.
      obtains theorem previews from compiled Lean state. A stale row immediately
      after a hash refresh often means the Lean preview cache still reflects the
      previous build.
+     In mirrored public/private checkouts, run the build and
+     `python3 scripts/review_dashboard.py --paper <paper-folder> --refresh-cache`
+     in each checkout before comparing or reusing dashboard digests; if one
+     checkout lacks `.olean` files, the dashboard may fall back to raw signatures
+     and make otherwise current LLM sidecars look stale.
   6. Add or refresh the `Statement Translation Audit` section in
      `FINAL_VALIDATION_REPORT.md`. It should give row counts, match/uncertain/
      mismatch counts, stale status, surface-audit status, and every flagged

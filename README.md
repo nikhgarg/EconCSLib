@@ -65,7 +65,7 @@ published citation title and year.
 | [GS62 College Admissions](papers/GS62CollegeAdmissions) | Formalized | 0/7 | OK: 116 lines | This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library. |
 | [Roth82 Stable Matching](papers/Roth82StableMatching) | Formalized | 0/27 | OK: 481 lines |  |
 | [GHW01 Digital Goods](papers/GHW01DigitalGoods) | Formalized | 0/18 | OK: 280 lines | Formalizes the SODA paper; Theorem 8.2 uses the refined monotone-auction wording from the journal version [Goldberg-Hartline-Karlin-Saks-Wright 2006](https://www.sciencedirect.com/science/article/pii/S0899825606000303). |
-| [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/39 | OK: 872 lines |  |
+| [MSVV07 AdWords](papers/MSVV07AdWords) | Formalized | 0/26 | OK: 872 lines |  |
 | [GGSG19 Top Three](papers/GGSG19TopThree) | Formalized | 0/10 | OK: 307 lines |  |
 | [GJ18 Informative Rating Systems](papers/GJ18InformativeRatingSystems) | Formalized | 0/8 | OK: 2914 lines |  |
 | [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 76 lines |  |

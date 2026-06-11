@@ -11,7 +11,7 @@
   "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 39,
+    "total_rows": 26,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -19,8 +19,8 @@
   "paper_interface": {
     "path": "papers/MSVV07AdWords/PaperInterface.lean",
     "line_count": 872,
-    "declaration_rows": 39,
-    "review_rows": 39,
+    "declaration_rows": 26,
+    "review_rows": 26,
     "oversized": false,
     "maintainability_issue": null,
     "proof_interface_path": "papers/MSVV07AdWords/ProofInterface.lean",
@@ -37,8 +37,6 @@
   "review_surface": {
     "source_file": "papers/MSVV07AdWords/PaperInterface.lean",
     "include_names": [
-      "paperInstance_has_budget_and_bid",
-      "paperAssignment_query_choice",
       "paperSlotsPerPageDistinct_iff",
       "paperSpend_formula",
       "paperRevenue_formula",
@@ -52,29 +50,18 @@
       "paperCanAssign_iff",
       "paperIsBalanceChoice_iff",
       "paperSmallBidsLimitFamily_fields",
-      "theorem8_finite_explicit_error",
       "theorem8_balance_msvv_competitive_of_small_bids_limit_family",
       "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error",
       "section6_next_highest_bid_all_formula",
       "section6_next_highest_bid_alive_formula",
-      "section6_effective_bids_theorem8_finite_explicit_error",
       "section6_next_highest_bid_all_theorem8_finite_explicit_error",
       "section6_next_highest_bid_alive_theorem8_finite_explicit_error",
       "section6_click_through_rates_theorem8_finite_explicit_error",
       "section6_availability_theorem8_finite_explicit_error",
-      "section6_multiple_slots_theorem8_finite_explicit_error",
       "section6_page_top_balance_theorem8_finite_explicit_error",
-      "section6_multiple_slots_distinct_choice_run_assignment_per_page_distinct",
-      "section8_weighted_bids_theorem8_finite_explicit_error",
       "section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids",
       "theorem9HardDistribution_uniform",
-      "theorem9IntegralPrefixAlgorithm_choice_feasible",
-      "theorem9RandomizedOnlineAlgorithm_pmf",
-      "theorem9FeasiblePrefixRuleFamily_fields",
       "theorem9CappedNormalizedRevenue_formula",
-      "theorem9_capped_normalized_revenue_eq_prefix_spend",
-      "theorem9_no_randomized_feasible_prefix_rule_family_beats_msvv_ratio",
-      "theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio",
       "theorem9_no_randomized_online_algorithm_beats_msvv_ratio"
     ],
     "slices": [
