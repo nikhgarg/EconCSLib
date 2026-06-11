@@ -504,6 +504,17 @@ def human_summary_review(payload: dict[str, Any]) -> dict[str, str] | None:
     return review
 
 
+def artifact_path(payload: dict[str, Any], key: str) -> str | None:
+    artifacts = payload.get("artifacts")
+    if not isinstance(artifacts, dict):
+        return None
+    value = artifacts.get(key)
+    if not isinstance(value, str):
+        return None
+    value = value.strip()
+    return value or None
+
+
 def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for folder, payload in records:
@@ -526,6 +537,7 @@ def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[s
             "main_note_review": human_summary_review(payload),
             "paper_folder": str(folder.relative_to(ROOT)),
             "review_entrypoint": payload["review_entrypoint"],
+            "dependency_dag_pdf": artifact_path(payload, "dependency_dag_pdf"),
         }
         rows.append(row)
 
@@ -737,6 +749,19 @@ def github_link(path: str) -> str:
     return GITHUB_MAIN + path
 
 
+def render_status_artifacts_cell(row: dict[str, Any]) -> str:
+    status_href = github_link(row["review_entrypoint"])
+    status_link = (
+        f'<a href="{html_escape(status_href)}">{html_escape(row["status"])}</a>'
+    )
+    dag_path = row.get("dependency_dag_pdf")
+    if not isinstance(dag_path, str) or not dag_path:
+        return status_link
+    dag_href = github_link(dag_path)
+    dag_link = f'<a href="{html_escape(dag_href)}">DAG</a>'
+    return f"{status_link} / {dag_link}"
+
+
 def html_note_with_citation(note: str, citation: dict[str, str] | None) -> str:
     rendered = html_escape(note)
     if not citation:
@@ -775,7 +800,7 @@ def render_site_status_block(payload: dict[str, Any]) -> str:
     lines = [f"{indent}{SITE_STATUS_BEGIN}"]
     for row in payload["papers"]:
         paper_href = row["source_url"] or github_link(row["paper_folder"])
-        status_href = github_link(row["review_entrypoint"])
+        status_artifacts = render_status_artifacts_cell(row)
         note = html_note_with_citation(row["main_note"], row.get("main_note_citation"))
         lines.extend(
             [
@@ -790,10 +815,7 @@ def render_site_status_block(payload: dict[str, Any]) -> str:
                     f"{html_escape(row['publication'])}."
                 ),
                 f"{indent}  </td>",
-                (
-                    f'{indent}  <td><a href="{html_escape(status_href)}">'
-                    f"{html_escape(row['status'])}</a></td>"
-                ),
+                f"{indent}  <td>{status_artifacts}</td>",
                 f"{indent}  <td>{int(row['lean_loc']):,}</td>",
                 f"{indent}  <td>{note}</td>",
                 f"{indent}  <td>{html_escape(row['human_translation'])}</td>",

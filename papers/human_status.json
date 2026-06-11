@@ -26,7 +26,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GS62CollegeAdmissions",
-      "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/GS62CollegeAdmissions/DependencyDAG.pdf"
     },
     {
       "id": "Roth82StableMatching",
@@ -45,7 +46,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/Roth82StableMatching",
-      "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/Roth82StableMatching/DependencyDAG.pdf"
     },
     {
       "id": "GHW01DigitalGoods",
@@ -67,7 +69,8 @@
       },
       "main_note_review": null,
       "paper_folder": "papers/GHW01DigitalGoods",
-      "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/GHW01DigitalGoods/DependencyDAG.pdf"
     },
     {
       "id": "MSVV07AdWords",
@@ -86,7 +89,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/MSVV07AdWords",
-      "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/MSVV07AdWords/DependencyDAG.pdf"
     },
     {
       "id": "GGSG19TopThree",
@@ -105,7 +109,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GGSG19TopThree",
-      "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/GGSG19TopThree/DependencyDAG.pdf"
     },
     {
       "id": "GJ18InformativeRatingSystems",
@@ -124,7 +129,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GJ18InformativeRatingSystems",
-      "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/GJ18InformativeRatingSystems/DependencyDAG.pdf"
     },
     {
       "id": "LG21TestOptionalPolicies",
@@ -143,7 +149,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/LG21TestOptionalPolicies",
-      "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/LG21TestOptionalPolicies/DependencyDAG.pdf"
     },
     {
       "id": "GN21DriverSurgePricing",
@@ -162,7 +169,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GN21DriverSurgePricing",
-      "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/GN21DriverSurgePricing/DependencyDAG.pdf"
     },
     {
       "id": "GCG24UserItemFairness",
@@ -181,7 +189,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GCG24UserItemFairness",
-      "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf"
     },
     {
       "id": "DSWG24DiscretizationBias",
@@ -200,7 +209,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/DSWG24DiscretizationBias",
-      "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/DSWG24DiscretizationBias/DependencyDAG.pdf"
     },
     {
       "id": "MBJG25ProducerFairness",
@@ -219,7 +229,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/MBJG25ProducerFairness",
-      "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/MBJG25ProducerFairness/DependencyDAG.pdf"
     },
     {
       "id": "LOS02CombinatorialAuctions",
@@ -238,7 +249,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/LOS02CombinatorialAuctions",
-      "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/LOS02CombinatorialAuctions/DependencyDAG.pdf"
     },
     {
       "id": "LMMS04FairDivision",
@@ -257,7 +269,8 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/LMMS04FairDivision",
-      "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/LMMS04FairDivision/DependencyDAG.pdf"
     },
     {
       "id": "PRPKG24AccuracyDiversity",
@@ -279,7 +292,8 @@
         "note": "Do not rewrite this summary without explicit human instruction."
       },
       "paper_folder": "papers/PRPKG24AccuracyDiversity",
-      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md"
+      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
+      "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/DependencyDAG.pdf"
     }
   ]
 }
