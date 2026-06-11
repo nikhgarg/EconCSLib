@@ -890,6 +890,10 @@ the Lean statements against the paper.
   binder context such as `W` versus `W'`, regenerate the Lean-to-TeX draft and
   then rerun the judge; do not change a correct Lean statement to satisfy a bad
   draft.
+  Treat source-equation-wrapper findings from `scripts/audit_repository.py` as
+  review-surface blockers: if an included alias has a paper-facing `_formula`,
+  `_iff`, `_fields`, `_rule`, `_content`, or `_matches` wrapper available, the
+  dashboard row should expose that wrapper, not the opaque alias.
 - Every dashboard row should label source provenance in the `PaperInterface.lean`
   docstring. Use dashboard-only lines such as `Source status: direct paper
   statement`, `Source status: direct paper formula`, `Source status: corrected
@@ -1027,10 +1031,12 @@ the Lean statements against the paper.
      in each checkout before comparing or reusing dashboard digests; if one
      checkout lacks `.olean` files, the dashboard may fall back to raw signatures
      and make otherwise current LLM sidecars look stale.
-  6. Add or refresh the `Statement Translation Audit` section in
-     `FINAL_VALIDATION_REPORT.md`. It should give row counts, match/uncertain/
-     mismatch counts, stale status, surface-audit status, and every flagged
-     row. This is agent audit evidence, not human review.
+  6. Record statement-translation results in the final report's validator
+     surfaces, not in an ad-hoc extra report heading. Summarize row counts,
+     match/uncertain/mismatch counts, stale status, and surface-audit status in
+     sections 1 and 11 as needed, then fill section 15
+     `Paper-Facing Statement Validator Ledger` from the validators export. This
+     is agent audit evidence, not human review.
   7. Run `python3 scripts/review_dashboard.py --paper <paper-folder> --precheck`
      before handoff. The precheck should report no stale LLM sidecars. Remaining
      `uncertain` or `mismatch` rows must be explicitly listed in the final
@@ -1769,6 +1775,12 @@ pass:
   `Paper-Facing Statement Validator Ledger`. Do not leave placeholders or
   pointers saying where those sections belong; move the text into template
   order and fill the validator ledger from the dashboard export.
+  In a public-repo batch cleanup, audit reports one by one and run an exact
+  heading-order check across every `papers/*/FINAL_VALIDATION_REPORT.md` before
+  committing. Also scan for pointer prose such as `See the verdict...`,
+  `where those sections belong`, `to be filled`, `TODO`, or `TBD`; every
+  template section should contain final human-facing content, even if that
+  content is simply `None`.
 - Write the final validation report in paper language, not Lean-internal
   implementation language. Near the top it must answer four questions directly:
   what has been proved, whether formalization found anything wrong or ambiguous
