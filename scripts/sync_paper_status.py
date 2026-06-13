@@ -458,6 +458,7 @@ def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[s
             "main_note_review": human_summary_review(payload),
             "paper_folder": str(folder.relative_to(ROOT)),
             "review_entrypoint": payload["review_entrypoint"],
+            "artifacts": payload.get("artifacts", {}),
         }
         rows.append(row)
 
@@ -681,6 +682,20 @@ def html_note_with_citation(note: str, citation: dict[str, str] | None) -> str:
     return f"{rendered} {rendered_citation}"
 
 
+def site_status_artifacts_cell(row: dict[str, Any]) -> str:
+    status_href = html_escape(github_link(row["review_entrypoint"]))
+    status = html_escape(row["status"])
+    links = [
+        f'<a href="{status_href}">{status}</a>',
+    ]
+    artifacts = row.get("artifacts")
+    if isinstance(artifacts, dict):
+        dag = artifacts.get("dependency_dag_pdf") or artifacts.get("dependency_dag_tex")
+        if isinstance(dag, str) and dag.strip():
+            links.append(f'<a href="{html_escape(github_link(dag.strip()))}">DAG</a>')
+    return '<div class="artifact-links">' + " ".join(links) + "</div>"
+
+
 def render_site_library_block(human: dict[str, Any]) -> str:
     indent = " " * 14
     lines = [f"{indent}{SITE_LIBRARY_BEGIN}"]
@@ -707,7 +722,6 @@ def render_site_status_block(payload: dict[str, Any]) -> str:
     lines = [f"{indent}{SITE_STATUS_BEGIN}"]
     for row in payload["papers"]:
         paper_href = row["source_url"] or github_link(row["paper_folder"])
-        status_href = github_link(row["review_entrypoint"])
         note = html_note_with_citation(row["main_note"], row.get("main_note_citation"))
         lines.extend(
             [
@@ -722,10 +736,7 @@ def render_site_status_block(payload: dict[str, Any]) -> str:
                     f"{html_escape(row['publication'])}."
                 ),
                 f"{indent}  </td>",
-                (
-                    f'{indent}  <td><a href="{html_escape(status_href)}">'
-                    f"{html_escape(row['status'])}</a></td>"
-                ),
+                f"{indent}  <td>{site_status_artifacts_cell(row)}</td>",
                 f"{indent}  <td>{int(row['lean_loc']):,}</td>",
                 f"{indent}  <td>{note}</td>",
                 f"{indent}  <td>{html_escape(row['human_translation'])}</td>",

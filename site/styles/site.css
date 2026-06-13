@@ -243,27 +243,27 @@ a:focus-visible {
 }
 
 .paper-table .paper-col {
-  width: 33%;
+  width: 32%;
 }
 
 .paper-table .status-col {
-  width: 10%;
+  width: 12%;
 }
 
 .paper-table .loc-col {
-  width: 8%;
-}
-
-.paper-table .note-col {
-  width: 27%;
-}
-
-.paper-table .human-col {
   width: 9%;
 }
 
+.paper-table .note-col {
+  width: 26%;
+}
+
+.paper-table .human-col {
+  width: 10%;
+}
+
 .paper-table .judge-col {
-  width: 13%;
+  width: 11%;
 }
 
 .status-table th,
@@ -272,6 +272,8 @@ a:focus-visible {
   border-bottom: 1px solid var(--line);
   text-align: left;
   vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .status-table th {
@@ -280,6 +282,7 @@ a:focus-visible {
   font-size: 0.78rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  white-space: normal;
 }
 
 .status-table tr:last-child td {
@@ -300,6 +303,17 @@ a:focus-visible {
 .status-table cite {
   color: inherit;
   font-style: italic;
+}
+
+.artifact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+}
+
+.artifact-links a {
+  white-space: normal;
 }
 
 .paper-table td:nth-child(3) {
