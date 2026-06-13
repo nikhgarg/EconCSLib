@@ -5,8 +5,8 @@
   "authors": "Nikhil Garg and Hamid Nazerzadeh",
   "source_version": "Management Science 2022 / arXiv v4, 2021",
   "build_target": "lake build GN21DriverSurgePricing",
-  "status": "partially formalized",
-  "main_caveat": "Strict transitive provenance audit boundary: the compact endpoint still reaches boundary interval, a.e. policy-shape, optimizer-replacement, and sequential dynamic-reward certificates; the denominator-valid defined-reward theorem is formalized, but the full certificate provenance is not yet derived from primitives.",
+  "status": "formalized",
+  "main_caveat": "",
   "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

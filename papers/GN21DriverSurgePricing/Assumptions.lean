@@ -102,71 +102,53 @@ abbrev assumption_affine_response_shape_domains
       0 < Qi / Ti + Qj / Tj ∧ Ti ≠ 0 ∧ Tj ≠ 0
 
 /-- Lemma 9 surge-state derivative source-data formulas and bounds. -/
--- audit-premise: C : Lemma6DerivativeFormulaCertificate
--- audit-premise: hq : C.q = gn21SwitchProb switch21 switch12 C.u
--- audit-premise: hwi : C.wi = m * C.u + z * gn21SwitchProb switch21 switch12 C.u
--- audit-premise: hWi : C.Wi = m * (C.Ti - 1) + z * (C.Qi - switch21)
--- audit-premise: hWj : C.Wj = R1 * C.Tj
--- audit-premise: hbounds_bar : lemma9StructuredBounds ratio C.Tj C.Qj Tbar2 Qbar2 switch21
+-- audit-premise: hbounds_bar : lemma9StructuredBounds ratio T1 Q1 Tbar2 Qbar2 switch21
+-- audit-premise: hz : z = ratio * (m - R1)
 -- audit-premise: hmR_pos : 0 < m - R1
 -- audit-premise: hR1_nonneg : 0 ≤ R1
--- audit-premise: hT1_nonneg : 0 ≤ C.Tj
--- audit-premise: hQ1_pos : 0 < C.Qj
+-- audit-premise: hT1_nonneg : 0 ≤ T1
+-- audit-premise: hQ1_pos : 0 < Q1
 -- audit-premise: hswitch21_pos : 0 < switch21
 -- audit-premise: hsum : 0 < switch21 + switch12
--- audit-premise: hu : 0 < C.u
--- audit-premise: hgap_nonneg : 0 ≤ switch21 * C.Ti - C.Qi
--- audit-premise: hgap_le : switch21 * C.Ti - C.Qi ≤ switch21 * Tbar2 - Qbar2
--- audit-premise: hswitch_lt_Q2 : switch21 < C.Qi
--- audit-premise: hQ2_le : C.Qi ≤ Qbar2
+-- audit-premise: hu : 0 < u
+-- audit-premise: hgap_nonneg : 0 ≤ switch21 * T2 - Q2
+-- audit-premise: hgap_le : switch21 * T2 - Q2 ≤ switch21 * Tbar2 - Qbar2
+-- audit-premise: hswitch_lt_Q2 : switch21 < Q2
+-- audit-premise: hQ2_le : Q2 ≤ Qbar2
 abbrev assumption_surge_derivative_source_bounds
-    (C : Lemma6DerivativeFormulaCertificate)
-    (ratio Tbar2 Qbar2 switch21 switch12 m R1 z : ℝ) :
+    (ratio u T1 Q1 T2 Q2 Tbar2 Qbar2 switch21 switch12 m R1 z : ℝ) :
     Prop :=
-  C.q = gn21SwitchProb switch21 switch12 C.u ∧
-    C.wi = m * C.u + z * gn21SwitchProb switch21 switch12 C.u ∧
-      C.Wi = m * (C.Ti - 1) + z * (C.Qi - switch21) ∧
-        C.Wj = R1 * C.Tj ∧
-          lemma9StructuredBounds ratio C.Tj C.Qj Tbar2 Qbar2 switch21 ∧
-            0 < m - R1 ∧ 0 ≤ R1 ∧ 0 ≤ C.Tj ∧ 0 < C.Qj ∧
-              0 < switch21 ∧ 0 < switch21 + switch12 ∧ 0 < C.u ∧
-                0 ≤ switch21 * C.Ti - C.Qi ∧
-                  switch21 * C.Ti - C.Qi ≤ switch21 * Tbar2 - Qbar2 ∧
-                    switch21 < C.Qi ∧ C.Qi ≤ Qbar2
+  lemma9StructuredBounds ratio T1 Q1 Tbar2 Qbar2 switch21 ∧
+    z = ratio * (m - R1) ∧ 0 < m - R1 ∧ 0 ≤ R1 ∧
+      0 ≤ T1 ∧ 0 < Q1 ∧ 0 < switch21 ∧
+        0 < switch21 + switch12 ∧ 0 < u ∧
+          0 ≤ switch21 * T2 - Q2 ∧
+            switch21 * T2 - Q2 ≤ switch21 * Tbar2 - Qbar2 ∧
+              switch21 < Q2 ∧ Q2 ≤ Qbar2
 
 /-- Lemma 10 non-surge derivative source-data formulas and bounds. -/
--- audit-premise: C : Lemma6DerivativeFormulaCertificate
--- audit-premise: hq : C.q = gn21SwitchProb switch12 switch21 C.u
--- audit-premise: hwi : C.wi = R2 * C.u + z * gn21SwitchProb switch12 switch21 C.u
--- audit-premise: hWi : C.Wi = R2 * (C.Ti - 1) + z * (C.Qi - switch12)
--- audit-premise: hWj : C.Wj = R2 * C.Tj
--- audit-premise: hbounds_bar : lemma10StructuredBounds ratio C.Tj C.Qj Tbar1 Qbar1 switch12
+-- audit-premise: hbounds_bar : lemma10StructuredBounds ratio T2 Q2 Tbar1 Qbar1 switch12
 -- audit-premise: hz : z = ratio * R2
 -- audit-premise: hR2_pos : 0 < R2
--- audit-premise: hQ2_pos : 0 < C.Qj
+-- audit-premise: hQ2_pos : 0 < Q2
 -- audit-premise: hswitch12_pos : 0 < switch12
 -- audit-premise: hsum : 0 < switch12 + switch21
--- audit-premise: hu : 0 < C.u
--- audit-premise: hA_pos : 0 < C.Tj * switch12 + C.Qj
--- audit-premise: hgap_nonneg : 0 ≤ switch12 * C.Ti - C.Qi
--- audit-premise: hgap_le : switch12 * C.Ti - C.Qi ≤ switch12 * Tbar1 - Qbar1
--- audit-premise: hswitch_lt_Q1 : switch12 < C.Qi
--- audit-premise: hQ1_le : C.Qi ≤ Qbar1
+-- audit-premise: hu : 0 < u
+-- audit-premise: hA_pos : 0 < T2 * switch12 + Q2
+-- audit-premise: hgap_nonneg : 0 ≤ switch12 * T1 - Q1
+-- audit-premise: hgap_le : switch12 * T1 - Q1 ≤ switch12 * Tbar1 - Qbar1
+-- audit-premise: hswitch_lt_Q1 : switch12 < Q1
+-- audit-premise: hQ1_le : Q1 ≤ Qbar1
 abbrev assumption_nonsurge_derivative_source_bounds
-    (C : Lemma6DerivativeFormulaCertificate)
-    (ratio Tbar1 Qbar1 switch12 switch21 R2 z : ℝ) :
+    (ratio u T2 Q2 T1 Q1 Tbar1 Qbar1 switch12 switch21 R2 z : ℝ) :
     Prop :=
-  C.q = gn21SwitchProb switch12 switch21 C.u ∧
-    C.wi = R2 * C.u + z * gn21SwitchProb switch12 switch21 C.u ∧
-      C.Wi = R2 * (C.Ti - 1) + z * (C.Qi - switch12) ∧
-        C.Wj = R2 * C.Tj ∧
-          lemma10StructuredBounds ratio C.Tj C.Qj Tbar1 Qbar1 switch12 ∧
-            z = ratio * R2 ∧ 0 < R2 ∧ 0 < C.Qj ∧ 0 < switch12 ∧
-              0 < switch12 + switch21 ∧ 0 < C.u ∧
-                0 < C.Tj * switch12 + C.Qj ∧
-                  0 ≤ switch12 * C.Ti - C.Qi ∧
-                    switch12 * C.Ti - C.Qi ≤ switch12 * Tbar1 - Qbar1 ∧
-                      switch12 < C.Qi ∧ C.Qi ≤ Qbar1
+  lemma10StructuredBounds ratio T2 Q2 Tbar1 Qbar1 switch12 ∧
+    z = ratio * R2 ∧ 0 < R2 ∧ 0 < Q2 ∧ 0 < switch12 ∧
+      0 < switch12 + switch21 ∧ 0 < u ∧
+        0 < T2 * switch12 + Q2 ∧
+          0 ≤ switch12 * T1 - Q1 ∧
+            switch12 * T1 - Q1 ≤ switch12 * Tbar1 - Qbar1 ∧
+              switch12 < Q1 ∧ Q1 ≤ Qbar1
 
 /-- Theorem 3 source-data domain for sequential current bounds. -/
 -- audit-premise: hR1_eq : R1 = rho * R2

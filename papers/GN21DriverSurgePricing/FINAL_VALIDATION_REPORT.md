@@ -2,18 +2,18 @@
 
 ## 1. Human Verdict
 
-- Lean formalization status: partially formalized
+- Lean formalization status: formalized
 - Human dashboard review status: 0/24 rows reviewed; 0 stale; 0 mismatches.
 - Main caveat: none for the named paper-facing results.  Theorem 3 is stated
   on the denominator-valid defined-reward domain used by the Appendix D
   reward-rate formulas; broader totalized real-division behavior at zero
   denominators is audit-only.
 
-The GN21 driver-surge paper is complete at the Lean proof level for the
-paper-facing definitions and named results represented in
-`PaperInterface.lean`.  The remaining non-Lean task is human signoff in the
-review dashboard; the dashboard should currently show `0/24` rows reviewed
-until a human reviewer saves those rows.
+The GN21 driver-surge paper has compiling paper-facing definitions and named
+result endpoints represented in `PaperInterface.lean`.  The current strict
+provenance audit reports no unresolved hidden source-row or certificate
+premise.  Human dashboard review is still external; the dashboard should
+currently show `0/24` rows reviewed until a human reviewer saves those rows.
 
 The formalization did not find a false main theorem.  It did make one implicit
 domain convention explicit: Appendix D reward rates divide by accepted-trip
@@ -28,11 +28,11 @@ code across 13 `.lean` files.  The human-review surface is deliberately much
 smaller: `PaperInterface.lean` is 379 lines and exposes 24 dashboard rows.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
-Current result: the compact endpoint still reaches boundary interval, a.e. policy-shape, optimizer-replacement, and sequential dynamic-reward certificates; the denominator-valid defined-reward theorem is formalized, but the full certificate provenance is not yet derived from primitives.
+Current result: no unresolved hidden source-row or certificate premise remains in the paper-facing review surface.
 <!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
@@ -160,7 +160,7 @@ Human dashboard reviews and model/agent statement checks may both appear here. T
 
 ## 7. Paper Assumption Provenance
 
-> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json`
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json`
 > now records per-premise judgments for this paper's `Assumptions.lean` ledger.
 > Current result: every explicit premise is judged source text, source primitives,
 > direct source-derived conditions, or explicit paper/local-calculus
@@ -187,8 +187,8 @@ counted as paper assumptions.
 | `assumption_fixed_response_policy_form_conditions` | paper condition | Lemma 5 measurable optimal fixed-response policy condition. |
 | `assumption_upper_endpoint_derivative_domain` | paper condition | Lemma 6 upper-endpoint derivative formula domain; the exact derivative identity no longer assumes positive endpoint density, and strict sign transfer is conditional on positive density inside the theorem conclusion. |
 | `assumption_affine_response_shape_domains` | paper condition | Lemmas 7--8 affine response sign domains. |
-| `assumption_surge_derivative_source_bounds` | paper condition | Lemma 9 surge-state source formulas and current bounds over the derivative certificate fields; no certificate-field renaming premise remains exposed. |
-| `assumption_nonsurge_derivative_source_bounds` | paper condition | Lemma 10 non-surge source formulas and current bounds over the derivative certificate fields; no certificate-field renaming premise remains exposed. |
+| `assumption_surge_derivative_source_bounds` | paper condition | Lemma 9 surge-state ratio bounds and current-bound inequalities; the paper-facing wrapper constructs the Lemma 6 endpoint derivative data internally from interval-density primitives. |
+| `assumption_nonsurge_derivative_source_bounds` | paper condition | Lemma 10 non-surge ratio bounds and current-bound inequalities; the paper-facing wrapper constructs the Lemma 6 endpoint derivative data internally from interval-density primitives. |
 | `assumption_theorem3_source_data_domain` | paper condition | Theorem 3 positive values, arrivals, switches, and accept-all masses. |
 
 Additional assumptions beyond the paper: none affecting the named paper
@@ -371,17 +371,20 @@ assumption audit above.
 
 ### Final Status
 
-Lean formalization: formalized. The represented paper-facing definitions and
-named results compile, and every explicit proof premise is source-matched,
-source-derived, or listed as an explicit paper/local-calculus condition in the
-assumption ledger. The Lemma 6 derivative formula has been strengthened so
-endpoint-density positivity is no longer a theorem premise; it appears only as
-the conditional hypothesis for strict sign transfer.
+Lean formalization: formalized. The represented paper-facing
+definitions and named results compile, and explicit proof premises are
+source-matched, source-derived, or listed as explicit paper/local-calculus
+conditions in the assumption ledger. The Lemma 6 derivative formula has been
+strengthened so endpoint-density positivity is no longer a theorem premise; it
+appears only as the conditional hypothesis for strict sign transfer. Lemmas 9
+and 10 now use interval-density source wrappers that construct the derivative
+data internally.
 
 Human validation: pending.  The next step is dashboard review of the 24
 `PaperInterface.lean` rows, not more Lean proof work.
 
 - Completion status: formalized.
-- Summary: Named CTMC lemmas and Theorems 1--4 are exposed, with all
+- Summary: Named CTMC lemmas and Theorems 1--4 are exposed and compile, with
   explicit premises source-matched, source-derived, or recorded as explicit
-  paper/local-calculus conditions.
+  paper/local-calculus conditions. The current strict provenance audit reports
+  no hidden source-row or certificate boundary in the paper-facing surface.

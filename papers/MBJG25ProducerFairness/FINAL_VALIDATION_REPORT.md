@@ -9,11 +9,11 @@
 - Human summary: Formalization required an interior-quality assumption (`0 < q_v < 1`) for the strict variance-decrease statement.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit passes for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
-Current result: The strengthened transitive provenance audit finds no unresolved certificate/source-boundary dependency for the current paper-facing status; the documented MBJG caveat remains the zero-denominator/utility-domain boundary already described in the report.
+Current result: the axiom/premise/source-hygiene audit finds no unresolved certificate/source-boundary dependency for the current paper-facing status; the documented MBJG caveat is the interior-quality condition for the strict variance-decrease statement. The former zero-denominator proof condition is derived in Lean and is no longer a caveat.
 <!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
@@ -30,7 +30,7 @@ The paper-facing definitions and named results compile in Lean; detailed definit
 
 ## 4. Paper Assumption Provenance And Modeling Notes
 
-> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json` records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 11/11 visible premises are judged as source model primitives, paper-statement conditions, or the documented strict-variance caveat; 0 premises remain as partial-formalization boundaries. The former nonzero-denominator proof condition for Theorem 3.2 convexity has been removed from the assumption ledger and is now derived in Lean from positive prior-shape mass, nonnegative prior strength, and positive time.
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json` records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 11/11 visible premises are judged as source model primitives, paper-statement conditions, or the documented strict-variance caveat; 0 premises remain as partial-formalization boundaries. The former nonzero-denominator proof condition for Theorem 3.2 convexity has been removed from the assumption ledger and is now derived in Lean from positive prior-shape mass, nonnegative prior strength, and positive time.
 
 Every paper-facing theorem premise that is not derived in Lean is routed through
 `Assumptions.lean` and checked separately as a paper/source condition or a

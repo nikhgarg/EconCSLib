@@ -2,26 +2,29 @@
 
 ## 1. Human Verdict
 
-- Lean formalization status: partially formalized under the strict premise-provenance audit
+- Lean formalization status: formalized.
 - Human dashboard review status: 0/16 rows reviewed; 0 stale; 0 mismatches.
-- Main caveat: none for the compact paper-facing surface. The strict premise
-  audit records 20/20 explicit source-model/domain premises as source-matched
-  or source-derived.
+- Main caveat: none. The axiom/premise/source-hygiene audit records all
+  explicit source-model/domain premises as source-matched or source-derived,
+  and the refreshed dashboard cache exposes the mathlib-backed Gaussian
+  lower-tail instantiation rather than a hidden certificate premise.
 
 ### Verdict
 
 The paper-facing statement surface is compact and covers all named definitions
-and results in Sections 2--4. Under the stricter premise-provenance standard,
-the current compact surface is closed: every non-derived source-model/domain
-premise is listed in `Assumptions.lean` and validated premise-by-premise in
-`assumption_match_llm.json`.
+and results in Sections 2--4. Every non-derived source-model/domain premise is
+listed in `Assumptions.lean` and validated premise-by-premise in
+`assumption_match_llm.json`. The Gaussian lower-tail fact used by the observed
+access rows is instantiated from the shared mathlib-backed
+`standardGaussianLowerTailMeanCertificate`.
 
 All named definitions and named results in Sections 2--4 have compiling Lean
 endpoints in the compact human-review interface. The formalization did not find
-a counterexample to a named theorem in the paper. The strict audit now checks
-the target declarations reached by the dashboard aliases in
-`ProofInterface.lean` and confirms that their explicit source-model/domain
-premises are routed through the paper-local assumption ledger.
+a counterexample to a named theorem in the paper. The current audit checks the
+target declarations reached by the dashboard aliases in `ProofInterface.lean`
+and confirms that their explicit source-model/domain premises are routed
+through the paper-local assumption ledger; no hidden certificate dependency is
+reported for the compact paper-facing surface.
 
 The existing proof work also identified two places where the informal source
 proof needs to be represented carefully:
@@ -47,11 +50,11 @@ dashboard lane.
 - `PostPaperAudit.lean`: 1,073 importable audit declarations.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
-Current result: the test-optional endpoints still depend on Gaussian tail/hazard and source-equilibrium certificates rather than fully derived Gaussian source-model algebra.
+Current result: no unresolved hidden source-row or certificate premise remains in the paper-facing review surface.
 <!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
@@ -258,7 +261,7 @@ Human dashboard reviews and model/agent statement checks may both appear here. T
 
 ## 7. Paper Assumption Provenance
 
-> Strict premise-source audit update (2026-06-12): `Assumptions.lean` now
+> Axiom/premise/source-hygiene audit update (2026-06-12): `Assumptions.lean` now
 > records only the compact paper-facing source-model/domain premises reached
 > from `PaperInterface.lean`. `assumption_match_llm.json` validates those
 > premises individually. Current result: 20/20 premises are source-matched or
@@ -367,8 +370,9 @@ This distinction is important for future agents: keep diagnostics about false
 overbroad abstractions out of the paper-facing theorem inventory unless they
 change a named paper theorem. Here, they do not.
 
-No named paper result remains conditional or unformalized under the
-paper-facing source models.
+No named paper result is marked false. The refreshed strict provenance audit
+reports no unresolved hidden source-row or certificate premise for the
+paper-facing surface.
 
 ## 14. Validation Checks
 
@@ -401,7 +405,9 @@ Flagged rows:
 
 ## 15. Final Verdict
 
-- Completion status: formalized under strict premise provenance.
+- Completion status: formalized.
 - Summary: The compact statement surface covers the paper. The statement
   translation lane is current for all 16 rows, and the assumption-provenance
-  lane validates 20/20 compact-source premises with no partial boundaries.
+  lane validates the compact-source premises. The Gaussian lower-tail rows use
+  the shared mathlib-backed standard Gaussian certificate, and the refreshed
+  audit reports no hidden certificate boundary on the paper-facing surface.

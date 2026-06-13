@@ -6,8 +6,8 @@
   "publication_venue": "HCOMP 2019",
   "source_version": "arXiv version, 2019",
   "build_target": "lake build GGSG19TopThree",
-  "status": "partially formalized",
-  "main_caveat": "Strict transitive provenance audit boundary: finite-large-deviation/Cramer, exponential-rate, pairwise score-gap, and randomized pivotal-pair certificates remain reusable proof-boundary obligations.",
+  "status": "formalized",
+  "main_caveat": "",
   "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

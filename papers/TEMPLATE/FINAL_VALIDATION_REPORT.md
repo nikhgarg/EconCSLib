@@ -66,6 +66,12 @@ assumptions.
   report no reviewed row that recursively depends on a local helper with an
   unvalidated certificate, source-row equation, hidden hypothesis, or other
   proof-boundary premise.
+- Recursive provenance closeout report: not run. Before a completion claim,
+  run `python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0 --write-report docs/RECURSIVE_PROVENANCE_AUDIT_<date>.md`
+  and confirm this paper has no unresolved broad/opaque row, source-row formula
+  boundary, paper-local hidden premise, or transitive library certificate
+  finding. If a finding remains, record it here and mark the endpoint
+  partial/conditional.
 
 ## 10. DAG Audit
 - Rendered artifact: not checked

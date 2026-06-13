@@ -1,6 +1,15 @@
 {
   "schema": 1,
   "paper": "GN21DriverSurgePricing",
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "translator": "gpt-5-codex",
+  "translator_type": "model",
+  "translated_at": "2026-06-13T00:00:00Z",
+  "prompt_summary": [
+    "Translate each Lean declaration from the Lean statement alone, with no paper context.",
+    "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
+    "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
+  ],
   "generated_at": "2026-06-12T00:35:00Z",
   "generator": "codex-refresh-current-lean-and-assumption-statements",
   "comment": "Refreshed after Lemma 9/10 source-field wrappers; source-premise validity is tracked separately in assumption_match_llm.json.",
@@ -62,8 +71,12 @@
       "statement": "For a pricing function $w$, cutoff $c$, and policy $\\sigma$, the threshold-policy condition is: for every positive trip length $\\tau$, $\\tau \\in \\sigma$ if and only if $c \\le w(\\tau)/\\tau$."
     },
     "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds": {
-      "lean_statement_sha256": "3488e3237f084189654ed21ede18046dfc457ca58a95d9f323553b2d16b7b7a4",
-      "statement": "For a Lemma 6 derivative certificate $C$ whose own fields satisfy the non-surge switch-probability formula, structured-price payment formula, $W_i$ and $W_j$ reward-rate formulas, Lemma 10 accept-all ratio bounds, $z=\\mathrm{ratio}\\,R_2$, positivity assumptions, and current-bound inequalities, the endpoint derivative value is positive: $C.\\mathrm{derivativeValue}>0$."
+      "lean_statement_sha256": "b475c0a093e2b6849b8ecc4979e4332da78c718af01e5a5f22bddd7f00199a2f",
+      "statement": "For a Lemma 6 derivative certificate $C$ whose own fields satisfy the non-surge switch-probability formula, structured-price payment formula, $W_i$ and $W_j$ reward-rate formulas, Lemma 10 accept-all ratio bounds, $z=\\mathrm{ratio}\\,R_2$, positivity assumptions, and current-bound inequalities, the endpoint derivative value is positive: $C.\\mathrm{derivativeValue}>0$.",
+      "prompt_version": "lean-to-tex-v2-strict-context-free",
+      "translated_at": "2026-06-13T00:00:00Z",
+      "translator": "gpt-5-codex",
+      "translator_type": "model"
     },
     "review_lemma1_measured_dynamic_reward_decomposition": {
       "lean_statement_sha256": "5641773fffc690f7cfc840b4cfd6539e2b986786e571e899b8b2f6175712fdb9",
@@ -86,8 +99,12 @@
       "statement": "Let $\\mu$ be nonatomic, let a measurable integrable response function satisfy the Lemma 5 positive-response shape data, and let a measurable policy $\\sigma\\subseteq\\mathrm{acceptAllPolicy}$ maximize the Lemma 5 marginal set reward among measurable subsets of accept-all. Then $\\sigma$ has the corresponding Lemma 5 policy form almost everywhere with respect to $\\mu$."
     },
     "review_lemma6_upper_endpoint_derivative_formula": {
-      "lean_statement_sha256": "774efc6874e99224cbfef4a7632a48b8de8f068bd39100579d06b8bb171b914f",
-      "statement": "Under the stated arrival-rate, positive-trip, positive-time, algebraic identification, nonzero-denominator, interval-integrability, strong-measurability, and continuity assumptions, the endpoint aggregate dynamic reward has the displayed derivative at $u$. If the endpoint density is positive, that derivative has the same strict sign as the Lemma 6 response evaluated at the endpoint data."
+      "lean_statement_sha256": "0e964dbd7e0d6b4e6f29aeb2dfaa67ec576dc24b156f7ebda58c2aa83dbcde5a",
+      "statement": "Under the stated arrival-rate, positive-trip, positive-time, algebraic identification, nonzero-denominator, interval-integrability, strong-measurability, and continuity assumptions, the endpoint aggregate dynamic reward has the displayed derivative at $u$. If the endpoint density is positive, that derivative has the same strict sign as the Lemma 6 response evaluated at the endpoint data.",
+      "prompt_version": "lean-to-tex-v2-strict-context-free",
+      "translated_at": "2026-06-13T00:00:00Z",
+      "translator": "gpt-5-codex",
+      "translator_type": "model"
     },
     "review_lemma7_affine_positive_additive_response_quasi_convex": {
       "lean_statement_sha256": "a5ae9734bb73ca2b0e233935ef86b65c7ae30609a11d1012947340ca22be6c4a",
@@ -98,8 +115,12 @@
       "statement": "If $m>0$, $a<0$, $R_j-R_i\\ge0$, $Q_i/T_i+Q_j/T_j>0$, $\\lambda_{IJ}>0$, $\\lambda_{IJ}+\\lambda_{JI}>0$, and $T_i,T_j\\ne0$, then the Lemma 6 response with switch probability $\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},u)$ and payment argument $m\\,u+a$ is strictly quasi-concave on positive $u$."
     },
     "review_lemma9_surge_derivative_positive_of_acceptAll_bounds": {
-      "lean_statement_sha256": "7d06bb8a897a37b5a35eb27b8b0a720c51ee0e6c43e9149ed8effa445642089d",
-      "statement": "For a Lemma 6 derivative certificate $C$ whose own fields satisfy the surge-state switch-probability formula, structured-price payment formula, $W_i$ and $W_j$ reward-rate formulas, Lemma 9 accept-all ratio bounds, $z=\\mathrm{ratio}(m-R_1)$, positivity assumptions, and current-bound inequalities, the endpoint derivative value is positive: $C.\\mathrm{derivativeValue}>0$."
+      "lean_statement_sha256": "801d26a2c90d75e489969b6e5eaf7babc8be1c44715c539b62dfad96f02c3900",
+      "statement": "For a Lemma 6 derivative certificate $C$ whose own fields satisfy the surge-state switch-probability formula, structured-price payment formula, $W_i$ and $W_j$ reward-rate formulas, Lemma 9 accept-all ratio bounds, $z=\\mathrm{ratio}(m-R_1)$, positivity assumptions, and current-bound inequalities, the endpoint derivative value is positive: $C.\\mathrm{derivativeValue}>0$.",
+      "prompt_version": "lean-to-tex-v2-strict-context-free",
+      "translated_at": "2026-06-13T00:00:00Z",
+      "translator": "gpt-5-codex",
+      "translator_type": "model"
     },
     "review_proposition3_1_affine_single_state_ic": {
       "lean_statement_sha256": "433e2a7e78236c5ed310cf659bec7106d6cf8f48f788930b9d97f13b1fda5f70",
@@ -134,8 +155,12 @@
       "statement": "For the explicit atomic multiplicative-pricing instance with switch rates $1/4$ and $1/4$, there is a positive cutoff $2$ nonsurge deviation rejecting long trips that is profitable, there is a positive cutoff $2$ surge deviation rejecting short trips that is profitable, and the resulting measured dynamic reward functional is not dynamically incentive compatible."
     },
     "review_theorem3_defined_reward_source_statement": {
-      "lean_statement_sha256": "b9df4de374b1fafeca62745e4413b649acfec8abf26bd84b0c68895f90f2e86d",
-      "statement": "Under the Theorem 3 source-domain assumptions R1 = rho * R2, 0 < R1 < R2, C < rho < 1, positive arrival and switch rates, integrability of trip lengths and CTMC switch probabilities, positive accept-all trip masses, and the paper positive-mass surge reward-rate data for every feasible policy, there exist structured prices w_i(tau) = m_i tau + z_i q_{i->j}(tau) with m_1, m_2, z_2 >= 0 (Lean indices 0/1) such that accept-all is dynamically incentive compatible for the defined reward, every defined-reward optimum agrees with accept-all almost everywhere, and the Theorem 3 structured parameter evidence holds."
+      "lean_statement_sha256": "f16367ccdcae491e962c32020e08a94827b97ee73ecd18a259141ddc0878fcee",
+      "statement": "Under the Theorem 3 source-domain assumptions R1 = rho * R2, 0 < R1 < R2, C < rho < 1, positive arrival and switch rates, integrability of trip lengths and CTMC switch probabilities, positive accept-all trip masses, and the paper positive-mass surge reward-rate data for every feasible policy, there exist structured prices w_i(tau) = m_i tau + z_i q_{i->j}(tau) with m_1, m_2, z_2 >= 0 (Lean indices 0/1) such that accept-all is dynamically incentive compatible for the defined reward, every defined-reward optimum agrees with accept-all almost everywhere, and the Theorem 3 structured parameter evidence holds.",
+      "prompt_version": "lean-to-tex-v2-strict-context-free",
+      "translated_at": "2026-06-13T00:00:00Z",
+      "translator": "gpt-5-codex",
+      "translator_type": "model"
     },
     "review_theorem4_structural_policy_representatives": {
       "lean_statement_sha256": "830878b532cca1e117791869d3b88685584bea7c4270c723e7e1bf679de1b0da",

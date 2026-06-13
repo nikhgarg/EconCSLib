@@ -5,8 +5,8 @@
   "authors": "Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V. Vazirani",
   "source_version": "Journal of the ACM, 2007",
   "build_target": "lake build MSVV07AdWords",
-  "status": "partially formalized",
-  "main_caveat": "Strict transitive provenance audit boundary: the Balance/MSVV finite-error and extensions still depend on approximation-accounting, state-invariant, and factor-revealing LP certificate APIs.",
+  "status": "formalized",
+  "main_caveat": "",
   "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

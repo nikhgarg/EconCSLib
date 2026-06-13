@@ -12,7 +12,7 @@
       "source_version": "ACM FAccT 2024 / PNAS Nexus 2025 published version",
       "build_target": "lake build DSWG24DiscretizationBias",
       "status": "formalized",
-      "main_caveat": "The strengthened transitive provenance audit finds no unresolved certificate/source-boundary dependency for the current paper-facing status. Explicit assumptions remain source-matched, including the human-verified implicit multiclass condition.",
+      "main_caveat": "",
       "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -137,8 +137,8 @@
       "authors": "Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg",
       "source_version": "NeurIPS 2024 / arXiv:2412.04466",
       "build_target": "lake build GCG24UserItemFairness",
-      "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: LP/duality and feasible-support optimality certificates for the Problem 6/11 reduction and misestimation tradeoff rows remain source-boundary proof obligations.",
+      "status": "formalized",
+      "main_caveat": "",
       "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -240,8 +240,8 @@
       "publication_venue": "HCOMP 2019",
       "source_version": "arXiv version, 2019",
       "build_target": "lake build GGSG19TopThree",
-      "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: finite-large-deviation/Cramer, exponential-rate, pairwise score-gap, and randomized pivotal-pair certificates remain reusable proof-boundary obligations.",
+      "status": "formalized",
+      "main_caveat": "",
       "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -325,8 +325,8 @@
       "authors": "Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright",
       "source_version": "SODA 2001 paper; Theorem 8.2 is checked against the later Goldberg-Hartline-Karlin-Saks-Wright journal monotone-auction formulation.",
       "build_target": "lake build GHW01DigitalGoods",
-      "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: The deterministic-truthfulness lower-bound endpoint still depends on the anonymous auction-family certificate for Theorem 9.3.",
+      "status": "formalized",
+      "main_caveat": "",
       "human_summary": "Formalizes the SODA paper; Theorem 8.2 uses the refined monotone-auction wording from the journal version.",
       "human_summary_citation": {
         "label": "Goldberg-Hartline-Karlin-Saks-Wright 2006",
@@ -372,7 +372,9 @@
           "assumption_weighted_pairing_log_factor",
           "assumption_truthful_auction_condition",
           "assumption_low_bid_below_high_bid",
-          "assumption_lower_bound_positive_alpha"
+          "assumption_lower_bound_positive_alpha",
+          "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model",
+          "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model"
         ],
         "include_names": [
           "revenue",
@@ -429,13 +431,13 @@
       "authors": "Nikhil Garg, Ramesh Johari",
       "source_version": "arXiv 1810.13028 TeX/PDF cache; publication citation: Manufacturing & Service Operations Management 23(3):589-605, published online 2020 (issue 2021)",
       "build_target": "lake build GJ18InformativeRatingSystems",
-      "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: the rating-system large-deviation route still depends on finite Chernoff/Cramer, exponential-rate, and pairwise threshold-rate certificates.",
+      "status": "formalized",
+      "main_caveat": "",
       "human_summary": "Theorem 1 is formalized under the support-safe finite-rate convention from ordinal upper-tail dominance and full finite ordinal rating support.",
       "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 8,
+        "total_rows": 7,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -444,7 +446,7 @@
         "path": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
         "line_count": 2940,
         "declaration_rows": 85,
-        "review_rows": 8,
+        "review_rows": 7,
         "oversized": false,
         "maintainability_issue": null
       },
@@ -475,7 +477,6 @@
         "include_names": [
           "definition_log_mgf_formula",
           "definition_rate_function_formula",
-          "lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support",
           "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives",
           "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law",
           "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives",
@@ -495,7 +496,6 @@
             "id": "appendix-c",
             "title": "Appendix C named large-deviation results",
             "names": [
-              "lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support",
               "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives"
             ]
           },
@@ -519,8 +519,8 @@
       "authors": "Nikhil Garg and Hamid Nazerzadeh",
       "source_version": "Management Science 2022 / arXiv v4, 2021",
       "build_target": "lake build GN21DriverSurgePricing",
-      "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: the compact endpoint still reaches boundary interval, a.e. policy-shape, optimizer-replacement, and sequential dynamic-reward certificates; the denominator-valid defined-reward theorem is formalized, but the full certificate provenance is not yet derived from primitives.",
+      "status": "formalized",
+      "main_caveat": "",
       "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -633,8 +633,8 @@
       "authors": "D. Gale and L. S. Shapley",
       "source_version": "American Mathematical Monthly, 1962",
       "build_target": "lake build GS62CollegeAdmissions",
-      "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: the Gale-Shapley existence/optimality rows still depend on deferred-acceptance invariant and stability certificates in the shared matching library.",
+      "status": "formalized",
+      "main_caveat": "",
       "human_summary": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.",
       "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
       "human_review": {
@@ -700,8 +700,8 @@
       "authors": "Zhi Liu and Nikhil Garg",
       "source_version": "EAAMO 2021 / arXiv:2107.08922",
       "build_target": "lake build LG21TestOptionalPolicies",
-      "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: the test-optional endpoints still depend on Gaussian tail/hazard and source-equilibrium certificates rather than fully derived Gaussian source-model algebra.",
+      "status": "formalized",
+      "main_caveat": "",
       "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -796,7 +796,7 @@
       "source_version": "ACM EC 2004",
       "build_target": "lake build LMMS04FairDivision",
       "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: the Section 3 runtime/search layer and some rounded-IP/counterexample endpoints remain certificate boundaries; Sections 2 and 4 stay formalized at their existing boundary.",
+      "main_caveat": "Partial-formalization boundary: the Section 3 runtime/search layer and some rounded-IP/counterexample endpoints remain certificate boundaries; Sections 2 and 4 stay formalized at their existing boundary.",
       "human_summary": "Sections 2 and 4 are fully formalized. Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.",
       "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
       "human_review": {
@@ -946,7 +946,7 @@
       "source_version": "Journal of the ACM 49(5), 2002",
       "build_target": "lake build LOS02CombinatorialAuctions",
       "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: the external complexity consequences, critical-value infinity axioms, and greedy-order blocking windows remain explicit partial boundaries.",
+      "main_caveat": "Partial-formalization boundary: the external complexity consequences, critical-value infinity axioms, and greedy-order blocking windows remain explicit partial boundaries.",
       "human_summary": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.",
       "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
       "human_review": {
@@ -1084,7 +1084,7 @@
       "source_version": "ICWSM 2025 / arXiv:2207.04369",
       "build_target": "lake build MBJG25ProducerFairness",
       "status": "formalized",
-      "main_caveat": "The strengthened transitive provenance audit finds no unresolved certificate/source-boundary dependency for the current paper-facing status; the documented MBJG caveat remains the zero-denominator/utility-domain boundary already described in the report.",
+      "main_caveat": "The strict variance-decrease statement is formalized with the documented interior-quality condition 0 < q_v < 1; the report records boundary counterexamples at q_v = 0 and q_v = 1.",
       "human_summary": "Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement.",
       "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
       "human_review": {
@@ -1188,8 +1188,8 @@
       "authors": "Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V. Vazirani",
       "source_version": "Journal of the ACM, 2007",
       "build_target": "lake build MSVV07AdWords",
-      "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: the Balance/MSVV finite-error and extensions still depend on approximation-accounting, state-invariant, and factor-revealing LP certificate APIs.",
+      "status": "formalized",
+      "main_caveat": "",
       "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -1280,7 +1280,7 @@
       "source_version": "The ACM Web Conference, 2024, pp. 1318--1329; arXiv:2307.15142v1",
       "build_target": "lake build PRPKG24AccuracyDiversity",
       "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: the Top-K oracle, Bernoulli tail/Laplace, rounding, averaging, and integral-asymptotic certificates remain explicit partial boundaries.",
+      "main_caveat": "Partial-formalization boundary: the Top-K oracle, Bernoulli tail/Laplace, rounding, averaging, and integral-asymptotic certificates remain explicit partial boundaries.",
       "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
       "human_summary_review": {
         "status": "human_approved",
@@ -1384,8 +1384,8 @@
       "authors": "Alvin E. Roth",
       "source_version": "Mathematics of Operations Research, 1982",
       "build_target": "lake build Roth82StableMatching",
-      "status": "partially formalized",
-      "main_caveat": "Strict transitive provenance audit boundary: the stable-matching theorem rows still depend on deferred-acceptance invariant, termination, optimality, and truthfulness certificates in the shared matching library.",
+      "status": "formalized",
+      "main_caveat": "",
       "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,

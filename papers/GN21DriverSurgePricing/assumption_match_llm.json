@@ -1,10 +1,18 @@
 {
   "schema": 1,
   "paper": "GN21DriverSurgePricing",
+  "prompt_version": "assumption-provenance-v2-exact-premise-source",
   "validator": "gpt-5-codex",
   "validator_type": "model",
-  "validated_at": "2026-06-12T00:00:00Z",
-  "comment": "Premise-level source/provenance audit. Each audit-premise from Assumptions.lean is judged individually; group-level approval is not sufficient.",
+  "validated_at": "2026-06-13T00:00:00Z",
+  "comment": "Refreshed under the exact premise-source provenance prompt. Every audit-premise is judged independently where present.",
+  "prompt_summary": [
+    "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
+    "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
+    "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
+    "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
+    "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption."
+  ],
   "items": {
     "assumption_affine_single_state_parameter_domain": {
       "judgment": "paper_condition",
@@ -15,19 +23,35 @@
         "hlambda : 0 < arrivalRate": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "Arrival rates are positive Poisson/CTMC rate primitives in the source model."
+          "reason": "Arrival rates are positive Poisson/CTMC rate primitives in the source model.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "ha_nonneg : 0 ≤ a": {
           "judgment": "source_text",
           "source_location": "source.txt lines 490-550, Proposition 3.1",
-          "reason": "Proposition 3.1 explicitly states the affine IC condition for 0 <= a <= m/lambda."
+          "reason": "Proposition 3.1 explicitly states the affine IC condition for 0 <= a <= m/lambda.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "ha_le_wait_value : a ≤ m / arrivalRate": {
           "judgment": "source_text",
           "source_location": "source.txt lines 490-550, Proposition 3.1",
-          "reason": "Proposition 3.1 explicitly states the upper bound a <= m/lambda."
+          "reason": "Proposition 3.1 explicitly states the upper bound a <= m/lambda.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_single_state_defined_reward_domain": {
       "judgment": "paper_condition",
@@ -38,34 +62,62 @@
         "hrate_nonneg : ∀ tau : TripLength, 0 < tau → 0 ≤ w tau / tau": {
           "judgment": "source_text",
           "source_location": "source.txt lines 2618-2624",
-          "reason": "The Appendix C.2 proof table records gamma(tau)=w(tau)/tau as non-negative."
+          "reason": "The Appendix C.2 proof table records gamma(tau)=w(tau)/tau as non-negative.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hrate_nonneg : ∀ τ : TripLength, 0 < τ → 0 ≤ w τ / τ": {
           "judgment": "source_text",
           "source_location": "source.txt lines 2618-2624",
-          "reason": "The Appendix C.2 proof table records gamma(tau)=w(tau)/tau as non-negative."
+          "reason": "The Appendix C.2 proof table records gamma(tau)=w(tau)/tau as non-negative.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hfinite_acceptAll : mu acceptAllPolicy ≠ ⊤": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "The source states trip lengths are drawn from a probability distribution; accept-all is a measurable subset of the finite probability-measure domain."
+          "reason": "The source states trip lengths are drawn from a probability distribution; accept-all is a measurable subset of the finite probability-measure domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hfinite_acceptAll : μ acceptAllPolicy ≠ ⊤": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "The source states trip lengths are drawn from a probability distribution; accept-all is a measurable subset of the finite probability-measure domain."
+          "reason": "The source states trip lengths are drawn from a probability distribution; accept-all is a measurable subset of the finite probability-measure domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hpositive_payout_mass : 0 < mu {τ : TripLength | τ ∈ acceptAllPolicy ∧ 0 < w τ}": {
           "judgment": "source_text",
           "source_location": "source.txt lines 2552-2557",
-          "reason": "The proof assumes w is not zero everywhere, written as positive probability of {tau : w(tau) > 0}; the Lean statement intersects with the positive-trip feasible domain."
+          "reason": "The proof assumes w is not zero everywhere, written as positive probability of {tau : w(tau) > 0}; the Lean statement intersects with the positive-trip feasible domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hpositive_payout_mass : 0 < μ {τ : TripLength | τ ∈ acceptAllPolicy ∧ 0 < w τ}": {
           "judgment": "source_text",
           "source_location": "source.txt lines 2552-2557",
-          "reason": "The proof assumes w is not zero everywhere, written as positive probability of {tau : w(tau) > 0}; the Lean statement intersects with the positive-trip feasible domain."
+          "reason": "The proof assumes w is not zero everywhere, written as positive probability of {tau : w(tau) > 0}; the Lean statement intersects with the positive-trip feasible domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_dynamic_time_fraction_denominators": {
       "judgment": "paper_condition",
@@ -76,14 +128,26 @@
         "hi : arrivalI * singleStateTripMass μI σI + switchIJ ≠ 0": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722; source.txt lines 660-730",
-          "reason": "Lemma 3 denominators have a positive switch-rate summand and nonnegative arrival-mass term in the CTMC probability-measure domain."
+          "reason": "Lemma 3 denominators have a positive switch-rate summand and nonnegative arrival-mass term in the CTMC probability-measure domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hj : arrivalJ * singleStateTripMass μJ σJ + switchJI ≠ 0": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722; source.txt lines 660-730",
-          "reason": "Lemma 3 denominators have a positive switch-rate summand and nonnegative arrival-mass term in the CTMC probability-measure domain."
+          "reason": "Lemma 3 denominators have a positive switch-rate summand and nonnegative arrival-mass term in the CTMC probability-measure domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_switch_rate_domain": {
       "judgment": "paper_condition",
@@ -94,24 +158,44 @@
         "hlambdaIJ : 0 < lambdaIJ": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "The CTMC model states positive switching rates."
+          "reason": "The CTMC model states positive switching rates.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hlambdaIJ : 0 ≤ lambdaIJ": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "This follows immediately from positive CTMC switching rates."
+          "reason": "This follows immediately from positive CTMC switching rates.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hsum : 0 < lambdaIJ + lambdaJI": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "This follows immediately from positive CTMC switching rates."
+          "reason": "This follows immediately from positive CTMC switching rates.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hsum : lambdaIJ + lambdaJI ≠ 0": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "This follows immediately from positive CTMC switching rates."
+          "reason": "This follows immediately from positive CTMC switching rates.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_fixed_response_policy_form_conditions": {
       "judgment": "paper_condition",
@@ -122,14 +206,26 @@
         "hresponse_measurable : Measurable response": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722; source.txt lines 2689-2720",
-          "reason": "The source restricts strategies/responses to measurable valid policies in the Lemma 5 setup."
+          "reason": "The source restricts strategies/responses to measurable valid policies in the Lemma 5 setup.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hoptimal : ∀ sigma' : TripPolicy, sigma' ⊆ acceptAllPolicy → MeasurableSet sigma' → lemma5MarginalSetReward mu response sigma' ≤ lemma5MarginalSetReward mu response sigma": {
           "judgment": "source_text",
           "source_location": "source.txt lines 210-330 and 3710-3722; source.txt lines 2689-2720",
-          "reason": "This is the formal best-response/optimality quantification over all measurable feasible policies used by Lemma 5."
+          "reason": "This is the formal best-response/optimality quantification over all measurable feasible policies used by Lemma 5.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_upper_endpoint_derivative_domain": {
       "judgment": "paper_condition",
@@ -140,44 +236,80 @@
         "harrival_pos : 0 < arrivalRate": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "Arrival rates are positive Poisson primitives."
+          "reason": "Arrival rates are positive Poisson primitives.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hu : 0 < u": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 3728-3748, Lemma 6 and surrounding derivative-domain text",
-          "reason": "The endpoint u is an upper endpoint of a policy subset of positive trip lengths R_+ = (0, infinity)."
+          "reason": "The endpoint u is an upper endpoint of a policy subset of positive trip lengths R_+ = (0, infinity).",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hQj_pos : 0 < Qj": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722; source.txt lines 3775-3780, Remark 4",
-          "reason": "Q includes a positive CTMC switch-rate term plus nonnegative arrival mass; Remark 4 records Q_i >= 0 in this domain."
+          "reason": "Q includes a positive CTMC switch-rate term plus nonnegative arrival mass; Remark 4 records Q_i >= 0 in this domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hTi_pos : 0 < gn21EndpointTiPath arrivalRate lowerEndpoint density u": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 330-420, Lemma 1 definitions; source.txt lines 3728-3748, Lemma 6 and surrounding derivative-domain text",
-          "reason": "T is the positive expected cycle-time term in the source reward-rate formula."
+          "reason": "T is the positive expected cycle-time term in the source reward-rate formula.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hTj_pos : 0 < Tj": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 330-420, Lemma 1 definitions",
-          "reason": "State cycle time is positive because it is 1 plus a nonnegative expected trip-time contribution."
+          "reason": "State cycle time is positive because it is 1 plus a nonnegative expected trip-time contribution.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hWi : gn21EndpointWiPath arrivalRate lowerEndpoint density payment u = Ri * gn21EndpointTiPath arrivalRate lowerEndpoint density u": {
           "judgment": "source_text",
           "source_location": "source.txt lines 330-420, Lemma 1 definitions; source.txt lines 3728-3748, Lemma 6 and surrounding derivative-domain text",
-          "reason": "The source defines R_i = W_i/T_i, so W_i = R_i T_i on the positive-time domain."
+          "reason": "The source defines R_i = W_i/T_i, so W_i = R_i T_i on the positive-time domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hWj : Wj = Rj * Tj": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 330-420, Lemma 1 definitions",
-          "reason": "The source defines R_j = W_j/T_j, so W_j = R_j T_j on the positive-time domain."
+          "reason": "The source defines R_j = W_j/T_j, so W_j = R_j T_j on the positive-time domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hden : gn21EndpointQiPath arrivalRate switchRate lowerEndpoint density switchProb u * Tj + Qj * gn21EndpointTiPath arrivalRate lowerEndpoint density u ≠ 0": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 3728-3748, Lemma 6 and surrounding derivative-domain text",
-          "reason": "The denominator is a sum of positive current/other-state time and exit-weight terms in the endpoint derivative domain."
+          "reason": "The denominator is a sum of positive current/other-state time and exit-weight terms in the endpoint derivative domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_affine_response_shape_domains": {
       "judgment": "paper_condition",
@@ -188,230 +320,329 @@
         "hm_pos : 0 < m": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3750-3760, Lemmas 7 and 8",
-          "reason": "Lemmas 7 and 8 explicitly require m > 0."
+          "reason": "Lemmas 7 and 8 explicitly require m > 0.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "ha_pos : 0 < a": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3750-3760, Lemmas 7 and 8",
-          "reason": "Lemma 7 explicitly requires a > 0."
+          "reason": "Lemma 7 explicitly requires a > 0.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "ha_neg : a < 0": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3750-3760, Lemmas 7 and 8",
-          "reason": "Lemma 8 explicitly requires a < 0."
+          "reason": "Lemma 8 explicitly requires a < 0.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hdelta_ji_nonpos : Rj - Ri ≤ 0": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3750-3760, Lemmas 7 and 8",
-          "reason": "Lemma 7 explicitly assumes Delta_ji <= 0."
+          "reason": "Lemma 7 explicitly assumes Delta_ji <= 0.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hdelta_ji_nonneg : 0 ≤ Rj - Ri": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3750-3760, Lemmas 7 and 8",
-          "reason": "Lemma 8 explicitly assumes Delta_ji >= 0."
+          "reason": "Lemma 8 explicitly assumes Delta_ji >= 0.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hstate_weight_pos : 0 < Qi / Ti + Qj / Tj": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 330-420, Lemma 1 definitions; source.txt lines 3775-3780, Remark 4",
-          "reason": "Q terms are nonnegative with positive switch-rate support and T terms are positive state cycle times, so the displayed state weight is positive in the dynamic model domain."
+          "reason": "Q terms are nonnegative with positive switch-rate support and T terms are positive state cycle times, so the displayed state weight is positive in the dynamic model domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hTi : Ti ≠ 0": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 330-420, Lemma 1 definitions",
-          "reason": "T_i is a positive expected cycle-time denominator."
+          "reason": "T_i is a positive expected cycle-time denominator.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hTj : Tj ≠ 0": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 330-420, Lemma 1 definitions",
-          "reason": "T_j is a positive expected cycle-time denominator."
+          "reason": "T_j is a positive expected cycle-time denominator.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_surge_derivative_source_bounds": {
       "judgment": "paper_condition",
-      "reason": "Lemma 9 supplies the surge pricing form, ratio bounds, and current-bound inequalities over the derivative certificate fields; no certificate-field renaming equality remains exposed.",
+      "reason": "Lemma 9 supplies the surge pricing form, ratio bounds, and current-bound inequalities; the paper-facing wrapper constructs the Lemma 6 derivative data internally from interval-density primitives.",
       "source_location": "source.txt lines 3785-3835, Lemma 9",
-      "premise_count": 17,
+      "premise_count": 13,
       "premise_judgments": {
-        "C : Lemma6DerivativeFormulaCertificate": {
-          "judgment": "paper_condition",
-          "source_location": "source.txt lines 3740-3785, Lemma 6 derivative formula and endpoint discussion",
-          "reason": "The derivative certificate packages the local endpoint derivative formula and its positive-density strict-sign specialization before Lemmas 9--10 substitute their structured fields. It is explicit provenance for the local calculus row, not a hidden source formula or a partial boundary."
-        },
-        "hq : C.q = gn21SwitchProb switch21 switch12 C.u": {
+        "hbounds_bar : lemma9StructuredBounds ratio T1 Q1 Tbar2 Qbar2 switch21": {
           "judgment": "source_text",
-          "source_location": "source.txt lines 3785-3835, Lemma 9",
-          "reason": "Lemma 9 uses q_{2->1}(u) in the surge-state derivative formula."
+          "source_location": "source.txt lines 3809-3832, Lemma 9",
+          "reason": "This is the displayed Lemma 9 ratio interval, using the fixed-state Q1,T1 and accept-all Qbar2,Tbar2 values.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hwi : C.wi = m * C.u + z * gn21SwitchProb switch21 switch12 C.u": {
+        "hz : z = ratio * (m - R1)": {
           "judgment": "source_text",
-          "source_location": "source.txt lines 3785-3835, Lemma 9",
-          "reason": "Lemma 9 states w_2(tau)=m tau + z q_{2->1}(tau)."
-        },
-        "hWi : C.Wi = m * (C.Ti - 1) + z * (C.Qi - switch21)": {
-          "judgment": "source_text",
-          "source_location": "source.txt lines 3785-3835, Lemma 9",
-          "reason": "Remark 2/Lemma 9 expand W_i for the structured surge price as m(T_i-1)+z(Q_i-lambda)."
-        },
-        "hWj : C.Wj = R1 * C.Tj": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "source.txt lines 330-420, Lemma 1 definitions; source.txt lines 3785-3835, Lemma 9",
-          "reason": "Lemma 9 fixes the other state reward rate R1 and the source defines R1=W1/T1."
-        },
-        "hbounds_bar : lemma9StructuredBounds ratio C.Tj C.Qj Tbar2 Qbar2 switch21": {
-          "judgment": "source_text",
-          "source_location": "source.txt lines 3785-3835, Lemma 9",
-          "reason": "This is the displayed Lemma 9 ratio interval, using accept-all Qbar/Tbar values."
+          "source_location": "source.txt lines 3809-3832, Lemma 9",
+          "reason": "Lemma 9 writes the admissible interval for z/(m-R1); Lean names this ratio equality explicitly.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hmR_pos : 0 < m - R1": {
           "judgment": "source_text",
-          "source_location": "source.txt lines 3785-3835, Lemma 9",
-          "reason": "Lemma 9 explicitly assumes m > R1."
+          "source_location": "source.txt lines 3809-3832, Lemma 9",
+          "reason": "Lemma 9 explicitly assumes m > R1.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hR1_nonneg : 0 ≤ R1": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 330-420, Lemma 1 definitions",
-          "reason": "R1 is an hourly earnings rate in the positive-payout domain."
+          "reason": "R1 is an hourly earnings rate in the positive-payout domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hT1_nonneg : 0 ≤ C.Tj": {
+        "hT1_nonneg : 0 ≤ T1": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 330-420, Lemma 1 definitions",
-          "reason": "The fixed-state T term is an expected cycle-time term."
+          "reason": "T1 is an expected cycle-time term.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hQ1_pos : 0 < C.Qj": {
+        "hQ1_pos : 0 < Q1": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722; source.txt lines 3775-3780, Remark 4",
-          "reason": "The fixed-state Q term has a positive CTMC switch-rate contribution in the dynamic model domain."
+          "reason": "The fixed-state Q term has positive CTMC switch-rate contribution in the dynamic model domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hswitch21_pos : 0 < switch21": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "CTMC switching rates are positive model primitives."
+          "reason": "CTMC switching rates are positive model primitives.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hsum : 0 < switch21 + switch12": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "The total switching intensity is positive because both CTMC rates are positive."
+          "reason": "The total switching intensity is positive because both CTMC rates are positive.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hu : 0 < C.u": {
+        "hu : 0 < u": {
           "judgment": "derived_from_source_primitives",
-          "source_location": "source.txt lines 3785-3835, Lemma 9",
-          "reason": "The derivative endpoint is an upper endpoint of a positive trip-length policy."
+          "source_location": "source.txt lines 3800-3832, Lemma 9 setup",
+          "reason": "The derivative endpoint is an upper endpoint of a positive trip-length policy.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hgap_nonneg : 0 ≤ switch21 * C.Ti - C.Qi": {
+        "hgap_nonneg : 0 ≤ switch21 * T2 - Q2": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3775-3780, Remark 4",
-          "reason": "Remark 4 states lambda_i->j T_i - Q_i >= 0."
+          "reason": "Remark 4 states lambda_i->j T_i - Q_i >= 0.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hgap_le : switch21 * C.Ti - C.Qi ≤ switch21 * Tbar2 - Qbar2": {
+        "hgap_le : switch21 * T2 - Q2 ≤ switch21 * Tbar2 - Qbar2": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3775-3780, Remark 4",
-          "reason": "Remark 4 says the gap is maximized at accept-all."
+          "reason": "Remark 4 says the gap is maximized at accept-all.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hswitch_lt_Q2 : switch21 < C.Qi": {
+        "hswitch_lt_Q2 : switch21 < Q2": {
           "judgment": "derived_from_source_primitives",
-          "source_location": "source.txt lines 3785-3835, Lemma 9; source.txt lines 210-330 and 3710-3722",
-          "reason": "For current policies with positive accepted mass, Q_i equals the switch rate plus a positive arrival-weight contribution."
+          "source_location": "source.txt lines 3809-3832, Lemma 9; source.txt lines 210-330 and 3710-3722",
+          "reason": "For current policies with positive accepted mass, Q2 equals the switch rate plus a positive arrival-weight contribution.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hQ2_le : C.Qi ≤ Qbar2": {
+        "hQ2_le : Q2 ≤ Qbar2": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3775-3780, Remark 4",
-          "reason": "Remark 4 says Q_i is maximized at accept-all."
+          "reason": "Remark 4 says Q_i is maximized at accept-all.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_nonsurge_derivative_source_bounds": {
       "judgment": "paper_condition",
-      "reason": "Lemma 10 supplies the non-surge pricing form, ratio bounds, and current-bound inequalities over the derivative certificate fields; no certificate-field renaming equality remains exposed.",
+      "reason": "Lemma 10 supplies the non-surge pricing form, ratio bounds, and current-bound inequalities; the paper-facing wrapper constructs the Lemma 6 derivative data internally from interval-density primitives.",
       "source_location": "source.txt lines 3835-3865, Lemma 10",
-      "premise_count": 17,
+      "premise_count": 12,
       "premise_judgments": {
-        "C : Lemma6DerivativeFormulaCertificate": {
-          "judgment": "paper_condition",
-          "source_location": "source.txt lines 3740-3785, Lemma 6 derivative formula and endpoint discussion",
-          "reason": "The derivative certificate packages the local endpoint derivative formula and its positive-density strict-sign specialization before Lemmas 9--10 substitute their structured fields. It is explicit provenance for the local calculus row, not a hidden source formula or a partial boundary."
-        },
-        "hq : C.q = gn21SwitchProb switch12 switch21 C.u": {
+        "hbounds_bar : lemma10StructuredBounds ratio T2 Q2 Tbar1 Qbar1 switch12": {
           "judgment": "source_text",
-          "source_location": "source.txt lines 3835-3865, Lemma 10",
-          "reason": "Lemma 10 uses q_{1->2}(u) in the non-surge derivative formula."
-        },
-        "hwi : C.wi = R2 * C.u + z * gn21SwitchProb switch12 switch21 C.u": {
-          "judgment": "source_text",
-          "source_location": "source.txt lines 3835-3865, Lemma 10",
-          "reason": "Lemma 10 states w_1(tau)=m tau + z q_{1->2}(tau) with m=R2."
-        },
-        "hWi : C.Wi = R2 * (C.Ti - 1) + z * (C.Qi - switch12)": {
-          "judgment": "source_text",
-          "source_location": "source.txt lines 3835-3865, Lemma 10",
-          "reason": "Remark 2/Lemma 10 expand W_i for the structured non-surge price as R2(T_i-1)+z(Q_i-lambda)."
-        },
-        "hWj : C.Wj = R2 * C.Tj": {
-          "judgment": "derived_from_source_primitives",
-          "source_location": "source.txt lines 330-420, Lemma 1 definitions; source.txt lines 3835-3865, Lemma 10",
-          "reason": "Lemma 10 fixes the other state reward rate R2 and the source defines R2=W2/T2."
-        },
-        "hbounds_bar : lemma10StructuredBounds ratio C.Tj C.Qj Tbar1 Qbar1 switch12": {
-          "judgment": "source_text",
-          "source_location": "source.txt lines 3835-3865, Lemma 10",
-          "reason": "This is the displayed Lemma 10 ratio interval, using accept-all Qbar/Tbar values."
+          "source_location": "source.txt lines 3834-3860, Lemma 10",
+          "reason": "This is the displayed Lemma 10 ratio interval, using the fixed-state Q2,T2 and accept-all Qbar1,Tbar1 values.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hz : z = ratio * R2": {
           "judgment": "source_text",
-          "source_location": "source.txt lines 3835-3865, Lemma 10",
-          "reason": "Lemma 10 states the interval in terms of z/R2; the Lean ratio field records that normalization."
+          "source_location": "source.txt lines 3834-3860, Lemma 10",
+          "reason": "Lemma 10 writes the admissible interval for z/R2; Lean names this ratio equality explicitly.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hR2_pos : 0 < R2": {
-          "judgment": "source_text",
-          "source_location": "source.txt lines 3835-3865, Lemma 10",
-          "reason": "Lemma 10 works in the positive R2 reward-rate domain."
+          "judgment": "derived_from_source_primitives",
+          "source_location": "source.txt lines 330-420, Lemma 1 definitions; source.txt lines 3834-3860, Lemma 10",
+          "reason": "R2 is the positive surge-state earnings-rate primitive in the Lemma 10 setup.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hQ2_pos : 0 < C.Qj": {
+        "hQ2_pos : 0 < Q2": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722; source.txt lines 3775-3780, Remark 4",
-          "reason": "The fixed-state Q term has a positive CTMC switch-rate contribution in the dynamic model domain."
+          "reason": "The fixed-state Q term has positive CTMC switch-rate contribution in the dynamic model domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hswitch12_pos : 0 < switch12": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "CTMC switching rates are positive model primitives."
+          "reason": "CTMC switching rates are positive model primitives.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hsum : 0 < switch12 + switch21": {
           "judgment": "derived_from_source_primitives",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "The total switching intensity is positive because both CTMC rates are positive."
+          "reason": "The total switching intensity is positive because both CTMC rates are positive.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hu : 0 < C.u": {
+        "hu : 0 < u": {
           "judgment": "derived_from_source_primitives",
-          "source_location": "source.txt lines 3835-3865, Lemma 10",
-          "reason": "The derivative endpoint is an upper endpoint of a positive trip-length policy."
+          "source_location": "source.txt lines 3834-3860, Lemma 10 setup",
+          "reason": "The derivative endpoint is an upper endpoint of a positive trip-length policy.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hA_pos : 0 < C.Tj * switch12 + C.Qj": {
+        "hA_pos : 0 < T2 * switch12 + Q2": {
           "judgment": "derived_from_source_primitives",
-          "source_location": "source.txt lines 330-420, Lemma 1 definitions; source.txt lines 3775-3780, Remark 4",
-          "reason": "The fixed-state time term, switch rate, and Q term are positive/nonnegative in the CTMC domain."
+          "source_location": "source.txt lines 3834-3860, Lemma 10",
+          "reason": "This denominator-side positive term follows from positive switch rate and positive Q/T primitives.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hgap_nonneg : 0 ≤ switch12 * C.Ti - C.Qi": {
+        "hgap_nonneg : 0 ≤ switch12 * T1 - Q1": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3775-3780, Remark 4",
-          "reason": "Remark 4 states lambda_i->j T_i - Q_i >= 0."
+          "reason": "Remark 4 states lambda_i->j T_i - Q_i >= 0.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hgap_le : switch12 * C.Ti - C.Qi ≤ switch12 * Tbar1 - Qbar1": {
+        "hgap_le : switch12 * T1 - Q1 ≤ switch12 * Tbar1 - Qbar1": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3775-3780, Remark 4",
-          "reason": "Remark 4 says the gap is maximized at accept-all."
+          "reason": "Remark 4 says the gap is maximized at accept-all.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hswitch_lt_Q1 : switch12 < C.Qi": {
+        "hswitch_lt_Q1 : switch12 < Q1": {
           "judgment": "derived_from_source_primitives",
-          "source_location": "source.txt lines 3835-3865, Lemma 10; source.txt lines 210-330 and 3710-3722",
-          "reason": "For current policies with positive accepted mass, Q_i equals the switch rate plus a positive arrival-weight contribution."
+          "source_location": "source.txt lines 3834-3860, Lemma 10; source.txt lines 210-330 and 3710-3722",
+          "reason": "For current policies with positive accepted mass, Q1 equals the switch rate plus a positive arrival-weight contribution.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hQ1_le : C.Qi ≤ Qbar1": {
+        "hQ1_le : Q1 ≤ Qbar1": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3775-3780, Remark 4",
-          "reason": "Remark 4 says Q_i is maximized at accept-all."
+          "reason": "Remark 4 says Q_i is maximized at accept-all.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_theorem3_source_data_domain": {
       "judgment": "paper_condition",
@@ -422,59 +653,107 @@
         "hR1_eq : R1 = rho * R2": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3940-3965, Theorem 3 and proof setup",
-          "reason": "Theorem 3 proof setup uses R1 = rho R2."
+          "reason": "Theorem 3 proof setup uses R1 = rho R2.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hR1_pos : 0 < R1": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3940-3965, Theorem 3 and proof setup",
-          "reason": "Theorem 3 assumes positive non-surge earnings rate."
+          "reason": "Theorem 3 assumes positive non-surge earnings rate.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hR1_lt_R2 : R1 < R2": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3940-3965, Theorem 3 and proof setup",
-          "reason": "Theorem 3 assumes R1 < R2."
+          "reason": "Theorem 3 assumes R1 < R2.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hR2_pos : 0 < R2": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3940-3965, Theorem 3 and proof setup",
-          "reason": "Theorem 3 assumes positive surge earnings rate."
+          "reason": "Theorem 3 assumes positive surge earnings rate.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hrho_lt_one : rho < 1": {
           "judgment": "source_text",
           "source_location": "source.txt lines 3940-3965, Theorem 3 and proof setup",
-          "reason": "Theorem 3 assumes rho < 1."
+          "reason": "Theorem 3 assumes rho < 1.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "harrival1_pos : 0 < arrival 0": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "Arrival rates are positive Poisson primitives."
+          "reason": "Arrival rates are positive Poisson primitives.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "harrival2_pos : 0 < arrival 1": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "Arrival rates are positive Poisson primitives."
+          "reason": "Arrival rates are positive Poisson primitives.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hswitch12_pos : 0 < switch12": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "CTMC switch rates are positive primitives."
+          "reason": "CTMC switch rates are positive primitives.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hswitch21_pos : 0 < switch21": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "CTMC switch rates are positive primitives."
+          "reason": "CTMC switch rates are positive primitives.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hmeasure1_pos : 0 < mu 0 acceptAllPolicy": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "Trip length distributions are probability measures with nontrivial positive-trip support."
+          "reason": "Trip length distributions are probability measures with nontrivial positive-trip support.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hmeasure2_pos : 0 < mu 1 acceptAllPolicy": {
           "judgment": "source_text_model_primitive",
           "source_location": "source.txt lines 210-330 and 3710-3722",
-          "reason": "Trip length distributions are probability measures with nontrivial positive-trip support."
+          "reason": "Trip length distributions are probability measures with nontrivial positive-trip support.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     }
   }
 }

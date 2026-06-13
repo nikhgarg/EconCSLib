@@ -1,50 +1,102 @@
 {
-  "generated_at": "2026-06-11T03:38:38Z",
+  "schema": 1,
+  "paper": "GHW01DigitalGoods",
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "translator": "gpt-5-codex",
+  "translator_type": "model",
+  "translated_at": "2026-06-13T00:00:00Z",
+  "prompt_summary": [
+    "Translate each Lean declaration from the Lean statement alone, with no paper context.",
+    "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
+    "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
+  ],
+  "generated_at": "2026-06-12T18:12:00Z",
   "generator": "codex-refresh-current-lean-statements",
+  "comment": "Regenerated against the current dashboard review surface, including assumption rows. Assumption-row source provenance is recorded in assumption_match_llm.json.",
   "items": {
+    "assumption_bid_value_range_conditions": {
+      "lean_statement_sha256": "f870a60843753574c19d7f3c930cedd2d79d984ca85abd9a89e7c4282f1e1204",
+      "statement": "All bidder values lie in the normalized source range: at least 1, at most h, nonnegative, and bounded by the high-value parameter."
+    },
+    "assumption_high_value_attained": {
+      "lean_statement_sha256": "a0ed3cfa96632e675e18add65e5b0ee2277592994d12962e2a41e06c21a27563",
+      "statement": "The finite bid profile attains the highest bid value h."
+    },
+    "assumption_high_value_scale_conditions": {
+      "lean_statement_sha256": "5af3371d67d65b2c20a904a7f9d43e56c93fa3f9040f455c4d1cbeb360e9937c",
+      "statement": "The high-value scale assumptions require 1 \\le h, positive sample high value, positive h, and highValue \\ge 2 for the two-value lower-bound model."
+    },
+    "assumption_low_bid_below_high_bid": {
+      "lean_statement_sha256": "47e39d2d885aeacdc09f7d66d02c4a820df530b7be931dc3bb9135a6a88527bf",
+      "statement": "The compared lower bid is strictly below the compared higher bid."
+    },
+    "assumption_lower_bound_positive_alpha": {
+      "lean_statement_sha256": "08be31a413071c66d41c100bbe43808feb5ccaae8a185f4e1d9b77a278131dd7",
+      "statement": "The lower-bound parameter alpha is positive."
+    },
+    "assumption_total_value_notation": {
+      "lean_statement_sha256": "18989c0256b84068366920474f30d2ccae429fb33d381e5845e051891127fe5a",
+      "statement": "The named total equals the sum of all bidder values."
+    },
+    "assumption_truthful_auction_condition": {
+      "lean_statement_sha256": "2a61387f4ae26e6fd83fa6ae2cbd0374f4272ef538fdfffa518436d4e327c68e",
+      "statement": "The auction mechanism is truthful in the paper's dominant-strategy sense."
+    },
+    "assumption_two_winner_benchmark_large_enough": {
+      "lean_statement_sha256": "54fa8709e27e66d3de9ee821f180804da6cd631723e897e17be8a9197ffb8cec",
+      "statement": "The two-winner fixed-price benchmark is at least twice the high bid: 2h \\le F^(2)."
+    },
+    "assumption_weighted_pairing_large_market": {
+      "lean_statement_sha256": "daae61d6b14f2b319da069ec1d7d21686df15846a83258831c5dcb43751276b7",
+      "statement": "The weighted-pairing large-market side condition is 4h \\le total."
+    },
+    "assumption_weighted_pairing_log_factor": {
+      "lean_statement_sha256": "5aba37ad3e1cf6ff48860224e39b0c17635458ef6b69347e832fcb12293ba79c",
+      "statement": "The finite logarithmic wrapper uses s with 2 \\le s and log_2(h)+2 \\le s^2."
+    },
     "corollary4_2_fixed_price_lower_bound": {
       "lean_statement_sha256": "0a444e8865e19b24626b051d59863232cd9d07e62123776701fe73e04c9b8244",
-      "statement": "\\forall {Agent : Type u_1} [inst : Fintype Agent] [inst_1 : Nonempty Agent] [DecidableEq Agent] (values : Agent \\to \u211d) {h binCount : \u211d}, (\\forall (i : Agent), 0 \\le values i) \\to 0 < h \\to (\\exists i, values i = h) \\to (\\forall (i : Agent), values i \\le h) \\to logb 2 \u2191(card Agent) + 2 \\le binCount \\to totalValue values \\le 4 * binCount * fixedPriceBenchmark values 1"
+      "statement": "\\forall {Agent : Type u_1} [inst : Fintype Agent] [inst_1 : Nonempty Agent] [DecidableEq Agent] (values : Agent \\to ℝ) {h binCount : ℝ}, (\\forall (i : Agent), 0 \\le values i) \\to 0 < h \\to (\\exists i, values i = h) \\to (\\forall (i : Agent), values i \\le h) \\to logb 2 ↑(card Agent) + 2 \\le binCount \\to totalValue values \\le 4 * binCount * fixedPriceBenchmark values 1"
     },
     "fixedPriceBenchmark": {
       "lean_statement_sha256": "0af0ab85aa431218acee3f412858f27cc99197fcc660c84bf5914ccbe0662bd9",
-      "statement": "{Agent : Type*} [Fintype Agent] [Nonempty Agent] (values : Agent \\to \u211d) (minWinners : \u2115) = (Finset.univ : Finset Agent).sup' (by obtain \u27e8i\u27e9 = (inferInstance : Nonempty Agent) exact \u27e8i, by simp\u27e9) (candidateFixedPriceRevenue values minWinners)"
+      "statement": "{Agent : Type*} [Fintype Agent] [Nonempty Agent] (values : Agent \\to ℝ) (minWinners : ℕ) = (Finset.univ : Finset Agent).sup' (by obtain ⟨i⟩ = (inferInstance : Nonempty Agent) exact ⟨i, by simp⟩) (candidateFixedPriceRevenue values minWinners)"
     },
     "lemma6_1_fair_coin": {
       "lean_statement_sha256": "e62abe981a78ba94933100ce857aaef3cb2cdb4ca6cba09b02025757cac22e06",
-      "statement": "\\forall {Index : Type u_1} (s : Finset Index) (keep : Bool), (productMeasure Index).real {side | (\\sum i \\in s, if side i = keep then 1 else 0) \\le \u2191card / 3} \\le exp (-\u2191card / 36)"
+      "statement": "\\forall {Index : Type u_1} (s : Finset Index) (keep : Bool), (productMeasure Index).real {side | (\\sum i \\in s, if side i = keep then 1 else 0) \\le ↑card / 3} \\le exp (-↑card / 36)"
     },
     "lemma8_1_truthful_monotone": {
       "lean_statement_sha256": "e3f629073f1a2af5486ff8c1f192fa3c23d03bb19a3de3e0c9ef8e04bea1595e",
-      "statement": "\\forall {Agent : Type u_1} [inst : DecidableEq Agent] (M : DigitalGoodsAuction Agent), truthful M \\to \\forall (bids : Agent \\to \u211d) (i : Agent) {low high : \u211d}, low < high \\to allocation (update bids i low) i \\le allocation (update bids i high) i"
+      "statement": "\\forall {Agent : Type u_1} [inst : DecidableEq Agent] (M : DigitalGoodsAuction Agent), truthful M \\to \\forall (bids : Agent \\to ℝ) (i : Agent) {low high : ℝ}, low < high \\to allocation (update bids i low) i \\le allocation (update bids i high) i"
     },
     "lemma9_2_threshold_domination": {
       "lean_statement_sha256": "f10f76c683b112beb7f539ca0a7436e550d74224d2366736f58b823a881904e3",
-      "statement": "\\forall {Agent : Type u_1} [inst : DecidableEq Agent] (M : DigitalGoodsAuction Agent), truthful M \\to IndividuallyRational \\to NoPositiveTransfers \\to BinaryAllocation \\to \\forall (bids : Agent \\to \u211d) (i : Agent), \\exists threshold, 0 \\le threshold \\land DeterministicOfferThresholdDominates (deterministicAuctionOffer M bids i) threshold"
+      "statement": "\\forall {Agent : Type u_1} [inst : DecidableEq Agent] (M : DigitalGoodsAuction Agent), truthful M \\to IndividuallyRational \\to NoPositiveTransfers \\to BinaryAllocation \\to \\forall (bids : Agent \\to ℝ) (i : Agent), \\exists threshold, 0 \\le threshold \\land DeterministicOfferThresholdDominates (deterministicAuctionOffer M bids i) threshold"
     },
     "revenue": {
       "lean_statement_sha256": "e5b7d52bf828312bdf62098eaa630b7aa35ae3629b76a4fde62945444cb9022f",
-      "statement": "{Agent : Type*} [Fintype Agent] (M : DigitalGoodsAuction Agent) (values : Agent \\to \u211d) = \\sum i : Agent, M.payment values i"
+      "statement": "{Agent : Type*} [Fintype Agent] (M : DigitalGoodsAuction Agent) (values : Agent \\to ℝ) = \\sum i : Agent, M.payment values i"
     },
     "singlePriceRevenue": {
       "lean_statement_sha256": "ca3413a15fc1bda57a8dc2d7b5cc91986afbfb762a39ed52d34c77167fff343b",
-      "statement": "{Agent : Type*} [Fintype Agent] (values : Agent \\to \u211d) (p : \u211d) = \\sum i : Agent, if p \\le values i then p else 0"
+      "statement": "{Agent : Type*} [Fintype Agent] (values : Agent \\to ℝ) (p : ℝ) = \\sum i : Agent, if p \\le values i then p else 0"
     },
     "theorem4_1_high_value": {
       "lean_statement_sha256": "a5e61c0537d54a884fa492f1c5ea5d33f8381aff8122ff1ce6e1071e5508093f",
-      "statement": "\\forall {Agent : Type u_1} [inst : Fintype Agent] [inst_1 : Nonempty Agent] [DecidableEq Agent] (values : Agent \\to \u211d) {h : \u211d}, 1 \\le h \\to (\\forall (i : Agent), 1 \\le values i) \\to (\\forall (i : Agent), values i \\le h) \\to totalValue values \\le 2 * (logb 2 h + 2) * fixedPriceBenchmark values 1"
+      "statement": "\\forall {Agent : Type u_1} [inst : Fintype Agent] [inst_1 : Nonempty Agent] [DecidableEq Agent] (values : Agent \\to ℝ) {h : ℝ}, 1 \\le h \\to (\\forall (i : Agent), 1 \\le values i) \\to (\\forall (i : Agent), values i \\le h) \\to totalValue values \\le 2 * (logb 2 h + 2) * fixedPriceBenchmark values 1"
     },
     "theorem6_2_random_sampling": {
       "lean_statement_sha256": "5726748c4ba79b2fdb844ebc5e61d7b58d1a7fb3f55e1fa53eaed4bc7a18ab76",
-      "statement": "\\forall {n : \u2115} [inst : NeZero n] (values : Fin n \\to \u211d) (keep : Bool) {alpha : \u2115} {highValue : \u211d}, 0 < highValue \\to (\\forall (i : Fin n), values i \\le highValue) \\to \u2191alpha * highValue \\le fixedPriceBenchmark values 1 \\to 1 - exp (-\u2191alpha / 36) - 40 * exp (-\u2191alpha / 72) \\le (productMeasure (Fin n)).real {side | fixedPriceBenchmark values 1 \\le 6 * (thresholdPriceAuction (crossSampleCandidateOfferThreshold side 1)).revenue values}"
+      "statement": "\\forall {n : ℕ} [inst : NeZero n] (values : Fin n \\to ℝ) (keep : Bool) {alpha : ℕ} {highValue : ℝ}, 0 < highValue \\to (\\forall (i : Fin n), values i \\le highValue) \\to ↑alpha * highValue \\le fixedPriceBenchmark values 1 \\to 1 - exp (-↑alpha / 36) - 40 * exp (-↑alpha / 72) \\le (productMeasure (Fin n)).real {side | fixedPriceBenchmark values 1 \\le 6 * (thresholdPriceAuction (crossSampleCandidateOfferThreshold side 1)).revenue values}"
     },
     "theorem7_1_weighted_pairing": {
       "lean_statement_sha256": "7850ed5d41bd0aeeeb6eb939355a46a221186adebf66a053ccedb2ae54685e2e",
-      "statement": "\\forall {Agent : Type u_1} [inst : Fintype Agent] [inst_1 : DecidableEq Agent] [inst_2 : LinearOrder Agent] (values : Agent \\to \u211d) {h total : \u211d}, total = totalValue values \\to 1 \\le h \\to (\\forall (i : Agent), 1 \\le values i) \\to (\\forall (i : Agent), values i \\le h) \\to 4 * h \\le total \\to total \\le 192 * (logb 2 h + 2) * weightedPairingRevenue values"
+      "statement": "\\forall {Agent : Type u_1} [inst : Fintype Agent] [inst_1 : DecidableEq Agent] [inst_2 : LinearOrder Agent] (values : Agent \\to ℝ) {h total : ℝ}, total = totalValue values \\to 1 \\le h \\to (\\forall (i : Agent), 1 \\le values i) \\to (\\forall (i : Agent), values i \\le h) \\to 4 * h \\le total \\to total \\le 192 * (logb 2 h + 2) * weightedPairingRevenue values"
     },
     "theorem7_2_weighted_pairing_benchmark": {
       "lean_statement_sha256": "752d4062801fc0ddba50ea10424abbadde33f5747b5aeb44c5ffc5ccad65620c",
-      "statement": "\\forall {Agent : Type u_1} [inst : Fintype Agent] [inst_1 : Nonempty Agent] [inst_2 : DecidableEq Agent] [inst_3 : LinearOrder Agent] (values : Agent \\to \u211d) {h total s : \u211d}, total = totalValue values \\to 1 \\le h \\to (\\forall (i : Agent), 1 \\le values i) \\to (\\forall (i : Agent), values i \\le h) \\to 2 * h \\le twoWinnerBenchmark values \\to 2 \\le s \\to logb 2 h + 2 \\le s ^ 2 \\to twoWinnerBenchmark values \\le 576 * s * weightedPairingRevenue values"
+      "statement": "\\forall {Agent : Type u_1} [inst : Fintype Agent] [inst_1 : Nonempty Agent] [inst_2 : DecidableEq Agent] [inst_3 : LinearOrder Agent] (values : Agent \\to ℝ) {h total s : ℝ}, total = totalValue values \\to 1 \\le h \\to (\\forall (i : Agent), 1 \\le values i) \\to (\\forall (i : Agent), values i \\le h) \\to 2 * h \\le twoWinnerBenchmark values \\to 2 \\le s \\to logb 2 h + 2 \\le s ^ 2 \\to twoWinnerBenchmark values \\le 576 * s * weightedPairingRevenue values"
     },
     "theorem8_2_truthful_revenue_upper_bound": {
       "lean_statement_sha256": "d136c92207769236b01413f416a6f428794fb3149358eb0dd34609ff42725915",
@@ -52,30 +104,27 @@
     },
     "theorem9_1_bid_independent_lower_bound": {
       "lean_statement_sha256": "e1640e52eaa5b4718e5f539bd95495bb0a12a21bbde84d363b2c135f5fc7fa2d",
-      "statement": "\\forall (priceRule : List \u211d \\to \u211d) {highValue alpha : \u2115}, 2 \\le highValue \\to 0 < alpha \\to \\exists highCount lowCount, \u2191highValue * twoValueBidIndependentPriceRevenue (twoValueListBidIndependentThresholdPrice priceRule highValue) highValue highCount lowCount \\le twoValueFixedPriceBenchmark highValue highCount lowCount \\land \u2191highValue * \u2191alpha \\le twoValueFixedPriceBenchmark highValue highCount lowCount"
+      "statement": "\\forall (priceRule : List ℝ \\to ℝ) {highValue alpha : ℕ}, 2 \\le highValue \\to 0 < alpha \\to \\exists highCount lowCount, ↑highValue * twoValueBidIndependentPriceRevenue (twoValueListBidIndependentThresholdPrice priceRule highValue) highValue highCount lowCount \\le twoValueFixedPriceBenchmark highValue highCount lowCount \\land ↑highValue * ↑alpha \\le twoValueFixedPriceBenchmark highValue highCount lowCount"
     },
     "theorem9_3_deterministic_truthful_lower_bound": {
       "lean_statement_sha256": "4e8ad9a813bdfd6e9544bebc509de208ca05ce33fa7c8929324cca34c904d214",
-      "statement": "\\forall {highValue alpha : \u2115} (model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue), 2 \\le highValue \\to 0 < alpha \\to \\exists highCount lowCount, (auctionFamily highCount lowCount).revenue (twoValueBidProfile highValue highCount lowCount) / twoValueFixedPriceBenchmark highValue highCount lowCount \\le 1 / \u2191highValue \\land \u2191highValue * \u2191alpha \\le twoValueFixedPriceBenchmark highValue highCount lowCount"
+      "statement": "\\forall {highValue alpha : ℕ} (model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue), 2 \\le highValue \\to 0 < alpha \\to \\exists highCount lowCount, (auctionFamily highCount lowCount).revenue (twoValueBidProfile highValue highCount lowCount) / twoValueFixedPriceBenchmark highValue highCount lowCount \\le 1 / ↑highValue \\land ↑highValue * ↑alpha \\le twoValueFixedPriceBenchmark highValue highCount lowCount"
     },
     "totalValue": {
       "lean_statement_sha256": "924fa80f2aab6b159fc7ddd92664927927f39512e3ee7349877d6354ccc815cb",
-      "statement": "{Agent : Type*} [Fintype Agent] (values : Agent \\to \u211d) = \\sum i : Agent, values i"
+      "statement": "{Agent : Type*} [Fintype Agent] (values : Agent \\to ℝ) = \\sum i : Agent, values i"
     },
     "truthful": {
       "lean_statement_sha256": "d8b762f5539c957bf7909e9c78b1570e16b51158aff85cd010c3fd8e2b37294c",
-      "statement": "{Agent : Type*} [DecidableEq Agent] (M : DigitalGoodsAuction Agent) = \\forall (values : Agent \\to \u211d) (i : Agent) (report : \u211d), M.utility values i (Function.update values i report) \\le M.utility values i values"
+      "statement": "{Agent : Type*} [DecidableEq Agent] (M : DigitalGoodsAuction Agent) = \\forall (values : Agent \\to ℝ) (i : Agent) (report : ℝ), M.utility values i (Function.update values i report) \\le M.utility values i values"
     },
     "twoWinnerBenchmark": {
       "lean_statement_sha256": "183b7a4ac4a439c67aa320eff9af97f1337b1eb3faf0c19994321fb2b8a7bc9b",
-      "statement": "{Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent] (values : Agent \\to \u211d) = twoWinnerFixedPriceBenchmarkValue values"
+      "statement": "{Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent] (values : Agent \\to ℝ) = twoWinnerFixedPriceBenchmarkValue values"
     },
     "weightedPairingRevenue": {
       "lean_statement_sha256": "01e1454c8950b9c01ff724bf9db3ff63f82a8cc169bc8a4cf9f57e202286c7ab",
-      "statement": "{Agent : Type*} [Fintype Agent] [DecidableEq Agent] [LinearOrder Agent] (values : Agent \\to \u211d) = weightedPairingExpectedRevenue values"
+      "statement": "{Agent : Type*} [Fintype Agent] [DecidableEq Agent] [LinearOrder Agent] (values : Agent \\to ℝ) = weightedPairingExpectedRevenue values"
     }
-  },
-  "paper": "GHW01DigitalGoods",
-  "schema": 1,
-  "comment": "Refreshed Lean statement digests against current PaperInterface.lean rows; existing Lean-to-TeX/prose drafts were preserved."
+  }
 }

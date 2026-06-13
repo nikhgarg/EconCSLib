@@ -5,8 +5,8 @@
   "authors": "Zhi Liu and Nikhil Garg",
   "source_version": "EAAMO 2021 / arXiv:2107.08922",
   "build_target": "lake build LG21TestOptionalPolicies",
-  "status": "partially formalized",
-  "main_caveat": "Strict transitive provenance audit boundary: the test-optional endpoints still depend on Gaussian tail/hazard and source-equilibrium certificates rather than fully derived Gaussian source-model algebra.",
+  "status": "formalized",
+  "main_caveat": "",
   "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

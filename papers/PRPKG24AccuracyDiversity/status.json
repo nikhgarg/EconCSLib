@@ -6,7 +6,7 @@
   "source_version": "The ACM Web Conference, 2024, pp. 1318--1329; arXiv:2307.15142v1",
   "build_target": "lake build PRPKG24AccuracyDiversity",
   "status": "partially formalized",
-  "main_caveat": "Strict transitive provenance audit boundary: the Top-K oracle, Bernoulli tail/Laplace, rounding, averaging, and integral-asymptotic certificates remain explicit partial boundaries.",
+  "main_caveat": "Partial-formalization boundary: the Top-K oracle, Bernoulli tail/Laplace, rounding, averaging, and integral-asymptotic certificates remain explicit partial boundaries.",
   "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
   "human_summary_review": {
     "status": "human_approved",

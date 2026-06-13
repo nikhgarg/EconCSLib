@@ -1,10 +1,18 @@
 {
   "schema": 1,
   "paper": "DSWG24DiscretizationBias",
+  "prompt_version": "assumption-provenance-v2-exact-premise-source",
   "validator": "gpt-5-codex",
   "validator_type": "model",
-  "validated_at": "2026-06-12T00:00:00Z",
-  "comment": "Premise-level source/provenance audit. Each audit-premise from Assumptions.lean is judged individually; group-level approval is not sufficient. The K >= 2 condition is recorded as a human-verified implicit multiclass condition from nikhgarg on 2026-06-12.",
+  "validated_at": "2026-06-13T00:00:00Z",
+  "comment": "Refreshed under the exact premise-source provenance prompt. Every audit-premise is judged independently where present.",
+  "prompt_summary": [
+    "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
+    "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
+    "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
+    "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
+    "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption."
+  ],
   "items": {
     "assumption_theorem1_no_information_case": {
       "judgment": "paper_condition",
@@ -15,9 +23,17 @@
         "hnoInformation : ∀ x a, q x a = prior μ a": {
           "judgment": "source_text",
           "source_location": "DSWG24DiscretizationBias.txt lines 761-768 and 1454-1461",
-          "reason": "The paper's Theorem 1(i) states that x provides no information and q(y,x)=Pr(y) for all x,y."
+          "reason": "The paper's Theorem 1(i) states that x provides no information and q(y,x)=Pr(y) for all x,y.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_theorem1_plurality_argmax_class": {
       "judgment": "paper_condition",
@@ -28,9 +44,17 @@
         "hplurality : ∀ a, prior μ a ≤ prior μ z": {
           "judgment": "source_text",
           "source_location": "DSWG24DiscretizationBias.txt lines 229-230, 764-768, and 1544-1545",
-          "reason": "The source says all data points are classified as a plurality class in the no-information case and fixes a consistent tie-breaking convention for argmax."
+          "reason": "The source says all data points are classified as a plurality class in the no-information case and fixes a consistent tie-breaking convention for argmax.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_theorem1_perfect_classifier": {
       "judgment": "paper_condition",
@@ -41,9 +65,17 @@
         "htruth : ∀ xy : X × Y, rule xy.1 = xy.2": {
           "judgment": "source_text",
           "source_location": "DSWG24DiscretizationBias.txt lines 786-788 and 1466-1468",
-          "reason": "The source states the perfect-classifier case as q(z,x)=1 for the true label and 0 otherwise; the Lean premise is the induced decision-rule equality with the true label."
+          "reason": "The source states the perfect-classifier case as q(z,x)=1 for the true label and 0 otherwise; the Lean premise is the induced decision-rule equality with the true label.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_theorem1_argmax_rule_measurable": {
       "judgment": "paper_condition",
@@ -54,9 +86,17 @@
         "hrule : Measurable argmaxRule": {
           "judgment": "paper_condition",
           "source_location": "DSWG24DiscretizationBias.txt lines 759-763; formalization side condition for the continuous argmax rule",
-          "reason": "The paper states the continuous argmax rule under a data distribution; Lean exposes the standard measurability condition needed for the integrals in the continuous theorem."
+          "reason": "The paper states the continuous argmax rule under a data distribution; Lean exposes the standard measurability condition needed for the integrals in the continuous theorem.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_theorem1_calibrated_classifier": {
       "judgment": "paper_condition",
@@ -67,9 +107,17 @@
         "hcal : calibrated μ q": {
           "judgment": "source_text",
           "source_location": "DSWG24DiscretizationBias.txt lines 759-763 and 1451-1455",
-          "reason": "The paper defines calibration as Pr(Y=y | q(y,x)=c)=c and states Theorem 1 for calibrated classifiers."
+          "reason": "The paper defines calibration as Pr(Y=y | q(y,x)=c)=c and states Theorem 1 for calibrated classifiers.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_theorem2_at_least_two_classes": {
       "judgment": "paper_condition",
@@ -78,14 +126,19 @@
       "premise_count": 1,
       "validator": "nikhgarg",
       "validator_type": "human",
-      "validated_at": "2026-06-12T00:00:00Z",
+      "validated_at": "2026-06-13T00:00:00Z",
       "premise_judgments": {
         "hK : 2 ≤ K": {
           "judgment": "paper_condition",
           "source_location": "DSWG24DiscretizationBias.txt lines 952-956 and 1908-1912; human validator nikhgarg, 2026-06-12",
-          "reason": "The paper states Theorem 2 for the multiclass setting. The human validator confirmed K >= 2 as an implicit source condition, not a proof-route certificate."
+          "reason": "The paper states Theorem 2 for the multiclass setting. The human validator confirmed K >= 2 as an implicit source condition, not a proof-route certificate.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_theorem2_more_rows_than_classes": {
       "judgment": "paper_condition",
@@ -96,9 +149,17 @@
         "hNK : K < N": {
           "judgment": "source_text",
           "source_location": "DSWG24DiscretizationBias.txt lines 952-956 and 1908-1912",
-          "reason": "Theorem 2 states N > K, represented in Lean as K < N."
+          "reason": "Theorem 2 states N > K, represented in Lean as K < N.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_theorem2_positive_sample_count": {
       "judgment": "paper_condition",
@@ -109,9 +170,17 @@
         "hNpos : 0 < N": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived from source condition N > K and implicit K >= 2; DSWG24DiscretizationBias.txt lines 952-956 and 1908-1912",
-          "reason": "The exposed positivity condition follows from the paper's N > K theorem condition together with the multiclass K >= 2 setting."
+          "reason": "The exposed positivity condition follows from the paper's N > K theorem condition together with the multiclass K >= 2 setting.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_theorem2_reference_nonnegative": {
       "judgment": "paper_condition",
@@ -122,9 +191,17 @@
         "hpref_nonneg : ∀ y, 0 ≤ pref y": {
           "judgment": "source_text_model_primitive",
           "source_location": "DSWG24DiscretizationBias.txt lines 926-927, 952-956, and 2058-2085",
-          "reason": "The source defines the non-trivial reference object as a reference distribution; nonnegativity is the probability-distribution component of that source primitive."
+          "reason": "The source defines the non-trivial reference object as a reference distribution; nonnegativity is the probability-distribution component of that source primitive.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     }
   }
 }

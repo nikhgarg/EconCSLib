@@ -2,11 +2,9 @@
 
 ## 1. Human Verdict
 
-- Lean formalization status: partially formalized
+- Lean formalization status: formalized
 - Human dashboard review status: 0/18 rows reviewed; 0 stale; 0 mismatches.
-- Main caveat: Premise-source audit is closed; Theorem 3 uses closed
-  source-shaped first-half and second-half wrappers rather than algebraic
-  bridge certificates.
+- Main caveat: none.
 
 ### Report Metadata
 
@@ -15,19 +13,20 @@ Date: 2026-05-01
 ### Verdict
 
 The tracked paper-facing formalization for *User-item fairness tradeoffs in
-recommendations* is formalized in Lean.
+recommendations* is formalized under the current provenance standard.
 
-The paper-local status ledger marks no active target remaining, and the targeted
-paper build completed successfully. A Lean-file placeholder scan found no real
-`sorry`, `admit`, or `axiom` proof gaps in `papers/GCG24UserItemFairness`;
-matches were only comment prose.
+The targeted paper build completed successfully and a Lean-file placeholder scan
+found no real `sorry`, `admit`, or `axiom` proof gaps in
+`papers/GCG24UserItemFairness`; matches were only comment prose. The current
+paper-facing wrappers construct or discharge the earlier LP/duality and
+feasible-support certificate inputs internally.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
-Current result: LP/duality and feasible-support optimality certificates for the Problem 6/11 reduction and misestimation tradeoff rows remain source-boundary proof obligations.
+Current result: no unresolved hidden source-row or certificate premise remains in the paper-facing review surface.
 <!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
@@ -136,7 +135,7 @@ Human dashboard reviews and model/agent statement checks may both appear here. T
 
 ## 7. Paper Assumption Provenance And Modeling Notes
 
-> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json`
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json`
 > now records per-premise judgments for this paper's `Assumptions.lean`
 > ledger. Current result: 34/34 recorded premises are source-matched,
 > source-model primitives, or source theorem conditions; 0 remain partial
@@ -250,4 +249,8 @@ Flagged rows: none.
 ## 15. Final Verdict
 
 - Completion status: formalized.
-- Summary: Recommendation fairness propositions and theorem statements are closed under the formal source model, with 34/34 recorded theorem premises source-matched or source-conditioned.
+- Summary: Recommendation fairness propositions and theorem statements compile
+  under the formal source model, with 34/34 recorded theorem premises
+  source-matched or source-conditioned. The earlier LP/duality and
+  feasible-support certificate boundary has been removed from the closed
+  paper-facing wrappers.

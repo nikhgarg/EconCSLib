@@ -6,7 +6,7 @@
   "source_version": "ACM FAccT 2024 / PNAS Nexus 2025 published version",
   "build_target": "lake build DSWG24DiscretizationBias",
   "status": "formalized",
-  "main_caveat": "The strengthened transitive provenance audit finds no unresolved certificate/source-boundary dependency for the current paper-facing status. Explicit assumptions remain source-matched, including the human-verified implicit multiclass condition.",
+  "main_caveat": "",
   "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

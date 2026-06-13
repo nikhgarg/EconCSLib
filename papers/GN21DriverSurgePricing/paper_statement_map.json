@@ -79,8 +79,8 @@
     },
     "review_lemma6_upper_endpoint_derivative_formula": {
       "source_text_file": "source.txt",
-      "start_line": 3786,
-      "end_line": 3808
+      "start_line": 3724,
+      "end_line": 3745
     },
     "review_lemma7_affine_positive_additive_response_quasi_convex": {
       "source_text_file": "source.txt",
@@ -94,13 +94,13 @@
     },
     "review_lemma9_surge_derivative_positive_of_acceptAll_bounds": {
       "source_text_file": "source.txt",
-      "start_line": 3099,
-      "end_line": 3108
+      "start_line": 3809,
+      "end_line": 3829
     },
     "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds": {
       "source_text_file": "source.txt",
-      "start_line": 3114,
-      "end_line": 3123
+      "start_line": 3834,
+      "end_line": 3854
     },
     "review_theorem2_multiplicative_policy_shape_ae": {
       "source_text_file": "source.txt",

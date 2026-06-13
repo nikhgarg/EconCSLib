@@ -1,58 +1,68 @@
 {
-  "generated_at": "2026-06-11T03:45:07Z",
-  "generator": "gpt-5-codex",
+  "schema": 1,
+  "paper": "GCG24UserItemFairness",
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "translator": "gpt-5-codex",
+  "translator_type": "model",
+  "translated_at": "2026-06-13T00:00:00Z",
+  "prompt_summary": [
+    "Translate each Lean declaration from the Lean statement alone, with no paper context.",
+    "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
+    "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
+  ],
+  "comment": "Refreshed Theorem 3 drafts with explicit W/W-prime qualifiers after report-parser cleanup; other drafts preserved.",
+  "generated_at": "2026-06-11T04:02:19Z",
+  "generator": "codex-refresh-current-lean-statements",
   "items": {
     "itemFairness": {
       "lean_statement_sha256": "27ffb87bff30f730bd5e4100c0d98994f43706e08bc75d1d2708951401ee8c41",
-      "statement": "{m n : \u2115} [NeZero n] (W : RecommendationModel m n) (\u03c1 : Policy m n) = EconCSLib.finiteMin (normalizedItemUtility W \u03c1)"
+      "statement": "{m n : ℕ} [NeZero n] (W : RecommendationModel m n) (ρ : Policy m n) = EconCSLib.finiteMin (normalizedItemUtility W ρ)"
     },
     "itemNormalizer": {
       "lean_statement_sha256": "597b468785fb5a0abf0a3b60413d792e678b72437cf6dc616305880238a36a4f",
-      "statement": "{m n : \u2115} (W : RecommendationModel m n) (j : Item n) = \\sum u, W.utility u j"
+      "statement": "{m n : ℕ} (W : RecommendationModel m n) (j : Item n) = \\sum u, W.utility u j"
     },
     "normalizedItemUtility": {
       "lean_statement_sha256": "00fcc2a3c98ac915191c7c39bf030fcebe91b21d107771c46d29cf18dfb6c36b",
-      "statement": "{m n : \u2115} (W : RecommendationModel m n) (\u03c1 : Policy m n) (j : Item n) = let denom = itemNormalizer W j if denom = 0 then 0 else rawItemUtility W \u03c1 j / denom"
+      "statement": "{m n : ℕ} (W : RecommendationModel m n) (ρ : Policy m n) (j : Item n) = let denom = itemNormalizer W j if denom = 0 then 0 else rawItemUtility W ρ j / denom"
     },
     "normalizedUserUtility": {
       "lean_statement_sha256": "6d25289cdea8154fe9b7632ddc90082ae7c108cdc8d747299904a9bc0893e2a9",
-      "statement": "{m n : \u2115} [NeZero n] (W : RecommendationModel m n) (\u03c1 : Policy m n) (u : User m) = rawUserUtility W \u03c1 u / RecommendationModel.bestItemUtility W u"
+      "statement": "{m n : ℕ} [NeZero n] (W : RecommendationModel m n) (ρ : Policy m n) (u : User m) = rawUserUtility W ρ u / RecommendationModel.bestItemUtility W u"
     },
     "priceOfFairness": {
       "lean_statement_sha256": "5c9a981d86763828aeaa1791404340644723470b93ad22f8d2ff9e33729f01cf",
-      "statement": "{m n : \u2115} [NeZero m] [NeZero n] (W : RecommendationModel m n) = priceOfFairnessAt W 1"
+      "statement": "{m n : ℕ} [NeZero m] [NeZero n] (W : RecommendationModel m n) = priceOfFairnessAt W 1"
     },
     "priceOfFairnessAt": {
       "lean_statement_sha256": "ddb6cf5a9db72f4343dc8ea35e33c4d9a2619f216938f9b109c8288adc4ba63d",
-      "statement": "{m n : \u2115} [NeZero m] [NeZero n] (W : RecommendationModel m n) (\\gamma : \u211d) = let base = RecommendationModel.optimalUserFairnessAtLevel W 0 if base = 0 then 0 else (base - RecommendationModel.optimalUserFairnessAtLevel W \\gamma) / base"
+      "statement": "{m n : ℕ} [NeZero m] [NeZero n] (W : RecommendationModel m n) (\\gamma : ℝ) = let base = RecommendationModel.optimalUserFairnessAtLevel W 0 if base = 0 then 0 else (base - RecommendationModel.optimalUserFairnessAtLevel W \\gamma) / base"
     },
     "priceOfMisestimation": {
       "lean_statement_sha256": "650fd354d6a7028b3fcba10b7f640511984558ecade1dfa4d360fef99a177688",
-      "statement": "{m n : \u2115} [NeZero m] [NeZero n] (E : EstimatedRecommendationModel m n) (\\gamma : \u211d) (\u03c1hat : Policy m n) = let base = RecommendationModel.optimalUserFairnessAtLevel E.trueModel \\gamma if base = 0 then 0 else (base - RecommendationModel.userFairness E.trueModel \u03c1hat) / base"
+      "statement": "{m n : ℕ} [NeZero m] [NeZero n] (E : EstimatedRecommendationModel m n) (\\gamma : ℝ) (ρhat : Policy m n) = let base = RecommendationModel.optimalUserFairnessAtLevel E.trueModel \\gamma if base = 0 then 0 else (base - RecommendationModel.userFairness E.trueModel ρhat) / base"
     },
     "proposition1_symmetric_lp_reduction": {
-      "lean_statement_sha256": "69b534fd7292d11e761c7bd18f96d063c915b326adb7dcfc291a2277e0458b28",
-      "statement": "\\forall {m n K : \u2115} [inst : NeZero m] [inst_1 : NeZero n] [NeZero K] (R : ReductionWitness m n K) (reps : TypeRepresentatives types) (\\gamma : \u211d), LPReductionTarget R \\gamma"
+      "statement": "\\forall {m n K : ℕ} [inst : NeZero m] [inst_1 : NeZero n] [NeZero K] (R : ReductionWitness m n K) (reps : TypeRepresentatives types) (\\gamma : ℝ), LPReductionTarget R \\gamma"
     },
     "proposition2_symmetric_optimum_exists": {
-      "lean_statement_sha256": "e1d3e3377f34655260b6d9b7f9e00cdff5dabfdc955dbd5f6c40bcfa961f99f5",
-      "statement": "\\forall {m n K : \u2115} [inst : NeZero m] [inst_1 : NeZero n] [NeZero K] (S : SymmetricData m n K) (reps : TypeRepresentatives types), Positive \\to \\exists \u03c1sym, IsTypeSymmetric types \u03c1sym \\land IsOptimalAtLevel 1 \u03c1sym"
+      "statement": "\\forall {m n K : ℕ} [inst : NeZero m] [inst_1 : NeZero n] [NeZero K] (S : SymmetricData m n K) (reps : TypeRepresentatives types), Positive \\to \\exists ρsym, IsTypeSymmetric types ρsym \\land IsOptimalAtLevel 1 ρsym"
     },
     "rawItemUtility": {
       "lean_statement_sha256": "d5e1f4c7a0b549166e0dabfb569088c7fcc7eda2127ddc62ef902a12b4a61e03",
-      "statement": "{m n : \u2115} (W : RecommendationModel m n) (\u03c1 : Policy m n) (j : Item n) = \\sum u, W.utility u j * (\u03c1 u j).toReal"
+      "statement": "{m n : ℕ} (W : RecommendationModel m n) (ρ : Policy m n) (j : Item n) = \\sum u, W.utility u j * (ρ u j).toReal"
     },
     "rawUserUtility": {
       "lean_statement_sha256": "cd26ce9f137759e2175e1476a553536810bdb87c6c820dc36550fbf9c4d57955",
-      "statement": "{m n : \u2115} (W : RecommendationModel m n) (\u03c1 : Policy m n) (u : User m) = EconCSLib.Policy.agentScore \u03c1 W.utility u"
+      "statement": "{m n : ℕ} (W : RecommendationModel m n) (ρ : Policy m n) (u : User m) = EconCSLib.Policy.agentScore ρ W.utility u"
     },
     "recommendationUtility": {
       "lean_statement_sha256": "d060b0d93b8eb1a936c777bf701fb9e01bc0e85a0398f714322ec4511df54231",
-      "statement": "{m n : \u2115} (W : RecommendationModel m n) (u : User m) (j : Item n) = W.utility u j"
+      "statement": "{m n : ℕ} (W : RecommendationModel m n) (u : User m) (j : Item n) = W.utility u j"
     },
     "solvesProblemOne": {
       "lean_statement_sha256": "f050c265e50b42e5994c0db7ffbcdb5ae397af85b6b1e7885c7941055d4cd465",
-      "statement": "{m n : \u2115} [NeZero m] [NeZero n] (W : RecommendationModel m n) (\\gamma : \u211d) (\u03c1 : Policy m n) = RecommendationModel.IsOptimalAtLevel W \\gamma \u03c1"
+      "statement": "{m n : ℕ} [NeZero m] [NeZero n] (W : RecommendationModel m n) (\\gamma : ℝ) (ρ : Policy m n) = RecommendationModel.IsOptimalAtLevel W \\gamma ρ"
     },
     "theorem3_price_of_fairness_decreases": {
       "lean_statement_sha256": "d17da16cf10d7e9a62e3197ea3bfad45d8d8888deae34c130ecd9ff391aa1653",
@@ -62,20 +72,51 @@
       "lean_statement_sha256": "86c2667fb818d0d68079899374cb057c1f0b255f55946a01edffc60825f351f9",
       "statement": "For recommendation models W and W' with nonnegative utilities and a positive item in every row, if W.optimalUserFairnessAtLevel 1 < W'.optimalUserFairnessAtLevel 1, then W'.priceOfFairness < W.priceOfFairness."
     },
+    "theorem3_price_decreases_first_half": {
+      "statement": "For the opposing two-type source model with positive strictly decreasing item values and 0 < alpha <= alpha' <= 1/2, increasing alpha toward the balanced population weakly decreases the price of fairness."
+    },
+    "theorem3_price_increases_second_half": {
+      "statement": "For the opposing two-type source model with positive strictly decreasing item values and 1/2 <= alpha <= alpha' < 1, increasing alpha away from the balanced population weakly increases the price of fairness."
+    },
     "theorem4_misestimation_tradeoff_typeOne": {
-      "lean_statement_sha256": "38cb3495022e40fb0e8825a137a0e84112d3f9561e6ba65964d415de728e2b4c",
-      "statement": "\\forall {m n : \u2115} [inst : NeZero m] [inst_1 : NeZero n] (E : EstimatedRecommendationModel m n) (Rtrue : ReductionWitness m n 2) (Rest : ReductionWitness m n 3) (repsTrue : TypeRepresentatives types) (repsEst : TypeRepresentatives types) {beta eps : \u211d} (u : User m), 2 < n \\to trueModel = model \\to estimatedModel = model \\to reduced = twoTypeReducedModel (1 / 2) (theorem4SmallValueVector eps) \\to reduced = theorem4EstimatedReducedModel beta (theorem4SmallValueVector eps) \\to (\\forall (u : User m), toType u = 0 \\to toType u = 0) \\to (\\forall (u : User m), toType u = 1 \\to toType u = 1) \\to toType u = 1 \\to toType u = 2 \\to 0 < eps \\to (\u2191n)\u207b\u00b9 < beta \\to beta < 1 / 2 \\to (have \u03c10 := theorem4NoFairnessPolicyCollapsed (theorem4SmallValueVector eps); SolvesEstimatedProblem 0 (liftedPolicy \u03c10) \\land priceOfMisestimation 0 (liftedPolicy \u03c10) \\le 1 / 2) \\land \\exists \u03c11, SolvesEstimatedProblem 1 (liftedPolicy \u03c11) \\land 1 - eps < priceOfMisestimation 1 (liftedPolicy \u03c11)"
+      "statement": "\\forall {m n : ℕ} [inst : NeZero m] [inst_1 : NeZero n] (E : EstimatedRecommendationModel m n) (Rtrue : ReductionWitness m n 2) (Rest : ReductionWitness m n 3) (repsTrue : TypeRepresentatives types) (repsEst : TypeRepresentatives types) {beta eps : ℝ} (u : User m), 2 < n \\to trueModel = model \\to estimatedModel = model \\to reduced = twoTypeReducedModel (1 / 2) (theorem4SmallValueVector eps) \\to reduced = theorem4EstimatedReducedModel beta (theorem4SmallValueVector eps) \\to (\\forall (u : User m), toType u = 0 \\to toType u = 0) \\to (\\forall (u : User m), toType u = 1 \\to toType u = 1) \\to toType u = 1 \\to toType u = 2 \\to 0 < eps \\to (↑n)⁻¹ < beta \\to beta < 1 / 2 \\to (have ρ0 := theorem4NoFairnessPolicyCollapsed (theorem4SmallValueVector eps); SolvesEstimatedProblem 0 (liftedPolicy ρ0) \\land priceOfMisestimation 0 (liftedPolicy ρ0) \\le 1 / 2) \\land \\exists ρ1, SolvesEstimatedProblem 1 (liftedPolicy ρ1) \\land 1 - eps < priceOfMisestimation 1 (liftedPolicy ρ1)"
     },
     "theorem4_misestimation_tradeoff_typeZero": {
-      "lean_statement_sha256": "92c91b2bbf546feb3fc8cdaaf8dac3aff597c5b7f4d65ede5de2a27f6ad93a36",
-      "statement": "\\forall {m n : \u2115} [inst : NeZero m] [inst_1 : NeZero n] (E : EstimatedRecommendationModel m n) (Rtrue : ReductionWitness m n 2) (Rest : ReductionWitness m n 3) (repsTrue : TypeRepresentatives types) (repsEst : TypeRepresentatives types) {beta eps : \u211d} (u : User m), 2 < n \\to trueModel = model \\to estimatedModel = model \\to reduced = twoTypeReducedModel (1 / 2) (theorem4SmallValueVector eps) \\to reduced = theorem4EstimatedReducedModel beta (theorem4SmallValueVector eps) \\to (\\forall (u : User m), toType u = 0 \\to toType u = 0) \\to (\\forall (u : User m), toType u = 1 \\to toType u = 1) \\to toType u = 0 \\to toType u = 2 \\to 0 < eps \\to (\u2191n)\u207b\u00b9 < beta \\to beta < 1 / 2 \\to (have \u03c10 := theorem4NoFairnessPolicyCollapsed (theorem4SmallValueVector eps); SolvesEstimatedProblem 0 (liftedPolicy \u03c10) \\land priceOfMisestimation 0 (liftedPolicy \u03c10) \\le 1 / 2) \\land \\exists \u03c11, SolvesEstimatedProblem 1 (liftedPolicy \u03c11) \\land 1 - eps < priceOfMisestimation 1 (liftedPolicy \u03c11)"
+      "statement": "\\forall {m n : ℕ} [inst : NeZero m] [inst_1 : NeZero n] (E : EstimatedRecommendationModel m n) (Rtrue : ReductionWitness m n 2) (Rest : ReductionWitness m n 3) (repsTrue : TypeRepresentatives types) (repsEst : TypeRepresentatives types) {beta eps : ℝ} (u : User m), 2 < n \\to trueModel = model \\to estimatedModel = model \\to reduced = twoTypeReducedModel (1 / 2) (theorem4SmallValueVector eps) \\to reduced = theorem4EstimatedReducedModel beta (theorem4SmallValueVector eps) \\to (\\forall (u : User m), toType u = 0 \\to toType u = 0) \\to (\\forall (u : User m), toType u = 1 \\to toType u = 1) \\to toType u = 0 \\to toType u = 2 \\to 0 < eps \\to (↑n)⁻¹ < beta \\to beta < 1 / 2 \\to (have ρ0 := theorem4NoFairnessPolicyCollapsed (theorem4SmallValueVector eps); SolvesEstimatedProblem 0 (liftedPolicy ρ0) \\land priceOfMisestimation 0 (liftedPolicy ρ0) \\le 1 / 2) \\land \\exists ρ1, SolvesEstimatedProblem 1 (liftedPolicy ρ1) \\land 1 - eps < priceOfMisestimation 1 (liftedPolicy ρ1)"
+    },
+    "assumption_positive_recommendation_utilities": {
+      "statement": "Source condition: recommendation utilities in the relevant source models are strictly positive."
+    },
+    "assumption_theorem3_opposing_type_model": {
+      "statement": "Source condition: Theorem 3 uses the opposing two-type model with the same positive, strictly decreasing value vector."
+    },
+    "assumption_theorem3_first_half_alpha_domain": {
+      "statement": "Source condition: Theorem 3 first-half monotonicity uses 0 < alpha <= alpha' <= 1/2."
+    },
+    "assumption_theorem3_second_half_alpha_domain": {
+      "statement": "Source condition: Theorem 3 second-half monotonicity uses 1/2 <= alpha <= alpha' < 1."
+    },
+    "assumption_theorem4_at_least_three_items": {
+      "statement": "Source condition: Theorem 4 uses a nontrivial item geometry with more than two items."
+    },
+    "assumption_theorem4_true_model_reduction": {
+      "statement": "Source condition: Theorem 4's true model is the two-type source construction."
+    },
+    "assumption_theorem4_estimated_model_reduction": {
+      "statement": "Source condition: Theorem 4's estimated model is the three-type estimated construction."
+    },
+    "assumption_theorem4_displayed_reduced_models": {
+      "statement": "Source condition: Theorem 4 uses the displayed true and estimated reduced matrices."
+    },
+    "assumption_theorem4_cold_start_type_wiring": {
+      "statement": "Source condition: Theorem 4's cold-start user is estimated as the third type and has one of the two true opposing rows."
+    },
+    "assumption_theorem4_parameter_domain": {
+      "statement": "Source condition: Theorem 4 uses positive epsilon and beta in the displayed domain."
     },
     "userFairness": {
       "lean_statement_sha256": "8d986b647ed3a4b0303fc7ea6daed94689a0cc9d2dc83ef2b618196b76249e6c",
-      "statement": "{m n : \u2115} [NeZero m] [NeZero n] (W : RecommendationModel m n) (\u03c1 : Policy m n) = EconCSLib.finiteMin (normalizedUserUtility W \u03c1)"
+      "statement": "{m n : ℕ} [NeZero m] [NeZero n] (W : RecommendationModel m n) (ρ : Policy m n) = EconCSLib.finiteMin (normalizedUserUtility W ρ)"
     }
-  },
-  "paper": "GCG24UserItemFairness",
-  "schema": 1,
-  "comment": "Refreshed Theorem 3 drafts with explicit W/W-prime qualifiers after report-parser cleanup; other drafts preserved."
+  }
 }

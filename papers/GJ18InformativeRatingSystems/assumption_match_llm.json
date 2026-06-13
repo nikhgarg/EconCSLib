@@ -1,10 +1,18 @@
 {
   "schema": 1,
   "paper": "GJ18InformativeRatingSystems",
+  "prompt_version": "assumption-provenance-v2-exact-premise-source",
   "validator": "gpt-5-codex",
   "validator_type": "model",
-  "validated_at": "2026-06-12T00:00:00Z",
-  "comment": "Premise-level source/provenance audit against the cached GJ18 TeX source. Each audit-premise from Assumptions.lean is judged individually; helper-route conditions are not canonical theorem assumptions unless marked source or derived.",
+  "validated_at": "2026-06-13T00:00:00Z",
+  "comment": "Refreshed under the exact premise-source provenance prompt. Every audit-premise is judged independently where present.",
+  "prompt_summary": [
+    "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
+    "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
+    "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
+    "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
+    "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption."
+  ],
   "items": {
     "assumption_positive_match_rates": {
       "judgment": "paper_condition",
@@ -15,19 +23,35 @@
         "hgHi : 0 < sampleRate hi": {
           "judgment": "paper_condition",
           "source_location": "adjectivesmodel.tex: sellers receive n_k(theta)=floor(k g(theta)) matches/ratings; appendix_theory.tex: kg(theta_i) is the number of samples",
-          "reason": "The pairwise helper applies the paper's asymptotic sample-rate model to a compared high type; positivity is the nondegenerate domain in which the displayed large-deviation rate is meaningful."
+          "reason": "The pairwise helper applies the paper's asymptotic sample-rate model to a compared high type; positivity is the nondegenerate domain in which the displayed large-deviation rate is meaningful.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hgLo : 0 < sampleRate lo": {
           "judgment": "paper_condition",
           "source_location": "adjectivesmodel.tex: sellers receive n_k(theta)=floor(k g(theta)) matches/ratings; appendix_theory.tex: kg(theta_i) is the number of samples",
-          "reason": "The pairwise helper applies the paper's asymptotic sample-rate model to a compared low type; positivity is the nondegenerate domain in which the displayed large-deviation rate is meaningful."
+          "reason": "The pairwise helper applies the paper's asymptotic sample-rate model to a compared low type; positivity is the nondegenerate domain in which the displayed large-deviation rate is meaningful.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hpositive_sample : ∀ θ : Fin n, 0 < sampleRate θ": {
           "judgment": "paper_condition",
           "source_location": "adjectivesmodel.tex Rating accumulation model; appendix_theory.tex Theorem 1 finite ordered type formula",
-          "reason": "The finite-chain endpoint applies the same positive sample-rate convention uniformly across the finite seller-type chain used in Theorem 1."
+          "reason": "The finite-chain endpoint applies the same positive sample-rate convention uniformly across the finite seller-type chain used in Theorem 1.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_positive_integer_sample_rates": {
       "judgment": "paper_condition",
@@ -38,14 +62,26 @@
         "hgHi : 0 < gHi": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived from the positive sample-rate condition for the integer-rate specialization of n_k(theta)=floor(k g(theta))",
-          "reason": "The natural-valued helper is a representation bridge; positive integer rates are the integer instance of the source positive sample-rate condition."
+          "reason": "The natural-valued helper is a representation bridge; positive integer rates are the integer instance of the source positive sample-rate condition.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hgLo : 0 < gLo": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived from the positive sample-rate condition for the integer-rate specialization of n_k(theta)=floor(k g(theta))",
-          "reason": "The natural-valued helper is a representation bridge; positive integer rates are the integer instance of the source positive sample-rate condition."
+          "reason": "The natural-valued helper is a representation bridge; positive integer rates are the integer instance of the source positive sample-rate condition.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_nonpositive_common_dual_parameters": {
       "judgment": "paper_condition",
@@ -56,14 +92,26 @@
         "hz : z ≤ 0": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived by the source lower-tail large-deviation route for x_k(theta_hi)-x_k(theta_lo) <= 0",
-          "reason": "This is not an extra model assumption. It is the sign of the common-dual witness exposed by an auxiliary helper; the canonical endpoint packages/derives the witness from the source variational problem."
+          "reason": "This is not an extra model assumption. It is the sign of the common-dual witness exposed by an auxiliary helper; the canonical endpoint packages/derives the witness from the source variational problem.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hz : ∀ p : finiteChainOrderedPair n, z p ≤ 0": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Finite-chain pointwise version of the source lower-tail large-deviation route",
-          "reason": "This is the finite ordered-chain form of the same lower-tail common-dual witness condition, exposed for helper reuse rather than assumed by the canonical source endpoint."
+          "reason": "This is the finite ordered-chain form of the same lower-tail common-dual witness condition, exposed for helper reuse rather than assumed by the canonical source endpoint.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_pairwise_threshold_minimizer": {
       "judgment": "paper_condition",
@@ -74,9 +122,17 @@
         "hthreshold_min : ∀ b : ℝ, M.pairwiseRateObjective sampleRate hi lo a ≤ M.pairwiseRateObjective sampleRate hi lo b": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived from the paper's inf_a pairwise objective together with the finite support-safe threshold-rate endpoint",
-          "reason": "The premise says the selected threshold realizes the source displayed infimum; it is a helper-level witness, not an independent paper assumption."
+          "reason": "The premise says the selected threshold realizes the source displayed infimum; it is a helper-level witness, not an independent paper assumption.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_two_sided_score_witnesses": {
       "judgment": "paper_condition",
@@ -87,14 +143,26 @@
         "hscorePos : 0 < twoSampleRateBlockScore M gHi gLo samplePos": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived in Lean from finite ordinal full support and score span for the source rating model",
-          "reason": "The positive score-gap sample is obtained from the bottom/top rating atoms supplied by the source finite ordinal support convention."
+          "reason": "The positive score-gap sample is obtained from the bottom/top rating atoms supplied by the source finite ordinal support convention.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hscoreNeg : twoSampleRateBlockScore M gHi gLo sampleNeg < 0": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived in Lean from finite ordinal full support and score span for the source rating model",
-          "reason": "The negative score-gap sample is obtained from the bottom/top rating atoms supplied by the source finite ordinal support convention."
+          "reason": "The negative score-gap sample is obtained from the bottom/top rating atoms supplied by the source finite ordinal support convention.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_monotone_rating_scores": {
       "judgment": "paper_assumption",
@@ -105,9 +173,17 @@
         "hscore_mono : Monotone M.score": {
           "judgment": "source_text_model_primitive",
           "source_location": "adjectivesmodel.tex: choose a random, increasing set of scores phi(y) in [0,1]",
-          "reason": "Lean's monotone score condition is the finite ordinal representation of the paper's increasing score functions."
+          "reason": "Lean's monotone score condition is the finite ordinal representation of the paper's increasing score functions.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_full_finite_ordinal_rating_support": {
       "judgment": "paper_condition",
@@ -118,9 +194,17 @@
         "hfull_support : M.fullSupport": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived from the source finite ordered rating scale and strict decrease of R(theta,y|Y) in y",
-          "reason": "Strictly decreasing cumulative probabilities across the finite rating order imply positive mass at the represented rating levels used by the canonical finite ordinal endpoint."
+          "reason": "Strictly decreasing cumulative probabilities across the finite rating order imply positive mass at the represented rating levels used by the canonical finite ordinal endpoint.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     },
     "assumption_score_range_and_strict_span": {
       "judgment": "paper_condition",
@@ -131,19 +215,35 @@
         "hscore_low_le : ∀ r : Rating, M.score rLow ≤ M.score r": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived from the source ordered finite rating scale and increasing score function phi",
-          "reason": "The selected lowest rating level is below every other rating in the ordinal score order."
+          "reason": "The selected lowest rating level is below every other rating in the ordinal score order.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hscore_le_high : ∀ r : Rating, M.score r ≤ M.score rHigh": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived from the source ordered finite rating scale and increasing score function phi",
-          "reason": "The selected highest rating level is above every other rating in the ordinal score order."
+          "reason": "The selected highest rating level is above every other rating in the ordinal score order.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
         "hscore_lt : M.score rLow < M.score rHigh": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived from the source nontrivial finite rating scale and increasing score design phi(y) in [0,1]",
-          "reason": "The strict span records the nonconstant increasing-score regime used for ranking informativeness."
+          "reason": "The strict span records the nonconstant increasing-score regime used for ranking informativeness.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
         }
-      }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
     }
   }
 }

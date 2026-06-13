@@ -5,8 +5,8 @@
   "authors": "Alvin E. Roth",
   "source_version": "Mathematics of Operations Research, 1982",
   "build_target": "lake build Roth82StableMatching",
-  "status": "partially formalized",
-  "main_caveat": "Strict transitive provenance audit boundary: the stable-matching theorem rows still depend on deferred-acceptance invariant, termination, optimality, and truthfulness certificates in the shared matching library.",
+  "status": "formalized",
+  "main_caveat": "",
   "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

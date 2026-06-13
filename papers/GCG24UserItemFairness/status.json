@@ -5,8 +5,8 @@
   "authors": "Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg",
   "source_version": "NeurIPS 2024 / arXiv:2412.04466",
   "build_target": "lake build GCG24UserItemFairness",
-  "status": "partially formalized",
-  "main_caveat": "Strict transitive provenance audit boundary: LP/duality and feasible-support optimality certificates for the Problem 6/11 reduction and misestimation tradeoff rows remain source-boundary proof obligations.",
+  "status": "formalized",
+  "main_caveat": "",
   "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

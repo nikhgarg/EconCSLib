@@ -11,9 +11,9 @@
 - Human summary: Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit does not yet pass for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
 Current result: the external complexity consequences, critical-value infinity axioms, and greedy-order blocking windows remain explicit partial boundaries.
 <!-- transitive-source-premise-audit:end -->
@@ -36,7 +36,7 @@ The theorem endpoints involving native computational complexity are intentionall
 
 ## 4. Paper Assumption Provenance And Boundary Ledger
 
-> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json` now records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 6/8 premises are source-matched to the local JACM text and 2/8 remain visible partial-formalization boundaries. The remaining boundaries are exactly the external Theorem 6.1 complexity facts: native NP-hardness/inapproximability and the machine-level `NP = ZPP` consequence.
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json` now records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 6/8 premises are source-matched to the local JACM text and 2/8 remain visible partial-formalization boundaries. The remaining boundaries are exactly the external Theorem 6.1 complexity facts: native NP-hardness/inapproximability and the machine-level `NP = ZPP` consequence.
 
 Every paper-facing premise is now routed through
 `LOS02CombinatorialAuctions/Assumptions.lean` and checked by

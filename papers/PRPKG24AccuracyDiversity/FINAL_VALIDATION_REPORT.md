@@ -13,9 +13,9 @@
 - Lean footprint: 149 `PaperInterface.lean` LOC, 27 paper-result review rows, plus 14 assumption-ledger rows.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit does not yet pass for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
 Current result: the Top-K oracle, Bernoulli tail/Laplace, rounding, averaging, and integral-asymptotic certificates remain explicit partial boundaries.
 <!-- transitive-source-premise-audit:end -->
@@ -140,7 +140,7 @@ Human dashboard reviews and model/agent statement checks may both appear here. T
 
 ## 7. Paper Assumption Provenance
 
-> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json` now records per-premise judgments for this paper's `Assumptions.lean` ledger against the local source-text cache. Current result: 45/45 explicit premises are judged source text, source-model primitives, or immediate source-derived domain conditions; 0/45 explicit premises remain hidden proof assumptions. The paper remains partially formalized because Proposition 4 still stops at a continuous-sphere/Laplace analytic boundary.
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json` now records per-premise judgments for this paper's `Assumptions.lean` ledger against the local source-text cache. Current result: 45/45 explicit premises are judged source text, source-model primitives, or immediate source-derived domain conditions; 0/45 explicit premises remain hidden proof assumptions. The paper remains partially formalized because Proposition 4 still stops at a continuous-sphere/Laplace analytic boundary.
 
 Every non-derived paper-facing premise is routed through
 `PRPKG24AccuracyDiversity/Assumptions.lean` and checked by

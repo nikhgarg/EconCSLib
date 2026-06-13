@@ -56,14 +56,23 @@ final validation report, human-review log, or review-surface audit just because
 this early check ran.
 
 At review boundaries, populate `lean_to_tex_llm.json` with context-free
-Lean-to-TeX/prose translations generated from `PaperInterface.lean` alone. New
+Lean-to-TeX/prose translations generated from `PaperInterface.lean` alone. The
+translator must preserve every visible variable, binder, hypothesis, domain
+condition, equivalence direction, and conclusion; it must not summarize a theorem
+as an endpoint label or omit conditions that appear in the Lean statement. New
 tracked entries should use `{ "tex_statement": "...", "lean_statement_sha256":
 "..." }`. Then populate `statement_match_llm.json` with an independent
-no-context judgment of whether each translation matches the original paper
-statement, including Lean, paper, and TeX statement digests plus the judge
-model/agent name, validator type, validation timestamp, and any validator
-comment. If the judge flags a mismatch or uncertainty, iterate on the Lean
-statement before treating it as the paper theorem target. Run
+no-context judgment of whether each translation matches the original full paper
+statement, including all hypotheses, subparts, quantifiers, domains, constants,
+normalizations, signs, inequality directions, and conclusions. A row may be
+judged `matches` only if it is equivalent to the full source statement or to a
+clearly identified source subpart; if the Lean translation is a conditional
+wrapper, source-row package, omitted subclaim, weakened/strengthened statement,
+or broad aggregate for several displayed formulas, the judge must mark
+`mismatch` or `uncertain`. Include Lean, paper, and TeX statement digests plus
+the judge model/agent name, validator type, validation timestamp, and any
+validator comment. If the judge flags a mismatch or uncertainty, iterate on the
+Lean statement before treating it as the paper theorem target. Run
 `python3 scripts/review_dashboard.py --paper TEMPLATE --precheck` before
 handoff so missing/stale statement-audit rows are explicit.
 If any paper-facing theorem takes a hypothesis that is not proved from prior
@@ -113,3 +122,9 @@ the dashboard as oversized and curate `PaperInterface.lean` or
       primitives into `EconCSLib` when the destination is clear and the
       extraction is local/low-risk; otherwise record the candidate and likely
       destination module in `FINAL_VALIDATION_REPORT.md`.
+- [ ] Run the combined recursive provenance audit and write the paper-by-paper
+      closeout report:
+      `python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0 --write-report docs/RECURSIVE_PROVENANCE_AUDIT_<date>.md`.
+      Resolve all findings for this paper before claiming `formalized`; if a
+      finding remains, mark the result partial/conditional in `status.json`,
+      `DependencyDAG.tex`, and `FINAL_VALIDATION_REPORT.md`.

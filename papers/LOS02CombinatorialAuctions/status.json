@@ -6,7 +6,7 @@
   "source_version": "Journal of the ACM 49(5), 2002",
   "build_target": "lake build LOS02CombinatorialAuctions",
   "status": "partially formalized",
-  "main_caveat": "Strict transitive provenance audit boundary: the external complexity consequences, critical-value infinity axioms, and greedy-order blocking windows remain explicit partial boundaries.",
+  "main_caveat": "Partial-formalization boundary: the external complexity consequences, critical-value infinity axioms, and greedy-order blocking windows remain explicit partial boundaries.",
   "human_summary": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.",
   "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
   "human_review": {

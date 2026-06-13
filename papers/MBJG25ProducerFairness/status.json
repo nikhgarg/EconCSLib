@@ -6,7 +6,7 @@
   "source_version": "ICWSM 2025 / arXiv:2207.04369",
   "build_target": "lake build MBJG25ProducerFairness",
   "status": "formalized",
-  "main_caveat": "The strengthened transitive provenance audit finds no unresolved certificate/source-boundary dependency for the current paper-facing status; the documented MBJG caveat remains the zero-denominator/utility-domain boundary already described in the report.",
+  "main_caveat": "The strict variance-decrease statement is formalized with the documented interior-quality condition 0 < q_v < 1; the report records boundary counterexamples at q_v = 0 and q_v = 1.",
   "human_summary": "Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement.",
   "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
   "human_review": {

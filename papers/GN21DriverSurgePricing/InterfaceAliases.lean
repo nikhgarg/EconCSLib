@@ -77,13 +77,207 @@ abbrev lemma7_affine_positive_additive_response_quasi_convex := @paper_lemma7_af
 /-- Lemma 8: negative-additive affine CTMC response is strictly quasi-concave. -/
 abbrev lemma8_affine_negative_additive_response_quasi_concave := @paper_lemma8_affine_negative_additive_response_strict_quasi_concave
 
-/-- Lemma 9: surge derivative is positive under the accept-all bounds. -/
-abbrev lemma9_surge_derivative_positive_of_acceptAll_bounds :=
-  @paper_lemma9_surge_derivative_positive_of_acceptAll_bounds_on_certificate_fields
+/--
+Lemma 9: surge derivative is positive under the accept-all bounds, with the
+Lemma 6 endpoint-derivative data constructed from interval-density primitives.
+-/
+theorem lemma9_surge_derivative_positive_of_acceptAll_bounds
+    (arrivalRate lowerEndpoint u T1 Q1 T2 Q2 Tbar2 Qbar2
+      switch21 switch12 m R1 z ratio : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hQ1_pos : 0 < Q1)
+    (hden :
+      gn21EndpointQiPath arrivalRate switch21 lowerEndpoint density
+          (gn21SwitchProb switch21 switch12) u * T1 +
+        Q1 *
+          gn21EndpointTiPath arrivalRate lowerEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) volume
+        lowerEndpoint u)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch21 switch12 τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice m z switch21 switch12 τ *
+          density τ) volume lowerEndpoint u)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice m z switch21 switch12 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice m z switch21 switch12 τ *
+          density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume lowerEndpoint u)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ2 :
+      gn21EndpointQiPath arrivalRate switch21 lowerEndpoint density
+        (gn21SwitchProb switch21 switch12) u = Q2)
+    (hT2 :
+      gn21EndpointTiPath arrivalRate lowerEndpoint density u = T2)
+    (hW2 :
+      gn21EndpointWiPath arrivalRate lowerEndpoint density
+        (ctmcStructuredSurgePrice m z switch21 switch12) u =
+          m * (T2 - 1) + z * (Q2 - switch21))
+    (hbounds_bar : lemma9StructuredBounds ratio T1 Q1 Tbar2 Qbar2 switch21)
+    (hz : z = ratio * (m - R1))
+    (hmR_pos : 0 < m - R1)
+    (hR1_nonneg : 0 ≤ R1)
+    (hT1_nonneg : 0 ≤ T1)
+    (hswitch21_pos : 0 < switch21)
+    (hsum : 0 < switch21 + switch12)
+    (hu : 0 < u)
+    (hgap_nonneg : 0 ≤ switch21 * T2 - Q2)
+    (hgap_le : switch21 * T2 - Q2 ≤ switch21 * Tbar2 - Qbar2)
+    (hswitch_lt_Q2 : switch21 < Q2)
+    (hQ2_le : Q2 ≤ Qbar2) :
+    0 <
+      (lemma6EndpointDerivativeData_of_interval_density_paths
+        arrivalRate switch21 lowerEndpoint u Q1 T1 (R1 * T1) density
+        (gn21SwitchProb switch21 switch12)
+        (ctmcStructuredSurgePrice m z switch21 switch12)
+        harrival_pos hdensity_pos hQ1_pos hden hq_int hq_meas hq_cont
+        hw_int hw_meas hw_cont ht_int ht_meas ht_cont).derivativeValue := by
+  let D :=
+    lemma6EndpointDerivativeData_of_interval_density_paths
+      arrivalRate switch21 lowerEndpoint u Q1 T1 (R1 * T1) density
+      (gn21SwitchProb switch21 switch12)
+      (ctmcStructuredSurgePrice m z switch21 switch12)
+      harrival_pos hdensity_pos hQ1_pos hden hq_int hq_meas hq_cont
+      hw_int hw_meas hw_cont ht_int ht_meas ht_cont
+  have hbounds_current :
+      lemma9StructuredBounds ratio T1 Q1 T2 Q2 switch21 :=
+    lemma9StructuredBounds_of_acceptAll_tightening
+      ratio T1 Q1 T2 Q2 Tbar2 Qbar2 switch21 hbounds_bar
+      hT1_nonneg hQ1_pos hswitch21_pos hgap_nonneg hgap_le
+      hswitch_lt_Q2 hQ2_le
+  have hpos : 0 < D.derivativeValue :=
+    paper_lemma9_derivative_value_pos_of_current_bounds_certificate
+      (lemma6DerivativeFormulaCertificate_of_endpoint_data D)
+      ratio u T1 Q1 T2 Q2 switch21 switch12 m R1 z
+      (by rfl)
+      (by rfl)
+      (by rfl)
+      (by simpa [D] using hQ2)
+      (by rfl)
+      (by simpa [D] using hT2)
+      (by rfl)
+      (by simpa [D] using hW2)
+      (by rfl)
+      hbounds_current hz hmR_pos hR1_nonneg hT1_nonneg hQ1_pos
+      hswitch21_pos hsum hu hswitch_lt_Q2 hgap_nonneg
+  simpa [D] using hpos
 
-/-- Lemma 10: non-surge derivative is positive under the accept-all bounds. -/
-abbrev lemma10_nonsurge_derivative_positive_of_acceptAll_bounds :=
-  @paper_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds_on_certificate_fields
+/--
+Lemma 10: non-surge derivative is positive under the accept-all bounds, with
+the Lemma 6 endpoint-derivative data constructed from interval-density
+primitives.
+-/
+theorem lemma10_nonsurge_derivative_positive_of_acceptAll_bounds
+    (arrivalRate lowerEndpoint u T2 Q2 T1 Q1 Tbar1 Qbar1
+      switch12 switch21 R2 z ratio : ℝ)
+    (density : ℝ → ℝ)
+    (harrival_pos : 0 < arrivalRate)
+    (hdensity_pos : 0 < density u)
+    (hQ2_pos : 0 < Q2)
+    (hden :
+      gn21EndpointQiPath arrivalRate switch12 lowerEndpoint density
+          (gn21SwitchProb switch12 switch21) u * T2 +
+        Q2 *
+          gn21EndpointTiPath arrivalRate lowerEndpoint density u ≠ 0)
+    (hq_int :
+      IntervalIntegrable
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) volume
+        lowerEndpoint u)
+    (hq_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) (𝓝 u))
+    (hq_cont :
+      ContinuousAt
+        (fun τ => gn21SwitchProb switch12 switch21 τ * density τ) u)
+    (hw_int :
+      IntervalIntegrable
+        (fun τ => ctmcStructuredSurgePrice R2 z switch12 switch21 τ *
+          density τ) volume lowerEndpoint u)
+    (hw_meas :
+      StronglyMeasurableAtFilter
+        (fun τ => ctmcStructuredSurgePrice R2 z switch12 switch21 τ *
+          density τ) (𝓝 u))
+    (hw_cont :
+      ContinuousAt
+        (fun τ => ctmcStructuredSurgePrice R2 z switch12 switch21 τ *
+          density τ) u)
+    (ht_int :
+      IntervalIntegrable (fun τ => τ * density τ) volume lowerEndpoint u)
+    (ht_meas :
+      StronglyMeasurableAtFilter (fun τ => τ * density τ) (𝓝 u))
+    (ht_cont : ContinuousAt (fun τ => τ * density τ) u)
+    (hQ1 :
+      gn21EndpointQiPath arrivalRate switch12 lowerEndpoint density
+        (gn21SwitchProb switch12 switch21) u = Q1)
+    (hT1 :
+      gn21EndpointTiPath arrivalRate lowerEndpoint density u = T1)
+    (hW1 :
+      gn21EndpointWiPath arrivalRate lowerEndpoint density
+        (ctmcStructuredSurgePrice R2 z switch12 switch21) u =
+          R2 * (T1 - 1) + z * (Q1 - switch12))
+    (hbounds_bar : lemma10StructuredBounds ratio T2 Q2 Tbar1 Qbar1 switch12)
+    (hz : z = ratio * R2)
+    (hR2_pos : 0 < R2)
+    (hswitch12_pos : 0 < switch12)
+    (hsum : 0 < switch12 + switch21)
+    (hu : 0 < u)
+    (hA_pos : 0 < T2 * switch12 + Q2)
+    (hgap_nonneg : 0 ≤ switch12 * T1 - Q1)
+    (hgap_le : switch12 * T1 - Q1 ≤ switch12 * Tbar1 - Qbar1)
+    (hswitch_lt_Q1 : switch12 < Q1)
+    (hQ1_le : Q1 ≤ Qbar1) :
+    0 <
+      (lemma6EndpointDerivativeData_of_interval_density_paths
+        arrivalRate switch12 lowerEndpoint u Q2 T2 (R2 * T2) density
+        (gn21SwitchProb switch12 switch21)
+        (ctmcStructuredSurgePrice R2 z switch12 switch21)
+        harrival_pos hdensity_pos hQ2_pos hden hq_int hq_meas hq_cont
+        hw_int hw_meas hw_cont ht_int ht_meas ht_cont).derivativeValue := by
+  let D :=
+    lemma6EndpointDerivativeData_of_interval_density_paths
+      arrivalRate switch12 lowerEndpoint u Q2 T2 (R2 * T2) density
+      (gn21SwitchProb switch12 switch21)
+      (ctmcStructuredSurgePrice R2 z switch12 switch21)
+      harrival_pos hdensity_pos hQ2_pos hden hq_int hq_meas hq_cont
+      hw_int hw_meas hw_cont ht_int ht_meas ht_cont
+  have hbounds_current :
+      lemma10StructuredBounds ratio T2 Q2 T1 Q1 switch12 :=
+    lemma10StructuredBounds_of_acceptAll_tightening
+      ratio T2 Q2 T1 Q1 Tbar1 Qbar1 switch12 hbounds_bar hA_pos
+      (le_of_lt hQ2_pos) hswitch12_pos hgap_nonneg hgap_le
+      hswitch_lt_Q1 hQ1_le
+  have hpos : 0 < D.derivativeValue :=
+    paper_lemma10_derivative_value_pos_of_current_bounds_certificate
+      (lemma6DerivativeFormulaCertificate_of_endpoint_data D)
+      ratio u T2 Q2 T1 Q1 switch12 switch21 R2 z
+      (by rfl)
+      (by rfl)
+      (by rfl)
+      (by simpa [D] using hQ1)
+      (by rfl)
+      (by simpa [D] using hT1)
+      (by rfl)
+      (by simpa [D] using hW1)
+      (by rfl)
+      hbounds_current hz hR2_pos hQ2_pos hswitch12_pos hsum hu
+      hswitch_lt_Q1 hgap_nonneg hA_pos
+  simpa [D] using hpos
 
 /-- Theorem 4: positive-response accept-all candidate from current bounds. -/
 abbrev theorem4_positive_response_acceptAll_candidate := @theorem4_positive_response_acceptAll_candidate_of_current_bounds_source

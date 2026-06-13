@@ -1,5 +1,16 @@
 {
-  "generated_at": "2026-06-11T03:38:38Z",
+  "schema": 1,
+  "paper": "GS62CollegeAdmissions",
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "translator": "gpt-5-codex",
+  "translator_type": "model",
+  "translated_at": "2026-06-13T00:00:00Z",
+  "prompt_summary": [
+    "Translate each Lean declaration from the Lean statement alone, with no paper context.",
+    "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
+    "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
+  ],
+  "generated_at": "2026-06-07T00:00:39Z",
   "generator": "codex-refresh-current-lean-statements",
   "items": {
     "applicantOptimalStableMarriage": {
@@ -23,15 +34,12 @@
       "statement": "For sets of men $M$ and women $W$ with utilities $v_m:M\\to W\\to\\mathbb{R}$ and $v_w:W\\to M\\to\\mathbb{R}$, the strict marriage domain is the condition that men's preferences are strict, women's preferences are strict, and every man-woman pair is acceptable."
     },
     "theorem1_stable_marriage_exists": {
-      "lean_statement_sha256": "bd9105e1105935f812dbb11289bc320230f490a6bc47e47058bda0bf0a29f85f",
-      "statement": "For finite sets $M$ and $W$ with decidable equality, if $|M|=|W|$ and utilities $v_m,v_w$ satisfy the strict marriage domain, then there exists an assignment $\\mu$ that is stable and complete."
+      "lean_statement_sha256": "3b2712e9c3a03fd1c1bc20530f4388c8c51821601c7d700dcf974e63cffda311",
+      "statement": "For a finite indexed set $A$ with decidable equality, if utilities $v_m,v_w:A\\to A\\to\\mathbb{R}$ satisfy the strict marriage domain, then there exists an assignment $\\mu$ from $A$ to $A$ that is stable and complete; equal cardinality is represented by using the same finite index type for both sides."
     },
     "theorem2_applicant_optimality": {
-      "lean_statement_sha256": "e3085275e469f9addcfeef41921e1251a3f8a3d9344b70fbc6c011c59968b082",
-      "statement": "For finite applicant and college sets with decidable equality, if the two sides have equal cardinality and the utilities satisfy the strict marriage domain, then deferred acceptance produces a complete matching that is applicant-optimal among stable matchings."
+      "lean_statement_sha256": "dee4314d17806dc44092966bcbd66d36bb9c1fe69e1394b0e9e620245a8dd0f5",
+      "statement": "For a finite indexed set $A$ with decidable equality, if applicant and college utilities $v_a,v_c:A\\to A\\to\\mathbb{R}$ satisfy the strict marriage domain, then deferred acceptance produces a complete matching that is applicant-optimal among stable matchings; equal cardinality is represented by using the same finite index type for both sides."
     }
-  },
-  "paper": "GS62CollegeAdmissions",
-  "schema": 1,
-  "comment": "Refreshed Lean statement digests against current PaperInterface.lean rows; existing Lean-to-TeX/prose drafts were preserved."
+  }
 }

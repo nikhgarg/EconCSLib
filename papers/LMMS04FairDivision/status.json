@@ -6,7 +6,7 @@
   "source_version": "ACM EC 2004",
   "build_target": "lake build LMMS04FairDivision",
   "status": "partially formalized",
-  "main_caveat": "Strict transitive provenance audit boundary: the Section 3 runtime/search layer and some rounded-IP/counterexample endpoints remain certificate boundaries; Sections 2 and 4 stay formalized at their existing boundary.",
+  "main_caveat": "Partial-formalization boundary: the Section 3 runtime/search layer and some rounded-IP/counterexample endpoints remain certificate boundaries; Sections 2 and 4 stay formalized at their existing boundary.",
   "human_summary": "Sections 2 and 4 are fully formalized. Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.",
   "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
   "human_review": {

@@ -82,4 +82,28 @@ abbrev assumption_low_bid_below_high_bid (low high : ℝ) : Prop :=
 abbrev assumption_lower_bound_positive_alpha (alpha : ℕ) : Prop :=
   0 < alpha
 
+/--
+Theorem 8.2 is checked against the later journal version's monotone randomized
+offer formulation rather than the broader preliminary SODA wording.
+-/
+-- audit-premise: model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price
+abbrev assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model
+    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
+    [Fintype Price] [DecidableEq Price]
+    (_model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :
+    Prop :=
+  True
+
+/--
+Theorem 9.3 uses the paper's deterministic set-of-bids convention and focused
+slice `A_i(B_i^x)` to represent each bidder's offer from the other bids and the
+bidder's own reported value.
+-/
+-- audit-premise: model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue
+abbrev assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model
+    {highValue : ℕ}
+    (_model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) :
+    Prop :=
+  True
+
 end GHW01DigitalGoods

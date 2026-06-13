@@ -1,4 +1,15 @@
 {
+  "schema": 1,
+  "paper": "Roth82StableMatching",
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "translator": "gpt-5-codex",
+  "translator_type": "model",
+  "translated_at": "2026-06-13T00:00:00Z",
+  "prompt_summary": [
+    "Translate each Lean declaration from the Lean statement alone, with no paper context.",
+    "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
+    "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
+  ],
   "generated_at": "2026-06-12T00:00:00Z",
   "generator": "codex-current-dashboard-statement-digest-refresh",
   "items": {
@@ -110,7 +121,5 @@
       "lean_statement_sha256": "bcc516fba52a2fd37879ea1dea183733d6e589cb94401b7fc7a6e91c26e1daa8",
       "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = stable val_m val_w mu \\land \\forall mu', stable val_m val_w mu' \\to \\forall w, (match mu'.w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m)"
     }
-  },
-  "paper": "Roth82StableMatching",
-  "schema": 1
+  }
 }

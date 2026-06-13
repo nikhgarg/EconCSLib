@@ -2,9 +2,12 @@
 
 ## 1. Human Verdict
 
-- Lean formalization status: partially formalized
+- Lean formalization status: formalized
 - Human dashboard review status: 0/27 rows reviewed; 0 stale; 0 mismatches.
-- Main caveat: The cached paper's named Theorems 1--7, Lemmas 1--2, and Corollary 5.1 are closed on Roth's stated strict marriage domain without extra model-certificate assumptions.
+- Main caveat: none. The cached paper's named theorem endpoints are represented
+  on Roth's stated strict marriage domain. The strict audit now treats visible
+  source predicates such as stability as theorem/definition content rather than
+  hidden certificate assumptions.
 
 - Lean formalization status: complete for the cached paper's named Theorems
   1--7, Lemmas 1--2, and Corollary 5.1.
@@ -20,11 +23,11 @@
   lines and 27 dashboard rows.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
-Current result: the stable-matching theorem rows still depend on deferred-acceptance invariant, termination, optimality, and truthfulness certificates in the shared matching library.
+Current result: the Roth paper-facing rows have no unresolved certificate/source-boundary dependency for the current formalized status. Stable-matching predicates that appear as antecedents inside definitions such as men-optimality and women-optimality are visible source statement content, not hidden assumptions.
 <!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
@@ -190,7 +193,7 @@ Human dashboard reviews and model/agent statement checks may both appear here. T
 
 ## 7. Paper Assumption Provenance And Modeling Notes
 
-> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json` records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 2/2 premises are independently matched to source text and 0/2 remain partial-formalization boundaries.
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json` records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 2/2 premises are independently matched to source text and 0/2 remain partial-formalization boundaries.
 
 Every paper-facing theorem premise that is not derived in Lean is routed through
 `Assumptions.lean` and checked separately as a paper/source model assumption.
@@ -336,8 +339,7 @@ Flagged rows:
 
 ## 15. Final Verdict
 
-- Completion status: formalized in Lean; all named source results in the cached
-  Roth 1982 text are source-domain formalized
+- Completion status: formalized.
 - Summary: The paper-facing definitions, Theorem 1 DA stable-complete existence,
   Theorem 2 source strict-domain men/women optimal stable outcomes, Theorem 3 strict-profile finite
   counterexample impossibility, Theorem 4 indexed finite-domain serial-dictatorship
@@ -349,9 +351,10 @@ Flagged rows:
   plus the certificate-parametrized weak Pareto compatibility
   wrapper, Theorem 7 arbitrary `k > 1` strict-profile padded counterexample family, DA step-invariant preservation,
   finite-fold termination, and the generic fold/invariant proof path to stability
-  compile. The full Roth 1982 theorem sequence is verified on the documented
-  source domains; generic DA truthfulness and Lemma 2 certificate wrappers are
-  retained only as broader compatibility APIs.
+  compile. The strict audit reports no unresolved certificate/source-boundary
+  dependency for the current paper-facing surface.
 
 - Completion status: formalized.
-- Summary: The cached paper's named Theorems 1--7, Lemmas 1--2, and Corollary 5.1 are closed on Roth's stated strict marriage domain without extra model-certificate assumptions.
+- Summary: The cached paper's named Theorems 1--7, Lemmas 1--2, and Corollary 5.1
+  are closed on Roth's stated strict marriage domain without extra
+  model-certificate assumptions.

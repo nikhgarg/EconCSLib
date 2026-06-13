@@ -11,9 +11,9 @@
 - Human summary: Sections 2 and 4 are closed; Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit does not yet pass for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
 Current result: the Section 3 runtime/search layer and some rounded-IP/counterexample endpoints remain certificate boundaries; Sections 2 and 4 stay formalized at their existing boundary.
 <!-- transitive-source-premise-audit:end -->
@@ -36,7 +36,7 @@ Section 3 has substantial formal content but remains partial at the runtime boun
 
 ## 4. Paper Assumption Provenance
 
-> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json` now records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 28/28 explicit proof premises in the compact paper-facing surface are matched to, or derived from, source-model conditions. The selected min/max rounded-type identification helper is no longer exposed as a paper-facing row; it remains available in `ProofInterface.lean` for proof engineering.
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json` now records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 28/28 explicit proof premises in the compact paper-facing surface are matched to, or derived from, source-model conditions. The selected min/max rounded-type identification helper is no longer exposed as a paper-facing row; it remains available in `ProofInterface.lean` for proof engineering.
 
 Every non-derived paper-facing premise is routed through
 `LMMS04FairDivision/Assumptions.lean` and checked by

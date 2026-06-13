@@ -4,19 +4,20 @@
 
 - Lean formalization status: formalized
 - Human dashboard review status: 0/32 rows reviewed; 0 stale; 0 mismatches.
-- Main caveat: the strict premise-source audit is closed for the recorded
-  assumption ledger, including the human-verified implicit `K >= 2` multiclass
-  condition. The Theorem 2(iii) weighted-objective row is now the
+- Main caveat: none. Status note: the axiom/premise/source-hygiene audit is
+  closed for the recorded assumption ledger, including the human-verified
+  implicit `K >= 2` multiclass condition. The Theorem 2(iii)
+  weighted-objective row is now the
   certificate-free source-facing necessary condition: for `γ < 1`, a
   weighted-objective maximizing independent rule must agree with argmax almost
   surely.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit passes for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
-Current result: The strengthened transitive provenance audit finds no unresolved certificate/source-boundary dependency for the current paper-facing status. Explicit assumptions remain source-matched, including the human-verified implicit multiclass condition.
+Current result: the axiom/premise/source-hygiene audit finds no unresolved certificate/source-boundary dependency for the current paper-facing status. Explicit assumptions remain source-matched, including the human-verified implicit multiclass condition.
 <!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
@@ -242,7 +243,7 @@ Human dashboard reviews and model/agent statement checks may both appear here. T
 
 ## 7. Paper Assumption Provenance
 
-> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json`
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json`
 > now records per-premise judgments for this paper's `Assumptions.lean`
 > ledger. Current result: 9/9 recorded assumption-premises are source-matched,
 > source-derived, or human-verified as implicit source conditions; 0/9 remain
@@ -354,5 +355,5 @@ source-facing necessary condition, while broader optimizer/maximality helper
 routes remain internal auxiliary material.
 
 - Completion status: formalized.
-- Summary: premise-source and statement audits are clean for the current
-  dashboard.
+- Summary: axiom/premise/source-hygiene and statement audits are clean for the
+  current dashboard.

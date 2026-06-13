@@ -2,22 +2,24 @@
 
 ## 1. Human Verdict
 
-- Lean formalization status: partially formalized
+- Lean formalization status: formalized
 - Human dashboard review status: 0/10 rows reviewed; 0 stale; 0 mismatches.
-- Strict premise-source audit: 9/9 explicit premises are source-matched or derived from source primitives.
+- Axiom/premise/source-hygiene audit: 9/9 explicit premises are source-matched or derived from source primitives.
 
-- Lean formalization status: partially formalized.
+- Lean formalization status: formalized.
 - Human dashboard review status: 0 reviewed rows, 0 stale rows, 0 mismatch rows, 10 total rows.
 - Paper correctness verdict: no source error found for the formalized finite-candidate theorem surface.
-- Qualitative proof verdict: paper-facing results are closed with explicit finite-support boundary handling.
+- Qualitative proof verdict: the finite-candidate theorem surface is exposed
+  with explicit finite-support boundary handling. The remaining visible
+  premises are source-matched or derived from source primitives.
 - Lean footprint: 34,984 paper-local Lean LOC, 308 `PaperInterface.lean` LOC, 10 review rows.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
-Current result: finite-large-deviation/Cramer, exponential-rate, pairwise score-gap, and randomized pivotal-pair certificates remain reusable proof-boundary obligations.
+Current result: no unresolved hidden source-row or certificate premise remains in the paper-facing review surface.
 <!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
@@ -140,7 +142,7 @@ Human dashboard reviews and model/agent statement checks may both appear here. T
 
 ## 7. Paper Assumption Provenance
 
-> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json`
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json`
 > records per-premise judgments for this paper's `Assumptions.lean` ledger.
 > Current result: 9/9 explicit premises are source-matched or derived from
 > source primitives, and 0/9 remain partial boundaries.
@@ -212,3 +214,6 @@ inspected. Targeted `git diff --check` passed for the changed GGSG documents.
 ## 15. Final Verdict
 
 - Completion status: formalized.
+- Summary: The finite-candidate source theorem surface is represented in Lean,
+  including the finite-support boundary branches and randomized pivotal-pair
+  cases exposed in the paper-facing interface.

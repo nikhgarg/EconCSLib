@@ -2,16 +2,16 @@
 
 ## 1. Human Verdict
 
-- Lean formalization status: partially formalized
+- Lean formalization status: formalized
 - Human dashboard review status: 0/7 rows reviewed; 0 stale; 0 mismatches.
 - Human summary: This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Lean Axiom And Premise Audit
 
-The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The paper-facing interface passes the Lean-native axiom-closure audit. `#print axioms` on each dashboard row reports no unapproved proof debt; theorem rows use only the standard Lean foundations `propext`, `Classical.choice`, and `Quot.sound`, while definition rows have no axioms. The dashboard-expanded statements expose no remaining certificate/source-row assumptions.
 
-Current result: the Gale-Shapley existence/optimality rows still depend on deferred-acceptance invariant and stability certificates in the shared matching library.
+Current result: the Gale-Shapley existence, college-admissions existence, and applicant-optimality rows are closed. The deferred-acceptance invariant, termination, stability, and optimality facts they use are proved internally in the shared matching library rather than assumed by the paper interface.
 <!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
@@ -55,9 +55,9 @@ See the verdict and named-statement sections in this report.
 | Complete marriage definition | `gs_complete_marriage` | fully formalized | exact up to explicit source-domain assumptions | Completeness represents the paper's no-unmatched marriage convention. |
 | Applicant-optimal stable assignment definition | `gs_applicant_optimal_stable_marriage` | fully formalized | exact up to explicit source-domain assumptions | The definition states applicant-side weak optimality among stable assignments. |
 | Strict marriage-domain convention | `gs_strict_marriage_domain` | fully formalized | minor deviation | Lean packages strict rankings and all-pairs acceptability explicitly. |
-| Theorem 1: stable marriages exist | `audit_theorem1_stable_marriage_exists` | fully formalized | exact up to explicit source-domain assumptions | Closed by `paper_gs62_theorem1_stable_marriage_exists`, using deferred-acceptance stability and completeness for the same-index equal-size marriage representation. |
-| College-admissions stable assignment with finite quotas | `audit_college_admissions_stable_assignment_exists` | fully formalized | minor deviation | Closed by cloning each college into `quota c` identical one-to-one seats, then collapsing the stable one-to-one assignment into college rosters. This represents the paper's responsive college ranking over individual applicants. |
-| Theorem 2: applicants are at least as well off under the procedure as under any other stable assignment | `audit_theorem2_deferred_acceptance_applicant_optimal` | fully formalized | exact up to explicit source-domain assumptions | Closed by the reusable proposer-optimality theorem from the Roth/deferred-acceptance infrastructure, with equal cardinality derived by the same-index quota-one representation. |
+| Theorem 1: stable marriages exist | `audit_theorem1_stable_marriage_exists` | fully formalized | exact up to explicit source-domain assumptions | The statement is exposed and discharged by the closed reusable deferred-acceptance stability theorem plus finite completeness. |
+| College-admissions stable assignment with finite quotas | `audit_college_admissions_stable_assignment_exists` | fully formalized | minor deviation | The cloned-seat route compiles against the closed many-to-one stability endpoint. |
+| Theorem 2: applicants are at least as well off under the procedure as under any other stable assignment | `audit_theorem2_deferred_acceptance_applicant_optimal` | fully formalized | exact up to explicit source-domain assumptions | Proposer optimality is discharged through the closed reusable DA optimality theorem. |
 
 <!-- lean-derived-statements:start -->
 ### Lean-Derived Dashboard Named Statements
@@ -89,11 +89,11 @@ Human dashboard reviews and model/agent statement checks may both appear here. T
 
 ## 7. Paper Assumption Provenance And Modeling Notes
 
-> Strict premise-source audit update (2026-06-12): the former `hcard` theorem premises have been removed from the paper-facing interface and are derived internally by representing the equal-size marriage/quota-one endpoints with one finite index type. Current result: 0 explicit paper-assumption premises remain in the `GS62` interface.
+> Axiom/premise/source-hygiene audit update (2026-06-13): the former `hcard` theorem premises have been removed from the paper-facing interface and are derived internally by representing the equal-size marriage/quota-one endpoints with one finite index type. Current result: 0 explicit paper-assumption premises remain in the `GS62` interface. The Lean-native axiom audit confirms the final paper-facing rows are closed except for standard Lean foundations.
 
 | Assumption declaration | Lean declaration | Source location / statement | Assumption validators | Comments |
 | --- | --- | --- | --- | --- |
-| None | `none` | None | None | No explicit paper-assumption premises remain; equal cardinality is derived from the same-index finite representation used by the interface theorems. |
+| None | `none` | None | None | No explicit paper-assumption premises remain; equal cardinality is derived from the same-index finite representation. |
 
 ### Additional Assumptions Beyond Paper
 

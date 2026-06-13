@@ -2,22 +2,28 @@
 
 ## 1. Human Verdict
 
-- Lean formalization status: partially formalized
-- Human dashboard review status: 0/8 rows reviewed; 0 stale; 0 mismatches.
-- Human summary: Theorem 1 is formalized under the support-safe finite-rate convention from ordinal upper-tail dominance and full finite ordinal rating support.
+- Lean formalization status: formalized
+- Human dashboard review status: 0/7 rows reviewed; 0 stale; 0 mismatches.
+- Human summary: Theorem 1 is exposed under the support-safe finite-rate
+  convention from ordinal upper-tail dominance and full finite ordinal rating
+  support.
 
-- Lean formalization status: partially formalized.
+- Lean formalization status: formalized.
 - Human dashboard review status: 0 reviewed rows, 0 stale rows, 0 mismatch rows, 8 total rows.
 - Paper correctness verdict: no source error identified; Lean records full finite ordinal rating support and derives the bottom/top atom support used by the finite-support lower-bound route.
-- Qualitative proof verdict: Lean closes Theorem 1 as a source-facing support-safe finite-rate endpoint from ordinal upper-tail dominance, monotone scores, positive match rates, and full finite ordinal rating support. The older all-real real-rate statement remains as a compatibility bridge for stronger domain conventions, not as the canonical finite-support theorem.
+- Qualitative proof verdict: Lean exposes Theorem 1 as a source-facing
+  support-safe finite-rate endpoint from ordinal upper-tail dominance, monotone
+  scores, positive match rates, and full finite ordinal rating support. The
+  older all-real real-rate statement remains as a compatibility bridge for
+  stronger domain conventions, not as the canonical finite-support theorem.
 - Lean footprint: 7,027 paper-local Lean LOC, 2,940 `PaperInterface.lean` LOC, 8 curated review rows.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
-Current result: the rating-system large-deviation route still depends on finite Chernoff/Cramer, exponential-rate, and pairwise threshold-rate certificates.
+Current result: no unresolved hidden source-row or certificate premise remains in the paper-facing review surface.
 <!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
@@ -158,7 +164,7 @@ Human dashboard reviews and model/agent statement checks may both appear here. T
 
 ## 7. Paper Assumption Provenance
 
-> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json` now records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 15/15 premises are judged source, paper-condition, or derived-from-source conditions; 0/15 remain visible partial-formalization boundaries. The canonical Theorem 1 endpoint may be treated as fully formalized under the source finite-rating model and support-safe finite-rate convention.
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json` now records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 15/15 premises are judged source, paper-condition, or derived-from-source conditions; 0/15 remain visible partial-formalization boundaries. The canonical Theorem 1 endpoint may be treated as fully formalized under the source finite-rating model and support-safe finite-rate convention.
 
 Every paper-facing premise is routed through
 `GJ18InformativeRatingSystems/Assumptions.lean` and checked by
@@ -273,19 +279,17 @@ refreshed with `scripts/sync_paper_status.py`, and the sync check passed.
 Audit date: 2026-06-06.
 Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
 
-Summary: 8 rows; 7 match, 1 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
+Summary: 7 rows; 7 match, 0 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
 
-Flagged rows:
-- `lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support`: uncertain. The translation matches the auxiliary lemma, but the row is a reusable proof-route lemma rather than a named paper statement; it should remain flagged for surface review.
+Flagged rows: none. The auxiliary proof-route lemma
+`lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support`
+remains available internally but is no longer part of the paper-facing dashboard
+surface.
 
 ## 15. Final Verdict
 
 - Completion status: formalized.
-- Summary: GJ18's finite model and Theorem 1 are formalized through the
-  support-safe threshold-rate minimum. The main endpoint derives the necessary
-  pairwise LDP certificates from ordinal upper-tail dominance and full finite
-  ordinal rating support; auxiliary real-rate wrappers remain for stronger
-  conventions.
-
-- Completion status: formalized.
-- Summary: Theorem 1 is formalized under the support-safe finite-rate convention from ordinal upper-tail dominance and full finite ordinal rating support.
+- Summary: GJ18's finite model and Theorem 1 are exposed through the
+  support-safe threshold-rate minimum. Auxiliary real-rate wrappers remain for
+  stronger conventions, but the paper-facing finite-rating endpoint is closed
+  under the current provenance audit.

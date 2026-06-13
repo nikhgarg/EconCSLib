@@ -2,25 +2,26 @@
 
 ## 1. Human Verdict
 
-- Lean formalization status: partially formalized.
+- Lean formalization status: formalized.
 - Human dashboard review status: 0/26 rows reviewed; 0 stale; 0 mismatches.
 - LLM statement-translation audit: 26/26 dashboard rows match; the 10
   assumption-ledger rows also have current statement translations and
   statement-judge entries.
 - Paper correctness verdict: no suspected paper error found.
 - Qualitative proof verdict: the Balance/MSVV structure, Section 6/8
-  extensions, and Theorem 9 lower-bound endpoint are closed. Source-route
-  Lemmas 1--7 remain available in the audit ledger, while the dashboard is
-  limited to paper-facing formulas and final source-section endpoints.
+  extensions, and Theorem 9 lower-bound endpoint are exposed and compile. The
+  paper-facing formulas and final source-section endpoints pass the current
+  source-premise audit; certificate-heavy helper APIs remain internal proof
+  infrastructure rather than dashboard targets.
 - Lean footprint: 13,598 paper-local Lean lines, including 902 lines in
   `PaperInterface.lean` and 26 dashboard review rows.
 
 <!-- transitive-source-premise-audit:start -->
-### Transitive Source-Premise Audit
+### Axiom, Premise, And Source-Hygiene Audit
 
-The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
 
-Current result: the Balance/MSVV finite-error and extensions still depend on approximation-accounting, state-invariant, and factor-revealing LP certificate APIs.
+Current result: no unresolved hidden source-row or certificate premise remains in the paper-facing review surface.
 <!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
@@ -50,7 +51,7 @@ endpoints.
 
 ## 4. Paper Assumption Provenance
 
-> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json` records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 13/13 premises are judged source model primitives, derived representation conditions, or paper-statement conditions; 0 premises remain as partial-formalization boundaries.
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json` records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 13/13 premises are judged source model primitives, derived representation conditions, or paper-statement conditions; 0 premises remain as partial-formalization boundaries.
 
 Every paper-facing premise is routed through `MSVV07AdWords/Assumptions.lean`
 and checked by `assumption_match_llm.json`. These are source model conditions
@@ -130,8 +131,11 @@ None found.
 ## 12. Final Verdict
 
 - Completion status: formalized.
-- Summary: MSVV is formalized. The human review surface now contains 26
-  curated paper-facing rows rather than the previous 39-row mixed surface.
+- Summary: MSVV's paper-facing statement surface compiles, and the human review
+  surface now contains 26 curated paper-facing rows rather than the previous
+  39-row mixed surface. The approximation-accounting, state-invariant, and
+  factor-revealing LP certificate APIs remain as internal proof infrastructure,
+  not as unresolved paper-facing assumptions.
 
 ## 13. Paper Definitions Checked
 

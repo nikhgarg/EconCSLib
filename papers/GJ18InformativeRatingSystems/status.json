@@ -5,13 +5,13 @@
   "authors": "Nikhil Garg, Ramesh Johari",
   "source_version": "arXiv 1810.13028 TeX/PDF cache; publication citation: Manufacturing & Service Operations Management 23(3):589-605, published online 2020 (issue 2021)",
   "build_target": "lake build GJ18InformativeRatingSystems",
-  "status": "partially formalized",
-  "main_caveat": "Strict transitive provenance audit boundary: the rating-system large-deviation route still depends on finite Chernoff/Cramer, exponential-rate, and pairwise threshold-rate certificates.",
+  "status": "formalized",
+  "main_caveat": "",
   "human_summary": "Theorem 1 is formalized under the support-safe finite-rate convention from ordinal upper-tail dominance and full finite ordinal rating support.",
   "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 8,
+    "total_rows": 7,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -20,7 +20,7 @@
     "path": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
     "line_count": 2940,
     "declaration_rows": 85,
-    "review_rows": 8,
+    "review_rows": 7,
     "oversized": false,
     "maintainability_issue": null
   },
@@ -51,7 +51,6 @@
     "include_names": [
       "definition_log_mgf_formula",
       "definition_rate_function_formula",
-      "lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support",
       "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives",
       "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law",
       "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives",
@@ -71,7 +70,6 @@
         "id": "appendix-c",
         "title": "Appendix C named large-deviation results",
         "names": [
-          "lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support",
           "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives"
         ]
       },

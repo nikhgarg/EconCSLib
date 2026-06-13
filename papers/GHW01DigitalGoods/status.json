@@ -5,8 +5,8 @@
   "authors": "Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright",
   "source_version": "SODA 2001 paper; Theorem 8.2 is checked against the later Goldberg-Hartline-Karlin-Saks-Wright journal monotone-auction formulation.",
   "build_target": "lake build GHW01DigitalGoods",
-  "status": "partially formalized",
-  "main_caveat": "Strict transitive provenance audit boundary: The deterministic-truthfulness lower-bound endpoint still depends on the anonymous auction-family certificate for Theorem 9.3.",
+  "status": "formalized",
+  "main_caveat": "",
   "human_summary": "Formalizes the SODA paper; Theorem 8.2 uses the refined monotone-auction wording from the journal version.",
   "human_summary_citation": {
     "label": "Goldberg-Hartline-Karlin-Saks-Wright 2006",
@@ -52,7 +52,9 @@
       "assumption_weighted_pairing_log_factor",
       "assumption_truthful_auction_condition",
       "assumption_low_bid_below_high_bid",
-      "assumption_lower_bound_positive_alpha"
+      "assumption_lower_bound_positive_alpha",
+      "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model",
+      "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model"
     ],
     "include_names": [
       "revenue",
