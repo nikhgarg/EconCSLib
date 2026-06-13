@@ -1,0 +1,149 @@
+{
+  "schema": 1,
+  "paper": "GJ18InformativeRatingSystems",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-12T00:00:00Z",
+  "comment": "Premise-level source/provenance audit against the cached GJ18 TeX source. Each audit-premise from Assumptions.lean is judged individually; helper-route conditions are not canonical theorem assumptions unless marked source or derived.",
+  "items": {
+    "assumption_positive_match_rates": {
+      "judgment": "paper_condition",
+      "reason": "The source model gives sellers floor(k g(theta)) ratings by time k and the large-deviation theorem is stated in the nondegenerate asymptotic sample-rate regime.",
+      "source_location": "adjectivesmodel.tex Rating accumulation model; appendix_theory.tex Lemma problessthan and Theorem 1 proof",
+      "premise_count": 3,
+      "premise_judgments": {
+        "hgHi : 0 < sampleRate hi": {
+          "judgment": "paper_condition",
+          "source_location": "adjectivesmodel.tex: sellers receive n_k(theta)=floor(k g(theta)) matches/ratings; appendix_theory.tex: kg(theta_i) is the number of samples",
+          "reason": "The pairwise helper applies the paper's asymptotic sample-rate model to a compared high type; positivity is the nondegenerate domain in which the displayed large-deviation rate is meaningful."
+        },
+        "hgLo : 0 < sampleRate lo": {
+          "judgment": "paper_condition",
+          "source_location": "adjectivesmodel.tex: sellers receive n_k(theta)=floor(k g(theta)) matches/ratings; appendix_theory.tex: kg(theta_i) is the number of samples",
+          "reason": "The pairwise helper applies the paper's asymptotic sample-rate model to a compared low type; positivity is the nondegenerate domain in which the displayed large-deviation rate is meaningful."
+        },
+        "hpositive_sample : ∀ θ : Fin n, 0 < sampleRate θ": {
+          "judgment": "paper_condition",
+          "source_location": "adjectivesmodel.tex Rating accumulation model; appendix_theory.tex Theorem 1 finite ordered type formula",
+          "reason": "The finite-chain endpoint applies the same positive sample-rate convention uniformly across the finite seller-type chain used in Theorem 1."
+        }
+      }
+    },
+    "assumption_positive_integer_sample_rates": {
+      "judgment": "paper_condition",
+      "reason": "Integer-rate helper rows instantiate the paper's positive asymptotic sample-rate model with positive natural sample rates.",
+      "source_location": "Appendix C finite/integer-rate specialization of floor(k g(theta)) sample counts",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hgHi : 0 < gHi": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the positive sample-rate condition for the integer-rate specialization of n_k(theta)=floor(k g(theta))",
+          "reason": "The natural-valued helper is a representation bridge; positive integer rates are the integer instance of the source positive sample-rate condition."
+        },
+        "hgLo : 0 < gLo": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the positive sample-rate condition for the integer-rate specialization of n_k(theta)=floor(k g(theta))",
+          "reason": "The natural-valued helper is a representation bridge; positive integer rates are the integer instance of the source positive sample-rate condition."
+        }
+      }
+    },
+    "assumption_nonpositive_common_dual_parameters": {
+      "judgment": "paper_condition",
+      "reason": "The common-dual signs are lower-tail Chernoff/Laplace-principle witnesses for the source pairwise score-comparison event; the main support-safe endpoint derives the needed witness package internally.",
+      "source_location": "appendix_theory.tex Lemma problessthan proof and Theorem 1 variational formula",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hz : z ≤ 0": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived by the source lower-tail large-deviation route for x_k(theta_hi)-x_k(theta_lo) <= 0",
+          "reason": "This is not an extra model assumption. It is the sign of the common-dual witness exposed by an auxiliary helper; the canonical endpoint packages/derives the witness from the source variational problem."
+        },
+        "hz : ∀ p : finiteChainOrderedPair n, z p ≤ 0": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Finite-chain pointwise version of the source lower-tail large-deviation route",
+          "reason": "This is the finite ordered-chain form of the same lower-tail common-dual witness condition, exposed for helper reuse rather than assumed by the canonical source endpoint."
+        }
+      }
+    },
+    "assumption_pairwise_threshold_minimizer": {
+      "judgment": "paper_condition",
+      "reason": "The paper's displayed rate uses an infimum over the common threshold a; helper rows expose a minimizer witness while the main endpoint works through the support-safe adjacent threshold-rate minimum.",
+      "source_location": "appendix_theory.tex Lemma problessthan; adjectivesmodel.tex Theorem 1 equation rW",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hthreshold_min : ∀ b : ℝ, M.pairwiseRateObjective sampleRate hi lo a ≤ M.pairwiseRateObjective sampleRate hi lo b": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the paper's inf_a pairwise objective together with the finite support-safe threshold-rate endpoint",
+          "reason": "The premise says the selected threshold realizes the source displayed infimum; it is a helper-level witness, not an independent paper assumption."
+        }
+      }
+    },
+    "assumption_two_sided_score_witnesses": {
+      "judgment": "paper_condition",
+      "reason": "Finite-support lower-bound helper rows expose positive and negative score-gap witnesses; the main finite ordinal endpoint derives them from full rating-law support and a strict score span.",
+      "source_location": "adjectivesmodel.tex ordered finite rating scale, strictly decreasing cumulative rating law, and increasing score design",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hscorePos : 0 < twoSampleRateBlockScore M gHi gLo samplePos": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived in Lean from finite ordinal full support and score span for the source rating model",
+          "reason": "The positive score-gap sample is obtained from the bottom/top rating atoms supplied by the source finite ordinal support convention."
+        },
+        "hscoreNeg : twoSampleRateBlockScore M gHi gLo sampleNeg < 0": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived in Lean from finite ordinal full support and score span for the source rating model",
+          "reason": "The negative score-gap sample is obtained from the bottom/top rating atoms supplied by the source finite ordinal support convention."
+        }
+      }
+    },
+    "assumption_monotone_rating_scores": {
+      "judgment": "paper_assumption",
+      "reason": "The source design problem optimizes over increasing score functions on the ordered rating scale.",
+      "source_location": "adjectivesmodel.tex design optimization paragraph after Theorem 1",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hscore_mono : Monotone M.score": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "adjectivesmodel.tex: choose a random, increasing set of scores phi(y) in [0,1]",
+          "reason": "Lean's monotone score condition is the finite ordinal representation of the paper's increasing score functions."
+        }
+      }
+    },
+    "assumption_full_finite_ordinal_rating_support": {
+      "judgment": "paper_condition",
+      "reason": "The source has a finite ordered rating scale and assumes the cumulative rating law is strictly decreasing in rating level; this supplies the positive finite rating support used by the support-safe endpoint.",
+      "source_location": "adjectivesmodel.tex Ratings model: finite ordered Y, rho(theta,y|Y), R(theta,y|Y), and R strictly decreasing with y",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hfull_support : M.fullSupport": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the source finite ordered rating scale and strict decrease of R(theta,y|Y) in y",
+          "reason": "Strictly decreasing cumulative probabilities across the finite rating order imply positive mass at the represented rating levels used by the canonical finite ordinal endpoint."
+        }
+      }
+    },
+    "assumption_score_range_and_strict_span": {
+      "judgment": "paper_condition",
+      "reason": "The source score function maps ordered rating levels into [0,1] and the optimization uses increasing score functions, giving lower/upper bounds and a nontrivial span.",
+      "source_location": "adjectivesmodel.tex Ratings model and design optimization paragraph",
+      "premise_count": 3,
+      "premise_judgments": {
+        "hscore_low_le : ∀ r : Rating, M.score rLow ≤ M.score r": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the source ordered finite rating scale and increasing score function phi",
+          "reason": "The selected lowest rating level is below every other rating in the ordinal score order."
+        },
+        "hscore_le_high : ∀ r : Rating, M.score r ≤ M.score rHigh": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the source ordered finite rating scale and increasing score function phi",
+          "reason": "The selected highest rating level is above every other rating in the ordinal score order."
+        },
+        "hscore_lt : M.score rLow < M.score rHigh": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the source nontrivial finite rating scale and increasing score design phi(y) in [0,1]",
+          "reason": "The strict span records the nonconstant increasing-score regime used for ranking informativeness."
+        }
+      }
+    }
+  }
+}

@@ -6848,7 +6848,7 @@ connects the displayed split of the original sorted order around accepted `j`
 to the local erase-stable windows used by the finite and zero critical-branch
 theorems.
 -/
-structure SingleMindedSourceSortedEraseCriticalWindow [DecidableEq Bidder]
+structure SingleMindedFullOrderSortedEraseCriticalWindow [DecidableEq Bidder]
     [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
     (bids : Bidder → SingleMindedBid Item)
@@ -6912,7 +6912,7 @@ theorem singleMindedAverageValueUpdateWindow_sortedEraseCriticalWindow_of_split
   · intro v
     exact singleMindedAverageValueUpdateWindow_mem_j bids base j v
 
-def singleMindedAverageValueUpdateWindow_sourceSortedEraseCriticalWindow_of_split
+def singleMindedAverageValueUpdateWindow_fullOrderSortedEraseCriticalWindow_of_split
     [Fintype Bidder] [DecidableEq Item] [LinearOrder Bidder]
     (bids : Bidder → SingleMindedBid Item)
     {before base : List Bidder} {j : Bidder}
@@ -6940,7 +6940,7 @@ def singleMindedAverageValueUpdateWindow_sourceSortedEraseCriticalWindow_of_spli
           (singleMindedValueUpdate bids j v)
           (singleMindedAverageOrderOf
             (singleMindedValueUpdate bids j v))) :
-    SingleMindedSourceSortedEraseCriticalWindow
+    SingleMindedFullOrderSortedEraseCriticalWindow
       (singleMindedAverageOrderOf (Bidder := Bidder) (Item := Item))
       bids (singleMindedGreedyAcceptedFromState bids ∅ (before ++ [j]))
       j base (singleMindedAverageValueUpdateWindow bids j base) := by
@@ -6957,7 +6957,7 @@ def singleMindedAverageValueUpdateWindow_sourceSortedEraseCriticalWindow_of_spli
         bids (singleMindedGreedyAcceptedFromState bids ∅ (before ++ [j]))
         horder hreject haccept
 
-theorem singleMindedAverageValueUpdateWindow_sortedEraseCriticalWindow_of_source_split
+theorem singleMindedAverageValueUpdateWindow_sortedEraseCriticalWindow_of_split_data
     [Fintype Bidder] [DecidableEq Item] [LinearOrder Bidder]
     (bids : Bidder → SingleMindedBid Item)
     {before base : List Bidder} {j : Bidder}
@@ -6981,7 +6981,7 @@ theorem singleMindedAverageValueUpdateWindow_sortedEraseCriticalWindow_of_source
         (singleMindedAverageValueUpdateWindow_membership_iff_mechanism_of_split
           bids v horder hjaccepted).2 hlocal)
 
-def singleMindedAverageValueUpdateWindow_sourceSortedEraseCriticalWindow_of_source_split
+def singleMindedAverageValueUpdateWindow_fullOrderSortedEraseCriticalWindow_of_split_data
     [Fintype Bidder] [DecidableEq Item] [LinearOrder Bidder]
     (bids : Bidder → SingleMindedBid Item)
     {before base : List Bidder} {j : Bidder}
@@ -6989,7 +6989,7 @@ def singleMindedAverageValueUpdateWindow_sourceSortedEraseCriticalWindow_of_sour
       singleMindedAverageOrderOf bids = before ++ j :: base)
     (hjaccepted :
       j ∈ singleMindedGreedyAcceptedFromState bids ∅ (before ++ [j])) :
-    SingleMindedSourceSortedEraseCriticalWindow
+    SingleMindedFullOrderSortedEraseCriticalWindow
       (singleMindedAverageOrderOf (Bidder := Bidder) (Item := Item))
       bids (singleMindedGreedyAcceptedFromState bids ∅ (before ++ [j]))
       j base (singleMindedAverageValueUpdateWindow bids j base) := by
@@ -7002,7 +7002,7 @@ def singleMindedAverageValueUpdateWindow_sourceSortedEraseCriticalWindow_of_sour
       window := ?_ }
   · exact singleMindedAverageOrderOf_nodup bids
   · exact
-      singleMindedAverageValueUpdateWindow_sortedEraseCriticalWindow_of_source_split
+      singleMindedAverageValueUpdateWindow_sortedEraseCriticalWindow_of_split_data
         bids horder hjaccepted
 
 theorem singleMindedGreedyAcceptedMechanism_finite_branch_of_nextDenied_some
@@ -7113,7 +7113,7 @@ theorem singleMindedGreedyAcceptedMechanism_zero_branch_of_nextDenied_none
           bids (orderOf bids) hj_final hnext_order
       simpa [singleMindedGreedyAcceptedMechanismFromOrderOf] using hpay
 
-theorem singleMindedGreedyAcceptedMechanism_finite_branch_of_source_sorted_window
+theorem singleMindedGreedyAcceptedMechanism_finite_branch_of_sorted_window
     [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
     (bids : Bidder → SingleMindedBid Item)
@@ -7121,7 +7121,7 @@ theorem singleMindedGreedyAcceptedMechanism_finite_branch_of_source_sorted_windo
     (pre nextPost : List Bidder) {j n : Bidder}
     (windowOrder : ℝ → List Bidder)
     (hsource :
-      SingleMindedSourceSortedEraseCriticalWindow orderOf bids acceptedWithJ j
+      SingleMindedFullOrderSortedEraseCriticalWindow orderOf bids acceptedWithJ j
         (pre ++ n :: nextPost) windowOrder)
     (hnext_order :
       singleMindedGreedyNextDeniedFromOrder bids (orderOf bids) j = some n)
@@ -7199,7 +7199,7 @@ theorem singleMindedGreedyAcceptedMechanism_finite_branch_of_source_sorted_windo
       hpairwise hjpre hnodup_original hnext_state hsource.window hjn
       hj_nonempty hj_final hnext_order
 
-theorem singleMindedGreedyAcceptedMechanism_zero_branch_of_source_sorted_window
+theorem singleMindedGreedyAcceptedMechanism_zero_branch_of_sorted_window
     [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
     (bids : Bidder → SingleMindedBid Item)
@@ -7207,7 +7207,7 @@ theorem singleMindedGreedyAcceptedMechanism_zero_branch_of_source_sorted_window
     (base : List Bidder) {j : Bidder}
     (windowOrder : ℝ → List Bidder)
     (hsource :
-      SingleMindedSourceSortedEraseCriticalWindow orderOf bids acceptedWithJ j
+      SingleMindedFullOrderSortedEraseCriticalWindow orderOf bids acceptedWithJ j
         base windowOrder)
     (hnext_order :
       singleMindedGreedyNextDeniedFromOrder bids (orderOf bids) j = none) :
@@ -7272,7 +7272,7 @@ Source-window data for the accepted-bid critical branch of LOS02 Definition
 10.1. It provides the full-order sorted-window package for whichever case the
 `n(j)` search returns: a finite next-denied bid or no next-denied bid.
 -/
-structure SingleMindedSourceCriticalBranchWindows [DecidableEq Bidder]
+structure SingleMindedCriticalBranchWindows [DecidableEq Bidder]
     [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
     (bids : Bidder → SingleMindedBid Item) (j : Bidder) where
@@ -7283,23 +7283,23 @@ structure SingleMindedSourceCriticalBranchWindows [DecidableEq Bidder]
           Σ pre : List Bidder,
             Σ nextPost : List Bidder,
               Σ windowOrder : ℝ → List Bidder,
-                SingleMindedSourceSortedEraseCriticalWindow orderOf bids
+                SingleMindedFullOrderSortedEraseCriticalWindow orderOf bids
                   acceptedWithJ j (pre ++ n :: nextPost) windowOrder
   none :
     singleMindedGreedyNextDeniedFromOrder bids (orderOf bids) j = none →
       Σ acceptedWithJ : Finset Bidder,
         Σ base : List Bidder,
         Σ windowOrder : ℝ → List Bidder,
-          SingleMindedSourceSortedEraseCriticalWindow orderOf bids
+          SingleMindedFullOrderSortedEraseCriticalWindow orderOf bids
             acceptedWithJ j base windowOrder
 
-noncomputable def singleMindedAverageSourceCriticalBranchWindows_of_accepted
+noncomputable def singleMindedAverageCriticalBranchWindows_of_accepted
     [Fintype Bidder] [DecidableEq Item] [LinearOrder Bidder]
     (bids : Bidder → SingleMindedBid Item) {j : Bidder}
     (hjacc :
       j ∈ singleMindedGreedyAcceptedFromOrder bids
         (singleMindedAverageOrderOf bids)) :
-    SingleMindedSourceCriticalBranchWindows
+    SingleMindedCriticalBranchWindows
       (singleMindedAverageOrderOf (Bidder := Bidder) (Item := Item))
       bids j := by
   classical
@@ -7384,12 +7384,12 @@ noncomputable def singleMindedAverageSourceCriticalBranchWindows_of_accepted
           before ++ j :: (pre ++ n :: nextPost) := by
       rw [horder, hbase]
     exact
-      singleMindedAverageValueUpdateWindow_sourceSortedEraseCriticalWindow_of_source_split
+      singleMindedAverageValueUpdateWindow_fullOrderSortedEraseCriticalWindow_of_split_data
         bids horder' hjaccepted
   · intro _hnext
     exact
       ⟨acceptedWithJ, base, singleMindedAverageValueUpdateWindow bids j base,
-        singleMindedAverageValueUpdateWindow_sourceSortedEraseCriticalWindow_of_source_split
+        singleMindedAverageValueUpdateWindow_fullOrderSortedEraseCriticalWindow_of_split_data
           bids horder hjaccepted⟩
 
 /--
@@ -7408,13 +7408,13 @@ structure SingleMindedSomeThresholdBranch [DecidableEq Bidder]
       singleMindedValueUpdate branchBids i v =
         Function.update reports i { desired := s, value := v }
   branch_nonempty : (branchBids i).desired.Nonempty
-  windows : SingleMindedSourceCriticalBranchWindows orderOf branchBids i
+  windows : SingleMindedCriticalBranchWindows orderOf branchBids i
   payment_eq :
     (singleMindedGreedyAcceptedMechanismFromOrderOf orderOf).payment
       branchBids i = p
   threshold_nonneg : 0 ≤ p
 
-noncomputable def singleMindedSomeThresholdBranch_of_source_windows
+noncomputable def singleMindedSomeThresholdBranch_of_branch_windows
     [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
     (reports branchBids : Bidder → SingleMindedBid Item)
@@ -7426,7 +7426,7 @@ noncomputable def singleMindedSomeThresholdBranch_of_source_windows
         singleMindedValueUpdate branchBids i v =
           Function.update reports i { desired := s, value := v })
     (hwindows :
-      SingleMindedSourceCriticalBranchWindows orderOf branchBids i) :
+      SingleMindedCriticalBranchWindows orderOf branchBids i) :
     SingleMindedSomeThresholdBranch orderOf reports i s
       ((singleMindedGreedyAcceptedMechanismFromOrderOf orderOf).payment
         branchBids i) := by
@@ -7477,13 +7477,13 @@ noncomputable def singleMindedAverageSomeThresholdBranch_of_accepted_update
       singleMindedValueUpdate_update_desired_value
         reports i s branchValue v
   have hwindows :
-      SingleMindedSourceCriticalBranchWindows
+      SingleMindedCriticalBranchWindows
         (singleMindedAverageOrderOf (Bidder := Bidder) (Item := Item))
         branchBids i :=
-    singleMindedAverageSourceCriticalBranchWindows_of_accepted
+    singleMindedAverageCriticalBranchWindows_of_accepted
       branchBids (by simpa [branchBids] using hacc)
   simpa [branchBids] using
-    singleMindedSomeThresholdBranch_of_source_windows
+    singleMindedSomeThresholdBranch_of_branch_windows
       (singleMindedAverageOrderOf (Bidder := Bidder) (Item := Item))
       reports branchBids i s hbranch_profile hvalue_update_eq hwindows
 
@@ -7618,7 +7618,7 @@ Source-branch data sufficient to build the domain-aware critical-value
 certificate for the LOS02 greedy accepted-set mechanism. This keeps the
 concrete sorted-order construction outside the generic certificate proof.
 -/
-structure SingleMindedNonnegativeCriticalSourceBranchData
+structure SingleMindedNonnegativeCriticalBranchData
     [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder) where
   threshold :
@@ -7670,12 +7670,12 @@ windows for the finite and no-next cases, the actual Definition 10.1 payment is
 the critical threshold for changing only the accepted bidder's value on the
 nonnegative report domain.
 -/
-theorem singleMindedGreedyAcceptedMechanism_payment_critical_of_source_windows
+theorem singleMindedGreedyAcceptedMechanism_payment_critical_of_branch_windows
     [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
     (bids : Bidder → SingleMindedBid Item) {j : Bidder}
     (hwindows :
-      SingleMindedSourceCriticalBranchWindows orderOf bids j)
+      SingleMindedCriticalBranchWindows orderOf bids j)
     (hj_nonempty : (bids j).desired.Nonempty) :
     let M := singleMindedGreedyAcceptedMechanismFromOrderOf orderOf
     (∀ v, 0 ≤ v → v < M.payment bids j →
@@ -7692,7 +7692,7 @@ theorem singleMindedGreedyAcceptedMechanism_payment_critical_of_source_windows
         rcases hwindows.none hnext with
           ⟨acceptedWithJ, base, windowOrder, hsource⟩
         have hbranch :=
-          singleMindedGreedyAcceptedMechanism_zero_branch_of_source_sorted_window
+          singleMindedGreedyAcceptedMechanism_zero_branch_of_sorted_window
             orderOf bids acceptedWithJ base windowOrder hsource hnext
         have hpay : M.payment bids j = 0 := by
           simpa [M] using hbranch.2.2
@@ -7701,7 +7701,7 @@ theorem singleMindedGreedyAcceptedMechanism_payment_critical_of_source_windows
         rcases hwindows.finite n hnext with
           ⟨acceptedWithJ, pre, nextPost, windowOrder, hsource⟩
         have hbranch :=
-          singleMindedGreedyAcceptedMechanism_finite_branch_of_source_sorted_window
+          singleMindedGreedyAcceptedMechanism_finite_branch_of_sorted_window
             orderOf bids acceptedWithJ pre nextPost windowOrder hsource hnext
             hj_nonempty
         have hpay :
@@ -7716,7 +7716,7 @@ theorem singleMindedGreedyAcceptedMechanism_payment_critical_of_source_windows
         rcases hwindows.none hnext with
           ⟨acceptedWithJ, base, windowOrder, hsource⟩
         have hbranch :=
-          singleMindedGreedyAcceptedMechanism_zero_branch_of_source_sorted_window
+          singleMindedGreedyAcceptedMechanism_zero_branch_of_sorted_window
             orderOf bids acceptedWithJ base windowOrder hsource hnext
         have hpay : M.payment bids j = 0 := by
           simpa [M] using hbranch.2.2
@@ -7725,7 +7725,7 @@ theorem singleMindedGreedyAcceptedMechanism_payment_critical_of_source_windows
         rcases hwindows.finite n hnext with
           ⟨acceptedWithJ, pre, nextPost, windowOrder, hsource⟩
         have hbranch :=
-          singleMindedGreedyAcceptedMechanism_finite_branch_of_source_sorted_window
+          singleMindedGreedyAcceptedMechanism_finite_branch_of_sorted_window
             orderOf bids acceptedWithJ pre nextPost windowOrder hsource hnext
             hj_nonempty
         have hpay :
@@ -7748,10 +7748,10 @@ theorem singleMindedAverageGreedyAcceptedMechanism_payment_critical_of_accepted
     (∀ v, M.payment bids j < v →
       j ∈ M.accepted (singleMindedValueUpdate bids j v)) := by
   exact
-    singleMindedGreedyAcceptedMechanism_payment_critical_of_source_windows
+    singleMindedGreedyAcceptedMechanism_payment_critical_of_branch_windows
       (singleMindedAverageOrderOf (Bidder := Bidder) (Item := Item))
       bids
-      (singleMindedAverageSourceCriticalBranchWindows_of_accepted bids hjacc)
+      (singleMindedAverageCriticalBranchWindows_of_accepted bids hjacc)
       hj_nonempty
 
 theorem singleMindedAverageGreedyPayment_eq_of_accepted_updates
@@ -8046,9 +8046,9 @@ theorem singleMindedAverageGreedyCriticalThreshold_accepted_threshold
             reports (singleMindedAverageOrderOf reports) hacc_order hnext
       simpa [hnext, hpay] using hthreshold
 
-noncomputable def singleMindedAverageGreedyNonnegativeCriticalSourceBranchData
+noncomputable def singleMindedAverageGreedyNonnegativeCriticalBranchData
     [Fintype Bidder] [DecidableEq Item] [LinearOrder Bidder] :
-    SingleMindedNonnegativeCriticalSourceBranchData
+    SingleMindedNonnegativeCriticalBranchData
       (singleMindedAverageOrderOf (Bidder := Bidder) (Item := Item)) where
   threshold := singleMindedAverageGreedyCriticalThreshold
   threshold_own_value_independent := by
@@ -8079,11 +8079,11 @@ accepted-set mechanism from source branch data. Finite thresholds are discharged
 by the accepted-bid payment-criticality theorem, while true infinite thresholds
 are supplied explicitly by `none_denied`.
 -/
-noncomputable def singleMindedGreedyAcceptedMechanism_nonnegativeCriticalValueWithInfinityCertificate_of_source_branch_data
+noncomputable def singleMindedGreedyAcceptedMechanism_nonnegativeCriticalValueWithInfinityCertificate_of_branch_data
     [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
     (data :
-      SingleMindedNonnegativeCriticalSourceBranchData orderOf) :
+      SingleMindedNonnegativeCriticalBranchData orderOf) :
     (singleMindedGreedyAcceptedMechanismFromOrderOf
       (Bidder := Bidder) (Item := Item)
       orderOf).NonnegativeCriticalValueWithInfinityCertificate := by
@@ -8103,7 +8103,7 @@ noncomputable def singleMindedGreedyAcceptedMechanism_nonnegativeCriticalValueWi
   · intro reports hreports i s v p hs hv_nonneg hthreshold hv_lt
     let branch := data.some_branch reports hreports i s p hs hthreshold
     have hcritical :=
-      singleMindedGreedyAcceptedMechanism_payment_critical_of_source_windows
+      singleMindedGreedyAcceptedMechanism_payment_critical_of_branch_windows
         orderOf branch.branchBids branch.windows branch.branch_nonempty
     have hdeny :
         i ∉ M.accepted (singleMindedValueUpdate branch.branchBids i v) :=
@@ -8113,7 +8113,7 @@ noncomputable def singleMindedGreedyAcceptedMechanism_nonnegativeCriticalValueWi
   · intro reports hreports i s v p hs hv_nonneg hthreshold hp_lt
     let branch := data.some_branch reports hreports i s p hs hthreshold
     have hcritical :=
-      singleMindedGreedyAcceptedMechanism_payment_critical_of_source_windows
+      singleMindedGreedyAcceptedMechanism_payment_critical_of_branch_windows
         orderOf branch.branchBids branch.windows branch.branch_nonempty
     have hacc :
         i ∈ M.accepted (singleMindedValueUpdate branch.branchBids i v) :=
@@ -8170,9 +8170,9 @@ theorem singleMindedAverageGreedyAcceptedMechanism_truthfulOn_nonnegative
         (Bidder := Bidder) (Item := Item))
       (singleMindedGreedyAcceptedMechanismFromOrderOf_participation
         (singleMindedAverageOrderOf (Bidder := Bidder) (Item := Item)))
-      (singleMindedGreedyAcceptedMechanism_nonnegativeCriticalValueWithInfinityCertificate_of_source_branch_data
+      (singleMindedGreedyAcceptedMechanism_nonnegativeCriticalValueWithInfinityCertificate_of_branch_data
         (singleMindedAverageOrderOf (Bidder := Bidder) (Item := Item))
-        (singleMindedAverageGreedyNonnegativeCriticalSourceBranchData
+        (singleMindedAverageGreedyNonnegativeCriticalBranchData
           (Bidder := Bidder) (Item := Item)))
 
 theorem singleMindedGreedyAcceptedFromState_rejects_of_average_threshold_and_prefix_accept

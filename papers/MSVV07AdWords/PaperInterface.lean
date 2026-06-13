@@ -1,4 +1,5 @@
 import MSVV07AdWords.ProofInterface
+import MSVV07AdWords.Assumptions
 
 /-!
 # Paper Interface: MSVV07 AdWords
@@ -48,7 +49,9 @@ abbrev paperSlotsPerPageDistinct
     (A : PaperAssignment Advertiser (Σ q : Query, Slot q)) : Prop :=
   Proof.paperSlotsPerPageDistinct Slot A
 
-/-- Paper multiple-slot distinctness spelled out by original query and slot. -/
+/-- Paper multiple-slot distinctness spelled out by original query and slot.
+Source status: direct paper model extension
+-/
 theorem paperSlotsPerPageDistinct_iff
     {Advertiser Query : Type*} (Slot : Query → Type*)
     (A : PaperAssignment Advertiser (Σ q : Query, Slot q)) :
@@ -66,7 +69,9 @@ noncomputable abbrev paperSpend
     (A : PaperAssignment Advertiser Query) (a : Advertiser) : ℝ :=
   Proof.paperSpend I A a
 
-/-- Paper spend formula for advertiser `a` under assignment `A`. -/
+/-- Paper spend formula for advertiser `a` under assignment `A`.
+Source status: direct paper formula
+-/
 theorem paperSpend_formula
     {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
     (I : PaperInstance Advertiser Query)
@@ -85,7 +90,9 @@ noncomputable abbrev paperRevenue
     (A : PaperAssignment Advertiser Query) : ℝ :=
   Proof.paperRevenue I A
 
-/-- Paper revenue formula for an assignment. -/
+/-- Paper revenue formula for an assignment.
+Source status: direct paper formula
+-/
 theorem paperRevenue_formula
     {Advertiser Query : Type*} [Fintype Query]
     (I : PaperInstance Advertiser Query)
@@ -104,7 +111,9 @@ abbrev paperFeasible
     (A : PaperAssignment Advertiser Query) : Prop :=
   Proof.paperFeasible I A
 
-/-- Paper budget feasibility: no advertiser spends more than her budget. -/
+/-- Paper budget feasibility: no advertiser spends more than her budget.
+Source status: direct paper constraint
+-/
 theorem paperFeasible_iff
     {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
     (I : PaperInstance Advertiser Query)
@@ -118,7 +127,9 @@ abbrev paperSmallBids
     (I : PaperInstance Advertiser Query) (epsilon : ℝ) : Prop :=
   Proof.paperSmallBids I epsilon
 
-/-- Paper small-bids condition: every bid is at most an `epsilon` budget fraction. -/
+/-- Paper small-bids condition: every bid is at most an `epsilon` budget fraction.
+Source status: direct paper assumption
+-/
 theorem paperSmallBids_iff
     {Advertiser Query : Type*}
     (I : PaperInstance Advertiser Query) (epsilon : ℝ) :
@@ -132,7 +143,9 @@ noncomputable abbrev paperFractionalRevenue
     (x : Advertiser → Query → ℝ) : ℝ :=
   Proof.paperFractionalRevenue I x
 
-/-- Paper fractional LP value. -/
+/-- Paper fractional LP value.
+Source status: direct paper formula
+-/
 theorem paperFractionalRevenue_formula
     {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]
     (I : PaperInstance Advertiser Query)
@@ -148,7 +161,9 @@ abbrev PaperFractionalFeasible
     (x : Advertiser → Query → ℝ) : Prop :=
   Proof.PaperFractionalFeasible I x
 
-/-- Paper fractional LP feasibility constraints. -/
+/-- Paper fractional LP feasibility constraints.
+Source status: direct paper constraints
+-/
 theorem paperFractionalFeasible_iff
     {Advertiser Query : Type*} [Fintype Advertiser] [Fintype Query]
     (I : PaperInstance Advertiser Query)
@@ -167,7 +182,9 @@ theorem paperFractionalFeasible_iff
 noncomputable abbrev paperTradeoff (s : ℝ) : ℝ :=
   Proof.paperTradeoff s
 
-/-- The paper's MSVV/Balance tradeoff function at spent fraction `s`. -/
+/-- The paper's MSVV/Balance tradeoff function at spent fraction `s`.
+Source status: direct paper formula
+-/
 theorem paperTradeoff_formula (s : ℝ) :
     paperTradeoff s = 1 - Real.exp (s - 1) := by
   rfl
@@ -176,7 +193,9 @@ theorem paperTradeoff_formula (s : ℝ) :
 noncomputable abbrev paperMsvvRatio : ℝ :=
   Proof.paperMsvvRatio
 
-/-- The paper's competitive ratio `1 - 1/e`. -/
+/-- The paper's competitive ratio `1 - 1/e`.
+Source status: direct paper formula
+-/
 theorem paperMsvvRatio_formula :
     paperMsvvRatio = 1 - 1 / Real.exp 1 := by
   rfl
@@ -188,7 +207,9 @@ noncomputable abbrev paperBalanceScore
     (A : PaperAssignment Advertiser Query) (a : Advertiser) (q : Query) : ℝ :=
   Proof.paperBalanceScore I A a q
 
-/-- Paper Balance/MSVV scaled bid. -/
+/-- Paper Balance/MSVV scaled bid.
+Source status: direct paper formula
+-/
 theorem paperBalanceScore_formula
     {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
     (I : PaperInstance Advertiser Query)
@@ -204,7 +225,9 @@ abbrev paperCanAssign
     (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser) : Prop :=
   Proof.paperCanAssign I A q a
 
-/-- Paper feasibility for assigning query `q` next to advertiser `a`. -/
+/-- Paper feasibility for assigning query `q` next to advertiser `a`.
+Source status: direct paper budget constraint
+-/
 theorem paperCanAssign_iff
     {Advertiser Query : Type*} [Fintype Query] [DecidableEq Advertiser]
     (I : PaperInstance Advertiser Query)
@@ -227,6 +250,7 @@ abbrev paperIsBalanceChoice
 /--
 Paper Balance/MSVV choice rule: advertiser `a` is feasible for query `q` and
 maximizes the scaled bid among feasible advertisers.
+Source status: direct paper algorithm rule
 -/
 theorem paperIsBalanceChoice_iff
     {Advertiser Query : Type*}
@@ -254,6 +278,7 @@ abbrev PaperSmallBidsLimitFamily
 Paper-facing small-bids limiting family: bids become small relative to budgets,
 offline optimum converges to `optLimit`, and Balance/MSVV revenue converges to
 `revenueLimit`.
+Source status: formalization bridge for Theorem 8 limiting statement
 -/
 theorem paperSmallBidsLimitFamily_fields
     {Advertiser : Type*}
@@ -318,6 +343,7 @@ theorem theorem8_finite_explicit_error
 Theorem 8, paper-level limiting endpoint. Any finite-query small-bids family
 satisfying the explicit threshold eventually has limiting competitive ratio
 `1 - 1/e`.
+Source status: direct paper theorem
 -/
 theorem theorem8_balance_msvv_competitive_of_small_bids_limit_family
     {Advertiser : Type*}
@@ -366,6 +392,7 @@ noncomputable abbrev section6_next_highest_bid_all
 The all-bidders Section 6 next-price charge is the maximum of zero and the
 largest bid from an advertiser other than `a`, or zero when there is no other
 advertiser.
+Source status: direct paper model extension
 -/
 theorem section6_next_highest_bid_all_formula
     {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]
@@ -392,6 +419,7 @@ noncomputable abbrev section6_next_highest_bid_alive
 The alive-bidders Section 6 next-price charge is the maximum of zero and the
 largest bid from an alive advertiser other than `a`, or zero when no such
 advertiser exists.
+Source status: direct paper model extension
 -/
 theorem section6_next_highest_bid_alive_formula
     {Advertiser Query : Type*} [Fintype Advertiser] [DecidableEq Advertiser]
@@ -803,6 +831,7 @@ theorem theorem9_capped_normalized_revenue_eq_prefix_spend
 /--
 Theorem 9 capped normalized revenue is the average capped prefix spend across
 all bidders.
+Source status: direct paper proof formula
 -/
 theorem theorem9CappedNormalizedRevenue_formula
     (N : ℕ) (algorithm : theorem9IntegralPrefixAlgorithm N)
@@ -855,6 +884,7 @@ theorem theorem9_no_randomized_integral_prefix_algorithm_beats_msvv_ratio :
 /--
 Theorem 9, paper-facing randomized online algorithm endpoint in the finite
 prefix model.
+Source status: direct paper theorem
 -/
 theorem theorem9_no_randomized_online_algorithm_beats_msvv_ratio :
     ∀ delta : ℝ, 0 < delta →

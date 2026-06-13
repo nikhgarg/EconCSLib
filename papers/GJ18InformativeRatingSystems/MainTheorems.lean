@@ -517,7 +517,7 @@ theorem finiteFloorPkObjective_oneSub_hasExponentialRate_of_adjacent_shifted_cra
         M sampleRate pairHi pairLo weight adjacentPair
         hweight_nonneg iMin hweight_pos
         (fun p =>
-          twoSampleFloorPkComplementError_sourceThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
+          twoSampleFloorPkComplementError_pairwiseThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
             M sampleRate (pairHi p) (pairLo p)
             (hgHi p) (hgLo p) (a p) (z p) (hz p)
             (C_hi p) (C_lo p) (hshifted_rate p) (hdual_rate p))
@@ -615,7 +615,7 @@ theorem finiteFloorPkObjective_oneSub_hasExponentialRate_of_adjacent_logMGF_deri
     M sampleRate pairHi pairLo weight adjacentPair
     hweight_nonneg hweight_sum iMin hweight_pos
     (fun p =>
-      twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer
+      twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer
         M sampleRate (pairHi p) (pairLo p)
         (hgHi p) (hgLo p) (a p) (z p) (hz p)
         (hbdd_hi p) (hbdd_lo p) (hderiv_hi p) (hderiv_lo p)
@@ -778,7 +778,7 @@ theorem finiteFloorPkObjective_oneSub_hasExponentialRate_of_adjacent_logMGF_deri
     M sampleRate pairHi pairLo weight adjacentPair
     hweight_nonneg hweight_sum iMin hweight_pos
     (fun p =>
-      twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_pos_neg_atoms
+      twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_pos_neg_atoms
         M sampleRate (pairHi p) (pairLo p)
         (hgHi p) (hgLo p) (a p) (z p) (hz p)
         (hderiv_hi p) (hderiv_lo p) (hthreshold_eq p)
@@ -927,7 +927,7 @@ theorem finiteFloorPkObjective_oneSub_hasExponentialRate_of_adjacent_logMGF_deri
     M sampleRate pairHi pairLo weight adjacentPair
     hweight_nonneg hweight_sum iMin hweight_pos
     (fun p =>
-      twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_threshold_minimizer_of_straddling_support
+      twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_threshold_minimizer_of_straddling_support
         M sampleRate (pairHi p) (pairLo p)
         (hgHi p) (hgLo p) (a p) (z p) (hz p)
         (hderiv_hi p) (hderiv_lo p) (hthreshold_min p)
@@ -2449,7 +2449,7 @@ theorem finiteChainUniformFloorPkObjective_oneSub_hasExponentialRate_of_interval
           (finiteChainOrderedPairThresholdRate M sampleRate p) := by
     intro p
     simpa [finiteChainOrderedPairThresholdRate] using
-      twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_threshold_minimizer_of_straddling_support
+      twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_threshold_minimizer_of_straddling_support
         M sampleRate (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p)
         (hpositive_sample (finiteChainOrderedPairHi p))
         (hpositive_sample (finiteChainOrderedPairLo p))
@@ -2522,7 +2522,7 @@ theorem finiteChainUniformFloorPkObjective_oneSub_hasExponentialRate_of_interval
           (finiteChainOrderedPairThresholdRate M sampleRate p) := by
     intro p
     simpa [finiteChainOrderedPairThresholdRate] using
-      twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
+      twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
         M sampleRate (finiteChainOrderedPairHi p) (finiteChainOrderedPairLo p)
         (hpositive_sample (finiteChainOrderedPairHi p))
         (hpositive_sample (finiteChainOrderedPairLo p))
@@ -3293,7 +3293,7 @@ theorem finiteFloorPkObjective_oneSub_hasExponentialRate_of_adjacent_logMGF_deri
     M sampleRate pairHi pairLo weight adjacentPair
     hweight_nonneg hweight_sum iMin hweight_pos
     (fun p =>
-      twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives_of_straddling_support
+      twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives_of_straddling_support
         M sampleRate (pairHi p) (pairLo p)
         (hgHi p) (hgLo p) (hbdd_hi p) (hbdd_lo p) (a p) (z p) (hz p)
         (hderiv_hi p) (hderiv_lo p)
@@ -3589,7 +3589,7 @@ theorem finiteUniformFloorPkObjective_oneSub_hasExponentialRate_of_logMGF_deriva
             (pairHi p) (pairLo p))
           (pairwiseSellerThresholdRate M sampleRate (pairHi p) (pairLo p)) :=
     fun p =>
-      twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
+      twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
         M sampleRate (pairHi p) (pairLo p)
         (hgHi p) (hgLo p) (a p) (z p) (hz p)
         (hderiv_hi p) (hderiv_lo p) (hthreshold_eq p)
@@ -3801,7 +3801,7 @@ theorem finiteRankingPkComplementError_hasExponentialRate_of_adjacent_logMGF_der
       hweight_nonneg iMin hweight_pos ?_ hadj_min hadj_dominates
   intro p
   exact
-    twoSamplePkComplementError_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
+    twoSamplePkComplementError_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
       M sampleRate (pairHi p) (pairLo p) (gHi p) (gLo p)
       (hgHi p) (hgLo p) (hsample_hi p) (hsample_lo p)
       (hbdd_hi p) (hbdd_lo p) (a p) (z p)

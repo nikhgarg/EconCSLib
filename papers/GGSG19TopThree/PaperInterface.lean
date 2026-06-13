@@ -1,4 +1,5 @@
 import GGSG19TopThree.ProofInterface
+import GGSG19TopThree.Assumptions
 
 /-!
 # Human-Facing Interface for GGSG19
@@ -15,7 +16,11 @@ open EconCSLib.Probability
 
 noncomputable section
 
-/-- Paper definition of an exponential large-deviation rate. -/
+/--
+Source status: direct source definition.
+
+Paper definition of an exponential large-deviation rate.
+-/
 abbrev paper_definition_large_deviation_rate (A : ℕ → ℝ) (r : ℝ) : Prop :=
   definition_large_deviation_rate A r
 
@@ -139,20 +144,20 @@ theorem source_proposition4_thm_goal_learning_finite_support
       ∀ pair,
         0 ≤ EconCSLib.pmfExp law
           (fun signal =>
-            score (hi pair) signal - score (lo pair) signal))
-    {pairWeight : Pair → ℝ}
-    (hweight : ∀ pair, 0 ≤ pairWeight pair)
-    (hweight_pos : ∀ pair, 0 < pairWeight pair) :
+            score (hi pair) signal - score (lo pair) signal)) :
     ∃ rate : WithTop ℝ,
       HasExtendedExponentialRate
         (fun sampleSize =>
           ∑ pair : Pair,
-            pairWeight pair *
-              finiteScoreGapPairwiseErrorProb law score
-                (hi pair) (lo pair) sampleSize)
-        rate :=
-  proposition4_outcome_error_extended_rate_from_relevant_pairs_finite_support_trichotomy
-    law score hi lo hmean hweight hweight_pos
+            finiteScoreGapPairwiseErrorProb law score
+              (hi pair) (lo pair) sampleSize)
+        rate := by
+  simpa using
+    (proposition4_outcome_error_extended_rate_from_relevant_pairs_finite_support_trichotomy
+      law score hi lo hmean
+      (pairWeight := fun _ => (1 : ℝ))
+      (by intro pair; exact zero_le_one)
+      (by intro pair; exact zero_lt_one))
 
 /--
 Source Theorem `lem:randomizebetterscoring`, finite W-selection form.  The
@@ -245,6 +250,8 @@ theorem source_theorem2_lem_randomizenotbetterapproval_pairwise
     law K weight hweight hsum hi lo
 
 /--
+Source status: direct source theorem.
+
 Source Theorem `lem:randomizebetterapproval_Wselection`, concrete finite
 constructed-law endpoint: the six-ranking law is design-invariant for
 W-selection and 50/50 randomized approval strictly beats every static
@@ -263,6 +270,9 @@ theorem source_theorem_lem_randomizebetterapproval_w_selection_constructed
   randomized_approval_w_selection_constructed_ranking_law_design_invariant_and_all_static_k
 
 /--
+Source status: direct source corollary, with implicit non-uniform Mallows
+domain recorded in `Assumptions.lean`.
+
 Source Corollary `lem:mallowsnorando`: under a finite Mallows model with
 `q < 1`, an approval-rate-optimal static K-approval cutoff weakly dominates
 any finite randomized family of nontrivial K-approval rules.

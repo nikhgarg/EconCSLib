@@ -936,8 +936,8 @@ theorem paretoCitedOrderStatisticMean_topK_forward_marginal_pos
         orderStatisticTopKSumFromMean (paretoCitedOrderStatisticMean α) k (q + 1) -
             orderStatisticTopKSumFromMean (paretoCitedOrderStatisticMean α) k q =
           (∑ i ∈ Finset.range q, (A i - B i)) + A q := by
-      rw [orderStatisticTopKSumFromMean_eq_source_sum,
-        orderStatisticTopKSumFromMean_eq_source_sum]
+      rw [orderStatisticTopKSumFromMean_eq_bottomIndexed_sum,
+        orderStatisticTopKSumFromMean_eq_bottomIndexed_sum]
       rw [min_eq_right hq_succ_le_k, min_eq_right hq_le_k]
       rw [Finset.sum_range_succ]
       change
@@ -1155,8 +1155,8 @@ theorem paretoIidOrderStatisticTopKSum_eq_cited
       orderStatisticTopKSumFromMean (paretoCitedOrderStatisticMean α) k q := by
   by_cases hq_zero : q = 0
   · simp [hq_zero]
-  · rw [orderStatisticTopKSumFromMean_eq_source_sum,
-      orderStatisticTopKSumFromMean_eq_source_sum]
+  · rw [orderStatisticTopKSumFromMean_eq_bottomIndexed_sum,
+      orderStatisticTopKSumFromMean_eq_bottomIndexed_sum]
     refine Finset.sum_congr rfl ?_
     intro i hi
     have hi_lt_min : i < min k q := Finset.mem_range.1 hi
@@ -1669,7 +1669,7 @@ theorem paretoIidOrderStatisticTopK_forward_zero_pos
   have htop_one :
       orderStatisticTopKSumFromMean (paretoIidOrderStatisticMeanSeq α) k 1 =
         paretoIidOrderStatisticMeanSeq α 1 1 := by
-    rw [orderStatisticTopKSumFromMean_eq_source_sum]
+    rw [orderStatisticTopKSumFromMean_eq_bottomIndexed_sum]
     rw [min_eq_right (Nat.succ_le_of_lt hk)]
     simp
   simpa [paretoIidOrderStatisticOracle, TopKValueOracle.ofOrderStatisticMean,

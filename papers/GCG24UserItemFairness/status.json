@@ -5,8 +5,8 @@
   "authors": "Sophie Greenwood, Sudalakshmee Chiniah, and Nikhil Garg",
   "source_version": "NeurIPS 2024 / arXiv:2412.04466",
   "build_target": "lake build GCG24UserItemFairness",
-  "status": "formalized",
-  "main_caveat": "Recommendation fairness propositions and theorem statements are closed under the formal source model.",
+  "status": "partially formalized",
+  "main_caveat": "Strict transitive provenance audit boundary: LP/duality and feasible-support optimality certificates for the Problem 6/11 reduction and misestimation tradeoff rows remain source-boundary proof obligations.",
   "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
@@ -17,7 +17,7 @@
   },
   "paper_interface": {
     "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
-    "line_count": 235,
+    "line_count": 286,
     "declaration_rows": 18,
     "review_rows": 18,
     "oversized": false,
@@ -25,13 +25,33 @@
   },
   "artifacts": {
     "readme": "papers/GCG24UserItemFairness/README.md",
+    "source_text": "papers/GCG24UserItemFairness/GCG24UserItemFairness.txt",
     "paper_interface": "papers/GCG24UserItemFairness/PaperInterface.lean",
+    "assumptions": "papers/GCG24UserItemFairness/Assumptions.lean",
     "final_validation_report": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
     "dependency_dag_tex": "papers/GCG24UserItemFairness/DependencyDAG.tex",
     "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf"
   },
   "review_surface": {
     "source_file": "papers/GCG24UserItemFairness/PaperInterface.lean",
+    "assumption_source_file": "papers/GCG24UserItemFairness/Assumptions.lean",
+    "llm_assumption_review": {
+      "assumption_judgment_file": "papers/GCG24UserItemFairness/assumption_match_llm.json",
+      "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption or paper-statement condition rather than a proof assumption."
+    },
+    "assumption_policy": "strict",
+    "assumption_names": [
+      "assumption_positive_recommendation_utilities",
+      "assumption_theorem3_opposing_type_model",
+      "assumption_theorem3_first_half_alpha_domain",
+      "assumption_theorem3_second_half_alpha_domain",
+      "assumption_theorem4_at_least_three_items",
+      "assumption_theorem4_true_model_reduction",
+      "assumption_theorem4_estimated_model_reduction",
+      "assumption_theorem4_displayed_reduced_models",
+      "assumption_theorem4_cold_start_type_wiring",
+      "assumption_theorem4_parameter_domain"
+    ],
     "include_names": [
       "recommendationUtility",
       "rawUserUtility",
@@ -47,8 +67,8 @@
       "priceOfMisestimation",
       "proposition1_symmetric_lp_reduction",
       "proposition2_symmetric_optimum_exists",
-      "theorem3_price_of_fairness_decreases",
-      "theorem3_price_of_fairness_strictly_decreases",
+      "theorem3_price_decreases_first_half",
+      "theorem3_price_increases_second_half",
       "theorem4_misestimation_tradeoff_typeZero",
       "theorem4_misestimation_tradeoff_typeOne"
     ],
@@ -71,8 +91,8 @@
           "priceOfMisestimation",
           "proposition1_symmetric_lp_reduction",
           "proposition2_symmetric_optimum_exists",
-          "theorem3_price_of_fairness_decreases",
-          "theorem3_price_of_fairness_strictly_decreases",
+          "theorem3_price_decreases_first_half",
+          "theorem3_price_increases_second_half",
           "theorem4_misestimation_tradeoff_typeZero",
           "theorem4_misestimation_tradeoff_typeOne"
         ]

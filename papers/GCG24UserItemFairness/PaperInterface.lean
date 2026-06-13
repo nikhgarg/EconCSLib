@@ -1,4 +1,5 @@
 import GCG24UserItemFairness.MainTheorems
+import GCG24UserItemFairness.Assumptions
 
 /-!
 # Paper Interface: User-Item Fairness Tradeoffs
@@ -32,7 +33,10 @@ def normalizedUserUtility {m n : ℕ} [NeZero n]
     (W : RecommendationModel m n) (ρ : Policy m n) (u : User m) : ℝ :=
   rawUserUtility W ρ u / RecommendationModel.bestItemUtility W u
 
-/-- User fairness `U_min(rho) = min_i U_i(rho)`. -/
+/--
+Source status: direct source text
+User fairness objective for a recommendation policy.
+-/
 def userFairness {m n : ℕ} [NeZero m] [NeZero n]
     (W : RecommendationModel m n) (ρ : Policy m n) : ℝ :=
   EconCSLib.finiteMin (normalizedUserUtility W ρ)
@@ -53,7 +57,10 @@ def normalizedItemUtility {m n : ℕ}
   let denom := itemNormalizer W j
   if denom = 0 then 0 else rawItemUtility W ρ j / denom
 
-/-- Item fairness `I_min(rho) = min_j I_j(rho)`. -/
+/--
+Source status: direct source text
+Item fairness objective for a recommendation policy.
+-/
 def itemFairness {m n : ℕ} [NeZero n]
     (W : RecommendationModel m n) (ρ : Policy m n) : ℝ :=
   EconCSLib.finiteMin (normalizedItemUtility W ρ)
@@ -105,7 +112,7 @@ theorem proposition2_symmetric_optimum_exists
     {m n K : ℕ} [NeZero m] [NeZero n] [NeZero K]
     (S : RecommendationModel.SymmetricData m n K)
     (reps : UserTypeAssignment.TypeRepresentatives S.types)
-    (hPos : S.model.Positive) :
+    (hPos : assumption_positive_recommendation_utilities S.model) :
     ∃ ρsym : Policy m n,
       UserTypeAssignment.IsTypeSymmetric S.types ρsym ∧
         RecommendationModel.IsOptimalAtLevel S.model 1 ρsym := by
@@ -113,32 +120,76 @@ theorem proposition2_symmetric_optimum_exists
     S reps hPos
 
 /--
-Theorem 3 algebraic statement: if the maximal-item-fairness constrained optimum
-weakly increases between two models, then the price of fairness weakly
-decreases.
+Theorem 3, first half: in the opposing two-type model, increasing `alpha`
+toward `1 / 2` weakly decreases the price of fairness.
 -/
-theorem theorem3_price_of_fairness_decreases
+theorem theorem3_price_decreases_first_half
     {m n : ℕ} [NeZero m] [NeZero n]
-    (W W' : RecommendationModel m n)
-    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem)
-    (hNonneg' : W'.Nonnegative) (hRow' : W'.RowHasPositiveItem)
-    (hopt :
-      W.optimalUserFairnessAtLevel 1 ≤ W'.optimalUserFairnessAtLevel 1) :
-    W'.priceOfFairness ≤ W.priceOfFairness := by
-  exact RecommendationModel.paper_theorem3_price_decreases_from_constrained_optimum_increase
-    W W' hNonneg hRow hNonneg' hRow' hopt
+    (R R' : ReductionWitness m n 2)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (reps' : UserTypeAssignment.TypeRepresentatives R'.data.types)
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (hred : R.reduced = OpposingTypes.twoTypeReducedModel alpha v)
+    (hred' : R'.reduced = OpposingTypes.twoTypeReducedModel alpha' v)
+    (hn : assumption_theorem4_at_least_three_items n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : alpha ≤ 1 / 2)
+    (halpha_half' : alpha' ≤ 1 / 2)
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hPos : assumption_positive_recommendation_utilities R.data.model)
+    (hPos' : assumption_positive_recommendation_utilities R'.data.model) :
+    RecommendationModel.priceOfFairness R'.data.model ≤
+      RecommendationModel.priceOfFairness R.data.model := by
+  have hNonneg : R.data.model.Nonnegative :=
+    RecommendationModel.nonnegative_of_positive R.data.model hPos
+  have hRow : R.data.model.RowHasPositiveItem :=
+    RecommendationModel.rowHasPositiveItem_of_positive R.data.model hPos
+  have hNonneg' : R'.data.model.Nonnegative :=
+    RecommendationModel.nonnegative_of_positive R'.data.model hPos'
+  have hRow' : R'.data.model.RowHasPositiveItem :=
+    RecommendationModel.rowHasPositiveItem_of_positive R'.data.model hPos'
+  exact OpposingTypes.paper_theorem3_price_decreases_firstHalf_of_reduction
+    R R' reps reps' hred hred' hn halpha0 halpha1 halpha0' halpha1'
+    halpha_le halpha_half halpha_half' hpos hdec hNonneg hRow hNonneg' hRow'
 
-/-- Theorem 3 strict algebraic form. -/
-theorem theorem3_price_of_fairness_strictly_decreases
+/--
+Theorem 3, second half: in the opposing two-type model, increasing `alpha`
+away from `1 / 2` weakly increases the price of fairness.
+-/
+theorem theorem3_price_increases_second_half
     {m n : ℕ} [NeZero m] [NeZero n]
-    (W W' : RecommendationModel m n)
-    (hNonneg : W.Nonnegative) (hRow : W.RowHasPositiveItem)
-    (hNonneg' : W'.Nonnegative) (hRow' : W'.RowHasPositiveItem)
-    (hopt :
-      W.optimalUserFairnessAtLevel 1 < W'.optimalUserFairnessAtLevel 1) :
-    W'.priceOfFairness < W.priceOfFairness := by
-  exact RecommendationModel.paper_theorem3_price_strictly_decreases_from_constrained_optimum_increase
-    W W' hNonneg hRow hNonneg' hRow' hopt
+    (R R' : ReductionWitness m n 2)
+    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)
+    (reps' : UserTypeAssignment.TypeRepresentatives R'.data.types)
+    {alpha alpha' : ℝ} {v : Item n → ℝ}
+    (hred : R.reduced = OpposingTypes.twoTypeReducedModel alpha v)
+    (hred' : R'.reduced = OpposingTypes.twoTypeReducedModel alpha' v)
+    (hn : assumption_theorem4_at_least_three_items n)
+    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)
+    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)
+    (halpha_le : alpha ≤ alpha')
+    (halpha_half : 1 / 2 ≤ alpha)
+    (halpha_half' : 1 / 2 ≤ alpha')
+    (hpos : ∀ j : Item n, 0 < v j)
+    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)
+    (hPos : assumption_positive_recommendation_utilities R.data.model)
+    (hPos' : assumption_positive_recommendation_utilities R'.data.model) :
+    RecommendationModel.priceOfFairness R.data.model ≤
+      RecommendationModel.priceOfFairness R'.data.model := by
+  have hNonneg : R.data.model.Nonnegative :=
+    RecommendationModel.nonnegative_of_positive R.data.model hPos
+  have hRow : R.data.model.RowHasPositiveItem :=
+    RecommendationModel.rowHasPositiveItem_of_positive R.data.model hPos
+  have hNonneg' : R'.data.model.Nonnegative :=
+    RecommendationModel.nonnegative_of_positive R'.data.model hPos'
+  have hRow' : R'.data.model.RowHasPositiveItem :=
+    RecommendationModel.rowHasPositiveItem_of_positive R'.data.model hPos'
+  exact OpposingTypes.paper_theorem3_price_increases_secondHalf_of_reduction
+    R R' reps reps' hred hred' hn halpha0 halpha1 halpha0' halpha1'
+    halpha_le halpha_half halpha_half' hpos hdec hNonneg hRow hNonneg' hRow'
 
 /--
 Theorem 4 final tradeoff, cold-start user whose true row is the first opposing
@@ -155,9 +206,9 @@ theorem theorem4_misestimation_tradeoff_typeZero
     (repsEst : UserTypeAssignment.TypeRepresentatives Rest.data.types)
     {beta eps : ℝ}
     (u : User m)
-    (hn : 2 < n)
-    (htrue : E.trueModel = Rtrue.data.model)
-    (hestimated : E.estimatedModel = Rest.data.model)
+    (hn : assumption_theorem4_at_least_three_items n)
+    (htrue : assumption_theorem4_true_model_reduction E Rtrue)
+    (hestimated : assumption_theorem4_estimated_model_reduction E Rest)
     (hredTrue :
       Rtrue.reduced = OpposingTypes.twoTypeReducedModel (1 / 2 : ℝ)
         (OpposingTypes.theorem4SmallValueVector (n := n) eps))
@@ -197,9 +248,9 @@ theorem theorem4_misestimation_tradeoff_typeOne
     (repsEst : UserTypeAssignment.TypeRepresentatives Rest.data.types)
     {beta eps : ℝ}
     (u : User m)
-    (hn : 2 < n)
-    (htrue : E.trueModel = Rtrue.data.model)
-    (hestimated : E.estimatedModel = Rest.data.model)
+    (hn : assumption_theorem4_at_least_three_items n)
+    (htrue : assumption_theorem4_true_model_reduction E Rtrue)
+    (hestimated : assumption_theorem4_estimated_model_reduction E Rest)
     (hredTrue :
       Rtrue.reduced = OpposingTypes.twoTypeReducedModel (1 / 2 : ℝ)
         (OpposingTypes.theorem4SmallValueVector (n := n) eps))

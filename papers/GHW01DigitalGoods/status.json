@@ -5,8 +5,8 @@
   "authors": "Andrew V. Goldberg, Jason D. Hartline, and Andrew Wright",
   "source_version": "SODA 2001 paper; Theorem 8.2 is checked against the later Goldberg-Hartline-Karlin-Saks-Wright journal monotone-auction formulation.",
   "build_target": "lake build GHW01DigitalGoods",
-  "status": "formalized",
-  "main_caveat": "This folder formalizes the SODA paper, not a full inventory of all named results in the 2006 journal article. Theorem 8.2 uses the later journal version's refined monotone truthful randomized-auction wording. The preliminary unrestricted Section 8 wording is retained only as a source-version audit note. Theorem 9.3 is closed against the paper's focused set-of-bids deterministic auction convention.",
+  "status": "partially formalized",
+  "main_caveat": "Strict transitive provenance audit boundary: The deterministic-truthfulness lower-bound endpoint still depends on the anonymous auction-family certificate for Theorem 9.3.",
   "human_summary": "Formalizes the SODA paper; Theorem 8.2 uses the refined monotone-auction wording from the journal version.",
   "human_summary_citation": {
     "label": "Goldberg-Hartline-Karlin-Saks-Wright 2006",
@@ -22,7 +22,7 @@
   },
   "paper_interface": {
     "path": "papers/GHW01DigitalGoods/PaperInterface.lean",
-    "line_count": 280,
+    "line_count": 326,
     "declaration_rows": 18,
     "review_rows": 18,
     "oversized": false,
@@ -33,10 +33,27 @@
     "paper_interface": "papers/GHW01DigitalGoods/PaperInterface.lean",
     "final_validation_report": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
     "dependency_dag_tex": "papers/GHW01DigitalGoods/DependencyDAG.tex",
-    "dependency_dag_pdf": "papers/GHW01DigitalGoods/DependencyDAG.pdf"
+    "dependency_dag_pdf": "papers/GHW01DigitalGoods/DependencyDAG.pdf",
+    "source_text": "papers/GHW01DigitalGoods/GHW01DigitalGoods.txt",
+    "assumptions": "papers/GHW01DigitalGoods/Assumptions.lean"
   },
   "review_surface": {
     "source_file": "papers/GHW01DigitalGoods/PaperInterface.lean",
+    "assumption_source_file": "papers/GHW01DigitalGoods/Assumptions.lean",
+    "llm_assumption_review": "papers/GHW01DigitalGoods/assumption_match_llm.json",
+    "assumption_policy": "strict",
+    "assumption_names": [
+      "assumption_high_value_scale_conditions",
+      "assumption_bid_value_range_conditions",
+      "assumption_high_value_attained",
+      "assumption_total_value_notation",
+      "assumption_weighted_pairing_large_market",
+      "assumption_two_winner_benchmark_large_enough",
+      "assumption_weighted_pairing_log_factor",
+      "assumption_truthful_auction_condition",
+      "assumption_low_bid_below_high_bid",
+      "assumption_lower_bound_positive_alpha"
+    ],
     "include_names": [
       "revenue",
       "truthful",

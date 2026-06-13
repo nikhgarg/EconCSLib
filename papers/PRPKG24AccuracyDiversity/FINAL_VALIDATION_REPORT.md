@@ -3,14 +3,22 @@
 ## 1. Human Verdict
 
 - Lean formalization status: partially formalized
-- Human dashboard review status: 0/27 rows reviewed; 0 stale; 0 mismatches.
+- Human dashboard review status: 0/27 paper-result rows reviewed; 0 stale; 0 mismatches. The separate assumption-provenance ledger adds 14 audited rows.
 - Human summary: Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.
 
 - Lean formalization status: partially formalized.
-- Human dashboard review status: 0 reviewed rows, 0 stale rows, 0 mismatch rows, 27 total rows.
+- Human dashboard review status: 0 reviewed rows, 0 stale rows, 0 mismatch rows, 27 paper-result rows.
 - Paper correctness verdict: the current Lean surface supports the main closed routes; Proposition 2's printed finite constant and Lemma D.1(i)'s printed sign convention are documented source deviations.
 - Qualitative proof verdict: all main theorem and downstream asymptotic routes are closed except Proposition 4's continuous-sphere analytic layer.
-- Lean footprint: 138 `PaperInterface.lean` LOC, 27 review rows.
+- Lean footprint: 149 `PaperInterface.lean` LOC, 27 paper-result review rows, plus 14 assumption-ledger rows.
+
+<!-- transitive-source-premise-audit:start -->
+### Transitive Source-Premise Audit
+
+The strengthened recursive source-premise audit does not yet pass for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+
+Current result: the Top-K oracle, Bernoulli tail/Laplace, rounding, averaging, and integral-asymptotic certificates remain explicit partial boundaries.
+<!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
 
@@ -34,65 +42,7 @@ The remaining literal source gap is the continuous sphere profile space,
 uniform measure, cosine-kernel/Fubini/symmetry, and Laplace analytic
 instantiation needed for the full source proposition.
 
-## 4. Additional Assumptions Beyond Paper
-
-- Proposition 4 currently stops at an explicit kernel-symmetry checkpoint rather than instantiating the paper's continuous sphere model.
-- Auxiliary asymptotic and finite-routing endpoints are certificate-gated when the source proof needs a reusable analytic or rounding boundary.
-
-## 5. Proof-Strategy Deviations
-
-### Source Deviations
-
-- Proposition 2: Lean proves the corrected finite error `(2m+1)/N` and derives the paper's asymptotic `1/2`-homogeneity conclusion. The printed sharper finite constant appears to miss a factor of 2.
-- Lemma D.1(i): the printed sign convention conflicts with the proof route and downstream exponential-decay use. Lean closes the downstream routes under the source-appropriate positive-rate/decay conventions.
-
-## 6. Proof Tricks Worth Reusing
-
-None separately recorded in the existing report.
-
-## 7. Library Lift Pass
-
-Reusable infrastructure already lives in shared recommender, finite-rounding,
-asymptotics, order-statistics, exponential, Pareto, real-distribution, and
-symmetry modules. Remaining candidates for future library work are generic
-separable concave apportionment rounding, compact-group/Haar action APIs, and a
-continuous Laplace-principle scaffold.
-
-## 8. DAG Audit
-
-The DAG records the paper-facing theorem boundary. Full Proposition 4 remains
-non-green; the separate averaging/kernel checkpoint is green and should not be
-read as closing the continuous sphere/Laplace source layer.
-
-## 9. Conditional Results and Remaining Gaps
-
-None separately recorded in the existing report.
-
-## 10. Suspected Paper Errors or Inconsistencies
-
-None separately recorded in the existing report.
-
-## 11. Validation Checks
-
-The closeout audit records passing checks for `lake build PRPKG24AccuracyDiversity`,
-`python3 scripts/sync_paper_status.py --check`, `python3 scripts/audit_repository.py`,
-and `git diff --check`.
-
-### Statement Translation Audit
-
-Audit date: 2026-06-06.
-Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
-
-Summary: 27 rows; 27 match, 0 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
-
-No flagged rows remain after the current statement check.
-
-## 12. Final Verdict
-
-- Completion status: partially formalized.
-- Summary: Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.
-
-## 13. Paper Definitions Checked
+## 4. Paper Definitions Checked
 
 <!-- lean-derived-definitions:start -->
 ### Lean-Derived Dashboard Definitions
@@ -128,7 +78,7 @@ No flagged rows remain after the current statement check.
 | abbrev lemmaD5 | `lemmaD5` | - Lemma D.5: real-to-integer rounding bridge. |
 <!-- lean-derived-definitions:end -->
 
-## 14. Named Theorem Statements Checked
+## 5. Named Theorem Statements Checked
 
 <!-- lean-derived-statements:start -->
 ### Lean-Derived Dashboard Named Statements
@@ -136,7 +86,7 @@ No flagged rows remain after the current statement check.
 None exposed in the current dashboard surface.
 <!-- lean-derived-statements:end -->
 
-## 15. Paper-Facing Statement Validator Ledger
+## 6. Paper-Facing Statement Validator Ledger
 
 Generated from dashboard status export:
 
@@ -144,32 +94,132 @@ Generated from dashboard status export:
 
 | Paper-facing statement | Lean declaration | Validators | Validator comments |
 | --- | --- | --- | --- |
-| abbrev corollary1 | `corollary1` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev corollary3 | `corollary3` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev definition1 | `definition1` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev definition2 | `definition2` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| theorem definition3_expectedTopSum_formula | `definition3_expectedTopSum_formula` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The current source-facing wrapper matches the paper-facing statement. |
-| abbrev example1 | `example1` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev lemma1 | `lemma1` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev lemmaD1 | `lemmaD1` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev lemmaD2 | `lemmaD2` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev lemmaD3 | `lemmaD3` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev lemmaD4 | `lemmaD4` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev lemmaD5 | `lemmaD5` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev proposition2 | `proposition2` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev proposition4 | `proposition4` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev proposition5 | `proposition5` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem1_i | `theorem1_i` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem1_ii | `theorem1_ii` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem1_iii | `theorem1_iii` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem1_iv | `theorem1_iv` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem1_v_common_mean | `theorem1_v_common_mean` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem1_v_unique_common_mean | `theorem1_v_unique_common_mean` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem2_i | `theorem2_i` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem2_ii | `theorem2_ii` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem2_iii | `theorem2_iii` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem2_iv_alpha_zero | `theorem2_iv_alpha_zero` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem2_iv_positive_alpha | `theorem2_iv_positive_alpha` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
-| abbrev theorem3 | `theorem3` | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z) | gpt-5-codex (model; matches; 2026-06-11T03:46:12Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev assumption_bounded_upper_endpoint_density_domain | `assumption_bounded_upper_endpoint_density_domain` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): Theorem 1(ii) and Lemma 1 use a bounded upper support endpoint, nonnegative value domain, and positive tail constants. |
+| abbrev assumption_common_mean_argmax_domain | `assumption_common_mean_argmax_domain` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): The all-consumed endpoint chooses a type maximizing likelihood when conditional means are common and nonnegative. |
+| abbrev assumption_decaying_bernoulli_parameter_domain | `assumption_decaying_bernoulli_parameter_domain` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): Theorem 2 uses decaying Bernoulli success probabilities, with source alpha regimes and nondegenerate Bernoulli probability domains. |
+| abbrev assumption_example1_positive_calibrated_exponential_parameters | `assumption_example1_positive_calibrated_exponential_parameters` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): Example 1 is a two-type probability model with an exponential conditional-value distribution. |
+| abbrev assumption_exponential_order_statistic_domain | `assumption_exponential_order_statistic_domain` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): Theorem 1(iii) and Lemma D.3 use a positive-rate exponential distribution and positive top-k count. |
+| abbrev assumption_finite_discrete_top_value_domain | `assumption_finite_discrete_top_value_domain` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): Theorem 1(i) and its proof use a finite discrete support with a top value and lower support values. |
+| abbrev assumption_nonnegative_homogeneity_exponent | `assumption_nonnegative_homogeneity_exponent` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): Corollary 1 quantifies over gamma >= 0. |
+| abbrev assumption_pareto_finite_mean_domain | `assumption_pareto_finite_mean_domain` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): Theorem 1(iv) and Lemma D.4 use Pareto alpha > 1 and positive top-k count. |
+| abbrev assumption_positive_rounding_population_size | `assumption_positive_rounding_population_size` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): Lemma D.5 and finite rounding statements are stated for positive population size. |
+| abbrev assumption_positive_type_likelihoods | `assumption_positive_type_likelihoods` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): The paper's finite-type model uses type preference probabilities p_t as likelihood weights and normalizes homogeneity targets by them. |
+| abbrev assumption_proposition4_continuous_sphere_laplace_boundary | `assumption_proposition4_continuous_sphere_laplace_boundary` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; partial_boundary; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; partial_boundary; 2026-06-12T00:00:00Z): The folder currently stops Proposition 4 at an averaging/kernel checkpoint; the full continuous sphere, uniform measure, cosine-kernel/Fubini/symmetry, and Laplace-principle analytic instantiation remain partial. |
+| abbrev assumption_uniform_top_k_positive_count_domain | `assumption_uniform_top_k_positive_count_domain` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): Proposition 2 is about positive top-k recommendation/consumption counts along a positive population sequence. |
+| abbrev assumption_unique_common_mean_argmax_domain | `assumption_unique_common_mean_argmax_domain` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): The converse endpoint uses the nondegenerate positive common mean and a unique likelihood maximizer. |
+| abbrev assumption_varying_bernoulli_probability_domain | `assumption_varying_bernoulli_probability_domain` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z)<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The assumption-row Lean statement matches the documented paper/source role; premise-level source provenance is recorded in assumption_match_llm.json.<br/>gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z): Theorem 3 and Corollary 3 use Bernoulli success probabilities in the nondegenerate probability range. |
+| abbrev corollary1 | `corollary1` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev corollary3 | `corollary3` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev definition1 | `definition1` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev definition2 | `definition2` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| theorem definition3_expectedTopSum_formula | `definition3_expectedTopSum_formula` | gpt-5-codex (model; matches; 2026-06-11T03:14:55Z) | gpt-5-codex (model; matches; 2026-06-11T03:14:55Z): The revised Lean review row spells out the source equation or condition directly, rather than exposing only a function signature or opaque constructor, and the Lean-to-TeX draft matches that paper-facing statement. |
+| abbrev example1 | `example1` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev lemma1 | `lemma1` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev lemmaD1 | `lemmaD1` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev lemmaD2 | `lemmaD2` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev lemmaD3 | `lemmaD3` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev lemmaD4 | `lemmaD4` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev lemmaD5 | `lemmaD5` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev proposition2 | `proposition2` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev proposition4 | `proposition4` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev proposition5 | `proposition5` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem1_i | `theorem1_i` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem1_ii | `theorem1_ii` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem1_iii | `theorem1_iii` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem1_iv | `theorem1_iv` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem1_v_common_mean | `theorem1_v_common_mean` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem1_v_unique_common_mean | `theorem1_v_unique_common_mean` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem2_i | `theorem2_i` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem2_ii | `theorem2_ii` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem2_iii | `theorem2_iii` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem2_iv_alpha_zero | `theorem2_iv_alpha_zero` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem2_iv_positive_alpha | `theorem2_iv_positive_alpha` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
+| abbrev theorem3 | `theorem3` | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z) | gpt-5-codex (model; matches; 2026-06-07T00:00:39Z): The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. |
 
 Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
+
+## 7. Paper Assumption Provenance
+
+> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json` now records per-premise judgments for this paper's `Assumptions.lean` ledger against the local source-text cache. Current result: 45/45 explicit premises are judged source text, source-model primitives, or immediate source-derived domain conditions; 0/45 explicit premises remain hidden proof assumptions. The paper remains partially formalized because Proposition 4 still stops at a continuous-sphere/Laplace analytic boundary.
+
+Every non-derived paper-facing premise is routed through
+`PRPKG24AccuracyDiversity/Assumptions.lean` and checked by
+`assumption_match_llm.json`. The source-condition rows cover distribution
+domains, positive type likelihoods, Bernoulli parameter regimes, positive
+top-k/population counts, common-mean argmax hypotheses, and finite-support or
+upper-endpoint density assumptions from the named theorem statements.
+
+The one documented partial boundary remains Proposition 4: Lean currently
+stops at an explicit kernel-symmetry checkpoint rather than instantiating the
+paper's full continuous sphere model, uniform measure, cosine-kernel/Fubini
+symmetry, and Laplace analytic certificate.
+
+| Lean assumption/condition | Judgment | Source role |
+| --- | --- | --- |
+| `assumption_example1_positive_calibrated_exponential_parameters` | paper condition | Example 1 positive probabilities, probability sum, and exponential rate. |
+| `assumption_finite_discrete_top_value_domain` | paper condition | Theorem 1(i) finite-discrete top/lower support-value split. |
+| `assumption_positive_type_likelihoods` | paper condition | Positive type likelihoods/probabilities in model ratios. |
+| `assumption_bounded_upper_endpoint_density_domain` | paper condition | Theorem 1(ii)/Lemma 1 bounded support and positive tail constants. |
+| `assumption_exponential_order_statistic_domain` | paper condition | Theorem 1(iii)/Lemma D.3 positive exponential rate and k. |
+| `assumption_pareto_finite_mean_domain` | paper condition | Theorem 1(iv)/Lemma D.4 Pareto alpha > 1 and positive k. |
+| `assumption_common_mean_argmax_domain` | paper condition | Theorem 1(v) common-mean likelihood maximizer. |
+| `assumption_unique_common_mean_argmax_domain` | paper condition | Theorem 1(v) converse unique maximizer. |
+| `assumption_nonnegative_homogeneity_exponent` | paper condition | Corollary 1 gamma >= 0. |
+| `assumption_decaying_bernoulli_parameter_domain` | paper condition | Theorem 2 decaying Bernoulli parameter regimes. |
+| `assumption_varying_bernoulli_probability_domain` | paper condition | Theorem 3/Corollary 3 Bernoulli probabilities in `(0,1)`. |
+| `assumption_uniform_top_k_positive_count_domain` | paper condition | Proposition 2 positive top-k sequence counts. |
+| `assumption_proposition4_continuous_sphere_laplace_boundary` | documented caveat | Full continuous-sphere/Laplace analytic layer remains partial. |
+| `assumption_positive_rounding_population_size` | paper condition | Lemma D.5 positive population size. |
+
+## 8. Proof-Strategy Deviations
+
+### Source Deviations
+
+- Proposition 2: Lean proves the corrected finite error `(2m+1)/N` and derives the paper's asymptotic `1/2`-homogeneity conclusion. The printed sharper finite constant appears to miss a factor of 2.
+- Lemma D.1(i): the printed sign convention conflicts with the proof route and downstream exponential-decay use. Lean closes the downstream routes under the source-appropriate positive-rate/decay conventions.
+
+## 9. Proof Tricks Worth Reusing
+
+None separately recorded in the existing report.
+
+## 10. Library Lift Pass
+
+Reusable infrastructure already lives in shared recommender, finite-rounding,
+asymptotics, order-statistics, exponential, Pareto, real-distribution, and
+symmetry modules. Remaining candidates for future library work are generic
+separable concave apportionment rounding, compact-group/Haar action APIs, and a
+continuous Laplace-principle scaffold.
+
+## 11. DAG Audit
+
+The DAG records the paper-facing theorem boundary. Full Proposition 4 remains
+non-green; the separate averaging/kernel checkpoint is green and should not be
+read as closing the continuous sphere/Laplace source layer.
+
+## 12. Conditional Results and Remaining Gaps
+
+None separately recorded in the existing report.
+
+## 13. Suspected Paper Errors or Inconsistencies
+
+None separately recorded in the existing report.
+
+## 14. Validation Checks
+
+The closeout audit records passing checks for `lake build PRPKG24AccuracyDiversity`,
+`python3 scripts/sync_paper_status.py --check`, `python3 scripts/audit_repository.py`,
+and `git diff --check`.
+
+### Statement Translation Audit
+
+Audit date: 2026-06-06.
+Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
+
+Summary: 41 rows; 41 match, 0 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: passed for the 41-row statement-plus-assumption surface.
+
+Flagged rows: none.
+
+## 15. Final Verdict
+
+- Completion status: partially formalized.
+- Summary: Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.

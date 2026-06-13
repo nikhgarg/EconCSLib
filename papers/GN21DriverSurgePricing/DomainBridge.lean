@@ -631,6 +631,124 @@ theorem gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_state_rat
       μI μJ arrivalI arrivalJ switchIJ switchJI wI wJ R1 R2 hleft_rate
       hright_rate hleft_fraction_pos hfractions_sum hR1_lt_R2)
 
+/--
+A feasible measurable profitable deviation refutes measurable incentive
+compatibility.  This is the measurable-domain counterpart of the full-domain
+profitable-deviation negation used elsewhere in the GN21 development.
+-/
+theorem not_dynamicMeasurableIncentiveCompatible_of_feasible_profitableDeviation
+    {R : DynamicReward} {ρ : Fin 2 → TripPolicy}
+    (hρ : dynamicFeasibleMeasurablePolicy ρ)
+    (hdev : R acceptAllDynamicPolicy < R ρ) :
+    ¬ dynamicMeasurableIncentiveCompatible R := by
+  intro hIC
+  exact not_le_of_gt hdev (hIC.2 ρ hρ)
+
+/--
+Structured Theorem 3 zero-mass boundary, state-rate form: for the CTMC pricing
+surface used in the theorem statement, if the right accept-all state reward
+rate exceeds the left accept-all state reward rate and the left state has
+positive accept-all time share, then the left-empty/right-accept-all feasible
+measurable policy strictly improves on accept-all under the current real-valued
+reward totalization.
+-/
+theorem gn21MeasuredCTMCStructuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_state_rates
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 R1 R2 : ℝ)
+    (hdenJ :
+      arrival 1 * singleStateTripMass (μ 1) acceptAllPolicy *
+            gn21StateCycleTime (μ 1) (arrival 1) acceptAllPolicy *
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+              (∅ : TripPolicy) ≠ 0)
+    (hleft_rate :
+      gn21MeasuredStateRewardRate (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+          acceptAllPolicy =
+        R1)
+    (hright_rate :
+      gn21MeasuredStateRewardRate (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          acceptAllPolicy =
+        R2)
+    (hleft_fraction_pos :
+      0 <
+        gn21MeasuredTimeFraction (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 acceptAllPolicy acceptAllPolicy)
+    (hfractions_sum :
+      gn21MeasuredTimeFraction (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 acceptAllPolicy acceptAllPolicy +
+          gn21MeasuredTimeFraction (μ 1) (μ 0) (arrival 1) (arrival 0)
+            switch21 switch12 acceptAllPolicy acceptAllPolicy =
+        1)
+    (hR1_lt_R2 : R1 < R2) :
+    gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z
+        acceptAllDynamicPolicy <
+      gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z
+        (Function.update acceptAllDynamicPolicy 0 (∅ : TripPolicy)) := by
+  have hraw :=
+    gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_state_rates
+      (μ 0) (μ 1) (arrival 0) (arrival 1) switch12 switch21
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+      (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+      R1 R2 hdenJ hleft_rate hright_rate hleft_fraction_pos
+      hfractions_sum hR1_lt_R2
+  simpa [gn21MeasuredCTMCStructuredDynamicReward,
+    gn21MeasuredDynamicRewardFunctional, acceptAllDynamicPolicy,
+    Function.update] using hraw
+
+/--
+Structured Theorem 3 zero-mass obstruction against full measurable IC: the
+state-rate configuration above makes the left-empty/right-accept-all policy a
+feasible measurable profitable deviation, so accept-all is not measurable
+incentive compatible for the current real-valued totalization.
+-/
+theorem not_dynamicMeasurableIncentiveCompatible_gn21MeasuredCTMCStructuredDynamicReward_of_left_empty_acceptAll_state_rates
+    (μ : Fin 2 → Measure TripLength)
+    (arrival m z : Fin 2 → ℝ)
+    (switch12 switch21 R1 R2 : ℝ)
+    (hdenJ :
+      arrival 1 * singleStateTripMass (μ 1) acceptAllPolicy *
+            gn21StateCycleTime (μ 1) (arrival 1) acceptAllPolicy *
+            gn21ExitWeightIntegral (μ 0) (arrival 0) switch12 switch21
+              (∅ : TripPolicy) ≠ 0)
+    (hleft_rate :
+      gn21MeasuredStateRewardRate (μ 0) (arrival 0)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 0)
+          acceptAllPolicy =
+        R1)
+    (hright_rate :
+      gn21MeasuredStateRewardRate (μ 1) (arrival 1)
+          (ctmcStructuredDynamicSurgePrice m z switch12 switch21 1)
+          acceptAllPolicy =
+        R2)
+    (hleft_fraction_pos :
+      0 <
+        gn21MeasuredTimeFraction (μ 0) (μ 1) (arrival 0) (arrival 1)
+          switch12 switch21 acceptAllPolicy acceptAllPolicy)
+    (hfractions_sum :
+      gn21MeasuredTimeFraction (μ 0) (μ 1) (arrival 0) (arrival 1)
+            switch12 switch21 acceptAllPolicy acceptAllPolicy +
+          gn21MeasuredTimeFraction (μ 1) (μ 0) (arrival 1) (arrival 0)
+            switch21 switch12 acceptAllPolicy acceptAllPolicy =
+        1)
+    (hR1_lt_R2 : R1 < R2) :
+    ¬ dynamicMeasurableIncentiveCompatible
+      (gn21MeasuredCTMCStructuredDynamicReward μ arrival switch12 switch21 m z) := by
+  refine
+    not_dynamicMeasurableIncentiveCompatible_of_feasible_profitableDeviation
+      (ρ := Function.update acceptAllDynamicPolicy 0 (∅ : TripPolicy))
+      ?hfeasible ?hdev
+  · exact
+      dynamicFeasibleMeasurablePolicy_update
+        dynamicFeasibleMeasurablePolicy_acceptAll 0 (∅ : TripPolicy)
+        (by intro x hx; cases hx)
+        (by simp)
+  · exact
+      gn21MeasuredCTMCStructuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_state_rates
+        μ arrival m z switch12 switch21 R1 R2 hdenJ hleft_rate hright_rate
+        hleft_fraction_pos hfractions_sum hR1_lt_R2
+
 /-- A feasible measurable dynamic policy has zero accepted mass in some state. -/
 def dynamicHasZeroAcceptedMass
     (μ : Fin 2 → Measure TripLength) (σ : Fin 2 → TripPolicy) : Prop := ∃ i : Fin 2, singleStateTripMass (μ i) (σ i) = 0

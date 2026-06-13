@@ -1,4 +1,5 @@
 import DSWG24DiscretizationBias.MainTheorems
+import DSWG24DiscretizationBias.Assumptions
 
 /-!
 # Paper Interface: DSWG24 Discretization Bias
@@ -21,38 +22,49 @@ noncomputable section
 
 /-! ## Paper Definitions -/
 
-/-- Prior class probability `Pr(y)`. -/
+/--
+Prior class probability `Pr(y)`.
+
+Source status: direct source definition
+Source note: The paper's bias definitions use the label prior as the reference distribution.
+-/
 def prior [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
     (μ : PMF (X × Y)) (y : Y) : ℝ :=
   ((Finite.labelMarginal μ) y).toReal
 
 /-- Marginal label share `\hat p_marg(y) = (1/N) sum_i 1[\hat y_i = y]`.
 
-Source status: population analogue of source formula
-Source note: The source formula is a finite-sample average over predictions; this Lean definition uses the corresponding PMF probability under `Finite.featureMarginal μ`.
+Source status: direct source formula
+Source note: Source text lines 180--185 define this as the finite-sample average over predicted labels.
 -/
-def marginalLabelShare [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
-    (μ : PMF (X × Y)) (rule : X → Y) (y : Y) : ℝ :=
-  EconCSLib.pmfProb (Finite.featureMarginal μ) (fun x => rule x = y)
+def marginalLabelShare {N K : ℕ} (decision : Fin N → Fin K) (y : Fin K) : ℝ :=
+  (∑ i : Fin N, if decision i = y then (1 : ℝ) else 0) / (N : ℝ)
 
 /-- Aggregate posterior `p_agg^q(y) = (1/N) sum_i q(y,x_i)`.
 
-Source status: population analogue of source formula
-Source note: The source formula is a finite-sample average over observed features; this Lean definition uses the corresponding PMF expectation under `Finite.featureMarginal μ`.
+Source status: direct source formula
+Source note: Source text lines 198--206 define this as the finite-sample average of continuous classifier scores.
 -/
-def aggregatePosterior [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
-    (μ : PMF (X × Y)) (q : X → Y → ℝ) (y : Y) : ℝ :=
-  EconCSLib.pmfExp (Finite.featureMarginal μ) (fun x => q x y)
+def aggregatePosterior {N K : ℕ} (q : Fin N → Fin K → ℝ) (y : Fin K) : ℝ :=
+  (∑ i : Fin N, q i y) / (N : ℝ)
 
-/-- Bias `bias(y, \hat y, p_ref) = \hat p_marg(y) - p_ref(y)`. -/
-def bias [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
-    (μ : PMF (X × Y)) (rule : X → Y) (pref : Y → ℝ) (y : Y) : ℝ :=
-  marginalLabelShare μ rule y - pref y
+/--
+Bias `bias(y, \hat y, p_ref) = \hat p_marg(y) - p_ref(y)`.
 
-/-- Distributional fidelity `fid(p_ref, \hat y) = -sum_y |bias(y,\hat y,p_ref)|`. -/
-def fidelity [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
-    (μ : PMF (X × Y)) (rule : X → Y) (pref : Y → ℝ) : ℝ :=
-  -∑ y : Y, |bias μ rule pref y|
+Source status: direct source formula
+Source note: The source defines bias as marginal predicted-label share minus the chosen reference distribution.
+-/
+def bias {N K : ℕ} (decision : Fin N → Fin K) (pref : Fin K → ℝ) (y : Fin K) : ℝ :=
+  marginalLabelShare decision y - pref y
+
+/--
+Distributional fidelity `fid(p_ref, \hat y) = -sum_y |bias(y,\hat y,p_ref)|`.
+
+Source status: direct source formula
+Source note: The source objective uses negative total absolute bias as the fidelity term.
+-/
+def fidelity {N K : ℕ} (decision : Fin N → Fin K) (pref : Fin K → ℝ) : ℝ :=
+  -∑ y : Fin K, |bias decision pref y|
 
 /-- Predictive MAE for Bayes posterior scores: `E_X sum_y q(y,x)(1-q(y,x))`. -/
 def classifierMAE [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
@@ -60,7 +72,12 @@ def classifierMAE [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
   EconCSLib.pmfExp (Finite.featureMarginal μ)
     (fun x => ∑ y : Y, q x y * (1 - q x y))
 
-/-- Continuous marginal label share: `∫ x, 1[rule x = y] dμ(x)`. -/
+/--
+Continuous marginal label share: `∫ x, 1[rule x = y] dμ(x)`.
+
+Source status: continuous source analogue
+Source note: This is the continuous-population version of the finite marginal label share.
+-/
 def continuousMarginalLabelShare {X Y : Type*} [MeasurableSpace X] [DecidableEq Y]
     (μ : Measure X) (rule : X → Y) (y : Y) : ℝ :=
   ∫ x, (if rule x = y then (1 : ℝ) else 0) ∂μ
@@ -96,7 +113,12 @@ def continuousJointClassifierMAE {X Y : Type*} [MeasurableSpace (X × Y)]
     [Fintype Y] (μ : Measure (X × Y)) (q : X → Y → ℝ) : ℝ :=
   ∫ xy, ∑ y : Y, q xy.1 y * (1 - q xy.1 y) ∂μ
 
-/-- Posterior-simplex condition: each `q(x)` is a probability vector. -/
+/--
+Posterior-simplex condition: each `q(x)` is a probability vector.
+
+Source status: source model condition
+Source note: The calibrated classifier is a posterior/probability vector over labels at each feature value.
+-/
 def posteriorSimplex {X Y : Type*} [Fintype Y] (q : X → Y → ℝ) : Prop :=
   (∀ x, (∑ y : Y, q x y) = 1) ∧
     (∀ x y, 0 ≤ q x y) ∧
@@ -111,6 +133,9 @@ Calibration: for every label and every measurable score event, the true label
 mass on that score event equals the aggregate posterior score mass on the same
 event.  This is the paper's `Pr(Y=y | q(y,x)=c)=c` condition in
 event-preimage form.
+
+Source status: source model condition
+Source note: The event-preimage form is the measurable version of the paper's calibration assumption.
 -/
 def calibrated {X Y : Type*} [MeasurableSpace (X × Y)] [DecidableEq Y]
     (μ : Measure (X × Y)) (q : X → Y → ℝ) : Prop := by
@@ -171,6 +196,9 @@ Theorem 1(i): if features provide no information and all rows are assigned to
 a plurality class `z`, then plurality-class bias is `1 - Pr(z)` and every other
 class has bias `-Pr(y)`.  The same formula holds whether the reference is the
 prior or the aggregate posterior.
+
+Source status: direct theorem clause
+Source note: This is the no-information/plurality case of Theorem 1.
 -/
 theorem theorem1i_no_information_bias
     [Fintype X] [DecidableEq X] [Nonempty X]
@@ -178,25 +206,25 @@ theorem theorem1i_no_information_bias
     (μ : PMF (X × Y)) (q : X → Y → ℝ) (z y : Y)
     (hnoInformation : ∀ x a, q x a = prior μ a)
     (hplurality : ∀ a, prior μ a ≤ prior μ z) :
-    (bias μ (fun _ : X => z) (prior μ) y =
+    (Finite.paperBias μ (fun _ : X => z) (prior μ) y =
         if z = y then 1 - prior μ y else -prior μ y) ∧
-      (bias μ (fun _ : X => z) (aggregatePosterior μ q) y =
+      (Finite.paperBias μ (fun _ : X => z) (Finite.paperAggregatePosterior μ q) y =
         if z = y then 1 - prior μ y else -prior μ y) := by
   classical
   have hprior :
-      bias μ (fun _ : X => z) (prior μ) y =
+      Finite.paperBias μ (fun _ : X => z) (prior μ) y =
         if z = y then 1 - prior μ y else -prior μ y := by
-    simpa [bias, prior, marginalLabelShare, Finite.paperBias,
-      Finite.paperPrior, Finite.paperMarginalLabelShare] using
+    simpa [prior, Finite.paperBias, Finite.paperPrior,
+      Finite.paperMarginalLabelShare] using
       (Finite.paper_theorem1i_no_information_prior_bias μ z y)
-  have hagg : aggregatePosterior μ q y = prior μ y := by
-    unfold aggregatePosterior
+  have hagg : Finite.paperAggregatePosterior μ q y = prior μ y := by
+    unfold Finite.paperAggregatePosterior
     have hfun : (fun x : X => q x y) = fun _ : X => prior μ y := by
       funext x
       exact hnoInformation x y
     rw [hfun]
     exact EconCSLib.pmfExp_const (Finite.featureMarginal μ) (prior μ y)
-  exact ⟨hprior, by simpa [bias, hagg] using hprior⟩
+  exact ⟨hprior, by simpa [Finite.paperBias, hagg] using hprior⟩
 
 /--
 Theorem 1(ii): if the induced decision rule agrees pointwise with the true
@@ -206,8 +234,8 @@ theorem theorem1ii_perfect_classifier_zero_bias
     [Fintype X] [DecidableEq X] [Fintype Y] [DecidableEq Y]
     (μ : PMF (X × Y)) (rule : X → Y)
     (htruth : ∀ xy : X × Y, rule xy.1 = xy.2) (y : Y) :
-    bias μ rule (prior μ) y = 0 := by
-  simpa [bias, prior, marginalLabelShare, Finite.paperBias, Finite.paperPrior,
+    Finite.paperBias μ rule (prior μ) y = 0 := by
+  simpa [prior, Finite.paperBias, Finite.paperPrior,
     Finite.paperMarginalLabelShare] using
     (Finite.paper_theorem1ii_perfect_classifier_prior_bias_zero μ rule htruth y)
 
@@ -246,8 +274,8 @@ Theorem 1(iii) tightness: there is a binary one-feature instance where
 argmax bias equals predictive MAE.
 -/
 theorem theorem1iii_tight_binary_example :
-    bias Finite.paperTheorem1TightMu Finite.paperTheorem1TightArgmax
-        (aggregatePosterior Finite.paperTheorem1TightMu Finite.paperTheorem1TightQ) 0 =
+    Finite.paperAggregateBias Finite.paperTheorem1TightMu
+        Finite.paperTheorem1TightQ Finite.paperTheorem1TightArgmax 0 =
       classifierMAE Finite.paperTheorem1TightMu Finite.paperTheorem1TightQ := by
   change
     Finite.paperAggregateBias Finite.paperTheorem1TightMu
@@ -261,6 +289,9 @@ theorem theorem1iii_tight_binary_example :
 /--
 Theorem 2(i): for Bayes-optimal scores, every `gamma` and fidelity/reference
 term has a joint decision rule maximizing the expected objective `O_N^gamma`.
+
+Source status: direct theorem clause
+Source note: This is Theorem 2(i)'s joint-rule existence claim under the Bayes score identity.
 -/
 theorem theorem2i_joint_rule_exists
     {ω σ : Type*} {N K : ℕ} [NeZero K]
@@ -313,6 +344,9 @@ theorem theorem2ii_argmax_accuracy_maximizing
 Theorem 2(iii), Pareto part: any independent rule that disagrees with argmax
 with positive probability is not Pareto optimal for a non-trivial reference
 distribution.
+
+Source status: direct theorem clause
+Source note: This is the Pareto-optimality part of Theorem 2(iii) for independent rules.
 -/
 theorem theorem2iii_non_argmax_not_pareto
     {X : Type*} [Fintype X] [DecidableEq X] {N K : ℕ}
@@ -336,11 +370,14 @@ theorem theorem2iii_non_argmax_not_pareto
       hnontrivial hweak_argmax
 
 /--
-Theorem 2(iii), objective part for `gamma < 1`: under the usual argmax
-maximality certificate, an independent rule maximizes the weighted expected
-objective iff it agrees with argmax with probability one.
+Theorem 2(iii), objective part for `gamma < 1`: any independent rule that
+maximizes the weighted expected objective must agree with argmax with
+probability one.
+
+Source status: direct theorem clause
+Source note: This is the certificate-free weighted-objective necessary condition for Theorem 2(iii).
 -/
-theorem theorem2iii_weighted_objective_maximizer_iff_agrees_argmax
+theorem theorem2iii_weighted_objective_maximizer_agrees_argmax
     {X : Type*} [Fintype X] [DecidableEq X] {N K : ℕ}
     (μ : PMF X) (posterior : X → Fin K → ℝ) (pref : Fin K → ℝ)
     (rule argmaxRule : X → Fin K)
@@ -350,7 +387,7 @@ theorem theorem2iii_weighted_objective_maximizer_iff_agrees_argmax
     (hpref_sum : (∑ y : Fin K, pref y) = 1)
     (hnontrivial : ∀ y : Fin K, 1 / (N : ℝ) ≤ pref y)
     (hweak_argmax : ∀ x y, posterior x y ≤ posterior x (argmaxRule x))
-    (hargmaxMax :
+    (hmax :
       ∀ other : (Fin N → X) → Fin N → Fin K,
         Pareto.weightedObjective γ
             (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF μ N)
@@ -360,27 +397,29 @@ theorem theorem2iii_weighted_objective_maximizer_iff_agrees_argmax
             (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF μ N)
               (fun s => Theorem2iii.sampledPosterior posterior s))
             (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF μ N) pref)
-            (fun s => Theorem2iii.sampledDecision argmaxRule s)) :
-    (∀ other : (Fin N → X) → Fin N → Fin K,
-        Pareto.weightedObjective γ
-            (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF μ N)
-              (fun s => Theorem2iii.sampledPosterior posterior s))
-            (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF μ N) pref) other ≤
-          Pareto.weightedObjective γ
-            (Theorem2iii.expectedDatasetAccuracy (Theorem2iii.iidSamplePMF μ N)
-              (fun s => Theorem2iii.sampledPosterior posterior s))
-            (Theorem2iii.expectedDatasetFidelity (Theorem2iii.iidSamplePMF μ N) pref)
-            (fun s => Theorem2iii.sampledDecision rule s)) ↔
-      EconCSLib.pmfProb μ (fun x : X => rule x ≠ argmaxRule x) = 0 := by
+            (fun s => Theorem2iii.sampledDecision rule s)) :
+    EconCSLib.pmfProb μ (fun x : X => rule x ≠ argmaxRule x) = 0 := by
+  classical
+  by_contra hzero
+  have hp_ne : EconCSLib.pmfProb μ (fun x : X => rule x ≠ argmaxRule x) ≠ 0 :=
+    hzero
+  have hnonneg :
+      0 ≤ EconCSLib.pmfProb μ (fun x : X => rule x ≠ argmaxRule x) :=
+    EconCSLib.pmfProb_nonneg μ (fun x : X => rule x ≠ argmaxRule x)
+  have hpos : 0 < EconCSLib.pmfProb μ (fun x : X => rule x ≠ argmaxRule x) :=
+    lt_of_le_of_ne hnonneg hp_ne.symm
   exact
-    Theorem2iii.paper_theorem2iii_expected_weightedObjective_maximizer_iff_independent_rule_agrees_ae
-      μ posterior pref rule argmaxRule hγnonneg hγlt hNpos hpref_nonneg
-      hpref_sum hnontrivial hweak_argmax hargmaxMax
+    (Theorem2iii.paper_theorem2iii_not_expected_weightedObjective_maximizer_of_independent_rule_disagrees_pos
+      μ posterior pref rule argmaxRule hγnonneg hγlt hpos hNpos
+      hpref_nonneg hpref_sum hnontrivial hweak_argmax) hmax
 
 /--
 Theorem 2(iii), `gamma = 1` boundary: if every positive-probability
 disagreement is posterior-strict, then a disagreeing independent rule is not a
 weighted-objective maximizer even at the accuracy-only boundary.
+
+Source status: source-domain strengthening
+Source note: This boundary row records the strict-disagreement case used to separate source-facing uniqueness behavior.
 -/
 theorem theorem2iii_strict_disagreement_not_weighted_objective_maximizer
     {X : Type*} [Fintype X] [DecidableEq X] {N K : ℕ}

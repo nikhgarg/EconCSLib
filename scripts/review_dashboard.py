@@ -40,13 +40,41 @@ DEFAULT_PAPER_STATUS_FILE = "status.json"
 DEFAULT_LLM_LEAN_TO_TEX_FILE = "lean_to_tex_llm.json"
 DEFAULT_LLM_STATEMENT_JUDGE_FILE = "statement_match_llm.json"
 DEFAULT_LLM_REVIEW_SURFACE_FILE = "review_surface_llm.json"
+DEFAULT_LLM_ASSUMPTION_JUDGE_FILE = "assumption_match_llm.json"
+DEFAULT_ASSUMPTION_SOURCE_FILE = "Assumptions.lean"
 PAPER_STATEMENT_MAP_FILE = "paper_statement_map.json"
 REVIEW_SURFACE_LLM_AUDIT_THRESHOLD = 30
 REVIEW_SURFACE_WARN_THRESHOLD = 50
-PAPER_INTERFACE_CACHE_SCHEMA = 12
+PAPER_INTERFACE_CACHE_SCHEMA = 14
 REVIEW_SURFACE_SCHEMA = 1
 REVIEW_SOURCE_FILENAME = "PaperInterface.lean"
 REVIEW_DECL_KINDS = {"theorem", "lemma", "def", "abbrev"}
+ASSUMPTION_DECL_NAME_RE = re.compile(
+    r"^(?:paper_)?assumption(?:_|$)|^source_assumption(?:_|$)|_assumption(?:_|$)"
+)
+APPROVED_ASSUMPTION_JUDGMENTS = {
+    "paper_assumption",
+    "paper_condition",
+    "documented_caveat",
+    "partial_boundary",
+}
+APPROVED_ASSUMPTION_PREMISE_JUDGMENTS = {
+    "paper_assumption",
+    "paper_condition",
+    "source_text",
+    "source_text_model_primitive",
+    "derived_from_source_primitives",
+    "documented_caveat",
+    "partial_boundary",
+    "human_verified_source_implicit",
+}
+SOURCE_TEXT_ASSUMPTION_PREMISE_JUDGMENTS = {
+    "paper_assumption",
+    "paper_condition",
+    "source_text",
+    "source_text_model_primitive",
+    "human_verified_source_implicit",
+}
 
 
 DECL_RE = re.compile(
@@ -305,6 +333,15 @@ class ReviewItem:
     llm_match_validator: str = ""
     llm_match_validator_type: str = ""
     llm_match_validated_at: str = ""
+    is_assumption: bool = False
+    llm_assumption_judgment: str = ""
+    llm_assumption_reason: str = ""
+    llm_assumption_stale: bool = False
+    llm_assumption_source: str = ""
+    llm_assumption_validator: str = ""
+    llm_assumption_validator_type: str = ""
+    llm_assumption_validated_at: str = ""
+    llm_assumption_premise_judgments: dict[str, dict[str, str]] | None = None
     paper_statement_image_url: str = ""
     line_number: int = 0
     slice_id: str = "all"
@@ -336,6 +373,19 @@ def review_source_module(folder: Path, source_file: Path) -> str:
     """Return the Lean import module for a paper-local review source."""
 
     return f"{folder.name}.{source_file.stem}"
+
+
+def assumption_source_file(folder: Path) -> Path:
+    """Return the paper-local Lean source that holds explicit assumptions."""
+
+    payload = load_review_slice_payload(folder)
+    raw_path = payload.get("assumption_source_file")
+    if isinstance(raw_path, str) and raw_path.strip():
+        path = Path(raw_path.strip())
+        if not path.is_absolute():
+            path = ROOT / path
+        return path
+    return folder / DEFAULT_ASSUMPTION_SOURCE_FILE
 
 
 def find_paper_pdf(folder: Path) -> Path | None:
@@ -1190,6 +1240,259 @@ def load_llm_review_surface_audit(folder: Path) -> dict[str, Any]:
     }
 
 
+def llm_assumption_judgments_file(folder: Path) -> Path:
+    """Return the preferred LLM paper-assumption provenance sidecar."""
+
+    tracked_path = folder / DEFAULT_LLM_ASSUMPTION_JUDGE_FILE
+    if tracked_path.exists() and tracked_path.is_file():
+        return tracked_path
+    return folder / ".review_traces" / DEFAULT_LLM_ASSUMPTION_JUDGE_FILE
+
+
+def _normalize_assumption_judgment(raw: Any) -> str:
+    """Normalize LLM verdicts for paper-assumption provenance."""
+
+    if isinstance(raw, bool):
+        return "paper_assumption" if raw else "not_paper_assumption"
+    value = str(raw or "").strip().lower()
+    if value in {
+        "paper_assumption",
+        "paper assumption",
+        "source_assumption",
+        "source assumption",
+        "model_assumption",
+        "model assumption",
+        "match",
+        "matches",
+        "yes",
+        "true",
+    }:
+        return "paper_assumption"
+    if value in {
+        "paper_condition",
+        "paper condition",
+        "source_condition",
+        "source condition",
+        "statement_condition",
+        "statement condition",
+        "theorem_condition",
+        "theorem condition",
+        "paper_statement_condition",
+        "paper statement condition",
+    }:
+        return "paper_condition"
+    if value in {
+        "documented_caveat",
+        "documented caveat",
+        "paper_caveat",
+        "paper caveat",
+        "source_caveat",
+        "source caveat",
+        "repair_condition",
+        "repair condition",
+    }:
+        return "documented_caveat"
+    if value in {
+        "partial_boundary",
+        "partial boundary",
+        "partial_formalization_boundary",
+        "partial formalization boundary",
+        "unresolved_boundary",
+        "unresolved boundary",
+        "needs_derivation",
+        "needs derivation",
+    }:
+        return "partial_boundary"
+    if value in {
+        "not_paper_assumption",
+        "not paper assumption",
+        "proof_assumption",
+        "proof assumption",
+        "not_in_paper",
+        "not in paper",
+        "mismatch",
+        "no",
+        "false",
+    }:
+        return "not_paper_assumption"
+    if value in {"uncertain", "unknown", "unsure", "needs_review", "needs review", "partial"}:
+        return "uncertain"
+    return value
+
+
+def _normalize_premise_text(raw: str) -> str:
+    """Normalize a Lean premise line for robust JSON/source comparisons."""
+
+    return re.sub(r"\s+", " ", str(raw or "").strip())
+
+
+def _assumption_premise_judgments(raw_value: Any) -> dict[str, dict[str, str]]:
+    """Extract nested premise-level provenance judgments from an assumption row."""
+
+    if not isinstance(raw_value, dict):
+        return {}
+    raw_items = (
+        raw_value.get("premise_judgments")
+        or raw_value.get("premise_items")
+        or raw_value.get("premise_validations")
+        or raw_value.get("premises_judged")
+    )
+    out: dict[str, dict[str, str]] = {}
+
+    def add_item(raw_premise: Any, raw_item: Any) -> None:
+        premise = _normalize_premise_text(str(raw_premise or ""))
+        if not premise:
+            return
+        if isinstance(raw_item, dict):
+            raw_judgment = (
+                raw_item.get("judgment")
+                or raw_item.get("verdict")
+                or raw_item.get("status")
+                or raw_item.get("source_text_judgment")
+            )
+            out[premise] = {
+                "judgment": _normalize_assumption_judgment(raw_judgment),
+                "reason": str(
+                    raw_item.get("reason")
+                    or raw_item.get("notes")
+                    or raw_item.get("explanation")
+                    or ""
+                ).strip(),
+                "source_location": str(raw_item.get("source_location") or "").strip(),
+            }
+        else:
+            out[premise] = {
+                "judgment": _normalize_assumption_judgment(raw_item),
+                "reason": "",
+                "source_location": "",
+            }
+
+    if isinstance(raw_items, dict):
+        for premise, raw_item in raw_items.items():
+            add_item(premise, raw_item)
+    elif isinstance(raw_items, list):
+        for raw_item in raw_items:
+            if isinstance(raw_item, dict):
+                add_item(raw_item.get("premise"), raw_item)
+            else:
+                add_item(raw_item, "uncertain")
+    return out
+
+
+def load_llm_assumption_judgments(folder: Path) -> dict[str, dict[str, Any]]:
+    """Load optional LLM judgments that listed assumptions are source assumptions."""
+
+    path = llm_assumption_judgments_file(folder)
+    if not path.exists() or not path.is_file():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if payload.get("schema") != 1:
+        return {}
+    if payload.get("paper") not in {None, folder.name}:
+        return {}
+    items = payload.get("items")
+    if not isinstance(items, dict):
+        return {}
+    source = path.name
+    payload_validator = str(
+        payload.get("validator")
+        or payload.get("model")
+        or payload.get("judge")
+        or payload.get("agent")
+        or source
+    ).strip()
+    payload_validator_type = str(
+        payload.get("validator_type")
+        or ("model" if payload.get("model") else "agent" if payload.get("judge") else "")
+    ).strip()
+    payload_validated_at = str(
+        payload.get("validated_at")
+        or payload.get("timestamp")
+        or payload.get("generated_at")
+        or ""
+    ).strip()
+    payload_comment = str(
+        payload.get("comment")
+        or payload.get("notes")
+        or payload.get("reason")
+        or payload.get("explanation")
+        or ""
+    ).strip()
+    out: dict[str, dict[str, str]] = {}
+    for raw_name, raw_value in items.items():
+        name = str(raw_name).strip()
+        if not name:
+            continue
+        if isinstance(raw_value, dict):
+            raw_judgment = (
+                raw_value.get("judgment")
+                or raw_value.get("verdict")
+                or raw_value.get("status")
+                or raw_value.get("paper_assumption")
+            )
+            reason = str(
+                raw_value.get("reason")
+                or raw_value.get("notes")
+                or raw_value.get("explanation")
+                or ""
+            ).strip()
+            validator = str(
+                raw_value.get("validator")
+                or raw_value.get("model")
+                or raw_value.get("judge")
+                or raw_value.get("agent")
+                or payload_validator
+            ).strip()
+            validator_type = str(
+                raw_value.get("validator_type")
+                or ("model" if raw_value.get("model") else "agent" if raw_value.get("judge") else "")
+                or payload_validator_type
+            ).strip()
+            validated_at = str(
+                raw_value.get("validated_at")
+                or raw_value.get("timestamp")
+                or raw_value.get("generated_at")
+                or payload_validated_at
+            ).strip()
+            comment = str(
+                raw_value.get("comment")
+                or raw_value.get("notes")
+                or raw_value.get("reason")
+                or raw_value.get("explanation")
+                or payload_comment
+                or ""
+            ).strip()
+            out[name] = {
+                "judgment": _normalize_assumption_judgment(raw_judgment),
+                "reason": reason,
+                "source": source,
+                "validator": validator,
+                "validator_type": validator_type,
+                "validated_at": validated_at,
+                "comment": comment,
+                "lean_statement_sha256": str(raw_value.get("lean_statement_sha256") or "").strip(),
+                "paper_statement_sha256": str(raw_value.get("paper_statement_sha256") or "").strip(),
+                "premise_judgments": _assumption_premise_judgments(raw_value),
+            }
+        else:
+            judgment = _normalize_assumption_judgment(raw_value)
+            if judgment:
+                out[name] = {
+                    "judgment": judgment,
+                    "reason": "",
+                    "source": source,
+                    "validator": payload_validator,
+                    "validator_type": payload_validator_type,
+                    "validated_at": payload_validated_at,
+                    "comment": payload_comment,
+                    "premise_judgments": {},
+                }
+    return out
+
+
 def llm_lean_to_tex_drafts_file(folder: Path) -> Path:
     """Return the preferred Lean-to-TeX draft sidecar for a paper."""
 
@@ -1554,11 +1857,26 @@ def load_review_slice_payload(folder: Path) -> dict[str, Any]:
                 payload: dict[str, Any] = {"schema": REVIEW_SURFACE_SCHEMA}
                 include_names = review_surface.get("include_names")
                 slices = review_surface.get("slices")
+                assumption_names = review_surface.get("assumption_names")
+                assumption_source_file = review_surface.get("assumption_source_file")
+                assumption_policy = review_surface.get("assumption_policy")
                 if isinstance(include_names, list):
                     payload["include_names"] = include_names
                 if isinstance(slices, list):
                     payload["slices"] = slices
-                if "include_names" in payload or "slices" in payload:
+                if isinstance(assumption_names, list):
+                    payload["assumption_names"] = assumption_names
+                if isinstance(assumption_source_file, str) and assumption_source_file.strip():
+                    payload["assumption_source_file"] = assumption_source_file
+                if isinstance(assumption_policy, str):
+                    payload["assumption_policy"] = assumption_policy
+                if (
+                    "include_names" in payload
+                    or "slices" in payload
+                    or "assumption_names" in payload
+                    or "assumption_source_file" in payload
+                    or "assumption_policy" in payload
+                ):
                     return payload
 
     return {}
@@ -1596,6 +1914,22 @@ def review_filter_names(folder: Path) -> set[str] | None:
     return out if out else None
 
 
+def review_assumption_names(folder: Path) -> set[str]:
+    """Return explicit paper-assumption declarations from status.json."""
+
+    payload = load_review_slice_payload(folder)
+    names = payload.get("assumption_names")
+    if not isinstance(names, list):
+        return set()
+    return {str(name).strip() for name in names if str(name).strip()}
+
+
+def is_assumption_item_name(name: str) -> bool:
+    """Heuristic for assumption declarations before status.json has been filled."""
+
+    return bool(ASSUMPTION_DECL_NAME_RE.search(name))
+
+
 def review_item_matches_slice_rule(item: ReviewItem, rule: dict[str, Any]) -> bool:
     """Check whether an item belongs to one review slice rule."""
 
@@ -1631,7 +1965,8 @@ def apply_review_slices(folder: Path, items: list[ReviewItem]) -> list[ReviewIte
 
     include_names = review_filter_names(folder)
     if include_names is not None:
-        items = [item for item in items if item.name in include_names]
+        assumption_names = review_assumption_names(folder)
+        items = [item for item in items if item.name in include_names or item.name in assumption_names]
 
     rules = review_slice_rules(folder)
     if not rules:
@@ -1742,26 +2077,15 @@ def collect_review_decl_text(lines: list[str], start: int, kind: str) -> tuple[s
     return None
 
 
-def parse_interface_items(
-    interface_path: Path, report_path: Path | None, paper_folder: Path | None = None
-) -> list[ReviewItem]:
-    """Combine declaration signatures and paper statements for one paper folder."""
+def parse_review_source_declarations(
+    source_path: Path,
+) -> list[tuple[str, str, str, str, str | None, int, Path]]:
+    """Parse dashboard-visible Lean declarations from one source file."""
 
-    rows = interface_path.read_text(encoding="utf-8").splitlines()
-    paper_statements = parse_report_texts(report_path) if report_path and report_path.exists() else {}
-    if paper_folder is None:
-        paper_folder = interface_path.parent
-    source_statements = parse_paper_tex_statements(paper_folder)
-    if not source_statements:
-        source_statements = parse_paper_text_statements(paper_folder)
-    paper_statements.update(source_statements)
-    paper_statements.update(parse_paper_statement_map(paper_folder))
-    llm_tex_drafts = load_llm_lean_to_tex_drafts(paper_folder)
-    llm_judgments = load_llm_statement_judgments(paper_folder)
-
-    # Keep declaration names first.
-    parsed: list[tuple[str, str, str, str, str | None, int]] = []
-    lines = rows
+    if not source_path.exists() or not source_path.is_file():
+        return []
+    lines = source_path.read_text(encoding="utf-8").splitlines()
+    parsed: list[tuple[str, str, str, str, str | None, int, Path]] = []
     namespace_stack: list[str] = []
     section_depth = 0
     pending_comment: str | None = None
@@ -1814,7 +2138,17 @@ def parse_interface_items(
             names, next_i = exported
             for name in names:
                 full_name = ".".join(namespace_stack + [name]) if namespace_stack else name
-                parsed.append(("theorem", name, full_name, f"exported declaration `{full_name}`", pending_comment, i + 1))
+                parsed.append(
+                    (
+                        "theorem",
+                        name,
+                        full_name,
+                        f"exported declaration `{full_name}`",
+                        pending_comment,
+                        i + 1,
+                        source_path,
+                    )
+                )
             pending_comment = None
             i = next_i
             continue
@@ -1827,7 +2161,7 @@ def parse_interface_items(
             collected = collect_review_decl_text(lines, i, kind)
             if collected is not None:
                 raw_sig, next_i = collected
-                parsed.append((kind, name, full_name, raw_sig, pending_comment, i + 1))
+                parsed.append((kind, name, full_name, raw_sig, pending_comment, i + 1, source_path))
             else:
                 next_i = i + 1
             pending_comment = None
@@ -1837,21 +2171,52 @@ def parse_interface_items(
         if stripped and not stripped.startswith("--") and not stripped.startswith("/-"):
             pending_comment = None
         i += 1
+    return parsed
 
-    check_map = run_lean_check_previews(
-        paper_folder,
-        [
-            full_name
-            for kind, _name, full_name, _raw_sig, _comment, _line_number in parsed
-            if kind in REVIEW_DECL_KINDS
-        ],
-        source_file=interface_path,
-    )
+
+def parse_interface_items(
+    interface_path: Path, report_path: Path | None, paper_folder: Path | None = None
+) -> list[ReviewItem]:
+    """Combine declaration signatures and paper statements for one paper folder."""
+
+    paper_statements = parse_report_texts(report_path) if report_path and report_path.exists() else {}
+    if paper_folder is None:
+        paper_folder = interface_path.parent
+    source_statements = parse_paper_tex_statements(paper_folder)
+    if not source_statements:
+        source_statements = parse_paper_text_statements(paper_folder)
+    paper_statements.update(source_statements)
+    paper_statements.update(parse_paper_statement_map(paper_folder))
+    llm_tex_drafts = load_llm_lean_to_tex_drafts(paper_folder)
+    llm_judgments = load_llm_statement_judgments(paper_folder)
+    assumption_names = review_assumption_names(paper_folder)
+    assumption_judgments = load_llm_assumption_judgments(paper_folder)
+
+    parsed = parse_review_source_declarations(interface_path)
+    assumption_path = assumption_source_file(paper_folder)
+    if assumption_names and assumption_path != interface_path and assumption_path.exists():
+        for row in parse_review_source_declarations(assumption_path):
+            _kind, name, full_name, _raw_sig, _comment, _line_number, _source_path = row
+            if name in assumption_names or full_name in assumption_names or is_assumption_item_name(name):
+                parsed.append(row)
+
+    check_maps: dict[Path, dict[str, str]] = {}
+    for source_path in sorted({row[6] for row in parsed}):
+        check_maps[source_path] = run_lean_check_previews(
+            paper_folder,
+            [
+                full_name
+                for kind, _name, full_name, _raw_sig, _comment, _line_number, row_source in parsed
+                if kind in REVIEW_DECL_KINDS and row_source == source_path
+            ],
+            source_file=source_path,
+        )
 
     out: list[ReviewItem] = []
-    for kind, name, full_name, raw_sig, doc_comment, line_number in parsed:
+    for kind, name, full_name, raw_sig, doc_comment, line_number, source_path in parsed:
         if kind not in REVIEW_DECL_KINDS:
             continue
+        check_map = check_maps.get(source_path, {})
         check_statement = check_map.get(full_name) or check_map.get(name)
         lean_statement = raw_sig if kind == "def" else (
             f"@{full_name} :\n{check_statement}" if check_statement else raw_sig
@@ -1891,6 +2256,23 @@ def parse_interface_items(
                 )
                 or (bool(recorded_tex) and recorded_tex != statement_digest(agent_statement))
             )
+        is_assumption = name in assumption_names or full_name in assumption_names or is_assumption_item_name(name)
+        assumption_judgment = (
+            assumption_judgments.get(name)
+            or assumption_judgments.get(full_name)
+            or {}
+        )
+        llm_assumption_stale = False
+        if assumption_judgment:
+            recorded_lean = assumption_judgment.get("lean_statement_sha256", "")
+            recorded_paper = assumption_judgment.get("paper_statement_sha256", "")
+            llm_assumption_stale = (
+                (bool(recorded_lean) and recorded_lean != statement_digest(lean_statement))
+                or (
+                    bool(recorded_paper)
+                    and recorded_paper != statement_digest(displayed_paper_statement)
+                )
+            )
         out.append(
             ReviewItem(
                 name=name,
@@ -1908,6 +2290,16 @@ def parse_interface_items(
                 llm_match_validator=judgment.get("validator", ""),
                 llm_match_validator_type=judgment.get("validator_type", ""),
                 llm_match_validated_at=judgment.get("validated_at", ""),
+                is_assumption=is_assumption,
+                llm_assumption_judgment=assumption_judgment.get("judgment", ""),
+                llm_assumption_reason=assumption_judgment.get("reason", "")
+                or assumption_judgment.get("comment", ""),
+                llm_assumption_stale=llm_assumption_stale,
+                llm_assumption_source=assumption_judgment.get("source", ""),
+                llm_assumption_validator=assumption_judgment.get("validator", ""),
+                llm_assumption_validator_type=assumption_judgment.get("validator_type", ""),
+                llm_assumption_validated_at=assumption_judgment.get("validated_at", ""),
+                llm_assumption_premise_judgments=assumption_judgment.get("premise_judgments") or {},
                 line_number=line_number,
             )
         )
@@ -1972,6 +2364,7 @@ def _cache_source_hashes(folder: Path) -> dict[str, str]:
     llm_tex_path = llm_lean_to_tex_drafts_file(folder)
     llm_judge_path = llm_statement_judgments_file(folder)
     llm_surface_path = llm_review_surface_file(folder)
+    llm_assumption_path = llm_assumption_judgments_file(folder)
     status_path = folder / DEFAULT_PAPER_STATUS_FILE
 
     interface_source = interface_path.read_text(encoding="utf-8") if interface_path.exists() else ""
@@ -1986,6 +2379,9 @@ def _cache_source_hashes(folder: Path) -> dict[str, str]:
     llm_surface_source = (
         llm_surface_path.read_text(encoding="utf-8") if llm_surface_path.exists() else ""
     )
+    llm_assumption_source = (
+        llm_assumption_path.read_text(encoding="utf-8") if llm_assumption_path.exists() else ""
+    )
     status_source = status_path.read_text(encoding="utf-8") if status_path.exists() else ""
 
     return {
@@ -1999,6 +2395,7 @@ def _cache_source_hashes(folder: Path) -> dict[str, str]:
         "llm_tex_sha256": statement_digest(llm_tex_source),
         "llm_statement_judge_sha256": statement_digest(llm_judge_source),
         "llm_review_surface_sha256": statement_digest(llm_surface_source),
+        "llm_assumption_judge_sha256": statement_digest(llm_assumption_source),
         "status_json_sha256": statement_digest(status_source),
     }
 
@@ -2041,6 +2438,8 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
         return None
     if payload.get("hashes", {}).get("llm_review_surface_sha256") != hashes["llm_review_surface_sha256"]:
         return None
+    if payload.get("hashes", {}).get("llm_assumption_judge_sha256") != hashes["llm_assumption_judge_sha256"]:
+        return None
     if payload.get("hashes", {}).get("status_json_sha256") != hashes["status_json_sha256"]:
         return None
 
@@ -2067,6 +2466,18 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
         llm_match_validator = str(raw_row.get("llm_match_validator") or "").strip()
         llm_match_validator_type = str(raw_row.get("llm_match_validator_type") or "").strip()
         llm_match_validated_at = str(raw_row.get("llm_match_validated_at") or "").strip()
+        is_assumption = bool(raw_row.get("is_assumption") or False)
+        llm_assumption_judgment = str(raw_row.get("llm_assumption_judgment") or "").strip()
+        llm_assumption_reason = str(raw_row.get("llm_assumption_reason") or "").strip()
+        llm_assumption_stale = bool(raw_row.get("llm_assumption_stale") or False)
+        llm_assumption_source = str(raw_row.get("llm_assumption_source") or "").strip()
+        llm_assumption_validator = str(raw_row.get("llm_assumption_validator") or "").strip()
+        llm_assumption_validator_type = str(raw_row.get("llm_assumption_validator_type") or "").strip()
+        llm_assumption_validated_at = str(raw_row.get("llm_assumption_validated_at") or "").strip()
+        raw_premise_judgments = raw_row.get("llm_assumption_premise_judgments")
+        llm_assumption_premise_judgments = (
+            raw_premise_judgments if isinstance(raw_premise_judgments, dict) else {}
+        )
         paper_statement_image_url = str(raw_row.get("paper_statement_image_url") or "").strip()
         line_number = int(raw_row.get("line_number") or 0)
         slice_id = _safe_slice_id(str(raw_row.get("slice_id") or "all"))
@@ -2090,6 +2501,15 @@ def load_cached_review_rows(folder: Path) -> list[ReviewItem] | None:
                 llm_match_validator=llm_match_validator,
                 llm_match_validator_type=llm_match_validator_type,
                 llm_match_validated_at=llm_match_validated_at,
+                is_assumption=is_assumption,
+                llm_assumption_judgment=llm_assumption_judgment,
+                llm_assumption_reason=llm_assumption_reason,
+                llm_assumption_stale=llm_assumption_stale,
+                llm_assumption_source=llm_assumption_source,
+                llm_assumption_validator=llm_assumption_validator,
+                llm_assumption_validator_type=llm_assumption_validator_type,
+                llm_assumption_validated_at=llm_assumption_validated_at,
+                llm_assumption_premise_judgments=llm_assumption_premise_judgments,
                 paper_statement_image_url=paper_statement_image_url,
                 line_number=line_number,
                 slice_id=slice_id,
@@ -2150,6 +2570,7 @@ def review_surface_digest(items: list[ReviewItem]) -> str:
             "paper_statement": normalize_statement(item.paper_statement),
             "source_status": normalize_statement(item.source_status),
             "source_note": normalize_statement(item.source_note),
+            "is_assumption": bool(item.is_assumption),
         }
         for item in sorted(items, key=lambda row: row.name)
     ]
@@ -2210,6 +2631,11 @@ def review_surface_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[
 def statement_translation_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[str, Any]:
     """Summarize context-free Lean-to-TeX and third-LLM statement-match coverage."""
 
+    statement_items = [
+        item
+        for item in items
+        if not item.is_assumption and not is_assumption_item_name(item.name)
+    ]
     draft_entries = load_llm_lean_to_tex_draft_entries(folder)
     judgments = load_llm_statement_judgments(folder)
     missing_draft: list[str] = []
@@ -2221,7 +2647,7 @@ def statement_translation_audit_summary(folder: Path, items: list[ReviewItem]) -
     unknown: list[str] = []
     matches = 0
 
-    for item in items:
+    for item in statement_items:
         draft = draft_entries.get(item.name)
         if not draft:
             missing_draft.append(item.name)
@@ -2247,7 +2673,7 @@ def statement_translation_audit_summary(folder: Path, items: list[ReviewItem]) -
         if item.llm_match_stale:
             stale_judgment.append(item.name)
 
-    all_uncertain = bool(items) and len(uncertain) == len(items)
+    all_uncertain = bool(statement_items) and len(uncertain) == len(statement_items)
     needs_attention = bool(
         missing_draft
         or stale_draft
@@ -2258,7 +2684,7 @@ def statement_translation_audit_summary(folder: Path, items: list[ReviewItem]) -
         or unknown
     )
     return {
-        "row_count": len(items),
+        "row_count": len(statement_items),
         "draft_count": len(draft_entries),
         "judgment_count": len(judgments),
         "matches": matches,
@@ -2279,6 +2705,152 @@ def statement_translation_audit_summary(folder: Path, items: list[ReviewItem]) -
         "has_completed_audit": bool(draft_entries and judgments),
         "all_uncertain": all_uncertain,
         "needs_attention": needs_attention,
+    }
+
+
+def assumption_surface_digest(items: list[ReviewItem]) -> str:
+    """Return a stable digest of the paper-assumption review surface."""
+
+    payload = [
+        {
+            "name": item.name,
+            "kind": item.kind,
+            "lean_statement": normalize_statement(item.lean_statement),
+            "paper_statement": normalize_statement(item.paper_statement),
+            "source_status": normalize_statement(item.source_status),
+            "source_note": normalize_statement(item.source_note),
+        }
+        for item in sorted(items, key=lambda row: row.name)
+        if item.is_assumption
+    ]
+    return hashlib.sha256(
+        json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode(
+            "utf-8"
+        )
+    ).hexdigest()
+
+
+def assumption_provenance_audit_summary(folder: Path, items: list[ReviewItem]) -> dict[str, Any]:
+    """Summarize whether explicit assumptions have source-assumption judgments."""
+
+    configured_names = review_assumption_names(folder)
+    assumption_items = [
+        item
+        for item in items
+        if item.is_assumption or item.name in configured_names or is_assumption_item_name(item.name)
+    ]
+    item_names = {item.name for item in assumption_items}
+    missing_rows = sorted(configured_names - item_names)
+    unlisted_rows = sorted(
+        item.name
+        for item in assumption_items
+        if is_assumption_item_name(item.name) and item.name not in configured_names
+    )
+    missing_judgment: list[str] = []
+    stale_judgment: list[str] = []
+    not_paper_assumption: list[str] = []
+    uncertain: list[str] = []
+    unknown: list[str] = []
+    partial_boundary_premises: list[str] = []
+    unresolved_premises: list[str] = []
+    missing_source_location_premises: list[str] = []
+    premise_judgment_count = 0
+    paper_assumptions = 0
+    paper_conditions = 0
+    documented_caveats = 0
+    partial_boundaries = 0
+
+    for item in assumption_items:
+        judgment = str(item.llm_assumption_judgment or "").strip()
+        if not judgment:
+            missing_judgment.append(item.name)
+            continue
+        if item.llm_assumption_stale:
+            stale_judgment.append(item.name)
+        if judgment == "paper_assumption":
+            paper_assumptions += 1
+        elif judgment == "paper_condition":
+            paper_conditions += 1
+        elif judgment == "documented_caveat":
+            documented_caveats += 1
+        elif judgment == "partial_boundary":
+            partial_boundaries += 1
+        elif judgment == "not_paper_assumption":
+            not_paper_assumption.append(item.name)
+        elif judgment == "uncertain":
+            uncertain.append(item.name)
+        else:
+            unknown.append(item.name)
+        premise_judgments = item.llm_assumption_premise_judgments or {}
+        if not isinstance(premise_judgments, dict):
+            premise_judgments = {}
+        for premise, raw_premise_judgment in sorted(premise_judgments.items()):
+            premise_judgment = ""
+            source_location = ""
+            if isinstance(raw_premise_judgment, dict):
+                premise_judgment = str(raw_premise_judgment.get("judgment") or "").strip()
+                source_location = str(raw_premise_judgment.get("source_location") or "").strip()
+            else:
+                premise_judgment = _normalize_assumption_judgment(raw_premise_judgment)
+            premise_judgment_count += 1
+            label = f"{item.name}: {premise}"
+            if premise_judgment == "partial_boundary":
+                partial_boundary_premises.append(label)
+                continue
+            if premise_judgment not in APPROVED_ASSUMPTION_PREMISE_JUDGMENTS:
+                unresolved_premises.append(f"{label} [{premise_judgment or 'missing'}]")
+                continue
+            if (
+                premise_judgment in SOURCE_TEXT_ASSUMPTION_PREMISE_JUDGMENTS
+                and not source_location
+            ):
+                missing_source_location_premises.append(label)
+
+    needs_attention = bool(
+        missing_rows
+        or unlisted_rows
+        or missing_judgment
+        or stale_judgment
+        or not_paper_assumption
+        or uncertain
+        or unknown
+        or partial_boundaries
+        or partial_boundary_premises
+        or unresolved_premises
+        or missing_source_location_premises
+    )
+    return {
+        "row_count": len(assumption_items),
+        "configured_count": len(configured_names),
+        "paper_assumption_count": paper_assumptions,
+        "paper_condition_count": paper_conditions,
+        "documented_caveat_count": documented_caveats,
+        "partial_boundary_count": partial_boundaries,
+        "missing_rows_count": len(missing_rows),
+        "unlisted_rows_count": len(unlisted_rows),
+        "missing_judgment_count": len(missing_judgment),
+        "stale_judgment_count": len(stale_judgment),
+        "not_paper_assumption_count": len(not_paper_assumption),
+        "uncertain_count": len(uncertain),
+        "unknown_count": len(unknown),
+        "premise_judgment_count": premise_judgment_count,
+        "partial_boundary_premise_count": len(partial_boundary_premises),
+        "unresolved_premise_count": len(unresolved_premises),
+        "missing_source_location_premise_count": len(missing_source_location_premises),
+        "missing_rows": missing_rows,
+        "unlisted_rows": unlisted_rows,
+        "missing_judgment": missing_judgment,
+        "stale_judgment": stale_judgment,
+        "not_paper_assumption": not_paper_assumption,
+        "uncertain": uncertain,
+        "unknown": unknown,
+        "partial_boundary_premises": partial_boundary_premises,
+        "unresolved_premises": unresolved_premises,
+        "missing_source_location_premises": missing_source_location_premises,
+        "has_completed_audit": bool(assumption_items) and not missing_judgment,
+        "assumption_surface_sha256": assumption_surface_digest(assumption_items),
+        "needs_attention": needs_attention,
+        "has_warning": needs_attention,
     }
 
 
@@ -2344,6 +2916,7 @@ def gather_paper_data(
                 "assets": assets,
                 "surface_audit": review_surface_audit_summary(folder, all_items),
                 "statement_audit": statement_translation_audit_summary(folder, all_items),
+                "assumption_audit": assumption_provenance_audit_summary(folder, all_items),
             }
         )
     return papers
@@ -2554,6 +3127,22 @@ def build_review_status(papers: list[dict[str, Any]], reviews: list[dict[str, An
                 )
                 if validator_entry is not None:
                     validators.append(validator_entry)
+            if item.get("llm_assumption_judgment"):
+                validator_entry = _validator_entry(
+                    validator=str(
+                        item.get("llm_assumption_validator")
+                        or item.get("llm_assumption_source")
+                        or DEFAULT_LLM_ASSUMPTION_JUDGE_FILE
+                    ).strip(),
+                    validator_type=str(item.get("llm_assumption_validator_type") or "").strip(),
+                    validated_at=str(item.get("llm_assumption_validated_at") or "").strip(),
+                    judgment=str(item.get("llm_assumption_judgment") or "").strip(),
+                    comment=str(item.get("llm_assumption_reason") or "").strip(),
+                    source=str(item.get("llm_assumption_source") or "").strip(),
+                    stale=bool(item.get("llm_assumption_stale", False)),
+                )
+                if validator_entry is not None:
+                    validators.append(validator_entry)
             rows.append(
                 {
                     "paper": paper_name,
@@ -2579,6 +3168,7 @@ def build_review_status(papers: list[dict[str, Any]], reviews: list[dict[str, An
                     "source_stale": stale_source,
                     "source_status": item.get("source_status", ""),
                     "source_note": item.get("source_note", ""),
+                    "is_assumption": bool(item.get("is_assumption", False)),
                     "validators": validators,
                     "validator_names": _validator_names(validators),
                     "llm_match_judgment": item.get("llm_match_judgment", ""),
@@ -2588,6 +3178,16 @@ def build_review_status(papers: list[dict[str, Any]], reviews: list[dict[str, An
                     "llm_match_validator": item.get("llm_match_validator", ""),
                     "llm_match_validator_type": item.get("llm_match_validator_type", ""),
                     "llm_match_validated_at": item.get("llm_match_validated_at", ""),
+                    "llm_assumption_judgment": item.get("llm_assumption_judgment", ""),
+                    "llm_assumption_reason": item.get("llm_assumption_reason", ""),
+                    "llm_assumption_stale": bool(item.get("llm_assumption_stale", False)),
+                    "llm_assumption_source": item.get("llm_assumption_source", ""),
+                    "llm_assumption_validator": item.get("llm_assumption_validator", ""),
+                    "llm_assumption_validator_type": item.get("llm_assumption_validator_type", ""),
+                    "llm_assumption_validated_at": item.get("llm_assumption_validated_at", ""),
+                    "llm_assumption_premise_judgments": item.get(
+                        "llm_assumption_premise_judgments", {}
+                    ),
                 }
             )
     rows.sort(key=lambda row: (row["paper"], row["theorem"]))
@@ -2799,6 +3399,83 @@ def statement_audit_rows(papers: list[dict[str, Any]]) -> list[dict[str, Any]]:
         audit = paper.get("statement_audit") or {}
         rows.append({"paper": paper.get("name", ""), **audit})
     return rows
+
+
+def assumption_audit_rows(papers: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Return paper-level assumption-provenance audit rows."""
+
+    rows: list[dict[str, Any]] = []
+    for paper in papers:
+        audit = paper.get("assumption_audit") or {}
+        rows.append({"paper": paper.get("name", ""), **audit})
+    return rows
+
+
+def hidden_premise_repository_audit_rows(paper: str | None) -> list[dict[str, Any]]:
+    """Return hidden-premise findings from the repository audit for CLI prechecks."""
+
+    try:
+        import audit_repository  # type: ignore
+    except Exception as exc:  # pragma: no cover - defensive CLI fallback
+        return [
+            {
+                "paper": paper or "all papers",
+                "hidden_premise_audit_error": str(exc),
+                "hidden_premise_count": 0,
+                "hidden_premise_samples": [],
+                "needs_attention": True,
+                "has_warning": True,
+            }
+        ]
+
+    marker = "has premises not routed through explicit Assumptions.lean paper assumptions"
+    rows: dict[str, dict[str, Any]] = {}
+    for finding in audit_repository.run(include_active=False, strict_style=False):
+        if marker not in finding.message:
+            continue
+        rel_path = finding.path.relative_to(ROOT) if finding.path.is_absolute() else finding.path
+        parts = rel_path.parts
+        if len(parts) < 2 or parts[0] != "papers":
+            continue
+        paper_name = parts[1]
+        if paper and paper_name != paper:
+            continue
+        row = rows.setdefault(
+            paper_name,
+            {
+                "paper": paper_name,
+                "hidden_premise_count": 0,
+                "hidden_premise_error_count": 0,
+                "hidden_premise_warning_count": 0,
+                "hidden_premise_samples": [],
+                "needs_attention": True,
+                "has_warning": True,
+            },
+        )
+        row["hidden_premise_count"] += 1
+        if finding.severity == "ERROR":
+            row["hidden_premise_error_count"] += 1
+        elif finding.severity == "WARN":
+            row["hidden_premise_warning_count"] += 1
+        if len(row["hidden_premise_samples"]) < 5:
+            row["hidden_premise_samples"].append(finding.message)
+    return list(rows.values())
+
+
+def merge_hidden_premise_audit_rows(
+    rows: list[dict[str, Any]], paper: str | None
+) -> list[dict[str, Any]]:
+    """Merge explicit-assumption and hidden-premise audits for CLI reporting."""
+
+    merged = {str(row.get("paper") or ""): dict(row) for row in rows}
+    for hidden in hidden_premise_repository_audit_rows(paper):
+        paper_name = str(hidden.get("paper") or "")
+        row = merged.setdefault(paper_name, {"paper": paper_name})
+        row.update(hidden)
+        if hidden.get("needs_attention"):
+            row["needs_attention"] = True
+            row["has_warning"] = True
+    return list(merged.values())
 
 
 def stale_review_rows(rows: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
@@ -3610,6 +4287,88 @@ HTML_PAGE = """
       return panel;
     }
 
+    function assumptionJudgmentLabel(item) {
+      const value = String(item.llm_assumption_judgment || "").toLowerCase();
+      if (item.llm_assumption_stale) {
+        return "Stale assumption judgment";
+      }
+      if (value === "paper_assumption") {
+        return "Assumption: in paper";
+      }
+      if (value === "paper_condition") {
+        return "Condition: in paper";
+      }
+      if (value === "documented_caveat") {
+        return "Documented caveat";
+      }
+      if (value === "partial_boundary") {
+        return "Partial boundary";
+      }
+      if (value === "not_paper_assumption") {
+        return "Assumption: not in paper";
+      }
+      if (value === "uncertain") {
+        return "Assumption: uncertain";
+      }
+      return "No assumption judgment";
+    }
+
+    function assumptionJudgmentClass(item) {
+      const value = String(item.llm_assumption_judgment || "").toLowerCase();
+      if (item.llm_assumption_stale) {
+        return "warn";
+      }
+      if (value === "paper_assumption" || value === "paper_condition" || value === "documented_caveat") {
+        return "ok";
+      }
+      if (value === "partial_boundary") {
+        return "warn";
+      }
+      if (value === "not_paper_assumption") {
+        return "bad";
+      }
+      if (value === "uncertain") {
+        return "warn";
+      }
+      return "";
+    }
+
+    function makeAssumptionJudgePanel(item) {
+      const panel = document.createElement("div");
+      panel.className = "llm-judge-panel";
+      const heading = document.createElement("div");
+      heading.className = "llm-judge-heading";
+      const title = document.createElement("span");
+      title.className = "small muted";
+      title.textContent = "LLM assumption-provenance note";
+      const badge = document.createElement("span");
+      badge.className = `status-pill ${assumptionJudgmentClass(item)}`.trim();
+      badge.textContent = assumptionJudgmentLabel(item);
+      heading.appendChild(title);
+      heading.appendChild(badge);
+      panel.appendChild(heading);
+      const reason = document.createElement("div");
+      reason.className = "llm-judge-reason";
+      const bits = [];
+      if (item.llm_assumption_reason) {
+        bits.push(String(item.llm_assumption_reason));
+      }
+      if (item.llm_assumption_stale) {
+        bits.push("The saved assumption judgment predates the current Lean or paper statement.");
+      }
+      if (!bits.length) {
+        bits.push(item.llm_assumption_judgment
+          ? "No reason recorded."
+          : "Run the source-assumption judge and save assumption_match_llm.json.");
+      }
+      if (item.llm_assumption_source) {
+        bits.push(`Source: ${item.llm_assumption_source}`);
+      }
+      reason.textContent = bits.join("\\n");
+      panel.appendChild(reason);
+      return panel;
+    }
+
     function softWrapLeanSegment(segment) {
       if (segment.length < 24) {
         return segment;
@@ -4051,6 +4810,85 @@ HTML_PAGE = """
       return panel;
     }
 
+    function assumptionAuditClass(audit) {
+      if (!audit || !audit.row_count) {
+        return "";
+      }
+      if (audit.not_paper_assumption_count) {
+        return "bad";
+      }
+      if (audit.needs_attention) {
+        return "warn";
+      }
+      return "ok";
+    }
+
+    function assumptionAuditLabel(audit) {
+      if (!audit || !audit.row_count) {
+        return "";
+      }
+      if (audit.not_paper_assumption_count) {
+        return "Assumption mismatch";
+      }
+      if (audit.missing_judgment_count) {
+        return "Assumption judge required";
+      }
+      if (audit.stale_judgment_count) {
+        return "Assumption judge stale";
+      }
+      if (audit.uncertain_count || audit.unknown_count || audit.unlisted_rows_count || audit.missing_rows_count) {
+        return "Assumptions need review";
+      }
+      return "Assumptions current";
+    }
+
+    function makeAssumptionAuditPanel(paper) {
+      const audit = paper.assumption_audit || {};
+      if (!audit.row_count && !audit.configured_count && !audit.needs_attention) {
+        const empty = document.createElement("div");
+        empty.style.display = "none";
+        return empty;
+      }
+      const panel = document.createElement("section");
+      const cls = assumptionAuditClass(audit);
+      panel.className = `surface-audit-panel ${cls}`.trim();
+
+      const heading = document.createElement("div");
+      heading.className = "surface-audit-heading";
+      const title = document.createElement("span");
+      title.textContent = `Paper assumptions: ${audit.row_count || 0} row${audit.row_count === 1 ? "" : "s"}`;
+      const badge = document.createElement("span");
+      badge.className = `status-pill ${cls}`.trim();
+      badge.textContent = assumptionAuditLabel(audit);
+      heading.appendChild(title);
+      heading.appendChild(badge);
+      panel.appendChild(heading);
+
+      const body = document.createElement("div");
+      body.className = "surface-audit-body";
+      const notes = [];
+      if (audit.unlisted_rows_count) {
+        notes.push("Some assumption-like declarations are not listed in status.json review_surface.assumption_names.");
+      }
+      if (audit.missing_rows_count) {
+        notes.push("Some configured assumptions are missing from the dashboard rows.");
+      }
+      if (audit.missing_judgment_count) {
+        notes.push("Run the source-assumption judge and save assumption_match_llm.json.");
+      } else if (audit.stale_judgment_count) {
+        notes.push("The saved assumption_match_llm.json no longer matches the current assumptions.");
+      } else if (audit.not_paper_assumption_count) {
+        notes.push("The assumption judge says at least one row is a proof assumption rather than a paper/source model assumption.");
+      } else if (audit.uncertain_count || audit.unknown_count) {
+        notes.push("The assumption judge could not confirm every listed assumption.");
+      } else if (audit.row_count) {
+        notes.push("Every listed assumption has a current source-assumption judgment.");
+      }
+      body.textContent = notes.join(" ");
+      panel.appendChild(body);
+      return panel;
+    }
+
     function refreshSummary(entries, statusRows) {
       const summary = document.getElementById("summary");
       if (!state.papers.length) {
@@ -4314,6 +5152,7 @@ HTML_PAGE = """
       row.dataset.paper = paper;
       row.dataset.theorem = item.name;
       row.dataset.kind = item.kind || "";
+      row.dataset.isAssumption = item.is_assumption ? "true" : "false";
       row.dataset.sliceKey = sliceKey(paper, item.slice_id || "all");
       row.dataset.sliceId = item.slice_id || "all";
       row.dataset.sliceTitle = item.slice_title || "All statements";
@@ -4393,6 +5232,9 @@ HTML_PAGE = """
       agentCell.appendChild(agentHeader);
       agentCell.appendChild(agentText);
       agentCell.appendChild(makeLlmJudgePanel(item));
+      if (item.is_assumption || item.llm_assumption_judgment) {
+        agentCell.appendChild(makeAssumptionJudgePanel(item));
+      }
 
       const reviewCell = document.createElement("aside");
       reviewCell.className = "review-controls col-review";
@@ -4515,7 +5357,9 @@ HTML_PAGE = """
 
       const sourceBadge = document.createElement("span");
       sourceBadge.className = `status-pill ${isDirectSourceStatus(item.source_status) && !item.source_note ? "ok" : item.source_status || item.source_note ? "warn" : ""}`;
-      sourceBadge.textContent = item.source_status || "Source status not labeled";
+      sourceBadge.textContent = item.is_assumption
+        ? "Paper assumption"
+        : item.source_status || "Source status not labeled";
 
       reviewCell.appendChild(header);
       reviewCell.appendChild(sliceMeta);
@@ -4720,6 +5564,7 @@ HTML_PAGE = """
         summary.appendChild(header);
         block.appendChild(summary);
         block.appendChild(makeSurfaceAuditPanel(paper));
+        block.appendChild(makeAssumptionAuditPanel(paper));
         block.appendChild(makeSourcePanel(paper));
         const table = document.createElement("table");
         const head = document.createElement("thead");
@@ -4790,6 +5635,7 @@ def stale_review_summary(
         "totals": status_totals(rows),
         "surface_audits": surface_audit_rows(papers),
         "statement_audits": statement_audit_rows(papers),
+        "assumption_audits": merge_hidden_premise_audit_rows(assumption_audit_rows(papers), paper),
         "stale": buckets["stale"],
         "unreviewed": buckets["unreviewed"],
         "mismatch": buckets["mismatch"],
@@ -4900,7 +5746,10 @@ def print_statement_audit_warnings(rows: list[dict[str, Any]], label: str) -> bo
         "Lean statements alone, then regenerate statement_match_llm.json from only "
         "the paper statement and that translation. If all rows are uncertain, "
         "treat that as a likely source extraction problem and fix the source map "
-        "before accepting row-level judgments."
+        "before accepting row-level judgments. A clean statement audit is still "
+        "row-local; run `python3 scripts/review_dashboard.py --paper <paper> "
+        "--assumption-precheck` or the combined `--precheck` path before "
+        "treating theorem premises as certified."
     )
     return True
 
@@ -4924,6 +5773,110 @@ def print_statement_audit_status(paper: str | None, slice_filter: str | None = N
         f"{total_rows} row(s), {total_drafts} Lean-to-TeX draft(s), "
         f"{total_judgments} statement-judge row(s), no missing/stale/flagged items."
     )
+    print(
+        "This is only the row-local statement match lane. Before treating these "
+        "rows as certified paper targets, also run "
+        "`python3 scripts/review_dashboard.py --paper <paper> --assumption-precheck` "
+        "or the combined `--precheck` path to verify theorem-premise provenance."
+    )
+    return False
+
+
+def print_assumption_audit_warnings(rows: list[dict[str, Any]], label: str) -> bool:
+    """Print paper-level assumption-provenance warnings."""
+
+    warnings = [row for row in rows if row.get("has_warning") or row.get("needs_attention")]
+    if not warnings:
+        return False
+    print(f"\nAssumption-provenance audit warnings for {label}:")
+    for row in warnings:
+        paper = row.get("paper") or "unknown paper"
+        reasons: list[str] = []
+        if row.get("missing_rows_count"):
+            reasons.append(f"{row['missing_rows_count']} configured assumption declaration(s) missing")
+        if row.get("unlisted_rows_count"):
+            reasons.append(f"{row['unlisted_rows_count']} assumption-like declaration(s) not listed in status.json")
+        if row.get("missing_judgment_count"):
+            reasons.append(f"{row['missing_judgment_count']} missing assumption-judge declaration(s)")
+        if row.get("stale_judgment_count"):
+            reasons.append(f"{row['stale_judgment_count']} stale assumption-judge declaration(s)")
+        if row.get("not_paper_assumption_count"):
+            reasons.append(f"{row['not_paper_assumption_count']} declaration(s) judged not to be paper assumptions")
+        if row.get("uncertain_count"):
+            reasons.append(f"{row['uncertain_count']} uncertain assumption-judge declaration(s)")
+        if row.get("unknown_count"):
+            reasons.append(f"{row['unknown_count']} unknown assumption-judge value(s)")
+        if row.get("partial_boundary_count"):
+            reasons.append(f"{row['partial_boundary_count']} partial-boundary declaration(s)")
+        if row.get("partial_boundary_premise_count"):
+            reasons.append(
+                f"{row['partial_boundary_premise_count']} premise-level partial boundary finding(s)"
+            )
+        if row.get("unresolved_premise_count"):
+            reasons.append(
+                f"{row['unresolved_premise_count']} unresolved premise-level judgment(s)"
+            )
+        if row.get("missing_source_location_premise_count"):
+            reasons.append(
+                f"{row['missing_source_location_premise_count']} source-text premise judgment(s) missing source_location"
+            )
+        if row.get("hidden_premise_count"):
+            hidden_bits: list[str] = [f"{row['hidden_premise_count']} hidden premise finding(s)"]
+            if row.get("hidden_premise_error_count"):
+                hidden_bits.append(f"{row['hidden_premise_error_count']} error")
+            if row.get("hidden_premise_warning_count"):
+                hidden_bits.append(f"{row['hidden_premise_warning_count']} warning")
+            reasons.append(", ".join(hidden_bits))
+        if row.get("hidden_premise_audit_error"):
+            reasons.append(f"could not run hidden-premise audit: {row['hidden_premise_audit_error']}")
+        if not reasons:
+            reasons.append("assumption provenance needs attention")
+        print(f" - {paper}: {'; '.join(str(reason) for reason in reasons)}.")
+        samples: list[str] = []
+        for key, label_text in [
+            ("missing_rows", "missing declaration"),
+            ("unlisted_rows", "unlisted declaration"),
+            ("not_paper_assumption", "not paper assumption"),
+            ("uncertain", "uncertain"),
+            ("stale_judgment", "stale judgment"),
+            ("missing_judgment", "missing judgment"),
+            ("unknown", "unknown"),
+            ("partial_boundary_premises", "partial premise"),
+            ("unresolved_premises", "unresolved premise"),
+            ("missing_source_location_premises", "missing premise source"),
+        ]:
+            sample = _format_name_sample(list(row.get(key) or []))
+            if sample:
+                samples.append(f"{label_text}: {sample}")
+        for sample in samples[:4]:
+            print(f"   {sample}")
+        for sample in list(row.get("hidden_premise_samples") or [])[:3]:
+            print(f"   hidden premise: {sample}")
+    print(
+        "Every paper-facing theorem premise that is not derived in Lean must be "
+        "declared in Assumptions.lean, listed in "
+        "status.json review_surface.assumption_names, and judged in "
+        "assumption_match_llm.json as a true paper/source model assumption."
+    )
+    return True
+
+
+def print_assumption_audit_status(paper: str | None, slice_filter: str | None = None) -> bool:
+    """Print only assumption-provenance audit diagnostics."""
+
+    papers = gather_paper_data(paper, slice_filter)
+    rows = merge_hidden_premise_audit_rows(assumption_audit_rows(papers), paper)
+    label = paper or "all papers"
+    if slice_filter:
+        label = f"{label} slice {slice_filter}"
+    has_attention = print_assumption_audit_warnings(rows, label)
+    if has_attention:
+        return True
+    total_rows = sum(int(row.get("row_count") or 0) for row in rows)
+    print(
+        f"Assumption-provenance audits for {label} are current: "
+        f"{total_rows} assumption declaration(s), no missing/stale/flagged items."
+    )
     return False
 
 
@@ -4938,6 +5891,7 @@ def print_stale_review_warning(
     mismatch_rows = summary["mismatch"]
     surface_audits = summary["surface_audits"]
     statement_audits = summary["statement_audits"]
+    assumption_audits = summary["assumption_audits"]
     totals = summary["totals"]
     label = paper or "all papers"
     if slice_filter:
@@ -4952,11 +5906,12 @@ def print_stale_review_warning(
     )
     surface_needs_attention = print_surface_audit_warnings(surface_audits, label)
     statement_needs_attention = print_statement_audit_warnings(statement_audits, label)
+    assumption_needs_attention = print_assumption_audit_warnings(assumption_audits, label)
 
     if not stale_rows:
         if not unreviewed_rows and not mismatch_rows:
             print(f"Review checks for {label} are currently up to date.")
-            return surface_needs_attention or statement_needs_attention
+            return surface_needs_attention or statement_needs_attention or assumption_needs_attention
         else:
             print(
                 f"Review checks for {label}: no stale checks, but "
@@ -5155,6 +6110,7 @@ class ReviewHTTPHandler(BaseHTTPRequestHandler):
                     "totals": status_totals(rows),
                     "surface_audits": surface_audit_rows(papers),
                     "statement_audits": statement_audit_rows(papers),
+                    "assumption_audits": assumption_audit_rows(papers),
                 },
             )
             return
@@ -5243,6 +6199,16 @@ def main() -> None:
         help="Like --statement-precheck, but return non-zero for missing/stale/flagged statement-audit rows.",
     )
     parser.add_argument(
+        "--assumption-precheck",
+        action="store_true",
+        help="Print only paper-assumption provenance audit diagnostics, then exit.",
+    )
+    parser.add_argument(
+        "--assumption-check",
+        action="store_true",
+        help="Like --assumption-precheck, but return non-zero for missing/stale/flagged assumption-audit rows.",
+    )
+    parser.add_argument(
         "--refresh-cache",
         action="store_true",
         help="Regenerate cached paper-interface rows and exit.",
@@ -5267,6 +6233,12 @@ def main() -> None:
     if args.statement_precheck or args.statement_check:
         has_attention = print_statement_audit_status(args.paper, args.slice_filter)
         if args.statement_check and has_attention:
+            sys.exit(1)
+        return
+
+    if args.assumption_precheck or args.assumption_check:
+        has_attention = print_assumption_audit_status(args.paper, args.slice_filter)
+        if args.assumption_check and has_attention:
             sys.exit(1)
         return
 
@@ -5333,6 +6305,7 @@ def main() -> None:
                     "totals": status_totals(rows),
                     "surface_audits": surface_audit_rows(papers),
                     "statement_audits": statement_audit_rows(papers),
+                    "assumption_audits": assumption_audit_rows(papers),
                 },
                 indent=2,
             )

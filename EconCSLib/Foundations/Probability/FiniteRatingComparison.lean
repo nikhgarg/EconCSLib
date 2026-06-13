@@ -25,12 +25,12 @@ namespace Probability
 noncomputable section
 
 /-- Source log-MGF `Λ(z | θ) = log sum_y rho(θ,y|Y) exp(z phi(y))`. -/
-def sourceLogMGF {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
+def ratingLogMGF {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (θ : Seller) (z : ℝ) : ℝ :=
   M.logMGF θ z
 
 /-- Source rate function `I(a | θ) = sup_z {z a - Λ(z | θ)}`. -/
-def sourceRateFunction {Seller Rating : Type*} [Fintype Rating]
+def ratingRateFunction {Seller Rating : Type*} [Fintype Rating]
     [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (θ : Seller) (a : ℝ) : ℝ :=
   M.rateFunction θ a
@@ -40,7 +40,7 @@ Extended source rate function. Thresholds outside the finite score hull have
 rate `⊤`, avoiding the real-valued `sSup` boundary that appears in unrestricted
 Legendre transforms.
 -/
-def sourceRateFunctionTop {Seller Rating : Type*} [Fintype Rating]
+def ratingRateFunctionTop {Seller Rating : Type*} [Fintype Rating]
     [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (θ : Seller) (a : ℝ) :
     WithTop ℝ :=
@@ -50,13 +50,13 @@ def sourceRateFunctionTop {Seller Rating : Type*} [Fintype Rating]
 If the finite source log-MGF has derivative `a` at `z0`, then the extended
 source rate at threshold `a` is finite and attained at `z0`.
 -/
-theorem sourceRateFunctionTop_eq_eval_of_logMGF_hasDerivAt
+theorem ratingRateFunctionTop_eq_eval_of_logMGF_hasDerivAt
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (θ : Seller) (a z0 : ℝ)
     (hderiv : HasDerivAt (fun z : ℝ => M.logMGF θ z) a z0) :
-    sourceRateFunctionTop M θ a =
+    ratingRateFunctionTop M θ a =
       (finiteLegendreValue (M.typeLaw θ) M.score a z0 : WithTop ℝ) := by
-  simpa [sourceRateFunctionTop] using
+  simpa [ratingRateFunctionTop] using
     M.rateFunctionTop_eq_eval_of_logMGF_hasDerivAt θ a z0 hderiv
 
 /--
@@ -1081,35 +1081,35 @@ theorem pairwiseRateObjectiveTop_minimizer_of_common_logMGF_derivatives
   let zHi : ℝ := z * (sampleRate hi)⁻¹
   let zLo : ℝ := -(z * (sampleRate lo)⁻¹)
   have hhi_rate_a :
-      sourceRateFunctionTop M hi a =
+      ratingRateFunctionTop M hi a =
         (finiteLegendreValue (M.typeLaw hi) M.score a zHi : WithTop ℝ) := by
     dsimp [zHi]
-    exact sourceRateFunctionTop_eq_eval_of_logMGF_hasDerivAt
+    exact ratingRateFunctionTop_eq_eval_of_logMGF_hasDerivAt
       M hi a (z * (sampleRate hi)⁻¹) hderiv_hi
   have hlo_rate_a :
-      sourceRateFunctionTop M lo a =
+      ratingRateFunctionTop M lo a =
         (finiteLegendreValue (M.typeLaw lo) M.score a zLo : WithTop ℝ) := by
     dsimp [zLo]
-    exact sourceRateFunctionTop_eq_eval_of_logMGF_hasDerivAt
+    exact ratingRateFunctionTop_eq_eval_of_logMGF_hasDerivAt
       M lo a (-(z * (sampleRate lo)⁻¹)) hderiv_lo
   have hhi_rate_a' :
       M.rateFunctionTop hi a =
         (finiteLegendreValue (M.typeLaw hi) M.score a zHi : WithTop ℝ) := by
-    simpa [sourceRateFunctionTop] using hhi_rate_a
+    simpa [ratingRateFunctionTop] using hhi_rate_a
   have hlo_rate_a' :
       M.rateFunctionTop lo a =
         (finiteLegendreValue (M.typeLaw lo) M.score a zLo : WithTop ℝ) := by
-    simpa [sourceRateFunctionTop] using hlo_rate_a
+    simpa [ratingRateFunctionTop] using hlo_rate_a
   have hhi_ge_b :
       withTopRealScale (sampleRate hi)
           (finiteLegendreValue (M.typeLaw hi) M.score b zHi : WithTop ℝ) ≤
-        withTopRealScale (sampleRate hi) (sourceRateFunctionTop M hi b) :=
+        withTopRealScale (sampleRate hi) (ratingRateFunctionTop M hi b) :=
     withTopRealScale_mono_of_nonneg hgHi.le
       (finiteRateFunctionTop_ge_eval (M.typeLaw hi) M.score b zHi)
   have hlo_ge_b :
       withTopRealScale (sampleRate lo)
           (finiteLegendreValue (M.typeLaw lo) M.score b zLo : WithTop ℝ) ≤
-        withTopRealScale (sampleRate lo) (sourceRateFunctionTop M lo b) :=
+        withTopRealScale (sampleRate lo) (ratingRateFunctionTop M lo b) :=
     withTopRealScale_mono_of_nonneg hgLo.le
       (finiteRateFunctionTop_ge_eval (M.typeLaw lo) M.score b zLo)
   have hscaled_b :
@@ -1253,15 +1253,15 @@ theorem pairwiseRateObjectiveTop_eq_coe_of_common_logMGF_derivatives
       M.rateFunctionTop hi a =
         (finiteLegendreValue (M.typeLaw hi) M.score a zHi : WithTop ℝ) := by
     dsimp [zHi]
-    simpa [sourceRateFunctionTop] using
-      sourceRateFunctionTop_eq_eval_of_logMGF_hasDerivAt
+    simpa [ratingRateFunctionTop] using
+      ratingRateFunctionTop_eq_eval_of_logMGF_hasDerivAt
         M hi a (z * (sampleRate hi)⁻¹) hderiv_hi
   have hlo_top :
       M.rateFunctionTop lo a =
         (finiteLegendreValue (M.typeLaw lo) M.score a zLo : WithTop ℝ) := by
     dsimp [zLo]
-    simpa [sourceRateFunctionTop] using
-      sourceRateFunctionTop_eq_eval_of_logMGF_hasDerivAt
+    simpa [ratingRateFunctionTop] using
+      ratingRateFunctionTop_eq_eval_of_logMGF_hasDerivAt
         M lo a (-(z * (sampleRate lo)⁻¹)) hderiv_lo
   have hhi_real :
       M.rateFunction hi a =
@@ -3572,7 +3572,7 @@ def PairwiseThresholdRateTopLdpCertificate.of_expected_score_gap_and_common_extr
 Source-threshold specialization of the arbitrary-real floor-count pairwise
 score-gap certificate.
 -/
-theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
+theorem twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller)
@@ -3612,7 +3612,7 @@ threshold derivative data.  The shifted one-population Cramer certificates and
 the shifted/source-rate identities are discharged internally from finite-MGF
 shift algebra.
 -/
-theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer
+theorem twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller)
@@ -3739,7 +3739,7 @@ theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertif
             ring
       _ = pairwiseSellerThresholdRate M sampleRate hi lo := hthreshold_eq
   exact
-    twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
+    twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
       M sampleRate hi lo hgHi hgLo a z hz
       C_hi C_lo hshifted_rate hdual_rate
 
@@ -3750,7 +3750,7 @@ derived internally from finite log-MGF convexity.  The remaining support-atom
 hypotheses are the finite-support nondegeneracy inputs needed by the empirical
 type Cramer certificate.
 -/
-theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_pos_neg_atoms
+theorem twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_pos_neg_atoms
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller)
@@ -3835,7 +3835,7 @@ theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertif
     rw [hmean_eq]
     linarith
   exact
-    twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer
+    twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer
       M sampleRate hi lo hgHi hgLo a z hz hbdd_hi hbdd_lo
       hderiv_hi hderiv_lo hthreshold_eq hmean_hi hmean_lo
       hmass_hi_pos hscore_hi_pos hmass_hi_neg hscore_hi_neg
@@ -3845,7 +3845,7 @@ theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertif
 Source-threshold floor-count pairwise certificate from common threshold
 derivative data and a compact two-sided-support predicate for each type law.
 -/
-theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
+theorem twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller)
@@ -3872,7 +3872,7 @@ theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertif
     ⟨⟨loBelow, hmass_lo_below, hscore_lo_below⟩,
       ⟨loAbove, hmass_lo_above, hscore_lo_above⟩⟩
   exact
-    twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_pos_neg_atoms
+    twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_pos_neg_atoms
       M sampleRate hi lo hgHi hgLo a z hz
       hderiv_hi hderiv_lo hthreshold_eq
       hmass_hi_above (by linarith)
@@ -3885,7 +3885,7 @@ Source-threshold floor-count pairwise certificate where the common threshold is
 specified as a minimizer of the source pairwise rate objective, rather than by
 an already-evaluated `sInf` equality.
 -/
-theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_threshold_minimizer_of_straddling_support
+theorem twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_threshold_minimizer_of_straddling_support
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller)
@@ -3906,7 +3906,7 @@ theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertif
     ExponentialRateCertificate
       (twoSampleFloorScoreGapLeftTailProb M sampleRate hi lo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
+  twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
     M sampleRate hi lo hgHi hgLo a z hz hderiv_hi hderiv_lo
     (pairwiseSellerThresholdRate_eq_of_pairwiseRateObjective_minimizer
       M sampleRate hi lo a hthreshold_min)
@@ -3942,7 +3942,7 @@ def PairwiseThresholdRateTopLdpCertificate.of_regularity
   leftTail := by
     intro p
     exact
-      twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
+      twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
         M sampleRate (pairHi p) (pairLo p)
         (hpositive_hi p) (hpositive_lo p)
         (C.threshold p) (C.dual p) (C.dual_nonpos p)
@@ -3956,7 +3956,7 @@ proved to minimize the source pairwise objective by Fenchel optimality; the
 all-threshold boundedness hypotheses are the current real-valued rate-function
 API side condition for that minimizer proof.
 -/
-theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives_of_straddling_support
+theorem twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives_of_straddling_support
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller)
@@ -3979,7 +3979,7 @@ theorem twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertif
     ExponentialRateCertificate
       (twoSampleFloorScoreGapLeftTailProb M sampleRate hi lo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
+  twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
     M sampleRate hi lo hgHi hgLo a z hz hderiv_hi hderiv_lo
     (pairwiseSellerThresholdRate_eq_of_common_logMGF_derivatives
       M sampleRate hi lo hgHi hgLo hbdd_hi hbdd_lo a z
@@ -4969,7 +4969,7 @@ Exact source-threshold rate for the block comparison, provided the remaining
 reverse Fenchel/no-duality-gap inequality is supplied.  The forward inequality
 is discharged by `twoSampleRateBlockChernoffRate_le_pairwiseSellerThresholdRate`.
 -/
-theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate
+theorem twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller) (gHi gLo : ℕ)
@@ -5012,7 +5012,7 @@ stationary Chernoff tilt, once the reverse Fenchel/no-duality-gap inequality is
 available.  The finite block Cramer side is discharged by the shared
 empirical-type theorem.
 -/
-theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_stationary_tilt
+theorem twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_stationary_tilt
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller) (gHi gLo : ℕ)
@@ -5048,7 +5048,7 @@ theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_sta
     ExponentialRateCertificate
       (twoSampleRateBlockErrorProb M hi lo gHi gLo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate
+  twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate
     M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
     hbdd_hi hbdd_lo hreverse
     (twoSampleRateBlock_cramerCertificate_of_stationary_tilt
@@ -5060,7 +5060,7 @@ Exact source-threshold rate for the integer-rate block comparison from
 first-order Fenchel data and a stationary Chernoff tilt.  This removes the
 opaque reverse no-duality-gap input from the stationary-tilt route.
 -/
-theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_common_derivatives
+theorem twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_common_derivatives
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller) (gHi gLo : ℕ)
@@ -5106,7 +5106,7 @@ theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_com
       M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
       hbdd_hi hbdd_lo a z hderiv_hi hderiv_lo hstationary
   exact
-    twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_stationary_tilt
+    twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_stationary_tilt
       M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
       hbdd_hi hbdd_lo hreverse hmean hmassPos hscorePos hmassNeg hscoreNeg
       hstationary
@@ -5117,7 +5117,7 @@ stationary Chernoff tilt.  The common one-rating derivative threshold is
 derived from stationarity of the block log-MGF, so it is not an external
 witness.
 -/
-theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_stationary_tilt_common_derivatives
+theorem twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_stationary_tilt_common_derivatives
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller) (gHi gLo : ℕ)
@@ -5155,7 +5155,7 @@ theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_sta
       M hi lo gHi gLo hgHi hgLo hstationary with
     ⟨a, hderiv_hi, hderiv_lo⟩
   exact
-    twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_common_derivatives
+    twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_common_derivatives
       M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
       hbdd_hi hbdd_lo a z hderiv_hi hderiv_lo
       hmean hmassPos hscorePos hmassNeg hscoreNeg hstationary
@@ -5164,7 +5164,7 @@ theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_sta
 Exact source-threshold rate for the integer-rate block comparison with the
 stationary Chernoff tilt derived internally from finite two-sided support.
 -/
-theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_mean_nonneg_pos_neg_atoms
+theorem twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_mean_nonneg_pos_neg_atoms
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller) (gHi gLo : ℕ)
@@ -5196,7 +5196,7 @@ theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_mea
       M hi lo gHi gLo hmean hmassPos hscorePos hmassNeg hscoreNeg with
     ⟨z, _hz, hstationary⟩
   exact
-    twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_stationary_tilt_common_derivatives
+    twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_stationary_tilt_common_derivatives
       M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
       hbdd_hi hbdd_lo hmean hmassPos hscorePos hmassNeg hscoreNeg
       hstationary
@@ -5206,7 +5206,7 @@ Exact source-threshold rate for the integer-rate block comparison from common
 one-rating log-MGF derivatives.  The common-derivative equations imply the
 block dual is stationary, so no separate stationary-sum premise is needed.
 -/
-theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
+theorem twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller) (gHi gLo : ℕ)
@@ -5258,7 +5258,7 @@ theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_log
       (twoSampleRateBlockScore M gHi gLo)
       hderiv_block
   exact
-    twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_common_derivatives
+    twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_common_derivatives
       M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
       hbdd_hi hbdd_lo a z hderiv_hi hderiv_lo hmean
       hmassPos hscorePos hmassNeg hscoreNeg hstationary
@@ -5267,7 +5267,7 @@ theorem twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_log
 Exact source-threshold rate for the ungrouped two-sample integer-rate
 comparison error from common one-rating log-MGF derivatives.
 -/
-theorem twoSampleIntegerRateLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
+theorem twoSampleIntegerRateLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller) (gHi gLo : ℕ)
@@ -5305,7 +5305,7 @@ theorem twoSampleIntegerRateLeftTail_sourceThresholdRate_exponentialRateCertific
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
   twoSampleIntegerRateLeftTail_exponentialRateCertificate_of_block
     M hi lo gHi gLo
-    (twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
+    (twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
       M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
       hbdd_hi hbdd_lo a z hderiv_hi hderiv_lo hmean
       hmassPos hscorePos hmassNeg hscoreNeg)
@@ -5381,7 +5381,7 @@ theorem twoSampleFloorPkComplementError_exponentialRateCertificate_of_leftTail
 Source-threshold floor-count `Pk_LD` certificate from shifted high/low Cramer
 certificates and the dual/rate identities.
 -/
-theorem twoSampleFloorPkComplementError_sourceThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
+theorem twoSampleFloorPkComplementError_pairwiseThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller)
@@ -5412,7 +5412,7 @@ theorem twoSampleFloorPkComplementError_sourceThresholdRate_exponentialRateCerti
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
   twoSampleFloorPkComplementError_exponentialRateCertificate_of_leftTail
     M sampleRate hi lo
-    (twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
+    (twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
       M sampleRate hi lo hgHi hgLo a z hz C_hi C_lo
       hshifted_rate hdual_rate)
 
@@ -5421,7 +5421,7 @@ Lemma `Pk_LD` in the integer-rate finite model: the paper's pairwise
 `1 - P_k` error has the source threshold exponent derived from common
 one-rating log-MGF derivatives.
 -/
-theorem twoSamplePkComplementError_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
+theorem twoSamplePkComplementError_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller) (gHi gLo : ℕ)
@@ -5459,7 +5459,7 @@ theorem twoSamplePkComplementError_sourceThresholdRate_exponentialRateCertificat
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
   twoSamplePkComplementError_exponentialRateCertificate_of_leftTail
     M hi lo gHi gLo
-    (twoSampleIntegerRateLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
+    (twoSampleIntegerRateLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
       M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
       hbdd_hi hbdd_lo a z hderiv_hi hderiv_lo hmean
       hmassPos hscorePos hmassNeg hscoreNeg)
@@ -5521,30 +5521,30 @@ theorem equalSamplePairwiseError_exponentialRateCertificate_of_cramer
   simpa [equalSamplePairwiseErrorProb, equalSamplePairwiseChernoffRate] using
     C.exponentialRateCertificate
 
-theorem sourceLogMGF_eq_finite_formula
+theorem ratingLogMGF_eq_finite_formula
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (θ : Seller) (z : ℝ) :
-    sourceLogMGF M θ z =
+    ratingLogMGF M θ z =
       Real.log (∑ y : Rating,
         ((M.typeLaw θ) y).toReal * Real.exp (z * M.score y)) := by
   rfl
 
-theorem sourceRateFunction_eq_finite_formula
+theorem ratingRateFunction_eq_finite_formula
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (θ : Seller) (a : ℝ) :
-    sourceRateFunction M θ a =
+    ratingRateFunction M θ a =
       sSup (Set.range fun z : ℝ =>
-        z * a - sourceLogMGF M θ z) := by
+        z * a - ratingLogMGF M θ z) := by
   rfl
 
-theorem pairwiseSellerThresholdRate_eq_source_formula
+theorem pairwiseSellerThresholdRate_eq_inf_ratingRateFunction
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (sampleRate : Seller → ℝ)
     (hi lo : Seller) :
     pairwiseSellerThresholdRate M sampleRate hi lo =
       sInf (Set.range fun a : ℝ =>
-        sampleRate hi * sourceRateFunction M hi a +
-          sampleRate lo * sourceRateFunction M lo a) := by
+        sampleRate hi * ratingRateFunction M hi a +
+          sampleRate lo * ratingRateFunction M lo a) := by
   rfl
 
 

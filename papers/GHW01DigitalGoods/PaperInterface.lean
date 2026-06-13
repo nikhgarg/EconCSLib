@@ -1,4 +1,5 @@
 import GHW01DigitalGoods.MainTheorems
+import GHW01DigitalGoods.Assumptions
 
 /-!
 # Paper Interface: Competitive Auctions and Digital Goods
@@ -60,7 +61,12 @@ def twoWinnerBenchmark {Agent : Type*}
     (values : Agent → ℝ) : ℝ :=
   twoWinnerFixedPriceBenchmarkValue values
 
-/-- Total bid value `T = sum_i v_i`. -/
+/--
+Total bid value `T = sum_i v_i`.
+
+Source status: direct source text.
+Source note: GHW define `T` as the sum of all bids in the input profile.
+-/
 def totalValue {Agent : Type*} [Fintype Agent] (values : Agent → ℝ) : ℝ :=
   ∑ i : Agent, values i
 
@@ -88,6 +94,10 @@ theorem theorem4_1_high_value
 /--
 Corollary 4.2: truncating bids below `h / n` and applying Theorem 4.1 gives
 the logarithmic fixed-price lower bound.
+
+Source status: source corollary endpoint.
+Source note: The cutoff truncation and scaled benchmark comparison are derived
+internally from the source proof.
 -/
 theorem corollary4_2_fixed_price_lower_bound
     {Agent : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]
@@ -103,7 +113,12 @@ theorem corollary4_2_fixed_price_lower_bound
     paper_corollary4_2_fixed_price_lower_bound_of_card_truncation
       values hvalues_nonneg hh_pos hmax hvalue_le_h hbinCount
 
-/-- Lemma 6.1: fair-coin random sampling lower-tail estimate. -/
+/--
+Lemma 6.1: fair-coin random sampling lower-tail estimate.
+
+Source status: source lemma endpoint.
+Source note: Lean exposes the fair-coin lower-tail form used by Theorem 6.2.
+-/
 theorem lemma6_1_fair_coin
     {Index : Type*} (s : Finset Index) (keep : Bool) :
     (EconCSLib.FairCoin.productMeasure Index).real
@@ -115,6 +130,10 @@ theorem lemma6_1_fair_coin
 /--
 Theorem 6.2: random-sampling auction revenue guarantee for finite candidate
 benchmark inputs satisfying `alpha * h <= F`.
+
+Source status: source theorem endpoint.
+Source note: The ranked top-prefix sampling construction is built internally;
+`alpha * h <= F` is the source theorem condition.
 -/
 theorem theorem6_2_random_sampling
     {n : ℕ} [NeZero n]
@@ -149,7 +168,13 @@ theorem theorem6_2_random_sampling
     paper_theorem6_2_fair_coin_revenue_bound_of_finite_candidate_benchmark_all_alpha
       values keep hhigh_pos hvalue_bound halpha_highValue
 
-/-- Theorem 7.1: weighted pairing gets a logarithmic guarantee when `4h <= T`. -/
+/--
+Theorem 7.1: weighted pairing gets a logarithmic guarantee when `4h <= T`.
+
+Source status: source theorem endpoint.
+Source note: The Lean inequality gives an explicit constant version of the
+paper's `Omega(T / log h)` bound under the displayed side condition.
+-/
 theorem theorem7_1_weighted_pairing
     {Agent : Type*} [Fintype Agent] [DecidableEq Agent] [LinearOrder Agent]
     (values : Agent → ℝ) {h total : ℝ}
@@ -201,7 +226,12 @@ has expected revenue at most the fixed-price benchmark `F`.
 
 This is the Theorem 8.2 endpoint used for the SODA paper. The preliminary
 unrestricted wording is tracked separately as source-version audit material,
-not as a paper-facing theorem. -/
+not as a paper-facing theorem.
+
+Source status: source-version endpoint.
+Source note: Formalized against the later journal monotone randomized-offer
+wording that refines the preliminary SODA Section 8.2 statement.
+-/
 theorem theorem8_2_truthful_revenue_upper_bound
     {Agent Price : Type*} [Fintype Agent] [Nonempty Agent]
     [DecidableEq Agent] [Fintype Price] [DecidableEq Price]
@@ -219,7 +249,13 @@ theorem theorem8_2_truthful_revenue_upper_bound
     paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_offer_source_model
       model
 
-/-- Theorem 9.1: bid-independent auctions have a lower-bound witness. -/
+/--
+Theorem 9.1: bid-independent auctions have a lower-bound witness.
+
+Source status: source theorem endpoint.
+Source note: Lean states the two-value bid-independent lower-bound witness with
+the paper's positive `alpha` large-market condition.
+-/
 theorem theorem9_1_bid_independent_lower_bound
     (priceRule : List ℝ → ℝ) {highValue alpha : ℕ}
     (hhigh_ge_two : 2 ≤ highValue) (halpha_pos : 0 < alpha) :
@@ -235,7 +271,13 @@ theorem theorem9_1_bid_independent_lower_bound
     paper_theorem9_1_bid_independent_list_rule_scaled_lower_bound_fixed_price_benchmark
       priceRule hhigh_ge_two halpha_pos
 
-/-- Lemma 9.2: deterministic truthful binary auctions admit threshold offers. -/
+/--
+Lemma 9.2: deterministic truthful binary auctions admit threshold offers.
+
+Source status: source lemma endpoint.
+Source note: This is the finite deterministic-threshold form of the paper's
+truthful deterministic auctions are bid-independent lemma.
+-/
 theorem lemma9_2_threshold_domination
     {Agent : Type*} [DecidableEq Agent]
     (M : DigitalGoodsAuction Agent)
@@ -257,6 +299,10 @@ Theorem 9.3: deterministic truthful auctions have a lower-bound witness.
 The source model supplies the paper's set-of-bids focused-outcome convention;
 erased-list relabeling and then Lemma 9.2's anonymous list-price
 representation are constructed internally for the original auction family.
+
+Source status: source theorem endpoint.
+Source note: The paper's focused set-of-bids convention is the only source
+model input; the erased-list/list-price bridge is derived internally.
 -/
 theorem theorem9_3_deterministic_truthful_lower_bound
     {highValue alpha : ℕ}

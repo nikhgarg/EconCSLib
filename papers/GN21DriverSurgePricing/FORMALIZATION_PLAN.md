@@ -11,11 +11,11 @@ Last updated: 2026-05-23
   named-paper closeout.
 - `PaperInterface.lean` exposes a compact review surface for central
   single-state source claims, the named CTMC lemmas, Theorems 2--4, and the
-  current Theorem 3 source route.
+  current Theorem 3 defined-reward source route.
 - `PostPaperAudit.lean` is now the importable source-numbered endpoint ledger.
   `FINAL_VALIDATION_REPORT.md` records the named-result inventory, proof-route
-  deviations, validation commands, the feasible sequential Theorem 3 endpoint,
-  and the optional zero-mass bridge/obstruction boundary.
+  deviations, validation commands, the defined-reward Theorem 3 endpoint, and
+  the optional zero-mass totalization bridge/obstruction boundary.
 - `MainTheorems.lean` remains the large proof-facing ledger for the continuous
   and dynamic driver-surge development.  Active Lemma 5 and Theorem 3 route
   adapters now live in `Lemma5Frontier.lean` and `Theorem3Frontier.lean` so
@@ -23,21 +23,19 @@ Last updated: 2026-05-23
 - `DomainBridge.lean` now contains the source-faithful positive-mass Theorem 3
   a.e.-uniqueness endpoint
   `paper_theorem3_measured_structured_positive_mass_measurable_ic_ae_unique_prices_of_source_assumptions`,
-  exposed as `PaperInterface.theorem3_positive_mass_source`.  It also exposes
-  the optional full feasible-measurable bridge
+  exposed as `PaperInterface.theorem3_positive_mass_source`.  The compact
+  paper-facing endpoint is `PaperInterface.theorem3_defined_reward_source`,
+  where Appendix D reward-rate denominators are required to be defined.  The
+  file also exposes the optional totalized feasible-measurable bridge
   `PaperInterface.theorem3_source_with_zero_mass_dominance`, which adds exactly
   the explicit zero-mass strict-dominance certificate needed for that route,
   plus the state-rate and certificate-impossibility obstruction theorems that
   show this certificate is not automatic under the current totalized `ℝ`
-  reward interface.  `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`
-  gives the partial-reward alternative where zero-mass denominator failures are
-  left undefined.
+  reward interface.
 - `Theorem3SplitCurrentBounds.lean` now routes the sequential Lemma 9 then
   Lemma 10 a.e.-uniqueness proof through local measured reward-rate records.
-  The full feasible sequential current-bounds source-data route is exposed as
-  `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data` and
-  proves the full `theorem3MeasuredStructuredMeasurableICAEUniqueConclusion`
-  without using the zero-mass dominance certificate.
+  That route feeds the defined-reward source endpoint; optional totalized
+  wrappers are retained for audit/strengthening only.
 - `Lemma5Frontier.lean` now contains the compact Theorem 4 structural
   endpoints that turn allowed Lemma 5 replacement data, allowed Lemma 5 forms,
   or feasible a.e. representative forms into the paper's measurable-domain
@@ -64,11 +62,10 @@ Last updated: 2026-05-23
 - Start human review with `PaperInterface.lean`; do not review the full
   `MainTheorems.lean` ledger directly.
 - Treat the current interface as a curated starter surface.  Theorem 3's
-  preferred full-measurable review endpoint is
-  `PaperInterface.theorem3_feasible_sequential_current_bounds_source_data`;
+  preferred review endpoint is `PaperInterface.theorem3_defined_reward_source`;
   `PaperInterface.theorem3_positive_mass_source` and
   `PaperInterface.theorem3_source_with_zero_mass_dominance` are additional
-  source-boundary and optional-bridge views.
+  source-boundary and optional totalized-bridge views.
 - Add more paper-facing interface rows only when the corresponding source claim
   has a stable Lean statement.
 
@@ -76,8 +73,8 @@ Last updated: 2026-05-23
 
 - Refresh the dashboard/cache around `PaperInterface.lean` and the audit
   endpoints in `PostPaperAudit.lean` if the review UI needs regenerated data.
-- Extend the partial reward interface only if a future paper needs more than
-  the current theorem `PaperInterface.theorem3_defined_reward_ic_of_positive_mass`.
+- Extend the defined-reward interface only if a future paper needs more than
+  the current theorem `PaperInterface.theorem3_defined_reward_source`.
 - For optional Theorem 4 strengthening, target
   `PaperInterface.theorem4_structural_policy_representatives_of_allowed_replacement_data`
   when following the paper's Lemma 5 replacement proof,

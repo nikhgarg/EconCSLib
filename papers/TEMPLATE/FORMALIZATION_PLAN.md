@@ -5,6 +5,20 @@ useful; it is not the final validation report.
 
 - Namespace: `TEMPLATE`
 
+## Initial Outside-Lean Paper Audit
+
+- Source version / local files inspected:
+- Formula sanity check:
+  - Signs, constants, normalizations, quantifiers, domains:
+  - Formula-bearing displayed claims that need derivation, not source-row assumptions:
+- Named result sanity check:
+  - Results that look correct as stated:
+  - Suspected bugs, missing assumptions, or ambiguous wording:
+- Proof strategy consequences:
+  - Source proof route to follow:
+  - Cleaner Lean route or reusable library route:
+  - Major issues already reported to the user:
+
 ## Source Inventory
 
 - Definitions / formatted paper objects:
@@ -28,5 +42,5 @@ useful; it is not the final validation report.
 ## Deviations And Assumptions
 
 - Source imprecision or proof deviation to report later:
-- Genuine paper assumptions:
+- Genuine paper assumptions to declare in `Assumptions.lean`:
 - Temporary certificate fields to discharge:

@@ -1,0 +1,166 @@
+{
+  "schema": 1,
+  "paper": "LG21TestOptionalPolicies",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-12T00:00:00Z",
+  "comment": "Strict premise-source audit for the compact PaperInterface surface. Implementation-only PostPaperAudit helper premises are excluded from this ledger.",
+  "items": {
+    "assumption_section3_access_fraction_domain": {
+      "judgment": "paper_condition",
+      "reason": "The Section 3 proof fixes a base-feature cohort and explicitly takes the access share to be an interior fraction. Lean records the nonnegative and below-one parts used by the compact Theorem 3.1 endpoints.",
+      "source_location": "source.txt lines 424-437 and 1135-1137",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hC_nonneg : \u2200 e base, 0 \u2264 accessFraction e base": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "source.txt lines 1135-1137: the source writes the relevant access fraction as C in (0, 1).",
+          "reason": "A source fraction in (0, 1) is nonnegative."
+        },
+        "hC_lt_one : \u2200 e base, accessFraction e base < 1": {
+          "judgment": "source_text",
+          "source_location": "source.txt lines 1135-1137: the proof assumes the fixed-cohort access fraction C is in (0, 1).",
+          "reason": "The Lean premise is the upper-bound part of the paper's interior-fraction condition."
+        }
+      }
+    },
+    "assumption_section3_source_equilibrium_instances": {
+      "judgment": "paper_condition",
+      "reason": "The Section 3 theorems are statements about every source equilibrium under the optional-reporting or report-required source game.",
+      "source_location": "source.txt lines 229-271 and 424-455",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hEq : \u2200 e, paperSourceEquilibrium (lg21OptionalReportingBaseSourceEquilibriumData ...)": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 229-271 define student decisions and equilibrium; lines 424-437 state Theorem 3.1 for every equilibrium under optional reporting.",
+          "reason": "This is the paper's source equilibrium premise specialized to the optional-reporting source model."
+        },
+        "hEq : \u2200 e, paperSourceEquilibrium (lg21ReportRequiredBaseSourceEquilibriumData ...)": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 229-271 define student decisions and equilibrium; lines 431-437 state the report-required branch.",
+          "reason": "This is the paper's source equilibrium premise specialized to the report-required source model."
+        }
+      }
+    },
+    "assumption_source_model_event_and_consistency_predicates": {
+      "judgment": "paper_condition",
+      "reason": "The paper's source model contains reporting/taking events and estimation-consistency components of equilibrium; Lean names these predicates explicitly when instantiating the source games.",
+      "source_location": "source.txt lines 229-271, 424-455, and 492-501",
+      "premise_count": 4,
+      "premise_judgments": {
+        "reporterEvent : Equilibrium \u2192 Base \u2192 Student \u2192 Prop": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 242-263 define reporting decisions and equilibrium over students with access; lines 424-437 state the reporting branch.",
+          "reason": "This is the Lean predicate for the source reporting event used to form event shares."
+        },
+        "takerEvent : Equilibrium \u2192 Base \u2192 Student \u2192 Prop": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 242-263 define test-taking decisions and equilibrium over students with access; lines 431-437 state the taking/report-required branch.",
+          "reason": "This is the Lean predicate for the source test-taking event used to form event shares."
+        },
+        "estimationConsistent : Equilibrium \u2192 Prop": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 256-271, Definition 1 includes estimation consistency in equilibrium.",
+          "reason": "The Lean premise names the paper's estimation-consistency component of source equilibrium."
+        },
+        "reportEstimationConsistent takeEstimationConsistent : Prop": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 256-271, Definition 1 includes estimation consistency; lines 492-501 state the observed-access source equilibrium setting.",
+          "reason": "These are the optional-reporting and report-required estimation-consistency propositions passed to the fully specified observed-access source games."
+        }
+      }
+    },
+    "assumption_section3_threshold_decision_shapes": {
+      "judgment": "paper_condition",
+      "reason": "The paper's Section 3 proof establishes threshold-shaped reporting/taking decisions and the named theorem states finite thresholds in both regimes.",
+      "source_location": "source.txt lines 424-437 and 1045-1047",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hthreshold : \u2200 e base actor, reportDecision e base actor = true \u2194 decisionThreshold e base \u2264 actor": {
+          "judgment": "source_text",
+          "source_location": "source.txt lines 424-430 state the optional-reporting finite test-score threshold; lines 1045-1047 describe rewriting the reporting function by a cutoff.",
+          "reason": "The Lean predicate is the paper's threshold rule for score reporting."
+        },
+        "hthreshold : \u2200 e base actor, takeDecision e actor base = true \u2194 decisionThreshold e base \u2264 actor": {
+          "judgment": "source_text",
+          "source_location": "source.txt lines 431-437 state the report-required finite skill threshold.",
+          "reason": "The Lean predicate is the paper's threshold rule for test-taking/reporting in the report-required branch."
+        }
+      }
+    },
+    "assumption_section3_zero_positive_event_blank_branch": {
+      "judgment": "paper_condition",
+      "reason": "The fairness-impossibility proof splits off the zero-reporter/taker branch as the already-test-blank/no-test-relevance case.",
+      "source_location": "source.txt lines 455-463 and 1578-1614",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hblank_of_no_positive : \u2200 e base, no positive reporter/taker event mass \u2192 \u2200 test, baseOnlyEstimate e base = fullFeatureEstimate e base test": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "source.txt lines 455-463: reporting unravels until no student reports, which leads to the policy being test-blank; lines 1578-1614 give the proof split.",
+          "reason": "The Lean premise records the paper's zero-positive-event branch of the unraveling argument. It is not an independent proof certificate."
+        }
+      }
+    },
+    "assumption_positive_gaussian_domain_conditions": {
+      "judgment": "paper_condition",
+      "reason": "Gaussian scales, variances, and posterior-slope parameters are positive domain facts in the source Gaussian model and its Bayesian posterior formulas.",
+      "source_location": "source.txt lines 205-220, 2318-2394, and 2417-2481",
+      "premise_count": 7,
+      "premise_judgments": {
+        "htestScale : 0 < testScale": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 205-220 define Gaussian feature signals; source variance/scale parameters are positive by model domain.",
+          "reason": "The Lean premise is the positive test-signal scale needed by the observed-access Gaussian source game."
+        },
+        "hslope : \u2200 e base, 0 < slope e base": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "source.txt lines 2318-2394 derive the Bayesian posterior estimate with a positive test-signal contribution.",
+          "reason": "The slope is the positive coefficient on the observed signal in the Gaussian posterior mean."
+        },
+        "hslope : \u2200 base, 0 < slope base": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "source.txt lines 2318-2394 derive the Bayesian posterior estimate with a positive test-signal contribution.",
+          "reason": "This is the base-indexed version of the positive Gaussian posterior slope."
+        },
+        "hslope : \u2200 base : Base, 0 < slope base": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "source.txt lines 2318-2394 derive the Bayesian posterior estimate with a positive test-signal contribution.",
+          "reason": "This is the typed base-indexed version of the positive Gaussian posterior slope."
+        },
+        "hlawTestScale : \u2200 base, 0 < lawTestScale base": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 205-220 define Gaussian feature signals; lines 2318-2394 use the test signal's nonzero positive variance.",
+          "reason": "A Gaussian test-signal law in the source model has positive scale."
+        },
+        "hlawTestScale : \u2200 base : Base, 0 < lawTestScale base": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 205-220 define Gaussian feature signals; lines 2318-2394 use the test signal's nonzero positive variance.",
+          "reason": "A Gaussian test-signal law in the source model has positive scale; this is the typed base-indexed theorem signature form."
+        },
+        "hextraNoiseVar : 0 < extraNoiseVar": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 2417-2481: Proposition 4.3 compares the Bayesian estimate distributions with additional test information; variances in the Gaussian source model are positive.",
+          "reason": "The extra-signal variance is a Gaussian-domain parameter, not a proof-route certificate."
+        }
+      }
+    },
+    "assumption_observed_access_source_equilibria": {
+      "judgment": "paper_condition",
+      "reason": "Lemma 4.1 and downstream observed-access results are stated for source equilibria in the optional-reporting and report-required observed-access games.",
+      "source_location": "source.txt lines 492-501 and 1784-1810",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hReportEq : paperSourceEquilibrium (lg21FullySpecifiedOptionalReportingSourceEquilibriumData ...)": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 492-501 state the observed-access Bayesian policy and its equilibrium conclusion; lines 1784-1810 begin the source proof.",
+          "reason": "The Lean premise is the optional-reporting source equilibrium instance to which Lemma 4.1 applies."
+        },
+        "hTakeEq : paperSourceEquilibrium (lg21FullySpecifiedReportRequiredSourceEquilibriumData ...)": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source.txt lines 492-501 state the observed-access Bayesian policy and its equilibrium conclusion; lines 1784-1810 include the report-required branch setup.",
+          "reason": "The Lean premise is the report-required source equilibrium instance to which Lemma 4.1 applies."
+        }
+      }
+    }
+  }
+}

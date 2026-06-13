@@ -31,20 +31,29 @@
   "artifacts": {
     "readme": "papers/TEMPLATE/README.md",
     "paper_interface": "papers/TEMPLATE/PaperInterface.lean",
+    "assumptions": "papers/TEMPLATE/Assumptions.lean",
     "final_validation_report": "papers/TEMPLATE/FINAL_VALIDATION_REPORT.md",
     "dependency_dag_tex": "papers/TEMPLATE/DependencyDAG.tex",
     "dependency_dag_pdf": "papers/TEMPLATE/DependencyDAG.pdf"
   },
   "review_surface": {
     "source_file": "papers/TEMPLATE/PaperInterface.lean",
+    "assumption_source_file": "papers/TEMPLATE/Assumptions.lean",
     "llm_statement_review": {
       "lean_to_tex_file": "papers/TEMPLATE/lean_to_tex_llm.json",
       "match_judgment_file": "papers/TEMPLATE/statement_match_llm.json",
       "review_surface_audit_file": "papers/TEMPLATE/review_surface_llm.json",
+      "assumption_judgment_file": "papers/TEMPLATE/assumption_match_llm.json",
       "surface_audit_threshold": 30,
       "surface_warning_threshold": 50,
       "policy": "Translate each Lean statement with an LLM that has no paper context; have a third LLM compare that TeX/prose translation with the original paper statement, record the model/agent validator metadata, and iterate on PaperInterface.lean until they match. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 50 or more rows, curate the surface before broad human review."
     },
+    "llm_assumption_review": {
+      "assumption_judgment_file": "papers/TEMPLATE/assumption_match_llm.json",
+      "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
+    },
+    "assumption_policy": "strict",
+    "assumption_names": [],
     "include_names": [],
     "slices": [
       {

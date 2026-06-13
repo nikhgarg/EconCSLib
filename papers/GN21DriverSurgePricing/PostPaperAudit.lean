@@ -166,6 +166,14 @@ abbrev audit_theorem3_zero_mass_totalization_obstruction := @PaperInterface.theo
 /-- Audit endpoint for the state-rate form of the zero-mass totalization obstruction. -/
 abbrev audit_theorem3_zero_mass_totalization_obstruction_state_rates := @PaperInterface.theorem3_zero_mass_totalization_obstruction_state_rates
 
+/-- Audit endpoint for the structured state-rate zero-mass totalization obstruction. -/
+abbrev audit_theorem3_structured_zero_mass_totalization_obstruction_state_rates :=
+  @PaperInterface.theorem3_structured_zero_mass_totalization_obstruction_state_rates
+
+/-- Audit endpoint for the structured state-rate obstruction to measurable IC. -/
+abbrev audit_theorem3_structured_zero_mass_not_measurable_ic_of_state_rates :=
+  @PaperInterface.theorem3_structured_zero_mass_not_measurable_ic_of_state_rates
+
 /-- Audit endpoint for the impossibility of zero-mass dominance after a profitable zero-mass deviation. -/
 abbrev audit_theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass := @PaperInterface.theorem3_zero_mass_dominance_impossible_of_profitable_zero_mass
 

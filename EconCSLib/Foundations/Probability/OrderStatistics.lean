@@ -58,7 +58,7 @@ it gives those analytic results a stable target interface.
 - `sampleOrderStatisticValue`
 - `expectedSampleOrderStatisticMean`
 - `expectedOrderStatisticMeanSeq`
-- `topKSourceEndpointLoss_eq_reflectedTopKMeanSum`
+- `topKEndpointLoss_eq_reflectedTopKMeanSum`
 - `TopKExpectationOracle.ScaledMarginalLimitCertificate`
 - `TopKExpectationOracle.ScaledMarginalLimitCertificate.eventually_marginal_sandwich`
 - `TopKExpectationOracle.ScaledMarginalLimitCertificate.marginal_lt_of_scaled_gap`
@@ -1074,7 +1074,7 @@ distribution-specific integral identities to paper files.
 Top-`k` loss from an upper endpoint, expressed using the `k` source
 order-statistic means at a fixed sample count.
 -/
-def topKSourceEndpointLoss (M : ℝ) {k : ℕ} (sourceMean : Fin k → ℝ) : ℝ :=
+def topKEndpointLoss (M : ℝ) {k : ℕ} (sourceMean : Fin k → ℝ) : ℝ :=
   (k : ℝ) * M - ∑ i : Fin k, sourceMean i
 
 /-- Sum of the reflected lower order-statistic means at a fixed sample count. -/
@@ -1086,18 +1086,18 @@ Reflection identity for bounded-support top-`k` order statistics: if every
 source order-statistic mean is the upper endpoint minus its reflected mean,
 then the total endpoint loss equals the reflected finite sum.
 -/
-theorem topKSourceEndpointLoss_eq_reflectedTopKMeanSum
+theorem topKEndpointLoss_eq_reflectedTopKMeanSum
     (M : ℝ) {k : ℕ}
     (sourceMean reflectedMean : Fin k → ℝ)
     (hsource : ∀ i : Fin k, sourceMean i = M - reflectedMean i) :
-    topKSourceEndpointLoss M sourceMean =
+    topKEndpointLoss M sourceMean =
       reflectedTopKMeanSum reflectedMean := by
   have hconst : (∑ _i : Fin k, M) = (k : ℝ) * M := by
     simp [Fintype.card_fin, nsmul_eq_mul, mul_comm]
   calc
-    topKSourceEndpointLoss M sourceMean
+    topKEndpointLoss M sourceMean
         = (∑ _i : Fin k, M) - ∑ i : Fin k, sourceMean i := by
-          rw [topKSourceEndpointLoss, hconst]
+          rw [topKEndpointLoss, hconst]
     _ = ∑ i : Fin k, (M - sourceMean i) := by
           rw [Finset.sum_sub_distrib]
     _ = ∑ i : Fin k, reflectedMean i := by
@@ -1109,27 +1109,27 @@ theorem topKSourceEndpointLoss_eq_reflectedTopKMeanSum
           rw [reflectedTopKMeanSum]
 
 /--
-Sample-count-indexed wrapper for `topKSourceEndpointLoss`, matching common
+Sample-count-indexed wrapper for `topKEndpointLoss`, matching common
 paper notation where source means depend on the number of sampled items.
 -/
-def topKSourceEndpointLossSeq
+def topKEndpointLossSeq
     (M : ℝ) {k : ℕ} (sourceMean : Fin k → ℕ → ℝ) (a : ℕ) : ℝ :=
-  topKSourceEndpointLoss M (fun i => sourceMean i a)
+  topKEndpointLoss M (fun i => sourceMean i a)
 
 /-- Sample-count-indexed wrapper for `reflectedTopKMeanSum`. -/
 def reflectedTopKMeanSumSeq
     {k : ℕ} (reflectedMean : Fin k → ℕ → ℝ) (a : ℕ) : ℝ :=
   reflectedTopKMeanSum (fun i => reflectedMean i a)
 
-/-- Sequence form of `topKSourceEndpointLoss_eq_reflectedTopKMeanSum`. -/
-theorem topKSourceEndpointLossSeq_eq_reflectedTopKMeanSumSeq
+/-- Sequence form of `topKEndpointLoss_eq_reflectedTopKMeanSum`. -/
+theorem topKEndpointLossSeq_eq_reflectedTopKMeanSumSeq
     (M : ℝ) {k : ℕ}
     (sourceMean reflectedMean : Fin k → ℕ → ℝ)
     (hsource : ∀ a (i : Fin k), sourceMean i a = M - reflectedMean i a)
     (a : ℕ) :
-    topKSourceEndpointLossSeq M sourceMean a =
+    topKEndpointLossSeq M sourceMean a =
       reflectedTopKMeanSumSeq reflectedMean a :=
-  topKSourceEndpointLoss_eq_reflectedTopKMeanSum M
+  topKEndpointLoss_eq_reflectedTopKMeanSum M
     (fun i => sourceMean i a)
     (fun i => reflectedMean i a)
     (fun i => hsource a i)
@@ -1684,8 +1684,8 @@ theorem sampleTopKEndpointLoss_eq_reflectedBottomKSum
     sampleTopKEndpointLoss M sample k =
       reflectedBottomKSum M sample k := by
   simpa [sampleTopKEndpointLoss, sampleTopKSum, reflectedBottomKSum,
-    topKSourceEndpointLoss, reflectedTopKMeanSum] using
-    topKSourceEndpointLoss_eq_reflectedTopKMeanSum M
+    topKEndpointLoss, reflectedTopKMeanSum] using
+    topKEndpointLoss_eq_reflectedTopKMeanSum M
       (fun i : Fin (min k n) =>
         upperOrderStatistic sample (topKRankEmbedding k n i))
       (fun i : Fin (min k n) =>
@@ -2701,7 +2701,7 @@ def orderStatisticTopKSumFromMean
     orderStatisticTopKSumFromMean μ 0 a = 0 := by
   simp [orderStatisticTopKSumFromMean]
 
-theorem orderStatisticTopKSumFromMean_eq_source_sum
+theorem orderStatisticTopKSumFromMean_eq_bottomIndexed_sum
     (μ : ℕ → ℕ → ℝ) (k a : ℕ) :
     orderStatisticTopKSumFromMean μ k a =
       ∑ i ∈ Finset.range (min k a), μ (a - i) a := rfl
@@ -3052,7 +3052,7 @@ structure ScaledMarginalLimitCertificate [Fintype τ]
 namespace ScaledMarginalLimitCertificate
 
 variable [Fintype τ]
-variable {O : TopKExpectationOracle τ} {k : ℕ}
+variable {k : ℕ}
 variable {scale : ℕ → ℝ} {weight : τ → ℝ}
 
 /--
@@ -3063,6 +3063,7 @@ margin `objectiveWeight t * O.marginalTopK k t q` and type weight
 `objectiveWeight t * weight t`.
 -/
 theorem weighted
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {objectiveWeight : τ → ℝ} (hobjective_pos : ∀ t, 0 < objectiveWeight t) :
     ScaledMarginalLimitCertificate
@@ -3088,6 +3089,7 @@ proved.
 -/
 theorem congr_marginal
     {O' : TopKExpectationOracle τ}
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     (hmargin :
       ∀ᶠ q in atTop,
@@ -3102,6 +3104,7 @@ theorem congr_marginal
     rw [hq t]
 
 theorem eventually_uniform_ratio_abs_sub_lt
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ q in atTop,
@@ -3125,6 +3128,7 @@ arguments can build one concrete `o(1)` error schedule from the family of
 asymptotic marginal estimates.
 -/
 noncomputable def uniformRatioThreshold
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight) (m : ℕ) : ℕ :=
   Classical.choose
     (eventually_atTop.1
@@ -3132,6 +3136,7 @@ noncomputable def uniformRatioThreshold
         (by positivity : (0 : ℝ) < 1 / ((m + 1 : ℕ) : ℝ))))
 
 theorem uniformRatioThreshold_spec
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight) (m : ℕ) :
     ∀ q ≥ C.uniformRatioThreshold m,
       ∀ t : τ,
@@ -3147,20 +3152,24 @@ Concrete `o(1)` error schedule induced by the uniform finite-type ratio
 thresholds of a scaled-marginal certificate.
 -/
 noncomputable def uniformRatioError
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight) : ℕ → ℝ :=
   EconCSLib.Math.reciprocalThresholdError C.uniformRatioThreshold
 
 theorem uniformRatioError_nonneg
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight) (N : ℕ) :
     0 ≤ C.uniformRatioError N :=
   EconCSLib.Math.reciprocalThresholdError_nonneg C.uniformRatioThreshold N
 
 theorem uniformRatioError_tendsToZero
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight) :
     EconCSLib.Math.TendsToZero C.uniformRatioError :=
   EconCSLib.Math.reciprocalThresholdError_tendsToZero C.uniformRatioThreshold
 
 theorem uniformRatioError_le_of_threshold_le
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {m N : ℕ}
     (hm_le_N : m ≤ N)
@@ -3171,6 +3180,7 @@ theorem uniformRatioError_le_of_threshold_le
       C.uniformRatioThreshold hm_le_N hthreshold_le_N
 
 theorem uniform_ratio_abs_sub_lt_uniformRatioError
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {q : ℕ} (hq_base : C.uniformRatioThreshold 0 ≤ q) :
     ∀ t : τ,
@@ -3196,22 +3206,26 @@ For every `q ≤ N`, `uniformRatioError q * q` is bounded by
 `uniformRatioPrefixError N * N`, while the prefix envelope still tends to zero.
 -/
 noncomputable def uniformRatioPrefixError
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight) : ℕ → ℝ :=
   EconCSLib.Math.prefixScaledError C.uniformRatioError
 
 theorem uniformRatioPrefixError_nonneg
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight) (N : ℕ) :
     0 ≤ C.uniformRatioPrefixError N :=
   EconCSLib.Math.prefixScaledError_nonneg C.uniformRatioError
     C.uniformRatioError_nonneg N
 
 theorem uniformRatioPrefixError_tendsToZero
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight) :
     EconCSLib.Math.TendsToZero C.uniformRatioPrefixError :=
   EconCSLib.Math.prefixScaledError_tendsToZero C.uniformRatioError
     C.uniformRatioError_nonneg C.uniformRatioError_tendsToZero
 
 theorem uniformRatioError_mul_count_le_prefix
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {q N : ℕ} (hN_pos : 0 < N) (hq_le_N : q ≤ N) :
     C.uniformRatioError q * (q : ℝ) ≤
@@ -3220,6 +3234,7 @@ theorem uniformRatioError_mul_count_le_prefix
     C.uniformRatioError hN_pos hq_le_N
 
 theorem eventually_uniform_ratio_mem_Icc
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ q in atTop,
@@ -3232,6 +3247,7 @@ theorem eventually_uniform_ratio_mem_Icc
   constructor <;> linarith
 
 theorem eventually_uniform_ratio_pos
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight) :
     ∀ᶠ q in atTop,
       ∀ t : τ,
@@ -3241,6 +3257,7 @@ theorem eventually_uniform_ratio_pos
   linarith [(hq t).1]
 
 theorem marginalTopK_eq_ratio_mul
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {q : ℕ} {t : τ} (hscale : scale q ≠ 0) :
     O.marginalTopK k t q =
@@ -3254,6 +3271,7 @@ Uniform finite-type asymptotic ratio control gives an eventual multiplicative
 sandwich for every type's marginal top-`k` value.
 -/
 theorem eventually_marginal_sandwich
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ q in atTop,
@@ -3289,6 +3307,7 @@ If the common marginal scale vanishes, then every type-specific top-`k`
 marginal in a scaled-marginal certificate also vanishes.
 -/
 theorem marginalTopK_tendsto_zero
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     (hscale_zero : Tendsto scale atTop (nhds 0)) (t : τ) :
     Tendsto (fun q => O.marginalTopK k t q) atTop (nhds 0) := by
@@ -3309,6 +3328,7 @@ theorem marginalTopK_tendsto_zero
 
 /-- A one-index marginal sandwich at a fixed count. -/
 def MarginalSandwichAt
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     (ε : ℝ) (q : ℕ) : Prop :=
   ∀ t : τ,
@@ -3316,6 +3336,7 @@ def MarginalSandwichAt
       O.marginalTopK k t q ≤ (1 + ε) * (scale q * weight t)
 
 theorem eventually_marginalSandwichAt
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ q in atTop, C.MarginalSandwichAt ε q :=
@@ -3326,6 +3347,7 @@ If the upper scaled approximation for one marginal lies below the lower scaled
 approximation for another, then the actual marginals are strictly ordered.
 -/
 theorem marginal_lt_of_scaled_gap
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {ε : ℝ} {qsrc qdst : ℕ} {src dst : τ}
     (hsrc : C.MarginalSandwichAt ε qsrc)
@@ -3341,6 +3363,7 @@ Same-count specialization: a strict gap between scaled type weights eventually
 implies the same strict ordering of top-`k` marginals.
 -/
 theorem eventually_same_count_marginal_lt_of_weight_gap
+    {O : TopKExpectationOracle τ}
     (C : ScaledMarginalLimitCertificate O k scale weight)
     {ε : ℝ} (hε : 0 < ε) {src dst : τ}
     (hgap : (1 + ε) * weight src < (1 - ε) * weight dst) :

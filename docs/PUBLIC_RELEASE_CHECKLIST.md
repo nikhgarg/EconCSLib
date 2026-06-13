@@ -41,11 +41,15 @@ Each public paper folder should have:
 
 - [ ] a paper-local `README.md`;
 - [ ] `PaperInterface.lean` as the compact human-facing theorem surface;
+- [ ] `Assumptions.lean` if any paper-facing theorem premise remains as an
+      explicit source/model assumption;
 - [ ] `FINAL_VALIDATION_REPORT.md` or an equivalent validation summary;
 - [ ] `DependencyDAG.tex` and a rendered `DependencyDAG.pdf`;
 - [ ] a current `status.json`, including human-review row counts,
-      `review_surface` rows/slices, artifact paths, and any PaperInterface
-      maintenance issue;
+      `review_surface` rows/slices, `assumption_names` for any paper-model
+      assumptions, artifact paths, and any PaperInterface maintenance issue;
+- [ ] `assumption_match_llm.json` whenever paper-facing theorem premises remain
+      as source/model assumptions rather than derived Lean facts;
 - [ ] a passing `lake build <PaperTarget>` command; and
 - [ ] no tracked source PDFs, extracted source-paper text caches,
       review-dashboard caches, or generated build artifacts other than

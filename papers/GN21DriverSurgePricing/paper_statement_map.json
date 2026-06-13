@@ -79,8 +79,8 @@
     },
     "review_lemma6_upper_endpoint_derivative_formula": {
       "source_text_file": "source.txt",
-      "start_line": 3042,
-      "end_line": 3049
+      "start_line": 3786,
+      "end_line": 3808
     },
     "review_lemma7_affine_positive_additive_response_quasi_convex": {
       "source_text_file": "source.txt",
@@ -117,10 +117,10 @@
       "start_line": 3128,
       "end_line": 3148
     },
-    "review_theorem3_feasible_sequential_current_bounds_source_data_statement": {
+    "review_theorem3_defined_reward_source_statement": {
       "source_text_file": "source.txt",
-      "start_line": 3216,
-      "end_line": 3232
+      "start_line": 722,
+      "end_line": 733
     }
   }
 }

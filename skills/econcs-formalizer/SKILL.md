@@ -20,15 +20,37 @@ that result.
 When a paper source has already been downloaded into the repository, treat that
 local TeX/text cache as the working source of truth. Do not keep repeating web
 searches for the same source during proof work. If the source is missing and
-the exact TeX/later-version convention is needed, download or cache it once,
-record where it lives, and then use the local copy for subsequent source
-checks.
+the exact TeX/later-version convention is needed, first check sibling public,
+private, recovered, and archived worktrees for an existing cache and copy it
+into the active paper folder. Only download when no local cache exists. Record
+where the local cache lives, then use that copy for subsequent source checks.
+Prefer source TeX over PDF text extraction for displayed formulas, numbered
+equations, theorem labels, and appendix proof steps; PDF text is often good
+enough for orientation but too noisy to settle algebraic disputes.
 
 Use `formalized` as the repository status word for Lean-checked paper results.
 Lean verification is the mechanism, not a separate paper status. Do not answer
 status questions with "verified in Lean" when the intended claim is
 `formalized`; reserve "reviewed" for saved human dashboard review entries and
 "validation" for the audit/checking workflow.
+Treat `formalized` as a strong provenance claim: every exposed paper result is
+proved by Lean from imported Lean/mathlib/library declarations plus explicit
+theorem parameters that are either discharged by the proof or recorded as
+validated paper-source assumptions. The LLM-as-judge checks are necessary audit
+evidence that the exposed Lean statements and explicit assumptions match the
+source paper, but they are not themselves Lean proofs and they do not certify
+hidden premises. Before saying a whole paper is fully formalized, confirm both
+the row-local statement checks and the hidden-premise/source-assumption checks
+are current and clean for that paper.
+In particular, run the recursive provenance audit when closing a paper or
+preparing a public PR. It follows certificate/source-row/external-boundary
+premises through paper-local helper chains and reusable-library APIs. A paper
+with unresolved transitive certificate/source-boundary dependencies is
+`partially formalized`, not `formalized`, unless those dependencies are derived
+inside Lean or are validated source assumptions. Ordinary source-visible theorem
+conditions such as positivity, measurability, or ordering hypotheses should be
+validated by the statement/assumption judges, but they are not the same thing as
+hidden certificate provenance.
 
 Unless told otherwise, you do not have a time limit; keep going until you reach
 the requested stopping condition or a clean theorem/compile boundary. Run the
@@ -174,6 +196,12 @@ not call this a caveat merely because Lean has not yet connected the paper's
 own assumptions or appendix derivation. A caveat means the final theorem differs
 from the source statement; a conditional status means the source statement may
 be faithful but some derivation remains undischarged.
+Use `partial_boundary` in assumption-provenance JSON for a visible external,
+library, analytic, runtime, solver, or theorem-import boundary that remains
+undischarged. This can be the top-level judgment for an `assumption_*`
+declaration as well as an individual premise judgment. Do not downgrade it to
+`documented_caveat` unless the source statement itself is false, missing a
+needed non-source condition, or intentionally repaired in the Lean endpoint.
 Do not use `formalized with caveat` for source-quality notes, poor OCR, or an
 audit observation that does not change the closed paper-facing theorem. Put that
 note in the final report and leave the status `formalized`.
@@ -194,6 +222,77 @@ paper's primitive assumptions, the whole paper is `partially formalized`, even
 if most theorem infrastructure compiles. It may still be public, but the README,
 DAG, root status table, and final report must all name the exact remaining
 certificate or external-library boundary.
+If a paper-facing theorem genuinely needs a source assumption, expose that
+assumption as a first-class declaration in paper-local `Assumptions.lean`
+rather than as an arbitrary theorem hypothesis. Name it `assumption_*`,
+`paper_assumption_*`, or `source_assumption_*`, list it in `status.json`
+`review_surface.assumption_names`, and validate it in
+`assumption_match_llm.json` with an independent source-assumption judge. A
+premise is allowed to remain in a `formalized` endpoint only if it is routed
+through that assumption ledger and the judge confirms it is an actual
+paper/source model assumption. Capacity equations, threshold identities,
+density normalizers, selection-mass formulas, row packages, and certificate
+fields are proof obligations unless the paper explicitly assumes them.
+Do not rely on "source row" wrappers or theorem parameters to smuggle formulas
+into a closed proof. A displayed formula, defining equation, threshold equation,
+normalization, selection-mass identity, distribution law, recurrence, or
+capacity condition counts as derived only when Lean proves it from the source
+model primitives or it is listed as a source assumption and validated at premise
+granularity. If such a formula is merely supplied to the theorem, the endpoint
+is conditional/partial no matter how faithful the statement text looks.
+This applies through the reusable library as well as paper-local files. A
+library theorem may take an explicit certificate, witness, or formula package;
+that is a good API because Lean forces callers to provide it. But a paper-facing
+row that depends on such an API through any helper chain is not closed until the
+paper code constructs the certificate from primitives or exposes it as a
+validated paper assumption. Do not bake paper-source displayed formulas into
+`EconCSLib/` definitions or implicit instances to make the call site look
+unconditional; make source formulas explicit parameters/certificate fields or
+keep them in the paper folder.
+After editing reusable library code, run
+`python3 scripts/audit_repository.py --library-only --library-premise-audit`.
+This fails source-shaped reusable API names, hidden proof-boundary section
+variables, axiom/opaque placeholders, and guarded debug commands, and reports
+direct/transitive certificate-boundary APIs as informational findings. The
+library parser covers theorem, lemma, def, abbrev, structure, class, and
+inductive declarations; do not assume a proof-boundary structure is invisible
+to the audit just because it is not a theorem. If the audit flags a
+source-shaped reusable name, either rename it to a paper-neutral abstraction,
+make the source formula an explicit argument, or move it back to the paper
+folder.
+Use `--info-limit -1` when you need the complete transitive library-boundary
+inventory. CI should use `--info-limit 0` so only actionable errors/warnings
+appear in logs.
+Treat suffix-named structures such as `...Certificate`, `...Oracle`,
+`...Window`, `...Package`, `...Regularity`, and `...Invariant` as
+proof-boundary evidence even when they are not named `hcert`. Do not keep these
+as namespace/section-level `variable`s in reusable code; pass them explicitly to
+each theorem/definition that consumes them so callers cannot inherit the
+premise silently. Generic data predicates such as `feasible : α → Prop` or
+`move : α → α → Prop` may remain section variables when they are just model
+parameters, not proof evidence.
+Apply the same recursive provenance rule inside the paper folder. If a
+paper-facing theorem calls a helper, and that helper calls another helper that
+still takes a certificate, hidden hypothesis, source-row equation, or
+proof-boundary premise, that premise belongs to the paper-facing theorem until
+some helper actually constructs it from already proved primitives. A certificate
+constructed internally is discharged; a certificate merely consumed by a helper
+propagates outward. Do not use `axiom`, `constant`, `opaque`, or unsafe
+declarations to stand in for the missing derivation.
+Do not leave those proof obligations as the default proof shape. If an
+explicit certificate, row package, or extra hypothesis is introduced to unblock
+a build, treat it as a temporary checkpoint: immediately name the closure lemma
+that would derive it from the source model, attack that lemma before moving to
+new paper results, and keep the downstream theorem partial/conditional until
+the certificate is either discharged internally or promoted to a validated
+paper-assumption declaration. The normal proof loop should reduce the number of
+visible certificates and extra hypotheses, not accumulate them.
+For a final `formalized` paper, `scripts/audit_repository.py` should not report
+hidden-premise, source-row, opaque-alias, broad-aggregate, stale-LLM-sidecar, or
+missing-source-provenance findings for that paper's review surface. If the
+global audit reports unrelated active-paper warnings, filter to the paper under
+review and make the final claim only for papers whose own warnings are clean or
+explicitly classified as non-theorem packaging notes.
 If a certificate/interface structure is constructed internally and the final
 paper-facing theorem no longer takes it as an input, that certificate is
 discharged. Do not imply additional certificates are needed; for fully
@@ -212,8 +311,11 @@ at a status milestone. That command regenerates the detailed
 `papers/status.json`, the compact human-facing `papers/human_status.json`,
 `docs/PAPER_STATUS.md`, the generated paper-status block in the top-level
 `README.md`, and the status table in `site/index.html`. Do not hand-edit those
-generated status outputs. During routine proof iteration, do not run the status
-sync just because Lean LOC changed or a small proof seam was added; defer
+generated status outputs. The sync script defaults to tracked paper status
+files so untracked draft scaffolds do not pollute generated CI-facing tables;
+use `--include-untracked` only when intentionally syncing a new untracked
+paper scaffold. During routine proof iteration, do not run the status sync just
+because Lean LOC changed or a small proof seam was added; defer
 generated table/doc refreshes until a named paper result closes, a status note
 changes, a final report/handoff is prepared, or the user explicitly asks. If
 README/docs/site/table text is wrong, fix the paper-local `status.json` and
@@ -285,6 +387,55 @@ editing. If a written scratch argument would help, create a short `.txt`,
 to unlock the Lean proof. Do not create a sketch when it would be ceremony
 rather than useful proof planning. After the strategy is clear, execute it in
 Lean and keep moving.
+
+If a proof loop has produced several wrappers, adapters, or public aliases
+without shrinking the visible theorem assumptions, stop before adding another
+layer. Write or update a short outside-Lean plan that names the current target
+declaration, the theorem application that should close it, and classifies each
+remaining visible premise as a source assumption, a derivable row/lemma, a
+definitional surface mismatch, or a real semantic gap. Prefer proving the
+missing row-identification lemma or choosing the right concrete source surface
+over adding more wrappers. Resume Lean only after the plan names the next small
+build target and why each exposed premise should be discharged, bundled, or kept.
+For proof-facing certificates, "kept" is a temporary decision, not the default
+end state: either prove the certificate constructor now, expose the premise as
+a validated source assumption, or mark the exact source theorem partial. Do not
+start a new theorem while the current theorem still has an easy-to-state
+undischarged certificate or row hypothesis.
+Treat wrappers as proof progress only when the final paper-facing theorem type
+gets closer to the paper statement: fewer visible certificates, fewer unproved
+row hypotheses, or a more faithful source surface. If an already-stronger
+compiled endpoint exists under a secondary name, rewire/promote the public
+paper-facing alias before adding new helper layers. Use `#check` or a temporary
+scratch theorem to inspect the actual theorem type; do not infer remaining
+work from long declaration names or README prose alone.
+If `#check` shows that the remaining premises are exactly the paper's displayed
+source assumptions, do not try to "prove" them away by inventing a stronger
+model unless the paper claims that derivation. Treat them as legitimate theorem
+inputs. If the remaining premises are source-model identification rows that the
+paper derives in an appendix, make that row package the active proof boundary
+and name it explicitly. For appendix restatements such as "Theorem N (Theorem
+M)" or "Proposition N (Proposition M)", do not create a separate proof target
+unless the appendix statement contains genuinely new conclusions; otherwise
+map it to the main theorem/proposition endpoint and expose any extra appendix
+parts as support rows only when they are paper-facing.
+When a source theorem has logically independent assumption components, preserve
+that separation through the proof-facing and paper-facing interfaces. Do not
+reassemble a coarse older bundle merely to call an existing helper if one part
+belongs to feasibility, another to a merit/objective inequality, and only the
+coarse bundle makes the result look more conditional. Instead, add or use the
+small adapter that consumes exactly the component needed by the current proof,
+then feed the remaining source-shaped component to the theorem that actually
+uses it.
+
+When this outside-Lean diagnosis is needed, make it mathematical rather than
+ceremonial. Read the local source TeX around the source theorem and proof,
+write the intended paper route in a few bullets, then map every exposed Lean
+premise to one of four actions: prove now, package as a source-shaped row
+structure, keep as an explicit paper assumption, or mark as the real boundary.
+Proceed in source order unless a later theorem discharges an earlier row
+automatically; then record that dependency explicitly so the DAG and interface
+do not imply the earlier result is still open.
 
 Keep strategy notes token-cheap. A good scratch update is the active theorem
 name, the exact remaining mathematical obligation, the next bridge lemma, and
@@ -413,16 +564,23 @@ sampled subprofiles, or chosen witnesses may not be definitionally equivariant;
 a source-shaped top-prefix family usually preserves the paper argument with
 less transport machinery.
 
-When starting a paper, do an outside-Lean proof-planning pass over the entire
-proof and formalization route before deep Lean implementation. Identify the
-main theorem chain, likely reusable library seams, underspecified paper steps,
-necessary assumptions or certificates, and fallback proof paths. Use the
-scaffolded `FORMALIZATION_PLAN.md` in the paper folder as the live plan, or use
-`.txt`/`.tex` instead only when that is genuinely more convenient. Keep it short
-and functional: it is a scratchpad for thinking, not a polished deliverable.
-Then start executing the plan in Lean. As the formal proof progresses, edit the
-plan to record strategy changes, patched source gaps, discharged seams, and
-remaining blockers.
+When starting a paper or beginning a serious paper audit, do an extended
+outside-Lean paper sanity pass before deep Lean implementation. Read the local
+source cache, inspect every named result and formula-bearing displayed claim,
+and ask whether the signs, constants, normalizations, quantifiers, domains, and
+proof dependencies look mathematically correct. Separately think through the
+formal proof strategy: the main theorem chain, likely reusable library seams,
+underspecified paper steps, necessary assumptions or certificates, and fallback
+proof paths. Write these initial learnings in `FORMALIZATION_PLAN.md` under an
+`Initial Outside-Lean Paper Audit` section before proving. Use `.txt`/`.tex`
+only when that is genuinely more convenient for a detailed derivation, and link
+or summarize it from the plan. Keep the artifact functional rather than
+polished: it is a scratchpad for thinking and early risk detection. If this
+pass finds a likely source bug, missing assumption, formula ambiguity, or
+strategy-changing issue, alert the user early instead of silently encoding the
+printed formula as a source row. Then start executing the plan in Lean. As the
+formal proof progresses, edit the plan to record strategy changes, patched
+source gaps, discharged seams, and remaining blockers.
 For a post-validation or post-formalization audit pass, keep
 `FORMALIZATION_PLAN.md` as the working scratchpad unless the user explicitly
 asks to retire it. Put the durable human-facing audit in a separate paper-local
@@ -479,7 +637,10 @@ a named-lemma path with a looser certificate, alternate theorem, or broad
 abstraction unless the resulting paper-facing endpoint still states the source
 result or the source route is false, imprecise, or genuinely inapplicable. If
 an auxiliary certificate is temporarily useful, keep it as a clearly marked
-staging device and continue toward the paper's named theorem itself.
+staging device, then immediately pursue the constructor/elimination proof that
+removes it from the paper-facing theorem. A certificate endpoint is useful
+scaffolding only if the next proof steps are closing it or proving downstream
+results that do not depend on it being assumed.
 
 For stable-matching/deferred-acceptance papers, load
 `references/proof-markets-social-choice.md` after the first status pass. It
@@ -526,6 +687,34 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   docstring, `docs/ECONCSLIB_DOMAIN_INDEX.md`, and the relevant roadmap or
   extraction-plan index. Update this skill when the extraction creates a new
   workflow rule or a module future agents should check first.
+- During library provenance refactors, avoid ambiguous pairs where a local
+  package theorem and a full-order/source-facing package constructor share the
+  same Lean declaration name. Use distinct paper-neutral names for different
+  abstraction levels, such as local window versus full-order window, so the
+  build and downstream wrappers cannot silently call the wrong package.
+- Reusable library theorems may require explicit certificates, witnesses,
+  external-boundary hypotheses, or source-shaped row packages from their
+  callers. This is often the right API because Lean then forces every paper
+  wrapper either to construct the certificate or remain conditional. Do not ban
+  such library certificates. Instead, never mark a paper theorem `formalized`
+  while the paper-facing wrapper still exposes the certificate unless that
+  certificate is a validated paper-source assumption. During closeout and public
+  PR preparation, run
+  `python3 scripts/audit_repository.py --library-only --library-premise-audit` and inspect any
+  library certificate/source-boundary APIs used by completed paper wrappers.
+  This audit builds a fresh in-memory declaration index each run, propagates
+  certificate/source-boundary dependencies through reusable-library helpers and
+  paper-local aliases, and should not be replaced by a checked-in index. When
+  extracting to the library, use generic definitions and explicit certificate
+  parameters; avoid paper-specific formula constants, implicit certificate
+  parameters, implicit instances, or names that make a source formula look like
+  a generic theorem.
+- After a reusable-library provenance refactor or API rename, run a targeted
+  validation matrix before calling it done: `rg` for stale old names, build each
+  touched library module, build downstream paper libraries that import the API,
+  and then build aggregate `EconCSLib`. If the refactor changes a heavily used
+  generic certificate API, also build at least one representative downstream
+  paper that exercises dot notation and paper-local adapters for that API.
 - For domain-specific proof seams, use the proof-reference routing table below
   instead of adding theorem-family details to this always-loaded workflow file.
   The relevant reference should name reusable modules and declarations that
@@ -650,8 +839,13 @@ Think of the repository as having two distinct roles: **`EconCSLib` is the textb
   merge, cherry-pick, or push the private branch into the public repository.
   Create a new public branch from current public `main`, then apply only an
   allowlisted patch from private. The allowlist should name exact shared-library
-  paths, exact already-public paper folders, and generated public status/site
-  files. Use a binary/full-index patch for PDFs, for example
+  paths, exact already-public paper folders, public workflow/skill/template
+  files, and generated public status/site files. In the private repo, commit
+  only the public-paper/workflow/skill paths requested by the user; leave
+  unpublished paper folders and their generated/private status deltas out of
+  that commit. In the public repo, regenerate aggregate status files from the
+  public checkout instead of copying private aggregate tables wholesale. Use a
+  binary/full-index patch for PDFs, for example
   `git diff --binary --full-index public/main..origin/main -- <allowlisted paths>
   --output=/tmp/public-filter.patch`, then `git apply` it in the public
   checkout. Do not include source-paper PDFs, extracted source-paper text
@@ -813,6 +1007,10 @@ the Lean statements against the paper.
   obligation, but should still foreground the paper statement. During a pause
   or handoff pass, audit the DAG for this specifically: if a node reads like a
   session log, rewrite it before rendering.
+  Compatibility routes, older sufficient endpoints, alternate proof attempts,
+  and implementation-only wrappers are not DAG node content once the
+  paper-facing result is represented. Record them in the README or final
+  validation report if they matter for auditability.
 - Add one central Lean file for paper-facing theorem statements, conventionally
   named `MainTheorems.lean`, `PaperTheorems.lean`, or the existing paper root if
   the folder already has a root module. This file should state and prove only
@@ -891,8 +1089,22 @@ the Lean statements against the paper.
   alias, add a source-equation wrapper theorem in `PaperInterface.lean` such as
   `_formula`, `_iff`, `_fields`, `_rule`, `_content`, or `_matches`, and include
   that wrapper in `status.json` `review_surface.include_names` instead of the
-  opaque alias. The repository audit checks this failure mode when an included
-  alias has an available source-equation wrapper.
+  opaque alias. The wrapper must make the formula visible, but visibility is
+  not proof provenance: it is closed only when the formula is derived in Lean
+  from source model primitives or from separately validated paper assumptions.
+  If the wrapper asserts a displayed equation, inequality, iff, definition, or
+  source-defining formula as a theorem premise, certificate field, or source
+  row, the downstream endpoint is partial until that premise is derived or
+  routed through `Assumptions.lean` and approved by the source-assumption judge.
+  The repository audit checks this failure mode when an included alias has an
+  available source-equation wrapper.
+  Every displayed or source-defining formula used by a paper-facing result
+  should have an exact formula/subclaim row. Do not collapse several displayed
+  formulas or subclaims into a broad numbered-result row such as a metric
+  package, source surface, or model summary when claiming full validation.
+  The independent judge must be able to compare signs, constants, domains,
+  quantifiers, inequality direction, normalizing factors, and hypotheses for
+  each formula-bearing row.
   When an LLM-as-judge row is `uncertain`, inspect the actual Lean statement
   before accepting the uncertainty. If the Lean row is only a function
   signature, imported alias, structure name, or conclusion predicate, fix
@@ -905,6 +1117,17 @@ the Lean statements against the paper.
   review-surface blockers: if an included alias has a paper-facing `_formula`,
   `_iff`, `_fields`, `_rule`, `_content`, or `_matches` wrapper available, the
   dashboard row should expose that wrapper, not the opaque alias.
+  Treat stale Lean-to-TeX or statement-judge sidecars the same way: stale
+  sidecars do not change a Lean proof, but they invalidate the current
+  source-match claim until regenerated and rechecked. After renaming aliases,
+  splitting aggregate rows, or changing source-provenance docstrings, refresh
+  the sidecars, remove obsolete keys, and run the paper's statement precheck
+  before carrying the result into a report, generated status table, or public PR.
+  Broad aggregate rows are not acceptable substitutes for formula-level review.
+  If one Lean declaration summarizes several paper formulas or subclaims, expose
+  separate paper-facing rows for the exact formulas/subclaims and include those
+  rows in `status.json`; keep the aggregate theorem in the audit ledger only if
+  it is useful for proof coverage.
 - Every dashboard row should label source provenance in the `PaperInterface.lean`
   docstring. Use dashboard-only lines such as `Source status: direct paper
   statement`, `Source status: direct paper formula`, `Source status: corrected
@@ -914,6 +1137,32 @@ the Lean statements against the paper.
   those lines from the statement text and displays them as badges/notes. Treat a
   missing source-deviation note as a review-surface bug, not as a harmless
   documentation omission.
+- Every non-derived paper-facing theorem premise should appear as a named
+  assumption declaration in paper-local `Assumptions.lean`, imported by
+  `PaperInterface.lean` when a theorem signature references it. Add the
+  declaration to `status.json` `review_surface.assumption_names` and run
+  `python3 scripts/review_dashboard.py --paper <paper-folder> --assumption-precheck`
+  at review boundaries. If the assumption judge is missing, stale, uncertain,
+  or says `not_paper_assumption`, the downstream theorem is conditional/partial
+  until that premise is derived or the source assumption is documented. Do not
+  hide proof certificates, source-row equations, threshold identities, or
+  normalizer formulas inside theorem parameters to avoid this workflow; those
+  are either Lean proof obligations to close or explicit paper assumptions to
+  validate.
+  `scripts/audit_repository.py` follows review-surface `abbrev`/`def` aliases
+  into paper-local Lean files and scans paper-facing declarations outside
+  `PaperInterface.lean`, so moving a certificate to `ProofInterface.lean` does
+  not make a completed theorem closed. The dashboard
+  `--assumption-precheck` CLI path also invokes this hidden-premise audit for
+  the selected paper, so it may report unresolved proof premises even when the
+  explicit assumption table has zero rows. If that audit flags an alias target,
+  either discharge the target premise, expose it as a validated paper
+  assumption, or downgrade the endpoint to conditional/partial.
+  At closeout/public-promotion boundaries also run
+  `python3 scripts/audit_repository.py --library-only --library-premise-audit`; that stricter
+  pass follows transitive reusable-library dependencies and flags paper rows
+  that still rely on certificate/source-boundary APIs several helper layers
+  deep.
 - Keep proof-linkage declarations such as `paper_definition_eq_library_name`,
   bare aliases for generic predicates, and other implementation checks out of
   `PaperInterface.lean`. Put them in `ProofInterface.lean` or another
@@ -970,9 +1219,15 @@ the Lean statements against the paper.
   source statement plus that translation, then run
   `python3 scripts/review_dashboard.py --paper <paper-folder> --statement-precheck`.
   Use `--statement-check` instead when a nonzero exit is useful for automation.
+  Then run `python3 scripts/review_dashboard.py --paper <paper-folder>
+  --assumption-precheck` before treating the matched statements as certified
+  targets. The statement judge is row-local and will not catch a source-domain
+  premise that was split out of a definition into theorem hypotheses.
   If `--statement-check` fails here, treat it as target-setting feedback: fix
   `PaperInterface.lean` or the extracted source statement before building long
-  proofs around that row.
+  proofs around that row. If `--assumption-precheck` reports hidden premises,
+  derive them, move true paper assumptions to `Assumptions.lean`, or mark the
+  endpoint partial/conditional before calling the target ready.
   This early pass deliberately skips workflow scaffolding: do not update the
   DAG, final validation report, human-review log, or review-surface audit just
   because the target-setting pass ran. Its purpose is to catch wrong theorem
@@ -992,7 +1247,10 @@ the Lean statements against the paper.
   If nearly every row is `uncertain`, assume a parser/source-statement mapping
   failure until proven otherwise: fix the source extraction or record a
   paper-wide source-map issue, instead of leaving every row individually
-  uncertain as if each theorem were separately ambiguous.
+  uncertain as if each theorem were separately ambiguous. When a parser failure
+  is the real problem, the dashboard/report should expose one paper-wide parser
+  or source-map status rather than a table that makes every theorem look
+  independently uncertain.
   A judge result of `uncertain` means the statement target is not certified yet;
   do not rewrite it as "formalized with caveat" or "partial formalization"
   unless the mathematical formalization itself has that status.
@@ -1028,6 +1286,12 @@ the Lean statements against the paper.
      `comment` for any validator-facing note that should appear in the status
      export. Top-level validator/comment fields are defaults; item entries can
      override them when a different model or agent checked a specific row.
+     The judge prompt must be exact-formula aware: it should reject broad
+     aggregate rows when the paper has displayed equations, inequalities, iff
+     statements, definitions, or source-defining formulas that are not exposed
+     as their own row or subclaim. Ask it to check signs, constants, domains,
+     quantifiers, inequality direction, normalizing factors, and hypotheses,
+     not merely whether the row label resembles the paper's numbered result.
   5. Treat `mismatch` or `uncertain` as a problem with the formalized statement
      unless the translation is plainly wrong. Usually the fix is to make the
      `PaperInterface.lean` declaration more paper-facing and self-contained,
@@ -1178,8 +1442,9 @@ the Lean statements against the paper.
     node should describe the source theorem's statement, not the Lean proof
     machinery that closed it. Do not fill a closed theorem box with internal
     helper names, certificate layers, construction details, or a list of every
-    bridge lemma. Put those details in the README status row, proof comments,
-    or the final report during post-validation.
+    bridge lemma. Also omit old compatibility/sufficient routes and alternate
+    proof attempts from the visual node. Put those details in the README status
+    row, proof comments, or the final report during post-validation.
     Include the actual source-facing conclusion or a faithful short formula
     summary in the DAG node itself so a human can recognize the paper result
     without opening the Lean file. For example, a closed Gaussian lemma node
@@ -1560,6 +1825,12 @@ search.
    If the full main theorem is not ready, add definitions, local invariants,
    certificate structures, and conditional theorems that compile. Avoid `sorry`
    unless the user explicitly asks for placeholder theorem statements.
+   Treat this as a checkpoint discipline, not a destination. After a
+   conditional theorem compiles, the next default task is to discharge its
+   certificate/hypothesis inputs by deriving them from the source model or to
+   route true paper assumptions through `Assumptions.lean` and the
+   assumption judge. Do not keep building more conditional wrappers around the
+   same open premise.
    If Lean exposes that a paper lemma is false as stated, do not silently weaken
    the paper-facing declaration to make progress. State the paper version, prove
    the strongest true nearby lemma separately, and add a small compiled
@@ -1773,6 +2044,30 @@ pass:
   handoff or an implementation inventory. It is the concise final assessment a
   human should read to decide whether the paper's definitions and named theorem
   statements were represented correctly.
+- If the final status is `formalized with caveat` because a closed Lean result
+  intentionally differs from the paper due to a real source discrepancy, also
+  create a concise caveat-repair memo. Prefer a tracked TeX source plus rendered
+  PDF: start with a 1--2 page executive summary, then give a deeper note for
+  each issue in human-facing proof language. Do not fill the memo with Lean
+  declaration names. For algebraic/formula caveats, state the old source
+  equation, the exact replacement equation, the source theorem/proposition
+  locations affected, and a short TeX derivation explaining why the replacement
+  is correct. Update that memo when the human gives feedback.
+- In the source-caveat pass, audit proof prose as well as theorem boxes. Trace
+  normalized quantities through the next comparison whenever a source symbol
+  could mean an admitted-class share, group-conditional admission probability,
+  probability mass, capacity-normalized share, or objective contribution. If a
+  proof line compares a quantity under the wrong normalization but the final
+  Lean theorem uses the correct source theorem statement, record this as a
+  proof-text/source-notation repair in the caveat memo and final report. Do not
+  call the Lean theorem wrong unless the formalized statement itself depends on
+  the bad comparison. For example, if `tau_g` is defined as `pi_g` times a
+  selected mass divided by total capacity, then `tau_g` is an admitted-class
+  share. Underrepresentation is `tau_B < pi_B` or an equivalent
+  group-conditional-rate comparison, not raw `tau_B < tau_A` unless equal
+  population shares or another explicit normalization has been assumed. When
+  the Lean endpoint uses `tau_B < pi_B`, classify the raw-comparison sentence
+  as a proof-text repair only.
 - Treat the final validation report itself as an audit target. Before final
   handoff, reread the report as a human reviewer would: it must be paper-facing,
   short enough to inspect, organized around source definitions and named theorem
@@ -1824,6 +2119,11 @@ pass:
   clear and the build can be checked; otherwise record the candidate,
   destination module, and reusable proof idea in the final report. Do not
   perform a risky broad move during final closeout.
+  After extraction, rebuild both the new leaf modules and the paper target that
+  imported or inspired them. If a paper-local proof relies on unfolding a raw
+  arithmetic formula or `if` expression, keep the source-shaped local formula
+  in the paper namespace and make the shared API a reusable sibling rather than
+  replacing the local declaration with an opaque one-step alias.
 - Run a skill-update pass as a required post-formalization step. If the paper
   taught a reusable workflow lesson, update this skill or its reference files
   before final handoff; if it did not, state that explicitly in the final
@@ -1941,6 +2241,12 @@ pass:
   witness interfaces, no standalone proof-facing formula aliases in the audit
   ledger, no stale `Lean witness` report language, and no completed-paper status
   rows that hide caveats in prose.
+  Also run `python3 scripts/audit_repository.py --library-only --library-premise-audit` when a
+  completed paper uses recently added or extracted library APIs. Informational
+  library certificate findings are not errors by themselves, but any completed
+  paper wrapper that still exposes one of those certificate/source-boundary
+  parameters must either construct it internally, route it through validated
+  paper assumptions, or be downgraded to partial/conditional.
   Keep the paper validation report paper-local: record audit findings that
   affect the paper being reported, but do not put unrelated global repository
   errors or other active-paper warnings into that paper's validation report.
@@ -2038,43 +2344,81 @@ Summarize the completed proof in paper language, grouping source definitions
 and named results by section. This should read like an executive proof audit,
 not a list of Lean helper lemmas.
 
-## 4. Additional Assumptions Beyond Paper
+## 4. Paper Assumption Provenance
+Every paper-facing theorem premise that is not derived in Lean should appear as
+a named assumption declaration in `Assumptions.lean`, be listed in `status.json`
+`review_surface.assumption_names`, and be checked in `assumption_match_llm.json`
+as a true paper/source model assumption.
+
+The source-assumption judge must work at premise granularity. A grouped
+assumption declaration may summarize a family of conditions, but it does not
+validate the individual `-- audit-premise:` comments under that declaration.
+Every exact premise must have a `premise_judgments` entry in
+`assumption_match_llm.json` with a source location and one of these meanings:
+`source_text_model_primitive` / `source_text` / `paper_condition` for textually
+stated model or theorem conditions, `derived_from_source_primitives` only when a
+Lean derivation from source primitives already exists, `documented_caveat` for
+an acknowledged source mismatch, or `partial_boundary` for a visible premise
+that is not yet source-matched or derived. A paper with any `partial_boundary`
+premise is not fully formalized; update `status.json`, the final validation
+report, and the generated status tables accordingly. A grouped assumption
+declaration may also have top-level `judgment: "partial_boundary"` when the
+whole declaration is a known external/library/analytic boundary. Do not use
+`documented_caveat` for that case unless the paper statement itself needs a
+repair.
+
+| Assumption declaration | Lean declaration | Source location / statement | Assumption validators | Comments |
+| --- | --- | --- | --- | --- |
+| None | `none` | None | None | No paper assumptions recorded. |
+
+## 5. Displayed Formula Provenance
+Every displayed or source-defining formula used by a named result should have
+an exact paper-facing row or exact subclaim row. Broad aggregate rows are not
+enough for full validation. Formula rows are closed only when the formula is
+derived in Lean from source primitives or from separately validated paper
+assumptions.
+
+| Paper formula / subclaim | Lean declaration | Provenance | Validators | Comments |
+| --- | --- | --- | --- | --- |
+| None | `none` | None | None | No displayed formulas checked. |
+
+## 6. Additional Assumptions Beyond Paper
 - `<assumption declaration>`: <why needed, where used>
 - If none: `None`
 
-## 5. Proof-Strategy Deviations
+## 7. Proof-Strategy Deviations
 - `<paper result/declaration>`: <what changed qualitatively in strategy and why>
 - If none: `None`
 
-## 6. Proof Tricks Worth Reusing
+## 8. Proof Tricks Worth Reusing
 - <modeling/proof/library-seam lesson that should inform future papers>
 - If none: `None`
 
-## 7. Library Lift Pass
+## 9. Library Lift Pass
 - <paper-local component>: <target EconCSLib module and extraction status>
 - If none: `None`
 
-## 8. DAG Audit
+## 10. DAG Audit
 - Rendered artifact: <yes/no, visual inspection method>
 - Topology: <missing/extra boxes fixed or none>
 - Layout: <overlap/routing status>
 
-## 9. Conditional Results and Remaining Gaps
+## 11. Conditional Results and Remaining Gaps
 - `<paper item>`: <exact remaining certificate/assumption declaration name>
 - If none: `None`
 
-## 10. Suspected Paper Errors or Inconsistencies
+## 12. Suspected Paper Errors or Inconsistencies
 - `<location in paper>`: <issue description + Lean/formalization evidence>
 - If none: `None`
 
-## 11. Validation Checks
+## 13. Validation Checks
 - <build/audit/DAG/no-placeholder outcomes in prose>
 
-## 12. Final Verdict
+## 14. Final Verdict
 - Completion status: <formalized / formalized with caveat / partially formalized / not formalized>
 - Summary: <2-5 lines>
 
-## 13. Paper Definitions Checked
+## 15. Paper Definitions Checked
 These are the mathematical objects from the paper interface. All should be
 exposed in `PaperInterface.lean`.
 
@@ -2083,7 +2427,7 @@ exposed in `PaperInterface.lean`.
 - <Next paper object>: <paper notation and one-line statement>.
   Lean: `<PaperInterface.definitionName>`.
 
-## 14. Named Theorem Statements Checked
+## 16. Named Theorem Statements Checked
 ### Theorem <n>
 **Paper statement.** <one theorem-box-level statement matching the source>
 
@@ -2092,7 +2436,7 @@ exposed in `PaperInterface.lean`.
 
 **Status.** <formalized / conditional / not formalized>. <1-4 lines of caveats only if needed.>
 
-## 15. Paper-Facing Statement Validator Ledger
+## 17. Paper-Facing Statement Validator Ledger
 This table is one row per dashboard/PaperInterface row. Fill it from the
 validator ledger, not from memory:
 

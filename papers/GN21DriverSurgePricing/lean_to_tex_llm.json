@@ -1,8 +1,50 @@
 {
-  "comment": "Refreshed Theorem 3 draft after expanding the PaperInterface statement and parser cleanup; other drafts preserved.",
-  "generated_at": "2026-06-11T03:55:30Z",
-  "generator": "codex-refresh-current-lean-statements",
+  "schema": 1,
+  "paper": "GN21DriverSurgePricing",
+  "generated_at": "2026-06-12T00:35:00Z",
+  "generator": "codex-refresh-current-lean-and-assumption-statements",
+  "comment": "Refreshed after Lemma 9/10 source-field wrappers; source-premise validity is tracked separately in assumption_match_llm.json.",
   "items": {
+    "assumption_affine_response_shape_domains": {
+      "lean_statement_sha256": "022257b85297ae29c74a57cb514df17c0f95a37261122effef62856b8598402a",
+      "statement": "The Lemma 7/8 affine-response domain records $m>0$, the positive-additive and negative-additive sign cases for $a$, the corresponding $\\Delta_{ji}$ sign cases, positive state weight, and nonzero state-time denominators."
+    },
+    "assumption_affine_single_state_parameter_domain": {
+      "lean_statement_sha256": "0d4d94bb6a96806928b4bd55d6068628515f52416bca417aa0050ccba3cd4bbe",
+      "statement": "The affine single-state parameter domain requires a positive arrival rate and $0\\le a\\le m/\\lambda$."
+    },
+    "assumption_dynamic_time_fraction_denominators": {
+      "lean_statement_sha256": "fc119448d304be8db8a854f16af629ad0e68b7f6b8cf4561ee2390807218c58e",
+      "statement": "The dynamic time-fraction domain requires both state denominators $\\lambda_I\\,\\mathrm{mass}_{\\mu_I}(\\sigma_I)+\\lambda_{I\\to J}$ and $\\lambda_J\\,\\mathrm{mass}_{\\mu_J}(\\sigma_J)+\\lambda_{J\\to I}$ to be nonzero."
+    },
+    "assumption_fixed_response_policy_form_conditions": {
+      "lean_statement_sha256": "b78bd914f187806a158af57cd362da5b812714d593a6789612d801eadc992932",
+      "statement": "The Lemma 5 fixed-response domain records that the response function is measurable and that the selected policy maximizes the marginal set reward over all measurable feasible policies."
+    },
+    "assumption_nonsurge_derivative_source_bounds": {
+      "lean_statement_sha256": "01ed7b2522292b42aa1098099214040e16159cdc657a91700fd603fa4314ea6e",
+      "statement": "The Lemma 10 non-surge source-bounds row records the source formulas over the derivative certificate fields, the Lemma 10 accept-all ratio bounds, $z=\\mathrm{ratio}\\,R_2$, positivity conditions, and the current-bound inequalities."
+    },
+    "assumption_single_state_defined_reward_domain": {
+      "lean_statement_sha256": "9d024771d5732a76ec690c3533a82ae94a5db4dfbbce53edbc2243bf9ca37f44",
+      "statement": "The single-state reward domain records nonnegative payment rates on positive trip lengths, finite accept-all mass, and positive mass on feasible trips with strictly positive payout for the relevant trip-length measure variants."
+    },
+    "assumption_surge_derivative_source_bounds": {
+      "lean_statement_sha256": "cebf7e0e195e8fb8195a57d61c0e10269d02325c305e0a2f9e275124336ede49",
+      "statement": "The Lemma 9 surge-state source-bounds row records the source formulas over the derivative certificate fields, the Lemma 9 accept-all ratio bounds, $m>R_1$, positivity conditions, and the current-bound inequalities."
+    },
+    "assumption_switch_rate_domain": {
+      "lean_statement_sha256": "b01172258cc7527a2220a2f24e102af46445895f6ca7336d3245d20fb34b0c02",
+      "statement": "The switch-rate domain records positive CTMC switching intensity, its nonnegativity consequence, positive total switching intensity, and nonzero total switching intensity."
+    },
+    "assumption_theorem3_source_data_domain": {
+      "lean_statement_sha256": "be29e3792ede3ac22717fa0941d369be0a62ec81165386d9bfb65248ac41078b",
+      "statement": "The Theorem 3 source-data domain records $R_1=\\rho R_2$, $0<R_1<R_2$, $R_2>0$, $\\rho<1$, positive arrival and switch rates, and positive accept-all masses in both states."
+    },
+    "assumption_upper_endpoint_derivative_domain": {
+      "lean_statement_sha256": "95f45f0689e75999ca5f945d6f8d0bd55e24e7ec55e435849d3a45b443103b19",
+      "statement": "The Lemma 6 endpoint-derivative domain records positive arrival, positive endpoint density and endpoint quantities, the $W=RT$ reward-rate identities, and the nonzero derivative denominator."
+    },
     "review_definition_dynamic_defined_reward": {
       "lean_statement_sha256": "7bc86bbb3277081b12f8fa50a8ac692a8c041aef7f3273fc6f92883db31d7570",
       "statement": "For two trip-length measures $\\mu$, a denominator-valid dynamic reward is a real-valued function on two-state policies $\\sigma$ that are feasible, measurable, and have positive accepted-trip mass in every state."
@@ -20,8 +62,8 @@
       "statement": "For a pricing function $w$, cutoff $c$, and policy $\\sigma$, the threshold-policy condition is: for every positive trip length $\\tau$, $\\tau \\in \\sigma$ if and only if $c \\le w(\\tau)/\\tau$."
     },
     "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds": {
-      "lean_statement_sha256": "57df5c767645ee8043e421df18e164a63460a25da39dce79365cbadbea04242f",
-      "statement": "For a Lemma 6 derivative certificate $C$ whose fields match the non-surge-state endpoint, payment, queue, time, and reward identities, if the structured non-surge bounds, ratio identity $z=\\mathrm{ratio}\\,R_2$, positivity assumptions, switch-probability assumptions, and current-bound inequalities all hold, then $C.\\mathrm{derivativeValue}>0$."
+      "lean_statement_sha256": "3488e3237f084189654ed21ede18046dfc457ca58a95d9f323553b2d16b7b7a4",
+      "statement": "For a Lemma 6 derivative certificate $C$ whose own fields satisfy the non-surge switch-probability formula, structured-price payment formula, $W_i$ and $W_j$ reward-rate formulas, Lemma 10 accept-all ratio bounds, $z=\\mathrm{ratio}\\,R_2$, positivity assumptions, and current-bound inequalities, the endpoint derivative value is positive: $C.\\mathrm{derivativeValue}>0$."
     },
     "review_lemma1_measured_dynamic_reward_decomposition": {
       "lean_statement_sha256": "5641773fffc690f7cfc840b4cfd6539e2b986786e571e899b8b2f6175712fdb9",
@@ -36,8 +78,8 @@
       "statement": "If both state cycle denominators $\\lambda_I\\,\\mathrm{mass}_{\\mu_I}(\\sigma_I)+q_{IJ}$ and $\\lambda_J\\,\\mathrm{mass}_{\\mu_J}(\\sigma_J)+q_{JI}$ are nonzero, then the cycle-based time-fraction expression built from cross-subcycle probabilities and subcycle lengths equals $\\mathrm{gn21MeasuredTimeFraction}(\\mu_I,\\mu_J,\\lambda_I,\\lambda_J,q_{IJ},q_{JI},\\sigma_I,\\sigma_J)$."
     },
     "review_lemma4_single_state_threshold_uniqueness": {
-      "lean_statement_sha256": "e49dde4c56d86897c16e3277bc839a6d449c688c10a2734da7a6c2c8e775633a",
-      "statement": "Under the same single-state measurability, integrability, positivity, and accept-all assumptions, there are $c^\\ast\\ge0$ and $\\sigma^\\ast$ such that $\\sigma^\\ast$ is a threshold-rate policy, has renewal reward $c^\\ast$, and is optimal; moreover every measurable optimal $\\rho\\subseteq\\mathrm{acceptAllPolicy}$ differs from the strict/complete threshold bands at $c^\\ast$ only on sets of zero single-state trip mass."
+      "lean_statement_sha256": "066f374dae237da125a96a2e5721605000bc609ee652ec82e8ccdab1f2afe2ed",
+      "statement": "Under the same single-state measurability, integrability, nonnegative-rate, finite-mass, positive-arrival, and positive-payout-mass assumptions, there are $c^\\ast\\ge0$ and $\\sigma^\\ast$ such that $\\sigma^\\ast$ is a threshold-rate policy, has renewal reward $c^\\ast$, and is optimal; moreover every measurable optimal $\\rho\\subseteq\\mathrm{acceptAllPolicy}$ differs from the strict/complete threshold bands at $c^\\ast$ only on sets of zero single-state trip mass."
     },
     "review_lemma5_fixed_response_policy_form": {
       "lean_statement_sha256": "fb895a769d5c0cb382d6f2fa2f93b5d6252a08711d7909e0b1420ced2a6106d8",
@@ -45,7 +87,7 @@
     },
     "review_lemma6_upper_endpoint_derivative_formula": {
       "lean_statement_sha256": "774efc6874e99224cbfef4a7632a48b8de8f068bd39100579d06b8bb171b914f",
-      "statement": "Under the stated positivity, algebraic identification, nonzero-denominator, interval-integrability, strong-measurability, and continuity assumptions, the endpoint aggregate dynamic reward has the displayed derivative at $u$; that derivative has the same strict sign as the Lemma 6 response evaluated at the endpoint data."
+      "statement": "Under the stated arrival-rate, positive-trip, positive-time, algebraic identification, nonzero-denominator, interval-integrability, strong-measurability, and continuity assumptions, the endpoint aggregate dynamic reward has the displayed derivative at $u$. If the endpoint density is positive, that derivative has the same strict sign as the Lemma 6 response evaluated at the endpoint data."
     },
     "review_lemma7_affine_positive_additive_response_quasi_convex": {
       "lean_statement_sha256": "a5ae9734bb73ca2b0e233935ef86b65c7ae30609a11d1012947340ca22be6c4a",
@@ -56,8 +98,8 @@
       "statement": "If $m>0$, $a<0$, $R_j-R_i\\ge0$, $Q_i/T_i+Q_j/T_j>0$, $\\lambda_{IJ}>0$, $\\lambda_{IJ}+\\lambda_{JI}>0$, and $T_i,T_j\\ne0$, then the Lemma 6 response with switch probability $\\mathrm{gn21SwitchProb}(\\lambda_{IJ},\\lambda_{JI},u)$ and payment argument $m\\,u+a$ is strictly quasi-concave on positive $u$."
     },
     "review_lemma9_surge_derivative_positive_of_acceptAll_bounds": {
-      "lean_statement_sha256": "809c2d76bfe21a539450a97eedaa31ba40e804cae5748cd0698d286873364ad7",
-      "statement": "For a Lemma 6 derivative certificate $C$ whose fields match the surge-state endpoint, payment, queue, time, and reward identities, if the structured surge bounds, ratio identity $z=\\mathrm{ratio}(m-R_1)$, positivity/nonnegativity assumptions, switch-probability assumptions, and current-bound inequalities all hold, then $C.\\mathrm{derivativeValue}>0$."
+      "lean_statement_sha256": "7d06bb8a897a37b5a35eb27b8b0a720c51ee0e6c43e9149ed8effa445642089d",
+      "statement": "For a Lemma 6 derivative certificate $C$ whose own fields satisfy the surge-state switch-probability formula, structured-price payment formula, $W_i$ and $W_j$ reward-rate formulas, Lemma 9 accept-all ratio bounds, $z=\\mathrm{ratio}(m-R_1)$, positivity assumptions, and current-bound inequalities, the endpoint derivative value is positive: $C.\\mathrm{derivativeValue}>0$."
     },
     "review_proposition3_1_affine_single_state_ic": {
       "lean_statement_sha256": "433e2a7e78236c5ed310cf659bec7106d6cf8f48f788930b9d97f13b1fda5f70",
@@ -80,8 +122,8 @@
       "statement": "In any measurable IID single-state renewal-cycle model $C$, the empirical average payment per empirical average cycle time converges almost surely, as $n\\to\\infty$, to $\\mathrm{singleStateRenewalReward}(\\mu,\\mathrm{arrivalRate},w,\\sigma)$."
     },
     "review_theorem1_single_state_threshold_best_response": {
-      "lean_statement_sha256": "fde6889fa062f7842e18c25be376199d45e7d5521216312aee5649241f0433d1",
-      "statement": "If $w(\\tau)/\\tau$ is measurable and nonnegative on positive trip lengths, the accept-all policy has finite nonzero mass and integrable payment/time, the arrival rate is positive, and accept-all gives positive trip payment, then there are $c\\ge0$ and a policy $\\sigma$ such that $\\sigma$ is a threshold-rate policy for $(w,c)$ and is optimal for $\\mathrm{singleStateRenewalReward}(\\mu,\\lambda,w)$."
+      "lean_statement_sha256": "22e6fefdb527e2b0e3e703407ab88480d146404db4583c043bf405294a536b7c",
+      "statement": "If $w(\\tau)/\\tau$ is measurable and nonnegative on positive trip lengths, the accept-all policy has finite mass and integrable payment/time, the arrival rate is positive, and the feasible positive-payout set has positive measure, then there are $c\\ge0$ and a policy $\\sigma$ such that $\\sigma$ is a threshold-rate policy for $(w,c)$ and is optimal for $\\mathrm{singleStateRenewalReward}(\\mu,\\lambda,w)$."
     },
     "review_theorem2_multiplicative_policy_shape_ae": {
       "lean_statement_sha256": "d013b83550c655e6bf74283b0916d36fb191f45bc4ea86ceb86d96994eee8561",
@@ -91,15 +133,13 @@
       "lean_statement_sha256": "f75cac8b289a9252fbaf0f9c0d36cdbe64e7edcf1a9a2382332c54f0f9b64b56",
       "statement": "For the explicit atomic multiplicative-pricing instance with switch rates $1/4$ and $1/4$, there is a positive cutoff $2$ nonsurge deviation rejecting long trips that is profitable, there is a positive cutoff $2$ surge deviation rejecting short trips that is profitable, and the resulting measured dynamic reward functional is not dynamically incentive compatible."
     },
-    "review_theorem3_feasible_sequential_current_bounds_source_data_statement": {
-      "lean_statement_sha256": "20a5ead734c6c83370a8fc2e5ccd5c7915cae4ac7e784f37166e221c2c7e4082",
-      "statement": "Under the Theorem 3 feasible sequential current-bounds assumptions (R1 = rho * R2, 0 < R1 < R2, 0 < R2, C < rho < 1, positive arrivals and switch rates, integrability of trip time and switch probabilities, positive accept-all masses, and feasible sequential current-bound source certificates), there exist structured price parameters m and z with 0 <= m_0, 0 <= m_1, and 0 <= z_1 such that the measured CTMC structured dynamic reward is dynamically measurable incentive compatible, every measurable optimum agrees with accept-all almost everywhere, the prices have the structured surge-price form, and the Theorem 3 parameter evidence holds."
+    "review_theorem3_defined_reward_source_statement": {
+      "lean_statement_sha256": "b9df4de374b1fafeca62745e4413b649acfec8abf26bd84b0c68895f90f2e86d",
+      "statement": "Under the Theorem 3 source-domain assumptions R1 = rho * R2, 0 < R1 < R2, C < rho < 1, positive arrival and switch rates, integrability of trip lengths and CTMC switch probabilities, positive accept-all trip masses, and the paper positive-mass surge reward-rate data for every feasible policy, there exist structured prices w_i(tau) = m_i tau + z_i q_{i->j}(tau) with m_1, m_2, z_2 >= 0 (Lean indices 0/1) such that accept-all is dynamically incentive compatible for the defined reward, every defined-reward optimum agrees with accept-all almost everywhere, and the Theorem 3 structured parameter evidence holds."
     },
     "review_theorem4_structural_policy_representatives": {
       "lean_statement_sha256": "830878b532cca1e117791869d3b88685584bea7c4270c723e7e1bf679de1b0da",
       "statement": "For nonatomic two-state measures, arrival rates, affine price parameters, switch rates, and Theorem 4 bracket source data, there exists an optimal policy $\\rho^\\ast$ for the structured dynamic surge-price reward whose state-$0$ component is almost-everywhere equal to a nonsurge structural representative and whose state-$1$ component is almost-everywhere equal to a surge structural representative; every optimal policy admits such representatives in both states."
     }
-  },
-  "paper": "GN21DriverSurgePricing",
-  "schema": 1
+  }
 }

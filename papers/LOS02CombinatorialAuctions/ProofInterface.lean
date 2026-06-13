@@ -2316,7 +2316,7 @@ abbrev sortedEraseCriticalWindow
 Full-order sorted-window package for instantiating the source Section 10
 critical-price branches from a split of the original greedy order around `j`.
 -/
-abbrev sourceSortedEraseCriticalWindow
+abbrev fullOrderSortedEraseCriticalWindow
     {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
     (bids : Bidder → SingleMindedBid Item)
@@ -2364,7 +2364,7 @@ theorem averageValueUpdateWindow_sortedEraseCriticalWindowOfSplit
 Source-window constructor for the concrete average-order suffix window. It
 packages the original split, accepted prefix, and local suffix-window facts.
 -/
-noncomputable def averageValueUpdateWindow_sourceSortedEraseCriticalWindowOfSplit
+noncomputable def averageValueUpdateWindow_fullOrderSortedEraseCriticalWindowOfSplit
     {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Item]
     [LinearOrder Bidder]
     (bids : Bidder → SingleMindedBid Item)
@@ -2390,7 +2390,7 @@ noncomputable def averageValueUpdateWindow_sourceSortedEraseCriticalWindowOfSpli
         j ∈ singleMindedGreedyAcceptedFromOrder
           (valueUpdate bids j v)
           (averageOrderOf (valueUpdate bids j v))) :
-    sourceSortedEraseCriticalWindow
+    fullOrderSortedEraseCriticalWindow
       averageOrderOf bids
       (singleMindedGreedyAcceptedFromState bids ∅ (before ++ [j]))
       j base (averageValueUpdateWindow bids j base) :=
@@ -2414,14 +2414,14 @@ theorem averageValueUpdateWindow_sortedEraseCriticalWindowOfSourceSplit
       (singleMindedGreedyAcceptedFromState bids ∅ (before ++ [j]))
       j base (averageValueUpdateWindow bids j base) := by
   exact
-    LOS02CombinatorialAuctions.paper_average_value_update_window_sorted_erase_critical_window_of_source_split
+    LOS02CombinatorialAuctions.paper_average_value_update_window_sorted_erase_critical_window_of_split_data
       bids horder hjaccepted
 
 /--
 Concrete average-order source-window package for the split around an accepted
 bid `j`, with no remaining bridge assumptions.
 -/
-noncomputable def averageValueUpdateWindow_sourceSortedEraseCriticalWindowOfSourceSplit
+noncomputable def averageValueUpdateWindow_fullOrderSortedEraseCriticalWindowOfSourceSplit
     {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Item]
     [LinearOrder Bidder]
     (bids : Bidder → SingleMindedBid Item)
@@ -2429,11 +2429,11 @@ noncomputable def averageValueUpdateWindow_sourceSortedEraseCriticalWindowOfSour
     (horder : averageOrderOf bids = before ++ j :: base)
     (hjaccepted :
       j ∈ singleMindedGreedyAcceptedFromState bids ∅ (before ++ [j])) :
-    sourceSortedEraseCriticalWindow
+    fullOrderSortedEraseCriticalWindow
       averageOrderOf bids
       (singleMindedGreedyAcceptedFromState bids ∅ (before ++ [j]))
       j base (averageValueUpdateWindow bids j base) :=
-  LOS02CombinatorialAuctions.paper_average_value_update_window_source_sorted_erase_critical_window_of_source_split
+  LOS02CombinatorialAuctions.paper_average_value_update_window_source_sorted_erase_critical_window_of_split_data
     bids horder hjaccepted
 
 /--
@@ -2509,7 +2509,7 @@ theorem greedy_accepted_mechanism_zero_branch_of_next_denied_none
 Source-window finite branch for Definition 10.1: a full-order split around `j`
 derives the local finite critical branch from the full-order `n(j)=n` search.
 -/
-theorem greedy_accepted_mechanism_finite_branch_of_source_sorted_window
+theorem greedy_accepted_mechanism_finite_branch_of_sorted_window
     {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
     (bids : Bidder → SingleMindedBid Item)
@@ -2517,7 +2517,7 @@ theorem greedy_accepted_mechanism_finite_branch_of_source_sorted_window
     (pre nextPost : List Bidder) {j n : Bidder}
     (windowOrder : ℝ → List Bidder)
     (hsource :
-      sourceSortedEraseCriticalWindow orderOf bids acceptedWithJ j
+      fullOrderSortedEraseCriticalWindow orderOf bids acceptedWithJ j
         (pre ++ n :: nextPost) windowOrder)
     (hnext_order :
       greedyNextDeniedFromOrder bids (orderOf bids) j = some n)
@@ -2529,7 +2529,7 @@ theorem greedy_accepted_mechanism_finite_branch_of_source_sorted_window
     (∀ v, p < v → j ∈ M.accepted (valueUpdate bids j v)) ∧
     M.payment bids j = p := by
   exact
-    LOS02CombinatorialAuctions.paper_greedy_accepted_mechanism_finite_branch_of_source_sorted_window
+    LOS02CombinatorialAuctions.paper_greedy_accepted_mechanism_finite_branch_of_sorted_window
       orderOf bids acceptedWithJ pre nextPost windowOrder hsource
       hnext_order hj_nonempty
 
@@ -2538,7 +2538,7 @@ Source-window zero branch for Definition 10.1: a full-order split around `j`
 with no next denied bid gives zero payment and acceptance at every positive
 value over the nonnegative value domain.
 -/
-theorem greedy_accepted_mechanism_zero_branch_of_source_sorted_window
+theorem greedy_accepted_mechanism_zero_branch_of_sorted_window
     {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
     (bids : Bidder → SingleMindedBid Item)
@@ -2546,7 +2546,7 @@ theorem greedy_accepted_mechanism_zero_branch_of_source_sorted_window
     (base : List Bidder) {j : Bidder}
     (windowOrder : ℝ → List Bidder)
     (hsource :
-      sourceSortedEraseCriticalWindow orderOf bids acceptedWithJ j
+      fullOrderSortedEraseCriticalWindow orderOf bids acceptedWithJ j
         base windowOrder)
     (hnext_order :
       greedyNextDeniedFromOrder bids (orderOf bids) j = none) :
@@ -2556,7 +2556,7 @@ theorem greedy_accepted_mechanism_zero_branch_of_source_sorted_window
     (∀ v, 0 < v → j ∈ M.accepted (valueUpdate bids j v)) ∧
     M.payment bids j = 0 := by
   exact
-    LOS02CombinatorialAuctions.paper_greedy_accepted_mechanism_zero_branch_of_source_sorted_window
+    LOS02CombinatorialAuctions.paper_greedy_accepted_mechanism_zero_branch_of_sorted_window
       orderOf bids acceptedWithJ base windowOrder hsource hnext_order
 
 /--
@@ -2575,7 +2575,7 @@ abbrev sourceCriticalBranchWindows
 For any bidder accepted by the concrete average-order greedy run, the average
 order supplies source critical-branch windows for the finite and no-next cases.
 -/
-noncomputable def averageSourceCriticalBranchWindowsOfAccepted
+noncomputable def averageCriticalBranchWindowsOfAccepted
     {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Item]
     [LinearOrder Bidder]
     (bids : Bidder → SingleMindedBid Item) {j : Bidder}
@@ -2589,7 +2589,7 @@ noncomputable def averageSourceCriticalBranchWindowsOfAccepted
 Source branch data sufficient to build the nonnegative-domain critical-value
 certificate for the LOS02 greedy accepted-set mechanism.
 -/
-abbrev nonnegativeCriticalSourceBranchData
+abbrev nonnegativeCriticalBranchData
     {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder) :=
   LOS02CombinatorialAuctions.paper_nonnegative_critical_source_branch_data
@@ -2601,7 +2601,7 @@ Accepted-bid criticality for the full greedy mechanism: the actual Definition
 value on the nonnegative report domain, assuming source windows for the finite
 and no-next branches.
 -/
-theorem greedy_accepted_mechanism_payment_critical_of_source_windows
+theorem greedy_accepted_mechanism_payment_critical_of_branch_windows
     {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
     (bids : Bidder → SingleMindedBid Item) {j : Bidder}
@@ -2614,7 +2614,7 @@ theorem greedy_accepted_mechanism_payment_critical_of_source_windows
     (∀ v, M.payment bids j < v →
       j ∈ M.accepted (valueUpdate bids j v)) := by
   exact
-    LOS02CombinatorialAuctions.paper_greedy_accepted_mechanism_payment_critical_of_source_windows
+    LOS02CombinatorialAuctions.paper_greedy_accepted_mechanism_payment_critical_of_branch_windows
       orderOf bids hwindows hj_nonempty
 
 /--
@@ -2694,11 +2694,11 @@ sorted-order branch data have been supplied.
 noncomputable def greedy_nonnegativeCriticalCertificateOfSourceBranchData
     {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
     (orderOf : (Bidder → SingleMindedBid Item) → List Bidder)
-    (data : nonnegativeCriticalSourceBranchData orderOf) :
+    (data : nonnegativeCriticalBranchData orderOf) :
     (greedyAcceptedMechanismFromOrderOf
       (Bidder := Bidder) (Item := Item)
       orderOf).NonnegativeCriticalValueWithInfinityCertificate :=
-  LOS02CombinatorialAuctions.paper_greedy_nonnegative_critical_certificate_of_source_branch_data
+  LOS02CombinatorialAuctions.paper_greedy_nonnegative_critical_certificate_of_branch_data
     orderOf data
 
 /--
@@ -2709,22 +2709,22 @@ noncomputable def averageGreedy_nonnegativeCriticalCertificateOfSourceBranchData
     {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Item]
     [LinearOrder Bidder]
     (data :
-      nonnegativeCriticalSourceBranchData
+      nonnegativeCriticalBranchData
         (averageOrderOf (Bidder := Bidder) (Item := Item))) :
     SingleMindedAcceptedMechanism.NonnegativeCriticalValueWithInfinityCertificate
       (averageGreedyAcceptedMechanism
         (Bidder := Bidder) (Item := Item)) :=
-  LOS02CombinatorialAuctions.paper_average_greedy_nonnegative_critical_certificate_of_source_branch_data
+  LOS02CombinatorialAuctions.paper_average_greedy_nonnegative_critical_certificate_of_branch_data
     (Bidder := Bidder) (Item := Item) data
 
 /--
 Concrete source-branch data for the average-order greedy mechanism on the
 nonempty nonnegative single-minded domain.
 -/
-noncomputable def averageGreedyNonnegativeCriticalSourceBranchData
+noncomputable def averageGreedyNonnegativeCriticalBranchData
     {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Item]
     [LinearOrder Bidder] :
-    nonnegativeCriticalSourceBranchData
+    nonnegativeCriticalBranchData
       (averageOrderOf (Bidder := Bidder) (Item := Item)) :=
   LOS02CombinatorialAuctions.paper_average_greedy_nonnegative_critical_source_branch_data
     (Bidder := Bidder) (Item := Item)
@@ -3052,7 +3052,7 @@ theorem theorem10_2_averageGreedy_truthful_of_nonnegative_sourceBranchData
         (Bidder := Bidder) (Item := Item)).MonotonicityOn
           nonnegativeNonemptySingleMindedProfile)
     (data :
-      nonnegativeCriticalSourceBranchData
+      nonnegativeCriticalBranchData
         (averageOrderOf (Bidder := Bidder) (Item := Item))) :
     singleMindedTruthfulOn
       (averageGreedyAcceptedMechanism

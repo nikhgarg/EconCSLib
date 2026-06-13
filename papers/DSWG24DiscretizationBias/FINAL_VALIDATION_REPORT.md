@@ -4,7 +4,20 @@
 
 - Lean formalization status: formalized
 - Human dashboard review status: 0/32 rows reviewed; 0 stale; 0 mismatches.
-- Scope note: Main theorem route differs from the paper proof in places; the validation report records the proof-route deviation.
+- Main caveat: the strict premise-source audit is closed for the recorded
+  assumption ledger, including the human-verified implicit `K >= 2` multiclass
+  condition. The Theorem 2(iii) weighted-objective row is now the
+  certificate-free source-facing necessary condition: for `γ < 1`, a
+  weighted-objective maximizing independent rule must agree with argmax almost
+  surely.
+
+<!-- transitive-source-premise-audit:start -->
+### Transitive Source-Premise Audit
+
+The strengthened recursive source-premise audit passes for full-status provenance. It follows paper-local wrappers and reusable-library certificate APIs, and treats certificate/source-row/external-boundary premises as full-status blockers unless they are derived internally or routed through validated paper assumptions.
+
+Current result: The strengthened transitive provenance audit finds no unresolved certificate/source-boundary dependency for the current paper-facing status. Explicit assumptions remain source-matched, including the human-verified implicit multiclass condition.
+<!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
 
@@ -31,95 +44,9 @@ found.
 
 ## 3. What Has Been Proven
 
-The paper-facing definitions, Theorem 1 discretization-bias bound, and Theorem
-2 weighted-objective characterization are formalized. Lean also records the
-Bayes-identity assumptions and coordinate-sweep proof route needed to make the
-source proof precise.
+See the verdict and named-statement sections in this report.
 
-## 4. Additional Assumptions Beyond Paper
-
-None separately recorded in the existing report.
-
-## 5. Proof-Strategy Deviations
-
-### Proof Deviations and Assumptions
-
-- **Theorem 1 proof deviation.** The paper's continuous source-transformation
-  proof sketch is underspecified at the measurable transformation step and in
-  the multiclass `S_b/S_d` mass accounting. Lean proves the same paper-facing
-  bound directly from calibration, and formalizes the source-transformation
-  route using an explicit real-coordinate sweep with coordinate pushforward and
-  pullback. This is a proof-strategy deviation, not a theorem-statement change.
-- **Theorem 2 Bayes assumption.** The paper phrase "Bayes optimal `q`" is
-  represented by row-wise Bayes identities. A finite Bayes dataset model is
-  provided as a reusable discharger for those identities.
-- **Standard formal assumptions.** Lean exposes finite type, decidable equality,
-  posterior-simplex, measurability, integrability, finite-measure, and
-  non-trivial-reference assumptions where the paper leaves them implicit.
-- **Optional future strengthening.** The accepted Theorem 1 source route uses a
-  concrete coordinate sweep. A fully abstract arbitrary nonatomic transport
-  theorem could later replace this proof seam. More automatic arbitrary-measure
-  conditional-expectation dischargers and randomized-rule measurability wrappers
-  would be reusable conveniences, not missing theorem endpoints.
-
-## 6. Proof Tricks Worth Reusing
-
-None separately recorded in the existing report.
-
-## 7. Library Lift Pass
-
-None separately recorded in the existing report.
-
-## 8. DAG Audit
-
-No separate DAG audit note is recorded in the existing report.
-
-## 9. Conditional Results and Remaining Gaps
-
-None separately recorded in the existing report.
-
-## 10. Suspected Paper Errors or Inconsistencies
-
-None separately recorded in the existing report.
-
-## 11. Validation Checks
-
-### Verification Checks
-
-- The paper target `DSWG24DiscretizationBias` builds successfully.
-- The human-facing Lean interface `DSWG24DiscretizationBias.PaperInterface`
-  builds successfully.
-- The post-paper audit ledger builds successfully.
-- The DSWG Lean files contain no `sorry`, `admit`, or `axiom` placeholders.
-- The dependency DAG renders successfully and was visually inspected after the
-  final layout update.
-- The final report and repository status files no longer contain obsolete
-  Theorem 2(i)--(ii) restriction caveats or raw command logs.
-
-### Statement Translation Audit
-
-Audit date: 2026-06-06.
-Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
-
-Summary: 32 rows; 30 match, 0 uncertain, 2 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: passes (32 rows; digest 2944f9d9c293).
-
-Flagged rows:
-- `marginalLabelShare`: mismatch. Paper defines a finite-sample average over predictions; translation defines a population probability under mu_X.
-- `aggregatePosterior`: mismatch. Paper defines an empirical average over observed x_i; translation gives an expectation over the marginal distribution.
-
-## 12. Final Verdict
-
-Completion status: complete.
-
-The paper-facing definitions, Theorem 1, and Theorem 2 are represented by
-compiling Lean declarations. The main theorem statements match the source text;
-where Lean differs, it is by making assumptions explicit or replacing an
-underspecified proof sketch with a precise coordinate-sweep proof strategy.
-
-- Completion status: formalized.
-- Summary: Main theorem route differs from the paper proof in places; the validation report records the proof-route deviation.
-
-## 13. Paper Definitions Checked
+## 4. Paper Definitions Checked
 
 These are the mathematical objects from the paper interface. All are exposed in
 `PaperInterface.lean`.
@@ -162,8 +89,8 @@ These are the mathematical objects from the paper interface. All are exposed in
 | Paper-facing item | Lean declaration | Source-facing statement |
 | --- | --- | --- |
 | def prior | `prior` | - Prior class probability `Pr(y)`. |
-| def marginalLabelShare | `marginalLabelShare` | mismatch. Paper defines a finite-sample average over predictions; translation defines a population probability under mu_X. |
-| def aggregatePosterior | `aggregatePosterior` | mismatch. Paper defines an empirical average over observed x_i; translation gives an expectation over the marginal distribution. |
+| def marginalLabelShare | `marginalLabelShare` | - Marginal label share `\hat p_marg(y) = (1/N) sum_i 1[\hat y_i = y]`. |
+| def aggregatePosterior | `aggregatePosterior` | - Aggregate posterior `p_agg^q(y) = (1/N) sum_i q(y,x_i)`. |
 | def bias | `bias` | - Bias `bias(y, \hat y, p_ref) = \hat p_marg(y) - p_ref(y)`. |
 | def fidelity | `fidelity` | - Distributional fidelity `fid(p_ref, \hat y) = -sum_y \|bias(y,\hat y,p_ref)\|`. |
 | def classifierMAE | `classifierMAE` | - Predictive MAE for Bayes posterior scores: `E_X sum_y q(y,x)(1-q(y,x))`. |
@@ -186,7 +113,7 @@ These are the mathematical objects from the paper interface. All are exposed in
 | def sourceSe | `sourceSe` | - Source proof region `S_e`: focal posterior is `0`. |
 <!-- lean-derived-definitions:end -->
 
-## 14. Named Theorem Statements Checked
+## 5. Named Theorem Statements Checked
 
 ### Theorem 1
 
@@ -240,9 +167,9 @@ distributions `F`:
 - `PaperInterface.theorem2iii_non_argmax_not_pareto`: states that a positively
   disagreeing independent rule is not Pareto optimal under a non-trivial
   reference distribution.
-- `PaperInterface.theorem2iii_weighted_objective_maximizer_iff_agrees_argmax`:
-  states the weighted-objective maximizer iff argmax-agreement claim for
-  `gamma < 1`.
+- `PaperInterface.theorem2iii_weighted_objective_maximizer_agrees_argmax`:
+  states that any `gamma < 1` weighted-objective maximizing independent rule
+  agrees with argmax almost surely.
 - `PaperInterface.theorem2iii_strict_disagreement_not_weighted_objective_maximizer`:
   states the accuracy-boundary strict-disagreement non-maximality claim.
 
@@ -266,11 +193,11 @@ interfaces for independent deterministic and randomized rules.
 | theorem theorem2i_joint_rule_exists | `theorem2i_joint_rule_exists` | states existence of a joint expected-objective maximizer. |
 | theorem theorem2ii_argmax_accuracy_maximizing | `theorem2ii_argmax_accuracy_maximizing` | states argmax expected-accuracy optimality for Bayes-optimal scores. |
 | theorem theorem2iii_non_argmax_not_pareto | `theorem2iii_non_argmax_not_pareto` | states that a positively disagreeing independent rule is not Pareto optimal under a non-trivial reference distribution. |
-| theorem theorem2iii_weighted_objective_maximizer_iff_agrees_argmax | `theorem2iii_weighted_objective_maximizer_iff_agrees_argmax` | states the weighted-objective maximizer iff argmax-agreement claim for `gamma < 1`. |
+| theorem theorem2iii_weighted_objective_maximizer_agrees_argmax | `theorem2iii_weighted_objective_maximizer_agrees_argmax` | states that any `gamma < 1` weighted-objective maximizing independent rule agrees with argmax almost surely. |
 | theorem theorem2iii_strict_disagreement_not_weighted_objective_maximizer | `theorem2iii_strict_disagreement_not_weighted_objective_maximizer` | states the accuracy-boundary strict-disagreement non-maximality claim. |
 <!-- lean-derived-statements:end -->
 
-## 15. Paper-Facing Statement Validator Ledger
+## 6. Paper-Facing Statement Validator Ledger
 
 Generated from dashboard status export:
 
@@ -309,6 +236,123 @@ Generated from dashboard status export:
 | theorem theorem2ii_argmax_accuracy_maximizing | `theorem2ii_argmax_accuracy_maximizing` | gpt-5-codex (model; matches; 2026-06-06T20:39:21Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:21Z): Translation states that an argmax rule maximizes expected accuracy under Bayes-optimal score assumptions. |
 | theorem theorem2iii_non_argmax_not_pareto | `theorem2iii_non_argmax_not_pareto` | gpt-5-codex (model; matches; 2026-06-06T20:39:21Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:21Z): Translation states non-Pareto-optimality for a positively disagreeing rule under a nontrivial reference distribution. |
 | theorem theorem2iii_strict_disagreement_not_weighted_objective_maximizer | `theorem2iii_strict_disagreement_not_weighted_objective_maximizer` | gpt-5-codex (model; matches; 2026-06-06T20:39:21Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:21Z): Translation states strict-disagreement non-maximality for the weighted objective at the accuracy boundary. |
-| theorem theorem2iii_weighted_objective_maximizer_iff_agrees_argmax | `theorem2iii_weighted_objective_maximizer_iff_agrees_argmax` | gpt-5-codex (model; matches; 2026-06-06T20:39:21Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:21Z): Translation states the gamma < 1 weighted-objective maximizer iff zero-disagreement with argmax rule. |
+| theorem theorem2iii_weighted_objective_maximizer_agrees_argmax | `theorem2iii_weighted_objective_maximizer_agrees_argmax` | gpt-5-codex (model; matches; 2026-06-12T21:30:00Z) | gpt-5-codex (model; matches; 2026-06-12T21:30:00Z): Translation states the source-facing necessary condition that a `gamma < 1` weighted-objective maximizing independent rule agrees with argmax almost surely. |
 
 Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
+
+## 7. Paper Assumption Provenance
+
+> Strict premise-source audit update (2026-06-12): `assumption_match_llm.json`
+> now records per-premise judgments for this paper's `Assumptions.lean`
+> ledger. Current result: 9/9 recorded assumption-premises are source-matched,
+> source-derived, or human-verified as implicit source conditions; 0/9 remain
+> visible partial-boundary premises. This closes the stale missing-source-text
+> premise issue, but it does not by itself make the whole paper fully closed.
+
+Every paper-facing premise is routed through
+`DSWG24DiscretizationBias/Assumptions.lean` and checked by
+`assumption_match_llm.json`. These are source theorem conditions or standard
+formal side conditions for the continuous measure-theoretic wrapper; none are
+extra proof certificates.
+
+| Lean assumption/condition | Judgment | Source role |
+| --- | --- | --- |
+| `assumption_theorem1_no_information_case` | paper condition | Theorem 1(i) no-information regime, `q(y,x)=Pr(y)`. |
+| `assumption_theorem1_plurality_argmax_class` | paper condition | Theorem 1(i) plurality/tie-broken argmax class. |
+| `assumption_theorem1_perfect_classifier` | paper condition | Theorem 1(ii) perfect-classifier regime. |
+| `assumption_theorem1_argmax_rule_measurable` | paper condition | Standard formal measurability condition for the continuous argmax rule. |
+| `assumption_theorem1_calibrated_classifier` | paper condition | Theorem 1 calibrated-classifier hypothesis. |
+| `assumption_theorem2_at_least_two_classes` | paper condition | Nontrivial finite multiclass setting; human-verified by `nikhgarg` on 2026-06-12 as an implicit source condition. |
+| `assumption_theorem2_more_rows_than_classes` | paper condition | Theorem 2 sample-size condition `N > K`. |
+| `assumption_theorem2_positive_sample_count` | paper condition | Formal consequence of `N > K`. |
+| `assumption_theorem2_reference_nonnegative` | paper condition | Non-trivial reference distributions are probability distributions. |
+
+Additional assumptions beyond the paper: none.
+
+## 8. Proof-Strategy Deviations
+
+### Proof Deviations and Assumptions
+
+- **Theorem 1 proof deviation.** The paper's continuous source-transformation
+  proof sketch is underspecified at the measurable transformation step and in
+  the multiclass `S_b/S_d` mass accounting. Lean proves the same paper-facing
+  bound directly from calibration, and formalizes the source-transformation
+  route using an explicit real-coordinate sweep with coordinate pushforward and
+  pullback. This is a proof-strategy deviation, not a theorem-statement change.
+- **Theorem 2 Bayes assumption.** The paper phrase "Bayes optimal `q`" is
+  represented by row-wise Bayes identities. A finite Bayes dataset model is
+  provided as a reusable discharger for those identities.
+- **Standard formal assumptions.** Lean exposes finite type, decidable equality,
+  posterior-simplex, measurability, integrability, finite-measure, and
+  non-trivial-reference assumptions where the paper leaves them implicit.
+- **Optional future strengthening.** The accepted Theorem 1 source route uses a
+  concrete coordinate sweep. A fully abstract arbitrary nonatomic transport
+  theorem could later replace this proof seam. More automatic arbitrary-measure
+  conditional-expectation dischargers and randomized-rule measurability wrappers
+  would be reusable conveniences, not missing theorem endpoints.
+
+## 9. Proof Tricks Worth Reusing
+
+None separately recorded in the existing report.
+
+## 10. Library Lift Pass
+
+None separately recorded in the existing report.
+
+## 11. DAG Audit
+
+No separate DAG audit note is recorded in the existing report.
+
+## 12. Conditional And Auxiliary Results
+
+- The recorded assumption ledger has no remaining partial-boundary premise.
+- The prior dashboard mismatches for `marginalLabelShare` and
+  `aggregatePosterior` are closed: both paper-facing rows now state the
+  finite-sample source formulas, while PMF/population analogues remain in the
+  proof layer under their own names.
+- The Theorem 2(iii) interface no longer exposes an optimizer/maximality
+  certificate in the paper-facing row; the former iff route remains an internal
+  helper only and is not counted as the paper-facing theorem endpoint.
+
+## 13. Suspected Paper Errors or Inconsistencies
+
+None separately recorded in the existing report.
+
+## 14. Validation Checks
+
+### Verification Checks
+
+- The paper target `DSWG24DiscretizationBias` builds successfully.
+- The human-facing Lean interface `DSWG24DiscretizationBias.PaperInterface`
+  builds successfully.
+- The post-paper audit ledger builds successfully.
+- The DSWG Lean files contain no `sorry`, `admit`, or `axiom` placeholders.
+- The dependency DAG renders successfully and was visually inspected after the
+  final layout update.
+- The final report and repository status files no longer contain obsolete
+  Theorem 2(i)--(ii) restriction caveats or raw command logs.
+
+### Statement Translation Audit
+
+Audit date: 2026-06-12.
+Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
+
+Summary: 32 rows; 32 match, 0 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none.
+
+Flagged rows: none.
+
+## 15. Final Verdict
+
+Completion status: formalized.
+
+The paper-facing definitions, Theorem 1, and Theorem 2 are represented by
+compiling Lean declarations. The recorded assumption-premises now have
+source/provenance judgments, including the human-verified implicit multiclass
+condition `K >= 2`; the two previous finite-sample definition mismatches are
+closed. The Theorem 2(iii) public endpoint is the certificate-free
+source-facing necessary condition, while broader optimizer/maximality helper
+routes remain internal auxiliary material.
+
+- Completion status: formalized.
+- Summary: premise-source and statement audits are clean for the current
+  dashboard.

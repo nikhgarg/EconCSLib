@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -66,7 +67,7 @@ PUBLICATION_OVERRIDES = {
 SOURCE_URL_OVERRIDES = {
     "DSWG24DiscretizationBias": "https://arxiv.org/pdf/2405.16762",
     "GCG24UserItemFairness": "https://openreview.net/pdf?id=ZOZjMs3JTs",
-    "GGSG19TopThree": "https://arxiv.org/abs/1906.08160",
+    "GGSG19TopThree": "https://arxiv.org/pdf/1906.08160",
     "GHW01DigitalGoods": "https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf",
     "GJ18InformativeRatingSystems": "https://doi.org/10.1287/msom.2020.0921",
     "GN21DriverSurgePricing": "https://arxiv.org/pdf/1905.07544",
@@ -239,12 +240,47 @@ def note_citation(payload: dict[str, Any]) -> dict[str, str] | None:
     return {"label": label, "url": url}
 
 
-def paper_dirs() -> list[Path]:
+def all_paper_dirs() -> list[Path]:
     return sorted(
         folder
         for folder in PAPERS.iterdir()
         if folder.is_dir() and folder.name != TEMPLATE.name and (folder / "status.json").exists()
     )
+
+
+def tracked_paper_dirs() -> list[Path]:
+    """Return paper folders whose status files are tracked in git.
+
+    Defaulting to tracked files keeps local draft paper scaffolds from changing
+    generated aggregate status files and matches CI behavior in a clean checkout.
+    """
+
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "--", "papers/*/status.json"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return all_paper_dirs()
+
+    folders: set[Path] = set()
+    for raw in result.stdout.splitlines():
+        path = (ROOT / raw.strip()).resolve()
+        if path.name == "status.json" and path.exists() and path.parent.parent == PAPERS:
+            if path.parent.name != TEMPLATE.name:
+                folders.add(path.parent)
+    if not folders:
+        return all_paper_dirs()
+    return sorted(folders)
+
+
+def paper_dirs(*, include_untracked: bool = False) -> list[Path]:
+    if include_untracked:
+        return all_paper_dirs()
+    return tracked_paper_dirs()
 
 
 def load_paper_status(folder: Path) -> dict[str, Any]:
@@ -259,8 +295,11 @@ def load_paper_status(folder: Path) -> dict[str, Any]:
     return payload
 
 
-def paper_records() -> list[tuple[Path, dict[str, Any]]]:
-    return [(folder, load_paper_status(folder)) for folder in paper_dirs()]
+def paper_records(*, include_untracked: bool = False) -> list[tuple[Path, dict[str, Any]]]:
+    return [
+        (folder, load_paper_status(folder))
+        for folder in paper_dirs(include_untracked=include_untracked)
+    ]
 
 
 def aggregate_payload(records: list[tuple[Path, dict[str, Any]]]) -> dict[str, Any]:
@@ -504,17 +543,6 @@ def human_summary_review(payload: dict[str, Any]) -> dict[str, str] | None:
     return review
 
 
-def artifact_path(payload: dict[str, Any], key: str) -> str | None:
-    artifacts = payload.get("artifacts")
-    if not isinstance(artifacts, dict):
-        return None
-    value = artifacts.get(key)
-    if not isinstance(value, str):
-        return None
-    value = value.strip()
-    return value or None
-
-
 def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for folder, payload in records:
@@ -537,7 +565,6 @@ def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[s
             "main_note_review": human_summary_review(payload),
             "paper_folder": str(folder.relative_to(ROOT)),
             "review_entrypoint": payload["review_entrypoint"],
-            "dependency_dag_pdf": artifact_path(payload, "dependency_dag_pdf"),
         }
         rows.append(row)
 
@@ -650,7 +677,7 @@ def render_readme_status_block(records: list[tuple[Path, dict[str, Any]]]) -> st
     by_id = {payload["id"]: payload for _folder, payload in records}
     lines = [
         README_STATUS_BEGIN,
-        "| Paper | Status | Human review | PaperInterface size | Public note |",
+        "| Paper | Status | Review | Interface | Human summary |",
         "|---|---:|---:|---:|---|",
     ]
     for row in human_status_rows(records):
@@ -707,7 +734,7 @@ def render_paper_status_md(payload: dict[str, Any]) -> str:
         "an arXiv, conference, or original working-paper year. The table below uses",
         "the published citation title and year.",
         "",
-        "| Paper info | Status | Human review | Full proof LOC | Note |",
+        "| Paper, authors, publication | Status | Human review | Full proof LOC | Public note |",
         "|---|---|---:|---:|---|",
     ]
     for row in payload["papers"]:
@@ -749,19 +776,6 @@ def github_link(path: str) -> str:
     return GITHUB_MAIN + path
 
 
-def render_status_artifacts_cell(row: dict[str, Any]) -> str:
-    status_href = github_link(row["review_entrypoint"])
-    status_link = (
-        f'<a href="{html_escape(status_href)}">{html_escape(row["status"])}</a>'
-    )
-    dag_path = row.get("dependency_dag_pdf")
-    if not isinstance(dag_path, str) or not dag_path:
-        return status_link
-    dag_href = github_link(dag_path)
-    dag_link = f'<a href="{html_escape(dag_href)}">DAG</a>'
-    return f"{status_link} / {dag_link}"
-
-
 def html_note_with_citation(note: str, citation: dict[str, str] | None) -> str:
     rendered = html_escape(note)
     if not citation:
@@ -800,7 +814,7 @@ def render_site_status_block(payload: dict[str, Any]) -> str:
     lines = [f"{indent}{SITE_STATUS_BEGIN}"]
     for row in payload["papers"]:
         paper_href = row["source_url"] or github_link(row["paper_folder"])
-        status_artifacts = render_status_artifacts_cell(row)
+        status_href = github_link(row["review_entrypoint"])
         note = html_note_with_citation(row["main_note"], row.get("main_note_citation"))
         lines.extend(
             [
@@ -815,11 +829,14 @@ def render_site_status_block(payload: dict[str, Any]) -> str:
                     f"{html_escape(row['publication'])}."
                 ),
                 f"{indent}  </td>",
-                f"{indent}  <td>{status_artifacts}</td>",
-                f"{indent}  <td>{int(row['lean_loc']):,}</td>",
-                f"{indent}  <td>{note}</td>",
+                (
+                    f'{indent}  <td><a href="{html_escape(status_href)}">'
+                    f"{html_escape(row['status'])}</a></td>"
+                ),
                 f"{indent}  <td>{html_escape(row['human_translation'])}</td>",
                 f"{indent}  <td>{html_escape(row['llm_as_judge_translation'])}</td>",
+                f"{indent}  <td>{int(row['lean_loc']):,}</td>",
+                f"{indent}  <td>{note}</td>",
                 f"{indent}</tr>",
             ]
         )
@@ -865,9 +882,14 @@ def render_site_index(payload: dict[str, Any]) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true", help="fail if generated status files are out of sync")
+    parser.add_argument(
+        "--include-untracked",
+        action="store_true",
+        help="also include untracked draft paper folders with status.json",
+    )
     args = parser.parse_args()
 
-    records = paper_records()
+    records = paper_records(include_untracked=args.include_untracked)
     aggregate = aggregate_payload(records)
     human = human_payload(records)
     outputs = {

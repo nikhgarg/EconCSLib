@@ -5,9 +5,8 @@
   "authors": "Aranyak Mehta, Amin Saberi, Umesh Vazirani, and Vijay V. Vazirani",
   "source_version": "Journal of the ACM, 2007",
   "build_target": "lake build MSVV07AdWords",
-  "status": "formalized",
-  "main_caveat": "Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed, including a source-shaped page-level guarantee.",
-  "human_summary": "",
+  "status": "partially formalized",
+  "main_caveat": "Strict transitive provenance audit boundary: the Balance/MSVV finite-error and extensions still depend on approximation-accounting, state-invariant, and factor-revealing LP certificate APIs.",
   "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
@@ -18,7 +17,7 @@
   },
   "paper_interface": {
     "path": "papers/MSVV07AdWords/PaperInterface.lean",
-    "line_count": 872,
+    "line_count": 902,
     "declaration_rows": 26,
     "review_rows": 26,
     "oversized": false,
@@ -32,10 +31,27 @@
     "final_validation_report": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
     "dependency_dag_tex": "papers/MSVV07AdWords/DependencyDAG.tex",
     "dependency_dag_pdf": "papers/MSVV07AdWords/DependencyDAG.pdf",
-    "proof_interface": "papers/MSVV07AdWords/ProofInterface.lean"
+    "proof_interface": "papers/MSVV07AdWords/ProofInterface.lean",
+    "source_text": "papers/MSVV07AdWords/MSVV07AdWords.txt",
+    "assumptions": "papers/MSVV07AdWords/Assumptions.lean"
   },
   "review_surface": {
     "source_file": "papers/MSVV07AdWords/PaperInterface.lean",
+    "assumption_source_file": "papers/MSVV07AdWords/Assumptions.lean",
+    "llm_assumption_review": "papers/MSVV07AdWords/assumption_match_llm.json",
+    "assumption_policy": "strict",
+    "assumption_names": [
+      "assumption_nonnegative_bids",
+      "assumption_full_distinct_query_history",
+      "assumption_epsilon_range",
+      "assumption_alive_bidder_predicate",
+      "assumption_next_highest_all_small_bids",
+      "assumption_next_highest_alive_small_bids",
+      "assumption_click_through_rates_probability_bounds",
+      "assumption_availability_predicate",
+      "assumption_weighted_bids_nonnegative_weights",
+      "assumption_weighted_effective_small_bids"
+    ],
     "include_names": [
       "paperSlotsPerPageDistinct_iff",
       "paperSpend_formula",

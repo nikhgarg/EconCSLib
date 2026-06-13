@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "paper": "GGSG19TopThree",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-12T00:00:00Z",
+  "comment": "Premise-level source/provenance audit. Each audit-premise from Assumptions.lean is judged individually; group-level approval is not sufficient.",
+  "items": {
+    "assumption_strict_cross_tier_no_ties": {
+      "judgment": "paper_condition",
+      "reason": "Proposition 1 is exactly the strict cross-tier top-prefix regime; the source states strict inequalities between every higher-tier and lower-tier candidate at every prefix cutoff.",
+      "source_location": "source_tex/arxiv.tex lines 385-392, Proposition thm:consistency",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hNoTie : ∀ stage : Fin Stage, ∀ hi lo : Candidate n, hi ∈ targetPrefix stage → lo ∉ targetPrefix stage → ∀ cut : RankingProperPrefixCut n, rankingTopPrefixProb law lo cut ≠ rankingTopPrefixProb law hi cut": {
+          "judgment": "source_text",
+          "source_location": "source_tex/arxiv.tex lines 385-392: higher-tier candidates are strictly more likely to be ranked in every top-k prefix than lower-tier candidates.",
+          "reason": "Strict greater-than source inequalities imply the Lean no-equality/no-cross-tier-tie premise."
+        }
+      }
+    },
+    "assumption_pairwise_approval_ternary_gap_domain": {
+      "judgment": "paper_condition",
+      "reason": "Proposition 3 specializes to K-approval, where score gaps are ternary, and uses the source condition that the higher-score candidate has larger expected score.",
+      "source_location": "source_tex/arxiv.tex lines 508-517, Proposition lem:pairwiselearning_approval",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hle : pDown ≤ pUp": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "source_tex/arxiv.tex lines 508-517: Proposition 3 assumes candidates i,j such that s_i > s_j and K-approval score β(k)=1[k≤K].",
+          "reason": "Under K-approval the expected pairwise score gap is pUp - pDown, so the source condition s_i > s_j derives pDown ≤ pUp."
+        },
+        "hscore : ∀ signal, hiScore signal - loScore signal = 1 ∨ hiScore signal - loScore signal = 0 ∨ hiScore signal - loScore signal = -1": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "source_tex/arxiv.tex lines 508-517: K-approval scores are β(k)=1[k≤K], so a pairwise score difference is 1, 0, or -1.",
+          "reason": "The ternary Lean score-gap premise is the finite-signal expansion of the source K-approval scoring rule."
+        }
+      }
+    },
+    "assumption_randomized_mechanism_probability_weights": {
+      "judgment": "paper_condition",
+      "reason": "Randomized scoring and K-approval mechanisms choose component rules with probabilities.",
+      "source_location": "source_tex/arxiv.tex lines 667-669 and 1399-1407",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hweight : ∀ rule, 0 ≤ weight rule": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source_tex/arxiv.tex lines 667-669: β_p is selected with probability d_p.",
+          "reason": "Probability weights are nonnegative by the source randomized-mechanism setup."
+        },
+        "hsum : (∑ rule : Rule, weight rule) = 1": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source_tex/arxiv.tex lines 667-669 and 1405-1407: component rules are selected with probabilities d^u.",
+          "reason": "A randomized mechanism's component probabilities sum to one in the source model."
+        }
+      }
+    },
+    "assumption_mallows_nontrivial_winner_and_noise": {
+      "judgment": "paper_condition",
+      "reason": "The Mallows no-randomization corollary selects W winners from the reference ranking and uses the adjacent pivotal pair W,W+1.",
+      "source_location": "source_tex/arxiv.tex lines 729-733 and 752-759",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hW : 0 < W.val": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "source_tex/arxiv.tex lines 729-733: selecting W winners separates candidates 1..W from W+1..M and uses pivotal pair W,W+1.",
+          "reason": "The Lean positivity condition states that the selected-winner boundary is nontrivial, which is implicit in the source's adjacent pivotal-pair setup."
+        },
+        "hq_lt : M.q < 1": {
+          "judgment": "paper_condition",
+          "source_location": "source_tex/arxiv.tex lines 291-295, 725-733, and 755-759.",
+          "reason": "The corollary reasons about the reference-ranking top-W set and adjacent pivotal pair under the Mallows model. The uniform endpoint φ=1 does not induce the strict reference top-W outcome used by that source proof, so Lean records the non-uniform Mallows regime as an implicit paper condition."
+        }
+      }
+    },
+    "assumption_nontrivial_k_approval_cutoffs": {
+      "judgment": "paper_condition",
+      "reason": "The K-approval randomization theorem ranges over proper nontrivial K-approval cutoffs.",
+      "source_location": "source_tex/arxiv.tex lines 1513-1517 and 729-733",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hK_pos : ∀ rule, 0 < K rule": {
+          "judgment": "source_text",
+          "source_location": "source_tex/arxiv.tex lines 1513-1517: randomization over K-approval mechanisms for K in {1,...,M-1}.",
+          "reason": "The source K range gives positive cutoffs."
+        },
+        "hK_lt : ∀ rule, K rule < n + 2": {
+          "judgment": "source_text",
+          "source_location": "source_tex/arxiv.tex lines 1513-1517: randomization over K-approval mechanisms for K in {1,...,M-1}.",
+          "reason": "For the Lean candidate indexing convention, K < n+2 is the proper-cutoff form of the source upper bound K ≤ M-1."
+        }
+      }
+    }
+  }
+}

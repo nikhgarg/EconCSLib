@@ -1,0 +1,155 @@
+{
+  "schema": 1,
+  "paper": "MSVV07AdWords",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-12T00:00:00Z",
+  "comment": "Premise-level source/provenance audit against the cached MSVV07 source text. These rows are model primitives or paper-statement conditions, not proof certificates.",
+  "items": {
+    "assumption_nonnegative_bids": {
+      "judgment": "paper_assumption",
+      "reason": "The AdWords model treats bids as monetary bid/revenue quantities for assigning queries to bidders.",
+      "source_location": "Problem statement and Section 2 AdWords model",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hbid : I.NonnegativeBids": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 2: each bidder specifies a bid c_iq and assignment earns revenue c_iq",
+          "reason": "Bids are source monetary quantities/revenues. The Lean predicate records their nonnegative monetary domain."
+        }
+      }
+    },
+    "assumption_full_distinct_query_history": {
+      "judgment": "paper_condition",
+      "reason": "The finite Lean endpoint represents the online sequence as a complete enumeration of finitely many query events.",
+      "source_location": "Section 2 query sequence q_1, q_2, ..., q_M; finite Theorem 8 accounting surface",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hnodup : history.Nodup": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Section 2 finite query sequence representation",
+          "reason": "The Lean finite type treats query occurrences as distinct events and `history` as their enumeration; nodup is a representation invariant of that source sequence."
+        },
+        "hcover : AdWordsInstance.historyFinset history = Finset.univ": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Section 2 finite query sequence representation",
+          "reason": "The cover condition states that the Lean history enumerates all finite query events in the source sequence."
+        }
+      }
+    },
+    "assumption_epsilon_range": {
+      "judgment": "paper_condition",
+      "reason": "The finite explicit-error theorem uses epsilon as the small-bids fraction/error parameter; the displayed finite bound is stated on the normalized small-bids range.",
+      "source_location": "Theorem 8 small-bids finite-error formulation",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hepsilon : 0 \u2264 epsilon": {
+          "judgment": "paper_condition",
+          "source_location": "Theorem 8 small-bids parameter",
+          "reason": "A small-bids fraction/error parameter is nonnegative."
+        },
+        "hepsilon_le_one : epsilon \u2264 1": {
+          "judgment": "paper_condition",
+          "source_location": "Theorem 8 finite explicit-error normalization",
+          "reason": "The finite Lean bound restricts to the normalized epsilon range; the limiting theorem uses arbitrarily small epsilon."
+        }
+      }
+    },
+    "assumption_alive_bidder_predicate": {
+      "judgment": "paper_assumption",
+      "reason": "Section 6 explicitly defines the next-highest bid variant over alive bidders.",
+      "source_location": "Section 6 next-highest-bid extension",
+      "premise_count": 1,
+      "premise_judgments": {
+        "alive : Advertiser \u2192 Query \u2192 Prop": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 6: alive bidders, i.e. bidders who still have money",
+          "reason": "The predicate is the Lean representation of the source's alive-bidder condition."
+        }
+      }
+    },
+    "assumption_next_highest_all_small_bids": {
+      "judgment": "paper_condition",
+      "reason": "The all-bidders next-price endpoint applies Theorem 8 to the next-price effective charges, so those effective charges must satisfy the same small-bids condition.",
+      "source_location": "Section 6 next-highest-bid extension via effective bids",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hnext_small : \u2200 a q, section6_next_highest_bid_all I a q \u2264 epsilon * I.budget a": {
+          "judgment": "paper_condition",
+          "source_location": "Section 6 next-highest-bid extension and Theorem 8 small-bids assumption",
+          "reason": "This is the small-bids theorem condition specialized to all-bidders next-price effective charges."
+        }
+      }
+    },
+    "assumption_next_highest_alive_small_bids": {
+      "judgment": "paper_condition",
+      "reason": "The alive-bidders next-price endpoint applies Theorem 8 to alive next-price effective charges, so those charges must satisfy the same small-bids condition.",
+      "source_location": "Section 6 next-highest-bid extension via effective bids",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hnext_small : \u2200 a q, section6_next_highest_bid_alive I alive a q \u2264 epsilon * I.budget a": {
+          "judgment": "paper_condition",
+          "source_location": "Section 6 alive-bidders next-highest-bid extension and Theorem 8 small-bids assumption",
+          "reason": "This is the small-bids theorem condition specialized to alive-bidders next-price effective charges."
+        }
+      }
+    },
+    "assumption_click_through_rates_probability_bounds": {
+      "judgment": "paper_assumption",
+      "reason": "Section 6 identifies click-through rate as the probability that a user clicks on the ad.",
+      "source_location": "Section 6 click-through-rate extension",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hctr_nonneg : \u2200 a q, 0 \u2264 ctr a q": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 6: CTR is the probability that a user clicks",
+          "reason": "Probabilities are nonnegative."
+        },
+        "hctr_le_one : \u2200 a q, ctr a q \u2264 1": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 6: CTR is the probability that a user clicks",
+          "reason": "Probabilities are at most one."
+        }
+      }
+    },
+    "assumption_availability_predicate": {
+      "judgment": "paper_assumption",
+      "reason": "Section 6 allows advertisers to enter during the query sequence, represented in Lean by an availability predicate.",
+      "source_location": "Section 6 delayed-entry / advertiser availability extension",
+      "premise_count": 1,
+      "premise_judgments": {
+        "available : Advertiser \u2192 Query \u2192 Prop": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 6: advertisers may enter at any time during the query sequence",
+          "reason": "The predicate is the Lean representation of source-time availability."
+        }
+      }
+    },
+    "assumption_weighted_bids_nonnegative_weights": {
+      "judgment": "paper_condition",
+      "reason": "Section 8 defines effective bids as actual bid times advertiser weight; the Lean theorem states the nonnegative-weight regime for preserving nonnegative effective bids.",
+      "source_location": "Section 8 weighted-bids extension",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hweight_nonneg : \u2200 a, 0 \u2264 weight a": {
+          "judgment": "paper_condition",
+          "source_location": "Section 8: each bidder is assigned a weight and effective bid is bid times weight",
+          "reason": "The condition records the nonnegative effective-bid regime for the paper's weighted-bid proposal."
+        }
+      }
+    },
+    "assumption_weighted_effective_small_bids": {
+      "judgment": "paper_condition",
+      "reason": "The weighted-bids endpoint applies Theorem 8 to weighted effective bids, so the weighted effective bids must satisfy the small-bids condition.",
+      "source_location": "Section 8 weighted-bids extension and Theorem 8 small-bids assumption",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hweighted_small : \u2200 a q, weight a * I.bid a q \u2264 epsilon * I.budget a": {
+          "judgment": "paper_condition",
+          "source_location": "Section 8 weighted effective bids; Theorem 8 small-bids assumption",
+          "reason": "This is the small-bids theorem condition specialized to the paper's weighted effective bids."
+        }
+      }
+    }
+  }
+}

@@ -19,6 +19,8 @@ scope checks for overbroad abstractions, not caveats on the paper statements.
 
 namespace LG21TestOptionalPolicies
 
+open EconCSLib.Probability
+
 namespace PostPaperAudit
 
 /-- Audit endpoint for the Section 3 hidden-access information-set assumption. -/
@@ -3172,13 +3174,170 @@ abbrev audit_theorem3_2_fairness_certificate_of_not_latent_or_observable_fair :=
 abbrev audit_theorem3_2_law_fairness_certificate_of_not_latent_or_observable_fair := @paper_interface_theorem3_2_law_fairness_impossibility_certificate_of_not_latent_or_observable_fair
 
 /-- Audit endpoint for Lemma 4.1, observed-access source strategy-proofness. -/
-abbrev audit_lemma4_1_observed_access_strategy_proofness := @paper_interface_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models
+theorem audit_lemma4_1_observed_access_strategy_proofness
+    {Feature Skill Base ReportRequiredBase ReportRequiredTest : Type*}
+    [Fintype Feature] [DecidableEq Feature]
+    (api : StandardGaussianCDFAPI)
+    (M : GaussianOffsetSignalFamily Feature) (theta : Feature → ℝ) (k : Feature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : Skill → Base → Bool)
+    (reportRequiredDecision : ReportRequiredBase → ReportRequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate M theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate api skillLaw reportRequiredDecision
+          qBar testScale htestScale takeEstimationConsistent)) :
+    (∀ info : paperAccessStudentInfo Skill Base ℝ,
+      paperChosenAccessAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate M theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate M theta k scoreLaw takeDecision
+          reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info :
+        paperAccessStudentInfo ℝ ReportRequiredBase ReportRequiredTest,
+        paperChosenAccessAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            standardGaussianLowerTailMeanCertificate api skillLaw reportRequiredDecision
+            qBar testScale htestScale takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            standardGaussianLowerTailMeanCertificate api skillLaw reportRequiredDecision
+            qBar testScale htestScale takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) :=
+  paper_interface_lemma4_1_observed_access_chosen_actions_of_fully_specified_source_models
+    standardGaussianLowerTailMeanCertificate api M theta k scoreLaw skillLaw
+    takeDecision reportRequiredDecision htestScale hReportEq hTakeEq
 
 /-- Audit endpoint for Proposition 4.2, base-indexed posterior-law surface. -/
-abbrev audit_proposition4_2_base_indexed_posterior_surface := @paper_interface_proposition4_2_not_latent_skill_fair_of_fully_specified_source_models_and_base_indexed_one_test_posterior_surface
+theorem audit_proposition4_2_base_indexed_posterior_surface
+    {StrategyFeature OptionalSkill OptionalBase RequiredBase RequiredTest
+      Base : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Nonempty Base]
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : OptionalSkill → OptionalBase → Bool)
+    (reportRequiredDecision : RequiredBase → RequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate Mstrategy theta k scoreLaw
+          takeDecision reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate api skillLaw
+          reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent))
+    (intercept slope lawTestScale noAccessEstimate : Base → ℝ)
+    (hslope : ∀ base : Base, 0 < slope base)
+    (hlawTestScale : ∀ base : Base, 0 < lawTestScale base) :
+    (∀ info : paperAccessStudentInfo OptionalSkill OptionalBase ℝ,
+      paperChosenAccessAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate Mstrategy theta k scoreLaw
+          takeDecision reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate Mstrategy theta k scoreLaw
+          takeDecision reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : paperAccessStudentInfo ℝ RequiredBase RequiredTest,
+        paperChosenAccessAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            standardGaussianLowerTailMeanCertificate api skillLaw
+            reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            standardGaussianLowerTailMeanCertificate api skillLaw
+            reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) ∧
+        ¬ lg21SourceLawLatentSkillFair
+          (paperBaseIndexedOneTestPosteriorLawSurface
+            intercept slope lawTestScale noAccessEstimate
+            hslope hlawTestScale) :=
+  paper_interface_proposition4_2_not_latent_skill_fair_of_fully_specified_source_models_and_base_indexed_one_test_posterior_surface
+    standardGaussianLowerTailMeanCertificate api Mstrategy theta k scoreLaw
+    skillLaw takeDecision reportRequiredDecision htestScale hReportEq hTakeEq
+    intercept slope lawTestScale noAccessEstimate hslope hlawTestScale
 
 /-- Audit endpoint for Proposition 4.3, base-mixed extra-signal surface. -/
-abbrev audit_proposition4_3_base_mixed_extra_signal_surface := @paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_fully_specified_source_models_and_base_mixed_extra_signal_surface
+theorem audit_proposition4_3_base_mixed_extra_signal_surface
+    {StrategyFeature OptionalSkill OptionalBase RequiredBase RequiredTest
+      Feature Base : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Fintype Feature] [Nonempty Feature] [Nonempty Base]
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : OptionalSkill → OptionalBase → Bool)
+    (reportRequiredDecision : RequiredBase → RequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate Mstrategy theta k scoreLaw
+          takeDecision reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate api skillLaw
+          reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent))
+    (baseProfile : PMF Base)
+    (Mbase : Base → GaussianOffsetSignalFamily Feature)
+    (extraNoiseMean extraNoiseVar : ℝ) (hextraNoiseVar : 0 < extraNoiseVar) :
+    (∀ info : paperAccessStudentInfo OptionalSkill OptionalBase ℝ,
+      paperChosenAccessAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate Mstrategy theta k scoreLaw
+          takeDecision reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate Mstrategy theta k scoreLaw
+          takeDecision reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : paperAccessStudentInfo ℝ RequiredBase RequiredTest,
+        paperChosenAccessAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            standardGaussianLowerTailMeanCertificate api skillLaw
+            reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            standardGaussianLowerTailMeanCertificate api skillLaw
+            reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) ∧
+        ¬ lg21SourceLawObservablyFair
+          (paperBaseMixedExtraSignalPosteriorLawSurface
+            baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) ∧
+          ¬ lg21SourceLawDemographicallyFair
+            (paperBaseMixedExtraSignalPosteriorLawSurface
+              baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar) :=
+  paper_interface_proposition4_3_not_law_observable_or_demographic_fair_of_fully_specified_source_models_and_base_mixed_extra_signal_surface
+    standardGaussianLowerTailMeanCertificate api Mstrategy theta k scoreLaw
+    skillLaw takeDecision reportRequiredDecision htestScale hReportEq hTakeEq
+    baseProfile Mbase extraNoiseMean extraNoiseVar hextraNoiseVar
 
 /-- Audit endpoint for Definition 6, finite re-sampling policy kernel. -/
 abbrev audit_definition6_resampling_policy_observable_kernel := @paper_interface_definition6_resampling_policy_observable_kernel
@@ -3235,7 +3394,60 @@ abbrev audit_theorem4_4_resampling_policy_strategy_proof_source_surface_fair := 
 abbrev audit_theorem4_4_resampling_policy_strategy_proof_source_surface_for_skill_fair := @paper_interface_theorem4_4_resampling_policy_strategy_proof_source_surface_for_skill_fair
 
 /-- Audit endpoint for Theorem 4.4, source strategy-proof fair re-sampling policy. -/
-abbrev audit_theorem4_4_resampling_policy := @paper_interface_theorem4_4_resampling_policy_source_strategy_proof_observable_and_demographic_fair
+theorem audit_theorem4_4_resampling_policy
+    {StrategyFeature OptionalSkill OptionalBase RequiredBase RequiredTest
+      ΩBase ΩTest Estimate : Type*}
+    [Fintype StrategyFeature] [DecidableEq StrategyFeature]
+    [Fintype ΩBase] [DecidableEq ΩBase]
+    (api : StandardGaussianCDFAPI)
+    (Mstrategy : GaussianOffsetSignalFamily StrategyFeature)
+    (theta : StrategyFeature → ℝ) (k : StrategyFeature)
+    (scoreLaw skillLaw : GaussianScaleLaw)
+    (takeDecision : OptionalSkill → OptionalBase → Bool)
+    (reportRequiredDecision : RequiredBase → RequiredTest → Bool)
+    {reportingBase threshold qBar testScale : ℝ} (htestScale : 0 < testScale)
+    {reportEstimationConsistent takeEstimationConsistent : Prop}
+    (hReportEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate Mstrategy theta k scoreLaw
+          takeDecision reportingBase threshold reportEstimationConsistent))
+    (hTakeEq :
+      paperSourceEquilibrium
+        (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate api skillLaw
+          reportRequiredDecision qBar testScale htestScale
+          takeEstimationConsistent))
+    (e : LG21ResamplingExperiment ΩBase ΩTest Estimate) :
+    (∀ info : paperAccessStudentInfo OptionalSkill OptionalBase ℝ,
+      paperChosenAccessAction
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate Mstrategy theta k scoreLaw
+          takeDecision reportingBase threshold reportEstimationConsistent).takeDecision
+        (lg21FullySpecifiedOptionalReportingSourceEquilibriumData
+          standardGaussianLowerTailMeanCertificate Mstrategy theta k scoreLaw
+          takeDecision reportingBase threshold reportEstimationConsistent).reportDecision
+        info =
+        LG21AccessAction.takeAndReport) ∧
+      (∀ info : paperAccessStudentInfo ℝ RequiredBase RequiredTest,
+        paperChosenAccessAction
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            standardGaussianLowerTailMeanCertificate api skillLaw
+            reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).takeDecision
+          (lg21FullySpecifiedReportRequiredSourceEquilibriumData
+            standardGaussianLowerTailMeanCertificate api skillLaw
+            reportRequiredDecision qBar testScale htestScale
+            takeEstimationConsistent).reportDecision
+          info =
+          LG21AccessAction.takeAndReport) ∧
+        lg21ObservableFair
+          (lg21AccessEstimateKernel e) (lg21ResamplingEstimateKernel e) ∧
+          lg21DemographicallyFair e.baseProfile
+            (lg21AccessEstimateKernel e) (lg21ResamplingEstimateKernel e) :=
+  paper_interface_theorem4_4_resampling_policy_source_strategy_proof_observable_and_demographic_fair
+    standardGaussianLowerTailMeanCertificate api Mstrategy theta k scoreLaw
+    skillLaw takeDecision reportRequiredDecision htestScale hReportEq hTakeEq e
 
 /-- Audit endpoint for Theorem 4.4, source-model strategy-proof source-surface fair re-sampling policy. -/
 abbrev audit_theorem4_4_resampling_policy_source_surface := @paper_interface_theorem4_4_resampling_policy_source_strategy_proof_source_surface_fair

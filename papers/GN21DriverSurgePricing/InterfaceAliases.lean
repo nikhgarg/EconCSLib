@@ -39,7 +39,8 @@ abbrev definition_threshold_policy := @thresholdPolicy
 abbrev proposition3_1_affine_single_state_ic := @proposition3_1_affine_single_state_measurable_ic
 
 /-- Theorem 1: single-state threshold best response. -/
-abbrev theorem1_single_state_threshold_best_response := @theorem1_single_state_threshold_best_response_measurable
+abbrev theorem1_single_state_threshold_best_response :=
+  @GN21DriverSurgePricing.paper_theorem1_single_state_threshold_best_response_measurable_of_positive_payout_mass
 
 /-- Lemma 1: measured dynamic reward decomposition. -/
 abbrev lemma1_measured_dynamic_reward_decomposition := @paper_lemma1_measured_dynamic_reward_decomposition
@@ -60,13 +61,15 @@ abbrev remark4_switch_time_minus_switch_probability_nonneg := @paper_remark4_swi
 abbrev lemma3_measured_time_fraction_formula := @paper_lemma3_measured_time_fraction_formula_algebra
 
 /-- Lemma 4: measurable threshold optimizer uniqueness up to zero-mass sets. -/
-abbrev lemma4_single_state_threshold_uniqueness := @paper_lemma4_single_state_threshold_mass_zero_uniqueness_measurable
+abbrev lemma4_single_state_threshold_uniqueness :=
+  @GN21DriverSurgePricing.paper_lemma4_single_state_threshold_mass_zero_uniqueness_measurable_of_positive_payout_mass
 
 /-- Lemma 5: fixed-response feasible policy form almost everywhere. -/
 abbrev lemma5_fixed_response_policy_form := @lemma5_fixed_response_feasible_policy_form_ae_of_response_shape
 
 /-- Lemma 6: upper-endpoint derivative formula for dynamic reward. -/
-abbrev lemma6_upper_endpoint_derivative_formula := @paper_lemma6_upper_endpoint_interval_density_response_formula
+abbrev lemma6_upper_endpoint_derivative_formula :=
+  @paper_lemma6_upper_endpoint_interval_density_response_formula_no_density_premise
 
 /-- Lemma 7: positive-additive affine CTMC response is strictly quasi-convex. -/
 abbrev lemma7_affine_positive_additive_response_quasi_convex := @paper_lemma7_affine_positive_additive_response_strict_quasi_convex
@@ -75,10 +78,12 @@ abbrev lemma7_affine_positive_additive_response_quasi_convex := @paper_lemma7_af
 abbrev lemma8_affine_negative_additive_response_quasi_concave := @paper_lemma8_affine_negative_additive_response_strict_quasi_concave
 
 /-- Lemma 9: surge derivative is positive under the accept-all bounds. -/
-abbrev lemma9_surge_derivative_positive_of_acceptAll_bounds := @paper_lemma9_surge_derivative_positive_of_acceptAll_bounds
+abbrev lemma9_surge_derivative_positive_of_acceptAll_bounds :=
+  @paper_lemma9_surge_derivative_positive_of_acceptAll_bounds_on_certificate_fields
 
 /-- Lemma 10: non-surge derivative is positive under the accept-all bounds. -/
-abbrev lemma10_nonsurge_derivative_positive_of_acceptAll_bounds := @paper_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds
+abbrev lemma10_nonsurge_derivative_positive_of_acceptAll_bounds :=
+  @paper_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds_on_certificate_fields
 
 /-- Theorem 4: positive-response accept-all candidate from current bounds. -/
 abbrev theorem4_positive_response_acceptAll_candidate := @theorem4_positive_response_acceptAll_candidate_of_current_bounds_source
@@ -472,6 +477,22 @@ accept-all zero-mass policy strictly improves on accept-all under the current
 real-valued reward totalization.
 -/
 abbrev theorem3_zero_mass_totalization_obstruction_state_rates := @gn21MeasuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_state_rates
+
+/--
+Theorem 3 structured zero-mass boundary, state-rate form: for the CTMC
+structured price surface, the same state-rate configuration gives a feasible
+measurable profitable deviation from accept-all.
+-/
+abbrev theorem3_structured_zero_mass_totalization_obstruction_state_rates :=
+  @gn21MeasuredCTMCStructuredDynamicReward_left_empty_acceptAll_gt_acceptAll_of_state_rates
+
+/--
+Theorem 3 structured zero-mass IC obstruction: under that state-rate
+configuration, accept-all is not measurable IC for the current real-valued
+CTMC reward totalization.
+-/
+abbrev theorem3_structured_zero_mass_not_measurable_ic_of_state_rates :=
+  @not_dynamicMeasurableIncentiveCompatible_gn21MeasuredCTMCStructuredDynamicReward_of_left_empty_acceptAll_state_rates
 
 /--
 Theorem 3 zero-mass certificate obstruction: a feasible zero-mass policy that

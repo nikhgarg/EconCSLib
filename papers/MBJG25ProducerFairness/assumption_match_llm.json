@@ -1,0 +1,145 @@
+{
+  "schema": 1,
+  "paper": "MBJG25ProducerFairness",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-12T00:00:00Z",
+  "comment": "Premise-level source/provenance audit against the local source text cache. Each audit-premise from Assumptions.lean is judged individually; algebraic proof conveniences must be derived in Lean rather than listed here.",
+  "items": {
+    "assumption_positive_prior_shape": {
+      "judgment": "paper_condition",
+      "reason": "The source models a Beta prior with shape parameters and uses their total mass as prior strength. Positive total shape mass is the source-domain condition under which the displayed posterior and prior-mean formulas are meaningful.",
+      "source_location": "Section 2.1 prior-weighted rating model; Theorems 3.1 and 3.2",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hshape : 0 < alpha + beta": {
+          "judgment": "paper_condition",
+          "source_location": "Section 2.1 prior-weighted rating model; prior strength alpha + beta",
+          "reason": "The paper treats alpha + beta as prior strength/number of prior trials for a Beta prior. The Lean condition records the positive-mass domain for those formulas."
+        }
+      }
+    },
+    "assumption_positive_time": {
+      "judgment": "paper_condition",
+      "reason": "The fixed-setting theorems discuss estimates after t timesteps/reviews; the monotonicity and denominator arguments use positive elapsed sample mass.",
+      "source_location": "Theorems 3.1 and 3.2; fixed setting after t timesteps",
+      "premise_count": 1,
+      "premise_judgments": {
+        "ht : 0 < t": {
+          "judgment": "paper_condition",
+          "source_location": "Theorems 3.1 and 3.2; after t timesteps",
+          "reason": "The paper's fixed-setting claims are after a positive elapsed review horizon. The Lean theorem makes the positive-time domain explicit."
+        }
+      }
+    },
+    "assumption_nonnegative_time": {
+      "judgment": "paper_assumption",
+      "reason": "The model time/review count is a sample mass and therefore nonnegative.",
+      "source_location": "Section 2.1 binary-rating model; review count t",
+      "premise_count": 1,
+      "premise_judgments": {
+        "ht : 0 \u2264 t": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 2.1 binary-rating model; R(v,t) is Binomial(t,q_v)",
+          "reason": "The review count t is a count/time horizon in the source model, hence nonnegative."
+        }
+      }
+    },
+    "assumption_quality_nonnegative": {
+      "judgment": "paper_assumption",
+      "reason": "The source states true product quality lies in the Bernoulli interval.",
+      "source_location": "Section 2.1, true quality q_v",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hq0 : 0 \u2264 q": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 2.1, true quality q_v with 0 <= q_v <= 1",
+          "reason": "This is the lower half of the source's closed Bernoulli quality interval."
+        }
+      }
+    },
+    "assumption_quality_at_most_one": {
+      "judgment": "paper_assumption",
+      "reason": "The source states true product quality lies in the Bernoulli interval.",
+      "source_location": "Section 2.1, true quality q_v",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hq1 : q \u2264 1": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 2.1, true quality q_v with 0 <= q_v <= 1",
+          "reason": "This is the upper half of the source's closed Bernoulli quality interval."
+        }
+      }
+    },
+    "assumption_quality_positive": {
+      "judgment": "documented_caveat",
+      "reason": "The paper states strict variance decrease on the closed quality interval, but the strict claim fails at q_v = 0. Lean proves the corrected interior statement and an explicit boundary counterexample.",
+      "source_location": "Theorem 3.1 strict variance-decrease caveat",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hq0 : 0 < q": {
+          "judgment": "documented_caveat",
+          "source_location": "Theorem 3.1 strict variance-decrease repair; boundary counterexample at q_v = 0",
+          "reason": "This is not an extra proof assumption. It is the documented repair condition for the source statement's boundary bug."
+        }
+      }
+    },
+    "assumption_quality_lt_one": {
+      "judgment": "documented_caveat",
+      "reason": "The paper states strict variance decrease on the closed quality interval, but the strict claim fails at q_v = 1. Lean proves the corrected interior statement and an explicit boundary counterexample.",
+      "source_location": "Theorem 3.1 strict variance-decrease caveat",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hq1 : q < 1": {
+          "judgment": "documented_caveat",
+          "source_location": "Theorem 3.1 strict variance-decrease repair; boundary counterexample at q_v = 1",
+          "reason": "This is not an extra proof assumption. It is the documented repair condition for the source statement's boundary bug."
+        }
+      }
+    },
+    "assumption_prior_strength_nonnegative": {
+      "judgment": "paper_assumption",
+      "reason": "The source defines prior strength eta as a nonnegative weight.",
+      "source_location": "Section 2.1 prior strength eta",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hetaLow_nonneg : 0 \u2264 etaLow": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 2.1 prior strength eta >= 0",
+          "reason": "This is the source model's prior-strength domain applied to the lower comparison value."
+        },
+        "heta_nonneg : 0 \u2264 eta": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 2.1 prior strength eta >= 0",
+          "reason": "This is the source model's prior-strength domain."
+        }
+      }
+    },
+    "assumption_prior_strength_weak_order": {
+      "judgment": "paper_condition",
+      "reason": "The Theorem 3.1 monotonicity statement compares a lower and a higher prior strength.",
+      "source_location": "Theorem 3.1, as eta increases",
+      "premise_count": 1,
+      "premise_judgments": {
+        "heta_le : etaLow \u2264 etaHigh": {
+          "judgment": "paper_condition",
+          "source_location": "Theorem 3.1 monotonicity in prior strength",
+          "reason": "This is the order condition needed to state nondecreasing/nonincreasing behavior as prior strength increases."
+        }
+      }
+    },
+    "assumption_prior_strength_strict_order": {
+      "judgment": "paper_condition",
+      "reason": "The corrected strict variance row compares strictly stronger prior strength.",
+      "source_location": "Theorem 3.1 strict monotonicity in prior strength",
+      "premise_count": 1,
+      "premise_judgments": {
+        "heta_lt : etaLow < etaHigh": {
+          "judgment": "paper_condition",
+          "source_location": "Theorem 3.1 strict monotonicity in prior strength",
+          "reason": "This is the strict comparison condition for the corrected strict decrease statement."
+        }
+      }
+    }
+  }
+}

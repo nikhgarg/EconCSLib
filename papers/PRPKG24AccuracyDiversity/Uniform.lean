@@ -992,8 +992,8 @@ theorem uniform01_expectedOrderStatisticTopKSum_eq_uniformOrderStatisticTopKSum
     (k q : ℕ) :
     orderStatisticTopKSumFromMean uniform01IidOrderStatisticMeanSeq k q =
       orderStatisticTopKSumFromMean uniformAscendingOrderStatisticMean k q := by
-  rw [orderStatisticTopKSumFromMean_eq_source_sum,
-    orderStatisticTopKSumFromMean_eq_source_sum]
+  rw [orderStatisticTopKSumFromMean_eq_bottomIndexed_sum,
+    orderStatisticTopKSumFromMean_eq_bottomIndexed_sum]
   refine Finset.sum_congr rfl ?_
   intro i hi
   have hiq : i < q :=

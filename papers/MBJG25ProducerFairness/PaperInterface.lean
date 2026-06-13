@@ -1,4 +1,5 @@
 import MBJG25ProducerFairness.MainTheorems
+import MBJG25ProducerFairness.Assumptions
 import MBJG25ProducerFairness.ResponsiveMarket
 import EconCSLib.Learning.Bandits.ThompsonSampling
 import EconCSLib.Algorithms.Online.Regret
@@ -39,7 +40,7 @@ noncomputable def paper_posterior_mean (alpha beta eta t q_v : ℝ) : ℝ :=
     Paper Definition: $E[\hat{q}_v] - q_v$
 -/
 noncomputable def paper_bias (alpha beta eta t q_v : ℝ) : ℝ :=
-  paper_posterior_mean alpha beta eta t q_v - q_v
+  (eta * alpha + t * q_v) / (eta * alpha + eta * beta + t) - q_v
 
 /-- The variance of the estimated quality.
     Source status: direct paper formula
@@ -68,12 +69,12 @@ Source note: The paper's Theorem 3.1 variance monotonicity claim is split here i
 -/
 theorem paper_facing_theorem3_1_variance_weak_decrease
     {alpha beta t q etaLow etaHigh : ℝ}
-    (hshape : 0 < alpha + beta)
-    (ht : 0 < t)
-    (hq0 : 0 ≤ q)
-    (hq1 : q ≤ 1)
-    (hetaLow_nonneg : 0 ≤ etaLow)
-    (heta_le : etaLow ≤ etaHigh) :
+    (hshape : assumption_positive_prior_shape alpha beta)
+    (ht : assumption_positive_time t)
+    (hq0 : assumption_quality_nonnegative q)
+    (hq1 : assumption_quality_at_most_one q)
+    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)
+    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :
     paper_variance alpha beta etaHigh t q ≤
       paper_variance alpha beta etaLow t q := by
   simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using
@@ -89,12 +90,12 @@ Source note: The paper states strict variance decrease without excluding boundar
 -/
 theorem paper_facing_theorem3_1_variance_strict_decrease_interior
     {alpha beta t q etaLow etaHigh : ℝ}
-    (hshape : 0 < alpha + beta)
-    (ht : 0 < t)
-    (hq0 : 0 < q)
-    (hq1 : q < 1)
-    (hetaLow_nonneg : 0 ≤ etaLow)
-    (heta_lt : etaLow < etaHigh) :
+    (hshape : assumption_positive_prior_shape alpha beta)
+    (ht : assumption_positive_time t)
+    (hq0 : assumption_quality_positive q)
+    (hq1 : assumption_quality_lt_one q)
+    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)
+    (heta_lt : assumption_prior_strength_strict_order etaLow etaHigh) :
     paper_variance alpha beta etaHigh t q <
       paper_variance alpha beta etaLow t q := by
   simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using
@@ -109,10 +110,10 @@ Source status: direct paper statement
 -/
 theorem paper_facing_theorem3_1_squared_bias_nondecreasing
     {alpha beta t q etaLow etaHigh : ℝ}
-    (hshape : 0 < alpha + beta)
-    (ht : 0 < t)
-    (hetaLow_nonneg : 0 ≤ etaLow)
-    (heta_le : etaLow ≤ etaHigh) :
+    (hshape : assumption_positive_prior_shape alpha beta)
+    (ht : assumption_positive_time t)
+    (hetaLow_nonneg : assumption_prior_strength_nonnegative etaLow)
+    (heta_le : assumption_prior_strength_weak_order etaLow etaHigh) :
     paper_squared_bias alpha beta etaLow t q ≤
       paper_squared_bias alpha beta etaHigh t q := by
   simpa [paper_squared_bias, paper_bias, paper_posterior_mean,
@@ -131,14 +132,22 @@ Source status: direct paper statement
 -/
 theorem paper_facing_theorem3_2_squared_bias_convex_in_quality
     {alpha beta eta t : ℝ}
-    (hden : eta * alpha + eta * beta + t ≠ 0) :
+    (hshape : assumption_positive_prior_shape alpha beta)
+    (heta_nonneg : assumption_prior_strength_nonnegative eta)
+    (ht : assumption_positive_time t) :
     EconCSLib.Statistics.JensenConvex
       (fun q => paper_squared_bias alpha beta eta t q) := by
+  have hden_pos : 0 < eta * alpha + eta * beta + t := by
+    calc
+      0 < eta * (alpha + beta) + t :=
+        add_pos_of_nonneg_of_pos
+          (mul_nonneg heta_nonneg hshape.le) ht
+      _ = eta * alpha + eta * beta + t := by ring
   simpa [paper_squared_bias, paper_bias, paper_posterior_mean,
     EconCSLib.Statistics.priorWeightedSquaredBias,
     EconCSLib.Statistics.priorWeightedBias,
     EconCSLib.Statistics.priorWeightedPosteriorMean] using
-    paper_theorem3_2_squared_bias_convex_in_quality hden
+    paper_theorem3_2_squared_bias_convex_in_quality (ne_of_gt hden_pos)
 
 /--
 Theorem 3.2, squared-bias global minimizer.
@@ -148,9 +157,9 @@ Source status: direct paper statement
 -/
 theorem paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean
     {alpha beta eta t : ℝ}
-    (hshape : 0 < alpha + beta)
-    (heta_nonneg : 0 ≤ eta)
-    (ht : 0 < t) :
+    (hshape : assumption_positive_prior_shape alpha beta)
+    (heta_nonneg : assumption_prior_strength_nonnegative eta)
+    (ht : assumption_positive_time t) :
     EconCSLib.Statistics.GlobalMinAt
       (fun q => paper_squared_bias alpha beta eta t q)
       (alpha / (alpha + beta)) := by
@@ -168,7 +177,7 @@ Source status: direct paper statement
 -/
 theorem paper_facing_theorem3_2_variance_concave_in_quality
     {alpha beta eta t : ℝ}
-    (ht : 0 ≤ t) :
+    (ht : assumption_nonnegative_time t) :
     EconCSLib.Statistics.JensenConcave
       (fun q => paper_variance alpha beta eta t q) := by
   simpa [paper_variance, EconCSLib.Statistics.priorWeightedVariance] using
@@ -183,7 +192,7 @@ Source status: direct paper statement
 -/
 theorem paper_facing_theorem3_2_variance_global_max_at_half
     {alpha beta eta t : ℝ}
-    (ht : 0 ≤ t) :
+    (ht : assumption_nonnegative_time t) :
     EconCSLib.Statistics.GlobalMaxAt
       (fun q => paper_variance alpha beta eta t q)
       (1 / 2) := by
@@ -236,10 +245,16 @@ noncomputable def paper_facing_individual_producer_unfairness
     (lifespan : V → ℝ)
     (q_v : V → ℝ)
     (q : ℝ) : ℝ :=
-  Real.sqrt
-    (EconCSLib.Statistics.finsetVariance
-      (Finset.univ.filter (fun v => q_v v = q))
-      (fun v => selections v / lifespan v))
+  let S := Finset.univ.filter (fun v => q_v v = q)
+  let selectionRate := fun v => selections v / lifespan v
+  let meanSelectionRate :=
+    if S.card = 0 then 0
+    else (∑ v ∈ S, selectionRate v) / (S.card : ℝ)
+  if S.card = 0 then 0
+  else
+    Real.sqrt
+      ((∑ v ∈ S, (selectionRate v - meanSelectionRate) ^ 2) /
+        (S.card : ℝ))
 
 /-- Section 4: Thompson Sampling.
 A dynamic policy that selects an arm by drawing from a belief distribution

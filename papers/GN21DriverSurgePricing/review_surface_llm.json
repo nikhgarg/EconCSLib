@@ -1,0 +1,148 @@
+{
+  "schema": 1,
+  "paper": "GN21DriverSurgePricing",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "judgment": "passes",
+  "reason": "All statement rows are paper-facing definitions, named lemmas, remarks, or theorem endpoints from the source map. The ten assumption rows are source/theorem-domain premises handled by the separate assumption-provenance audit.",
+  "review_rows": 34,
+  "review_surface_sha256": "8dc4b899b243efc1e824b219c0645477c4c73ca20c41a28117376860d5ad4b70",
+  "items": {
+    "assumption_affine_response_shape_domains": {
+      "judgment": "keep",
+      "reason": "Paper-facing assumption row; premise provenance is audited separately."
+    },
+    "assumption_affine_single_state_parameter_domain": {
+      "judgment": "keep",
+      "reason": "Paper-facing assumption row; premise provenance is audited separately."
+    },
+    "assumption_dynamic_time_fraction_denominators": {
+      "judgment": "keep",
+      "reason": "Paper-facing assumption row; premise provenance is audited separately."
+    },
+    "assumption_fixed_response_policy_form_conditions": {
+      "judgment": "keep",
+      "reason": "Paper-facing assumption row; premise provenance is audited separately."
+    },
+    "assumption_nonsurge_derivative_source_bounds": {
+      "judgment": "keep",
+      "reason": "Paper-facing assumption row; premise provenance is audited separately."
+    },
+    "assumption_single_state_defined_reward_domain": {
+      "judgment": "keep",
+      "reason": "Paper-facing assumption row; premise provenance is audited separately."
+    },
+    "assumption_surge_derivative_source_bounds": {
+      "judgment": "keep",
+      "reason": "Paper-facing assumption row; premise provenance is audited separately."
+    },
+    "assumption_switch_rate_domain": {
+      "judgment": "keep",
+      "reason": "Paper-facing assumption row; premise provenance is audited separately."
+    },
+    "assumption_theorem3_source_data_domain": {
+      "judgment": "keep",
+      "reason": "Paper-facing assumption row; premise provenance is audited separately."
+    },
+    "assumption_upper_endpoint_derivative_domain": {
+      "judgment": "keep",
+      "reason": "Paper-facing assumption row; premise provenance is audited separately. The Lemma 6 derivative row no longer assumes positive endpoint density."
+    },
+    "review_definition_dynamic_defined_reward": {
+      "judgment": "keep",
+      "reason": "Paper-facing definition row."
+    },
+    "review_definition_dynamic_ic": {
+      "judgment": "keep",
+      "reason": "Paper-facing definition row."
+    },
+    "review_definition_single_state_ic": {
+      "judgment": "keep",
+      "reason": "Paper-facing definition row."
+    },
+    "review_definition_threshold_policy": {
+      "judgment": "keep",
+      "reason": "Paper-facing definition row."
+    },
+    "review_lemma10_nonsurge_derivative_positive_of_acceptAll_bounds": {
+      "judgment": "keep",
+      "reason": "Paper-facing named lemma row."
+    },
+    "review_lemma1_measured_dynamic_reward_decomposition": {
+      "judgment": "keep",
+      "reason": "Paper-facing named lemma row."
+    },
+    "review_lemma2_switch_probability_formula": {
+      "judgment": "keep",
+      "reason": "Paper-facing named lemma row."
+    },
+    "review_lemma3_measured_time_fraction_formula": {
+      "judgment": "keep",
+      "reason": "Paper-facing named lemma row."
+    },
+    "review_lemma4_single_state_threshold_uniqueness": {
+      "judgment": "keep",
+      "reason": "Paper-facing named lemma row."
+    },
+    "review_lemma5_fixed_response_policy_form": {
+      "judgment": "keep",
+      "reason": "Paper-facing named lemma row."
+    },
+    "review_lemma6_upper_endpoint_derivative_formula": {
+      "judgment": "keep",
+      "reason": "Paper-facing named lemma row. The exact derivative identity is unconditional in endpoint density, with strict sign transfer conditional on positive endpoint density."
+    },
+    "review_lemma7_affine_positive_additive_response_quasi_convex": {
+      "judgment": "keep",
+      "reason": "Paper-facing named lemma row."
+    },
+    "review_lemma8_affine_negative_additive_response_quasi_concave": {
+      "judgment": "keep",
+      "reason": "Paper-facing named lemma row."
+    },
+    "review_lemma9_surge_derivative_positive_of_acceptAll_bounds": {
+      "judgment": "keep",
+      "reason": "Paper-facing named lemma row."
+    },
+    "review_proposition3_1_affine_single_state_ic": {
+      "judgment": "keep",
+      "reason": "Paper-facing proposition row."
+    },
+    "review_remark1_switch_probability_per_time_strictAntiOn": {
+      "judgment": "keep",
+      "reason": "Paper-facing remark row."
+    },
+    "review_remark3_switch_probability_per_time_tendsto_at_zero": {
+      "judgment": "keep",
+      "reason": "Paper-facing remark row."
+    },
+    "review_remark4_switch_time_minus_switch_probability_nonneg": {
+      "judgment": "keep",
+      "reason": "Paper-facing remark row."
+    },
+    "review_section2_single_state_renewal_reward_iid_bridge": {
+      "judgment": "keep",
+      "reason": "Paper-facing source-section bridge row."
+    },
+    "review_theorem1_single_state_threshold_best_response": {
+      "judgment": "keep",
+      "reason": "Paper-facing theorem row."
+    },
+    "review_theorem2_multiplicative_policy_shape_ae": {
+      "judgment": "keep",
+      "reason": "Paper-facing theorem row."
+    },
+    "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states": {
+      "judgment": "keep",
+      "reason": "Paper-facing theorem row."
+    },
+    "review_theorem3_defined_reward_source_statement": {
+      "judgment": "keep",
+      "reason": "Paper-facing theorem endpoint over the denominator-valid defined-reward source domain."
+    },
+    "review_theorem4_structural_policy_representatives": {
+      "judgment": "keep",
+      "reason": "Paper-facing theorem row."
+    }
+  }
+}

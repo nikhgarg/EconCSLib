@@ -1036,8 +1036,8 @@ theorem
         (boundedReflectedPowerSourceIidOrderStatisticMeanSeq beta) k q =
       orderStatisticTopKSumFromMean
         (boundedReflectedPowerOrderStatisticMean beta) k q := by
-  rw [orderStatisticTopKSumFromMean_eq_source_sum,
-    orderStatisticTopKSumFromMean_eq_source_sum]
+  rw [orderStatisticTopKSumFromMean_eq_bottomIndexed_sum,
+    orderStatisticTopKSumFromMean_eq_bottomIndexed_sum]
   refine Finset.sum_congr rfl ?_
   intro i hi
   have hiq : i < q :=
@@ -1614,7 +1614,7 @@ theorem boundedReflectedPowerOrderStatistic_topK_sum_eq_all_samples_of_le
     orderStatisticTopKSumFromMean
         (boundedReflectedPowerOrderStatisticMean beta) k q =
       (q : ℝ) / (beta + 1) := by
-  rw [orderStatisticTopKSumFromMean_eq_source_sum]
+  rw [orderStatisticTopKSumFromMean_eq_bottomIndexed_sum]
   rw [min_eq_right hqk]
   let factor := boundedReflectedPowerCommonLossFactor beta q
   let coeff := boundedReflectedPowerRankLossCoeff beta
@@ -6062,9 +6062,9 @@ theorem boundedLemmaD2_reflection_loss_eq_nested_sum
           M - ∑ j : Fin (i.val + 1), term ⟨i, j⟩) :
     (k : ℝ) * M - ∑ i : Fin k, sourceMean i =
       ∑ i : Fin k, ∑ j : Fin (i.val + 1), term ⟨i, j⟩ := by
-  simpa [EconCSLib.Probability.topKSourceEndpointLoss,
+  simpa [EconCSLib.Probability.topKEndpointLoss,
     EconCSLib.Probability.reflectedTopKMeanSum] using
-    EconCSLib.Probability.topKSourceEndpointLoss_eq_reflectedTopKMeanSum
+    EconCSLib.Probability.topKEndpointLoss_eq_reflectedTopKMeanSum
       M sourceMean
       (fun i : Fin k => ∑ j : Fin (i.val + 1), term ⟨i, j⟩)
       hsource
@@ -6085,11 +6085,11 @@ theorem boundedLemmaD2_reflection_loss_eq_topKLoss
     (k : ℝ) * M - ∑ i : Fin k, sourceMean i a =
       boundedLemmaD2TopKLoss k term a := by
   rw [boundedLemmaD2TopKLoss_eq_nested_sum]
-  simpa [EconCSLib.Probability.topKSourceEndpointLossSeq,
+  simpa [EconCSLib.Probability.topKEndpointLossSeq,
     EconCSLib.Probability.reflectedTopKMeanSumSeq,
-    EconCSLib.Probability.topKSourceEndpointLoss,
+    EconCSLib.Probability.topKEndpointLoss,
     EconCSLib.Probability.reflectedTopKMeanSum] using
-    EconCSLib.Probability.topKSourceEndpointLossSeq_eq_reflectedTopKMeanSumSeq
+    EconCSLib.Probability.topKEndpointLossSeq_eq_reflectedTopKMeanSumSeq
       M sourceMean
       (fun i a => ∑ j : Fin (i.val + 1), term ⟨i, j⟩ a)
       hsource a

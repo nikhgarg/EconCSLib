@@ -28,6 +28,19 @@ For `PaperInterface.lean` and `MainTheorems.lean`-style files:
 - Use `## Main declarations` in module docstrings for every paper-facing ledger
   and reusable `EconCSLib` module.
 - Place all assumptions on theorem arguments, not in informal side comments.
+- For paper-facing declarations, every theorem argument that is an assumption
+  rather than a derived object must reference an explicit paper assumption
+  declaration in paper-local `Assumptions.lean`. List those declarations
+  in `status.json` `review_surface.assumption_names` and validate them with
+  `assumption_match_llm.json`.
+- Do not pass threshold equations, capacity identities, density formulas,
+  selection-mass rows, external certificates, or proof-route witnesses as
+  hidden theorem hypotheses. If they are not explicit paper/source model
+  assumptions, derive them in Lean or mark the endpoint conditional/partial.
+- The repository audit follows `PaperInterface.lean` `abbrev`/`def` aliases
+  into all paper-local Lean files and scans paper-facing declaration names
+  outside the interface. Moving a certificate or row hypothesis into
+  `ProofInterface.lean` does not make a completed paper theorem closed.
 - Keep theorem names in `snake_case` in reusable modules and avoid paper-identifer
   prefixes there.
 - Keep wrappers for source theorems in source order and use a clear section split:
@@ -37,7 +50,8 @@ For `PaperInterface.lean` and `MainTheorems.lean`-style files:
 
 - Do not mark a ledger row `formalized` unless:
   - declaration exists,
-  - assumptions list is `None` (or `None; <paper assumptions>`),
+  - assumptions list is `None` or every remaining assumption is an explicit,
+    reviewed paper assumption declaration,
   - and the proof route is source-faithful.
 - Use `formalized with caveat` only when the Lean theorem adds something on top
   of the source statement, such as an extra assumption, restriction, corrected

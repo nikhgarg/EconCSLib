@@ -5,8 +5,8 @@
   "authors": "Nikhil Garg and Hamid Nazerzadeh",
   "source_version": "Management Science 2022 / arXiv v4, 2021",
   "build_target": "lake build GN21DriverSurgePricing",
-  "status": "formalized",
-  "main_caveat": "Named CTMC lemmas and Theorems 1--4 are exposed; zero-mass boundary behavior is audited separately.",
+  "status": "partially formalized",
+  "main_caveat": "Strict transitive provenance audit boundary: the compact endpoint still reaches boundary interval, a.e. policy-shape, optimizer-replacement, and sequential dynamic-reward certificates; the denominator-valid defined-reward theorem is formalized, but the full certificate provenance is not yet derived from primitives.",
   "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
@@ -17,7 +17,7 @@
   },
   "paper_interface": {
     "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
-    "line_count": 363,
+    "line_count": 379,
     "declaration_rows": 24,
     "review_rows": 24,
     "oversized": false,
@@ -31,10 +31,27 @@
     "final_validation_report": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
     "dependency_dag_tex": "papers/GN21DriverSurgePricing/DependencyDAG.tex",
     "dependency_dag_pdf": "papers/GN21DriverSurgePricing/DependencyDAG.pdf",
-    "proof_interface": "papers/GN21DriverSurgePricing/ProofInterface.lean"
+    "proof_interface": "papers/GN21DriverSurgePricing/ProofInterface.lean",
+    "source_text": "papers/GN21DriverSurgePricing/source.txt",
+    "assumptions": "papers/GN21DriverSurgePricing/Assumptions.lean"
   },
   "review_surface": {
     "source_file": "papers/GN21DriverSurgePricing/PaperInterface.lean",
+    "assumption_source_file": "papers/GN21DriverSurgePricing/Assumptions.lean",
+    "llm_assumption_review": "papers/GN21DriverSurgePricing/assumption_match_llm.json",
+    "assumption_policy": "strict",
+    "assumption_names": [
+      "assumption_affine_single_state_parameter_domain",
+      "assumption_single_state_defined_reward_domain",
+      "assumption_dynamic_time_fraction_denominators",
+      "assumption_switch_rate_domain",
+      "assumption_fixed_response_policy_form_conditions",
+      "assumption_upper_endpoint_derivative_domain",
+      "assumption_affine_response_shape_domains",
+      "assumption_surge_derivative_source_bounds",
+      "assumption_nonsurge_derivative_source_bounds",
+      "assumption_theorem3_source_data_domain"
+    ],
     "include_names": [
       "review_definition_single_state_ic",
       "review_definition_dynamic_ic",
@@ -59,7 +76,7 @@
       "review_theorem2_multiplicative_policy_shape_ae",
       "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states",
       "review_theorem4_structural_policy_representatives",
-      "review_theorem3_feasible_sequential_current_bounds_source_data_statement"
+      "review_theorem3_defined_reward_source_statement"
     ],
     "slices": [
       {
@@ -89,7 +106,7 @@
           "review_theorem2_multiplicative_policy_shape_ae",
           "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states",
           "review_theorem4_structural_policy_representatives",
-          "review_theorem3_feasible_sequential_current_bounds_source_data_statement"
+          "review_theorem3_defined_reward_source_statement"
         ]
       }
     ]

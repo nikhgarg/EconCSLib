@@ -67,6 +67,44 @@ The intended workflow has three independent statement passes:
 3. A third LLM, given only the original paper statement and the translated
    LaTeX/prose, judges whether they match and saves the result in
    `statement_match_llm.json`.
+4. A separate assumption-provenance LLM, given only the paper source text for
+   the claimed assumptions and the assumption declarations from `Assumptions.lean`,
+   judges whether every listed assumption is truly a paper/source model
+   assumption rather than a proof shortcut. Save this in
+   `assumption_match_llm.json`.
+
+The statement match pass is formula-level, not just result-label-level. Every
+displayed equation, inequality, iff, definition, or source-defining formula that
+is part of a paper-facing result should have an exact review row or an exact
+subclaim row. Broad rows that merely say a numbered result's metrics, model, or
+source surface are formalized can hide sign errors, missing normalizers,
+domain restrictions, or premise shortcuts. The judge prompt should explicitly
+ask whether all formula-bearing subclaims are present and whether their signs,
+constants, quantifiers, inequality direction, domains, and hypotheses match.
+
+Formula rows are still subject to proof provenance. A source-equation wrapper
+is complete only when it is derived in Lean from the paper's source model
+primitives or from separately validated paper assumptions. If the formula is
+asserted as a source row, theorem premise, certificate field, capacity identity,
+normalization, or other undischarged proof boundary, record it in
+`Assumptions.lean`/`assumption_match_llm.json` or mark the downstream endpoint
+partial until it is derived.
+
+The same rule applies to reusable library certificates. A library theorem may
+require an explicit certificate or source-shaped package from its caller; that
+is a good reusable API. But a paper-facing theorem is not complete merely
+because it aliases that library theorem. The paper wrapper must construct the
+certificate from paper primitives, or the certificate must be a validated paper
+assumption. Otherwise the dashboard/report should show a partial or conditional
+boundary. Use `python3 scripts/audit_repository.py --library-only --library-premise-audit` to
+list reusable APIs with certificate/source-boundary parameters and to catch
+paper rows that transitively depend on those APIs through helper layers.
+The default repository audit also follows paper-local helper chains. A reviewed
+row is blocked if any local helper it depends on, recursively, still consumes an
+unvalidated certificate, source-row equation, hidden hypothesis, or
+proof-boundary premise. Internally constructed certificates are fine; hidden
+premise consumers are not. Axioms, constants, opaque declarations, and unsafe
+declarations are review blockers.
 
 If the third LLM reports a mismatch or uncertainty, edit the Lean statement, not
 the translation, unless the translation is plainly wrong. The statement being
@@ -81,13 +119,17 @@ Use this workflow in two modes:
   are the right formalization targets. Generate `lean_to_tex_llm.json`, generate
   `statement_match_llm.json`, run
   `python3 scripts/review_dashboard.py --paper <paper> --statement-precheck`,
-  and iterate on `PaperInterface.lean` until mismatches are fixed. Do not update
-  the final validation report, review-surface audit, DAG, or human-review log
-  just for this early pass.
+  then run `python3 scripts/review_dashboard.py --paper <paper>
+  --assumption-precheck`. The statement judge is row-local; it does not certify
+  that visible theorem premises are source assumptions or already-derived facts.
+  Iterate on `PaperInterface.lean` until mismatches and premise-provenance
+  findings are fixed. Do not update the final validation report,
+  review-surface audit, DAG, or human-review log just for this early pass.
 - Full review-boundary pass: run before handoff, before public release, and
   after major `PaperInterface.lean` statement changes. This includes the same
   Lean-to-TeX and statement-judge pass, plus the review-surface audit when row
-  count requires it, the `Statement Translation Audit` section in
+  count requires it, the assumption-provenance pass when assumptions exist, the
+  `Statement Translation Audit` section in
   `FINAL_VALIDATION_REPORT.md`, and the full `--precheck`.
 
 For both modes, every dashboard row needs one concrete source statement. If the
@@ -177,6 +219,107 @@ is useful for the initial target-setting pass. `--statement-check` is the same
 check with a non-zero exit when any statement-audit row is missing, stale,
 uncertain, mismatched, or otherwise invalid.
 
+## Assumption Provenance
+
+Paper-facing theorem hypotheses are allowed only when they are explicit source
+assumptions. Do not hide a capacity equation, threshold identity, density row,
+certificate, or proof convenience as an unreviewed theorem premise. Instead:
+
+1. Add a named assumption declaration in paper-local `Assumptions.lean`,
+   usually named `assumption_*`, `paper_assumption_*`, or
+   `source_assumption_*`.
+2. Use that named assumption in theorem signatures, for example
+   `(h_model : assumption_source_model_conditions params)`.
+   The theorem statement may reference the imported assumption; the assumption
+   declaration itself should not live in `PaperInterface.lean` unless this is
+   legacy code awaiting cleanup.
+3. List every assumption declaration in paper-local `status.json`
+   `review_surface.assumption_names`.
+4. Save an independent source-assumption judgment in
+   `assumption_match_llm.json`.
+
+For new proof work, prefer deriving the premise or using the named assumption
+declaration directly in the theorem signature. For existing broad
+paper-local audit ledgers, the repository audit also accepts exact
+`-- audit-premise: <binder name> : <binder type>` markers attached to an
+approved `Assumptions.lean` declaration. This is a migration aid for making
+hidden source-model premises visible across `ProofInterface.lean` and
+`PostPaperAudit.lean`; it should not become a way to accumulate proof-only
+certificates.
+
+`assumption_match_llm.json` has schema:
+
+```json
+{
+  "schema": 1,
+  "paper": "PaperFolder",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-06T12:00:00Z",
+  "comment": "Optional sidecar-wide validator note.",
+  "items": {
+    "assumption_source_model_conditions": {
+      "judgment": "paper_condition",
+      "reason": "The condition is stated in the model section or theorem statement.",
+      "source_location": "Section 2, paragraph 3",
+      "premise_judgments": {
+        "hDomain : 0 < parameter": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 2, model paragraph",
+          "reason": "The source model states the positive-parameter domain."
+        },
+        "hBridge : derived_formula = source_formula": {
+          "judgment": "partial_boundary",
+          "source_location": "Appendix proof, equation display",
+          "reason": "The source uses this formula, but Lean has not yet derived it from the primitive model."
+        }
+      },
+      "comment": "Optional validator-facing note.",
+      "lean_statement_sha256": "optional digest",
+      "paper_statement_sha256": "optional digest"
+    }
+  }
+}
+```
+
+Use `"judgment": "paper_assumption"` for a standalone paper/model assumption,
+`"paper_condition"` for a theorem-domain condition stated in the source model
+or theorem statement, `"documented_caveat"` for a known source mismatch or
+intentional source-statement repair, and `"partial_boundary"` for an
+undischarged external/library/analytic/runtime/solver boundary that keeps the
+paper partial. Use `"judgment": "not_paper_assumption"` when the row is a proof
+assumption, certificate boundary, or derived formula that is not explicitly
+assumed by the paper. Use `"judgment": "uncertain"` when the judge cannot
+decide from the source text. The dashboard flags missing, stale, uncertain,
+unknown, partial-boundary, and not-paper-assumption declarations under the
+paper-level assumption panel.
+
+Grouped assumption judgments are not enough. If `Assumptions.lean` contains
+`-- audit-premise:` comments, every exact premise must appear under
+`premise_judgments`. Use `source_text_model_primitive`, `source_text`, or
+`paper_condition` only when the premise is explicitly a source/model/theorem
+condition and cite the source location. Use `derived_from_source_primitives`
+only when the Lean development already derives the premise from prior source
+definitions. Use `partial_boundary` when the premise is visible but not yet
+source-matched or derived; a paper with any `partial_boundary` premise must be
+reported as partial, not fully formalized.
+
+Run `python3 scripts/audit_repository.py` at the same boundary. The repository
+audit does not stop at the compact `PaperInterface.lean` declaration text: it
+follows thin `abbrev`/`def` aliases into paper-local Lean files and scans
+paper-facing declarations such as `paper_interface_*` across the paper folder.
+Thus a certificate, threshold equation, capacity identity, source-row package,
+or proof-boundary premise hidden in `ProofInterface.lean` is still a review
+blocker unless it is derived or appears as a validated paper-assumption
+declaration.
+
+`--assumption-precheck` reports only this lane and also invokes the repository
+hidden-premise audit for the selected paper. `--assumption-check` is the same
+check with a non-zero exit when any assumption declaration is missing, stale,
+uncertain, judged not to be a paper assumption, or any paper-facing theorem
+premise is still not routed through `Assumptions.lean`. Full `--precheck`
+includes this lane.
+
 ## Review-Surface Audit
 
 For any paper whose dashboard has more than 30 rows, run a separate LLM pass
@@ -253,6 +396,11 @@ from the source, corrected, weakened, strengthened, or added as an audit row,
 add `Source status: ...` and `Source note: ...` lines explaining the deviation.
 The dashboard strips these lines out of the paper-statement text and surfaces
 them separately as source-provenance badges.
+For formula-bearing rows, the source-provenance note must identify whether the
+formula is a direct paper formula, a corrected source formula, a derived formula
+from source primitives, or an explicit paper assumption. Do not use a generic
+numbered-result summary as the source statement for multiple displayed
+formulas.
 
 The repository is configured so that `paper_theorem_validations.jsonl` is
 commit-eligible, while other `.review_traces` files such as local dashboard
