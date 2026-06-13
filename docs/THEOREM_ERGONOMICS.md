@@ -82,12 +82,22 @@ Before claiming progress:
    named theorem statements without opening proof files.
 5. At review boundaries, run the independent statement check: translate each
    current Lean statement to LaTeX/prose using an LLM with no paper context,
-   then have a third LLM compare that translation against the original paper
-   statement with no Lean context. If it does not match, iterate on the Lean
-   statement before treating the declaration as the target theorem.
+   preserving every visible binder, hypothesis, domain condition,
+   equivalence/implication direction, and conclusion. Then have a third LLM
+   compare that translation against the complete original paper statement with
+   no Lean context. A match requires the same hypotheses, subparts, quantifiers,
+   domains, constants, normalizations, signs, inequality directions, and
+   conclusions; conditional wrappers, omitted subclaims, source-row packages, or
+   broad aggregates must be judged mismatch or uncertain. If it does not match,
+   iterate on the Lean statement before treating the declaration as the target
+   theorem.
 6. Update `README.md` theorem table with matching declaration names.
 7. Compile the paper folder and the shared `smoke check` file.
 8. Run the repository audit with strict style when declarations are finalized.
+   At closeout/public-promotion boundaries use
+   `python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0`
+   so source-hygiene, visible-premise, library-boundary, and Lean-native axiom
+   checks run together.
 
 ## 6) Reusable declaration discoverability
 

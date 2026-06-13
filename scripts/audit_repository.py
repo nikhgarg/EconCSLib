@@ -13,14 +13,43 @@ import argparse
 import json
 import re
 import subprocess
+import tempfile
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 PAPERS = ROOT / "papers"
 PUBLIC_RELEASE = (ROOT / "docs" / "PAPER_STATUS.md").exists()
-ACTIVE_PAPERS: set[str] = set()
+AUDIT_CONFIG = PAPERS / "audit_config.json"
+
+
+def load_audit_config() -> dict[str, object]:
+    if not AUDIT_CONFIG.exists():
+        return {}
+    payload = json.loads(AUDIT_CONFIG.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"{AUDIT_CONFIG.relative_to(ROOT)} should contain a JSON object")
+    if payload.get("schema") != 1:
+        raise ValueError(f"{AUDIT_CONFIG.relative_to(ROOT)} should use schema 1")
+    return payload
+
+
+AUDIT_CONFIG_PAYLOAD = load_audit_config()
+
+
+def audit_config_string_set(key: str) -> set[str]:
+    raw = AUDIT_CONFIG_PAYLOAD.get(key, [])
+    if not isinstance(raw, list):
+        raise ValueError(f"{key} should be a list")
+    return {str(item).strip() for item in raw if str(item).strip()}
+
+
+ACTIVE_PAPERS = audit_config_string_set("active_papers")
+GENERIC_SOURCE_HYGIENE_ALLOWED_TERMS = audit_config_string_set(
+    "generic_source_hygiene_allowed_terms"
+)
 REQUIRED_PAPER_FILES = {
     ".gitignore",
     "DependencyDAG.tex",
@@ -163,6 +192,11 @@ NUMBERED_SOURCE_RESULT_RE = re.compile(
     r"[A-Z]?\d+(?:\s*\([^)]+\))?",
     re.I,
 )
+GENERIC_SOURCE_THEOREM_LABEL_RE = re.compile(
+    r"\b(?:Definition|Lemma|Proposition|Theorem|Corollary|Claim)\s+"
+    r"[A-Z]?\d+(?:\.\d+)*(?:\s*\([^)]+\))?",
+    re.I,
+)
 NUMBERED_SOURCE_NAME_RE = re.compile(
     r"(?:^|_)(?:def(?:inition)?|lem(?:ma)?|prop(?:osition)?|thm|theorem|cor(?:ollary)?|claim)"
     r"[A-Z]?\d+(?:_|$)",
@@ -207,13 +241,13 @@ HYPOTHESIS_NAME_RE = re.compile(
 )
 PROOF_BOUNDARY_TYPE_RE = re.compile(
     r"\b(?:Prop|[A-Za-z0-9_']*(?:Certificate|Assumption|Hypothesis|Witness|Boundary|"
-    r"Bridge|Rows?|Table|SourceFamilyRows|SourceRows?|SourceTable|External|Oracle|"
+    r"Bridge|Rows?|Table|SourceModel|SourceFamilyRows|SourceRows?|SourceTable|External|Oracle|"
     r"Window|Windows|Package|Regularity|Invariant))\b",
     re.I,
 )
 VARIABLE_BOUNDARY_TYPE_RE = re.compile(
     r"\b[A-Za-z0-9_']*(?:Certificate|Assumption|Hypothesis|Witness|Boundary|Bridge|"
-    r"Rows?|Table|SourceFamilyRows|SourceRows?|SourceTable|External|Oracle|Window|"
+    r"Rows?|Table|SourceModel|SourceFamilyRows|SourceRows?|SourceTable|External|Oracle|Window|"
     r"Windows|Package|Regularity|Invariant)\b",
     re.I,
 )
@@ -227,18 +261,12 @@ LIBRARY_CERTIFICATE_BOUNDARY_RE = re.compile(
 LIBRARY_BOUNDARY_TYPE_RE = re.compile(
     r"\b[A-Za-z0-9_']*(?:"
     r"Certificate|Assumption|Hypothesis|Witness|Boundary|Bridge|Rows?|"
-    r"SourceFamilyRows|SourceRows?|SourceTable|External|Oracle|Window|Windows|Package|"
-    r"Regularity|Invariant"
+    r"SourceModel|SourceFamilyRows|SourceRows?|SourceTable|External|Oracle|Window|Windows|Package|"
+    r"Regularity"
     r")\b",
     re.I,
 )
 LIBRARY_EXTERNAL_BOUNDARY_RE = re.compile(r"\b(?:external|oracle|npEqZPP|NP|ZPP|hardness)\b", re.I)
-REVIEW_EXPLICIT_BOUNDARY_RE = re.compile(
-    r"\b(?:[A-Za-z0-9_']*(?:Certificate|Oracle|External|Boundary|Bridge|"
-    r"SourceFamilyRows|SourceRows?|SourceTable|Rows?|Table|Package|Window|Windows)|"
-    r"source[-_ ]?rows?|source[-_ ]?table|row[-_ ]?package)\b",
-    re.I,
-)
 PREDICATE_TYPE_WORD_RE = re.compile(
     r"\b(?:Positive|Nonnegative|NonnegativeBids|Nodup|Feasible|Optimal|Measurable|"
     r"Monotone|Strict|Domain|Truthful|Calibrated|Simplex|Support|Straddles|"
@@ -285,6 +313,34 @@ PROOF_FACING_AUDIT_FORMULA_RE = re.compile(
     re.I | re.S,
 )
 AXIOM_LIKE_DECL_RE = re.compile(r"^\s*(?:axiom|opaque|constant|unsafe\s+(?:axiom|def|theorem|lemma))\b")
+APPROVED_LEAN_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
+PRINT_AXIOMS_RE = re.compile(r"'([^']+)'\s+depends on axioms:\s*\[(.*?)\]", re.S)
+PRINT_NO_AXIOMS_RE = re.compile(r"'([^']+)'\s+does not depend on any axioms")
+LIBRARY_STANDARD_DEFINITION_AUDIT_FILE = ROOT / "EconCSLib" / "LibraryDefinitionAudit.lean"
+REQUIRED_LIBRARY_STANDARD_AUDITS = {
+    "jensenConvex_iff_convexOn_univ": "JensenConvex matches mathlib `ConvexOn ℝ Set.univ`",
+    "jensenConcave_iff_concaveOn_univ": "JensenConcave matches mathlib `ConcaveOn ℝ Set.univ`",
+    "strictQuasiConvexOnPositive_iff_expected": (
+        "StrictQuasiConvexOnPositive has the expected positive-domain strict "
+        "quasi-convex inequality"
+    ),
+    "strictQuasiConcaveOnPositive_iff_expected": (
+        "StrictQuasiConcaveOnPositive has the expected positive-domain strict "
+        "quasi-concave inequality"
+    ),
+}
+LIBRARY_FORBIDDEN_SOURCE_ASSUMPTION_RE = re.compile(
+    r"(?:^|_)(?:source|paper)?(?:assumption|hypothesis)(?:_|$)|"
+    r"(?:Source|Paper)?(?:Assumption|Hypothesis)$"
+)
+REUSABLE_LIBRARY_PROVENANCE_TEXT_RE = re.compile(
+    r"\b(?:"
+    r"source[- ]paper|source[- ]rows?|source[- ]facing|source[- ]formula|"
+    r"source[- ]threshold|displayed source[- ]threshold|displayed formula|"
+    r"paper[- ]specific|paper's"
+    r")\b",
+    re.I,
+)
 SOURCE_SHAPED_LIBRARY_NAME_RE = re.compile(
     r"(?:^|_)(?:paper|displayed|appendix)(?:_|$)|"
     r"(?:^|_)source(?:[A-Z_]|$).*(?:formula|rate|threshold|row|table|surface|equation|branch|window|paper)|"
@@ -457,6 +513,7 @@ def declaration_reference_names(source: str, *, body_only: bool = True) -> set[s
     """Return qualified and unqualified declaration-like names in a Lean block."""
 
     haystack = declaration_body(source) if body_only else source
+    haystack = lean_code_text(haystack)
     names: set[str] = set()
     for match in DECLARATION_REFERENCE_RE.finditer(haystack):
         token = match.group(0)
@@ -522,12 +579,12 @@ def strip_line_comment(line: str) -> str:
     return line.split("--", 1)[0]
 
 
-def lean_code_lines(path: Path) -> list[tuple[int, str]]:
+def lean_code_lines_from_text(text: str) -> list[tuple[int, str]]:
     """Return Lean code lines with line and block comments removed."""
 
     code_lines: list[tuple[int, str]] = []
     depth = 0
-    for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+    for line_no, line in enumerate(text.splitlines(), start=1):
         out: list[str] = []
         i = 0
         while i < len(line):
@@ -547,6 +604,39 @@ def lean_code_lines(path: Path) -> list[tuple[int, str]]:
                 i += 1
         code_lines.append((line_no, strip_line_comment("".join(out))))
     return code_lines
+
+
+def lean_code_lines(path: Path) -> list[tuple[int, str]]:
+    """Return Lean file lines with line and block comments removed."""
+
+    return lean_code_lines_from_text(path.read_text(encoding="utf-8"))
+
+
+def lean_code_text(text: str) -> str:
+    """Return Lean source text with line and nested block comments removed."""
+
+    code_lines: list[str] = []
+    depth = 0
+    for line in text.splitlines():
+        out: list[str] = []
+        i = 0
+        while i < len(line):
+            if depth == 0 and line.startswith("/-", i):
+                depth += 1
+                i += 2
+            elif depth > 0 and line.startswith("/-", i):
+                depth += 1
+                i += 2
+            elif depth > 0 and line.startswith("-/", i):
+                depth -= 1
+                i += 2
+            elif depth == 0:
+                out.append(line[i])
+                i += 1
+            else:
+                i += 1
+        code_lines.append(strip_line_comment("".join(out)))
+    return "\n".join(code_lines)
 
 
 def check_sorries_in_files(files: list[Path]) -> list[Finding]:
@@ -761,6 +851,54 @@ def check_paper_contract(include_active: bool) -> list[Finding]:
     return findings
 
 
+FINAL_REPORT_FORMALIZED_RE = re.compile(
+    r"(?mi)^\s*(?:-\s*)?(?:Completion status|Lean formalization status)\s*:\s*"
+    r"(?:formalized|complete(?:d)?)(?:\s|\.|$)"
+)
+FINAL_REPORT_PARTIAL_RE = re.compile(
+    r"(?mi)^\s*(?:-\s*)?(?:Completion status|Lean formalization status)\s*:\s*"
+    r"(?:partially formalized|partial(?:ly)?)(?:\s|\.|$)"
+)
+
+
+def check_final_report_status_alignment(include_active: bool) -> list[Finding]:
+    findings: list[Finding] = []
+    for folder in paper_dirs():
+        if folder.name in ACTIVE_PAPERS and not include_active:
+            continue
+        status_file = folder / "status.json"
+        report = folder / "FINAL_VALIDATION_REPORT.md"
+        if not status_file.exists() or not report.exists():
+            continue
+        try:
+            payload = json.loads(status_file.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        status = str(payload.get("status", "")).strip().lower()
+        report_text = report.read_text(encoding="utf-8")
+        says_formalized = bool(FINAL_REPORT_FORMALIZED_RE.search(report_text))
+        says_partial = bool(FINAL_REPORT_PARTIAL_RE.search(report_text))
+        if status.startswith("partially") and says_formalized:
+            findings.append(
+                Finding(
+                    "WARN",
+                    report,
+                    "final validation report has a whole-paper `formalized` verdict line, "
+                    "but paper-local status.json is partially formalized",
+                )
+            )
+        if status in {"formalized", "formalized with caveat"} and says_partial and not says_formalized:
+            findings.append(
+                Finding(
+                    "WARN",
+                    report,
+                    "final validation report has a whole-paper partial verdict line, "
+                    "but paper-local status.json is formalized",
+                )
+            )
+    return findings
+
+
 def _safe_slice_id(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]+", "-", value.strip()).strip("-") or "all"
 
@@ -903,6 +1041,173 @@ def review_declaration_comments(interface_text: str) -> dict[str, str]:
     }
 
 
+def namespace_stack_at_line(text: str, line_number: int) -> list[str]:
+    """Return the simple Lean namespace stack before `line_number`.
+
+    Paper interfaces in this repository use ordinary `namespace ...`/`end ...`
+    blocks. Tracking that stack is enough to generate fully qualified names for
+    Lean-native `#print axioms` checks without maintaining a separate index.
+    """
+
+    stack: list[str] = []
+    for current_line, code in lean_code_lines_from_text(text):
+        if current_line >= line_number:
+            break
+        stripped = code.strip()
+        match = re.match(r"^namespace\s+(.+)$", stripped)
+        if match:
+            stack.extend(
+                part
+                for part in re.split(r"\s+", match.group(1).strip())
+                if part
+            )
+            continue
+        match = re.match(r"^end(?:\s+(.+))?$", stripped)
+        if not match:
+            continue
+        raw_names = (match.group(1) or "").strip()
+        if raw_names:
+            for _ in re.split(r"\s+", raw_names):
+                if stack:
+                    stack.pop()
+        elif stack:
+            stack.pop()
+    return stack
+
+
+def qualified_review_decl_name(interface_text: str, line_number: int, name: str) -> str:
+    namespaces = namespace_stack_at_line(interface_text, line_number)
+    return ".".join([*namespaces, name]) if namespaces else name
+
+
+def lean_module_name(path: Path) -> str:
+    """Return the Lean module name corresponding to a repository Lean file."""
+
+    rel = path.relative_to(ROOT).with_suffix("")
+    parts = list(rel.parts)
+    if parts and parts[0] == "papers":
+        parts = parts[1:]
+    return ".".join(parts)
+
+
+def parse_print_axioms_output(output: str) -> dict[str, set[str]]:
+    """Parse Lean `#print axioms` output keyed by fully qualified declaration."""
+
+    parsed: dict[str, set[str]] = {}
+    for match in PRINT_NO_AXIOMS_RE.finditer(output):
+        parsed[match.group(1)] = set()
+    for match in PRINT_AXIOMS_RE.finditer(output):
+        raw_axioms = match.group(2)
+        axioms = {
+            axiom.strip()
+            for axiom in re.split(r",|\n", raw_axioms)
+            if axiom.strip()
+        }
+        parsed[match.group(1)] = axioms
+    return parsed
+
+
+def check_paper_interface_axiom_closure(
+    paper_id: str,
+    interface_path: Path,
+    interface_text: str,
+    include_names: list[str],
+    declaration_blocks: dict[str, tuple[int, str, str]],
+    status: object,
+) -> list[Finding]:
+    """Run Lean-native `#print axioms` on paper-facing review rows.
+
+    This is the exact transitive proof-debt check. It catches `sorryAx`,
+    declared axioms/constants, and opaque unsafe foundations no matter how many
+    reusable-library layers lie between the paper theorem and the dependency.
+    It deliberately does not try to classify theorem parameters; visible
+    premise/source-assumption checks handle those separately from the expanded
+    Lean statement.
+    """
+
+    rows: list[tuple[str, str, int]] = []
+    for name in include_names:
+        declaration = declaration_blocks.get(name)
+        if declaration is None:
+            continue
+        line_no, _kind, _source = declaration
+        rows.append((name, qualified_review_decl_name(interface_text, line_no, name), line_no))
+    if not rows:
+        return []
+
+    script_lines = [
+        f"import {lean_module_name(interface_path)}",
+        "set_option pp.universes false",
+        "",
+    ]
+    for _name, qualified_name, _line_no in rows:
+        script_lines.append(f"#print axioms {qualified_name}")
+    script = "\n".join(script_lines) + "\n"
+
+    severity = completed_status_finding_severity(status)
+    try:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            script_path = Path(tmpdir) / "paper_axiom_audit.lean"
+            script_path.write_text(script, encoding="utf-8")
+            proc = subprocess.run(
+                ["lake", "env", "lean", str(script_path)],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=180,
+            )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return [
+            Finding(
+                severity,
+                interface_path,
+                f"`{paper_id}` Lean axiom audit could not run for PaperInterface rows: {exc}",
+            )
+        ]
+
+    if proc.returncode != 0:
+        details = (proc.stderr or proc.stdout).strip().splitlines()
+        excerpt = " ".join(details[:3])[:600] if details else "Lean returned a nonzero status"
+        return [
+            Finding(
+                severity,
+                interface_path,
+                f"`{paper_id}` Lean axiom audit failed for PaperInterface rows: {excerpt}",
+            )
+        ]
+
+    parsed = parse_print_axioms_output(proc.stdout)
+    findings: list[Finding] = []
+    for name, qualified_name, line_no in rows:
+        if qualified_name not in parsed:
+            findings.append(
+                Finding(
+                    severity,
+                    interface_path,
+                    f"`{paper_id}` Lean axiom audit produced no `#print axioms` row for "
+                    f"`{name}` at line {line_no}",
+                )
+            )
+            continue
+        unapproved = sorted(parsed[qualified_name] - APPROVED_LEAN_AXIOMS)
+        if not unapproved:
+            continue
+        findings.append(
+            Finding(
+                severity,
+                interface_path,
+                f"`{paper_id}` review row `{name}` at line {line_no} depends on "
+                "unapproved Lean axiom(s): "
+                + ", ".join(unapproved)
+                + ". Only "
+                + ", ".join(sorted(APPROVED_LEAN_AXIOMS))
+                + " are accepted as standard Lean/mathlib foundations.",
+            )
+        )
+    return findings
+
+
 def paper_lean_files(folder: Path) -> list[Path]:
     """Return all paper-local Lean files, including the root import file."""
 
@@ -932,21 +1237,19 @@ def paper_lean_declaration_index(folder: Path) -> dict[str, list[LeanDeclaration
 def library_lean_files() -> list[Path]:
     """Return tracked reusable-library Lean files."""
 
-    files: list[Path] = []
+    files: set[Path] = set()
+    root = ROOT / "EconCSLib"
+    if root.exists():
+        files.update(path for path in root.rglob("*.lean") if path.is_file())
     try:
         tracked = git_ls_files()
     except subprocess.CalledProcessError:
         tracked = []
-    if tracked:
-        for rel in tracked:
-            path = ROOT / rel
-            if path.suffix == ".lean" and path.exists() and path.relative_to(ROOT).parts[0] == "EconCSLib":
-                files.append(path)
-        return sorted(files)
-    root = ROOT / "EconCSLib"
-    if not root.exists():
-        return []
-    return sorted(path for path in root.rglob("*.lean") if path.is_file())
+    for rel in tracked:
+        path = ROOT / rel
+        if path.suffix == ".lean" and path.exists() and path.relative_to(ROOT).parts[0] == "EconCSLib":
+            files.add(path)
+    return sorted(files)
 
 
 def library_lean_declaration_index() -> dict[str, list[LeanDeclaration]]:
@@ -1271,6 +1574,70 @@ def normalize_premise_text(text: str) -> str:
     return re.sub(r"\s+", " ", str(text or "").strip())
 
 
+def premise_type_text(premise: str) -> str:
+    """Return the normalized type side of a premise string.
+
+    Lean pretty-prints unused proof arguments in expanded `#check` output as
+    anonymous arrows (`SomeRows ... → ...`) rather than named binders.  The
+    assumption ledger records the corresponding `-- audit-premise:` comments
+    with human-readable names.  Matching on the type side lets the audit route
+    those anonymous arrows through the same explicit source-assumption rows.
+    """
+
+    normalized = normalize_premise_text(premise)
+    def dequalify(text: str) -> str:
+        return re.sub(
+            r"\b(?:[A-Za-z_][A-Za-z0-9_']*\.)+([A-Za-z_][A-Za-z0-9_']*)",
+            r"\1",
+            text,
+        )
+
+    if " : " in normalized:
+        return dequalify(normalized.split(" : ", 1)[1].strip())
+    if normalized.startswith("anonymous : "):
+        return dequalify(normalized.split(" : ", 1)[1].strip())
+    return dequalify(normalized)
+
+
+def is_review_explicit_boundary_premise(premise: str) -> bool:
+    """Return true when a premise's type head is a source/proof boundary.
+
+    This intentionally looks at the type head rather than the full expression:
+    ordinary source formulas can mention helper constants whose names contain
+    `Certificate` without themselves being certificate assumptions.
+    The head check is case-sensitive for suffixes such as `Table`; otherwise
+    ordinary source predicates such as `stable` or `AllPairsAcceptable` are
+    misclassified because they end in the letters "table".
+    """
+
+    type_text = premise_type_text(premise)
+    head = type_text.strip().split(None, 1)[0].strip("(){}[]")
+    short_head = head.rsplit(".", 1)[-1]
+    boundary_suffixes = (
+        "Certificate",
+        "Oracle",
+        "External",
+        "Boundary",
+        "Bridge",
+        "SourceModel",
+        "SourceFamilyRows",
+        "SourceRows",
+        "SourceTable",
+        "Rows",
+        "Table",
+        "Package",
+        "Window",
+        "Windows",
+        "Bounds",
+        "Bound",
+    )
+    return short_head.endswith(boundary_suffixes) or re.search(
+        r"\b(?:source[-_ ]?rows?|source[-_ ]?table|row[-_ ]?package)\b",
+        type_text,
+        re.I,
+    ) is not None
+
+
 def _premises_from_raw_value(raw_value: object) -> set[str]:
     """Extract exact theorem-premise strings from an assumption judgment item."""
 
@@ -1395,6 +1762,93 @@ def load_assumption_judgments(path: Path, paper_id: str) -> dict[str, dict[str, 
     return out
 
 
+def load_expanded_review_statements(folder: Path) -> dict[str, tuple[str, int]]:
+    """Load dashboard-expanded Lean statements keyed by review row name."""
+
+    path = folder / REVIEW_TRACE_CACHE
+    if not path.exists() or not path.is_file():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if not isinstance(payload, dict):
+        return {}
+    rows = payload.get("rows")
+    if not isinstance(rows, list):
+        return {}
+    expanded: dict[str, tuple[str, int]] = {}
+    for raw_row in rows:
+        if not isinstance(raw_row, dict):
+            continue
+        name = str(raw_row.get("name") or "").strip()
+        lean_statement = str(raw_row.get("lean_statement") or "").strip()
+        if not name or not lean_statement:
+            continue
+        raw_line = raw_row.get("line_number")
+        line_number = raw_line if isinstance(raw_line, int) else 0
+        expanded[name] = (lean_statement, line_number)
+    return expanded
+
+
+def expanded_statement_boundary_premises(
+    lean_statement: str, assumption_names: set[str]
+) -> list[str]:
+    """Return source-boundary binders visible only after Lean `#check` expansion."""
+
+    hidden: list[str] = []
+    for match in LEAN_BINDER_RE.finditer(lean_statement):
+        names = _binder_names(match.group(1))
+        type_text = match.group(2).strip()
+        if not names:
+            continue
+        if any(name in assumption_names for name in names):
+            continue
+        if any(assumption in type_text for assumption in assumption_names):
+            continue
+        premise = normalize_premise_text(f"{' '.join(names)} : {type_text}")
+        if is_review_explicit_boundary_premise(premise):
+            hidden.append(premise)
+    hidden.extend(expanded_statement_anonymous_boundary_premises(lean_statement))
+    return list(dict.fromkeys(hidden))
+
+
+def expanded_statement_anonymous_boundary_premises(lean_statement: str) -> list[str]:
+    """Return anonymous top-level proof-boundary arrows in expanded output.
+
+    Lean omits binder names for proof arguments that are not referenced in the
+    theorem's result type, printing them as top-level arrows:
+
+        SomeSourceRows ... → OtherRows ... → conclusion
+
+    These are still theorem premises and must route through `Assumptions.lean`
+    when they are source-row/certificate boundaries.
+    """
+
+    text = normalize_premise_text(lean_statement)
+    pieces: list[str] = []
+    current: list[str] = []
+    depth = 0
+    for char in text:
+        if char in "([{⦃":
+            depth += 1
+        elif char in ")]}⦄" and depth > 0:
+            depth -= 1
+        if char == "→" and depth == 0:
+            pieces.append("".join(current).strip())
+            current = []
+            continue
+        current.append(char)
+    hidden: list[str] = []
+    for piece in pieces:
+        candidate = piece.rsplit(",", 1)[-1].strip()
+        if not candidate or " : " in candidate:
+            continue
+        if is_review_explicit_boundary_premise(candidate):
+            hidden.append(normalize_premise_text(f"anonymous : {candidate}"))
+    return hidden
+
+
 def declaration_header(source: str) -> str:
     """Return the declaration signature before the proof/body."""
 
@@ -1462,7 +1916,7 @@ def explicit_boundary_premises(premises: list[str]) -> list[str]:
     return [
         premise
         for premise in premises
-        if REVIEW_EXPLICIT_BOUNDARY_RE.search(premise)
+        if is_review_explicit_boundary_premise(premise)
         or LIBRARY_EXTERNAL_BOUNDARY_RE.search(premise)
     ]
 
@@ -1586,31 +2040,157 @@ def paper_local_reference_target_map(
     return out
 
 
-def source_reference_library_boundary_dependencies(
-    source: str,
+def library_reference_target_map(
+    declarations: list[LeanDeclaration],
     library_declaration_index: dict[str, list[LeanDeclaration]],
+) -> dict[tuple[Path, int, str], list[LeanDeclaration]]:
+    """Resolve reusable-library declaration references once for fixed-point scans."""
+
+    out: dict[tuple[Path, int, str], list[LeanDeclaration]] = {}
+    for declaration in declarations:
+        targets: list[LeanDeclaration] = []
+        seen: set[tuple[Path, int, str]] = set()
+        for reference in declaration_reference_names(declaration.source):
+            for target in resolve_library_target(library_declaration_index, reference):
+                key = declaration_key(target)
+                if key == declaration_key(declaration) or key in seen:
+                    continue
+                seen.add(key)
+                targets.append(target)
+        out[declaration_key(declaration)] = targets
+    return out
+
+
+def declaration_result_type_text(source: str) -> str:
+    header = declaration_header(source)
+    if " : " not in header:
+        return ""
+    return normalize_premise_text(header.rsplit(" : ", 1)[1])
+
+
+def declaration_result_type_head(declaration: LeanDeclaration) -> str:
+    result = declaration_result_type_text(declaration.source)
+    if not result:
+        return ""
+    return result.strip().split(None, 1)[0].strip("(){}[]").rsplit(".", 1)[-1]
+
+
+def boundary_type_alias_map(declarations: list[LeanDeclaration]) -> dict[str, set[str]]:
+    """Discover transparent boundary aliases from declarations.
+
+    Standard/template: a boundary alias is a declaration of the form
+    `def Alias ... : Prop := Target ...`, where both `Alias` and `Target` have
+    certificate/source-boundary-shaped heads. This lets the audit recognize
+    closed constructors for definitionally equivalent certificate types without
+    naming paper- or library-specific functions.
+    """
+
+    aliases: dict[str, set[str]] = {}
+    for declaration in declarations:
+        if declaration.kind != "def":
+            continue
+        if declaration_result_type_text(declaration.source) != "Prop":
+            continue
+        alias_head = declaration.name.rsplit(".", 1)[-1]
+        if not LIBRARY_BOUNDARY_TYPE_RE.fullmatch(alias_head):
+            continue
+        body = lean_code_text(declaration_body(declaration.source)).strip()
+        match = DECLARATION_REFERENCE_RE.search(body)
+        if not match:
+            continue
+        target_head = match.group(0).rsplit(".", 1)[-1]
+        if not LIBRARY_BOUNDARY_TYPE_RE.fullmatch(target_head):
+            continue
+        aliases.setdefault(alias_head, set()).add(target_head)
+
+    changed = True
+    while changed:
+        changed = False
+        for alias, targets in list(aliases.items()):
+            expanded = set(targets)
+            for target in list(targets):
+                expanded.update(aliases.get(target, set()))
+            if not expanded.issubset(targets):
+                aliases[alias] = targets | expanded
+                changed = True
+    return aliases
+
+
+def boundary_type_heads_for_premise(
+    premise: str,
+    boundary_aliases: dict[str, set[str]] | None = None,
+) -> set[str]:
+    type_text = premise_type_text(premise)
+    head = type_text.strip().split(None, 1)[0].strip("(){}[]")
+    unqualified = head.rsplit(".", 1)[-1]
+    heads = {unqualified}
+    if boundary_aliases:
+        heads.update(boundary_aliases.get(unqualified, set()))
+    return heads
+
+
+def references_discharge_boundary(
+    referenced_targets: list[LeanDeclaration],
+    dependency_indexes: list[dict[tuple[Path, int, str], list[BoundaryDependency]]],
+    premise: str,
+    boundary_aliases: dict[str, set[str]],
+) -> bool:
+    """Return true when references include a closed constructor for `premise`.
+
+    Standard/template: a constructor discharges a boundary only when it returns
+    the same boundary type head (modulo transparent boundary aliases) and the
+    constructor itself has no currently known boundary dependencies.
+    """
+
+    type_heads = boundary_type_heads_for_premise(premise, boundary_aliases)
+    for target in referenced_targets:
+        target_key = declaration_key(target)
+        if any(target_key in dependency_index for dependency_index in dependency_indexes):
+            continue
+        if declaration_result_type_head(target) in type_heads:
+            return True
+    return False
+
+
+def referenced_library_boundary_dependencies(
+    referenced_targets: list[LeanDeclaration],
     library_boundary_dependency_index: dict[tuple[Path, int, str], list[BoundaryDependency]],
+    boundary_aliases: dict[str, set[str]],
 ) -> list[BoundaryDependency]:
-    """Return certificate dependencies of library declarations referenced by `source`."""
+    """Return certificate dependencies of referenced reusable-library declarations."""
 
     dependencies: list[BoundaryDependency] = []
     seen_targets: set[tuple[Path, int, str]] = set()
-    for reference in declaration_reference_names(source):
-        for target in resolve_library_target(library_declaration_index, reference):
-            target_key = declaration_key(target)
-            if target_key in seen_targets:
+    for target in referenced_targets:
+        target_key = declaration_key(target)
+        if target_key in seen_targets:
+            continue
+        seen_targets.add(target_key)
+        for dependency in library_boundary_dependency_index.get(target_key, []):
+            if references_discharge_boundary(
+                referenced_targets,
+                [library_boundary_dependency_index],
+                dependency.premise,
+                boundary_aliases,
+            ):
                 continue
-            seen_targets.add(target_key)
-            for dependency in library_boundary_dependency_index.get(target_key, []):
-                dependencies.append(
-                    BoundaryDependency(
-                        category=dependency.category,
-                        premise=dependency.premise,
-                        declaration=dependency.declaration,
-                        via=target.name,
-                    )
+            dependencies.append(
+                BoundaryDependency(
+                    category=dependency.category,
+                    premise=dependency.premise,
+                    declaration=dependency.declaration,
+                    via=target.name,
                 )
+            )
     return dedupe_boundary_dependencies(dependencies)
+
+
+def merge_boundary_alias_maps(*maps: dict[str, set[str]]) -> dict[str, set[str]]:
+    out: dict[str, set[str]] = {}
+    for mapping in maps:
+        for key, values in mapping.items():
+            out.setdefault(key, set()).update(values)
+    return out
 
 
 def library_boundary_dependency_index(
@@ -1625,6 +2205,8 @@ def library_boundary_dependency_index(
     """
 
     declarations = unique_declarations(declaration_index)
+    reference_targets = library_reference_target_map(declarations, declaration_index)
+    boundary_aliases = boundary_type_alias_map(declarations)
     dependencies: dict[tuple[Path, int, str], list[BoundaryDependency]] = {}
     for declaration in declarations:
         direct = [
@@ -1645,10 +2227,10 @@ def library_boundary_dependency_index(
         for declaration in declarations:
             key = declaration_key(declaration)
             current = dependencies.get(key, [])
-            propagated = source_reference_library_boundary_dependencies(
-                declaration.source,
-                declaration_index,
+            propagated = referenced_library_boundary_dependencies(
+                reference_targets.get(key, []),
                 dependencies,
+                boundary_aliases,
             )
             merged = dedupe_boundary_dependencies(current + propagated)
             if len(merged) != len(current):
@@ -1666,15 +2248,21 @@ def paper_boundary_dependency_index(
 
     declarations = unique_declarations(declaration_index)
     reference_targets = paper_local_reference_target_map(declarations, declaration_index)
+    library_reference_targets = library_reference_target_map(declarations, library_declaration_index)
+    boundary_aliases = merge_boundary_alias_maps(
+        boundary_type_alias_map(unique_declarations(library_declaration_index)),
+        boundary_type_alias_map(declarations),
+    )
     dependencies: dict[tuple[Path, int, str], list[BoundaryDependency]] = {}
     for declaration in declarations:
-        direct = source_reference_library_boundary_dependencies(
-            declaration.source,
-            library_declaration_index,
+        key = declaration_key(declaration)
+        direct = referenced_library_boundary_dependencies(
+            library_reference_targets.get(key, []),
             library_boundary_dependencies,
+            boundary_aliases,
         )
         if direct:
-            dependencies[declaration_key(declaration)] = direct
+            dependencies[key] = direct
 
     changed = True
     while changed:
@@ -1686,6 +2274,13 @@ def paper_boundary_dependency_index(
             for target in reference_targets.get(key, []):
                 target_key = declaration_key(target)
                 for dependency in dependencies.get(target_key, []):
+                    if references_discharge_boundary(
+                        reference_targets.get(key, []) + library_reference_targets.get(key, []),
+                        [dependencies, library_boundary_dependencies],
+                        dependency.premise,
+                        boundary_aliases,
+                    ):
+                        continue
                     propagated.append(
                         BoundaryDependency(
                             category=dependency.category,
@@ -1717,6 +2312,7 @@ def paper_hidden_premise_dependency_index(
 
     declarations = unique_declarations(declaration_index)
     reference_targets = paper_local_reference_target_map(declarations, declaration_index)
+    boundary_aliases = boundary_type_alias_map(declarations)
     dependencies: dict[tuple[Path, int, str], list[BoundaryDependency]] = {}
     for declaration in declarations:
         if declaration.name in assumption_names or is_assumption_decl_name(declaration.name):
@@ -1744,6 +2340,13 @@ def paper_hidden_premise_dependency_index(
             for target in reference_targets.get(key, []):
                 target_key = declaration_key(target)
                 for dependency in dependencies.get(target_key, []):
+                    if references_discharge_boundary(
+                        reference_targets.get(key, []),
+                        [dependencies],
+                        dependency.premise,
+                        boundary_aliases,
+                    ):
+                        continue
                     propagated.append(
                         BoundaryDependency(
                             category=dependency.category,
@@ -1778,6 +2381,116 @@ def source_specific_library_smells(declaration: LeanDeclaration) -> list[str]:
     if re.search(r"\b(?:paper|displayed)\b", header, re.I) and FORMULA_SPECIFIC_NAME_RE.search(header):
         reasons.append("source-shaped formula appears in declaration signature")
     return reasons
+
+
+def check_library_source_assumption_standards() -> list[Finding]:
+    """Reject source assumptions as reusable-library API objects.
+
+    Reusable code may expose explicit certificates/oracles for external
+    mathematical facts.  It should not define reusable `Assumption` or
+    `Hypothesis` records: those are paper-local provenance objects and must live
+    in a paper folder where the source text and LLM/human judgments can validate
+    them directly.
+    """
+
+    findings: list[Finding] = []
+    seen: set[tuple[Path, int, str]] = set()
+    for declaration in unique_declarations(library_lean_declaration_index()):
+        key = declaration_key(declaration)
+        if key in seen:
+            continue
+        seen.add(key)
+        if re.match(r"\s*private\s+", declaration.source):
+            continue
+        if LIBRARY_FORBIDDEN_SOURCE_ASSUMPTION_RE.search(declaration.name):
+            findings.append(
+                Finding(
+                    "ERROR",
+                    declaration.path,
+                    f"library `{declaration.name}` at line {declaration.line} uses "
+                    "`Assumption`/`Hypothesis` naming; paper assumptions must live in "
+                    "paper-local `Assumptions.lean`, and reusable APIs should require "
+                    "generic certificates or derived proofs instead",
+                )
+            )
+        if ASSUMPTION_AUDIT_PREMISE_RE.search(declaration.source):
+            findings.append(
+                Finding(
+                    "ERROR",
+                    declaration.path,
+                    f"library `{declaration.name}` at line {declaration.line} contains "
+                    "`audit-premise`; source-premise validation belongs in paper-local "
+                    "`Assumptions.lean`, not reusable library code",
+                )
+            )
+    return sorted(findings, key=lambda finding: (str(finding.path), finding.message))
+
+
+def check_library_reusable_provenance_language() -> list[Finding]:
+    """Reject paper/source-provenance wording in reusable Lean modules."""
+
+    findings: list[Finding] = []
+    for path in library_lean_files():
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        for line_no, line in enumerate(text.splitlines(), start=1):
+            match = REUSABLE_LIBRARY_PROVENANCE_TEXT_RE.search(line)
+            if not match:
+                continue
+            findings.append(
+                Finding(
+                    "ERROR",
+                    path,
+                    f"reusable library line {line_no} uses paper/source-provenance "
+                    f"wording `{match.group(0)}`; put source-text provenance in "
+                    "paper-local files and describe shared declarations as generic "
+                    "mathematical APIs",
+                )
+            )
+    return sorted(findings, key=lambda finding: (str(finding.path), finding.message))
+
+
+def check_library_standard_definition_audits() -> list[Finding]:
+    """Require Lean-checked audit lemmas for standard-name definitions."""
+
+    findings: list[Finding] = []
+    audit_file = LIBRARY_STANDARD_DEFINITION_AUDIT_FILE
+    if not audit_file.exists():
+        return [
+            Finding(
+                "ERROR",
+                audit_file,
+                "missing reusable definition audit module; standard mathematical "
+                "wrappers need build-checked equivalence lemmas",
+            )
+        ]
+
+    text = audit_file.read_text(encoding="utf-8")
+    root_module = ROOT / "EconCSLib.lean"
+    if root_module.exists() and "import EconCSLib.LibraryDefinitionAudit" not in root_module.read_text(
+        encoding="utf-8"
+    ):
+        findings.append(
+            Finding(
+                "ERROR",
+                root_module,
+                "`EconCSLib.LibraryDefinitionAudit` should be imported by the root "
+                "library target so CI builds the standard-definition checks",
+            )
+        )
+
+    for decl_name, description in REQUIRED_LIBRARY_STANDARD_AUDITS.items():
+        if not re.search(rf"^\s*(?:theorem|lemma)\s+{re.escape(decl_name)}\b", text, re.M):
+            findings.append(
+                Finding(
+                    "ERROR",
+                    audit_file,
+                    f"missing standard-definition audit `{decl_name}` ({description})",
+                )
+            )
+    return findings
 
 
 def review_surface_slice_counts(interface_text: str, status_file: Path) -> tuple[list[str], dict[str, int]]:
@@ -2218,12 +2931,6 @@ def root_status_interface_required_papers(readme: Path) -> set[str]:
 
 def check_machine_paper_status(library_premise_audit: bool = False) -> list[Finding]:
     findings: list[Finding] = []
-    library_declaration_index = library_lean_declaration_index()
-    library_boundary_dependencies = (
-        library_boundary_dependency_index(library_declaration_index)
-        if library_premise_audit
-        else {}
-    )
     if not PAPER_STATUS_FILE.exists():
         findings.append(Finding("ERROR", PAPER_STATUS_FILE, "missing machine-readable paper status file"))
         return findings
@@ -2370,24 +3077,12 @@ def check_machine_paper_status(library_premise_audit: bool = False) -> list[Find
         declaration_blocks = review_declaration_blocks(interface_text)
         declaration_comments = review_declaration_comments(interface_text)
         declaration_index = paper_lean_declaration_index(PAPERS / paper_id)
-        paper_hidden_premise_dependencies = paper_hidden_premise_dependency_index(
-            declaration_index,
-            assumption_names,
-        )
-        paper_boundary_dependencies = (
-            paper_boundary_dependency_index(
-                declaration_index,
-                library_declaration_index,
-                library_boundary_dependencies,
-            )
-            if library_premise_audit
-            else {}
-        )
         assumption_source_file = assumption_source_file_path(PAPERS / paper_id, review_surface)
         assumption_declarations = assumption_declarations_from_file(assumption_source_file)
         assumption_file_premises = assumption_premises_from_file(assumption_source_file)
         assumption_judgments: dict[str, dict[str, object]] = {}
         validated_assumption_premises: set[str] = set()
+        validated_assumption_premise_types: set[str] = set()
         hidden_premise_finding_keys: set[tuple[Path, int, str, str, tuple[str, ...]]] = set()
         hidden_premise_severity = assumption_finding_severity(strict_assumption_policy, status)
 
@@ -2398,6 +3093,7 @@ def check_machine_paper_status(library_premise_audit: bool = False) -> list[Find
                 premise
                 for premise in hidden
                 if normalize_premise_text(premise) not in validated_assumption_premises
+                and premise_type_text(premise) not in validated_assumption_premise_types
             ))
             if not hidden:
                 return
@@ -2463,6 +3159,16 @@ def check_machine_paper_status(library_premise_audit: bool = False) -> list[Find
                     "or legacy PaperInterface assumption declarations",
                 )
             )
+        findings.extend(
+            check_paper_interface_axiom_closure(
+                paper_id,
+                interface_path,
+                interface_text,
+                include_names,
+                declaration_blocks,
+                status,
+            )
+        )
         if assumption_names:
             assumption_judge_file = assumption_judgment_file_path(interface_path.parent, review_surface)
             if not assumption_judge_file.exists():
@@ -2584,6 +3290,7 @@ def check_machine_paper_status(library_premise_audit: bool = False) -> list[Find
                             )
                             if status not in {"formalized", "formalized with caveat"}:
                                 validated_assumption_premises.add(premise)
+                                validated_assumption_premise_types.add(premise_type_text(premise))
                             continue
                         if premise_judgment in {
                             "paper_assumption",
@@ -2601,6 +3308,7 @@ def check_machine_paper_status(library_premise_audit: bool = False) -> list[Find
                             )
                             continue
                         validated_assumption_premises.add(premise)
+                        validated_assumption_premise_types.add(premise_type_text(premise))
         elif strict_assumption_policy:
             llm_assumption_review = review_surface.get("llm_assumption_review")
             if not isinstance(llm_assumption_review, dict):
@@ -2612,6 +3320,34 @@ def check_machine_paper_status(library_premise_audit: bool = False) -> list[Find
                         "`review_surface.llm_assumption_review` even when there are no assumptions",
                     )
                 )
+        expanded_review_statements = load_expanded_review_statements(PAPERS / paper_id)
+        for name, (expanded_statement, expanded_line) in expanded_review_statements.items():
+            if name in assumption_names or is_assumption_decl_name(name):
+                continue
+            expanded_boundary_premises = expanded_statement_boundary_premises(
+                expanded_statement,
+                assumption_names,
+            )
+            if not expanded_boundary_premises:
+                continue
+            declaration = declaration_blocks.get(name)
+            if declaration:
+                line_no, kind, source = declaration
+            else:
+                line_no = expanded_line or 1
+                kind = "abbrev"
+                source = expanded_statement
+            add_hidden_premise_finding(
+                LeanDeclaration(
+                    path=interface_path,
+                    line=line_no,
+                    kind=kind,
+                    name=name,
+                    source=source,
+                ),
+                expanded_boundary_premises,
+                "expanded review row",
+            )
         for name in include_names:
             declaration = declaration_blocks.get(name)
             if not declaration:
@@ -2682,7 +3418,6 @@ def check_machine_paper_status(library_premise_audit: bool = False) -> list[Find
                     name=name,
                     source=source,
                 )
-                row_key = declaration_key(row_declaration)
                 visible_premises = {
                     normalize_premise_text(premise)
                     for premise in hidden_premise_binders(source, assumption_names)
@@ -2702,47 +3437,24 @@ def check_machine_paper_status(library_premise_audit: bool = False) -> list[Find
                         "review row",
                     )
                 alias_targets = resolve_paper_local_alias_chain(declaration_index, source)
-                alias_target_keys = {declaration_key(target) for target in alias_targets}
-                directly_reported_keys = {row_key} | alias_target_keys
                 for target_declaration in alias_targets:
                     if target_declaration.name in assumption_names or is_assumption_decl_name(target_declaration.name):
                         continue
-                    target_hidden = [
-                        premise
-                        for premise in hidden_premise_binders(
-                            target_declaration.source, assumption_names
-                        )
-                        if normalize_premise_text(premise) not in visible_statement_premises
-                    ]
+                    target_hidden = explicit_boundary_premises(
+                        [
+                            premise
+                            for premise in hidden_premise_binders(
+                                target_declaration.source, assumption_names
+                            )
+                            if normalize_premise_text(premise)
+                            not in visible_statement_premises
+                        ]
+                    )
                     if target_hidden:
                         add_hidden_premise_finding(
                             target_declaration,
                             target_hidden,
                             f"review row `{name}` resolves to",
-                        )
-                transitive_hidden_dependencies = [
-                    dependency
-                    for dependency in paper_hidden_premise_dependencies.get(row_key, [])
-                    if declaration_key(dependency.declaration) not in directly_reported_keys
-                    and normalize_premise_text(dependency.premise)
-                    not in visible_statement_premises
-                ]
-                if transitive_hidden_dependencies:
-                    add_hidden_premise_finding(
-                        row_declaration,
-                        [dependency.premise for dependency in transitive_hidden_dependencies],
-                        "review row transitively depends on paper-local hidden premise",
-                    )
-                if library_premise_audit:
-                    row_boundary_dependencies = paper_boundary_dependencies.get(
-                        (interface_path, line_no, name),
-                        [],
-                    )
-                    if row_boundary_dependencies:
-                        add_hidden_premise_finding(
-                            row_declaration,
-                            [dependency.premise for dependency in row_boundary_dependencies],
-                            "review row transitively depends on library boundary API",
                         )
             if not is_signature_only_review_alias(kind, source):
                 continue
@@ -3162,7 +3874,6 @@ def check_library_certificate_boundaries() -> list[Finding]:
     findings: list[Finding] = []
     seen: set[tuple[Path, int, str]] = set()
     declaration_index = library_lean_declaration_index()
-    boundary_dependency_index = library_boundary_dependency_index(declaration_index)
     for declaration in unique_declarations(declaration_index):
         key = declaration_key(declaration)
         if key in seen:
@@ -3182,23 +3893,6 @@ def check_library_certificate_boundaries() -> list[Finding]:
                     + "; ".join(samples)
                     + ("; ..." if len(boundaries) > 4 else "")
                     + ". Paper wrappers must construct these certificates or remain conditional/partial.",
-                )
-            )
-        elif key in boundary_dependency_index:
-            dependencies = boundary_dependency_index[key]
-            samples = [
-                f"{dependency.category}: {dependency.premise} via `{dependency.via}`"
-                for dependency in dependencies[:4]
-            ]
-            findings.append(
-                Finding(
-                    "INFO",
-                    declaration.path,
-                    f"library `{declaration.name}` at line {declaration.line} transitively "
-                    "depends on certificate/source-boundary API(s): "
-                    + "; ".join(samples)
-                    + ("; ..." if len(dependencies) > 4 else "")
-                    + ". Paper wrappers that use this helper must still discharge or expose the boundary.",
                 )
             )
         smells = source_specific_library_smells(declaration)
@@ -3246,6 +3940,105 @@ def check_library_source_hygiene() -> list[Finding]:
     return sorted(findings, key=lambda finding: (str(finding.path), finding.message))
 
 
+def known_paper_source_terms() -> set[str]:
+    """Return paper IDs and citation prefixes discovered from paper folders."""
+
+    terms: set[str] = set()
+    if not PAPERS.exists():
+        return terms
+    for folder in PAPERS.iterdir():
+        if not folder.is_dir() or folder.name == "TEMPLATE":
+            continue
+        if not PAPER_FOLDER_NAME_RE.fullmatch(folder.name):
+            continue
+        terms.add(folder.name)
+        match = re.match(r"^([A-Z][A-Za-z]*)(\d{2})", folder.name)
+        if not match:
+            continue
+        author_prefix = match.group(1)
+        year_prefix = f"{author_prefix}{match.group(2)}"
+        if len(author_prefix) >= 3:
+            terms.add(author_prefix)
+        terms.add(year_prefix)
+    return terms - GENERIC_SOURCE_HYGIENE_ALLOWED_TERMS
+
+
+def generic_source_hygiene_paths(*, library_only: bool) -> list[Path]:
+    """Return reusable files that should not contain concrete paper references."""
+
+    roots: list[Path] = [ROOT / "EconCSLib"]
+    if not library_only:
+        roots.extend(
+            [
+                ROOT / "scripts",
+                ROOT / "docs" / "AGENT_FORMALIZATION_WORKFLOW.md",
+                ROOT / "docs" / "LIBRARY_PROVENANCE.md",
+                ROOT / "docs" / "THEOREM_ERGONOMICS.md",
+                ROOT / "docs" / "REVIEW_DASHBOARD.md",
+                ROOT / "docs" / "NEW_CONTRIBUTOR_WORKFLOW.md",
+                ROOT / "skills" / "econcs-formalizer" / "SKILL.md",
+            ]
+        )
+
+    paths: set[Path] = set()
+    for root in roots:
+        if root.is_dir():
+            for path in root.rglob("*"):
+                if path.suffix in {".lean", ".py", ".md"} and path.is_file():
+                    paths.add(path)
+        elif root.is_file() and root.suffix in {".lean", ".py", ".md"}:
+            paths.add(root)
+    return sorted(paths)
+
+
+def check_generic_source_reference_hygiene(*, library_only: bool = False) -> list[Finding]:
+    """Reject concrete paper IDs/theorem-number labels in reusable code.
+
+    The check is data-driven: paper IDs and citation prefixes are discovered from
+    `papers/` folder names, while allowed domain/algorithm terms live in
+    `papers/audit_config.json`.
+    """
+
+    findings: list[Finding] = []
+    terms = known_paper_source_terms()
+    term_re = None
+    if terms:
+        term_re = re.compile(
+            r"\b(?:"
+            + "|".join(re.escape(term) for term in sorted(terms, key=len, reverse=True))
+            + r")\b"
+        )
+
+    for path in generic_source_hygiene_paths(library_only=library_only):
+        try:
+            lines = path.read_text(encoding="utf-8").splitlines()
+        except UnicodeDecodeError:
+            continue
+        for line_no, line in enumerate(lines, start=1):
+            if term_re is not None and (match := term_re.search(line)):
+                findings.append(
+                    Finding(
+                        "ERROR",
+                        path,
+                        f"generic code/doc line {line_no} mentions paper-specific term "
+                        f"`{match.group(0)}`; move citation/display metadata to paper-local "
+                        "files or data config, or use a paper-neutral domain name",
+                    )
+                )
+            if path.suffix == ".lean" and "EconCSLib" in path.parts:
+                if match := GENERIC_SOURCE_THEOREM_LABEL_RE.search(line):
+                    findings.append(
+                        Finding(
+                            "ERROR",
+                            path,
+                            f"generic Lean comment/source line {line_no} mentions paper "
+                            f"numbered label `{match.group(0)}`; theorem numbering belongs "
+                            "in paper-local interfaces and validation reports",
+                        )
+                    )
+    return sorted(findings, key=lambda finding: (str(finding.path), finding.message))
+
+
 def run_library(
     strict_style: bool,
     library_premise_audit: bool = False,
@@ -3256,7 +4049,11 @@ def run_library(
     findings.extend(check_axiom_like_declarations_in_files(files))
     findings.extend(check_hidden_variable_premises_in_files(files))
     findings.extend(check_guarded_checks_in_files(files))
+    findings.extend(check_library_source_assumption_standards())
+    findings.extend(check_library_reusable_provenance_language())
+    findings.extend(check_library_standard_definition_audits())
     findings.extend(check_library_source_hygiene())
+    findings.extend(check_generic_source_reference_hygiene(library_only=True))
     if strict_style:
         findings.extend(check_strict_lean_style())
     if library_premise_audit:
@@ -3274,8 +4071,13 @@ def run(
     findings.extend(check_axiom_like_declarations(include_active))
     findings.extend(check_hidden_variable_premises(include_active))
     findings.extend(check_guarded_checks(include_active))
+    findings.extend(check_library_source_assumption_standards())
+    findings.extend(check_library_reusable_provenance_language())
+    findings.extend(check_library_standard_definition_audits())
     findings.extend(check_library_source_hygiene())
+    findings.extend(check_generic_source_reference_hygiene())
     findings.extend(check_paper_contract(include_active))
+    findings.extend(check_final_report_status_alignment(include_active))
     findings.extend(check_review_launcher_readiness(include_active))
     findings.extend(check_dag_status_styles())
     findings.extend(check_paper_facing_ledgers(include_active))
@@ -3293,12 +4095,151 @@ def run(
     return findings
 
 
+def finding_paper_id(finding: Finding) -> str:
+    """Return the paper folder associated with a finding when one is visible."""
+
+    path = finding.path
+    parts = path.parts
+    if "papers" in parts:
+        index = parts.index("papers")
+        if index + 1 < len(parts):
+            paper = parts[index + 1]
+            return paper.removesuffix(".lean") if paper.endswith(".lean") else paper
+    match = re.match(r"`([^`]+)`", finding.message)
+    if match:
+        return match.group(1)
+    return "REPO"
+
+
+def paper_status_label(paper_id: str) -> str:
+    status_path = PAPERS / paper_id / "status.json"
+    if not status_path.exists():
+        return "not recorded"
+    try:
+        payload = json.loads(status_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return "unreadable status.json"
+    status = payload.get("status")
+    if isinstance(status, str) and status.strip():
+        return status
+    return "missing status"
+
+
+def deep_audit_category(message: str) -> str:
+    if "Lean axiom audit" in message or "depends on unapproved Lean axiom" in message:
+        return "Lean axiom closure"
+    if (
+        "broad aggregate name" in message
+        or "opaque alias/signature" in message
+        or "formula-bearing review row" in message
+    ):
+        return "broad-or-opaque paper-facing row"
+    if (
+        "premises not routed through explicit Assumptions.lean" in message
+        or "source-row formula boundary" in message
+    ):
+        return "hidden premise / certificate boundary"
+    return "other repository audit finding"
+
+
+def write_markdown_report(
+    report_path: Path,
+    findings: list[Finding],
+    include_active: bool,
+    strict_style: bool,
+    library_premise_audit: bool,
+    library_only: bool,
+) -> None:
+    """Write a durable paper-by-paper audit report.
+
+    This is intentionally generated from the same finding objects printed by the
+    CLI so the human report cannot drift from the blocking audit.
+    """
+
+    actionable = [finding for finding in findings if finding.severity in {"ERROR", "WARN"}]
+    errors = [finding for finding in findings if finding.severity == "ERROR"]
+    warnings = [finding for finding in findings if finding.severity == "WARN"]
+    infos = [finding for finding in findings if finding.severity == "INFO"]
+
+    by_paper: dict[str, list[Finding]] = {}
+    for finding in actionable:
+        by_paper.setdefault(finding_paper_id(finding), []).append(finding)
+
+    command_bits = ["python3 scripts/audit_repository.py"]
+    if include_active:
+        command_bits.append("--include-active")
+    if strict_style:
+        command_bits.append("--strict-style")
+    if library_premise_audit:
+        command_bits.append("--library-premise-audit")
+    if library_only:
+        command_bits.append("--library-only")
+    command_bits.append("--info-limit 0")
+    command_bits.append(f"--write-report {report_path.as_posix()}")
+
+    lines: list[str] = [
+        "# Axiom, Premise, And Source-Hygiene Audit Findings",
+        "",
+        f"- Generated: {date.today().isoformat()}",
+        f"- Command: `{' '.join(command_bits)}`",
+        f"- Scope: {'library only' if library_only else 'papers and reusable library'}",
+        f"- Active paper folders: {'included' if include_active else 'skipped'}",
+        f"- Strict style: {'included' if strict_style else 'not included'}",
+        f"- Library premise audit: {'included' if library_premise_audit else 'not included'}",
+        f"- Totals: {len(errors)} error(s), {len(warnings)} warning(s), {len(infos)} info finding(s)",
+        "",
+        "## How To Use This Report",
+        "",
+        "Resolve findings paper-by-paper. For a paper claimed as `formalized`,",
+        "`#print axioms` on the paper-facing rows should report only approved",
+        "standard Lean foundations, no paper-facing row should remain broad or",
+        "opaque, and every visible certificate/source-row/external premise should",
+        "be either derived or routed through a source-validated `Assumptions.lean`",
+        "declaration. Paper-specific formulas should not be hidden inside reusable",
+        "library definitions. A paper may remain `partially formalized` only if the",
+        "same boundary is explicit in `status.json`, the dependency DAG, and the",
+        "final validation report.",
+        "",
+    ]
+
+    if not actionable:
+        lines.extend(["## Findings By Paper", "", "No actionable findings."])
+    else:
+        lines.extend(["## Findings By Paper", ""])
+        for paper_id in sorted(by_paper):
+            paper_findings = by_paper[paper_id]
+            counts = {
+                severity: sum(1 for finding in paper_findings if finding.severity == severity)
+                for severity in ("ERROR", "WARN")
+            }
+            lines.extend(
+                [
+                    f"### {paper_id}",
+                    "",
+                    f"- Current status: `{paper_status_label(paper_id)}`",
+                    f"- Findings: {counts['ERROR']} error(s), {counts['WARN']} warning(s)",
+                    "",
+                ]
+            )
+            for finding in paper_findings:
+                rel = finding.path.relative_to(ROOT) if finding.path.is_absolute() else finding.path
+                category = deep_audit_category(finding.message)
+                lines.append(
+                    f"- `[{finding.severity}]` `{rel}` ({category}): {finding.message}"
+                )
+            lines.append("")
+
+    report_path = report_path if report_path.is_absolute() else ROOT / report_path
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--include-active",
         action="store_true",
-        help="also audit active fairness/monoculture folders that may be dirty under other agents",
+        help="also audit folders listed as active in papers/audit_config.json",
     )
     parser.add_argument(
         "--strict-style",
@@ -3324,6 +4265,11 @@ def main() -> int:
             "number to print all INFO findings"
         ),
     )
+    parser.add_argument(
+        "--write-report",
+        type=Path,
+        help="write a Markdown report grouping actionable findings by paper",
+    )
     args = parser.parse_args()
 
     if args.library_only:
@@ -3337,6 +4283,16 @@ def main() -> int:
             strict_style=args.strict_style,
             library_premise_audit=args.library_premise_audit,
         )
+    if args.write_report:
+        write_markdown_report(
+            args.write_report,
+            findings,
+            include_active=args.include_active,
+            strict_style=args.strict_style,
+            library_premise_audit=args.library_premise_audit,
+            library_only=args.library_only,
+        )
+        print(f"Wrote Markdown audit report to {args.write_report}")
     printed_infos = 0
     omitted_infos = 0
     for finding in findings:

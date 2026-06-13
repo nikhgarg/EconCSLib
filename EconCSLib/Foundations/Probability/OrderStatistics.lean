@@ -2740,8 +2740,8 @@ def sampleOrderStatisticValue {a : ℕ}
   else 0
 
 /--
-The paper's bottom-indexed one-based rank `a - r` is the same statistic as the
-`r`-th value from the top, whenever `r < a`.
+The bottom-indexed one-based rank `a - r` is the same statistic as the `r`-th
+value from the top, whenever `r < a`.
 -/
 theorem sampleOrderStatisticValue_eq_upperOrderStatistic_of_rank_from_top
     {a r : ℕ} (sample : Fin a → ℝ) (hr : r < a) :
@@ -2821,8 +2821,8 @@ def expectedSampleOrderStatisticMean {a : ℕ}
   else 0
 
 /--
-Expectation-level bridge from the paper's bottom-indexed one-based rank
-`a - r` to the library's `r`-from-top order statistic.
+Expectation-level bridge from the bottom-indexed one-based rank `a - r` to the
+library's `r`-from-top order statistic.
 -/
 theorem expectedSampleOrderStatisticMean_eq_expectedUpperOrderStatistic_of_rank_from_top
     {a r : ℕ} (μ : MeasureTheory.Measure (Fin a → ℝ)) (hr : r < a) :
@@ -3016,7 +3016,7 @@ def weighted (O : TopKExpectationOracle τ) (objectiveWeight : τ → ℝ) :
 
 /--
 Top-`k` expectation oracle induced by a bottom-indexed order-statistic mean
-table.  The oracle is constant across item types; paper-specific finite type
+table.  The oracle is constant across item types; caller-specific finite type
 oracles can wrap this definition.
 -/
 def orderStatisticTopKExpectationOracle
@@ -3456,7 +3456,7 @@ def ofConstMulScaleAsymptoticEquivalent
 
 /--
 Constructor from a fixed-`k`, per-rank marginal-sum asymptotic.  It converts
-the source-facing finite sum into the repository's `orderStatisticTopKSumFromMean`
+the finite rank sum into the repository's `orderStatisticTopKSumFromMean`
 top-`k` marginal.
 -/
 def ofFiniteRankMarginalSumAsymptoticEquivalent

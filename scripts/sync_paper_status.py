@@ -31,6 +31,7 @@ SITE_LIBRARY_END = "<!-- END GENERATED LIBRARY COMPONENT ROWS -->"
 SITE_STATUS_BEGIN = "<!-- BEGIN GENERATED PAPER STATUS ROWS -->"
 SITE_STATUS_END = "<!-- END GENERATED PAPER STATUS ROWS -->"
 GITHUB_MAIN = "https://github.com/nikhgarg/EconCSLib/blob/main/"
+CATALOG = PAPERS / "catalog.json"
 
 STATUS_LABELS = {
     "formalized": "Formalized",
@@ -47,182 +48,74 @@ STATUS_GROUPS = {
     "partially formalized": 1,
 }
 
-PUBLICATION_OVERRIDES = {
-    "DSWG24DiscretizationBias": ("PNAS Nexus, 2025", 2025),
-    "GCG24UserItemFairness": ("NeurIPS, 2024", 2024),
-    "GGSG19TopThree": ("HCOMP, 2019", 2019),
-    "GHW01DigitalGoods": ("SODA, 2001", 2001),
-    "GJ18InformativeRatingSystems": ("Manufacturing & Service Operations Management 23(3), 2020", 2020),
-    "GN21DriverSurgePricing": ("Management Science, 2022", 2022),
-    "GS62CollegeAdmissions": ("American Mathematical Monthly, 1962", 1962),
-    "LG21TestOptionalPolicies": ("EAAMO, 2021", 2021),
-    "LMMS04FairDivision": ("ACM EC, 2004", 2004),
-    "LOS02CombinatorialAuctions": ("Journal of the ACM, 2002", 2002),
-    "MBJG25ProducerFairness": ("ICWSM, 2025", 2025),
-    "MSVV07AdWords": ("Journal of the ACM, 2007", 2007),
-    "PRPKG24AccuracyDiversity": ("The ACM Web Conference, 2024", 2024),
-    "Roth82StableMatching": ("Mathematics of Operations Research, 1982", 1982),
-}
+def load_catalog() -> dict[str, Any]:
+    if not CATALOG.exists():
+        return {}
+    payload = json.loads(CATALOG.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"{CATALOG.relative_to(ROOT)} should contain a JSON object")
+    if payload.get("schema") != 1:
+        raise ValueError(f"{CATALOG.relative_to(ROOT)} should use schema 1")
+    return payload
 
-SOURCE_URL_OVERRIDES = {
-    "DSWG24DiscretizationBias": "https://arxiv.org/pdf/2405.16762",
-    "GCG24UserItemFairness": "https://openreview.net/pdf?id=ZOZjMs3JTs",
-    "GGSG19TopThree": "https://arxiv.org/pdf/1906.08160",
-    "GHW01DigitalGoods": "https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf",
-    "GJ18InformativeRatingSystems": "https://doi.org/10.1287/msom.2020.0921",
-    "GN21DriverSurgePricing": "https://arxiv.org/pdf/1905.07544",
-    "GS62CollegeAdmissions": "http://www.jstor.org/stable/2312726",
-    "LG21TestOptionalPolicies": "https://arxiv.org/pdf/2107.08922",
-    "LMMS04FairDivision": "https://www.cs.cmu.edu/~arielpro/15896s15/docs/paper12a.pdf",
-    "LOS02CombinatorialAuctions": "https://jmvidal.cse.sc.edu/library/lehmann02a.pdf",
-    "MBJG25ProducerFairness": "https://arxiv.org/pdf/2207.04369",
-    "MSVV07AdWords": "https://people.eecs.berkeley.edu/~vazirani/pubs/adwords.pdf",
-    "PRPKG24AccuracyDiversity": "https://arxiv.org/abs/2307.15142",
-    "Roth82StableMatching": "https://pubsonline.informs.org/doi/epdf/10.1287/moor.7.4.617",
-}
 
-README_TITLE_OVERRIDES = {
-    "MSVV07AdWords": "MSVV07 AdWords",
-}
+def publication_overrides(catalog: dict[str, Any]) -> dict[str, tuple[str, int]]:
+    raw = catalog.get("publication_overrides", {})
+    if not isinstance(raw, dict):
+        raise ValueError("publication_overrides should be an object")
+    out: dict[str, tuple[str, int]] = {}
+    for paper_id, value in raw.items():
+        if not isinstance(value, dict):
+            continue
+        publication = value.get("publication")
+        year = value.get("year")
+        if isinstance(publication, str) and isinstance(year, int):
+            out[str(paper_id)] = (publication, year)
+    return out
 
-LIBRARY_COMPONENTS = [
-    {
-        "title": "Foundations: finite math and graph tools",
-        "paths": [
-            "EconCSLib/Foundations/Math",
-            "EconCSLib/Foundations/Graph",
-        ],
-        "examples": (
-            "Finite-sum rewrites, order/rank lemmas, threshold and interval "
-            "characterizations, asymptotic/exponential estimates, and cycle "
-            "extraction in finite directed graphs."
-        ),
-        "papers": [
-            "DSWG24DiscretizationBias",
-            "LMMS04FairDivision",
-            "GN21DriverSurgePricing",
-            "LG21TestOptionalPolicies",
-        ],
-    },
-    {
-        "title": "Foundations: probability and stochastic processes",
-        "paths": ["EconCSLib/Foundations/Probability"],
-        "examples": (
-            "Finite distributions, conditional expectations, kernels, atom "
-            "and variance lemmas, Gaussian and exponential calculations, "
-            "stochastic dominance, Markov chains, MDPs, CTMCs, and "
-            "renewal-reward identities."
-        ),
-        "papers": [
-            "DSWG24DiscretizationBias",
-            "MBJG25ProducerFairness",
-            "LMMS04FairDivision",
-            "GN21DriverSurgePricing",
-            "LG21TestOptionalPolicies",
-            "GGSG19TopThree",
-            "GJ18InformativeRatingSystems",
-        ],
-    },
-    {
-        "title": "Foundations: optimization and certificates",
-        "paths": ["EconCSLib/Foundations/Optimization"],
-        "examples": (
-            "Argmax and endpoint principles, finite-search certificates, "
-            "approximation guarantees, linear-program certificates, "
-            "binary-choice optimality, move-graph descent, and "
-            "choice-equilibrium existence."
-        ),
-        "papers": [
-            "DSWG24DiscretizationBias",
-            "MSVV07AdWords",
-            "GN21DriverSurgePricing",
-            "LG21TestOptionalPolicies",
-            "LMMS04FairDivision",
-        ],
-    },
-    {
-        "title": "Rating-system applications",
-        "paths": [
-            "EconCSLib/Foundations/Econometrics/RatingModels",
-            "EconCSLib/Learning/Bandits",
-        ],
-        "examples": (
-            "Binary and ordinal signal models, posterior-mean ratings, "
-            "bias/variance decompositions, prior-weighted updates, "
-            "monotonicity/correction lemmas, and minimal bandit-regret "
-            "interfaces."
-        ),
-        "papers": [
-            "MBJG25ProducerFairness",
-            "GJ18InformativeRatingSystems",
-        ],
-    },
-    {
-        "title": "Matching markets",
-        "paths": ["EconCSLib/Markets/Matching"],
-        "examples": (
-            "Preference profiles, blocking pairs and stable matchings, "
-            "deferred-acceptance invariants, proposer incentives, and "
-            "many-to-one admissions models."
-        ),
-        "papers": ["GS62CollegeAdmissions", "Roth82StableMatching"],
-    },
-    {
-        "title": "Auctions and mechanisms",
-        "paths": ["EconCSLib/MechanismDesign/Auctions"],
-        "examples": (
-            "Allocation and payment rules, dominant-strategy truthfulness, "
-            "benchmark-competitive digital-goods auctions, VCG-style welfare "
-            "maximization, and single-minded set-packing mechanisms."
-        ),
-        "papers": ["GHW01DigitalGoods", "LOS02CombinatorialAuctions"],
-    },
-    {
-        "title": "Online algorithms and regret",
-        "paths": ["EconCSLib/Algorithms/Online"],
-        "examples": (
-            "Online matching/allocation state machines, primal-dual "
-            "accounting, competitive-ratio certificates, regret interfaces, "
-            "and platform-learning abstractions."
-        ),
-        "papers": ["MSVV07AdWords", "MBJG25ProducerFairness"],
-    },
-    {
-        "title": "Complexity abstractions",
-        "paths": ["EconCSLib/Algorithms/Complexity"],
-        "examples": (
-            "Decision/search problem interfaces, reductions, NP/ZPP-style "
-            "class consequences, Yao-style minimax wrappers, and explicit "
-            "external-solver assumptions."
-        ),
-        "papers": [
-            "LOS02CombinatorialAuctions",
-            "MSVV07AdWords",
-            "LMMS04FairDivision",
-        ],
-    },
-    {
-        "title": "Applications: recommender systems",
-        "paths": ["EconCSLib/Applications/RecommenderSystems"],
-        "examples": (
-            "Exposure and allocation policies, classwise fairness "
-            "constraints, top-k recommendation surfaces, policy averaging, "
-            "and accuracy/diversity trade-off statements."
-        ),
-        "papers": ["GCG24UserItemFairness"],
-    },
-    {
-        "title": "Social choice, rankings, and fair division",
-        "paths": ["EconCSLib/SocialChoice"],
-        "examples": (
-            "Ranking profiles, Kendall distance and Mallows-style sequential "
-            "ranking models, score/payoff interfaces, envy graphs, "
-            "bounded-envy allocations, and indivisible-goods fairness "
-            "statements."
-        ),
-        "papers": ["LMMS04FairDivision", "GGSG19TopThree"],
-    },
-]
+
+def string_map(catalog: dict[str, Any], key: str) -> dict[str, str]:
+    raw = catalog.get(key, {})
+    if not isinstance(raw, dict):
+        raise ValueError(f"{key} should be an object")
+    return {
+        str(name): value.strip()
+        for name, value in raw.items()
+        if isinstance(value, str) and value.strip()
+    }
+
+
+def library_components(catalog: dict[str, Any]) -> list[dict[str, Any]]:
+    raw = catalog.get("library_components", [])
+    if not isinstance(raw, list):
+        raise ValueError("library_components should be a list")
+    components: list[dict[str, Any]] = []
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        title = item.get("title")
+        examples = item.get("examples")
+        raw_paths = item.get("paths", [])
+        if not isinstance(title, str) or not isinstance(examples, str):
+            continue
+        if not isinstance(raw_paths, list):
+            continue
+        paths = [str(path) for path in raw_paths if str(path).strip()]
+        components.append(
+            {
+                "title": title.strip(),
+                "paths": paths,
+                "examples": " ".join(examples.split()),
+            }
+        )
+    return components
+
+
+CATALOG_PAYLOAD = load_catalog()
+PUBLICATION_OVERRIDES = publication_overrides(CATALOG_PAYLOAD)
+SOURCE_URL_OVERRIDES = string_map(CATALOG_PAYLOAD, "source_url_overrides")
+README_TITLE_OVERRIDES = string_map(CATALOG_PAYLOAD, "readme_title_overrides")
+LIBRARY_COMPONENTS = library_components(CATALOG_PAYLOAD)
 
 
 def note_citation(payload: dict[str, Any]) -> dict[str, str] | None:

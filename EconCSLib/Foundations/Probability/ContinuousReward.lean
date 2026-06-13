@@ -14,8 +14,8 @@ noncomputable section
 
 Reusable measure/integral accounting for papers where an agent accepts a
 measurable set of positive real quantities, such as trip lengths, service
-durations, or job sizes.  This module records the generic parts of the GN21
-driver-surge formalization: accepted mass, accepted time/size, accepted reward,
+durations, or job sizes.  This module records generic accepted-set reward
+accounting: accepted mass, accepted time/size, accepted reward,
 positive-domain feasibility, and the positive-denominator bridge from zero
 accepted time to zero accepted mass.
 

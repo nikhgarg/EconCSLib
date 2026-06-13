@@ -188,14 +188,23 @@ final validation report, human-review log, or review-surface audit just because
 this early check ran.
 
 At review boundaries, populate `lean_to_tex_llm.json` with context-free
-Lean-to-TeX/prose translations generated from `PaperInterface.lean` alone. New
+Lean-to-TeX/prose translations generated from `PaperInterface.lean` alone. The
+translator must preserve every visible variable, binder, hypothesis, domain
+condition, equivalence direction, and conclusion; it must not summarize a theorem
+as an endpoint label or omit conditions that appear in the Lean statement. New
 tracked entries should use `{{ "tex_statement": "...", "lean_statement_sha256":
 "..." }}`. Then populate `statement_match_llm.json` with an independent
-no-context judgment of whether each translation matches the original paper
-statement, including Lean, paper, and TeX statement digests plus the judge
-model/agent name, validator type, validation timestamp, and any validator
-comment. If the judge flags a mismatch or uncertainty, iterate on the Lean
-statement before treating it as the paper theorem target. Run
+no-context judgment of whether each translation matches the original full paper
+statement, including all hypotheses, subparts, quantifiers, domains, constants,
+normalizations, signs, inequality directions, and conclusions. A row may be
+judged `matches` only if it is equivalent to the full source statement or to a
+clearly identified source subpart; if the Lean translation is a conditional
+wrapper, source-row package, omitted subclaim, weakened/strengthened statement,
+or broad aggregate for several displayed formulas, the judge must mark
+`mismatch` or `uncertain`. Include Lean, paper, and TeX statement digests plus
+the judge model/agent name, validator type, validation timestamp, and any
+validator comment. If the judge flags a mismatch or uncertainty, iterate on the
+Lean statement before treating it as the paper theorem target. Run
 `python3 scripts/review_dashboard.py --paper {folder} --precheck` before
 handoff so missing/stale statement-audit rows are explicit.
 If any paper-facing theorem takes a hypothesis that is not proved from prior
@@ -248,6 +257,16 @@ the dashboard as oversized and curate `PaperInterface.lean` or
       workflow before asking for human dashboard review.
 - [ ] Update `status.json`, then run `python3 scripts/sync_paper_status.py`.
 - [ ] Rebuild `DependencyDAG.pdf` and verify visually after each significant edit.
+
+## Post-Formalization Checklist
+
+- [ ] Run a library elevation pass over paper-local proof modules and record
+      reusable candidates or completed extractions in `FINAL_VALIDATION_REPORT.md`.
+- [ ] Run the combined recursive provenance audit and write a closeout report:
+      `python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0 --write-report docs/RECURSIVE_PROVENANCE_AUDIT_<date>.md`.
+      Resolve all findings for this paper before claiming `formalized`; if a
+      finding remains, mark the result partial/conditional in `status.json`,
+      `DependencyDAG.tex`, and `FINAL_VALIDATION_REPORT.md`.
 """
 
 
@@ -308,10 +327,17 @@ def status_text(args: argparse.Namespace, folder: str) -> str:
                     "surface_audit_threshold": 30,
                     "surface_warning_threshold": 50,
                     "policy": (
-                        "Translate each Lean statement with an LLM that has no paper context; "
-                        "have a third LLM compare that TeX/prose translation with the original "
-                        "paper statement, record the model/agent validator metadata, and iterate "
-                        "on PaperInterface.lean until they match. "
+                        "Translate each Lean statement with an LLM that has no paper context "
+                        "and require it to preserve every visible binder, hypothesis, domain "
+                        "condition, equivalence direction, and conclusion. Have a third LLM "
+                        "compare that TeX/prose translation with the original full paper "
+                        "statement, not just the theorem label. A `matches` verdict requires "
+                        "equivalence of hypotheses, subparts, quantifiers, domains, constants, "
+                        "normalizations, signs, inequality directions, and conclusions; "
+                        "conditional wrappers, source-row packages, omitted subclaims, "
+                        "weakened/strengthened statements, or broad aggregates must be judged "
+                        "`mismatch` or `uncertain`. Record the model/agent validator metadata "
+                        "and iterate on PaperInterface.lean until the full statement matches. "
                         "If the dashboard has more than 30 rows, run a no-paper-context LLM "
                         "audit that checks whether every row is paper-facing; at 50 or more "
                         "rows, curate the surface before broad human review."
@@ -348,6 +374,15 @@ def lean_to_tex_llm_text(folder: str) -> str:
         {
             "schema": 1,
             "paper": folder,
+            "prompt_version": "lean-to-tex-v2-strict-context-free",
+            "translator": "",
+            "translator_type": "",
+            "translated_at": "",
+            "prompt_summary": [
+                "Translate each Lean declaration from the Lean statement alone, with no paper context.",
+                "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
+                "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries.",
+            ],
             "items": {},
         },
         indent=2,
@@ -359,18 +394,17 @@ def statement_match_llm_text(folder: str) -> str:
         {
             "schema": 1,
             "paper": folder,
+            "prompt_version": "statement-match-v2-strict-full-statement",
             "validator": "",
             "validator_type": "",
             "validated_at": "",
-            "comment": "",
-            "items": {
-                "assumption_source_model_conditions": {
-                    "judgment": "",
-                    "reason": "",
-                    "source_location": "",
-                    "premise_judgments": {},
-                }
-            },
+            "comment": "Compare the complete original source statement against the context-free Lean-to-TeX translation. Use no proof context.",
+            "prompt_summary": [
+                "A matches verdict requires the same hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions.",
+                "Mark mismatch or uncertain for omitted source subclaims, added non-source conditions, conditional wrappers, broad aggregate rows, source-row packages, certificate packages, or weakened/strengthened statements.",
+                "For formula-bearing rows, check the exact formula rather than only the theorem label or qualitative interpretation.",
+            ],
+            "items": {},
         },
         indent=2,
     ) + "\n"
@@ -400,10 +434,18 @@ def assumption_match_llm_text(folder: str) -> str:
         {
             "schema": 1,
             "paper": folder,
+            "prompt_version": "assumption-provenance-v2-exact-premise-source",
             "validator": "",
             "validator_type": "",
             "validated_at": "",
-            "comment": "",
+            "comment": "Validate every assumption declaration and every exact audit-premise against source text or a Lean derivation.",
+            "prompt_summary": [
+                "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
+                "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
+                "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
+                "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
+                "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption.",
+            ],
             "items": {},
         },
         indent=2,
@@ -707,6 +749,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
 - [ ] Post-formalization library elevation pass completed: reusable proof
       results, techniques, and primitives were moved into `EconCSLib` when
       local/low-risk, or recorded with destination modules in the final report.
+- [ ] Recursive provenance audit completed with
+      `python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0 --write-report docs/RECURSIVE_PROVENANCE_AUDIT_<date>.md`;
+      all findings for this paper are resolved or explicitly recorded as
+      partial/conditional boundaries.
 - [ ] Final status review completed before publishing.
 
 ## Notes
@@ -823,6 +869,12 @@ as a true paper/source model assumption.
   report no reviewed row that recursively depends on a local helper with an
   unvalidated certificate, source-row equation, hidden hypothesis, or other
   proof-boundary premise.
+- Recursive provenance closeout report: not run. Before a completion claim,
+  run `python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0 --write-report docs/RECURSIVE_PROVENANCE_AUDIT_<date>.md`
+  and confirm this paper has no unresolved broad/opaque row, source-row formula
+  boundary, paper-local hidden premise, or transitive library certificate
+  finding. If a finding remains, record it here and mark the endpoint
+  partial/conditional.
 
 ## 9. DAG Audit
 - Rendered artifact: not checked
@@ -876,7 +928,7 @@ human-only `human_review.reviewed_rows` counter.
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("url", help="paper URL; arXiv abs URLs are converted to PDF URLs")
-    parser.add_argument("--folder", help="citation-style folder name, e.g. DSWG24DiscretizationBias")
+    parser.add_argument("--folder", help="citation-style folder name, e.g. ABC24ShortTitle")
     parser.add_argument("--title", help="paper title for README and theorem ledger")
     parser.add_argument("--authors", help="paper authors for README")
     parser.add_argument("--version", help="source version, conference, journal, or arXiv version")

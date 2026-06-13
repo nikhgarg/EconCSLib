@@ -103,7 +103,7 @@ theorem FiniteLinearExpectation.sum {ω ι : Type*} [Fintype ι]
 Expected objective of a rule that observes `obs x` and then chooses an action.
 
 This abstracts over the source of randomness.  A finite PMF expectation,
-Lebesgue integral, or paper-specific expectation operator can instantiate
+Lebesgue integral, or caller-specific expectation operator can instantiate
 `expect` as long as it is monotone.
 -/
 noncomputable def expectedObjective {ω σ β : Type*}
@@ -267,8 +267,8 @@ theorem expectedDecisionScore_le_of_pointwiseMax
 /--
 Bayes posterior argmax maximizes expected 0-1 accuracy.
 
-The hypothesis `hbayes` is the paper's tower-property step: expected 0-1
-accuracy equals expected posterior score for every rule.
+The hypothesis `hbayes` is the tower-property step: expected 0-1 accuracy
+equals expected posterior score for every rule.
 -/
 theorem expectedDecisionAccuracy_le_of_bayesScore_pointwiseMax
     {ω σ ι α : Type*} [Fintype ι] [DecidableEq α]

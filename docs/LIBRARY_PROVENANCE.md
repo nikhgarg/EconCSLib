@@ -26,19 +26,23 @@ certificate is exposed as a validated source assumption in `Assumptions.lean`
 and `assumption_match_llm.json`. If the certificate remains a theorem argument,
 the paper endpoint is partial or conditional.
 
-The same rule applies recursively inside a paper folder. If a reviewed theorem
-uses a paper-local helper, and that helper still takes a certificate, hidden
-hypothesis, source-row equation, or proof-boundary premise, that premise is a
-premise of the reviewed theorem unless the helper constructs it internally from
-already proved facts. Axioms, constants, opaque declarations, and unsafe
+The same rule applies inside a paper folder at the visible interface. If a
+reviewed theorem, its expanded `#check` statement, or a direct paper-local
+alias target still takes a certificate, hidden hypothesis, source-row equation,
+or proof-boundary premise, that premise is part of the reviewed theorem unless
+it is routed through a validated assumption. If a helper constructs the
+certificate internally from already proved facts, the premise is discharged;
+confirm transitive proof debt with Lean's `#print axioms` rather than a
+syntactic dependency scan. Axioms, constants, opaque declarations, and unsafe
 declarations are not acceptable ways to discharge such evidence.
 
 Ordinary theorem side conditions are different from provenance boundaries. If a
 paper-facing theorem visibly states a source condition, the row-local statement
-judge validates that condition against the source. The recursive provenance
-audit follows certificate/source-row/external-boundary premises through helper
-chains; it should not treat every derived inequality or measurability side
-condition in a helper as a hidden paper assumption.
+judge validates that condition against the source. The repository audit checks
+the expanded paper-facing signatures and direct aliases for
+certificate/source-row/external-boundary premises; it should not treat every
+derived inequality or measurability side condition in a helper as a hidden
+paper assumption.
 
 Run this audit during closeout and public PR preparation:
 
@@ -53,7 +57,7 @@ wrappers. Completed paper wrappers should not expose those parameters unless
 they are validated paper assumptions.
 
 The command prints only the first batch of informational findings by default.
-Use `--info-limit -1` for the full transitive certificate-boundary inventory, or
+Use `--info-limit -1` for the full direct certificate-boundary inventory, or
 `--info-limit 0` in CI when only errors and warnings should appear in the log.
 
 The library-only audit checks more than theorem names:
@@ -64,6 +68,14 @@ The library-only audit checks more than theorem names:
   formula, source row, threshold, branch, or window declarations. Rename these
   to a paper-neutral abstraction, make the source formula an explicit argument,
   or move the source-specific definition into the paper folder.
+- It rejects reusable `Assumption`/`Hypothesis` declarations and paper/source
+  provenance wording in `EconCSLib/*.lean`. Paper-source provenance belongs in
+  paper-local `Assumptions.lean`, validation reports, and source-audit notes;
+  shared modules should describe generic mathematical APIs.
+- It requires `EconCSLib.LibraryDefinitionAudit` to be imported by the root
+  library target. That module contains build-checked equivalence lemmas for
+  standard-name wrappers, so a drift such as an incorrectly stated Jensen
+  convexity definition fails at Lean build time rather than relying on prose.
 - It rejects section-level `variable` declarations that hide proof-boundary
   premises such as certificates, witnesses, assumptions, boundary packages, or
   regularity/window packages. Ordinary generic data predicates may remain
@@ -71,20 +83,30 @@ The library-only audit checks more than theorem names:
   definition parameter so callers cannot inherit it silently.
 - It rejects axioms, constants, opaque declarations, unsafe proof declarations,
   and guarded `#check`/`#eval` lines in reusable code.
+- It rejects concrete paper folder IDs and citation prefixes in reusable code
+  and rejects paper theorem-number labels in shared Lean comments. The checker
+  discovers paper terms from `papers/` and uses data-configured allowlists for
+  established algorithm/domain names, so it is not a hardcoded function-name
+  denylist.
 
 This is a static audit over current Lean source. It builds an in-memory
 declaration index every run; no checked-in dependency index is used or allowed,
-because that would go stale. The audit propagates certificate/source-boundary
-dependencies through reusable-library calls and paper-local wrappers, so it
-catches direct aliases and transitive helper chains. It complements, but does
-not replace, the paper-local statement, assumption, and hidden-premise
-prechecks. The default audit also propagates paper-local
-certificate/source-boundary dependencies through helper calls;
-`--library-premise-audit` adds the reusable library closure on top.
+because that would go stale. It complements, but does not replace, the
+paper-local statement, assumption, hidden-premise, and Lean-native axiom
+prechecks. The default paper audit runs `#print axioms` on paper-facing rows to
+catch transitive global proof debt exactly, and checks expanded signatures for
+visible premises.
 
-For status, unresolved transitive boundary findings are errors for
-`formalized` papers. They may be warnings for a paper intentionally marked
-`partially formalized`, but the paper-local `status.json`,
+The source-hygiene pass is a guardrail against generic-code drift, not a proof
+of source correctness. It prevents paper-specific formulas, theorem numbering,
+and citation labels from becoming invisible reusable-library assumptions. A
+formula-bearing paper result still needs either a Lean derivation from the
+paper primitives, an explicit validated source assumption, or a documented
+partial/caveat boundary.
+
+For status, unresolved visible boundary findings or unapproved `#print axioms`
+findings are errors for `formalized` papers. They may be warnings for a paper
+intentionally marked `partially formalized`, but the paper-local `status.json`,
 `FINAL_VALIDATION_REPORT.md`, README, and DAG must name the boundary rather
 than presenting an all-green proof surface.
 

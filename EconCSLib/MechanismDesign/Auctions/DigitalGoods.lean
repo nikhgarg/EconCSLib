@@ -49,7 +49,7 @@ def TruthfulDominantStrategy [DecidableEq Agent]
 /--
 Truthfulness forces the allocation probability/quantity offered to a bidder to
 be monotone in that bidder's own bid. This is the reusable single-parameter
-mechanism fact behind GHW Lemma 8.1.
+mechanism fact behind the win-probability monotonicity lemma.
 -/
 theorem allocation_mono_own_bid_of_truthful [DecidableEq Agent]
     (M : DigitalGoodsAuction Agent) (hM : M.TruthfulDominantStrategy)
@@ -90,9 +90,10 @@ theorem allocation_mono_own_bid_of_truthful [DecidableEq Agent]
   nlinarith
 
 /--
-Algebraic form of the GHW Lemma 8.1 proof. If the two truthfulness comparisons
-hold for values `bᵢ < bⱼ`, win probabilities `pᵢ,pⱼ`, and conditional expected
-costs `cᵢ,cⱼ`, then the lower-value bid cannot have larger win probability.
+Algebraic form of the win-probability monotonicity lemma proof. If the two
+truthfulness comparisons hold for values `bᵢ < bⱼ`, win probabilities `pᵢ,pⱼ`,
+and conditional expected costs `cᵢ,cⱼ`, then the lower-value bid cannot have
+larger win probability.
 -/
 theorem winProbability_mono_of_truthful_utility_inequalities
     {bi bj pi pj ci cj : ℝ} (hbid : bi < bj)
@@ -102,10 +103,10 @@ theorem winProbability_mono_of_truthful_utility_inequalities
   nlinarith
 
 /--
-Certificate form of the final algebra in GHW Theorem 8.2. After the paper's
-truthfulness and telescoping argument rewrites expected revenue as a weighted
-sum of fixed-price revenues, nonnegative weights of total mass at most one and
-the benchmark bound `fixedPriceRevenue i <= fixedPriceBenchmark` imply
+Certificate form of the final algebra in the digital-goods revenue theorem.
+After truthfulness and telescoping rewrite expected revenue as a weighted sum
+of fixed-price revenues, nonnegative weights of total mass at most one and the
+benchmark bound `fixedPriceRevenue i <= fixedPriceBenchmark` imply
 `expectedRevenue <= fixedPriceBenchmark`.
 -/
 theorem expectedRevenue_le_fixedPriceBenchmark_of_weighted_certificate
@@ -301,7 +302,7 @@ theorem fixedPriceBenchmark_nonneg [Fintype Agent]
   exact singlePriceRevenue_nonneg values hp_nonneg
 
 /--
-Dyadic-bin certificate behind GHW Theorem 4.1. If a bin has at least a `1/m`
+Dyadic-bin certificate behind the dyadic-bin benchmark theorem. If a bin has at least a `1/m`
 share of total multi-price value `T`, and all values in the bin lie between
 `low` and `2 * low`, then the fixed-price benchmark is large enough to satisfy
 `T <= (2*m) * benchmark`.
@@ -359,7 +360,7 @@ theorem fixedPriceBenchmark_totalValue_le_of_factor_two_bin
   nlinarith
 
 /--
-Partition/candidate-bin version of the GHW Theorem 4.1 certificate. If a
+Partition/candidate-bin version of the dyadic-bin benchmark theorem certificate. If a
 finite family of factor-two bins accounts for total value `T`, then averaging
 selects a bin carrying at least a `1 / card` share, and the fixed-price
 benchmark satisfies the corresponding `2 * card` bound.
@@ -1192,7 +1193,7 @@ theorem singlePriceRevenue_le_totalBidValue_of_nonneg
     · simp [hwin, hvalues_nonneg i]
 
 /--
-Expected payment of bidder `i` in the GHW weighted-pairing auction. Bidder `i`
+Expected payment of bidder `i` in the weighted-pairing auction. Bidder `i`
 draws another bidder `j` with probability proportional to `values j`; if
 `values j <= values i`, bidder `i` wins and pays `values j`.
 -/
@@ -1205,7 +1206,7 @@ noncomputable def weightedPairingExpectedPayment
     else
       0
 
-/-- Expected revenue of the GHW weighted-pairing auction. -/
+/-- Expected revenue of the weighted-pairing auction. -/
 noncomputable def weightedPairingExpectedRevenue
     [Fintype Agent] [DecidableEq Agent]
     (values : Agent → ℝ) : ℝ :=
@@ -1732,7 +1733,7 @@ theorem twoValueBidIndependentThresholdRevenue_start_high_bound
     nlinarith
 
 /--
-GHW Theorem 9.1 finite construction for binary values. For any deterministic
+Finite construction for the deterministic-threshold lower-bound theorem on binary values. For any deterministic
 bid-independent two-price rule that uses the high price on the all-high endpoint,
 there is a two-value input whose revenue is an `O(1/H)` fraction of the fixed
 price benchmark lower bound, while the side condition `alpha * H <= F` holds.
@@ -1889,7 +1890,7 @@ def twoValueErasedBidList (H highCount lowCount : ℕ) : List ℝ :=
 /--
 Restrict a paper-style anonymous bid-independent price rule on erased bid
 lists to binary inputs. On binary inputs the canonical list is determined by
-the high/low counts, which is the count-threshold model used in Theorem 9.1.
+the high/low counts, which is the count-threshold model used in the deterministic-threshold lower-bound theorem.
 -/
 def twoValueListBidIndependentThresholdPrice
     (priceRule : List ℝ → ℝ) (H : ℕ) : ℕ → ℕ → ℝ :=
@@ -1905,8 +1906,8 @@ noncomputable def twoValueLowCountInList (_H : ℕ) (bids : List ℝ) : ℕ :=
   bids.countP fun x => decide (x = (1 : ℝ))
 
 /--
-Convert a count-threshold binary price rule into the paper's anonymous
-erased-bid-list form by counting high and low values in the list.
+Convert a count-threshold binary price rule into anonymous erased-bid-list
+form by counting high and low values in the list.
 -/
 noncomputable def twoValueCountListPriceRule
     (thresholdPrice : ℕ → ℕ → ℝ) (H : ℕ) : List ℝ → ℝ :=
@@ -2128,7 +2129,7 @@ theorem twoValueBidIndependentPriceRevenue_all_high_low_offer_bound
   nlinarith
 
 /--
-GHW Theorem 9.1 for arbitrary deterministic bid-independent threshold prices
+Deterministic-threshold lower-bound theorem for arbitrary deterministic bid-independent threshold prices
 on binary values. There is a two-value input whose revenue is at most a `1/H`
 fraction of a feasible fixed-price benchmark lower bound, while
 `alpha * H <= F` holds.
@@ -2222,8 +2223,8 @@ theorem twoValueBidIndependentPrice_exists_low_revenue_witness
         exact mul_le_mul_of_nonneg_left halpha_cast hH_nonneg
 
 /--
-The paper's parameter choice `m = H^2 * alpha` for the arbitrary-threshold
-Theorem 9.1 construction.
+The scaled choice `m = H^2 * alpha` for the arbitrary-threshold deterministic
+lower-bound construction.
 -/
 theorem twoValueBidIndependentPrice_exists_low_revenue_witness_scaled
     (price : ℕ → ℕ → ℝ) {H alpha : ℕ}
@@ -2254,10 +2255,10 @@ theorem twoValueBidIndependentPrice_exists_low_revenue_witness_scaled
     hH_ge_one_real halpha_lt_m hm_large
 
 /--
-GHW Theorem 9.1 with the paper's scale choice and the actual finite
-fixed-price benchmark on the constructed two-value input. This strengthens the
-certificate-valued witness above by proving the witness lower bound is feasible
-for the one-winner fixed-price benchmark `F`.
+The deterministic-threshold lower-bound theorem with the scaled finite
+construction and the actual fixed-price benchmark on the constructed two-value
+input. This strengthens the certificate-valued witness above by proving the
+witness lower bound is feasible for the one-winner fixed-price benchmark `F`.
 -/
 theorem twoValueBidIndependentPrice_exists_low_revenue_witness_scaled_benchmark
     (price : ℕ → ℕ → ℝ) {H alpha : ℕ}
@@ -2417,7 +2418,7 @@ theorem twoValueBidIndependentPrice_exists_low_revenue_witness_scaled_benchmark
           (mul_le_mul_of_nonneg_left halpha_cast hH_nonneg) hbench
 
 /--
-GHW Theorem 9.1 for a paper-style anonymous bid-independent price rule `f` on
+the deterministic-threshold lower-bound theorem for a paper-style anonymous bid-independent price rule `f` on
 erased bid lists. Its binary restriction is exactly the count-threshold rule
 above, so the adversarial two-value input is obtained from the count-threshold
 theorem.
@@ -2463,8 +2464,8 @@ def DeterministicOfferFeasible (offer : ℝ → Option ℝ) : Prop :=
 Bid-independence/critical-price shape for a deterministic offer slice: either
 the bidder is always rejected, or there is a critical price `v` such that bids
 below `v` lose and bids above `v` win at price `v`. The boundary bid `v` may
-either win or lose, matching the open/closed interval alternatives in GHW
-Lemma 9.2.
+either win or lose, matching the open/closed interval alternatives in the source
+the offer-slice characterization.
 -/
 def DeterministicOfferBidIndependent (offer : ℝ → Option ℝ) : Prop :=
   (∀ report, offer report = none) ∨
@@ -2484,7 +2485,7 @@ def DeterministicOfferThresholdDominates
     offer report = some price → price = threshold ∧ threshold ≤ report
 
 /--
-GHW Lemma 9.2 payment-constancy step: in a truthful deterministic offer slice,
+the offer-slice characterization lemma payment-constancy step: in a truthful deterministic offer slice,
 any two winning reports must be charged the same price.
 -/
 theorem deterministicOffer_payment_eq_of_truthful_wins
@@ -2498,7 +2499,7 @@ theorem deterministicOffer_payment_eq_of_truthful_wins
   linarith
 
 /--
-GHW Lemma 9.2 monotonicity step: if a lower report wins in a truthful
+the offer-slice characterization lemma monotonicity step: if a lower report wins in a truthful
 deterministic offer slice, then every higher report also wins.
 -/
 theorem deterministicOffer_winning_mono_of_truthful
@@ -2517,7 +2518,7 @@ theorem deterministicOffer_winning_mono_of_truthful
       nlinarith
 
 /--
-GHW Lemma 9.2 losing-prefix step: if a higher report loses in a truthful
+the offer-slice characterization lemma losing-prefix step: if a higher report loses in a truthful
 feasible deterministic offer slice, then every lower report also loses.
 -/
 theorem deterministicOffer_losing_anti_mono_of_truthful
@@ -2536,7 +2537,7 @@ theorem deterministicOffer_losing_anti_mono_of_truthful
       contradiction
 
 /--
-GHW Lemma 9.2 offer-slice characterization. A truthful feasible deterministic
+Offer-slice characterization lemma. A truthful feasible deterministic
 single-parameter offer is bid-independent: it is either always rejecting, or it
 has a critical price with losing reports below it and winning reports above it.
 -/
@@ -2708,7 +2709,7 @@ theorem deterministicAuctionOffer_feasible_of_individuallyRational
   · simp [halloc] at hoff
 
 /--
-Auction-level form of GHW Lemma 9.2. Every fixed-other-bids slice of a
+Auction-level form of the offer-slice characterization lemma. Every fixed-other-bids slice of a
 truthful, individually rational, no-positive-transfers deterministic
 digital-goods auction is bid-independent in the critical-price sense.
 -/

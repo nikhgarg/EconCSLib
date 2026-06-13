@@ -24,8 +24,8 @@ abbrev DecisionProblem (Instance : Type u) := Instance → Prop
 /--
 An abstract pair of complexity classes over a common language universe.
 
-For LOS02 this is used only to name the paper's `NP = ZPP` consequence. The
-structure does not claim a particular machine model for either class.
+This is only a light-weight interface for naming class-equality consequences;
+the structure does not claim a particular machine model for either class.
 -/
 structure ComplexityClassModel (Instance : Type u) where
   NP : Set (DecisionProblem Instance)
@@ -35,7 +35,7 @@ namespace ComplexityClassModel
 
 variable {Instance : Type u}
 
-/-- The abstract class-equality consequence written in LOS02 as `NP = ZPP`. -/
+/-- The abstract class-equality consequence usually written as `NP = ZPP`. -/
 def npEqZPP (M : ComplexityClassModel Instance) : Prop :=
   M.NP = M.ZPP
 

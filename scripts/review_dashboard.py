@@ -903,6 +903,14 @@ def parse_paper_statement_map(folder: Path) -> dict[str, str]:
     for key, raw_item in raw_items.items():
         if not isinstance(key, str) or not key.strip() or not isinstance(raw_item, dict):
             continue
+        direct_statement = str(raw_item.get("statement") or "").strip()
+        if direct_statement:
+            text = normalize_statement(direct_statement)
+            _add_statement_variant(statements, key.strip(), text)
+            for alias in raw_item.get("aliases", []) or []:
+                if isinstance(alias, str) and alias.strip():
+                    _add_statement_variant(statements, alias.strip(), text)
+            continue
         source_text_file = str(raw_item.get("source_text_file") or "source.txt").strip()
         if not source_text_file or "/" in source_text_file or "\\" in source_text_file:
             continue
@@ -5743,13 +5751,18 @@ def print_statement_audit_warnings(rows: list[dict[str, Any]], label: str) -> bo
             print(f"   {sample}")
     print(
         "At statement-review boundaries, regenerate lean_to_tex_llm.json from the "
-        "Lean statements alone, then regenerate statement_match_llm.json from only "
-        "the paper statement and that translation. If all rows are uncertain, "
-        "treat that as a likely source extraction problem and fix the source map "
-        "before accepting row-level judgments. A clean statement audit is still "
-        "row-local; run `python3 scripts/review_dashboard.py --paper <paper> "
-        "--assumption-precheck` or the combined `--precheck` path before "
-        "treating theorem premises as certified."
+        "Lean statements alone, preserving every visible binder, hypothesis, "
+        "domain condition, equivalence/implication direction, and conclusion. "
+        "Then regenerate statement_match_llm.json from the complete original "
+        "paper theorem/definition/formula text and that translation. The judge "
+        "should mark mismatch or uncertain for omitted subparts, extra non-source "
+        "conditions, broad aggregate rows, source-row/certificate packages, or "
+        "weakened/strengthened statements. If all rows are uncertain, treat that "
+        "as a likely source extraction problem and fix the source map before "
+        "accepting row-level judgments. A clean statement audit is still row-local; "
+        "run `python3 scripts/review_dashboard.py --paper <paper> "
+        "--assumption-precheck` or the combined `--precheck` path before treating "
+        "theorem premises as certified."
     )
     return True
 

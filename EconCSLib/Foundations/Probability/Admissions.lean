@@ -546,7 +546,7 @@ theorem admissionsSelectedWelfareMass_le_total_of_value_nonneg {Θ Ω : Type*}
 /-!
 ## Two-signal admissions accounting
 
-These wrappers keep paper-specific files thin when they compare two information
+These wrappers keep caller-specific files thin when they compare two information
 regimes but share the same latent prior and value function.
 -/
 

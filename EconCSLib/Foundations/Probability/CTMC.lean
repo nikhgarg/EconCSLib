@@ -317,8 +317,7 @@ theorem twoStateCtmcSwitchProbPerTime_tendsto_at_zero
 
 /--
 The switch probability is strictly below the instantaneous-rate linearization
-`lambdaIJ * t` for positive elapsed time.  This is the CTMC fact behind the
-paper's repeated use of `q_{i→j}(t)/t < lambdaIJ`.
+`lambdaIJ * t` for positive elapsed time.
 -/
 theorem twoStateCtmcSwitchProb_lt_rate_mul_time
     (lambdaIJ lambdaJI t : ℝ)

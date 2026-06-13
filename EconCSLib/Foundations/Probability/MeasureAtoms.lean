@@ -26,7 +26,7 @@ def IsMeasureAtom (μ : Measure Ω) (S : Set Ω) : Prop :=
 def AtomsBoundedBy (μ : Measure Ω) (α : ℝ) : Prop :=
   ∀ S : Set Ω, IsMeasureAtom μ S → μ.real S ≤ α
 
-/-- A positive-mass singleton is a measure atom in the paper's sense. -/
+/-- A positive-mass singleton is a measure atom. -/
 theorem isMeasureAtom_singleton_of_measure_ne_zero
     (μ : Measure Ω) {x : Ω}
     (hpos : μ ({x} : Set Ω) ≠ 0) :

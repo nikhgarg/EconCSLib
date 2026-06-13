@@ -127,37 +127,75 @@ tool, not a paper result by itself. A paper-facing theorem that calls such a
 library API is fully formalized only if it constructs the certificate from the
 paper source primitives inside Lean, or if the certificate is a validated
 paper-source assumption. Otherwise the paper endpoint remains partial or
-conditional. Run
-`python3 scripts/audit_repository.py --library-only --library-premise-audit`
-after reusable-library edits and during closeout to fail source-shaped reusable
-APIs, hidden proof-boundary section variables, axiom/opaque placeholders, and
-guarded debug commands, and to list shared-library APIs with
-certificate/source-boundary parameters. Then check that no completed paper
-wrapper still exposes one.
-Use `--info-limit -1` when you need the complete transitive library-boundary
+conditional. During closeout, run the combined axiom/premise/source-hygiene
+audit and write its paper-by-paper report:
+
+```bash
+python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0 --write-report docs/RECURSIVE_PROVENANCE_AUDIT_<date>.md
+```
+
+Use `--include-active` when the paper under review is still listed as active;
+otherwise it is fine to omit it. The generated report is the durable closeout
+artifact for Lean axiom closure, broad/opaque paper-facing rows, direct visible
+premises, source-row formula boundaries, and source-shaped reusable APIs. A
+completed paper must have no theorem-status findings for its folder unless the
+exact boundary is marked partial/conditional in `status.json`, the dependency
+DAG, and the final validation report.
+
+Also run
+`python3 scripts/audit_repository.py --library-only --library-premise-audit --info-limit 0`
+after reusable-library edits to fail source-shaped reusable APIs, hidden
+proof-boundary section variables, axiom/opaque placeholders, and guarded debug
+commands, and to list shared-library APIs with certificate/source-boundary
+parameters. Then check that no completed paper wrapper still exposes one.
+The same pass rejects reusable `Assumption`/`Hypothesis` declarations and
+paper/source provenance wording in `EconCSLib/*.lean`, and requires the
+root-imported `EconCSLib.LibraryDefinitionAudit` module for standard-name
+definitions. When adding a standard wrapper such as a convexity, concavity,
+order, metric, or probability notion, add a build-checked equivalence lemma in
+that audit module against the mathlib or local canonical definition.
+Use `--info-limit -1` when you need the complete direct library-boundary
 inventory; CI uses `--info-limit 0` so only actionable errors/warnings appear.
-The ordinary audit also propagates paper-local certificate/source-boundary
-premises through helper calls. A reviewed theorem is not closed if it calls a
-local helper that still takes an unvalidated certificate, source-row equation,
-external theorem, or proof-boundary witness, even through several intermediate
-wrappers. Ordinary inequalities, positivity, and measurability side conditions
-are different: if they are visible in the paper-facing statement, the
-statement/assumption judges validate them against the source, and a caller may
-derive them from stronger visible source premises. Do not use `axiom`,
-`constant`, `opaque`, or unsafe declarations to stand in for missing source
-proofs.
+The ordinary audit runs Lean-native `#print axioms` on paper-facing interface
+rows to catch transitive global proof debt exactly. It separately checks
+expanded `#check` statements and direct paper-local alias targets for visible
+certificate/source-boundary premises. Ordinary inequalities, positivity, and
+measurability side conditions are different: if they are visible in the
+paper-facing statement, the statement/assumption judges validate them against
+the source, and a caller may derive them from stronger visible source premises.
+Do not use `axiom`, `constant`, `opaque`, or unsafe declarations to stand in
+for missing source proofs.
 
 Do not hide paper-source formulas inside reusable-library definitions. If a
 formula is paper-source data, make it a paper-facing declaration or an explicit
 certificate argument to the reusable theorem. If the formula is generic and
 derived from library primitives, keep it generic and avoid paper/result-specific
 names. The library premise audit rebuilds a fresh in-memory declaration index
-on every run and propagates certificate/source-boundary dependencies through
-library helpers and paper wrappers; do not check in a dependency index.
+on every run and reports direct certificate/source-boundary APIs and
+source-shaped reusable definitions; do not check in a dependency index.
 The reusable-library parser covers theorem, lemma, def, abbrev, structure,
 class, and inductive declarations. A proof-boundary structure or package may
 live in `EconCSLib/`, but a paper-specific formula/window/row/source name should
 not be baked into the reusable API.
+
+The repository audit also includes a source-hygiene pass for generic code. It
+discovers paper IDs and citation prefixes from the `papers/` folders, then
+rejects those concrete references in reusable code, audit scripts, and generic
+workflow docs. It also rejects paper theorem-number labels such as `Theorem 2`
+or `Lemma 4.1` in `EconCSLib/` comments. The check is intentionally standard-
+based rather than function-name-based: paper metadata belongs in paper-local
+files or data config, source theorem numbering belongs in paper interfaces and
+validation reports, and reusable code should use domain or algorithm names.
+If a term is genuinely an established algorithm/domain name, allow it in
+`papers/audit_config.json`; do not add code-level one-off exceptions.
+
+This hardened audit catches the recurring mechanical failure modes: hidden
+source-row/certificate premises in paper wrappers, transitive proof debt via
+Lean-native `#print axioms`, source-shaped reusable APIs, and hardcoded
+paper references in generic code. It does not prove that every source formula is
+mathematically correct by itself. That requires the outside-Lean formula sanity
+pass, derivation of formula-bearing claims from primitives where possible, and
+the statement/assumption judges for visible paper-facing text.
 
 ## Human Review Order
 
@@ -238,9 +276,15 @@ before spending much time on proofs:
    skeleton containing the paper-facing definitions and named statements you
    intend to formalize.
 3. Generate `lean_to_tex_llm.json` from those Lean statements alone, with no
-   paper context.
+   paper context. The translation must preserve every visible binder,
+   hypothesis, domain condition, equivalence/implication direction, and
+   conclusion.
 4. Generate `statement_match_llm.json` by asking a separate judge to compare
-   only the original paper statement and the Lean-to-TeX draft.
+   only the complete original paper statement and the Lean-to-TeX draft. A
+   `matches` verdict requires the same hypotheses, subparts, quantifiers,
+   domains, constants, normalizations, signs, inequality directions, and
+   conclusions; conditional wrappers, omitted source subclaims, source-row
+   packages, and broad aggregates must be marked `mismatch` or `uncertain`.
 5. Run `python3 scripts/review_dashboard.py --paper <paper> --statement-precheck`.
 6. Run `python3 scripts/review_dashboard.py --paper <paper> --assumption-precheck`
    before treating statement matches as certified targets. The statement judge
@@ -268,11 +312,21 @@ At a statement-review boundary, run the independent LLM statement workflow:
    statement into paper-style LaTeX/prose. Save stable outputs in
    `lean_to_tex_llm.json`. New tracked entries should use
    `{ "tex_statement": "...", "lean_statement_sha256": "..." }` so stale
-   translation drafts can be detected.
+   translation drafts can be detected, and the sidecar should record
+   `prompt_version: "lean-to-tex-v2-strict-context-free"`. The translation
+   prompt must require every visible binder, hypothesis, domain condition,
+   equivalence or implication direction, and conclusion to survive unchanged in
+   the prose/LaTeX rendering.
 3. Ask a third LLM, with no Lean/proof context, to compare the original paper
    statement against the translated LaTeX/prose. Save verdicts and reasons in
    `statement_match_llm.json`, including current Lean, paper, and TeX statement
-   digests plus validator/model metadata.
+   digests plus validator/model metadata, and record
+   `prompt_version: "statement-match-v2-strict-full-statement"`. The judge must
+   compare the full source statement, not just the theorem label or qualitative
+   claim. It should reject or mark uncertain any omitted subpart, added
+   non-source hypothesis, changed quantifier/domain, changed constant or
+   normalizer, sign error, inequality-direction change, broad aggregate row,
+   source-row package, certificate package, or weakened/strengthened theorem.
 4. For every displayed or source-defining formula used by a paper-facing result,
    expose an exact formula/subclaim row in `PaperInterface.lean`. A broad row
    that summarizes a numbered result, theorem family, metric package, or source
@@ -285,26 +339,36 @@ At a statement-review boundary, run the independent LLM statement workflow:
    declare it in paper-local `Assumptions.lean`, list it in `status.json`
    `review_surface.assumption_names`, and ask a separate source-assumption
    judge to confirm that it is an explicit paper/source model assumption. Save
-   this in `assumption_match_llm.json`.
+   this in `assumption_match_llm.json`, with
+   `prompt_version: "assumption-provenance-v2-exact-premise-source"`.
    Do not try to hide such a premise by making the `PaperInterface.lean` row an
-   `abbrev` alias to a proof-facing theorem. `python3 scripts/audit_repository.py`
-   follows review-surface aliases into paper-local Lean files and computes a
-   recursive paper-local helper closure for certificate/source-boundary
-   premises; any certificate, source-row equation, external theorem, or
-   proof-boundary witness still counts unless it is derived or routed through
-   the explicit assumption ledger.
+   `abbrev` alias to a proof-facing theorem. The audit expands review-surface
+   declarations and direct paper-local alias targets, then uses Lean-native
+   `#print axioms` on paper-facing rows for transitive proof debt. Any visible
+   certificate, source-row equation, external theorem, or proof-boundary witness
+   still counts unless it is derived or routed through the explicit assumption
+   ledger.
    If `Assumptions.lean` uses `-- audit-premise:` comments, group approval is
    not enough: every exact premise must have an `assumption_match_llm.json`
    `premise_judgments` entry with a source location. Mark non-source or
    not-yet-derived premises as `partial_boundary` and keep the paper status
    partial until those premises are derived or source-matched.
+   The assumption judge must decide each exact premise independently. A
+   displayed formula, capacity equation, threshold identity, normalization,
+   density or mass row, source-row package, certificate, witness object, or
+   proof convenience is not a source assumption merely because it appears in a
+   proof or can be consumed by a Lean helper. It is acceptable only if the
+   source states it as an assumption or theorem condition, or if Lean derives it
+   from previously validated source primitives.
    This applies equally when the premise comes from a reusable library theorem.
    A direct paper alias to a library theorem that takes a certificate, witness,
    source-row package, or external-boundary parameter is conditional unless the
    paper wrapper constructs that argument internally or exposes it as a
-   validated paper assumption. The same rule applies through helper layers:
-   run `python3 scripts/audit_repository.py --library-only --library-premise-audit` to catch
-   transitive dependencies on certificate/source-boundary APIs.
+   validated paper assumption. Run
+   `python3 scripts/audit_repository.py --library-only --library-premise-audit`
+   after reusable-library edits to inventory direct certificate/source-boundary
+   APIs and source-shaped reusable names; combine that inventory with the
+   paper-facing `#print axioms` audit and expanded-statement review.
    A certificate that is constructed internally from already proved primitives
    is discharged; a certificate that is merely consumed by a helper remains a
    premise of every paper-facing theorem that depends on that helper.

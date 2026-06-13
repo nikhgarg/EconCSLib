@@ -1686,7 +1686,7 @@ assuming the two integration-by-parts terms are integrable.
 
 This is the lower-tail counterpart to
 `standardGaussian_firstMoment_affineCDF_integral_Ioi_of_integrable` and is the
-shape needed by Proposition 2's `kappa` calculation.
+shape needed by `kappa` calculation.
 -/
 theorem standardGaussian_firstMoment_affineCDF_integral_Iic_of_integrable
     (offset c B : ℝ)

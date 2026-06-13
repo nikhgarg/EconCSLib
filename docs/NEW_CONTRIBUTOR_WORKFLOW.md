@@ -133,8 +133,7 @@ python3 scripts/new_paper.py <paper-url> \
   --version "<Venue or version>"
 ```
 
-Use the existing folder naming convention, for example `MSVV07AdWords` or
-`Roth82StableMatching`.
+Use the existing folder naming convention, for example `ABC24ShortTitle`.
 
 The first public pull request for a new paper should contain only public-safe
 work. It can be an intake PR if it contains:

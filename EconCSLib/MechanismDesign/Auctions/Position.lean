@@ -271,10 +271,10 @@ def NoProfitableAssignedSlotDeviation (E : PositionEnvironment Slot)
         O.utility E values i
 
 /--
-Outcome-level stable assignment predicate for the EOS assignment-game bridge.
-It records the finite assignment feasibility, bidder-side individual
-rationality, and absence of a profitable rematch with any assigned slot at the
-current per-click payment.
+Outcome-level stable assignment predicate for an assignment-game bridge. It
+records the finite assignment feasibility, bidder-side individual rationality,
+and absence of a profitable rematch with any assigned slot at the current
+per-click payment.
 -/
 def StableAssignment (E : PositionEnvironment Slot)
     (O : PositionOutcome Bidder Slot) (values : Bidder → ℝ) : Prop :=

@@ -22,13 +22,13 @@ an audit exists.
 Use the paper-local launcher when possible:
 
 ```bash
-papers/DSWG24DiscretizationBias/review-dashboard.sh
+papers/ABC24ShortTitle/review-dashboard.sh
 ```
 
 Or run the shared script directly:
 
 ```bash
-python3 scripts/review_dashboard.py --paper DSWG24DiscretizationBias --serve
+python3 scripts/review_dashboard.py --paper ABC24ShortTitle --serve
 ```
 
 Open one of the printed URLs. On WSL2, the paper-local launcher binds broadly
@@ -73,14 +73,20 @@ The intended workflow has three independent statement passes:
    assumption rather than a proof shortcut. Save this in
    `assumption_match_llm.json`.
 
-The statement match pass is formula-level, not just result-label-level. Every
-displayed equation, inequality, iff, definition, or source-defining formula that
-is part of a paper-facing result should have an exact review row or an exact
-subclaim row. Broad rows that merely say a numbered result's metrics, model, or
-source surface are formalized can hide sign errors, missing normalizers,
-domain restrictions, or premise shortcuts. The judge prompt should explicitly
-ask whether all formula-bearing subclaims are present and whether their signs,
-constants, quantifiers, inequality direction, domains, and hypotheses match.
+The statement match pass is full-theorem and formula-level, not just
+result-label-level. Every displayed equation, inequality, iff, definition, or
+source-defining formula that is part of a paper-facing result should have an
+exact review row or an exact subclaim row. Broad rows that merely say a numbered
+result's metrics, model, or source surface are formalized can hide sign errors,
+missing normalizers, domain restrictions, omitted subparts, or premise
+shortcuts. The Lean-to-TeX prompt should preserve every visible binder,
+hypothesis, domain condition, equivalence/implication direction, and conclusion.
+The judge prompt should explicitly ask whether all formula-bearing subclaims are
+present and whether their hypotheses, subparts, quantifiers, signs, constants,
+normalizations, inequality direction, domains, and conclusions match the
+complete original paper statement. Conditional wrappers, source-row/certificate
+packages, omitted conclusions, or weakened/strengthened statements must be
+judged `mismatch` or `uncertain`.
 
 Formula rows are still subject to proof provenance. A source-equation wrapper
 is complete only when it is derived in Lean from the paper's source model
@@ -116,8 +122,9 @@ Use this workflow in two modes:
 - Initial target-setting pass: run near the beginning of a paper, after the
   source inventory and first `PaperInterface.lean` skeleton, before investing in
   long proofs. This lightweight pass only establishes that the Lean statements
-  are the right formalization targets. Generate `lean_to_tex_llm.json`, generate
-  `statement_match_llm.json`, run
+  are the right formalization targets. Generate `lean_to_tex_llm.json` from the
+  full expanded Lean statements, generate `statement_match_llm.json` against the
+  complete original paper theorem/definition/formula text, run
   `python3 scripts/review_dashboard.py --paper <paper> --statement-precheck`,
   then run `python3 scripts/review_dashboard.py --paper <paper>
   --assumption-precheck`. The statement judge is row-local; it does not certify
@@ -154,6 +161,14 @@ list.
 {
   "schema": 1,
   "paper": "PaperFolder",
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "translator": "gpt-5-codex",
+  "translator_type": "model",
+  "translated_at": "2026-06-13T12:00:00Z",
+  "prompt_summary": [
+    "Translate from the Lean statement alone, with no paper context.",
+    "Preserve all visible binders, hypotheses, domains, directions, and conclusions."
+  ],
   "items": {
     "paper_theorem_name": {
       "tex_statement": "Context-free paper-style translation of the Lean statement.",
@@ -173,9 +188,14 @@ It has schema:
 {
   "schema": 1,
   "paper": "PaperFolder",
+  "prompt_version": "statement-match-v2-strict-full-statement",
   "validator": "gpt-5-codex",
   "validator_type": "model",
   "validated_at": "2026-06-06T12:00:00Z",
+  "prompt_summary": [
+    "Compare the complete source statement against the Lean-to-TeX translation.",
+    "Require exact agreement on hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions."
+  ],
   "comment": "Optional sidecar-wide validator note.",
   "items": {
     "paper_theorem_name": {
@@ -253,9 +273,14 @@ certificates.
 {
   "schema": 1,
   "paper": "PaperFolder",
+  "prompt_version": "assumption-provenance-v2-exact-premise-source",
   "validator": "gpt-5-codex",
   "validator_type": "model",
   "validated_at": "2026-06-06T12:00:00Z",
+  "prompt_summary": [
+    "Validate each assumption declaration and every exact audit-premise.",
+    "A premise is acceptable only when it is source text, a source model primitive, a theorem condition, or derived in Lean from source primitives."
+  ],
   "comment": "Optional sidecar-wide validator note.",
   "items": {
     "assumption_source_model_conditions": {
@@ -303,6 +328,14 @@ only when the Lean development already derives the premise from prior source
 definitions. Use `partial_boundary` when the premise is visible but not yet
 source-matched or derived; a paper with any `partial_boundary` premise must be
 reported as partial, not fully formalized.
+
+The assumption judge must not accept a formula merely because it appears in a
+source proof or because a Lean helper can consume it. Displayed equations,
+capacity identities, threshold cutoffs, normalizations, density or mass rows,
+source-row packages, certificates, and witness objects are source assumptions
+only if the source states them as assumptions or theorem hypotheses. Otherwise
+they must either be derived in Lean from source primitives or recorded as a
+partial boundary.
 
 Run `python3 scripts/audit_repository.py` at the same boundary. The repository
 audit does not stop at the compact `PaperInterface.lean` declaration text: it
@@ -426,25 +459,25 @@ Use `--user` to force a reviewer handle. Summary views can be filtered with
 Run the launch-time freshness check without opening a browser:
 
 ```bash
-python3 scripts/review_dashboard.py --paper DSWG24DiscretizationBias --precheck
+python3 scripts/review_dashboard.py --paper ABC24ShortTitle --precheck
 ```
 
 Run non-interactive check mode. It exits with code 1 if any selected review is
 missing, stale, or marked as not matching:
 
 ```bash
-python3 scripts/review_dashboard.py --paper DSWG24DiscretizationBias --check
-papers/DSWG24DiscretizationBias/review-dashboard.sh --check
+python3 scripts/review_dashboard.py --paper ABC24ShortTitle --check
+papers/ABC24ShortTitle/review-dashboard.sh --check
 ```
 
 Export review status:
 
 ```bash
-python3 scripts/review_dashboard.py --paper DSWG24DiscretizationBias --export-format json
-python3 scripts/review_dashboard.py --paper DSWG24DiscretizationBias --export-format csv
-python3 scripts/review_dashboard.py --paper DSWG24DiscretizationBias --export-format md
-python3 scripts/review_dashboard.py --paper DSWG24DiscretizationBias --export-format validators-md
-python3 scripts/review_dashboard.py --paper DSWG24DiscretizationBias --export-format json --status-user nkgarg --stale-only
+python3 scripts/review_dashboard.py --paper ABC24ShortTitle --export-format json
+python3 scripts/review_dashboard.py --paper ABC24ShortTitle --export-format csv
+python3 scripts/review_dashboard.py --paper ABC24ShortTitle --export-format md
+python3 scripts/review_dashboard.py --paper ABC24ShortTitle --export-format validators-md
+python3 scripts/review_dashboard.py --paper ABC24ShortTitle --export-format json --status-user <github-user> --stale-only
 ```
 
 Use `validators-md` to refresh the paper-facing validator table in
@@ -455,8 +488,8 @@ In server mode, machine-readable status is available at:
 
 ```text
 GET /api/status
-GET /api/status?paper=DSWG24DiscretizationBias
-GET /api/status?paper=...&slice=slice-01&stale_only=true&user=nkgarg
+GET /api/status?paper=ABC24ShortTitle
+GET /api/status?paper=...&slice=slice-01&stale_only=true&user=<github-user>
 ```
 
 ## Launcher Maintenance

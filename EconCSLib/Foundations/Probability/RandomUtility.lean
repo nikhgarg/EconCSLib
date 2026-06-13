@@ -7,8 +7,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Random-Utility Noise Kernels
 
-Reusable pointwise inequalities for one-dimensional random-utility models.
-are intentionally paper-neutral.  Paper-specific ranking maps, payoff
+Reusable pointwise inequalities for one-dimensional random-utility models. They
+are intentionally paper-neutral. Caller-specific ranking maps, payoff
 certificates, and theorem-number wrappers should stay in the paper folder until
 another paper needs the same abstraction.
 

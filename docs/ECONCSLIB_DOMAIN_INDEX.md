@@ -15,7 +15,7 @@ when you need material from a domain quickly.
     `FiniteSum`, `FiniteRanking`, `FiniteRounding`, `FiniteSigns`,
     `Sequence`, `Asymptotics`, `ConvexCombination`, `IntervalCrossing`,
     `EpsilonContinuity`, `PositiveDenominator`, `AffineThreshold`,
-    `ThresholdCharacterization`, `ExponentialBounds`
+    `ThresholdCharacterization`, `PairCondition`, `ExponentialBounds`
     - `FiniteSum`: finite weighted-sum bounds, injective subfamily sum
       comparisons, weighted-share race bounds, finite averaging/cardinality
       lower bounds, Cauchy-Schwarz, ordered-pair double-sum regrouping by an
@@ -40,7 +40,12 @@ when you need material from a domain quickly.
       lower/upper cutoff strategies, compact interval crossings, unbounded
       continuous strict-monotone/strict-antitone crossing, and strict-antitone
       capacity cutoffs with the upper-region characterization
-      `{z | f z <= level} = {z | cutoff <= z}`.
+      `{z | f z <= level} = {z | cutoff <= z}`; includes
+      `CapacityThreshold` for source-facing capacity equation plus upper-region
+      characterizations.
+    - `PairCondition`: exact-one-of-two propositional packaging for
+      two-branch source cases, including bridges from qualified cutoff
+      case analyses and finite pair membership.
     - `ExponentialBounds`: elementary `exp`/`log` inequalities for finite
       probability products, including `exp(-2/x) <= 1 - 1/x` for `x >= 2` and
       its finite-power form.
@@ -48,7 +53,8 @@ when you need material from a domain quickly.
   - `EconCSLib.Foundations.Optimization`
     (`Approximation`, `Argmax`, `Certificate`, `FiniteSearch`,
     `LinearProgram`, `MoveGraph`, `ChoiceEquilibrium`, `ChoiceEquilibriumAE`,
-    `BinaryChoice`, `BinaryChoiceAE`, `Endpoint`)
+    `BinaryChoice`, `BinaryChoiceAE`, `BinaryPolicyGame`,
+    `StrategicEquilibrium`, `Endpoint`)
     - `Approximation`: benchmark/dual upper-bound sandwich certificates for
       approximation and competitive-ratio proofs, including additive-error
       variants.
@@ -80,6 +86,12 @@ when you need material from a domain quickly.
       predicates, conversions to and from raw Boolean best-response clauses,
       off-null-set constructors, a.e. projection from choice equilibria,
       no-tie/null-tie threshold identification, and affine cutoff consequences.
+    - `BinaryPolicyGame`: two-player binary policy equilibrium predicates,
+      low/high case-split iff theorems, feasible-policy variants, and
+      objective-comparison bridges for policy-pair games.
+    - `StrategicEquilibrium`: combined agent/policy equilibrium data with
+      almost-everywhere agent feasibility and best-response projections,
+      policy best-response projections, and consistency projections.
     - `Endpoint`: one-dimensional endpoint-move calculus from derivative
       signs, first/last-zero stopping lemmas, and one-sided local
       improvement/decrease steps for cutoff and interval-endpoint proofs.
@@ -173,9 +185,9 @@ when you need material from a domain quickly.
       coordinate projections/no-atoms, Owen affine standardization and
       vertical/horizontal boundary-zero helpers, plus independent Gaussian pair
       measures with arbitrary standard deviation, canonical variance-`1/2`
-      scaling, strict winner-below-cutoff and both-below-cutoff events, and
-      reusable strict conditional winner-ratio scaling bridges for random-
-      utility Gaussian reductions.
+      scaling, strict winner-below-cutoff and both-below-cutoff events, and the
+      reusable strict conditional winner-ratio scaling bridge for RUM Gaussian
+      reductions.
     - `FiniteSupportMGF`: finite-support MGF/log-MGF algebra, Legendre
       objectives, real and `WithTop` rate-function scaffolding, and finite
       rating-scale LDP model wrappers for rating-system large-deviation proofs,
@@ -183,12 +195,12 @@ when you need material from a domain quickly.
       `FiniteRatingLDPModel.pairwiseRateObjectiveTop`, and
       `FiniteRatingLDPModel.pairwiseThresholdRateTop`.
     - `FiniteRatingComparison`: finite-rating pairwise comparison
-      infrastructure extracted from GJ18-style rating-system proofs:
+      infrastructure for finite rating-system proofs:
       source-facing log-MGF/rate wrappers, support-safe pairwise threshold
       rates, tilted score means, two-sample and floor-count comparison
       probabilities, finite `P_k`/`1 - P_k` algebra, integer-rate block
-      comparisons, and pairwise LDP certificate constructors reusable by other
-      finite rating-scale large-deviation papers.
+      comparisons, and pairwise LDP certificate constructors reusable by finite
+      rating-scale large-deviation papers.
     - `LargeDeviations`: negative normalized log-decay rates, exact
       exponential-rate certificates, eventual exponential upper-bound
       and lower-bound certificates, conversion from exact rates to weaker
@@ -236,8 +248,16 @@ when you need material from a domain quickly.
 
 ## Applications
 
-- Entrypoint: `EconCSLib.Applications.RecommenderSystems`
-- Modules:
+- Entrypoints: `EconCSLib.Applications.Admissions`,
+  `EconCSLib.Applications.RecommenderSystems`
+- Admissions modules:
+  - `PolicySurface`: compact policy surfaces for group fairness, individual
+    fairness, group academic-merit improvement, and diversity improvement.
+  - `StrategicPolicy`: two-school/two-group policy surfaces, override rows,
+    weighted objectives, and groupwise objective-comparison algebra.
+  - `StrategicApplication`: reusable student application cutoffs, payoffs, and
+    two-school application-region definitions.
+- Recommender-systems modules:
   - `Policy`, `Allocation`, `AllocationSequence`
   - `Classwise`, `PolicyAveraging`
   - `Allocation`: finite integer allocations, total/support/share/objective
@@ -318,7 +338,7 @@ when you need material from a domain quickly.
 - Narrow entrypoints: `EconCSLib.SocialChoice.FairDivision`,
   `EconCSLib.SocialChoice.Ranking`
 - Modules:
-  - `FairDivision/IndivisibleGoods`, `LMMSAlgorithm`
+  - `FairDivision/IndivisibleGoods`, `FairDivision/BoundedEnvyAlgorithm`
   - `Ranking/Basic`, `Ranking/Kendall`, `Ranking/Probability`,
     `Ranking/Approval`, `Ranking/Mallows`, `Ranking/MallowsPayoff`,
     `Ranking/MallowsRankFactorization`, `Ranking/MallowsSequential`,
@@ -327,7 +347,7 @@ when you need material from a domain quickly.
     - `Ranking/Basic`: finite candidate universes with at least two
       candidates, full rankings as permutations, top-two choices, top-two
       swaps, rank lookup, and the "best remaining after one candidate is
-      removed" primitive used by sequential-selection proofs.
+      removed" primitive used by sequential selection proofs.
     - `Ranking/Kendall`: inversion predicates/finsets, Kendall tau distance,
       first/second-choice deletion formulas, relabeling through `cycleRange`
       and `cycleIcc`, center-transposition invariance, and center-order value

@@ -90,7 +90,7 @@ theorem exists_isMinimizerOn_of_finite
 /--
 Finite-code maximizer existence.
 
-Use this when the paper's feasible objects are not themselves convenient finite
+Use this when the feasible objects are not themselves convenient finite
 data, but every feasible object is represented by a feasible finite code.
 -/
 theorem exists_isMaximizerOn_of_finite_code

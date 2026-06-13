@@ -1,0 +1,205 @@
+{
+  "schema": 1,
+  "description": "Display metadata consumed by scripts/sync_paper_status.py. Paper-local status.json files remain the source of truth for proof status, review counts, and human summaries.",
+  "publication_overrides": {
+    "DSWG24DiscretizationBias": {
+      "publication": "PNAS Nexus, 2025",
+      "year": 2025
+    },
+    "GCG24UserItemFairness": {
+      "publication": "NeurIPS, 2024",
+      "year": 2024
+    },
+    "GGSG19TopThree": {
+      "publication": "HCOMP, 2019",
+      "year": 2019
+    },
+    "GHW01DigitalGoods": {
+      "publication": "SODA, 2001",
+      "year": 2001
+    },
+    "GJ18InformativeRatingSystems": {
+      "publication": "Manufacturing & Service Operations Management 23(3), 2020",
+      "year": 2020
+    },
+    "GN21DriverSurgePricing": {
+      "publication": "Management Science, 2022",
+      "year": 2022
+    },
+    "GS62CollegeAdmissions": {
+      "publication": "American Mathematical Monthly, 1962",
+      "year": 1962
+    },
+    "LG21TestOptionalPolicies": {
+      "publication": "EAAMO, 2021",
+      "year": 2021
+    },
+    "LMMS04FairDivision": {
+      "publication": "ACM EC, 2004",
+      "year": 2004
+    },
+    "LOS02CombinatorialAuctions": {
+      "publication": "Journal of the ACM, 2002",
+      "year": 2002
+    },
+    "MBJG25ProducerFairness": {
+      "publication": "ICWSM, 2025",
+      "year": 2025
+    },
+    "MSVV07AdWords": {
+      "publication": "Journal of the ACM, 2007",
+      "year": 2007
+    },
+    "PRPKG24AccuracyDiversity": {
+      "publication": "The ACM Web Conference, 2024",
+      "year": 2024
+    },
+    "Roth82StableMatching": {
+      "publication": "Mathematics of Operations Research, 1982",
+      "year": 1982
+    }
+  },
+  "source_url_overrides": {
+    "DSWG24DiscretizationBias": "https://arxiv.org/pdf/2405.16762",
+    "GCG24UserItemFairness": "https://openreview.net/pdf?id=ZOZjMs3JTs",
+    "GGSG19TopThree": "https://arxiv.org/pdf/1906.08160",
+    "GHW01DigitalGoods": "https://www.cs.miami.edu/home/burt/learning/Csc597.052/docs/goldberg.pdf",
+    "GJ18InformativeRatingSystems": "https://doi.org/10.1287/msom.2020.0921",
+    "GN21DriverSurgePricing": "https://arxiv.org/pdf/1905.07544",
+    "GS62CollegeAdmissions": "http://www.jstor.org/stable/2312726",
+    "LG21TestOptionalPolicies": "https://arxiv.org/pdf/2107.08922",
+    "LMMS04FairDivision": "https://www.cs.cmu.edu/~arielpro/15896s15/docs/paper12a.pdf",
+    "LOS02CombinatorialAuctions": "https://jmvidal.cse.sc.edu/library/lehmann02a.pdf",
+    "MBJG25ProducerFairness": "https://arxiv.org/pdf/2207.04369",
+    "MSVV07AdWords": "https://people.eecs.berkeley.edu/~vazirani/pubs/adwords.pdf",
+    "PRPKG24AccuracyDiversity": "https://arxiv.org/abs/2307.15142",
+    "Roth82StableMatching": "https://pubsonline.informs.org/doi/epdf/10.1287/moor.7.4.617"
+  },
+  "readme_title_overrides": {
+    "MSVV07AdWords": "MSVV07 AdWords"
+  },
+  "library_components": [
+    {
+      "title": "Foundations: finite math and graph tools",
+      "paths": [
+        "EconCSLib/Foundations/Math",
+        "EconCSLib/Foundations/Graph"
+      ],
+      "examples": "Finite-sum rewrites, order/rank lemmas, threshold and interval characterizations, asymptotic/exponential estimates, and cycle extraction in finite directed graphs.",
+      "papers": [
+        "DSWG24DiscretizationBias",
+        "LMMS04FairDivision",
+        "GN21DriverSurgePricing",
+        "LG21TestOptionalPolicies"
+      ]
+    },
+    {
+      "title": "Foundations: probability and stochastic processes",
+      "paths": [
+        "EconCSLib/Foundations/Probability"
+      ],
+      "examples": "Finite distributions, conditional expectations, kernels, atom and variance lemmas, Gaussian and exponential calculations, stochastic dominance, Markov chains, MDPs, CTMCs, and renewal-reward identities.",
+      "papers": [
+        "DSWG24DiscretizationBias",
+        "MBJG25ProducerFairness",
+        "LMMS04FairDivision",
+        "GN21DriverSurgePricing",
+        "LG21TestOptionalPolicies",
+        "GGSG19TopThree",
+        "GJ18InformativeRatingSystems"
+      ]
+    },
+    {
+      "title": "Foundations: optimization and certificates",
+      "paths": [
+        "EconCSLib/Foundations/Optimization"
+      ],
+      "examples": "Argmax and endpoint principles, finite-search certificates, approximation guarantees, linear-program certificates, binary-choice optimality, move-graph descent, and choice-equilibrium existence.",
+      "papers": [
+        "DSWG24DiscretizationBias",
+        "MSVV07AdWords",
+        "GN21DriverSurgePricing",
+        "LG21TestOptionalPolicies",
+        "LMMS04FairDivision"
+      ]
+    },
+    {
+      "title": "Rating-system applications",
+      "paths": [
+        "EconCSLib/Foundations/Econometrics/RatingModels",
+        "EconCSLib/Learning/Bandits"
+      ],
+      "examples": "Binary and ordinal signal models, posterior-mean ratings, bias/variance decompositions, prior-weighted updates, monotonicity/correction lemmas, and minimal bandit-regret interfaces.",
+      "papers": [
+        "MBJG25ProducerFairness",
+        "GJ18InformativeRatingSystems"
+      ]
+    },
+    {
+      "title": "Matching markets",
+      "paths": [
+        "EconCSLib/Markets/Matching"
+      ],
+      "examples": "Preference profiles, blocking pairs and stable matchings, deferred-acceptance invariants, proposer incentives, and many-to-one admissions models.",
+      "papers": [
+        "GS62CollegeAdmissions",
+        "Roth82StableMatching"
+      ]
+    },
+    {
+      "title": "Auctions and mechanisms",
+      "paths": [
+        "EconCSLib/MechanismDesign/Auctions"
+      ],
+      "examples": "Allocation and payment rules, dominant-strategy truthfulness, benchmark-competitive digital-goods auctions, VCG-style welfare maximization, and single-minded set-packing mechanisms.",
+      "papers": [
+        "GHW01DigitalGoods",
+        "LOS02CombinatorialAuctions"
+      ]
+    },
+    {
+      "title": "Online algorithms and regret",
+      "paths": [
+        "EconCSLib/Algorithms/Online"
+      ],
+      "examples": "Online matching/allocation state machines, primal-dual accounting, competitive-ratio certificates, regret interfaces, and platform-learning abstractions.",
+      "papers": [
+        "MSVV07AdWords",
+        "MBJG25ProducerFairness"
+      ]
+    },
+    {
+      "title": "Complexity abstractions",
+      "paths": [
+        "EconCSLib/Algorithms/Complexity"
+      ],
+      "examples": "Decision/search problem interfaces, reductions, NP/ZPP-style class consequences, Yao-style minimax wrappers, and explicit external-solver assumptions.",
+      "papers": [
+        "LOS02CombinatorialAuctions",
+        "MSVV07AdWords",
+        "LMMS04FairDivision"
+      ]
+    },
+    {
+      "title": "Applications: recommender systems",
+      "paths": [
+        "EconCSLib/Applications/RecommenderSystems"
+      ],
+      "examples": "Exposure and allocation policies, classwise fairness constraints, top-k recommendation surfaces, policy averaging, and accuracy/diversity trade-off statements.",
+      "papers": [
+        "GCG24UserItemFairness"
+      ]
+    },
+    {
+      "title": "Social choice, rankings, and fair division",
+      "paths": [
+        "EconCSLib/SocialChoice"
+      ],
+      "examples": "Ranking profiles, Kendall distance and Mallows-style sequential ranking models, score/payoff interfaces, envy graphs, bounded-envy allocations, and indivisible-goods fairness statements.",
+      "papers": [
+        "LMMS04FairDivision",
+        "GGSG19TopThree"
+      ]
+    }
+  ]
+}

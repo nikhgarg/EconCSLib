@@ -139,7 +139,7 @@ constructor using `PMF.ofFintype` or `PMF.normalize`.
 -/
 structure MallowsSpec (n : ℕ) where
   center : Ranking n
-  /-- Inverse Mallows parameter `q`; the paper's parameter is `q⁻¹`. -/
+  /-- Inverse Mallows parameter `q`; alternate conventions may use `q⁻¹`. -/
   q : ℝ
   law : PMF (Ranking n)
   partition : ℝ
