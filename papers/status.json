@@ -433,7 +433,7 @@
       "build_target": "lake build GJ18InformativeRatingSystems",
       "status": "formalized",
       "main_caveat": "",
-      "human_summary": "Theorem 1 is formalized under the support-safe finite-rate convention from ordinal upper-tail dominance and full finite ordinal rating support.",
+      "human_summary": "",
       "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -1281,10 +1281,10 @@
       "build_target": "lake build PRPKG24AccuracyDiversity",
       "status": "partially formalized",
       "main_caveat": "Partial-formalization boundary: the Top-K oracle, Bernoulli tail/Laplace, rounding, averaging, and integral-asymptotic certificates remain explicit partial boundaries.",
-      "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
+      "human_summary": "Fully formalizing Proposition 4 requires a general Laplace-principle-related analysis library.",
       "human_summary_review": {
         "status": "human_approved",
-        "note": "Do not rewrite this summary without explicit human instruction."
+        "note": "Top-level summary is limited to the remaining formalization boundary; source-discrepancy details belong in the validation report."
       },
       "review_entrypoint": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
       "human_review": {

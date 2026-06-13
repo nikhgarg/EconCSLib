@@ -726,10 +726,10 @@ def render_site_status_block(payload: dict[str, Any]) -> str:
                     f'{indent}  <td><a href="{html_escape(status_href)}">'
                     f"{html_escape(row['status'])}</a></td>"
                 ),
-                f"{indent}  <td>{html_escape(row['human_translation'])}</td>",
-                f"{indent}  <td>{html_escape(row['llm_as_judge_translation'])}</td>",
                 f"{indent}  <td>{int(row['lean_loc']):,}</td>",
                 f"{indent}  <td>{note}</td>",
+                f"{indent}  <td>{html_escape(row['human_translation'])}</td>",
+                f"{indent}  <td>{html_escape(row['llm_as_judge_translation'])}</td>",
                 f"{indent}</tr>",
             ]
         )

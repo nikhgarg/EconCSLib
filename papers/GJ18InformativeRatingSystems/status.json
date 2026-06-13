@@ -7,7 +7,7 @@
   "build_target": "lake build GJ18InformativeRatingSystems",
   "status": "formalized",
   "main_caveat": "",
-  "human_summary": "Theorem 1 is formalized under the support-safe finite-rate convention from ordinal upper-tail dominance and full finite ordinal rating support.",
+  "human_summary": "",
   "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,

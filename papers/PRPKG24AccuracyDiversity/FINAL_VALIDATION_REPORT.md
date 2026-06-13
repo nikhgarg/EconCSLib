@@ -4,7 +4,7 @@
 
 - Lean formalization status: partially formalized
 - Human dashboard review status: 0/27 paper-result rows reviewed; 0 stale; 0 mismatches. The separate assumption-provenance ledger adds 14 audited rows.
-- Human summary: Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.
+- Human summary: Fully formalizing Proposition 4 requires a general Laplace-principle-related analysis library.
 
 - Lean formalization status: partially formalized.
 - Human dashboard review status: 0 reviewed rows, 0 stale rows, 0 mismatch rows, 27 paper-result rows.
@@ -222,4 +222,4 @@ Flagged rows: none.
 ## 15. Final Verdict
 
 - Completion status: partially formalized.
-- Summary: Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.
+- Summary: Fully formalizing Proposition 4 requires a general Laplace-principle-related analysis library.

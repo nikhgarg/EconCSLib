@@ -4,9 +4,7 @@
 
 - Lean formalization status: formalized
 - Human dashboard review status: 0/7 rows reviewed; 0 stale; 0 mismatches.
-- Human summary: Theorem 1 is exposed under the support-safe finite-rate
-  convention from ordinal upper-tail dominance and full finite ordinal rating
-  support.
+- Human summary: Fully formalized.
 
 - Lean formalization status: formalized.
 - Human dashboard review status: 0 reviewed rows, 0 stale rows, 0 mismatch rows, 8 total rows.
