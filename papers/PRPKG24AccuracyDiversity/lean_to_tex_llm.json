@@ -1,172 +1,392 @@
 {
-  "generated_at": "2026-06-12T00:00:00Z",
-  "generator": "codex-current-dashboard-statement-digest-refresh",
+  "comment": "Refreshed against the current paper-facing statement surface.",
+  "generated_at": "2026-06-13T21:43:40Z",
+  "generator": "gpt-5-codex",
+  "generator_type": "model",
   "items": {
     "assumption_bounded_upper_endpoint_density_domain": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "347090a5258593c4517543aeb41a6f01292d2d734224e60a8480f9339b75ba9a",
-      "statement": "Theorem 1(ii) and Lemma 1 use a bounded upper support endpoint, nonnegative value domain, and positive tail constants."
+      "paper_statement_sha256": "502d9519719c312f43253852af5d3bde77d553dbcaa365c6bc9ed758579161c6",
+      "tex_statement": "Measure \u211d \\to \u211d \\to \u211d \\to \u211d \\to \u211d \\to Prop"
     },
     "assumption_common_mean_argmax_domain": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "af5c20de3590b26986c5596ee4d59d4493ce7a6782121415fb62c2c8bb379491",
-      "statement": "The all-consumed endpoint chooses a type maximizing likelihood when conditional means are common and nonnegative."
+      "paper_statement_sha256": "40dc409b4a3e94d63d49877b3aeb2cc67c4e8344ad8e2d53489b2bc06a8e1122",
+      "tex_statement": "{T : \u2115} \\to (ItemType T \\to \u211d) \\to \u211d \\to ItemType T \\to Prop"
     },
     "assumption_decaying_bernoulli_parameter_domain": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "c0f86b26a6593b4e51e076dae772c8fa68588f86d118eda37d6a294800aad705",
-      "statement": "Theorem 2 uses decaying Bernoulli success probabilities, with source alpha regimes and nondegenerate Bernoulli probability domains."
+      "paper_statement_sha256": "d8cf931306638995ba7a8f4c129a4733b25fedd481336d097761d0d5fb5e7805",
+      "tex_statement": "\u211d \\to \u211d \\to \u211d \\to Prop"
     },
     "assumption_example1_positive_calibrated_exponential_parameters": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "4d237d2a0e1b8033b889c0d2629ebdb0d2c6568734a3c1a1eed6ba842efd44bc",
-      "statement": "Example 1 is a two-type probability model with an exponential conditional-value distribution."
+      "paper_statement_sha256": "e3dad672a80c39d0d6f2075cfdb1dc510c2e630bfe079d505ef93ac9c1792cce",
+      "tex_statement": "\u211d \\to \u211d \\to \u211d \\to Prop"
     },
     "assumption_exponential_order_statistic_domain": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "f9751533ec939a9fab2da72b5203e18ed008c4897a28994e2b91d1e9ee607b15",
-      "statement": "Theorem 1(iii) and Lemma D.3 use a positive-rate exponential distribution and positive top-k count."
+      "paper_statement_sha256": "c19b9f749e71eaa5609fececfae71ff943a02c72260443dfc044200a9cd322f0",
+      "tex_statement": "\u211d \\to \u2115 \\to Prop"
     },
     "assumption_finite_discrete_top_value_domain": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "98ced3517dfb4261f94dc44cb57fc4a41c23702a1ac5842205d087b227dae773",
-      "statement": "Theorem 1(i) and its proof use a finite discrete support with a top value and lower support values."
+      "paper_statement_sha256": "98af650ff18460602acf2f0f52b77aaf68e649e5044bdc1e85e13245d0f77781",
+      "tex_statement": "{\\Omega : Type u_1} \\to \u2115 \\to (\\Omega \\to \u211d) \\to \u211d \\to \u211d \\to Prop"
+    },
+    "assumption_lemmaD2_split_integral_analytic_boundary": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "9bd816b3805c0909a7d5fa19c57f079b6b0b7a0202aa983515b064c23b1285ac",
+      "paper_statement_sha256": "00a728db4a44bd499658947112d15e9f79a651c1982411b9d6972d1e986a1f08",
+      "tex_statement": "Prop"
     },
     "assumption_nonnegative_homogeneity_exponent": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "ea506282f5edde122f4f66d89a828cd52ecb9921ed60f02343c252caff7d18fb",
-      "statement": "Corollary 1 quantifies over gamma >= 0."
+      "paper_statement_sha256": "23748f5a13ab3554bfdde871b9759887d6375ec3c7c33941ed5af722f18911d6",
+      "tex_statement": "\u211d \\to Prop"
     },
     "assumption_pareto_finite_mean_domain": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "dd2619ab39b40e762449b48e1d18849076e0dcb9a99f95067defac1ab8d9d68d",
-      "statement": "Theorem 1(iv) and Lemma D.4 use Pareto alpha > 1 and positive top-k count."
+      "paper_statement_sha256": "f1988c4ab157fa97aefa506ff30e725c6a72a11dcc45d9b6ed4e9a4e196a3d84",
+      "tex_statement": "\u211d \\to \u2115 \\to Prop"
     },
     "assumption_positive_rounding_population_size": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "bfad71456efc385443a9e0f1d2a4cd4d40cdc20f96ac075757f6cbddc104b7eb",
-      "statement": "Lemma D.5 and finite rounding statements are stated for positive population size."
+      "paper_statement_sha256": "466a43f626181dd98ecf65f211f340ee58c1c74bf451971d41d62da4c390b01b",
+      "tex_statement": "\u2115 \\to Prop"
     },
     "assumption_positive_type_likelihoods": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "418a55ad7b2a41e136e8de6e5d0b89e0dbf0ddf5d877d89edae232df07d259c4",
-      "statement": "The paper's finite-type model uses type preference probabilities p_t as likelihood weights and normalizes homogeneity targets by them."
+      "paper_statement_sha256": "45c566002e63e11f5e51ee4cf98e5c1a5b762f7192403678ec5cf3df758ddfa1",
+      "tex_statement": "{T : \u2115} \\to (ItemType T \\to \u211d) \\to Prop"
     },
     "assumption_proposition4_continuous_sphere_laplace_boundary": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "c865583eaf7a4d1348fc4ed1d65767e84bb945f4e6c7d8909833c07b14ee4fe1",
-      "statement": "The folder currently stops Proposition 4 at an averaging/kernel checkpoint; the full continuous sphere, uniform measure, cosine-kernel/Fubini/symmetry, and Laplace-principle analytic instantiation remain partial."
+      "paper_statement_sha256": "f02233419426364a36b18ca03969e3109f56fa1736164dc6933a5aae37e6b350",
+      "tex_statement": "Prop"
     },
     "assumption_uniform_top_k_positive_count_domain": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "70b749a772cb2d93cf5cfaeae78a512a459b5c5c71034cd41840a96672e51c5f",
-      "statement": "Proposition 2 is about positive top-k recommendation/consumption counts along a positive population sequence."
+      "paper_statement_sha256": "1918eca62642d6c4524c425cd87505370ed7c6cdac0e9bd4828d279826df1229",
+      "tex_statement": "(\u2115 \\to \u2115) \\to Prop"
     },
     "assumption_unique_common_mean_argmax_domain": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "cf173a259d356a5073b176b14265329cea243119d5d45fadc74d66c3d9a32f8f",
-      "statement": "The converse endpoint uses the nondegenerate positive common mean and a unique likelihood maximizer."
+      "paper_statement_sha256": "b664ecd30dcc350cd5476082cf40b64c9a3882809b186e51e6d997a78f10758e",
+      "tex_statement": "{T : \u2115} \\to (ItemType T \\to \u211d) \\to \u211d \\to ItemType T \\to Prop"
     },
     "assumption_varying_bernoulli_probability_domain": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "b508e952eb2e9cfea8419306d4b1edc47ccb97221f63a2ff238d5271742dbc3c",
-      "statement": "Theorem 3 and Corollary 3 use Bernoulli success probabilities in the nondegenerate probability range."
+      "paper_statement_sha256": "49f31c3d17946ef0bca8b8953a16c79c3ec1cab7b723abf22d56913486f0acaa",
+      "tex_statement": "{T : \u2115} \\to BernoulliSatisfactionModel T \\to Prop"
     },
     "corollary1": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "652a19fd9acd272582a28eba0320b06f18ea91e4c8c7fc2332a454b67ceac895",
-      "statement": "\\forall {T : ℕ} [NeZero T] (likelihood : ItemType T \\to ℝ) (gamma : ℝ), 0 \\le gamma \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\exists M, \\forall (seq : OptimalAllocationSequence fun x  =>  M) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ gamma / \\sum i, likelihood i ^ gamma))"
+      "paper_statement_sha256": "b1f2843afa132565247c4efc9ac1cc4bdeebd70b6d4e5bd4efb2635da95a8729",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] (likelihood : ItemType T \\to \u211d) (gamma : \u211d), 0 \\le gamma \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\exists M, \\forall (seq : OptimalAllocationSequence fun x  =>  M) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ gamma / \\sum i, likelihood i ^ gamma))"
     },
     "corollary3": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "d10339e5a631407d42d8c7fbec0d2e5252b851df5b175165b28757cf746a1890",
-      "statement": "\\forall {T : ℕ} [NeZero T] (B : BernoulliSatisfactionModel T), (\\forall (t : ItemType T), 0 < successProb t) \\to (\\forall (t : ItemType T), successProb t < 1) \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to (\\forall (i j : ItemType T), successProb i = successProb j) \\to AsymptoticHomogeneity (fun x  =>  toConsumptionModel) (uniformProfile T)"
+      "paper_statement_sha256": "4e6717a4ce35dbd5a8d5a56bbd5eba122c0f01c44ab74a9102a539475c004af4",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] (B : BernoulliSatisfactionModel T), (\\forall (t : ItemType T), 0 < successProb t) \\to (\\forall (t : ItemType T), successProb t < 1) \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to (\\forall (i j : ItemType T), successProb i = successProb j) \\to AsymptoticHomogeneity (fun x  =>  toConsumptionModel) (uniformProfile T)"
     },
     "definition1": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "9910daa9715efe9fec0291b93cc86f6299f9f0c436252658a3b2d1f8b2df8797",
-      "statement": "\\forall {T : ℕ} (a : CountAllocation T) (likelihood : ItemType T \\to ℝ) (gamma : ℝ), \\sum i, likelihood i ^ gamma \\ne 0 \\to ((gammaLikelihoodProfile likelihood gamma).Exact a \\iff \\forall (t : ItemType T), representation t = likelihood t ^ gamma / \\sum i, likelihood i ^ gamma)"
+      "paper_statement_sha256": "431a5441e8ce01faf690079c7d570046e05c957c17d6bb81b5c457a666217042",
+      "tex_statement": "\\forall {T : \u2115} (a : CountAllocation T) (likelihood : ItemType T \\to \u211d) (gamma : \u211d), \\sum i, likelihood i ^ gamma \\ne 0 \\to ((gammaLikelihoodProfile likelihood gamma).Exact a \\iff \\forall (t : ItemType T), representation t = likelihood t ^ gamma / \\sum i, likelihood i ^ gamma)"
     },
     "definition2": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "f11c7771dcad52883f94c1da5990ef38d6ae56e5c14c3b37d48fcb951d9ee76a",
-      "statement": "\\forall {T : ℕ} (seq : AllocationSequence T) (likelihood : ItemType T \\to ℝ) (gamma : ℝ), \\sum i, likelihood i ^ gamma \\ne 0 \\to (ConvergesToProfile (gammaLikelihoodProfile likelihood gamma) \\iff \\forall (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ gamma / \\sum i, likelihood i ^ gamma)))"
+      "paper_statement_sha256": "89615d2726d7ec3a2ecf3ab24cdd835e5471436d5c82818b1da2117a6be7f3a3",
+      "tex_statement": "\\forall {T : \u2115} (seq : AllocationSequence T) (likelihood : ItemType T \\to \u211d) (gamma : \u211d), \\sum i, likelihood i ^ gamma \\ne 0 \\to (ConvergesToProfile (gammaLikelihoodProfile likelihood gamma) \\iff \\forall (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ gamma / \\sum i, likelihood i ^ gamma)))"
     },
     "definition3_expectedTopSum_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "d5f69845b10f7c2fdfc69e634aa144aee2028c5d367d741e7a52c5c9e78f1f8b",
-      "statement": "\\forall (T : ℕ) (mu : ℕ \\to ℕ \\to ℝ) (k : ℕ) (t : ItemType T) (a : ℕ), (definition3 T mu).expectedTopSum k t a = \\sum i \\in range (min k a), mu (a - i) a"
+      "paper_statement_sha256": "a600ab8deab2aede35993a5ad2bcb7c8486d65e3237e85551962fe934a356e3a",
+      "tex_statement": "\\forall (T : \u2115) (mu : \u2115 \\to \u2115 \\to \u211d) (k : \u2115) (t : ItemType T) (a : \u2115), (definition3 T mu).expectedTopSum k t a = \\sum i \\in range (min k a), mu (a - i) a"
     },
     "example1": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "69b1e39e9fb4a6e8cb3ff3256dc1a0c1fba0eb28aeb171f7b53def90b5de1ae4",
-      "statement": "\\forall {p1 p2 lambda : ℝ}, 0 < p1 \\to 0 < p2 \\to 0 < lambda \\to p1 + p2 = 1 \\to \\forall (seq : OptimalAllocationSequence fun x  =>  (exponentialTopOneHarmonicOracle 2 lambda).toConsumptionModel (example1GenreLikelihood p1 p2) 1), Tendsto (fun N  =>  (allocation N).representation 0) atTop (nhds p1) \\land Tendsto (fun N  =>  (allocation N).representation 1) atTop (nhds p2)"
+      "paper_statement_sha256": "01ad4c1e0be21f62f0bbacd28802b921a68075db4197584c9a92a4fbd44b5192",
+      "tex_statement": "\\forall {p1 p2 lambda : \u211d}, 0 < p1 \\to 0 < p2 \\to 0 < lambda \\to p1 + p2 = 1 \\to \\forall (seq : OptimalAllocationSequence fun x  =>  (exponentialTopOneHarmonicOracle 2 lambda).toConsumptionModel (example1GenreLikelihood p1 p2) 1), Tendsto (fun N  =>  (allocation N).representation 0) atTop (nhds p1) \\land Tendsto (fun N  =>  (allocation N).representation 1) atTop (nhds p2)"
     },
     "lemma1_tail_formula": {
-      "lean_statement_sha256": "e7f21fd13d5466e51493a1003e910412fb330b6b3b93b76eea6529dfdaca117c",
-      "statement": "\\forall {beta c M L : ℝ} {k : ℕ} (baseMeasure : Measure ℝ) [IsProbabilityMeasure baseMeasure], (\\forallᵐ (y : ℝ) ∂baseMeasure, L \\le y \\land y \\le M) \\to 0 < beta \\to 0 < c \\to (\\forall {\\epsilon : ℝ}, 0 < \\epsilon \\to \\forallᶠ (x : ℝ) in nhdsWithin 0 (Ioi 0), (1 - \\epsilon) * (c / beta) * x ^ beta \\le real (Ici (M - x)) \\land real (Ici (M - x)) \\le (1 + \\epsilon) * (c / beta) * x ^ beta) \\to 0 < k \\to 0 < M - L \\to AsymptoticEquivalent (fun q  =>  orderStatisticTopKSumFromMean (expectedOrderStatisticMeanSeq fun a  =>  pi fun x  =>  baseMeasure) k (q + 1) - orderStatisticTopKSumFromMean (expectedOrderStatisticMeanSeq fun a  =>  pi fun x  =>  baseMeasure) k q) fun q  =>  (\\sum p, boundedLemmaD2LimitCoeff beta c ↑snd) / beta * boundedPowerMarginalScale beta q"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "a8fb19c5cf62df40dd7209649b87f2f94428a5e5f9da49e7be619e82bc32ae8b",
+      "paper_statement_sha256": "b4a09e185b2d6bd2afcc88112f209f050c21bc5e20b923445a620f903acf530c",
+      "tex_statement": "\\forall {beta c M L : \u211d} {k : \u2115} (baseMeasure : Measure \u211d) [IsProbabilityMeasure baseMeasure], (\\forall\u1d50 (y : \u211d) \u2202baseMeasure, L \\le y \\land y \\le M) \\to 0 < beta \\to 0 < c \\to (\\forall {\\epsilon : \u211d}, 0 < \\epsilon \\to \\forall\u1da0 (x : \u211d) in nhdsWithin 0 (Ioi 0), (1 - \\epsilon) * (c / beta) * x ^ beta \\le real (Ici (M - x)) \\land real (Ici (M - x)) \\le (1 + \\epsilon) * (c / beta) * x ^ beta) \\to 0 < k \\to 0 < M - L \\to AsymptoticEquivalent (fun q  =>  orderStatisticTopKSumFromMean (expectedOrderStatisticMeanSeq fun a  =>  pi fun x  =>  baseMeasure) k (q + 1) - orderStatisticTopKSumFromMean (expectedOrderStatisticMeanSeq fun a  =>  pi fun x  =>  baseMeasure) k q) fun q  =>  (\\sum p, boundedLemmaD2LimitCoeff beta c \u2191snd) / beta * boundedPowerMarginalScale beta q"
     },
     "lemmaD1": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "2193c8d7d90daa2312ce21d50a306c0d8a6976462f109c32c84b76fe2ae707de",
-      "statement": "\\forall {T : ℕ} {Mseq : ℕ \\to ConsumptionModel T} {G : GammaHomogeneityProfile T} (seq : OptimalAllocationSequence Mseq) (finiteObj : ℕ \\to CountAllocation T \\to ℝ) (limitObj : (ItemType T \\to ℝ) \\to ℝ) (candidate : ℕ \\to CountAllocation T), targetShare \\in stdSimplex ℝ (ItemType T) \\to ContinuousOn limitObj (stdSimplex ℝ (ItemType T)) \\to (\\forall x \\in stdSimplex ℝ (ItemType T), x \\ne targetShare \\to limitObj x < limitObj targetShare) \\to (\\forallᶠ (N : ℕ) in atTop, \\forall (b : CountAllocation T), FeasibleAtTotal N b \\to finiteObj N b \\le finiteObj N (allocation N)) \\to (\\forallᶠ (N : ℕ) in atTop, FeasibleAtTotal N (candidate N)) \\to (\\forall (\\delta : ℝ), 0 < \\delta \\to \\forallᶠ (N : ℕ) in atTop, limitObj targetShare - \\delta \\le finiteObj N (candidate N)) \\to (\\forall (\\delta : ℝ), 0 < \\delta \\to \\forallᶠ (N : ℕ) in atTop, \\forall (a : CountAllocation T), FeasibleAtTotal N a \\to finiteObj N a \\le (limitObj fun t  =>  representation t) + \\delta) \\to ConvergesToProfile G"
+      "paper_statement_sha256": "becf13f2f22458a69173d2e16ae6cc487979ffcda57fd91df251bd6ab1905277",
+      "tex_statement": "\\forall {T : \u2115} {Mseq : \u2115 \\to ConsumptionModel T} {G : GammaHomogeneityProfile T} (seq : OptimalAllocationSequence Mseq) (finiteObj : \u2115 \\to CountAllocation T \\to \u211d) (limitObj : (ItemType T \\to \u211d) \\to \u211d) (candidate : \u2115 \\to CountAllocation T), targetShare \\in stdSimplex \u211d (ItemType T) \\to ContinuousOn limitObj (stdSimplex \u211d (ItemType T)) \\to (\\forall x \\in stdSimplex \u211d (ItemType T), x \\ne targetShare \\to limitObj x < limitObj targetShare) \\to (\\forall\u1da0 (N : \u2115) in atTop, \\forall (b : CountAllocation T), FeasibleAtTotal N b \\to finiteObj N b \\le finiteObj N (allocation N)) \\to (\\forall\u1da0 (N : \u2115) in atTop, FeasibleAtTotal N (candidate N)) \\to (\\forall (\\delta : \u211d), 0 < \\delta \\to \\forall\u1da0 (N : \u2115) in atTop, limitObj targetShare - \\delta \\le finiteObj N (candidate N)) \\to (\\forall (\\delta : \u211d), 0 < \\delta \\to \\forall\u1da0 (N : \u2115) in atTop, \\forall (a : CountAllocation T), FeasibleAtTotal N a \\to finiteObj N a \\le (limitObj fun t  =>  representation t) + \\delta) \\to ConvergesToProfile G"
     },
     "lemmaD2_formula": {
-      "lean_statement_sha256": "caa8a4f3d8580eaa73a17a44fe42fabe0848510f6b2bf9480a7808d1f7720426",
-      "statement": "\\forall {beta c : ℝ} {k : ℕ} (G : ℝ \\to ℝ) (C : BoundedLemmaD2SplitIntegralFiniteCertificate beta c k G), AsymptoticEquivalent (boundedLemmaD2TopKLoss k (boundedLemmaD2IndexedIntegralTerm G)) fun a  =>  (\\sum p, boundedLemmaD2LimitCoeff beta c ↑snd) * boundedTailScale beta a"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "f33a8f75deefea551ea595c662e55a8ecf62f446f4fd50c686c63599931a1806",
+      "paper_statement_sha256": "0100482523b79ee759fa36d06d4e059a409b5232e83441c92e3fcd0a368ac214",
+      "tex_statement": "\\forall {beta c : \u211d} {k : \u2115} (G : \u211d \\to \u211d) (C : BoundedLemmaD2SplitIntegralFiniteCertificate beta c k G), AsymptoticEquivalent (boundedLemmaD2TopKLoss k (boundedLemmaD2IndexedIntegralTerm G)) fun a  =>  (\\sum p, boundedLemmaD2LimitCoeff beta c \u2191snd) * boundedTailScale beta a"
     },
     "lemmaD3_formula": {
-      "lean_statement_sha256": "efabcbdecd4560204a22e4e1c99c7336dbfa4487960d6e17807451b2bca063d7",
-      "statement": "\\forall {T : ℕ} [NeZero T] (likelihood : ItemType T \\to ℝ) (lambda : ℝ) (k : ℕ), 0 < lambda \\to 0 < k \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  (exponentialTopKOrderStatisticOracle T lambda k).toConsumptionModel likelihood k) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ 1 / \\sum i, likelihood i ^ 1))"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "75344e1744b939b456987fa819d1036aa4769946d471709865df38eb3dbf66b0",
+      "paper_statement_sha256": "dae6e1fdeedbb729c242ac92eb3531c18220f3de8f07d9078b8fc394a279db77",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] (likelihood : ItemType T \\to \u211d) (lambda : \u211d) (k : \u2115), 0 < lambda \\to 0 < k \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  (exponentialTopKOrderStatisticOracle T lambda k).toConsumptionModel likelihood k) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ 1 / \\sum i, likelihood i ^ 1))"
     },
     "lemmaD4_formula": {
-      "lean_statement_sha256": "5bec300e97f346dce8f546c08f79e9b9f97085ad0058075fbddb8bb57f23c4d9",
-      "statement": "\\forall {T : ℕ} [NeZero T] (likelihood : ItemType T \\to ℝ) {k : ℕ} {alpha : ℝ}, 1 < alpha \\to 0 < k \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  paretoIidOrderStatisticConsumptionModel likelihood k alpha) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (alpha / (alpha - 1)) / \\sum i, likelihood i ^ (alpha / (alpha - 1))))"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "1fbbfa4f9525087ffed49a8fbc7be9e32bad5225b737de7b83b811729714a142",
+      "paper_statement_sha256": "f2d7227c30894ae8c3f6b623e769bedc8969374fde7c319357020451fbfa1c1a",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] (likelihood : ItemType T \\to \u211d) {k : \u2115} {alpha : \u211d}, 1 < alpha \\to 0 < k \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  paretoIidOrderStatisticConsumptionModel likelihood k alpha) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (alpha / (alpha - 1)) / \\sum i, likelihood i ^ (alpha / (alpha - 1))))"
     },
     "lemmaD5": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "d5b129e28f7052b210e7a7c7933784129e3d0f743811c5ffdb6063bf6f6bf597",
-      "statement": "\\forall {T : ℕ} (likelihood : ItemType T \\to ℝ) (N k : ℕ), 0 < N \\to \\forall (a : CountAllocation T), (uniformTopKConsumptionModel likelihood k).IsOptimalAtTotal N a \\to \\sum i, √(likelihood i) \\ne 0 \\to (\\forall (t : ItemType T), |↑(count t) - ↑N * proposition2SqrtShare likelihood t| \\le ↑(card (ItemType T)) + 1) \\to (proposition2SqrtProfile likelihood).Approx a ((↑(card (ItemType T)) + 1) / ↑N)"
+      "paper_statement_sha256": "f6d7252cd0ea895d165610ead820a40524d83609ece08509776f63f30140b793",
+      "tex_statement": "\\forall {T : \u2115} (likelihood : ItemType T \\to \u211d) (N k : \u2115), 0 < N \\to \\forall (a : CountAllocation T), (uniformTopKConsumptionModel likelihood k).IsOptimalAtTotal N a \\to \\sum i, \u221a(likelihood i) \\ne 0 \\to (\\forall (t : ItemType T), |\u2191(count t) - \u2191N * proposition2SqrtShare likelihood t| \\le \u2191(card (ItemType T)) + 1) \\to (proposition2SqrtProfile likelihood).Approx a ((\u2191(card (ItemType T)) + 1) / \u2191N)"
     },
     "proposition2": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "566b6331aa83dc4feea9ed216fc73057605487131d774bb66352b6ea8bd74ee4",
-      "statement": "\\forall {T : ℕ} [inst : NeZero T] (likelihood : ItemType T \\to ℝ) (kseq : ℕ \\to ℕ), (\\forall (t : ItemType T), 0 < likelihood t) \\to (\\forall (N : ℕ), 0 < N \\to 0 < kseq N) \\to (\\forall (N : ℕ), 0 < N \\to ↑(kseq N) + 1 \\le ↑N * uniformSqrtMinShare likelihood - ↑T) \\to \\forall (seq : OptimalAllocationSequence fun N  =>  uniformTopKConsumptionModel likelihood (kseq N)), ConvergesToProfile (proposition2SqrtProfile likelihood)"
+      "paper_statement_sha256": "f98a70b83dc72acc5f131fc68d6cb3e7f8a6c18a2cd41f74997067f8703f54d7",
+      "tex_statement": "\\forall {T : \u2115} [inst : NeZero T] (likelihood : ItemType T \\to \u211d) (kseq : \u2115 \\to \u2115), (\\forall (t : ItemType T), 0 < likelihood t) \\to (\\forall (N : \u2115), 0 < N \\to 0 < kseq N) \\to (\\forall (N : \u2115), 0 < N \\to \u2191(kseq N) + 1 \\le \u2191N * uniformSqrtMinShare likelihood - \u2191T) \\to \\forall (seq : OptimalAllocationSequence fun N  =>  uniformTopKConsumptionModel likelihood (kseq N)), ConvergesToProfile (proposition2SqrtProfile likelihood)"
     },
     "proposition4": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "c13d1a6d0bbde9d7ce1ccd4c1c2f58d334cc73543a545cc0a7df161022e640c1",
-      "statement": "\\forall {Profile : Type u_1} (C : Proposition4ContinuousSphereCertificate Profile) (alpha : Profile), gamma uniformProfile \\le gamma alpha"
+      "paper_statement_sha256": "bc8926cb1a2c49888a52260b02d9e6f013d9eda6978e1ee6f60d9e54b2ef12cf",
+      "tex_statement": "\\forall {Profile : Type u_1} (C : Proposition4ContinuousSphereCertificate Profile) (alpha : Profile), gamma uniformProfile \\le gamma alpha"
     },
     "proposition5_identity": {
-      "lean_statement_sha256": "b81277b36eefeffd9a0712c4f950d8e186a6864603ee80ba80e825503c6bac97",
-      "statement": "\\forall (k a : ℕ), orderStatisticTopKSumFromMean uniformAscendingOrderStatisticMean k a = uniformTopKValue k a"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "0c8a75cfecd0114648d8b36504a0c1b5f12ea82393a6df6cf471bbd027e6b48d",
+      "paper_statement_sha256": "97f85b7b50d33a51331f5d5d24c19c1e3e71e0b1cae85f034ac934d340a7e218",
+      "tex_statement": "\\forall (k a : \u2115), orderStatisticTopKSumFromMean uniformAscendingOrderStatisticMean k a = uniformTopKValue k a"
     },
     "theorem1_i_formula": {
-      "lean_statement_sha256": "153a35fd7a7f6d2dca4bab36ddecd390a173443c5e0797ce0f59c91afbc6ae47",
-      "statement": "\\forall {T : ℕ} [NeZero T] {\\Omega : Type u_1} [inst : Fintype \\Omega] [inst_1 : DecidableEq \\Omega] (itemLaw : PMF \\Omega) (value : \\Omega \\to ℝ) {xTop xSecond : ℝ} (likelihood : ItemType T \\to ℝ) (k : ℕ) (seq : OptimalAllocationSequence fun x  =>  theorem1CommonTopKModel (finiteDiscreteIidTopKExpected \\Omega itemLaw k value) likelihood k), 0 < k \\to 0 < xTop \\to 0 \\le xSecond \\to xSecond \\le xTop \\to xSecond < xTop \\to (\\forall (\\omega : \\Omega), value \\omega \\le xTop) \\to (\\forall (\\omega : \\Omega), value \\omega = xTop \\lor value \\omega \\le xSecond) \\to (0 < pmfProb itemLaw fun \\omega  =>  value \\omega = xTop) \\to (0 < pmfProb itemLaw fun \\omega  =>  \\lnotvalue \\omega = xTop) \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (1 / ↑T))"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "25ceb93e3afab8f6ea9c897168e95f09ea762e85bb39f4fdb3d7410f1aa83dd5",
+      "paper_statement_sha256": "6015dbb1901975edf4e4e3c08127f8e9a3ed7571ebe4361a0721e6b7e264d0f4",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] {\\Omega : Type u_1} [inst : Fintype \\Omega] [inst_1 : DecidableEq \\Omega] (itemLaw : PMF \\Omega) (value : \\Omega \\to \u211d) {xTop xSecond : \u211d} (likelihood : ItemType T \\to \u211d) (k : \u2115) (seq : OptimalAllocationSequence fun x  =>  theorem1CommonTopKModel (finiteDiscreteIidTopKExpected \\Omega itemLaw k value) likelihood k), 0 < k \\to 0 < xTop \\to 0 \\le xSecond \\to xSecond \\le xTop \\to xSecond < xTop \\to (\\forall (\\omega : \\Omega), value \\omega \\le xTop) \\to (\\forall (\\omega : \\Omega), value \\omega = xTop \\lor value \\omega \\le xSecond) \\to (0 < pmfProb itemLaw fun \\omega  =>  value \\omega = xTop) \\to (0 < pmfProb itemLaw fun \\omega  =>  \\lnotvalue \\omega = xTop) \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (1 / \u2191T))"
     },
     "theorem1_ii_formula": {
-      "lean_statement_sha256": "ff6d69dd18d79002e8e6a97a6030f8143d715f706c27fed5cdd8a73d5bc39653",
-      "statement": "\\forall {T : ℕ} [NeZero T] {beta c M L : ℝ} {k : ℕ} (baseMeasure : Measure ℝ) [IsProbabilityMeasure baseMeasure], (\\forallᵐ (y : ℝ) ∂baseMeasure, L \\le y \\land y \\le M) \\to (\\forallᵐ (y : ℝ) ∂baseMeasure, 0 \\le y) \\to 0 < M \\to 0 < beta \\to 0 < c \\to \\forall (g : ℝ \\to ℝ), (\\forallᶠ (x : ℝ) in nhdsWithin 0 (Ioi 0), IntegrableOn g (Ioo 0 x) volume) \\to (\\forallᶠ (x : ℝ) in nhdsWithin 0 (Ioi 0), real (Ici (M - x)) = \\int (u : ℝ) in Ioo 0 x, g u) \\to Tendsto (fun u  =>  g u / (c * u ^ (beta - 1))) (nhdsWithin 0 (Ioi 0)) (nhds 1) \\to \\forall (likelihood : ItemType T \\to ℝ), (\\forall (t : ItemType T), 0 < likelihood t) \\to 0 < k \\to 0 < M - L \\to \\forall (seq : OptimalAllocationSequence fun x  =>  boundedIidOrderStatisticConsumptionModel likelihood k baseMeasure) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (beta / (beta + 1)) / \\sum i, likelihood i ^ (beta / (beta + 1))))"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "f6542109684d8b16c4f28e1b71499a8ddddc471cee1297ddac7367a0e7bd3d61",
+      "paper_statement_sha256": "b94bcbc20adbd344b686150bccdb56d9c1b8bc9e263a274cc123b6e9220d0950",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] {beta c M L : \u211d} {k : \u2115} (baseMeasure : Measure \u211d) [IsProbabilityMeasure baseMeasure], (\\forall\u1d50 (y : \u211d) \u2202baseMeasure, L \\le y \\land y \\le M) \\to (\\forall\u1d50 (y : \u211d) \u2202baseMeasure, 0 \\le y) \\to 0 < M \\to 0 < beta \\to 0 < c \\to \\forall (g : \u211d \\to \u211d), (\\forall\u1da0 (x : \u211d) in nhdsWithin 0 (Ioi 0), IntegrableOn g (Ioo 0 x) volume) \\to (\\forall\u1da0 (x : \u211d) in nhdsWithin 0 (Ioi 0), real (Ici (M - x)) = \\int (u : \u211d) in Ioo 0 x, g u) \\to Tendsto (fun u  =>  g u / (c * u ^ (beta - 1))) (nhdsWithin 0 (Ioi 0)) (nhds 1) \\to \\forall (likelihood : ItemType T \\to \u211d), (\\forall (t : ItemType T), 0 < likelihood t) \\to 0 < k \\to 0 < M - L \\to \\forall (seq : OptimalAllocationSequence fun x  =>  boundedIidOrderStatisticConsumptionModel likelihood k baseMeasure) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (beta / (beta + 1)) / \\sum i, likelihood i ^ (beta / (beta + 1))))"
     },
     "theorem1_iii_formula": {
-      "lean_statement_sha256": "e167d5ab903670258e692c523a99fa6aad71dcea71eccc7dce4010061ddd9f29",
-      "statement": "\\forall {T : ℕ} [NeZero T] (likelihood : ItemType T \\to ℝ) (lambda : ℝ) (k : ℕ), 0 < lambda \\to 0 < k \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  (exponentialTopKOrderStatisticOracle T lambda k).toConsumptionModel likelihood k) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ 1 / \\sum i, likelihood i ^ 1))"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "05e3f8147904143113eb97d32042966e11e3c0e203e043b2a8717a65e7d89fb2",
+      "paper_statement_sha256": "53f140b8e5c123aaec0f346b4f3ff7fa3bf91f80cfdb34254135c4919adf5065",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] (likelihood : ItemType T \\to \u211d) (lambda : \u211d) (k : \u2115), 0 < lambda \\to 0 < k \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  (exponentialTopKOrderStatisticOracle T lambda k).toConsumptionModel likelihood k) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ 1 / \\sum i, likelihood i ^ 1))"
     },
     "theorem1_iv_formula": {
-      "lean_statement_sha256": "53834808f267c4482009052d4462c5041eff2f377280aea3f0f3221d8c7ba178",
-      "statement": "\\forall {T : ℕ} [NeZero T] (likelihood : ItemType T \\to ℝ) {k : ℕ} {alpha : ℝ}, 1 < alpha \\to 0 < k \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  paretoIidOrderStatisticConsumptionModel likelihood k alpha) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (alpha / (alpha - 1)) / \\sum i, likelihood i ^ (alpha / (alpha - 1))))"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "83264bdfa934156c7a3a7f1310993dfb01752892b8dacb7c5eaf2e3a7234d5d9",
+      "paper_statement_sha256": "b43b4904a83e7be3bffec2c5cdbc9203179077bddecf90b0ac6134db8a97bab1",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] (likelihood : ItemType T \\to \u211d) {k : \u2115} {alpha : \u211d}, 1 < alpha \\to 0 < k \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  paretoIidOrderStatisticConsumptionModel likelihood k alpha) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (alpha / (alpha - 1)) / \\sum i, likelihood i ^ (alpha / (alpha - 1))))"
     },
     "theorem1_v_common_mean": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "225439bbd11c5692cc81e8a838b834a5582a377345850d2b7793959e3a8a8473",
-      "statement": "\\forall {T : ℕ} (likelihood : ItemType T \\to ℝ) (mean : ℝ) (N : ℕ) (best : ItemType T), 0 \\le mean \\to (\\forall (t : ItemType T), likelihood t \\le likelihood best) \\to (linearized likelihood fun x  =>  mean).IsOptimalAtTotal N (allOnTypeAllocation N best)"
+      "paper_statement_sha256": "505f0eb386d8a9705f0f2176c102c6fe89ff4947369c9563a41df8168fe6d300",
+      "tex_statement": "\\forall {T : \u2115} (likelihood : ItemType T \\to \u211d) (mean : \u211d) (N : \u2115) (best : ItemType T), 0 \\le mean \\to (\\forall (t : ItemType T), likelihood t \\le likelihood best) \\to (linearized likelihood fun x  =>  mean).IsOptimalAtTotal N (allOnTypeAllocation N best)"
     },
     "theorem1_v_unique_common_mean": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "16eba013a25d8befaeb2667c49afb39d368761b41bf79a2505270efb9ab581cf",
-      "statement": "\\forall {T : ℕ} (likelihood : ItemType T \\to ℝ) (mean : ℝ) (N : ℕ) (best : ItemType T), 0 < mean \\to (\\forall (t : ItemType T), t \\ne best \\to likelihood t < likelihood best) \\to \\forall (a : CountAllocation T), (linearized likelihood fun x  =>  mean).IsOptimalAtTotal N a \\to \\forall (t : ItemType T), t \\ne best \\to count t = 0"
+      "paper_statement_sha256": "1c440f60ed58cfe55441975dacdd8f1ab2a12ee0848d94eec2f0f3be5cb5a61f",
+      "tex_statement": "\\forall {T : \u2115} (likelihood : ItemType T \\to \u211d) (mean : \u211d) (N : \u2115) (best : ItemType T), 0 < mean \\to (\\forall (t : ItemType T), t \\ne best \\to likelihood t < likelihood best) \\to \\forall (a : CountAllocation T), (linearized likelihood fun x  =>  mean).IsOptimalAtTotal N a \\to \\forall (t : ItemType T), t \\ne best \\to count t = 0"
     },
     "theorem2_i_formula": {
-      "lean_statement_sha256": "99d5ff8e9a21ed9ec8e934ea50c273c119e07647519093b74511f8b867b1a3e0",
-      "statement": "\\forall {T : ℕ} [NeZero T] (likelihood : ItemType T \\to ℝ) (alpha c d : ℝ), 0 \\le alpha \\to alpha < 1 \\to 0 < c \\to 0 \\le d \\to decayingBernoulliSuccess c d alpha 0 < 1 \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  decayingBernoulliTopOneConsumptionModel likelihood c d alpha) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (1 / ↑T))"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "ecc43816fe4f3ee189c0406dc0dc6ea4635ba8dbbf7057059b649e29dde930fa",
+      "paper_statement_sha256": "0f73465d842343cb2d69092fbc8bf630f43aa5f0cd1ab7adfe46089ceb8a0d95",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] (likelihood : ItemType T \\to \u211d) (alpha c d : \u211d), 0 \\le alpha \\to alpha < 1 \\to 0 < c \\to 0 \\le d \\to decayingBernoulliSuccess c d alpha 0 < 1 \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  decayingBernoulliTopOneConsumptionModel likelihood c d alpha) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (1 / \u2191T))"
     },
     "theorem2_ii_formula": {
-      "lean_statement_sha256": "b98031059bfe79dda7ca7877310694babac72bab0cf6e48dcb65355051207982",
-      "statement": "\\forall {T : ℕ} [NeZero T] (likelihood : ItemType T \\to ℝ) (c d : ℝ), 0 < c \\to 0 \\le d \\to decayingBernoulliSuccess c d 1 0 < 1 \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  decayingBernoulliTopOneConsumptionModel likelihood c d 1) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (1 / (1 + c)) / \\sum i, likelihood i ^ (1 / (1 + c))))"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "d56af32974b7896605dbc086df727ca0ac1092b1430406dc4a66ba0c3ef0f7c1",
+      "paper_statement_sha256": "0589ff249d6b781ba40c74568bbefafe840b3d38e3adf87b81fe08bf78d7c7af",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] (likelihood : ItemType T \\to \u211d) (c d : \u211d), 0 < c \\to 0 \\le d \\to decayingBernoulliSuccess c d 1 0 < 1 \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  decayingBernoulliTopOneConsumptionModel likelihood c d 1) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (1 / (1 + c)) / \\sum i, likelihood i ^ (1 / (1 + c))))"
     },
     "theorem2_iii_formula": {
-      "lean_statement_sha256": "fddbd1bff633b8d5733ce97ba9cbf2de1275ab7efe9a8e21f53f52d7765dbb37",
-      "statement": "\\forall {T : ℕ} [NeZero T] (likelihood : ItemType T \\to ℝ) (alpha c d : ℝ), 1 < alpha \\to 0 < c \\to 0 \\le d \\to decayingBernoulliSuccess c d alpha 0 < 1 \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  decayingBernoulliTopOneConsumptionModel likelihood c d alpha) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (1 / alpha) / \\sum i, likelihood i ^ (1 / alpha)))"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "6c572ba07496afc88183457b58c17e10481177d33b4061b9d5d50d7262de4c4b",
+      "paper_statement_sha256": "3da23e64891118efcf3c501b97ad03d27d9c651a0cfa8da864ce103447695648",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] (likelihood : ItemType T \\to \u211d) (alpha c d : \u211d), 1 < alpha \\to 0 < c \\to 0 \\le d \\to decayingBernoulliSuccess c d alpha 0 < 1 \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  decayingBernoulliTopOneConsumptionModel likelihood c d alpha) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (1 / alpha) / \\sum i, likelihood i ^ (1 / alpha)))"
     },
     "theorem2_iv_alpha_zero_condition": {
-      "lean_statement_sha256": "fe4b1099431482287b1b0c6594e93bfd6d9b1b4c2a6e3238e42b7173c9b921aa",
-      "statement": "\\forall {T : ℕ} (likelihood : ItemType T \\to ℝ) (c d : ℝ) (N : ℕ) (best : ItemType T), 0 \\le c \\to (\\forall (t : ItemType T), likelihood t \\le likelihood best) \\to (decayingBernoulliAllConsumedConsumptionModel likelihood c d 0).IsOptimalAtTotal N (allOnTypeAllocation N best)"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "b3ed6cfc27d8f4226c5e53d1499a6b80e8a34f07fbcfa0db9c3224f1cea69b68",
+      "paper_statement_sha256": "ca2a3186cbf421490d138454b1abd515ee4ce6cea8cf5cd1f800384dd377ad97",
+      "tex_statement": "\\forall {T : \u2115} (likelihood : ItemType T \\to \u211d) (c d : \u211d) (N : \u2115) (best : ItemType T), 0 \\le c \\to (\\forall (t : ItemType T), likelihood t \\le likelihood best) \\to (decayingBernoulliAllConsumedConsumptionModel likelihood c d 0).IsOptimalAtTotal N (allOnTypeAllocation N best)"
     },
     "theorem2_iv_positive_alpha": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "43beafa16f4aded4e178eda39c9766cd852c3b5e4dcd0e9327a1e6cc0b278e87",
-      "statement": "\\forall {T : ℕ} [NeZero T] (likelihood : ItemType T \\to ℝ) (alpha c d : ℝ), 0 < alpha \\to 0 < c \\to 0 \\le d \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  decayingBernoulliAllConsumedConsumptionModel likelihood c d alpha) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (1 / alpha) / \\sum i, likelihood i ^ (1 / alpha)))"
+      "paper_statement_sha256": "1dac7d5726304963aa2b4520ee789ff3f5fb61b0f659648ec9990de3eb80a49e",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] (likelihood : ItemType T \\to \u211d) (alpha c d : \u211d), 0 < alpha \\to 0 < c \\to 0 \\le d \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  decayingBernoulliAllConsumedConsumptionModel likelihood c d alpha) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (likelihood t ^ (1 / alpha) / \\sum i, likelihood i ^ (1 / alpha)))"
     },
     "theorem3_formula": {
-      "lean_statement_sha256": "52a0d2726a57158444792f5c0555d79d4a5b3791a12fce1dece9fa339252d4de",
-      "statement": "\\forall {T : ℕ} [NeZero T] (B : BernoulliSatisfactionModel T), (\\forall (t : ItemType T), 0 < successProb t) \\to (\\forall (t : ItemType T), successProb t < 1) \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  toConsumptionModel) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (theorem3LogShareWeight B t / \\sum i, theorem3LogShareWeight B i))"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "59f509961338cab5d3d1c68975726d432d00de74effe035f9e294061d783eff0",
+      "paper_statement_sha256": "46f77e8acda8b88a5fa239f8884499daf7541630c34fc43e01d28b9b1751d29d",
+      "tex_statement": "\\forall {T : \u2115} [NeZero T] (B : BernoulliSatisfactionModel T), (\\forall (t : ItemType T), 0 < successProb t) \\to (\\forall (t : ItemType T), successProb t < 1) \\to (\\forall (t : ItemType T), 0 < likelihood t) \\to \\forall (seq : OptimalAllocationSequence fun x  =>  toConsumptionModel) (t : ItemType T), Tendsto (fun N  =>  (allocation N).representation t) atTop (nhds (theorem3LogShareWeight B t / \\sum i, theorem3LogShareWeight B i))"
     }
   },
   "paper": "PRPKG24AccuracyDiversity",
+  "prompt_summary": [
+    "Translate from the Lean statement alone, with no paper context."
+  ],
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
   "schema": 1
 }

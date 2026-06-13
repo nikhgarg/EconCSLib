@@ -1,125 +1,277 @@
 {
-  "schema": 1,
+  "comment": "Refreshed against the current paper-facing statement surface.",
+  "generated_at": "2026-06-13T21:43:40Z",
+  "generator": "gpt-5-codex",
+  "generator_type": "model",
+  "items": {
+    "assumption_equal_cardinality": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "4f5625ea8ae4512861d19ac9e3ca323d2a33b814f95eea3890c1bf9ec92d6605",
+      "paper_statement_sha256": "9a4f3f9d23be486ca37b1374b2111ee77954e40547e192edc00199fd3ba0c0dc",
+      "tex_statement": "{M : Type u_1} \\to {W : Type u_2} \\to [Fintype M] \\to [Fintype W] \\to Prop"
+    },
+    "assumption_simple_report_ranks_partner_first": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "c3e9db7be30a5309182a9ff58a9644ecb424648f537428299a6ffc741e477eff",
+      "paper_statement_sha256": "49b60764ab51ffad9a595994d5ed762573c9551e9972464940221ead2f7da861",
+      "tex_statement": "{W : Type u_1} \\to (W \\to \u211d) \\to W \\to Prop"
+    },
+    "completeMarriageOutcome": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "71323429a7fe7a4d081d16275ce60015e83707634f8660ba5cffb690d23b0792",
+      "paper_statement_sha256": "0ff93d7989d45fe293c355a32e3857c9ae3c70f8f2e43b34a0cf64283e7abe0c",
+      "tex_statement": "{M W : Type*} (mu : Assignment M W) = (\\forall m, \\exists w, mu.m_match m = some w) \\land (\\forall w, \\exists m, mu.w_match w = some m)"
+    },
+    "corollary5_1_no_need_to_misrepresent_first_choice": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "83ab3a3d824ec89cbcef6cf5228029fbc880915b89550b8895792a693817fbb0",
+      "paper_statement_sha256": "b69c7a86d75c7d9d52761f186964a9755a4801ea057d428a4677470eeaa0a84a",
+      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] [Nonempty M] [Nonempty W], (\\forall (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d), strictMarriageDomain val_m val_w \\to \\forall (w : W) (report_w : M \\to \u211d), \\exists report_w', (\\forall (mstar : M), (\\forall (m : M), m \\ne mstar \\to val_w w m < val_w w mstar) \\to \\forall (m : M), m \\ne mstar \\to report_w' m < report_w' mstar) \\land (match (menDeferredAcceptance val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (menDeferredAcceptance val_m (update val_w w report_w')).w_match w with | none  =>  0 | some m  =>  val_w w m) \\land \\forall (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d), strictMarriageDomain val_m val_w \\to \\forall (m : M) (report_m : W \\to \u211d), \\exists report_m', (\\forall (wstar : W), (\\forall (w : W), w \\ne wstar \\to val_m m w < val_m m wstar) \\to \\forall (w : W), w \\ne wstar \\to report_m' w < report_m' wstar) \\land (match (womenDeferredAcceptance (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (womenDeferredAcceptance (update val_m m report_m') val_w).m_match m with | none  =>  0 | some w  =>  val_m m w"
+    },
+    "efficientMatchingProcedure": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "2d8414ae636a5f85069901ec480a583fd1aa721a32359fcaaad8bfd32e2c95ee",
+      "paper_statement_sha256": "f539f5e4c497284c626663617b701f25aba733c75221350a2eae6577c5597ee4",
+      "tex_statement": "{M W : Type*} (mechanism : (M \\to W \\to \u211d) \\to (W \\to M \\to \u211d) \\to Assignment M W) = \\forall val_m val_w, paretoOptimal val_m val_w (mechanism val_m val_w)"
+    },
+    "lemma1_strict_simple_misrepresentation_same_partner": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "b2f1a0a3177f4badc917d1e46b27491f86cc869cb9221f15463a13065786d774",
+      "paper_statement_sha256": "44ef01336561f0cd1433650c39c0c78686da8a606b2d7a4582f0a53a7270bf91",
+      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d) (m : M) (report_m simple_report_m : W \\to \u211d) (wstar : W), strictMarriageDomain (update val_m m simple_report_m) val_w \\to (menDeferredAcceptance (update val_m m report_m) val_w).m_match m = some wstar \\to (\\forall (w : W), w \\ne wstar \\to simple_report_m w < simple_report_m wstar) \\to (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m = (menDeferredAcceptance (update val_m m report_m) val_w).m_match m"
+    },
+    "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "fa0ce495ad5752dedfdfed7534eebd67bb26eead5fe6e42873dfc497dcf523cd",
+      "paper_statement_sha256": "8c0cbcec0b8f9d01293ad53f049a94808c2fecd8725abd3df3a87bf3c439ff81",
+      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d) (m : M) (simple_report_m : W \\to \u211d) (ystar : W), card M = card W \\to strictMarriageDomain val_m val_w \\to strictMarriageDomain (update val_m m simple_report_m) val_w \\to (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m = some ystar \\to ((match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\to manReportStrictlyRanksPartnerFirst simple_report_m (some ystar) \\to \\forall (m' : M), (match (menDeferredAcceptance val_m val_w).m_match m' with | none  =>  0 | some w  =>  val_m m' w) \\le match (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m' with | none  =>  0 | some w  =>  val_m m' w"
+    },
+    "manReportStrictlyRanksPartnerFirst": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "aec2628597e13c09f775b82df536904fdd4608342e545501c8fe48fd787fa4c9",
+      "paper_statement_sha256": "f3a806b62ec7f79d3efa27290f925cdf831fec4d7e7c197922090fa967c7468a",
+      "tex_statement": "{W : Type*} (report_m : W \\to \u211d) (partner : Option W) = match partner with | none  =>  \\forall w, report_m w < 0 | some wstar  =>  \\forall w, w \\ne wstar \\to report_m w < report_m wstar"
+    },
+    "menDeferredAcceptance": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "27d696f59e01ff14f2ba835e7054ccbe199c4947536bc857f9eb01e8f596a64f",
+      "paper_statement_sha256": "952a482907bee6e819f0571676f12d16ce2cb317e00c72bab395ce9117e8a630",
+      "tex_statement": "{M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d) = deferredAcceptance val_m val_w"
+    },
+    "menOptimal": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "29117a9de888b5f833acb4a6082adb25d36ddcf280b77c7b2ee86bfb80f12563",
+      "paper_statement_sha256": "d07a2dc701ce60da12b9bc1984bf52584f22a9986c72473e4ac0dedbcb945b6e",
+      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d) (mu : Assignment M W) = stable val_m val_w mu \\land \\forall mu', stable val_m val_w mu' \\to \\forall m, (match mu'.m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w)"
+    },
+    "paretoOptimal": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "5da482be8c82c347af197408b0861162af3b999bea22143192774cb7fdfa87b6",
+      "paper_statement_sha256": "50c5a7c13dfcc53c113a9556ee24077dd6da4c843253ee928aba6b75cb54e3f4",
+      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d) (mu : Assignment M W) = completeMarriageOutcome mu \\land \\lnot \\exists nu, completeMarriageOutcome nu \\land (\\forall m, (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match nu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall w, (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match nu.w_match w with | none  =>  0 | some m  =>  val_w w m)) \\land ((\\exists m, (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w) < (match nu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\lor (\\exists w, (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m) < (match nu.w_match w with | none  =>  0 | some m  =>  val_w w m)))"
+    },
+    "possibleForMan": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "29b0f25ee33daebd36a23b41eab53ffbcf5d98759353e39ff664c108b727c801",
+      "paper_statement_sha256": "7b2c1109b6a0bc1029bf976cbea3894c6ddeb3067c04c1fafb52e280388126da",
+      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d) (m : M) (w : W) = \\exists mu, stable val_m val_w mu \\land mu.m_match m = some w"
+    },
+    "preferenceProfile": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "017bdc1acf6b99a5c6f630ae9eea74bba606f258fd5abe42851fb420bb565f27",
+      "paper_statement_sha256": "186f42769e128bde92d0493d7bf7ce31a34f450613c6c651047cbb675b06c4e5",
+      "tex_statement": "(M : Type u) (W : Type v) = (M \\to W \\to \u211d) \u00d7 (W \\to M \\to \u211d)"
+    },
+    "reportMisrepresentsKthChoice": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "39c6b90a0ec0156bbce4c7fbe89d8c9fbf99a26231ae6f1bb4a6b4b8db4115da",
+      "paper_statement_sha256": "9163989291f38e040f024c5c5af917a79262b9ed04a0002da2f5bb05c36c94aa",
+      "tex_statement": "{A : Type*} [Fintype A] [DecidableEq A] (true_score report_score : A \\to \u211d) (k : \u2115) = \\exists a, ((Finset.univ : Finset A).filter fun b  =>  true_score a < true_score b).card + 1 = k \\land ((Finset.univ : Finset A).filter fun b  =>  report_score a < report_score b).card + 1 \\ne k"
+    },
+    "serialDictatorshipMechanism_matches": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "fb6dbf6687d2c15730a0135b8aa9a6381e0d71884e71e23a4d6236a9ff164852",
+      "paper_statement_sha256": "11a2f3109c0411a716e972e4d14afea76d050f68436c3b883c70b1234639ad2e",
+      "tex_statement": "\\forall {n : \u2115} (val_m val_w : Fin n \\to Fin n \\to \u211d) (m w : Fin n), (serialDictatorshipMechanism val_m val_w).m_match m = some ((paper_serial_dictatorship_perm val_m) m) \\land (serialDictatorshipMechanism val_m val_w).w_match w = some ((symm (paper_serial_dictatorship_perm val_m)) w)"
+    },
+    "stable": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "07447f3facd7062a7049aa30a4b74af8af395f24f8bf911589ae0e96a79ac2e6",
+      "paper_statement_sha256": "f7d5c26c0ff99e6f3b38851fc83791a034b498747e1001c45e62deb14daa989c",
+      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d) (mu : Assignment M W) = (\\forall m, 0 \\le (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall w, 0 \\le (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m)) \\land (\\forall m w, (match mu.m_match m with | none  =>  0 | some w'  =>  val_m m w') < val_m m w \\to val_w w m \\le (match mu.w_match w with | none  =>  0 | some m'  =>  val_w w m'))"
+    },
+    "stableMatchingProcedure": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "021a4453bc8dfba697c5335db182137718a5c69ad30f6d494992044dc22ae31f",
+      "paper_statement_sha256": "cba89474fbb3106bf98f9dd01f0b865b2c054cfd5d0cd0bfb89ad1abfd42d1f7",
+      "tex_statement": "{M W : Type*} (mechanism : (M \\to W \\to \u211d) \\to (W \\to M \\to \u211d) \\to Assignment M W) = \\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to stable val_m val_w (mechanism val_m val_w)"
+    },
+    "stableOutcomes": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "daa4eb0dfcabfc8d4b6908cbef48ba3910738d7632bc45030a3da75a20d5dbd3",
+      "paper_statement_sha256": "bc6bc0b64b5d5c88bca9684dd011b3c94013d5a07b2685af7c7cd949a4bc2143",
+      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d) = {mu | stable val_m val_w mu}"
+    },
+    "strictMarriageDomain": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "5cb6e305592b9cb58f5419592f2cf3201aedaafac6cc88494e6aba1979e16ef1",
+      "paper_statement_sha256": "199e56f6dd3d1e864e3eaf84583ea9a2563d67d8fc8a575154a644cb1c26f993",
+      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d) = (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\land (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\land (\\forall m w, 0 < val_m m w) \\land (\\forall w m, 0 < val_w w m)"
+    },
+    "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "5f1f623923456b8eba42857a5fae2456db1e2a73ee6031e46bf5c91c450fd65e",
+      "paper_statement_sha256": "d1ce8e42274a41b2744ac01b7e6ac9c2c79bd1370ccbb1c26e6ffd843fe5dc4d",
+      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d), card M = card W \\to strictMarriageDomain val_m val_w \\to \\exists mu, stable val_m val_w mu \\land completeMarriageOutcome mu"
+    },
+    "theorem2_optimal_stable_outcomes_on_strict_marriage_domain": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "e2171754b7e44ca85ca84ee7f39b55bd51b7190786bb7e693324e7b20b23770e",
+      "paper_statement_sha256": "0c093543f6a321bfc83f1f704b93023814baf404118a9cc452a05262f39a9de4",
+      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d), strictMarriageDomain val_m val_w \\to (\\exists mu, menOptimal val_m val_w mu) \\land \\exists nu, womenOptimal val_m val_w nu"
+    },
+    "theorem3_no_stable_truthful_procedure_on_strict_profiles": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "288cc389ce08dba2fa75503e637dee27945edba77797c2176c41b9ec04d0d6b7",
+      "paper_statement_sha256": "6e4e64d5413553e1762f71dd174f306e683cd18c791b2184206884d9683ce94a",
+      "tex_statement": "\\lnot\\exists mechanism, stableMatchingProcedure mechanism \\land truthfulForAllAgents mechanism"
+    },
+    "theorem4_serial_dictatorship_constructed": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "151f841330f1ce1cdb53acdfbf84a0bd0ebe759106225aac8d4d2d753a988f2e",
+      "paper_statement_sha256": "9a9a2f261c1239be98382bdbb26f10005ed33cc1ac9f7be6446eb7f0743def7a",
+      "tex_statement": "\\forall {n : \u2115}, (\\forall (val_m val_w : Fin n \\to Fin n \\to \u211d), (\\forall (m w w' : Fin n), val_m m w = val_m m w' \\to w = w') \\to paretoOptimal val_m val_w (serialDictatorshipMechanism val_m val_w)) \\land (\\forall (val_m val_w : Fin n \\to Fin n \\to \u211d), (\\forall (m w w' : Fin n), val_m m w = val_m m w' \\to w = w') \\to \\forall (m : Fin n) (report_m : Fin n \\to \u211d), (match (serialDictatorshipMechanism (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (serialDictatorshipMechanism val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\land \\forall (val_m val_w : Fin n \\to Fin n \\to \u211d) (w : Fin n) (report_w : Fin n \\to \u211d), (match (serialDictatorshipMechanism val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (serialDictatorshipMechanism val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m"
+    },
+    "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "d844bd05dcac996033528f30b9bd50c41c1026acbcd0f707c46e18770a0d5938",
+      "paper_statement_sha256": "2e031a4c89c5ba96f4b9f090d45f4ec78db7502cf51444a1b954fe4dde62b071",
+      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d), card M = card W \\to strictMarriageDomain val_m val_w \\to (\\forall (m : M) (report_m : W \\to \u211d), (match (menDeferredAcceptance (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\land \\forall (w : W) (report_w : M \\to \u211d), (match (womenDeferredAcceptance val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (womenDeferredAcceptance val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m"
+    },
+    "theorem6_weak_pareto_for_men_on_strict_marriage_domain": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "5f2043f7796ca48ece29862be11ceb21055abfb2deec5fd1217619df83bf10dd",
+      "paper_statement_sha256": "ed308a01aa97b01bbf5f602af86edd362041ab84b06d83afb0458c76f17b0e14",
+      "tex_statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] [Nonempty M] (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d), card M = card W \\to strictMarriageDomain val_m val_w \\to \\lnot\\exists nu, completeMarriageOutcome nu \\land \\forall (m : M), (match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) < match m_match m with | none  =>  0 | some w  =>  val_m m w"
+    },
+    "theorem7_arbitrary_k_on_strict_profiles": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "f00abd669c891c2a37acf15c7bcc46e9c3834122503ac7adc00e2a179bb5b220",
+      "paper_statement_sha256": "3c0c2ee5120e309f9edfe4a9af5ef5fab8a8b2a39ed78d8de8d5c60800283197",
+      "tex_statement": "\\forall (k : \u2115), 1 < k \\to \\exists n, paper_no_stable_procedure_avoids_strict_kth_choice_manipulation_on (Fin n) (Fin n) k"
+    },
+    "truthfulForAllAgents": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "6567d54a32ba493be524d8e4bb2a582c50a7c16744ee430533ad4eb4c8eecfdd",
+      "paper_statement_sha256": "17de5542e6c3978cdcdb81440f739214a4a7e54dba5a4b30000a9e634c0c716a",
+      "tex_statement": "{M W : Type*} [DecidableEq M] [DecidableEq W] (mechanism : (M \\to W \\to \u211d) \\to (W \\to M \\to \u211d) \\to Assignment M W) = (\\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to \\forall m report_m, (\\forall i w w', ((Function.update val_m m report_m) i) w = ((Function.update val_m m report_m) i) w' \\to w = w') \\to (match (mechanism (Function.update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match (mechanism val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to \\forall w report_w, (\\forall j m m', ((Function.update val_w w report_w) j) m = ((Function.update val_w w report_w) j) m' \\to m = m') \\to (match (mechanism val_m (Function.update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match (mechanism val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m))"
+    },
+    "womenDeferredAcceptance": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "0dbf3fce8009d0646fadb6c24d7485acf2d7a62a777f5c9cde5702e17953e52d",
+      "paper_statement_sha256": "48c00c609b6cd57d28cbdfcbbc7cf167d7c048a401411ae2e0dda3f1cd8d4f5a",
+      "tex_statement": "{M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d) = (deferredAcceptance (M = W) (W = M) val_w val_m).swap"
+    },
+    "womenOptimal": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "bcc516fba52a2fd37879ea1dea183733d6e589cb94401b7fc7a6e91c26e1daa8",
+      "paper_statement_sha256": "18c4fcee983cb4fc9524f86403c443de1e6e2149cf5fff9ef18734715438c3e9",
+      "tex_statement": "{M W : Type*} (val_m : M \\to W \\to \u211d) (val_w : W \\to M \\to \u211d) (mu : Assignment M W) = stable val_m val_w mu \\land \\forall mu', stable val_m val_w mu' \\to \\forall w, (match mu'.w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m)"
+    }
+  },
   "paper": "Roth82StableMatching",
-  "prompt_version": "lean-to-tex-v2-strict-context-free",
-  "translator": "gpt-5-codex",
-  "translator_type": "model",
-  "translated_at": "2026-06-13T00:00:00Z",
   "prompt_summary": [
     "Translate each Lean declaration from the Lean statement alone, with no paper context.",
     "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
     "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
   ],
-  "generated_at": "2026-06-12T00:00:00Z",
-  "generator": "codex-current-dashboard-statement-digest-refresh",
-  "items": {
-    "completeMarriageOutcome": {
-      "lean_statement_sha256": "71323429a7fe7a4d081d16275ce60015e83707634f8660ba5cffb690d23b0792",
-      "statement": "{M W : Type*} (mu : Assignment M W) = (\\forall m, \\exists w, mu.m_match m = some w) \\land (\\forall w, \\exists m, mu.w_match w = some m)"
-    },
-    "corollary5_1_no_need_to_misrepresent_first_choice": {
-      "lean_statement_sha256": "83ab3a3d824ec89cbcef6cf5228029fbc880915b89550b8895792a693817fbb0",
-      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] [Nonempty M] [Nonempty W], (\\forall (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), strictMarriageDomain val_m val_w \\to \\forall (w : W) (report_w : M \\to ℝ), \\exists report_w', (\\forall (mstar : M), (\\forall (m : M), m \\ne mstar \\to val_w w m < val_w w mstar) \\to \\forall (m : M), m \\ne mstar \\to report_w' m < report_w' mstar) \\land (match (menDeferredAcceptance val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (menDeferredAcceptance val_m (update val_w w report_w')).w_match w with | none  =>  0 | some m  =>  val_w w m) \\land \\forall (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), strictMarriageDomain val_m val_w \\to \\forall (m : M) (report_m : W \\to ℝ), \\exists report_m', (\\forall (wstar : W), (\\forall (w : W), w \\ne wstar \\to val_m m w < val_m m wstar) \\to \\forall (w : W), w \\ne wstar \\to report_m' w < report_m' wstar) \\land (match (womenDeferredAcceptance (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (womenDeferredAcceptance (update val_m m report_m') val_w).m_match m with | none  =>  0 | some w  =>  val_m m w"
-    },
-    "efficientMatchingProcedure": {
-      "lean_statement_sha256": "2d8414ae636a5f85069901ec480a583fd1aa721a32359fcaaad8bfd32e2c95ee",
-      "statement": "{M W : Type*} (mechanism : (M \\to W \\to ℝ) \\to (W \\to M \\to ℝ) \\to Assignment M W) = \\forall val_m val_w, paretoOptimal val_m val_w (mechanism val_m val_w)"
-    },
-    "lemma1_strict_simple_misrepresentation_same_partner": {
-      "lean_statement_sha256": "b2f1a0a3177f4badc917d1e46b27491f86cc869cb9221f15463a13065786d774",
-      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (m : M) (report_m simple_report_m : W \\to ℝ) (wstar : W), strictMarriageDomain (update val_m m simple_report_m) val_w \\to (menDeferredAcceptance (update val_m m report_m) val_w).m_match m = some wstar \\to (\\forall (w : W), w \\ne wstar \\to simple_report_m w < simple_report_m wstar) \\to (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m = (menDeferredAcceptance (update val_m m report_m) val_w).m_match m"
-    },
-    "lemma2_strict_simple_misrepresentation_no_men_harmed_on_strict_domain": {
-      "lean_statement_sha256": "fa0ce495ad5752dedfdfed7534eebd67bb26eead5fe6e42873dfc497dcf523cd",
-      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (m : M) (simple_report_m : W \\to ℝ) (ystar : W), card M = card W \\to strictMarriageDomain val_m val_w \\to strictMarriageDomain (update val_m m simple_report_m) val_w \\to (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m = some ystar \\to ((match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\to manReportStrictlyRanksPartnerFirst simple_report_m (some ystar) \\to \\forall (m' : M), (match (menDeferredAcceptance val_m val_w).m_match m' with | none  =>  0 | some w  =>  val_m m' w) \\le match (menDeferredAcceptance (update val_m m simple_report_m) val_w).m_match m' with | none  =>  0 | some w  =>  val_m m' w"
-    },
-    "manReportStrictlyRanksPartnerFirst": {
-      "lean_statement_sha256": "aec2628597e13c09f775b82df536904fdd4608342e545501c8fe48fd787fa4c9",
-      "statement": "{W : Type*} (report_m : W \\to ℝ) (partner : Option W) = match partner with | none  =>  \\forall w, report_m w < 0 | some wstar  =>  \\forall w, w \\ne wstar \\to report_m w < report_m wstar"
-    },
-    "menDeferredAcceptance": {
-      "lean_statement_sha256": "27d696f59e01ff14f2ba835e7054ccbe199c4947536bc857f9eb01e8f596a64f",
-      "statement": "{M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = deferredAcceptance val_m val_w"
-    },
-    "menOptimal": {
-      "lean_statement_sha256": "29117a9de888b5f833acb4a6082adb25d36ddcf280b77c7b2ee86bfb80f12563",
-      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = stable val_m val_w mu \\land \\forall mu', stable val_m val_w mu' \\to \\forall m, (match mu'.m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w)"
-    },
-    "paretoOptimal": {
-      "lean_statement_sha256": "5da482be8c82c347af197408b0861162af3b999bea22143192774cb7fdfa87b6",
-      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = completeMarriageOutcome mu \\land \\lnot \\exists nu, completeMarriageOutcome nu \\land (\\forall m, (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match nu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall w, (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match nu.w_match w with | none  =>  0 | some m  =>  val_w w m)) \\land ((\\exists m, (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w) < (match nu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\lor (\\exists w, (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m) < (match nu.w_match w with | none  =>  0 | some m  =>  val_w w m)))"
-    },
-    "possibleForMan": {
-      "lean_statement_sha256": "29b0f25ee33daebd36a23b41eab53ffbcf5d98759353e39ff664c108b727c801",
-      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (m : M) (w : W) = \\exists mu, stable val_m val_w mu \\land mu.m_match m = some w"
-    },
-    "preferenceProfile": {
-      "lean_statement_sha256": "017bdc1acf6b99a5c6f630ae9eea74bba606f258fd5abe42851fb420bb565f27",
-      "statement": "(M : Type u) (W : Type v) = (M \\to W \\to ℝ) × (W \\to M \\to ℝ)"
-    },
-    "reportMisrepresentsKthChoice": {
-      "lean_statement_sha256": "39c6b90a0ec0156bbce4c7fbe89d8c9fbf99a26231ae6f1bb4a6b4b8db4115da",
-      "statement": "{A : Type*} [Fintype A] [DecidableEq A] (true_score report_score : A \\to ℝ) (k : ℕ) = \\exists a, ((Finset.univ : Finset A).filter fun b  =>  true_score a < true_score b).card + 1 = k \\land ((Finset.univ : Finset A).filter fun b  =>  report_score a < report_score b).card + 1 \\ne k"
-    },
-    "serialDictatorshipMechanism_matches": {
-      "lean_statement_sha256": "fb6dbf6687d2c15730a0135b8aa9a6381e0d71884e71e23a4d6236a9ff164852",
-      "statement": "\\forall {n : ℕ} (val_m val_w : Fin n \\to Fin n \\to ℝ) (m w : Fin n), (serialDictatorshipMechanism val_m val_w).m_match m = some ((paper_serial_dictatorship_perm val_m) m) \\land (serialDictatorshipMechanism val_m val_w).w_match w = some ((symm (paper_serial_dictatorship_perm val_m)) w)"
-    },
-    "stable": {
-      "lean_statement_sha256": "07447f3facd7062a7049aa30a4b74af8af395f24f8bf911589ae0e96a79ac2e6",
-      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = (\\forall m, 0 \\le (match mu.m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall w, 0 \\le (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m)) \\land (\\forall m w, (match mu.m_match m with | none  =>  0 | some w'  =>  val_m m w') < val_m m w \\to val_w w m \\le (match mu.w_match w with | none  =>  0 | some m'  =>  val_w w m'))"
-    },
-    "stableMatchingProcedure": {
-      "lean_statement_sha256": "021a4453bc8dfba697c5335db182137718a5c69ad30f6d494992044dc22ae31f",
-      "statement": "{M W : Type*} (mechanism : (M \\to W \\to ℝ) \\to (W \\to M \\to ℝ) \\to Assignment M W) = \\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to stable val_m val_w (mechanism val_m val_w)"
-    },
-    "stableOutcomes": {
-      "lean_statement_sha256": "daa4eb0dfcabfc8d4b6908cbef48ba3910738d7632bc45030a3da75a20d5dbd3",
-      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = {mu | stable val_m val_w mu}"
-    },
-    "strictMarriageDomain": {
-      "lean_statement_sha256": "5cb6e305592b9cb58f5419592f2cf3201aedaafac6cc88494e6aba1979e16ef1",
-      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\land (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\land (\\forall m w, 0 < val_m m w) \\land (\\forall w m, 0 < val_w w m)"
-    },
-    "theorem1_stable_complete_outcome_exists_on_strict_marriage_domain": {
-      "lean_statement_sha256": "5f1f623923456b8eba42857a5fae2456db1e2a73ee6031e46bf5c91c450fd65e",
-      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), card M = card W \\to strictMarriageDomain val_m val_w \\to \\exists mu, stable val_m val_w mu \\land completeMarriageOutcome mu"
-    },
-    "theorem2_optimal_stable_outcomes_on_strict_marriage_domain": {
-      "lean_statement_sha256": "e2171754b7e44ca85ca84ee7f39b55bd51b7190786bb7e693324e7b20b23770e",
-      "statement": "\\forall {M : Type u_1} {W : Type u_2} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), strictMarriageDomain val_m val_w \\to (\\exists mu, menOptimal val_m val_w mu) \\land \\exists nu, womenOptimal val_m val_w nu"
-    },
-    "theorem3_no_stable_truthful_procedure_on_strict_profiles": {
-      "lean_statement_sha256": "288cc389ce08dba2fa75503e637dee27945edba77797c2176c41b9ec04d0d6b7",
-      "statement": "\\lnot\\exists mechanism, stableMatchingProcedure mechanism \\land truthfulForAllAgents mechanism"
-    },
-    "theorem4_serial_dictatorship_constructed": {
-      "lean_statement_sha256": "151f841330f1ce1cdb53acdfbf84a0bd0ebe759106225aac8d4d2d753a988f2e",
-      "statement": "\\forall {n : ℕ}, (\\forall (val_m val_w : Fin n \\to Fin n \\to ℝ), (\\forall (m w w' : Fin n), val_m m w = val_m m w' \\to w = w') \\to paretoOptimal val_m val_w (serialDictatorshipMechanism val_m val_w)) \\land (\\forall (val_m val_w : Fin n \\to Fin n \\to ℝ), (\\forall (m w w' : Fin n), val_m m w = val_m m w' \\to w = w') \\to \\forall (m : Fin n) (report_m : Fin n \\to ℝ), (match (serialDictatorshipMechanism (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (serialDictatorshipMechanism val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\land \\forall (val_m val_w : Fin n \\to Fin n \\to ℝ) (w : Fin n) (report_w : Fin n \\to ℝ), (match (serialDictatorshipMechanism val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (serialDictatorshipMechanism val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m"
-    },
-    "theorem5_optimal_side_truthful_on_strict_domain_of_card_eq": {
-      "lean_statement_sha256": "d844bd05dcac996033528f30b9bd50c41c1026acbcd0f707c46e18770a0d5938",
-      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), card M = card W \\to strictMarriageDomain val_m val_w \\to (\\forall (m : M) (report_m : W \\to ℝ), (match (menDeferredAcceptance (update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\land \\forall (w : W) (report_w : M \\to ℝ), (match (womenDeferredAcceptance val_m (update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le match (womenDeferredAcceptance val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m"
-    },
-    "theorem6_weak_pareto_for_men_on_strict_marriage_domain": {
-      "lean_statement_sha256": "5f2043f7796ca48ece29862be11ceb21055abfb2deec5fd1217619df83bf10dd",
-      "statement": "\\forall {M : Type u_1} {W : Type u_2} [inst : Fintype M] [inst_1 : Fintype W] [inst_2 : DecidableEq M] [inst_3 : DecidableEq W] [Nonempty M] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ), card M = card W \\to strictMarriageDomain val_m val_w \\to \\lnot\\exists nu, completeMarriageOutcome nu \\land \\forall (m : M), (match (menDeferredAcceptance val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) < match m_match m with | none  =>  0 | some w  =>  val_m m w"
-    },
-    "theorem7_arbitrary_k_on_strict_profiles": {
-      "lean_statement_sha256": "f00abd669c891c2a37acf15c7bcc46e9c3834122503ac7adc00e2a179bb5b220",
-      "statement": "\\forall (k : ℕ), 1 < k \\to \\exists n, paper_no_stable_procedure_avoids_strict_kth_choice_manipulation_on (Fin n) (Fin n) k"
-    },
-    "truthfulForAllAgents": {
-      "lean_statement_sha256": "6567d54a32ba493be524d8e4bb2a582c50a7c16744ee430533ad4eb4c8eecfdd",
-      "statement": "{M W : Type*} [DecidableEq M] [DecidableEq W] (mechanism : (M \\to W \\to ℝ) \\to (W \\to M \\to ℝ) \\to Assignment M W) = (\\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to \\forall m report_m, (\\forall i w w', ((Function.update val_m m report_m) i) w = ((Function.update val_m m report_m) i) w' \\to w = w') \\to (match (mechanism (Function.update val_m m report_m) val_w).m_match m with | none  =>  0 | some w  =>  val_m m w) \\le (match (mechanism val_m val_w).m_match m with | none  =>  0 | some w  =>  val_m m w)) \\land (\\forall val_m val_w, (\\forall m w w', val_m m w = val_m m w' \\to w = w') \\to (\\forall w m m', val_w w m = val_w w m' \\to m = m') \\to \\forall w report_w, (\\forall j m m', ((Function.update val_w w report_w) j) m = ((Function.update val_w w report_w) j) m' \\to m = m') \\to (match (mechanism val_m (Function.update val_w w report_w)).w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match (mechanism val_m val_w).w_match w with | none  =>  0 | some m  =>  val_w w m))"
-    },
-    "womenDeferredAcceptance": {
-      "lean_statement_sha256": "0dbf3fce8009d0646fadb6c24d7485acf2d7a62a777f5c9cde5702e17953e52d",
-      "statement": "{M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) = (deferredAcceptance (M = W) (W = M) val_w val_m).swap"
-    },
-    "womenOptimal": {
-      "lean_statement_sha256": "bcc516fba52a2fd37879ea1dea183733d6e589cb94401b7fc7a6e91c26e1daa8",
-      "statement": "{M W : Type*} (val_m : M \\to W \\to ℝ) (val_w : W \\to M \\to ℝ) (mu : Assignment M W) = stable val_m val_w mu \\land \\forall mu', stable val_m val_w mu' \\to \\forall w, (match mu'.w_match w with | none  =>  0 | some m  =>  val_w w m) \\le (match mu.w_match w with | none  =>  0 | some m  =>  val_w w m)"
-    }
-  }
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "schema": 1
 }

@@ -1470,6 +1470,17 @@ the Lean statements against the paper.
   beginning-of-paper target-setting pass; use `--precheck` or `--check` for the
   full review-boundary pass. The statement-only commands intentionally ignore
   human-review counters and review-surface row-count warnings.
+- Do not treat sidecar freshness as a dashboard-only convention. For completed
+  papers, `python3 scripts/audit_repository.py` should also fail when
+  statement-translation or review-surface sidecars are stale, missing,
+  uncertain, mismatched, or otherwise flagged. Run the paper-local dashboard
+  checks for diagnosis, then run the repository audit or CI before marking the
+  paper closed.
+- Assumption provenance checks can invoke Lean hidden-premise expansion even for
+  papers with no explicit `Assumptions.lean` rows. In an uncached checkout this
+  may be slower than a JSON export; use the export only to triage row status,
+  and require the full audit/CI result before claiming there are no hidden
+  premise or certificate boundaries.
 - The dashboard displays the current Lean statement, the Lean-to-TeX draft, and
   the independent LLM match judgment. These LLM checks are pre-human-review
   evidence only; they do not increment `human_review.reviewed_rows`, and they

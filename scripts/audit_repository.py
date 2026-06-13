@@ -1145,8 +1145,30 @@ def check_paper_interface_axiom_closure(
     script = "\n".join(script_lines) + "\n"
 
     severity = completed_status_finding_severity(status)
+    module_name = lean_module_name(interface_path)
     try:
-        with tempfile.TemporaryDirectory() as tmpdir:
+        build_proc = subprocess.run(
+            ["lake", "build", module_name],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
+        if build_proc.returncode != 0:
+            details = (build_proc.stderr or build_proc.stdout).strip().splitlines()
+            excerpt = " ".join(details[:3])[:600] if details else "Lake returned a nonzero status"
+            return [
+                Finding(
+                    severity,
+                    interface_path,
+                    f"`{paper_id}` Lean axiom audit could not build `{module_name}`: {excerpt}",
+                )
+            ]
+
+        audit_tmp_root = ROOT / ".lake" / "paper_axiom_audit"
+        audit_tmp_root.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=audit_tmp_root) as tmpdir:
             script_path = Path(tmpdir) / "paper_axiom_audit.lean"
             script_path.write_text(script, encoding="utf-8")
             proc = subprocess.run(
@@ -1332,6 +1354,81 @@ def completed_status_finding_severity(status: object) -> str:
     if status in {"formalized", "formalized with caveat"}:
         return "ERROR"
     return "WARN"
+
+
+def paper_statement_sidecar_findings(
+    paper_id: str,
+    folder: Path,
+    status: object,
+) -> list[Finding]:
+    """Check current statement/review-surface LLM sidecars for one paper.
+
+    The dashboard owns the sidecar schema and digest logic.  The repository
+    audit enforces that completed papers do not pass CI with stale or missing
+    statement-translation evidence.
+    """
+
+    severity = completed_status_finding_severity(status)
+    try:
+        from review_dashboard import (
+            review_items_for_paper,
+            review_surface_audit_summary,
+            statement_translation_audit_summary,
+        )
+
+        items = review_items_for_paper(folder, use_cache=False)
+        surface = review_surface_audit_summary(folder, items)
+        statements = statement_translation_audit_summary(folder, items)
+    except Exception as exc:  # noqa: BLE001 - audit should report parser failures.
+        return [
+            Finding(
+                severity,
+                folder,
+                f"`{paper_id}` statement-sidecar audit could not run: {exc}",
+            )
+        ]
+
+    findings: list[Finding] = []
+    if surface.get("needs_attention"):
+        reasons: list[str] = []
+        if surface.get("missing_required"):
+            reasons.append("missing review-surface LLM audit")
+        if surface.get("stale"):
+            reasons.append("stale review-surface LLM audit")
+        if surface.get("judgment") in {"needs_curation", "uncertain"}:
+            reasons.append(f"review-surface judgment `{surface.get('judgment')}`")
+        findings.append(
+            Finding(
+                severity,
+                folder / "review_surface_llm.json",
+                f"`{paper_id}` review-surface audit needs attention: "
+                + (", ".join(reasons) if reasons else "unknown issue"),
+            )
+        )
+
+    if statements.get("needs_attention"):
+        parts: list[str] = []
+        for key, label in (
+            ("missing_draft_count", "missing Lean-to-TeX draft"),
+            ("stale_draft_count", "stale Lean-to-TeX draft"),
+            ("missing_judgment_count", "missing statement-judge row"),
+            ("stale_judgment_count", "stale statement-judge row"),
+            ("mismatch_count", "statement mismatch"),
+            ("uncertain_count", "uncertain statement judgment"),
+            ("unknown_count", "unknown statement judgment"),
+        ):
+            value = statements.get(key)
+            if isinstance(value, int) and value:
+                parts.append(f"{value} {label}(s)")
+        findings.append(
+            Finding(
+                severity,
+                folder / "statement_match_llm.json",
+                f"`{paper_id}` statement-translation audit needs attention: "
+                + (", ".join(parts) if parts else "unknown issue"),
+            )
+        )
+    return findings
 
 
 def _lower_initial(name: str) -> str:
@@ -3073,6 +3170,13 @@ def check_machine_paper_status(library_premise_audit: bool = False) -> list[Find
 
         actual_line_count = len(interface_path.read_text(encoding="utf-8").splitlines())
         interface_text = interface_path.read_text(encoding="utf-8")
+        findings.extend(
+            paper_statement_sidecar_findings(
+                paper_id,
+                PAPERS / paper_id,
+                status,
+            )
+        )
         actual_review_names = [name for _line, name in review_rows_from_interface_text(interface_text)]
         declaration_blocks = review_declaration_blocks(interface_text)
         declaration_comments = review_declaration_comments(interface_text)

@@ -300,6 +300,13 @@ audit just for this target-setting pass. Its purpose is to make sure the Lean
 statements are the right theorem targets before they become expensive to prove;
 it is valid only together with the assumption/hidden-premise check above.
 
+At final closeout, the repository audit is the enforcement layer for the same
+evidence. Completed papers should fail `python3 scripts/audit_repository.py` if
+statement-translation sidecars, review-surface sidecars, or assumption
+provenance are stale, missing, uncertain, mismatched, or otherwise flagged.
+Use dashboard commands for quick paper-local diagnosis, but do not rely on a
+JSON export alone when the hidden-premise lane needs Lean expansion.
+
 At a statement-review boundary, run the independent LLM statement workflow:
 
 1. Curate `PaperInterface.lean` to the paper-facing Lean definitions and named

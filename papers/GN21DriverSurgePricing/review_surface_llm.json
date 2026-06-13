@@ -1,12 +1,4 @@
 {
-  "schema": 1,
-  "paper": "GN21DriverSurgePricing",
-  "validator": "gpt-5-codex",
-  "validator_type": "model",
-  "judgment": "passes",
-  "reason": "All statement rows are paper-facing definitions, named lemmas, remarks, or theorem endpoints from the source map. The ten assumption rows are source/theorem-domain premises handled by the separate assumption-provenance audit.",
-  "review_rows": 34,
-  "review_surface_sha256": "8dc4b899b243efc1e824b219c0645477c4c73ca20c41a28117376860d5ad4b70",
   "items": {
     "assumption_affine_response_shape_domains": {
       "judgment": "keep",
@@ -144,5 +136,15 @@
       "judgment": "keep",
       "reason": "Paper-facing theorem row."
     }
-  }
+  },
+  "judgment": "passes",
+  "paper": "GN21DriverSurgePricing",
+  "prompt_version": "review-surface-v1",
+  "reason": "Current dashboard rows are paper-facing definitions, named statements, explicit source-condition rows, or documented boundary rows; premise provenance is audited separately.",
+  "review_rows": 34,
+  "review_surface_sha256": "852527b823ab2a926728a2cfc62466a719d2c9d09fe21d51acc07a14778deb0c",
+  "schema": 1,
+  "validated_at": "2026-06-13T21:50:39Z",
+  "validator": "gpt-5-codex",
+  "validator_type": "model"
 }

@@ -1,169 +1,181 @@
 {
-  "schema": 1,
-  "paper": "GGSG19TopThree",
-  "prompt_version": "statement-match-v2-strict-full-statement",
-  "validator": "gpt-5-codex",
-  "validator_type": "model",
-  "validated_at": "2026-06-13T00:00:00Z",
   "comment": "Refreshed under the strict full-statement match prompt; existing per-row judgments and reasons remain row-local and digest-checked.",
+  "items": {
+    "assumption_mallows_nontrivial_winner_and_noise": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "fc60c4098cf0ce3d63300a2740a66650085f8bda2cf3e14b65ab86188467bfb1",
+      "paper_statement_sha256": "8a964ecbd60b59f8789b06eff4134768e0df0516aa9c0fda1783abff8efb80db",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "57d968860fabe1008d2c72342adec04b70f4bae48b7bcf6ebca915624100c353",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_nontrivial_k_approval_cutoffs": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "67fe184ad4d20e728a9179d5580134afdf82f9e238f95a93ca0271f1954a6739",
+      "paper_statement_sha256": "3998841e1d0354d2fa4d6697c0d0c7efbe4a83759c32fff2fa285ce837917a56",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "57d968860fabe1008d2c72342adec04b70f4bae48b7bcf6ebca915624100c353",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_pairwise_approval_ternary_gap_domain": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "ae2895e098677d34fca5d64c4d3da08a2e1f01104808774f19cca93f63e2190a",
+      "paper_statement_sha256": "2b198efdd2e44cd58ac0e50cee946df60bdcf04e1631f918d42e2c4de79fa52e",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "57d968860fabe1008d2c72342adec04b70f4bae48b7bcf6ebca915624100c353",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_randomized_mechanism_probability_weights": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "312fa693dd6cef536d826bbf014e8066bb627fdbef13bca70d3a8cb975235322",
+      "paper_statement_sha256": "652cce3fee59a3829a255835f273d964c0ff5e7ee7a1ebdc3e3d69bc815d6bc3",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "57d968860fabe1008d2c72342adec04b70f4bae48b7bcf6ebca915624100c353",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_strict_cross_tier_no_ties": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "81f5745fdca1d75154d7238a66f1e8e41cffaf51ba17f9ffeb04dda555f33704",
+      "paper_statement_sha256": "14738df3047384c164f33095d5bb750d194c554f7970f5b5a6e3671640f76923",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "57d968860fabe1008d2c72342adec04b70f4bae48b7bcf6ebca915624100c353",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_definition_large_deviation_rate": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "e0e27bae7bdb99d2c7803e82dfa036be8cf5ee9aec810e3f60eee217e7b51283",
+      "paper_statement_sha256": "55f8f598fa3ad4d4fd4f37854b64934d764d44d904c22059e75ec38e8a70dd68",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "tex_statement_sha256": "d8b2d3deb9b37e9307e370d731c0a7482dfa721b2eda1f5cc4ea9543f92b2e7c",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_corollary_lem_mallowsnorando": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "f2f169f2ee4c585305145a17307b12289cb1b3d5b5fe935749da1439271b97a4",
+      "paper_statement_sha256": "7fb12609a98130586cad7c72dcbfe75ed3aa142550b831c8454b5e1a28cd8c0b",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "tex_statement_sha256": "1353ade53e95c4eb5603d992e483e88bb57c148f4cf3cab84163e093a6754209",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_proposition1_thm_consistency_tiered": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "04d4ba26d13b6f8cddcfe237a27a6afd80728d00db3d25accd64169f414248d2",
+      "paper_statement_sha256": "e67fafd5c22525c5f7265196a7ae82be80067fbf8ad0aa2af6c817d1bb3ca7cf",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "tex_statement_sha256": "eacadd5a9f45c9182794bd38ff660642a644ad0d5e1bfcb5d9d1f6c5d417dcc3",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_proposition2_thm_pairwiselearning_finite_support": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "e58a76877b7a0603df219c054fb1e3c3c7fe12231798f0277d9a5baa09e43a4e",
+      "paper_statement_sha256": "6b8c2a16a415fbadd8518dbbc79f9208c1740f57664108d67c6b2aae6adb09d2",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "tex_statement_sha256": "ee066919a567954dfe19bbc92653bbc7c5c27f4c470f0756c24e1be762d4fb06",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_proposition3_lem_pairwiselearning_approval_finite_ternary": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "6a1a99b56295e893dfc3162db790ed6a91b86ad88c16764b3f210b817f169afc",
+      "paper_statement_sha256": "d7232c3fd2da45ef75b48e304c696947bfe9b52af53155f71d5b69ece2304c19",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "tex_statement_sha256": "dafc14a4cc2d42d3d9121502feef4d77517a4b3cdebfcb904efc158517e23996",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_proposition4_thm_goal_learning_finite_support": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "8be37fc2863db1df27fd1f3d0e35df81235e297515b3f4370014957e3f43d611",
+      "paper_statement_sha256": "1a17ea4a9bdab1e2b50f6f551bb91151cdf997bfea1375b3c461ca055b5243b2",
+      "reason": "The updated Lean surface now states the source-shaped unweighted finite relevant-pair aggregate, matching the paper's expected-error sum Q^N.",
+      "tex_statement_sha256": "eb5634e8ce80de71735e3d11cb88e693af997a2f71a78e1aaba8563312475992",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_theorem1_lem_randomizebetterscoring": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "c469b09e36976c9b9b9a15c3c20bbbb78aebddd9d62f809f3d4f4d645941fd21",
+      "paper_statement_sha256": "fe5440e9a614f024eb99f548d8064d099ca86bf1a7476b860bf63f5fc181d351",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "tex_statement_sha256": "fc11b5d9d7e1a2730efd6eb3ade99942552dade58ebb79bf484f099fe911dc5d",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_theorem2_lem_randomizenotbetterapproval_pairwise": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "ae1e663667cbd89c3f294c7720b0c75e7f388c9e9a122207b32d70671976242e",
+      "paper_statement_sha256": "67eea6b1e1e77f54c462c6978f1c24cab48fc679ae482b073268dec63f6e1d7e",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "tex_statement_sha256": "d3dd5bf48d59e8037cf1bdeccf5e8c363a41a89dc1bcf3eea6f4f5826598e993",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_theorem_lem_mallowsnotWK_counterexample": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "f0e151770a69a44f674c9a267bdc683a8661b01c7e6b5b2bc0823d405af2be7d",
+      "paper_statement_sha256": "4451ab20640966f9c8d01596e28dfc82050b10eb575d997fca5f0157edacc8c5",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "tex_statement_sha256": "1918c923bd7eb5c8a954b63d5b5dc7d55e3d26ef3fac310a24f32f50d5034692",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "source_theorem_lem_randomizebetterapproval_w_selection_constructed": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "399f67c45ab466b70117575e5883a8dbfa39feec417e76ef23451ce6ebe62999",
+      "paper_statement_sha256": "e2c398d7405e9da007c11b62a9ef18771737fbb0bb2ce4307f86955ea5c224e3",
+      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
+      "tex_statement_sha256": "310c6ca540f9dc7067117867796c5fcc267d6dccddaf5437da47cf09d54fbfd0",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    }
+  },
+  "paper": "GGSG19TopThree",
   "prompt_summary": [
     "A matches verdict requires the same hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions.",
     "Mark mismatch or uncertain for omitted source subclaims, added non-source conditions, conditional wrappers, broad aggregate rows, source-row packages, certificate packages, or weakened/strengthened statements.",
     "For formula-bearing rows, check the exact formula rather than only the theorem label or qualitative interpretation."
   ],
-  "judge": "codex-statement-translation-audit",
-  "items": {
-    "paper_definition_large_deviation_rate": {
-      "judgment": "matches",
-      "matches": true,
-      "paper_statement_sha256": "55f8f598fa3ad4d4fd4f37854b64934d764d44d904c22059e75ec38e8a70dd68",
-      "tex_statement_sha256": "d8b2d3deb9b37e9307e370d731c0a7482dfa721b2eda1f5cc4ea9543f92b2e7c",
-      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "source_proposition1_thm_consistency_tiered": {
-      "judgment": "matches",
-      "matches": true,
-      "paper_statement_sha256": "e67fafd5c22525c5f7265196a7ae82be80067fbf8ad0aa2af6c817d1bb3ca7cf",
-      "tex_statement_sha256": "eacadd5a9f45c9182794bd38ff660642a644ad0d5e1bfcb5d9d1f6c5d417dcc3",
-      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "source_proposition2_thm_pairwiselearning_finite_support": {
-      "judgment": "matches",
-      "matches": true,
-      "paper_statement_sha256": "6b8c2a16a415fbadd8518dbbc79f9208c1740f57664108d67c6b2aae6adb09d2",
-      "tex_statement_sha256": "ee066919a567954dfe19bbc92653bbc7c5c27f4c470f0756c24e1be762d4fb06",
-      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "source_proposition3_lem_pairwiselearning_approval_finite_ternary": {
-      "judgment": "matches",
-      "matches": true,
-      "paper_statement_sha256": "d7232c3fd2da45ef75b48e304c696947bfe9b52af53155f71d5b69ece2304c19",
-      "tex_statement_sha256": "dafc14a4cc2d42d3d9121502feef4d77517a4b3cdebfcb904efc158517e23996",
-      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "source_proposition4_thm_goal_learning_finite_support": {
-      "judgment": "matches",
-      "matches": true,
-      "paper_statement_sha256": "1a17ea4a9bdab1e2b50f6f551bb91151cdf997bfea1375b3c461ca055b5243b2",
-      "reason": "The updated Lean surface now states the source-shaped unweighted finite relevant-pair aggregate, matching the paper's expected-error sum Q^N.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "source_theorem1_lem_randomizebetterscoring": {
-      "judgment": "matches",
-      "matches": true,
-      "paper_statement_sha256": "fe5440e9a614f024eb99f548d8064d099ca86bf1a7476b860bf63f5fc181d351",
-      "tex_statement_sha256": "fc11b5d9d7e1a2730efd6eb3ade99942552dade58ebb79bf484f099fe911dc5d",
-      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "source_theorem2_lem_randomizenotbetterapproval_pairwise": {
-      "judgment": "matches",
-      "matches": true,
-      "paper_statement_sha256": "67eea6b1e1e77f54c462c6978f1c24cab48fc679ae482b073268dec63f6e1d7e",
-      "tex_statement_sha256": "d3dd5bf48d59e8037cf1bdeccf5e8c363a41a89dc1bcf3eea6f4f5826598e993",
-      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "source_theorem_lem_randomizebetterapproval_w_selection_constructed": {
-      "judgment": "matches",
-      "matches": true,
-      "paper_statement_sha256": "e2c398d7405e9da007c11b62a9ef18771737fbb0bb2ce4307f86955ea5c224e3",
-      "tex_statement_sha256": "310c6ca540f9dc7067117867796c5fcc267d6dccddaf5437da47cf09d54fbfd0",
-      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "source_corollary_lem_mallowsnorando": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "source_theorem_lem_mallowsnotWK_counterexample": {
-      "judgment": "matches",
-      "matches": true,
-      "paper_statement_sha256": "4451ab20640966f9c8d01596e28dfc82050b10eb575d997fca5f0157edacc8c5",
-      "tex_statement_sha256": "1918c923bd7eb5c8a954b63d5b5dc7d55e3d26ef3fac310a24f32f50d5034692",
-      "reason": "The context-free Lean-to-TeX/prose draft and the paper-facing statement state the same paper result at comparable granularity.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_strict_cross_tier_no_ties": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Assumption-row statement matches Proposition 1's strict cross-tier top-prefix source condition; detailed per-premise provenance is in assumption_match_llm.json.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_pairwise_approval_ternary_gap_domain": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Assumption-row statement matches the K-approval ternary score-gap source condition; detailed per-premise provenance is in assumption_match_llm.json.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_randomized_mechanism_probability_weights": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Assumption-row statement matches the randomized-mechanism probability-weight source condition; detailed per-premise provenance is in assumption_match_llm.json.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_mallows_nontrivial_winner_and_noise": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Assumption-row statement matches the Mallows top-W pivotal-pair source condition; detailed per-premise provenance is in assumption_match_llm.json.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_nontrivial_k_approval_cutoffs": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Assumption-row statement matches the positive proper K-approval cutoff source condition; detailed per-premise provenance is in assumption_match_llm.json.",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    }
-  }
+  "prompt_version": "statement-match-v2-strict-full-statement",
+  "schema": 1,
+  "validated_at": "2026-06-13T21:43:40Z",
+  "validator": "gpt-5-codex",
+  "validator_type": "model"
 }

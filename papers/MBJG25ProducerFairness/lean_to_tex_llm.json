@@ -1,42 +1,259 @@
 {
-  "schema": 1,
+  "comment": "Refreshed against the current paper-facing statement surface.",
+  "generated_at": "2026-06-13T21:43:40Z",
+  "generator": "gpt-5-codex",
+  "generator_type": "model",
+  "items": {
+    "assumption_nonnegative_time": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "3323bbd8c8d7ccc0b4ae792b3f072a68be24b3842aad0dd8eb129adf07d71f74",
+      "paper_statement_sha256": "c94cc8e3f8e737b50627757b972d1737521f34cae1044ae66925df8f1c0fa17d",
+      "tex_statement": "\u211d \\to Prop"
+    },
+    "assumption_positive_prior_shape": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "e69d47dd000d6540ed0a703d89073e4841dd7205d02f70405fe97e1839e580a1",
+      "paper_statement_sha256": "d8baf3c85210282a9ce7a6388206b4b50f56f8bac4de608e1a1ce22dadb6d0c3",
+      "tex_statement": "\u211d \\to \u211d \\to Prop"
+    },
+    "assumption_positive_time": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "6b9550ce4e9206942aa96f2aa7a189eb88210280991da3bc76fca8a8a83cd536",
+      "paper_statement_sha256": "3cf265af47438ca3af58c342805b345e5321e6855b6e4170a086df9ea59f94bb",
+      "tex_statement": "\u211d \\to Prop"
+    },
+    "assumption_prior_strength_nonnegative": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "bc2c234a29c72537bbb83838c2eea2a563dc86bbc8b68adf7aee4c459bf732ea",
+      "paper_statement_sha256": "15f4d821b209923a98b3bc210ec7a0f94a6d27408619f1fb3a80084e2cfcc23d",
+      "tex_statement": "\u211d \\to Prop"
+    },
+    "assumption_prior_strength_strict_order": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "cc792e4928bb87c8c16b3087da2a3a2ae8994a39ee05609bfd51af81a13c1d90",
+      "paper_statement_sha256": "e977a6e2e98cb580c41e39c153c59378d279b3708c702e69e58415339b29bd14",
+      "tex_statement": "\u211d \\to \u211d \\to Prop"
+    },
+    "assumption_prior_strength_weak_order": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "cd9a5cc75e5c4a7e1fa183aabc28f60f3942a72d83af7a0ac0ee39b8717b7691",
+      "paper_statement_sha256": "3a6cdd32d7f6c618d626bf76b534aa6af2431c6c58581a42fc2e60b7cca0e621",
+      "tex_statement": "\u211d \\to \u211d \\to Prop"
+    },
+    "assumption_quality_at_most_one": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "9ce9a936b0355b3f3b262ca57f4c384434d60495f022813c4b84f5a9d92b74bd",
+      "paper_statement_sha256": "374fd59252f00544d4d26519748b1270b39ef2174f04ef2826e8dd7c2fc8765b",
+      "tex_statement": "\u211d \\to Prop"
+    },
+    "assumption_quality_lt_one": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "b51bb080ec2ee03a1e10b59293c5d0e44e8fa2a7404e7a3da37ef1bba32603e8",
+      "paper_statement_sha256": "17f443a09138bc246f80a7350a168d4f8a2a6e3a8d0b9b232715fbb8ace5b8e6",
+      "tex_statement": "\u211d \\to Prop"
+    },
+    "assumption_quality_nonnegative": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "bf88912a2847d32b3d618776e7b71a14a694309f3c39d6adecf9d8f610cb4f1c",
+      "paper_statement_sha256": "374fd59252f00544d4d26519748b1270b39ef2174f04ef2826e8dd7c2fc8765b",
+      "tex_statement": "\u211d \\to Prop"
+    },
+    "assumption_quality_positive": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "240d2198d371551184d63ace064cea7c8662dc0e38364268f8907386954d93d6",
+      "paper_statement_sha256": "17f443a09138bc246f80a7350a168d4f8a2a6e3a8d0b9b232715fbb8ace5b8e6",
+      "tex_statement": "\u211d \\to Prop"
+    },
+    "paper_bias": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "7eed6e8f8f7a9ff3deba2065aab1ca54f7abb5ff2a2b6b1617885e01d4b722c0",
+      "paper_statement_sha256": "c35f277d413c8df1fc7b8774f612ec0d8380139c66363b4144a7f1f121f7aa00",
+      "tex_statement": "The fixed-model bias is posterior mean minus true quality:\n\\[\\operatorname{Bias}(\\alpha,\\beta,\\eta,t,q_v)=\\frac{\\eta\\alpha+tq_v}{\\eta\\alpha+\\eta\\beta+t}-q_v.\\]"
+    },
+    "paper_facing_expected_regret": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "211b4f9bf382130b3aa2d1d1a21e3dce703daf5a30dfcd449c30339b962d44e1",
+      "paper_statement_sha256": "aabbf196c4bcde1795fe55c6b9f29f29ac77d3551bd2e93fb48cd542ac7a607a",
+      "tex_statement": "For horizon \\(T\\), nonempty feasible sets \\(M_t\\), qualities \\(q\\), and policy distributions \\(\\pi_t\\), expected regret is\n\\[\\sum_{t\\in \\operatorname{Fin}(T)}\\left(\\max_{v\\in M_t} q(v)-\\mathbb E_{v\\sim \\pi_t}[q(v)]\\right).\\]"
+    },
+    "paper_facing_individual_producer_unfairness": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "680c83b2c9e979dafd32085b0d55256732bdcd7d802d7f3d7317965b5c194f2e",
+      "paper_statement_sha256": "63db4a33afe09c84254afb346e46f3163a6dabf5eebfaccca6fa8bcab55957ce",
+      "tex_statement": "For finite producers \\(V\\), selections \\(s_v\\), lifespans \\(\\ell_v\\), true qualities \\(q_v\\), and quality level \\(q\\), individual producer unfairness is\n\\[\\sqrt{\\operatorname{Var}_{v\\in V: q_v=q}\\left(\\frac{s_v}{\\ell_v}\\right)},\\]\nthe standard deviation of selection rates among producers with the same true quality."
+    },
+    "paper_facing_responsive_mse_decomposition": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "002a2f8e3c296ad211cb96ecfef17d08dbbccaf916015a0bd03a9f022729ce02",
+      "paper_statement_sha256": "eb19cfbcf3ffd9d8c68c03a899b7eb4805fa4366588aa4090967d63893ef1a3a",
+      "tex_statement": "For states \\(s\\sim\\mu\\), review counts \\(N(s)\\), and posterior ratings \\(R(s)\\), assume each state satisfies\n\\[R(s)-q_v=\\operatorname{Bias}(\\alpha,\\beta,\\eta,N(s),q_v)\\]\nand\n\\[(R(s)-q_v)^2-\\operatorname{Bias}(\\alpha,\\beta,\\eta,N(s),q_v)^2\n  =\\operatorname{Var}(\\alpha,\\beta,\\eta,N(s),q_v).\\]\nThen the responsive expected MSE decomposes as\n\\[\\mathbb E_\\mu[(R-q_v)^2]\n =\\mathbb E_\\mu[\\operatorname{Bias}(\\alpha,\\beta,\\eta,N,q_v)^2]\n +\\mathbb E_\\mu[\\operatorname{Var}(\\alpha,\\beta,\\eta,N,q_v)].\\]"
+    },
+    "paper_facing_theorem3_1_squared_bias_nondecreasing": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "0da355ffe41b3b6dcc6a406849cad4298f1ce551621bd133842368310a6ed03a",
+      "paper_statement_sha256": "dbd5329cbde0c3fdf5db2fd8f2d6a54e60db6a03d3b08826e5184811b4b1f480",
+      "tex_statement": "If \\(\\alpha+\\beta>0\\), \\(t>0\\), \\(0\\le \\eta_{\\mathrm{low}}\\), and \\(\\eta_{\\mathrm{low}}\\le \\eta_{\\mathrm{high}}\\), then squared bias is nondecreasing in prior strength:\n\\[\\operatorname{Bias}(\\alpha,\\beta,\\eta_{\\mathrm{low}},t,q)^2\\le\n  \\operatorname{Bias}(\\alpha,\\beta,\\eta_{\\mathrm{high}},t,q)^2.\\]"
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "e674048a3a2467b9385fc29598a621f720273bbed9d50841db704e8599c93a69",
+      "paper_statement_sha256": "8f5d3289ec2f9b30b7bbb4d361843ea63c9e70994c5a18a168159b25e445e8b2",
+      "tex_statement": "For all parameters, strict variance decrease fails at \\(q_v=1\\):\n\\[\\neg\\bigl(\\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{high}},t,1)<\n  \\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{low}},t,1)\\bigr).\\]\nAt this boundary quality the variance term is identically zero."
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "86f07e5853f213e8c8d533b6d18b4f0438dca3518c385f20a8c982eccd71c6ee",
+      "paper_statement_sha256": "8ed50675d3504052d690a11b47c6ad60057730c9272da5e073216db06a79103e",
+      "tex_statement": "For all parameters, strict variance decrease fails at \\(q_v=0\\):\n\\[\\neg\\bigl(\\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{high}},t,0)<\n  \\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{low}},t,0)\\bigr).\\]\nAt this boundary quality the variance term is identically zero."
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_interior": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "734a5cdae72b190fcfe79116b1a587b42c28d0d6d06cd0ad302a79465bfa880f",
+      "paper_statement_sha256": "6e33f96c2e07ba1032eea32e01aff79fe91fa9f9424e09f640607b621af84b58",
+      "tex_statement": "If \\(\\alpha+\\beta>0\\), \\(t>0\\), \\(0<q<1\\), \\(0\\le \\eta_{\\mathrm{low}}\\), and \\(\\eta_{\\mathrm{low}}<\\eta_{\\mathrm{high}}\\), then variance is strictly decreasing in prior strength:\n\\[\\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{high}},t,q)<\n  \\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{low}},t,q).\\]\nThe Lean statement makes the interior-quality condition explicit."
+    },
+    "paper_facing_theorem3_1_variance_weak_decrease": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "f214acac0542dc828f697fa43cff8b1353b0b7e9845ac7769983b9fb300b4651",
+      "paper_statement_sha256": "8fdcd5d6275285696170b2a8ce842252d23edb7fae26e7842fec92b490f00672",
+      "tex_statement": "If \\(\\alpha+\\beta>0\\), \\(t>0\\), \\(0\\le q\\le 1\\), \\(0\\le \\eta_{\\mathrm{low}}\\), and \\(\\eta_{\\mathrm{low}}\\le \\eta_{\\mathrm{high}}\\), then variance is weakly decreasing in prior strength:\n\\[\\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{high}},t,q)\\le\n  \\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{low}},t,q).\\]"
+    },
+    "paper_facing_theorem3_2_squared_bias_convex_in_quality": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "7883731cd2d1f8a216f684b73bc3663ca10559083c1a0fb89fcd8b1b7ba49437",
+      "paper_statement_sha256": "2fe88dfe9995fbb1be2fa24c30695f5b744b3d17ddd8269995fea666108e107a",
+      "tex_statement": "If \\(\\alpha+\\beta>0\\), \\(\\eta\\ge 0\\), and \\(t>0\\), then the function\n\\[q\\mapsto \\left(\\frac{\\eta\\alpha+tq}{\\eta\\alpha+\\eta\\beta+t}-q\\right)^2\\]\nis Jensen-convex. The nonzero denominator follows from these source-domain conditions."
+    },
+    "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "b3971eaef8f6e007eaf62fe5413a5ef080212ce95184068664829a91c21b2c59",
+      "paper_statement_sha256": "f41cac6b1de2719b0e07dc9a28fa9f7c72bcb96a3210ed9b658c71c23c5e26a8",
+      "tex_statement": "If \\(\\alpha+\\beta>0\\), \\(\\eta\\ge 0\\), and \\(t>0\\), then the squared-bias function\n\\[q\\mapsto \\left(\\frac{\\eta\\alpha+tq}{\\eta\\alpha+\\eta\\beta+t}-q\\right)^2\\]\nhas a global minimum at \\(q=\\alpha/(\\alpha+\\beta)\\)."
+    },
+    "paper_facing_theorem3_2_variance_concave_in_quality": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "a2b822d7eede6bab60812b065027ffc7d87bbf11eb650e2e5910108bd3b1b12a",
+      "paper_statement_sha256": "9ede64b9229841cd19d7df522338f63410a3b71762e9ea2a2d5b907301f866a6",
+      "tex_statement": "If \\(t\\ge 0\\), then the variance function\n\\[q\\mapsto \\frac{tq(1-q)}{(\\eta\\alpha+\\eta\\beta+t)^2}\\]\nis Jensen-concave."
+    },
+    "paper_facing_theorem3_2_variance_global_max_at_half": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "82f51a4a34e4787e8d90f609de8655016a2303eb66d2c0e17b688f46c0786ac0",
+      "paper_statement_sha256": "e93c55fa90618724f5750c2b40c1f00edc82e711890e679e7ed0797ec480b09c",
+      "tex_statement": "If \\(t\\ge 0\\), then the variance function\n\\[q\\mapsto \\frac{tq(1-q)}{(\\eta\\alpha+\\eta\\beta+t)^2}\\]\nhas a global maximum at \\(q=1/2\\)."
+    },
+    "paper_facing_thompson_sampling_mechanism": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "44a7d0fb8c83c612cdddb76b61a7aefa23faf1c398e88e35a6592136b2435476",
+      "paper_statement_sha256": "7ee56e5839aa7854f872923d8114fd7dd9ad5b7ce29c8cc9fe5298dc20184ac7",
+      "tex_statement": "For a finite nonempty arm set \\(V\\), belief distribution \\(B\\) over quality profiles, and policy \\(\\pi\\), Thompson sampling means that there is a tie-breaker \\(\\tau\\) selecting an argmax of each sampled profile and\n\\[\\pi = B.bind\\bigl(x\\mapsto \\operatorname{pure}(\\tau(x))\\bigr).\\]\nEquivalently, draw a profile from the belief and select an argmax arm."
+    },
+    "paper_posterior_mean": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "15aa00ee7d7634af4fa043cb2e7e6f6af452f8582145748892f3c8138a4a3081",
+      "paper_statement_sha256": "3bad7fc58bd564ef5e7fe4a2d6727ca73fd77bfb270b97aeaf8930b2c7a16154",
+      "tex_statement": "For prior-shape variables \\((\\alpha,\\beta)\\), prior strength \\(\\eta\\), review count \\(t\\), and true quality \\(q_v\\), the Lean definition is\n\\[\\widehat q_v(\\alpha,\\beta,\\eta,t,q_v)=\\frac{\\eta\\alpha+tq_v}{\\eta\\alpha+\\eta\\beta+t}.\\]\nThe docstring identifies \\((\\alpha,\\beta)\\) with the paper's \\((\\widetilde\\alpha,\\widetilde\\beta)\\)."
+    },
+    "paper_squared_bias": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "e2b2170e1f5145a190d4241a33dbec473009901c741b216b00bfd4ace7ec12b4",
+      "paper_statement_sha256": "3b8a432cd8d75843dce7705257233ca316360987f2b0d7e6ea09fe57ea89ed16",
+      "tex_statement": "The fixed-model squared bias is\n\\[\\operatorname{Bias}(\\alpha,\\beta,\\eta,t,q_v)^2\n=\\left(\\frac{\\eta\\alpha+tq_v}{\\eta\\alpha+\\eta\\beta+t}-q_v\\right)^2.\\]"
+    },
+    "paper_variance": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "d0c1c8ce630c9a1e444d6d926bbd08ebbfb86babf92d2c60c6e41eb6a61770aa",
+      "paper_statement_sha256": "1dd7c656a75ba2cfbcec78c9e161cc99ef8c163677b50cfde836050b78acfc70",
+      "tex_statement": "The fixed-model variance term is\n\\[\\operatorname{Var}(\\alpha,\\beta,\\eta,t,q_v)=\\frac{tq_v(1-q_v)}{(\\eta\\alpha+\\eta\\beta+t)^2}.\\]"
+    }
+  },
   "paper": "MBJG25ProducerFairness",
-  "prompt_version": "lean-to-tex-v2-strict-context-free",
-  "translator": "gpt-5-codex",
-  "translator_type": "model",
-  "translated_at": "2026-06-13T00:00:00Z",
   "prompt_summary": [
     "Translate each Lean declaration from the Lean statement alone, with no paper context.",
     "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
     "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
   ],
-  "items": {
-    "assumption_positive_prior_shape": "The prior-shape parameters satisfy \\(\\alpha+\\beta>0\\).",
-    "assumption_positive_time": "The elapsed review time/sample count satisfies \\(t>0\\).",
-    "assumption_nonnegative_time": "The elapsed review time/sample count satisfies \\(t\\ge 0\\).",
-    "assumption_quality_nonnegative": "True quality satisfies \\(q\\ge 0\\).",
-    "assumption_quality_at_most_one": "True quality satisfies \\(q\\le 1\\).",
-    "assumption_quality_positive": "For the corrected strict variance row, true quality is interior on the lower side: \\(q>0\\).",
-    "assumption_quality_lt_one": "For the corrected strict variance row, true quality is interior on the upper side: \\(q<1\\).",
-    "assumption_prior_strength_nonnegative": "Prior strength satisfies \\(\\eta\\ge 0\\).",
-    "assumption_prior_strength_weak_order": "The compared prior strengths satisfy \\(\\eta_{\\mathrm{low}}\\le \\eta_{\\mathrm{high}}\\).",
-    "assumption_prior_strength_strict_order": "The compared prior strengths satisfy \\(\\eta_{\\mathrm{low}}<\\eta_{\\mathrm{high}}\\).",
-    "paper_posterior_mean": "For prior-shape variables \\((\\alpha,\\beta)\\), prior strength \\(\\eta\\), review count \\(t\\), and true quality \\(q_v\\), the Lean definition is\n\\[\\widehat q_v(\\alpha,\\beta,\\eta,t,q_v)=\\frac{\\eta\\alpha+tq_v}{\\eta\\alpha+\\eta\\beta+t}.\\]\nThe docstring identifies \\((\\alpha,\\beta)\\) with the paper's \\((\\widetilde\\alpha,\\widetilde\\beta)\\).",
-    "paper_bias": "The fixed-model bias is posterior mean minus true quality:\n\\[\\operatorname{Bias}(\\alpha,\\beta,\\eta,t,q_v)=\\frac{\\eta\\alpha+tq_v}{\\eta\\alpha+\\eta\\beta+t}-q_v.\\]",
-    "paper_variance": "The fixed-model variance term is\n\\[\\operatorname{Var}(\\alpha,\\beta,\\eta,t,q_v)=\\frac{tq_v(1-q_v)}{(\\eta\\alpha+\\eta\\beta+t)^2}.\\]",
-    "paper_squared_bias": "The fixed-model squared bias is\n\\[\\operatorname{Bias}(\\alpha,\\beta,\\eta,t,q_v)^2\n=\\left(\\frac{\\eta\\alpha+tq_v}{\\eta\\alpha+\\eta\\beta+t}-q_v\\right)^2.\\]",
-    "paper_facing_theorem3_1_variance_weak_decrease": "If \\(\\alpha+\\beta>0\\), \\(t>0\\), \\(0\\le q\\le 1\\), \\(0\\le \\eta_{\\mathrm{low}}\\), and \\(\\eta_{\\mathrm{low}}\\le \\eta_{\\mathrm{high}}\\), then variance is weakly decreasing in prior strength:\n\\[\\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{high}},t,q)\\le\n  \\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{low}},t,q).\\]",
-    "paper_facing_theorem3_1_variance_strict_decrease_interior": "If \\(\\alpha+\\beta>0\\), \\(t>0\\), \\(0<q<1\\), \\(0\\le \\eta_{\\mathrm{low}}\\), and \\(\\eta_{\\mathrm{low}}<\\eta_{\\mathrm{high}}\\), then variance is strictly decreasing in prior strength:\n\\[\\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{high}},t,q)<\n  \\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{low}},t,q).\\]\nThe Lean statement makes the interior-quality condition explicit.",
-    "paper_facing_theorem3_1_squared_bias_nondecreasing": "If \\(\\alpha+\\beta>0\\), \\(t>0\\), \\(0\\le \\eta_{\\mathrm{low}}\\), and \\(\\eta_{\\mathrm{low}}\\le \\eta_{\\mathrm{high}}\\), then squared bias is nondecreasing in prior strength:\n\\[\\operatorname{Bias}(\\alpha,\\beta,\\eta_{\\mathrm{low}},t,q)^2\\le\n  \\operatorname{Bias}(\\alpha,\\beta,\\eta_{\\mathrm{high}},t,q)^2.\\]",
-    "paper_facing_theorem3_2_squared_bias_convex_in_quality": "If \\(\\alpha+\\beta>0\\), \\(\\eta\\ge 0\\), and \\(t>0\\), then the function\n\\[q\\mapsto \\left(\\frac{\\eta\\alpha+tq}{\\eta\\alpha+\\eta\\beta+t}-q\\right)^2\\]\nis Jensen-convex. The nonzero denominator follows from these source-domain conditions.",
-    "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean": "If \\(\\alpha+\\beta>0\\), \\(\\eta\\ge 0\\), and \\(t>0\\), then the squared-bias function\n\\[q\\mapsto \\left(\\frac{\\eta\\alpha+tq}{\\eta\\alpha+\\eta\\beta+t}-q\\right)^2\\]\nhas a global minimum at \\(q=\\alpha/(\\alpha+\\beta)\\).",
-    "paper_facing_theorem3_2_variance_concave_in_quality": "If \\(t\\ge 0\\), then the variance function\n\\[q\\mapsto \\frac{tq(1-q)}{(\\eta\\alpha+\\eta\\beta+t)^2}\\]\nis Jensen-concave.",
-    "paper_facing_theorem3_2_variance_global_max_at_half": "If \\(t\\ge 0\\), then the variance function\n\\[q\\mapsto \\frac{tq(1-q)}{(\\eta\\alpha+\\eta\\beta+t)^2}\\]\nhas a global maximum at \\(q=1/2\\).",
-    "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero": "For all parameters, strict variance decrease fails at \\(q_v=0\\):\n\\[\\neg\\bigl(\\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{high}},t,0)<\n  \\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{low}},t,0)\\bigr).\\]\nAt this boundary quality the variance term is identically zero.",
-    "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one": "For all parameters, strict variance decrease fails at \\(q_v=1\\):\n\\[\\neg\\bigl(\\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{high}},t,1)<\n  \\operatorname{Var}(\\alpha,\\beta,\\eta_{\\mathrm{low}},t,1)\\bigr).\\]\nAt this boundary quality the variance term is identically zero.",
-    "paper_facing_individual_producer_unfairness": "For finite producers \\(V\\), selections \\(s_v\\), lifespans \\(\\ell_v\\), true qualities \\(q_v\\), and quality level \\(q\\), individual producer unfairness is\n\\[\\sqrt{\\operatorname{Var}_{v\\in V: q_v=q}\\left(\\frac{s_v}{\\ell_v}\\right)},\\]\nthe standard deviation of selection rates among producers with the same true quality.",
-    "paper_facing_thompson_sampling_mechanism": "For a finite nonempty arm set \\(V\\), belief distribution \\(B\\) over quality profiles, and policy \\(\\pi\\), Thompson sampling means that there is a tie-breaker \\(\\tau\\) selecting an argmax of each sampled profile and\n\\[\\pi = B.bind\\bigl(x\\mapsto \\operatorname{pure}(\\tau(x))\\bigr).\\]\nEquivalently, draw a profile from the belief and select an argmax arm.",
-    "paper_facing_expected_regret": "For horizon \\(T\\), nonempty feasible sets \\(M_t\\), qualities \\(q\\), and policy distributions \\(\\pi_t\\), expected regret is\n\\[\\sum_{t\\in \\operatorname{Fin}(T)}\\left(\\max_{v\\in M_t} q(v)-\\mathbb E_{v\\sim \\pi_t}[q(v)]\\right).\\]",
-    "paper_facing_responsive_mse_decomposition": "For states \\(s\\sim\\mu\\), review counts \\(N(s)\\), and posterior ratings \\(R(s)\\), assume each state satisfies\n\\[R(s)-q_v=\\operatorname{Bias}(\\alpha,\\beta,\\eta,N(s),q_v)\\]\nand\n\\[(R(s)-q_v)^2-\\operatorname{Bias}(\\alpha,\\beta,\\eta,N(s),q_v)^2\n  =\\operatorname{Var}(\\alpha,\\beta,\\eta,N(s),q_v).\\]\nThen the responsive expected MSE decomposes as\n\\[\\mathbb E_\\mu[(R-q_v)^2]\n =\\mathbb E_\\mu[\\operatorname{Bias}(\\alpha,\\beta,\\eta,N,q_v)^2]\n +\\mathbb E_\\mu[\\operatorname{Var}(\\alpha,\\beta,\\eta,N,q_v)].\\]"
-  }
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "schema": 1
 }

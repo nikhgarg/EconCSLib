@@ -1,45 +1,79 @@
 {
-  "schema": 1,
+  "comment": "Refreshed against the current paper-facing statement surface.",
+  "generated_at": "2026-06-13T21:43:40Z",
+  "generator": "gpt-5-codex",
+  "generator_type": "model",
+  "items": {
+    "applicantOptimalStableMarriage": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "59583c25c51eb4243c998c0a9b4d40f44791e57b96021283ef7b8fd4a6135a4b",
+      "paper_statement_sha256": "ef3667040636fe2adb4d0e0b1262ebb3e49f4910cbc9af25504ac7b44c21757e",
+      "tex_statement": "A matching $\\mu$ is applicant-optimal stable if it is stable and, for every stable matching $\\mu'$, every applicant/man weakly prefers their match under $\\mu$ to their match under $\\mu'$."
+    },
+    "college_admissions_stable_assignment_exists": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "bf9b19433b76b27ac6082a611418f40a56809b1a7b157af555aab8410d8ef8eb",
+      "paper_statement_sha256": "c5b6b154030e8b9835926d0f73662296c20c7fa2ee27ad5eff826522ab731c7e",
+      "tex_statement": "For finite applicant and college sets with decidable equality, any college quotas and applicant/college utilities admit an assignment $\\mu$ that is stable for the many-to-one college-admissions problem."
+    },
+    "completeMarriage": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "62bbc58547ae1a6d8b80a95aa79f249bade4d89426550970f66f52b744b9600a",
+      "paper_statement_sha256": "8de216e58e249b7f4ed25bb821e21031e530d92b1f68df9b2fee3c39c30ad7ea",
+      "tex_statement": "An assignment $\\mu$ is complete if every man is matched to some woman and every woman is matched to some man."
+    },
+    "stableMarriage": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "f736bdbd24995f3c33307d859f6d4eb84bd875212d02d1a92df9fb465e4cb5f7",
+      "paper_statement_sha256": "bb38fb8823aa7c84d187190b3cbf079ece3deeef7f3f0316110e9241064fcd98",
+      "tex_statement": "An assignment $\\mu$ is stable for utilities $v_m,v_w$ if every man and every woman weakly prefers their assigned match to being unmatched, and there is no pair $(m,w)$ such that $m$ strictly prefers $w$ to $\\mu(m)$ and $w$ strictly prefers $m$ to $\\mu(w)$."
+    },
+    "strictMarriageDomain": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "94efe8a728756d6287527085774ea3cbd9e9fc26d657c3526eb3e55cb4ef4e98",
+      "paper_statement_sha256": "6050f7957d7e8956cee1412ee5f51097d2ed262f75e71ff2e5b9ca3b47aa4c9a",
+      "tex_statement": "For sets of men $M$ and women $W$ with utilities $v_m:M\\to W\\to\\mathbb{R}$ and $v_w:W\\to M\\to\\mathbb{R}$, the strict marriage domain is the condition that men's preferences are strict, women's preferences are strict, and every man-woman pair is acceptable."
+    },
+    "theorem1_stable_marriage_exists": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "bd9105e1105935f812dbb11289bc320230f490a6bc47e47058bda0bf0a29f85f",
+      "paper_statement_sha256": "e36348b35e1cf1b6ed110dca15eea4979fd3bd8c30106288fb07dec27dca185c",
+      "tex_statement": "For a finite indexed set $A$ with decidable equality, if utilities $v_m,v_w:A\\to A\\to\\mathbb{R}$ satisfy the strict marriage domain, then there exists an assignment $\\mu$ from $A$ to $A$ that is stable and complete; equal cardinality is represented by using the same finite index type for both sides."
+    },
+    "theorem2_applicant_optimality": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "5f86881b4ff3d56186a4b86f67c40cd938416a840d62eaf3234f00f2509c3172",
+      "paper_statement_sha256": "04750f18e782d3d38540ca8e90ebb63baa06ebf0dfb99cebc8ce185611016c04",
+      "tex_statement": "For a finite indexed set $A$ with decidable equality, if applicant and college utilities $v_a,v_c:A\\to A\\to\\mathbb{R}$ satisfy the strict marriage domain, then deferred acceptance produces a complete matching that is applicant-optimal among stable matchings; equal cardinality is represented by using the same finite index type for both sides."
+    }
+  },
   "paper": "GS62CollegeAdmissions",
-  "prompt_version": "lean-to-tex-v2-strict-context-free",
-  "translator": "gpt-5-codex",
-  "translator_type": "model",
-  "translated_at": "2026-06-13T00:00:00Z",
   "prompt_summary": [
     "Translate each Lean declaration from the Lean statement alone, with no paper context.",
     "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
     "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
   ],
-  "generated_at": "2026-06-07T00:00:39Z",
-  "generator": "codex-refresh-current-lean-statements",
-  "items": {
-    "applicantOptimalStableMarriage": {
-      "lean_statement_sha256": "59583c25c51eb4243c998c0a9b4d40f44791e57b96021283ef7b8fd4a6135a4b",
-      "statement": "A matching $\\mu$ is applicant-optimal stable if it is stable and, for every stable matching $\\mu'$, every applicant/man weakly prefers their match under $\\mu$ to their match under $\\mu'$."
-    },
-    "college_admissions_stable_assignment_exists": {
-      "lean_statement_sha256": "bf9b19433b76b27ac6082a611418f40a56809b1a7b157af555aab8410d8ef8eb",
-      "statement": "For finite applicant and college sets with decidable equality, any college quotas and applicant/college utilities admit an assignment $\\mu$ that is stable for the many-to-one college-admissions problem."
-    },
-    "completeMarriage": {
-      "lean_statement_sha256": "62bbc58547ae1a6d8b80a95aa79f249bade4d89426550970f66f52b744b9600a",
-      "statement": "An assignment $\\mu$ is complete if every man is matched to some woman and every woman is matched to some man."
-    },
-    "stableMarriage": {
-      "lean_statement_sha256": "f736bdbd24995f3c33307d859f6d4eb84bd875212d02d1a92df9fb465e4cb5f7",
-      "statement": "An assignment $\\mu$ is stable for utilities $v_m,v_w$ if every man and every woman weakly prefers their assigned match to being unmatched, and there is no pair $(m,w)$ such that $m$ strictly prefers $w$ to $\\mu(m)$ and $w$ strictly prefers $m$ to $\\mu(w)$."
-    },
-    "strictMarriageDomain": {
-      "lean_statement_sha256": "94efe8a728756d6287527085774ea3cbd9e9fc26d657c3526eb3e55cb4ef4e98",
-      "statement": "For sets of men $M$ and women $W$ with utilities $v_m:M\\to W\\to\\mathbb{R}$ and $v_w:W\\to M\\to\\mathbb{R}$, the strict marriage domain is the condition that men's preferences are strict, women's preferences are strict, and every man-woman pair is acceptable."
-    },
-    "theorem1_stable_marriage_exists": {
-      "lean_statement_sha256": "3b2712e9c3a03fd1c1bc20530f4388c8c51821601c7d700dcf974e63cffda311",
-      "statement": "For a finite indexed set $A$ with decidable equality, if utilities $v_m,v_w:A\\to A\\to\\mathbb{R}$ satisfy the strict marriage domain, then there exists an assignment $\\mu$ from $A$ to $A$ that is stable and complete; equal cardinality is represented by using the same finite index type for both sides."
-    },
-    "theorem2_applicant_optimality": {
-      "lean_statement_sha256": "dee4314d17806dc44092966bcbd66d36bb9c1fe69e1394b0e9e620245a8dd0f5",
-      "statement": "For a finite indexed set $A$ with decidable equality, if applicant and college utilities $v_a,v_c:A\\to A\\to\\mathbb{R}$ satisfy the strict marriage domain, then deferred acceptance produces a complete matching that is applicant-optimal among stable matchings; equal cardinality is represented by using the same finite index type for both sides."
-    }
-  }
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "schema": 1
 }

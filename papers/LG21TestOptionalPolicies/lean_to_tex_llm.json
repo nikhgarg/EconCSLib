@@ -1,97 +1,223 @@
 {
-  "schema": 1,
+  "comment": "Refreshed against the current paper-facing statement surface.",
+  "generated_at": "2026-06-13T21:43:40Z",
+  "generator": "gpt-5-codex",
+  "generator_type": "model",
+  "items": {
+    "assumption_observed_access_source_equilibria": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "651ab7b0ea1a3c24eb7e65a9e3334332ed24d0c22e552d06ea3bd2f2ae208b39",
+      "paper_statement_sha256": "f7fad69b363a3173d9d4eaea00bc7b8be959c22751868240c90dc3deffe3a06d",
+      "tex_statement": "Prop"
+    },
+    "assumption_positive_gaussian_domain_conditions": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "98059a8054cbb6c35b3c491f241dba31f2555a099da5487dc6d18c360aaf64d3",
+      "paper_statement_sha256": "d76e0c559b8cdb44c59c8b3a088a4c39e78c298fd4c61960b86d103db3cd99e4",
+      "tex_statement": "Prop"
+    },
+    "assumption_section3_access_fraction_domain": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "20c85e5f99a73749ae2c07aaf0735ae51d45820084fca6959dd72fa029cfd4a8",
+      "paper_statement_sha256": "9e1d45ac677985559f5a8d5e0498c9c898477bbb3be1f181ba451d64c44dca8c",
+      "tex_statement": "Prop"
+    },
+    "assumption_section3_source_equilibrium_instances": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "294c10a22b5f793f00ad58bbc31bb5a0dbe1529811e69080775bcd53245f8f06",
+      "paper_statement_sha256": "a354f9d3b3e2e52c4e857039517770afb9e1a1cc81b14201ec570157315c1a29",
+      "tex_statement": "Prop"
+    },
+    "assumption_section3_threshold_decision_shapes": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "07a6bea1669b7869246758fd1a59c516c59f8bae27559dd3c92be5b20ffe8cf4",
+      "paper_statement_sha256": "d4bfa0631822289d5577046f7c65e054deed977f62ca62fceab8ba70bccb8d57",
+      "tex_statement": "Prop"
+    },
+    "assumption_section3_zero_positive_event_blank_branch": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "72e06bb376d1a69150b1029267c2971905de71a070e318e491cb44ea9300d936",
+      "paper_statement_sha256": "2fcc53dd55d05bef0eff22def047bf907ef622e3b5fda9bf0c7a55436e7c6bcc",
+      "tex_statement": "Prop"
+    },
+    "assumption_source_model_event_and_consistency_predicates": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "6c077613bd4cbb2011bb4a09641eb860cfb0ec395bee91a1c32663a473b7e91c",
+      "paper_statement_sha256": "19a66635e3f2c8a6c94a20a0edd739fb5c54b4744a4ae671c6dd573e22bacb59",
+      "tex_statement": "Prop"
+    },
+    "definition1_source_equilibrium": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "0e38ce47919c84b083d7a12a58cec13717c291e2665759c1fb7cf537679117ac",
+      "paper_statement_sha256": "36ea303dc955c586865ddfd840f6bd308383f4f179c1cdf00b728b67998a739c",
+      "tex_statement": "For any source-equilibrium data $E$, $E$ is a source equilibrium iff: every chosen access action is feasible under $E.requirement$; for every student information state and every feasible action $a$, $u(info,a) \\le u(info,a^*(info))$ for the chosen action $a^*$; and $E.estimationConsistent$ holds."
+    },
+    "definition2_latent_skill_fair": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "eaa080bd04931684ba7bdbf5a917b890ebdf4deef3b448b6f5af24df346ced9a",
+      "paper_statement_sha256": "2fe7c2312b62e740fdbe94e06102567d7305a0a949c987d679b187e2d185fac4",
+      "tex_statement": "A policy surface $S$ is latent-skill fair iff for every equilibrium $e$, skill $q$, and base group $b$, $S.latentAccessEstimate(e,q,b)=S.latentNoAccessEstimate(e,q,b)$."
+    },
+    "definition3_observable_fair": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "ceb8cbd8d21b86e27d2868f68aab22654f1599cb06ef0ecff778119a20c96e16",
+      "paper_statement_sha256": "b431affd238566e48028aef8149dadcdf6abfe0e7571ba588f89f992c49ed3fa",
+      "tex_statement": "A policy surface $S$ is observably fair iff for every equilibrium $e$ and base group $b$, $S.observableAccessEstimate(e,b)=S.observableNoAccessEstimate(e,b)$."
+    },
+    "definition4_demographic_fair": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "3bad6075c34e567ab80fa2ff6c51772b2c4719d77dd4cb53fa7a8aa5d49be08d",
+      "paper_statement_sha256": "2cd0115d3a9c73dc13e2ac9ff5969b07a8abab8c3938dcbb7d5a28bcd0e1bb86",
+      "tex_statement": "A policy surface $S$ is demographically fair iff for every equilibrium $e$, $S.demographicAccessEstimate(e)=S.demographicNoAccessEstimate(e)$."
+    },
+    "definition5_test_blank": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "3bab47cf42edf8780ec64f303a5eba3c3533ec1b4394ecab0a95cf0d7e6e66a5",
+      "paper_statement_sha256": "32d55c13143d62e410148f3a139fa82fa67c36e1a31564501ebae3565ab3aa06",
+      "tex_statement": "A policy surface $S$ is test-blank iff for every equilibrium $e$, base group $b$, and test value $t$, $S.baseOnlyEstimate(e,b)=S.fullFeatureEstimate(e,b,t)$."
+    },
+    "definition6_resampling_policy": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "ec51c1afeef3f9932fa9342afc4c699331534485ae954698b70f1a3d0dd25946",
+      "paper_statement_sha256": "ca49374e3b8fd7069fb48d88d6bd8f515322eda8b18f89690dc40884ced4d8f8",
+      "tex_statement": "For any resampling experiment $e$, the resampling policy kernel is exactly $e.signalGivenBase$."
+    },
+    "lemma4_1_observed_access_strategy_proofness": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "6c49e69753e600ab45b2dc1e4da87efa6e48aeb38156f54c717df8280fb34bdb",
+      "paper_statement_sha256": "58dacc6c3421198ccfd999188f101c7a6e85489771fb2df6b220879ad039c48d",
+      "tex_statement": "If the fully specified optional-reporting data and fully specified report-required data are both source equilibria, with $testScale>0$, then in both models the chosen access action is $takeAndReport$ for every student information state."
+    },
+    "proposition4_2_bayesian_access_estimates_not_latent_skill_fair": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "9830d56b60c442be01ec3de458f049383edfb2771abdd70b75f20d4dd054688c",
+      "paper_statement_sha256": "09c482cfc978d3691a7c1c1af8dcd916cd7ff16d14cd09349dc48250587410cb",
+      "tex_statement": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for any base-indexed one-test posterior-law surface with positive slope and positive law test scale, both models choose $takeAndReport$ for every information state, and that surface is not latent-skill fair."
+    },
+    "proposition4_3_bayesian_optimal_not_observable_or_demographic_fair": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "30426b8bfb0fa196aa47da526c0255749b312ebf056bb102e20729715a937f0a",
+      "paper_statement_sha256": "9c39580d0c46e25511cfcf428b024e178620d5bb6b8f0f4c65786805a2778c47",
+      "tex_statement": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for any base-mixed extra-signal posterior-law surface with positive extra-noise variance, both models choose $takeAndReport$ for every information state, and that surface is not observably fair and not demographically fair."
+    },
+    "theorem3_1_optional_reporting": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "a9157a24d6ca3a1db6d719bb0dd5f9ed37d4c9abf63e670203f961af95fd2092",
+      "paper_statement_sha256": "349723cf146d52f95c1ee3228beb543e91f71edccc8b8b07784969d6fe2af2a5",
+      "tex_statement": "Assume each access fraction satisfies $0 \\le \\alpha_e(b)<1$. Then the school information set from access action with observed access set to false always has access status none. Moreover, for every equilibrium $e$ there is a strategy $W$ such that everyone takes the test, some base-score pair is not reported, reporting in each base group is by a score cutoff, and the base-mixed Gaussian posterior-law surface for $e$ is not latent-skill fair, not observably fair, and not demographically fair."
+    },
+    "theorem3_1_report_required": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "4bd146d657aa3fc07eb776d2bc079f226d6dc91a849cce3fe4cce7bb0a88a05f",
+      "paper_statement_sha256": "90642c650d4461a29fdf6a0a816c55dae1f912915ad94f4d26e2e1285ea19fbb",
+      "tex_statement": "Assume slopes are positive and each access fraction satisfies $0 \\le \\alpha_e(b)<1$. Then the school information set from access action with observed access set to false always has access status none. Moreover, for every equilibrium $e$ there is a strategy $W$ such that some base-skill pair does not take the test, taking in each base group is by a skill cutoff, and the base-mixed affine-skill posterior-law surface for $e$ is not latent-skill fair, not observably fair, and not demographically fair."
+    },
+    "theorem3_2_optional_reporting_fairness_impossibility": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "4144cebb9dbcb4ed65f363cfb62fae48da996bcc9e796b091b695e16a9540214",
+      "paper_statement_sha256": "d23bb9ce84d40bbaed3089a7ecb8209a68c7097cf6aaab46a064fecaf214a670",
+      "tex_statement": "In the optional-reporting model, assume every $e$ is a source equilibrium with posterior-mean payoff, reporting is exactly the threshold rule $report(e,b,a)=true \\iff d_e(b) \\le a$, and if no positive-mass student in base $b$ reports then $baseOnlyEstimate(e,b)=fullFeatureEstimate(e,b,t)$ for all tests $t$. For the event-share binary-mixture estimate surface $S$, the observed-access information status is always none, and latent-skill fairness or observable fairness of $S$ implies test-blankness of $S$."
+    },
+    "theorem3_2_optional_reporting_no_test_relevance": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "f294df7b0d2295b07ca68bfbc76841abef50e69350ddae73b43ba567c8f2a6ce",
+      "paper_statement_sha256": "baa4c54e753fe7cc057e55c97e243a8492fb92f00f08b1e69ccfb39d0a0d4801",
+      "tex_statement": "Under the same optional-reporting equilibrium, threshold-reporting, and no-reporter hypotheses, if the event-share binary-mixture surface $S$ is latent-skill fair or observably fair, then the observed-access information status is always none and there is no triple $(e,b,t)$ with $baseOnlyEstimate(e,b) \\ne fullFeatureEstimate(e,b,t)$."
+    },
+    "theorem3_2_report_required_fairness_impossibility": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "027b3f2ee6d98ad1a7462b68dbef1b55e7f5cfc92180ae2d1ffc910da4a2706e",
+      "paper_statement_sha256": "5074c5e6533e11c847fe0169947f37aea3c6f6d2184694e065c0e25a4ebd9c75",
+      "tex_statement": "In the report-required model, assume every $e$ is a source equilibrium with payoff $1/2-\\operatorname{UTM}(actorLaw_e(b),d_e(b))+actor$, taking is exactly the threshold rule $take(e,a,b)=true \\iff d_e(b) \\le a$, and if no positive-mass student in base $b$ takes then $baseOnlyEstimate(e,b)=fullFeatureEstimate(e,b,t)$ for all tests $t$. For the event-share binary-mixture estimate surface $S$, the observed-access information status is always none, and latent-skill fairness or observable fairness of $S$ implies test-blankness of $S$."
+    },
+    "theorem3_2_report_required_no_test_relevance": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "b0a49935aff411c2c847827be4716da30c8b462d6345d4b2e165673b7855bebb",
+      "paper_statement_sha256": "379ca410e0c2bbde401e29649b5643743f61f96457fef75cad4ae54512eece57",
+      "tex_statement": "Under the same report-required equilibrium, threshold-taking, and no-taker hypotheses, if the event-share binary-mixture surface $S$ is latent-skill fair or observably fair, then the observed-access information status is always none and there is no triple $(e,b,t)$ with $baseOnlyEstimate(e,b) \\ne fullFeatureEstimate(e,b,t)$."
+    },
+    "theorem4_4_resampling_policy": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "7873c8030ec4b7023a7eb37ae82ffad31178a8867ec46a7fe9a6ebeae5190574",
+      "paper_statement_sha256": "245fa24ceb8729acdcc658d182917ed48b5f4f8e526a4d01a5937472eda228d1",
+      "tex_statement": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for every resampling experiment $e$, both models choose $takeAndReport$ for every information state, and the access-estimate kernel and resampling-estimate kernel are observably fair and demographically fair with respect to $e.baseProfile$."
+    }
+  },
   "paper": "LG21TestOptionalPolicies",
-  "prompt_version": "lean-to-tex-v2-strict-context-free",
-  "translator": "gpt-5-codex",
-  "translator_type": "model",
-  "translated_at": "2026-06-13T00:00:00Z",
   "prompt_summary": [
     "Translate each Lean declaration from the Lean statement alone, with no paper context.",
     "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
     "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
   ],
-  "generated_at": "2026-06-12T00:00:00Z",
-  "generator": "codex-digest-refresh-current-dashboard-statements",
-  "items": {
-    "definition1_source_equilibrium": {
-      "lean_statement_sha256": "0e38ce47919c84b083d7a12a58cec13717c291e2665759c1fb7cf537679117ac",
-      "statement": "For any source-equilibrium data $E$, $E$ is a source equilibrium iff: every chosen access action is feasible under $E.requirement$; for every student information state and every feasible action $a$, $u(info,a) \\le u(info,a^*(info))$ for the chosen action $a^*$; and $E.estimationConsistent$ holds."
-    },
-    "definition2_latent_skill_fair": {
-      "lean_statement_sha256": "eaa080bd04931684ba7bdbf5a917b890ebdf4deef3b448b6f5af24df346ced9a",
-      "statement": "A policy surface $S$ is latent-skill fair iff for every equilibrium $e$, skill $q$, and base group $b$, $S.latentAccessEstimate(e,q,b)=S.latentNoAccessEstimate(e,q,b)$."
-    },
-    "definition3_observable_fair": {
-      "lean_statement_sha256": "ceb8cbd8d21b86e27d2868f68aab22654f1599cb06ef0ecff778119a20c96e16",
-      "statement": "A policy surface $S$ is observably fair iff for every equilibrium $e$ and base group $b$, $S.observableAccessEstimate(e,b)=S.observableNoAccessEstimate(e,b)$."
-    },
-    "definition4_demographic_fair": {
-      "lean_statement_sha256": "3bad6075c34e567ab80fa2ff6c51772b2c4719d77dd4cb53fa7a8aa5d49be08d",
-      "statement": "A policy surface $S$ is demographically fair iff for every equilibrium $e$, $S.demographicAccessEstimate(e)=S.demographicNoAccessEstimate(e)$."
-    },
-    "definition5_test_blank": {
-      "lean_statement_sha256": "3bab47cf42edf8780ec64f303a5eba3c3533ec1b4394ecab0a95cf0d7e6e66a5",
-      "statement": "A policy surface $S$ is test-blank iff for every equilibrium $e$, base group $b$, and test value $t$, $S.baseOnlyEstimate(e,b)=S.fullFeatureEstimate(e,b,t)$."
-    },
-    "definition6_resampling_policy": {
-      "lean_statement_sha256": "ec51c1afeef3f9932fa9342afc4c699331534485ae954698b70f1a3d0dd25946",
-      "statement": "For any resampling experiment $e$, the resampling policy kernel is exactly $e.signalGivenBase$."
-    },
-    "lemma4_1_observed_access_strategy_proofness": {
-      "lean_statement_sha256": "6c49e69753e600ab45b2dc1e4da87efa6e48aeb38156f54c717df8280fb34bdb",
-      "statement": "If the fully specified optional-reporting data and fully specified report-required data are both source equilibria, with $testScale>0$, then in both models the chosen access action is $takeAndReport$ for every student information state.",
-      "prompt_version": "lean-to-tex-v2-strict-context-free",
-      "translated_at": "2026-06-13T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "proposition4_2_bayesian_access_estimates_not_latent_skill_fair": {
-      "lean_statement_sha256": "9830d56b60c442be01ec3de458f049383edfb2771abdd70b75f20d4dd054688c",
-      "statement": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for any base-indexed one-test posterior-law surface with positive slope and positive law test scale, both models choose $takeAndReport$ for every information state, and that surface is not latent-skill fair.",
-      "prompt_version": "lean-to-tex-v2-strict-context-free",
-      "translated_at": "2026-06-13T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "proposition4_3_bayesian_optimal_not_observable_or_demographic_fair": {
-      "lean_statement_sha256": "30426b8bfb0fa196aa47da526c0255749b312ebf056bb102e20729715a937f0a",
-      "statement": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for any base-mixed extra-signal posterior-law surface with positive extra-noise variance, both models choose $takeAndReport$ for every information state, and that surface is not observably fair and not demographically fair.",
-      "prompt_version": "lean-to-tex-v2-strict-context-free",
-      "translated_at": "2026-06-13T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    },
-    "theorem3_1_optional_reporting": {
-      "lean_statement_sha256": "a9157a24d6ca3a1db6d719bb0dd5f9ed37d4c9abf63e670203f961af95fd2092",
-      "statement": "Assume each access fraction satisfies $0 \\le \\alpha_e(b)<1$. Then the school information set from access action with observed access set to false always has access status none. Moreover, for every equilibrium $e$ there is a strategy $W$ such that everyone takes the test, some base-score pair is not reported, reporting in each base group is by a score cutoff, and the base-mixed Gaussian posterior-law surface for $e$ is not latent-skill fair, not observably fair, and not demographically fair."
-    },
-    "theorem3_1_report_required": {
-      "lean_statement_sha256": "4bd146d657aa3fc07eb776d2bc079f226d6dc91a849cce3fe4cce7bb0a88a05f",
-      "statement": "Assume slopes are positive and each access fraction satisfies $0 \\le \\alpha_e(b)<1$. Then the school information set from access action with observed access set to false always has access status none. Moreover, for every equilibrium $e$ there is a strategy $W$ such that some base-skill pair does not take the test, taking in each base group is by a skill cutoff, and the base-mixed affine-skill posterior-law surface for $e$ is not latent-skill fair, not observably fair, and not demographically fair."
-    },
-    "theorem3_2_optional_reporting_fairness_impossibility": {
-      "lean_statement_sha256": "4144cebb9dbcb4ed65f363cfb62fae48da996bcc9e796b091b695e16a9540214",
-      "statement": "In the optional-reporting model, assume every $e$ is a source equilibrium with posterior-mean payoff, reporting is exactly the threshold rule $report(e,b,a)=true \\iff d_e(b) \\le a$, and if no positive-mass student in base $b$ reports then $baseOnlyEstimate(e,b)=fullFeatureEstimate(e,b,t)$ for all tests $t$. For the event-share binary-mixture estimate surface $S$, the observed-access information status is always none, and latent-skill fairness or observable fairness of $S$ implies test-blankness of $S$."
-    },
-    "theorem3_2_optional_reporting_no_test_relevance": {
-      "lean_statement_sha256": "f294df7b0d2295b07ca68bfbc76841abef50e69350ddae73b43ba567c8f2a6ce",
-      "statement": "Under the same optional-reporting equilibrium, threshold-reporting, and no-reporter hypotheses, if the event-share binary-mixture surface $S$ is latent-skill fair or observably fair, then the observed-access information status is always none and there is no triple $(e,b,t)$ with $baseOnlyEstimate(e,b) \\ne fullFeatureEstimate(e,b,t)$."
-    },
-    "theorem3_2_report_required_fairness_impossibility": {
-      "lean_statement_sha256": "027b3f2ee6d98ad1a7462b68dbef1b55e7f5cfc92180ae2d1ffc910da4a2706e",
-      "statement": "In the report-required model, assume every $e$ is a source equilibrium with payoff $1/2-\\operatorname{UTM}(actorLaw_e(b),d_e(b))+actor$, taking is exactly the threshold rule $take(e,a,b)=true \\iff d_e(b) \\le a$, and if no positive-mass student in base $b$ takes then $baseOnlyEstimate(e,b)=fullFeatureEstimate(e,b,t)$ for all tests $t$. For the event-share binary-mixture estimate surface $S$, the observed-access information status is always none, and latent-skill fairness or observable fairness of $S$ implies test-blankness of $S$."
-    },
-    "theorem3_2_report_required_no_test_relevance": {
-      "lean_statement_sha256": "b0a49935aff411c2c847827be4716da30c8b462d6345d4b2e165673b7855bebb",
-      "statement": "Under the same report-required equilibrium, threshold-taking, and no-taker hypotheses, if the event-share binary-mixture surface $S$ is latent-skill fair or observably fair, then the observed-access information status is always none and there is no triple $(e,b,t)$ with $baseOnlyEstimate(e,b) \\ne fullFeatureEstimate(e,b,t)$."
-    },
-    "theorem4_4_resampling_policy": {
-      "lean_statement_sha256": "7873c8030ec4b7023a7eb37ae82ffad31178a8867ec46a7fe9a6ebeae5190574",
-      "statement": "If the fully specified optional-reporting and report-required data are source equilibria, with $testScale>0$, then for every resampling experiment $e$, both models choose $takeAndReport$ for every information state, and the access-estimate kernel and resampling-estimate kernel are observably fair and demographically fair with respect to $e.baseProfile$.",
-      "prompt_version": "lean-to-tex-v2-strict-context-free",
-      "translated_at": "2026-06-13T00:00:00Z",
-      "translator": "gpt-5-codex",
-      "translator_type": "model"
-    }
-  }
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "schema": 1
 }
