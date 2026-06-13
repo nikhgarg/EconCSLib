@@ -140,7 +140,7 @@ theorem affineUpperTail_gt_iff_cutoff_lt_of_slope_lt
 /--
 Comparison of two full-minus-sub affine Gaussian upper-tail changes from
 standardized-endpoint order.  This is the reusable core behind large-skill
-Theorem 2 comparisons: if A's full-policy standardized cutoff is no larger
+two-policy comparisons: if A's full-policy standardized cutoff is no larger
 than B's, while A's test-free cutoff is strictly larger than B's, then the
 admission change from using the full policy is larger for A.
 -/
@@ -223,6 +223,43 @@ theorem thresholdPassProb_conditionalPosteriorMeanScaleLaw_eq_affineUpperTail
     affineUpperTail,
     GaussianOffsetSignalFamily.conditionalPosteriorMeanScaleLaw_standardize_threshold]
   rw [precision_standardized_eq_affine M.centeredFamily.signalPrecisionSum_pos]
+
+/--
+Conditional posterior-score threshold probabilities cross at the affine cutoff
+determined by their total signal precisions.  The first law has larger total
+signal precision, hence a larger true-skill slope in the affine
+standardization.
+-/
+theorem thresholdPassProb_conditionalPosteriorMeanScaleLaw_gt_iff_cutoff_lt_of_signalPrecisionSum_lt
+    (A : StandardGaussianDerivativeAPI)
+    {ι : Type*} [Fintype ι] [Nonempty ι]
+    {M_A M_B : GaussianOffsetSignalFamily ι} {threshold q : ℝ}
+    (hprecision :
+      M_B.centeredFamily.signalPrecisionSum <
+        M_A.centeredFamily.signalPrecisionSum) :
+    A.api.thresholdPassProb
+          (M_A.conditionalPosteriorMeanScaleLaw q) threshold >
+        A.api.thresholdPassProb
+          (M_B.conditionalPosteriorMeanScaleLaw q) threshold ↔
+      (((M_A.centeredFamily.priorPrecision * (threshold - M_A.priorMean) +
+              M_A.centeredFamily.signalPrecisionSum * threshold) /
+            Real.sqrt M_A.centeredFamily.signalPrecisionSum) -
+          ((M_B.centeredFamily.priorPrecision * (threshold - M_B.priorMean) +
+              M_B.centeredFamily.signalPrecisionSum * threshold) /
+            Real.sqrt M_B.centeredFamily.signalPrecisionSum)) /
+        (Real.sqrt M_A.centeredFamily.signalPrecisionSum -
+          Real.sqrt M_B.centeredFamily.signalPrecisionSum) <
+        q := by
+  have hslope :
+      Real.sqrt M_B.centeredFamily.signalPrecisionSum <
+        Real.sqrt M_A.centeredFamily.signalPrecisionSum :=
+    Real.sqrt_lt_sqrt M_B.centeredFamily.signalPrecisionSum_pos.le
+      hprecision
+  rw [A.thresholdPassProb_conditionalPosteriorMeanScaleLaw_eq_affineUpperTail
+      M_A threshold q,
+    A.thresholdPassProb_conditionalPosteriorMeanScaleLaw_eq_affineUpperTail
+      M_B threshold q]
+  exact A.affineUpperTail_gt_iff_cutoff_lt_of_slope_lt hslope
 
 /--
 Large-skill affine-tail delta comparison from slope order alone.  The returned

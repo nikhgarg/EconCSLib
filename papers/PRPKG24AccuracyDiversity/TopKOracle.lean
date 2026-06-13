@@ -29,10 +29,10 @@ noncomputable abbrev orderStatisticTopKSumFromMean :
     (μ : ℕ → ℕ → ℝ) (a : ℕ) :
     orderStatisticTopKSumFromMean μ 0 a = 0 :=  EconCSLib.Probability.orderStatisticTopKSumFromMean_zero_k μ a
 
-theorem orderStatisticTopKSumFromMean_eq_source_sum
+theorem orderStatisticTopKSumFromMean_eq_bottomIndexed_sum
     (μ : ℕ → ℕ → ℝ) (k a : ℕ) :
     orderStatisticTopKSumFromMean μ k a =
-      ∑ i ∈ Finset.range (min k a), μ (a - i) a := EconCSLib.Probability.orderStatisticTopKSumFromMean_eq_source_sum μ k a
+      ∑ i ∈ Finset.range (min k a), μ (a - i) a := EconCSLib.Probability.orderStatisticTopKSumFromMean_eq_bottomIndexed_sum μ k a
 
 /--
 When the sample count is at least `k`, the paper's `min k a` top-`k`

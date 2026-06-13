@@ -7,8 +7,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Random-Utility Noise Kernels
 
-Reusable pointwise inequalities for one-dimensional random-utility models.
-are intentionally paper-neutral.  Paper-specific ranking maps, payoff
+Reusable pointwise inequalities for one-dimensional random-utility models. They
+are intentionally paper-neutral. Caller-specific ranking maps, payoff
 certificates, and theorem-number wrappers should stay in the paper folder until
 another paper needs the same abstraction.
 
@@ -357,7 +357,7 @@ theorem rum3_contract_bottom_first_imp_original_bottom_first_strict_of_t_lt_one
 If a middle alternative beats a top alternative after contraction, then its
 original realized score is strictly higher than the top alternative's score.
 -/
-theorem rum3_swap_middle_source_score_lt
+theorem rum3_swap_middle_base_score_lt
     {t x1 x2 r1 r2 : ℝ}
     (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
     (hx12 : x2 < x1)

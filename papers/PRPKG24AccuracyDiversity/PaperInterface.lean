@@ -1,4 +1,5 @@
 import PRPKG24AccuracyDiversity.ProofInterface
+import PRPKG24AccuracyDiversity.Assumptions
 
 /-!
 # Paper Interface: Reconciling the Accuracy-Diversity Trade-off
@@ -49,16 +50,44 @@ abbrev example1 :=
 abbrev theorem1_i :=
   @theorem1_i_finite_discrete_sequence_uniform_formula_of_iid_top_split
 
+/--
+Theorem 1(i): finite-discrete iid source, equation (6).
+Source status: direct source formula
+-/
+abbrev theorem1_i_formula :=
+  @theorem1_i_finite_discrete_sequence_uniform_formula_of_iid_top_split
+
 /-- Theorem 1(ii): bounded iid upper-endpoint density route, equation (6). -/
 abbrev theorem1_ii :=
+  @theorem1_ii_bounded_iid_upper_endpoint_density_ratio_sequence_formula_of_nonnegative_support
+
+/--
+Theorem 1(ii): bounded iid upper-endpoint density route, equation (6).
+Source status: direct source formula
+-/
+abbrev theorem1_ii_formula :=
   @theorem1_ii_bounded_iid_upper_endpoint_density_ratio_sequence_formula_of_nonnegative_support
 
 /-- Theorem 1(iii): exponential order-statistic source, equation (6). -/
 abbrev theorem1_iii :=
   @theorem1_iii_exponential_top_k_order_statistic_sequence_formula
 
+/--
+Theorem 1(iii): exponential order-statistic source, equation (6).
+Source status: direct source formula
+-/
+abbrev theorem1_iii_formula :=
+  @theorem1_iii_exponential_top_k_order_statistic_sequence_formula
+
 /-- Theorem 1(iv): concrete iid Pareto order-statistic source, equation (6). -/
 abbrev theorem1_iv :=
+  @theorem1_iv_pareto_iid_order_statistic_sequence_formula
+
+/--
+Theorem 1(iv): concrete iid Pareto order-statistic source, equation (6).
+Source status: direct source formula
+-/
+abbrev theorem1_iv_formula :=
   @theorem1_iv_pareto_iid_order_statistic_sequence_formula
 
 /-- Theorem 1(v): all-consumed common-mean argmax optimum. -/
@@ -77,12 +106,33 @@ abbrev corollary1 :=
 abbrev theorem2_i :=
   @theorem2_i_decaying_bernoulli_top_one_uniform_formula
 
+/--
+Theorem 2(i): decaying Bernoulli top-one, `alpha = 0`.
+Source status: direct source formula
+-/
+abbrev theorem2_i_formula :=
+  @theorem2_i_decaying_bernoulli_top_one_uniform_formula
+
 /-- Theorem 2(ii): decaying Bernoulli top-one, `alpha = 1`. -/
 abbrev theorem2_ii :=
   @theorem2_ii_decaying_bernoulli_top_one_formula
 
+/--
+Theorem 2(ii): decaying Bernoulli top-one, `alpha = 1`.
+Source status: direct source formula
+-/
+abbrev theorem2_ii_formula :=
+  @theorem2_ii_decaying_bernoulli_top_one_formula
+
 /-- Theorem 2(iii): decaying Bernoulli top-one, `alpha > 1`. -/
 abbrev theorem2_iii :=
+  @theorem2_iii_decaying_bernoulli_top_one_formula
+
+/--
+Theorem 2(iii): decaying Bernoulli top-one, `alpha > 1`.
+Source status: direct source formula
+-/
+abbrev theorem2_iii_formula :=
   @theorem2_iii_decaying_bernoulli_top_one_formula
 
 /-- Theorem 2(iv): decaying Bernoulli all-consumed, positive `alpha`. -/
@@ -93,8 +143,22 @@ abbrev theorem2_iv_positive_alpha :=
 abbrev theorem2_iv_alpha_zero :=
   @theorem2_iv_decaying_bernoulli_all_consumed_alpha_zero_argmax
 
+/--
+Theorem 2(iv): `alpha = 0` argmax endpoint.
+Source status: direct source condition
+-/
+abbrev theorem2_iv_alpha_zero_condition :=
+  @theorem2_iv_decaying_bernoulli_all_consumed_alpha_zero_argmax
+
 /-- Theorem 3: varying success probabilities, log-share formula. -/
 abbrev theorem3 :=
+  @theorem3_varying_success_probability_log_share_formula
+
+/--
+Theorem 3: varying success probabilities, log-share formula.
+Source status: direct source formula
+-/
+abbrev theorem3_formula :=
   @theorem3_varying_success_probability_log_share_formula
 
 /-- Corollary 3: iid Bernoulli gives asymptotic `0`-homogeneity. -/
@@ -115,6 +179,13 @@ abbrev proposition4 :=
 abbrev proposition5 :=
   @proposition5_uniform_order_statistic_topk_sum_eq_value
 
+/--
+Proposition 5: uniform `[0,1]` order-statistic identity.
+Source status: direct source identity
+-/
+abbrev proposition5_identity :=
+  @proposition5_uniform_order_statistic_topk_sum_eq_value
+
 /-! ## Appendix Lemmas -/
 
 /--
@@ -128,16 +199,44 @@ abbrev lemmaD1 :=
 abbrev lemmaD2 :=
   @lemmaD2_bounded_integral_top_k_loss_asymptotic_of_split_certificate
 
+/--
+Lemma D.2: bounded-tail integral asymptotic.
+Source status: direct source formula
+-/
+abbrev lemmaD2_formula :=
+  @lemmaD2_bounded_integral_top_k_loss_asymptotic_of_split_certificate
+
 /-- Lemma 1: bounded iid upper-endpoint tail loss-to-marginal bridge. -/
 abbrev lemma1 :=
+  @lemma1_bounded_support_iid_reflected_cdf_count_layer_top_k_forward_marginal_asymptotic_of_base_ae_bounds_and_upper_endpoint_tail
+
+/--
+Lemma 1: bounded iid upper-endpoint tail loss-to-marginal bridge.
+Source status: direct source tail formula
+-/
+abbrev lemma1_tail_formula :=
   @lemma1_bounded_support_iid_reflected_cdf_count_layer_top_k_forward_marginal_asymptotic_of_base_ae_bounds_and_upper_endpoint_tail
 
 /-- Lemma D.3: exponential order-statistic sequence formula. -/
 abbrev lemmaD3 :=
   @theorem1_iii_exponential_top_k_order_statistic_sequence_formula
 
+/--
+Lemma D.3: exponential order-statistic sequence formula.
+Source status: direct source formula
+-/
+abbrev lemmaD3_formula :=
+  @theorem1_iii_exponential_top_k_order_statistic_sequence_formula
+
 /-- Lemma D.4: concrete iid Pareto order-statistic sequence formula. -/
 abbrev lemmaD4 :=
+  @theorem1_iv_pareto_iid_order_statistic_sequence_formula
+
+/--
+Lemma D.4: concrete iid Pareto order-statistic sequence formula.
+Source status: direct source formula
+-/
+abbrev lemmaD4_formula :=
   @theorem1_iv_pareto_iid_order_statistic_sequence_formula
 
 /-- Lemma D.5: real-to-integer rounding bridge. -/

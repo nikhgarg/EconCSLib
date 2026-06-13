@@ -1,99 +1,209 @@
 {
-  "comment": "Refreshed statement digests after report-parser cleanup; existing judge verdicts were preserved.",
+  "schema": 1,
+  "paper": "GJ18InformativeRatingSystems",
+  "prompt_version": "statement-match-v2-strict-full-statement",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-13T00:00:00Z",
+  "comment": "Refreshed under the strict full-statement match prompt; existing per-row judgments and reasons remain row-local and digest-checked.",
+  "prompt_summary": [
+    "A matches verdict requires the same hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions.",
+    "Mark mismatch or uncertain for omitted source subclaims, added non-source conditions, conditional wrappers, broad aggregate rows, source-row packages, certificate packages, or weakened/strengthened statements.",
+    "For formula-bearing rows, check the exact formula rather than only the theorem label or qualitative interpretation."
+  ],
+  "judge": "codex-statement-translation-audit",
   "items": {
     "definition_log_mgf_formula": {
       "judgment": "matches",
-      "lean_statement_sha256": "29e9b7f65085e13446066aa4364249408fe23b30b831582cb5303797f660181e",
       "matches": true,
-      "paper_statement_sha256": "95f592552c79b1556a6355f249b93c0af0499edd18b906ad00036d216f37d3fa",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
+      "lean_statement_sha256": "8c9e103d9363ea028d244f2f76e05bd1628cf6dba44641736b6055dbc5255ce2",
+      "paper_statement_sha256": "8b6ae8582be9798f8bbc68ede35cff33146269122c59987772f11305cf453d7d",
       "tex_statement_sha256": "0fe5ddfb3829e3c24ddc4912ee3298bf4526a50ad241964cfc9716fd5406e2d9",
-      "validated_at": "2026-06-11T03:46:12Z",
+      "validated_at": "2026-06-13T00:00:00Z",
       "validator": "gpt-5-codex",
-      "validator_type": "model"
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
     },
     "definition_rate_function_formula": {
       "judgment": "matches",
-      "lean_statement_sha256": "83ba156947247538275b2add688e5a24a99fa5c59a570346b2dfe52765b1be13",
       "matches": true,
-      "paper_statement_sha256": "6f891406f81d137beba96ad426fd495d23f40a8113db2d54de49ae9724a74bab",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
+      "lean_statement_sha256": "1f08b72454237b170ea07e9445c59f80d97c009f282839335763b5726f370453",
+      "paper_statement_sha256": "5c75460838f575561253d890d947f2e044ab61a4b0ab3b6556cbd296e91239c4",
       "tex_statement_sha256": "8128261e7d0e35301298d1b1b40dd41c53a31e534c2eb0190c26a144e0b387cf",
-      "validated_at": "2026-06-11T03:46:12Z",
+      "validated_at": "2026-06-13T00:00:00Z",
       "validator": "gpt-5-codex",
-      "validator_type": "model"
-    },
-    "lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support": {
-      "judgment": "uncertain",
-      "lean_statement_sha256": "12b90a7f8adb24aa773e023591cd2afa0ef019d5b46671028552d9d5458f6fea",
-      "matches": null,
-      "paper_statement_sha256": "8d2645f817e3aff13a97ecb9142e10a035cab1c0347a1253238f42839ecdded5",
-      "reason": "The translation matches the auxiliary lemma, but the row is a reusable proof-route lemma rather than a named paper statement; it should remain flagged for surface review.",
-      "tex_statement_sha256": "e297a3c50d0719abc663aa365d63d305814c4911ef5610f2a68956cb1e614522",
-      "validated_at": "2026-06-11T03:46:12Z",
-      "validator": "gpt-5-codex",
-      "validator_type": "model"
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
     },
     "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives": {
       "judgment": "matches",
-      "lean_statement_sha256": "f560ce3648d5af6b62d3dc15839b3914ce38709b4126216617cd584943e26155",
       "matches": true,
+      "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
+      "lean_statement_sha256": "6dc9053995b09616663b7cc8bfe03ee7ff7d0ad3da6b8f5627cd031bca1737c3",
       "paper_statement_sha256": "c134190f0124c8ed54ce717d73dfcf1abc1101ae84e8dc0b1040e4bd20aa3ca6",
-      "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
       "tex_statement_sha256": "3085475051fcec82a80f0063940cd5e9de8c2e7658ef394e4601fd3a30949c2d",
-      "validated_at": "2026-06-11T03:46:12Z",
+      "validated_at": "2026-06-13T00:00:00Z",
       "validator": "gpt-5-codex",
-      "validator_type": "model"
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
     },
-    "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives": {
+    "lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support": {
       "judgment": "matches",
-      "lean_statement_sha256": "c56bcdc9f59be99394e7a1de5ca43ec39c373a9a79fc1dc72bfe0abe50f339ef",
       "matches": true,
-      "paper_statement_sha256": "0f0f85c8480e316910f65edea3812389b8086da957049825bdb2b26b95f5d9fa",
-      "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "0d22d8d7a0f2f55c6774f813c05fe8e8be3e99da65b11d616976c97dfe97ad3b",
-      "validated_at": "2026-06-11T03:46:12Z",
+      "reason": "The translation matches the documented auxiliary Appendix C derivative/minimizer helper route; it is not the canonical Theorem 1 endpoint.",
+      "lean_statement_sha256": "d50dcbeacb60828aeebb8771e90ba4c5d1ea7f968e6753aca7f18cb7097e1cf0",
+      "paper_statement_sha256": "3180f61551e6a12647fd487026388a925eab4f40bb0b29fa796e1352e546fc8e",
+      "tex_statement_sha256": "e297a3c50d0719abc663aa365d63d305814c4911ef5610f2a68956cb1e614522",
+      "validated_at": "2026-06-13T00:00:00Z",
       "validator": "gpt-5-codex",
-      "validator_type": "model"
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
     },
     "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law": {
       "judgment": "matches",
-      "lean_statement_sha256": "bdda8b9915d349beec22f841cc51e8eae5a7bc6a028e66e653dca060aa1008a5",
       "matches": true,
+      "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
+      "lean_statement_sha256": "74f4a46256088906c307990789573b4ef47a69989eb7e5b2bc24358a7c77b47e",
       "paper_statement_sha256": "917c33303bbf72d7faad3b945463840de507b0c6955835cd4ff4a2e39fc1f69c",
-      "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
       "tex_statement_sha256": "562d399b8a31cce8067edfc2fcc6d98596855444eed363d825e4a04a867afad8",
-      "validated_at": "2026-06-11T03:46:12Z",
+      "validated_at": "2026-06-13T00:00:00Z",
       "validator": "gpt-5-codex",
-      "validator_type": "model"
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
     },
-    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq": {
+    "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives": {
       "judgment": "matches",
-      "lean_statement_sha256": "67c5550e4afcf21f48463e5306f6a4f45464f4bca41ffb32c22c9ad7ef1934c2",
       "matches": true,
-      "paper_statement_sha256": "5180638c1dba04d1d388e07ca9bbb79eb9200734e2e7e9ccd5d6370e3e8205ed",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
-      "tex_statement_sha256": "e0371f3ca93a4208f7548e230b4d84887b7e94c834ed207b26dd54745dd30486",
-      "validated_at": "2026-06-11T03:46:12Z",
+      "lean_statement_sha256": "b5492a20024271ea7f0617cb37b4f2ab21ab9fae9265747d699196b8c1fe88c2",
+      "paper_statement_sha256": "1662910e239173bad570def80cf1ebeebcf9dcad7cf642d81e3ec8d89e602bad",
+      "tex_statement_sha256": "0d22d8d7a0f2f55c6774f813c05fe8e8be3e99da65b11d616976c97dfe97ad3b",
+      "validated_at": "2026-06-13T00:00:00Z",
       "validator": "gpt-5-codex",
-      "validator_type": "model"
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
     },
     "theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support": {
       "judgment": "matches",
-      "lean_statement_sha256": "14130ddb5b381660a0b17007198e3ead97ec5e5743035bb0fad0423ca5edcd06",
       "matches": true,
-      "paper_statement_sha256": "bf7318e4afad00b7926e6c188e551bfa91bdbed738722ab465b8defd19a32535",
       "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
+      "lean_statement_sha256": "cc17a6df93eaec99ff860b3924dae33744f178b3142bba90f6f0ca61f30dbc10",
+      "paper_statement_sha256": "bf867e391012368c72983fbe7f2787df0eb5d2dcbb8fa3bc481a7cec767a5cbc",
       "tex_statement_sha256": "01ed66a1c226c4dbf595383128d78372a89d2df6ff1851714f1d0585e121560b",
-      "validated_at": "2026-06-11T03:46:12Z",
+      "validated_at": "2026-06-13T00:00:00Z",
       "validator": "gpt-5-codex",
-      "validator_type": "model"
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
+    },
+    "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq": {
+      "judgment": "matches",
+      "matches": true,
+      "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
+      "lean_statement_sha256": "80c94d1a9e60950d07de729f32b202d7bda44145e06aa5613484e3a54579d1fc",
+      "paper_statement_sha256": "77be2d8ce923618eb3ce1f8f0ee72966c73ecedbf3a3c3c9d59c818b1cc4dad3",
+      "tex_statement_sha256": "e0371f3ca93a4208f7548e230b4d84887b7e94c834ed207b26dd54745dd30486",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
+    },
+    "assumption_positive_match_rates": {
+      "judgment": "matches",
+      "matches": true,
+      "reason": "The Lean assumption records the positive sample-rate condition for the paper's floor(k g(theta)) asymptotic ratings model.",
+      "lean_statement_sha256": "a39df7572d3e22af31a76db43ac78751f5b86f16d21e7f60f52a6a9b67ff3913",
+      "paper_statement_sha256": "092ef6b2c013a4cb789b4172fc2e28bb4bcc90ce1aaec1d9b3b500c7d76be475",
+      "tex_statement_sha256": "bd13c8679f22f9fc1ec91976f876ec1a182cce19eb4f5d3ce02fc3932f9d2352",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
+    },
+    "assumption_positive_integer_sample_rates": {
+      "judgment": "matches",
+      "matches": true,
+      "reason": "The Lean assumption is the integer-rate specialization of the paper's positive sample-rate model.",
+      "lean_statement_sha256": "e6480cb6cb7b467cb549d58044e8df370183391740aec7da94f163ae4673d9ef",
+      "paper_statement_sha256": "dcee8089722e3d0f5dcdbc6d1958784ec68b87e2cee1238b25189ed3704fd27a",
+      "tex_statement_sha256": "4fc27e7813eb46264ea04a203d0d7b834996dd1c7712d69974ae8177b2980772",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
+    },
+    "assumption_nonpositive_common_dual_parameters": {
+      "judgment": "matches",
+      "matches": true,
+      "reason": "The Lean assumption describes the lower-tail common-dual helper condition documented for the auxiliary proof route.",
+      "lean_statement_sha256": "060d185154deacfa544858d5f26349a5a6bd99fdc7500ddf1232a043351458c8",
+      "paper_statement_sha256": "5cde18fdc02d4b2d2682af3e33923e76ec07cdc8f20552116ab6322798f7e129",
+      "tex_statement_sha256": "8aa459368eefaa54cd3a504a04a73cd88ae7965d63797cfd8d6a9999262ae6c5",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
+    },
+    "assumption_pairwise_threshold_minimizer": {
+      "judgment": "matches",
+      "matches": true,
+      "reason": "The Lean assumption describes the helper-level minimizer witness for the paper's displayed infimum objective.",
+      "lean_statement_sha256": "82e354a88132694518a441e7729810782c65c160db46d12e2b17a531e4b64b94",
+      "paper_statement_sha256": "bae1ba49499756ea4680a4fab94c77ab704e8dd423a069bf57b5e66259909ff2",
+      "tex_statement_sha256": "f2a2029c01b24c0a1b2c95d8083518acc17d4032e9af9d3f8ffa09da708355a9",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
+    },
+    "assumption_two_sided_score_witnesses": {
+      "judgment": "matches",
+      "matches": true,
+      "reason": "The Lean assumption describes the finite-support score-witness condition, which the main endpoint derives from full support and score span.",
+      "lean_statement_sha256": "011b4c0352403e3dfbca3a0f832093eaccedaaf48f80319d0836ee1bac691a5d",
+      "paper_statement_sha256": "0f954909940e7d1c8760b2da3e979c203b80391d667419e452d24b3180824eee",
+      "tex_statement_sha256": "f924e71ce01fc5793f9239ab325da35f11a5e2d8c045a909db179f31365c04c9",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
+    },
+    "assumption_monotone_rating_scores": {
+      "judgment": "matches",
+      "matches": true,
+      "reason": "The Lean assumption matches the paper's increasing score-function condition on the ordered rating scale.",
+      "lean_statement_sha256": "c0d56ca0c2808ecc95d5ff684c76962362b4ca4f78c08ad21a131cab870fea83",
+      "paper_statement_sha256": "e445cfccb74aa4ecbb3e2e68c5054e49f6877037ee814fe473ad8b9700411188",
+      "tex_statement_sha256": "13ccc28a9dd8d97003a75d6ee0030b1fcaae0920dd9188172c43b9cdf66ca7fa",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
+    },
+    "assumption_full_finite_ordinal_rating_support": {
+      "judgment": "matches",
+      "matches": true,
+      "reason": "The Lean assumption matches the documented finite ordinal support condition derived from the source rating-law regularity.",
+      "lean_statement_sha256": "aa0a8a8137db9ece69c75525f1ac84d88c6ae369f54149fb0b6ab01c589c98f8",
+      "paper_statement_sha256": "dbf46d5074106976ea53ac9ffaedde7ef65166c88f2af5d417b29dfc517fefdf",
+      "tex_statement_sha256": "6190a9a8f5f5005160387e20052ded814762108a9b06f578303b8c8c41cbd656",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
+    },
+    "assumption_score_range_and_strict_span": {
+      "judgment": "matches",
+      "matches": true,
+      "reason": "The Lean assumption matches the documented score-range and strict-span condition for ordered finite ratings.",
+      "lean_statement_sha256": "fb8fbee7cea21c66075652af156d8af738eb64b4feeb32f2bac50a10ba41c7e6",
+      "paper_statement_sha256": "0692afc1233a8681ffcb157797f18ae333f7a998552a5625d9f965ac479f8b08",
+      "tex_statement_sha256": "066f873a6085913cc8fc89b43dd271f82650be5e89eb7e261140261188d287ff",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "prompt_version": "statement-match-v2-strict-full-statement"
     }
-  },
-  "judge": "codex-statement-translation-audit",
-  "paper": "GJ18InformativeRatingSystems",
-  "schema": 1,
-  "validated_at": "2026-06-11T03:46:12Z",
-  "validator": "gpt-5-codex",
-  "validator_type": "model"
+  }
 }

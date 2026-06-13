@@ -1,14 +1,25 @@
 {
+  "schema": 1,
+  "paper": "DSWG24DiscretizationBias",
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "translator": "gpt-5-codex",
+  "translator_type": "model",
+  "translated_at": "2026-06-13T00:00:00Z",
+  "prompt_summary": [
+    "Translate each Lean declaration from the Lean statement alone, with no paper context.",
+    "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
+    "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
+  ],
   "generated_at": "2026-06-07T00:00:39Z",
   "generator": "codex-refresh-current-lean-statements",
   "items": {
     "aggregatePosterior": {
-      "lean_statement_sha256": "566ec71a0b06bc04411d6fc7429f9fa912f6d51efe0ccaffdd9ce2ad0a4b5832",
-      "statement": "$aggregatePosterior_\\mu(q,y)=\\mathbb{E}_{x\\sim \\mu_X}[q(x,y)]$."
+      "lean_statement_sha256": "daacf6d7f57db8f1b67092ad1e2e68687460659df801693ca7c067976cc3aee5",
+      "statement": "$p_{\\mathrm{agg}}^q(y)=\\frac{1}{N}\\sum_{i=1}^N q_i(y)$."
     },
     "bias": {
-      "lean_statement_sha256": "6e8bf5a19b45d3175e5ba2b213322a7981cabc37c628681434d77d50706e0f1a",
-      "statement": "$bias_\\mu(rule,pref,y)=marginalLabelShare_\\mu(rule,y)-pref(y)$."
+      "lean_statement_sha256": "454127ea5b28de00779132f6e40003caea5d75522e0aa63afa86e14664b84dfa",
+      "statement": "$bias(y,decision,p_{ref})=\\hat p_{\\mathrm{marg}}(y;decision)-p_{ref}(y)$."
     },
     "calibrated": {
       "lean_statement_sha256": "62820718fb5e4ab5cbbe1f90fdbdb8e9e06cf0dc8d626cd8c289fd801d1a462e",
@@ -51,16 +62,16 @@
       "statement": "$expectedObjective_\\gamma(rule)=\\gamma\\,expectedDecisionAccuracy(expect,observedDataset,trueLabels,rule)+(1-\\gamma)\\,expectedObjective(expect,observedDataset,fidelityTerm,rule)$."
     },
     "fidelity": {
-      "lean_statement_sha256": "140a00cc746cd6be773a8f6cd79e93a86b4d4b1813dd3c7131d10963810d6849",
-      "statement": "$fidelity_\\mu(rule,pref)=-\\sum_{y\\in Y}|bias_\\mu(rule,pref,y)|$."
+      "lean_statement_sha256": "12b1c56d5b40dd79993974db49f323614a54c2f0401b1085ee31b234c1208563",
+      "statement": "$fid(p_{ref},decision)=-\\sum_y |bias(y,decision,p_{ref})|$."
     },
     "isArgmaxRule": {
       "lean_statement_sha256": "1c446e9f2abe3f13a5879110792f7180f1cf8e75d8e52489b56f6ab68a8363a3",
       "statement": "$rule$ is an argmax rule for $q$ iff for every $x,y$, $q(x,y)\\le q(x,rule(x))$."
     },
     "marginalLabelShare": {
-      "lean_statement_sha256": "9cdcec22d8cae20a48020e635b1af00e243f43ce93b46bedb61c62f2c5e859f1",
-      "statement": "$marginalLabelShare_\\mu(rule,y)=\\Pr_{x\\sim \\mu_X}[rule(x)=y]$."
+      "lean_statement_sha256": "40f8886b2e455d90860080d2f3f6d9f2fa5613ecff40cfd7fd8c5448db887380",
+      "statement": "$\\hat p_{\\mathrm{marg}}(y;decision)=\\frac{1}{N}\\sum_{i=1}^N \\mathbf{1}\\{decision_i=y\\}$."
     },
     "objective": {
       "lean_statement_sha256": "24f01fba48f800547360d4ddb66c62c4055f816884674445b39e62b4f94c2559",
@@ -95,42 +106,40 @@
       "statement": "$S_e(z)=\\{x:q(x,z)=0\\}$."
     },
     "theorem1i_no_information_bias": {
-      "lean_statement_sha256": "550ec56263da0800d76a755cbfb223f094d339d3d9d509dabd6468f4105325df",
+      "lean_statement_sha256": "2a89ce90d390fbe36f3cfc02fe917d31d01a8c2f7db49992d82b081ff4dedb7f",
       "statement": "If $q(x,a)=prior_\\mu(a)$ for all $x,a$ and $z$ has maximal prior probability, then for every label $y$, both $bias_\\mu(x\\mapsto z,prior_\\mu,y)$ and $bias_\\mu(x\\mapsto z,aggregatePosterior_\\mu(q),y)$ equal $1-prior_\\mu(y)$ if $z=y$, and $-prior_\\mu(y)$ otherwise."
     },
     "theorem1ii_perfect_classifier_zero_bias": {
-      "lean_statement_sha256": "84d792a1549d325d4d06ab50666fc3c08cd709cd062fad027f1d923347baaa37",
+      "lean_statement_sha256": "703c9ec58a524029707fb253b4fd29f2b92b2eec9c3cc267e38b16ce00aa96af",
       "statement": "If $rule(x)=y$ for every joint outcome $(x,y)$ in $\\mu$, then for every label $y$, $bias_\\mu(rule,prior_\\mu,y)=0$."
     },
     "theorem1iii_argmax_bias_le_mae": {
-      "lean_statement_sha256": "9857801422254598bc3711b496f6b2bf4c52df3186d32f4ca0ae5490ae8b009e",
+      "lean_statement_sha256": "d9560a08b7547cb75aa382af300222e0e8857a60695a9c20e4c8f34fa2bcc04b",
       "statement": "For finite-label finite-measure spaces, if $argmaxRule$ is measurable, is an argmax rule for $q$, $q$ is a posterior simplex, each $q(\\cdot,y)$ is measurable, and $q$ is calibrated under $\\mu$, then for every label $y$, $continuousJointPriorBias_\\mu(argmaxRule,y)\\le continuousJointClassifierMAE_\\mu(q)$."
     },
     "theorem1iii_tight_binary_example": {
-      "lean_statement_sha256": "db6d6f9e2e132f90574817d325e13c1c19df928c3b4327cc77653d4cbf73e70d",
-      "statement": "In the specified tight binary example, the bias of the argmax rule at label $0$ relative to the aggregate posterior equals the classifier MAE."
+      "lean_statement_sha256": "a408767461fc14442c83fb509b6890813c0489d9a43c7f6d02e991a116d70748",
+      "statement": "In the specified tight binary example, the aggregate-posterior bias of the argmax rule at label $0$ equals the classifier MAE."
     },
     "theorem2i_joint_rule_exists": {
-      "lean_statement_sha256": "0003599e3b003fd7c3bb7cf8e1bdd7b4fb1afb9f9783d80d7d503046c609c659",
+      "lean_statement_sha256": "b788808059cabf1d7c4e95531c2e7679c9053d4efb485bd2fcf70ff014833936",
       "statement": "If $2\\le K<N$, $expect$ is a finite linear expectation, and expected 0-1 accuracy for each coordinate equals the expected posterior score for every choice rule, then for every $\\gamma$, posterior, and fidelity term, there exists an optimal rule $optRule$ maximizing the expected objective over all rules."
     },
     "theorem2ii_argmax_accuracy_maximizing": {
-      "lean_statement_sha256": "09ab4ebb579d26a5b21704067f5fd582aa7ffcdbcf1d8c09ae8c31c974fc4789",
+      "lean_statement_sha256": "f1024feb46d3cd6ccc1437c20b7edcd22d2081704535a9246274c4f1c1145f38",
       "statement": "If $2\\le K<N$, $expect$ is a finite linear expectation, $argmaxRule$ is pointwise maximizing for every observed dataset, and expected 0-1 accuracy equals expected posterior score for each coordinate and choice rule, then every decision rule has expected accuracy at most that of $argmaxRule$."
     },
     "theorem2iii_non_argmax_not_pareto": {
-      "lean_statement_sha256": "9ad99f07323c5da50e7ad8a9e102698e04bc4a545ba480e00e9f0c3140452731",
+      "lean_statement_sha256": "685071cd3243e352e47a982257f9f33240372f853fc3cd473e9f24ad0b89c721",
       "statement": "For finite $X$, if $\\Pr_\\mu[rule\\ne argmaxRule]>0$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, and $argmaxRule$ weakly maximizes $posterior(x,\\cdot)$ for every $x$, then the sampled decision induced by $rule$ is not Pareto optimal for expected dataset accuracy and expected dataset fidelity."
     },
     "theorem2iii_strict_disagreement_not_weighted_objective_maximizer": {
-      "lean_statement_sha256": "d0aa2169136ab63403af13e247cfcb065b72196e43590d5d8f3147e5a213d308",
+      "lean_statement_sha256": "7dcb93c80be87cfe9a7974a24f27bb10cdf693128c6ce6c70cfb479dc1baef30",
       "statement": "For finite $X$, if $0<\\gamma\\le 1$, $\\Pr_\\mu[rule\\ne argmaxRule]>0$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, and every disagreement satisfies $posterior(x,rule(x))<posterior(x,argmaxRule(x))$, then the sampled decision from $rule$ does not maximize the weighted objective."
     },
-    "theorem2iii_weighted_objective_maximizer_iff_agrees_argmax": {
-      "lean_statement_sha256": "7edb8e12bea8b5b86289b843e0b3ad05451746738db495cca6e64e4efd511d62",
-      "statement": "For finite $X$, if $0\\le\\gamma<1$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, $argmaxRule$ weakly maximizes $posterior(x,\\cdot)$, and the sampled argmax decision maximizes the weighted objective, then the sampled decision from $rule$ maximizes the weighted objective iff $\\Pr_\\mu[rule\\ne argmaxRule]=0$."
+    "theorem2iii_weighted_objective_maximizer_agrees_argmax": {
+      "lean_statement_sha256": "bfe091ae7015f3c13831e31cfc083decb0c193f7a36469c49a5f8ac8455e0655",
+      "statement": "For finite $X$, if $0\\le\\gamma<1$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, $argmaxRule$ weakly maximizes $posterior(x,\\cdot)$ pointwise, and the sampled decision induced by $rule$ maximizes the weighted expected objective, then $\\Pr_\\mu[rule\\ne argmaxRule]=0$."
     }
-  },
-  "paper": "DSWG24DiscretizationBias",
-  "schema": 1
+  }
 }

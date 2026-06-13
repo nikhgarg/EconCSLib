@@ -26,8 +26,7 @@
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GS62CollegeAdmissions",
-      "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/GS62CollegeAdmissions/DependencyDAG.pdf"
+      "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "Roth82StableMatching",
@@ -41,13 +40,12 @@
       "human_review": "0/27",
       "human_translation": "0/27 reviewed",
       "llm_as_judge_translation": "27/27 match",
-      "lean_loc": 8890,
+      "lean_loc": 8931,
       "main_note": "",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/Roth82StableMatching",
-      "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/Roth82StableMatching/DependencyDAG.pdf"
+      "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "GHW01DigitalGoods",
@@ -61,7 +59,7 @@
       "human_review": "0/18",
       "human_translation": "0/18 reviewed",
       "llm_as_judge_translation": "18/18 match",
-      "lean_loc": 14469,
+      "lean_loc": 14624,
       "main_note": "Formalizes the SODA paper; Theorem 8.2 uses the refined monotone-auction wording from the journal version.",
       "main_note_citation": {
         "label": "Goldberg-Hartline-Karlin-Saks-Wright 2006",
@@ -69,8 +67,7 @@
       },
       "main_note_review": null,
       "paper_folder": "papers/GHW01DigitalGoods",
-      "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/GHW01DigitalGoods/DependencyDAG.pdf"
+      "review_entrypoint": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "MSVV07AdWords",
@@ -84,13 +81,12 @@
       "human_review": "0/26",
       "human_translation": "0/26 reviewed",
       "llm_as_judge_translation": "26/26 match",
-      "lean_loc": 13480,
+      "lean_loc": 13598,
       "main_note": "",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/MSVV07AdWords",
-      "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/MSVV07AdWords/DependencyDAG.pdf"
+      "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "GGSG19TopThree",
@@ -98,19 +94,18 @@
       "authors": "Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel",
       "publication": "HCOMP, 2019",
       "publication_year": 2019,
-      "source_url": "https://arxiv.org/abs/1906.08160",
+      "source_url": "https://arxiv.org/pdf/1906.08160",
       "paper_info": "Who is in Your Top Three? Optimizing Learning in Elections with Many Candidates by Nikhil Garg, Lodewijk Gelauff, Sukolsak Sakshuwong, Ashish Goel; HCOMP, 2019.",
       "status": "Formalized",
       "human_review": "0/10",
       "human_translation": "0/10 reviewed",
       "llm_as_judge_translation": "10/10 match",
-      "lean_loc": 34984,
+      "lean_loc": 35032,
       "main_note": "",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GGSG19TopThree",
-      "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/GGSG19TopThree/DependencyDAG.pdf"
+      "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "GJ18InformativeRatingSystems",
@@ -121,16 +116,15 @@
       "source_url": "https://doi.org/10.1287/msom.2020.0921",
       "paper_info": "Designing Informative Rating Systems: Evidence from an Online Labor Market by Nikhil Garg, Ramesh Johari; Manufacturing & Service Operations Management 23(3), 2020.",
       "status": "Formalized",
-      "human_review": "0/8",
-      "human_translation": "0/8 reviewed",
-      "llm_as_judge_translation": "7/8 match; 1 uncertain",
-      "lean_loc": 6921,
-      "main_note": "",
+      "human_review": "0/7",
+      "human_translation": "0/7 reviewed",
+      "llm_as_judge_translation": "7/7 match",
+      "lean_loc": 7027,
+      "main_note": "Theorem 1 is formalized under the support-safe finite-rate convention from ordinal upper-tail dominance and full finite ordinal rating support.",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GJ18InformativeRatingSystems",
-      "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/GJ18InformativeRatingSystems/DependencyDAG.pdf"
+      "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "LG21TestOptionalPolicies",
@@ -144,13 +138,12 @@
       "human_review": "0/16",
       "human_translation": "0/16 reviewed",
       "llm_as_judge_translation": "16/16 match",
-      "lean_loc": 125476,
+      "lean_loc": 125744,
       "main_note": "",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/LG21TestOptionalPolicies",
-      "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/LG21TestOptionalPolicies/DependencyDAG.pdf"
+      "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "GN21DriverSurgePricing",
@@ -164,13 +157,12 @@
       "human_review": "0/24",
       "human_translation": "0/24 reviewed",
       "llm_as_judge_translation": "24/24 match",
-      "lean_loc": 142131,
+      "lean_loc": 142927,
       "main_note": "",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GN21DriverSurgePricing",
-      "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/GN21DriverSurgePricing/DependencyDAG.pdf"
+      "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "GCG24UserItemFairness",
@@ -184,13 +176,12 @@
       "human_review": "0/18",
       "human_translation": "0/18 reviewed",
       "llm_as_judge_translation": "18/18 match",
-      "lean_loc": 45906,
+      "lean_loc": 46073,
       "main_note": "",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/GCG24UserItemFairness",
-      "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf"
+      "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "DSWG24DiscretizationBias",
@@ -203,14 +194,13 @@
       "status": "Formalized",
       "human_review": "0/32",
       "human_translation": "0/32 reviewed",
-      "llm_as_judge_translation": "30/32 match; 2 mismatch",
-      "lean_loc": 26044,
+      "llm_as_judge_translation": "32/32 match",
+      "lean_loc": 26133,
       "main_note": "",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/DSWG24DiscretizationBias",
-      "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/DSWG24DiscretizationBias/DependencyDAG.pdf"
+      "review_entrypoint": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "MBJG25ProducerFairness",
@@ -224,13 +214,12 @@
       "human_review": "10/17",
       "human_translation": "10/17 reviewed; 2 uncertain",
       "llm_as_judge_translation": "17/17 match",
-      "lean_loc": 601,
+      "lean_loc": 680,
       "main_note": "Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement.",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/MBJG25ProducerFairness",
-      "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/MBJG25ProducerFairness/DependencyDAG.pdf"
+      "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "LOS02CombinatorialAuctions",
@@ -244,13 +233,12 @@
       "human_review": "0/30",
       "human_translation": "0/30 reviewed",
       "llm_as_judge_translation": "30/30 match",
-      "lean_loc": 7436,
+      "lean_loc": 7582,
       "main_note": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/LOS02CombinatorialAuctions",
-      "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/LOS02CombinatorialAuctions/DependencyDAG.pdf"
+      "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "LMMS04FairDivision",
@@ -261,16 +249,15 @@
       "source_url": "https://www.cs.cmu.edu/~arielpro/15896s15/docs/paper12a.pdf",
       "paper_info": "On Approximately Fair Allocations of Indivisible Goods by Richard J. Lipton, Evangelos Markakis, Elchanan Mossel, and Amin Saberi; ACM EC, 2004.",
       "status": "Partially formalized",
-      "human_review": "0/33",
-      "human_translation": "0/33 reviewed",
-      "llm_as_judge_translation": "33/33 match",
-      "lean_loc": 80264,
+      "human_review": "0/31",
+      "human_translation": "0/31 reviewed",
+      "llm_as_judge_translation": "31/31 match",
+      "lean_loc": 80460,
       "main_note": "Sections 2 and 4 are fully formalized. Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.",
       "main_note_citation": null,
       "main_note_review": null,
       "paper_folder": "papers/LMMS04FairDivision",
-      "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/LMMS04FairDivision/DependencyDAG.pdf"
+      "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md"
     },
     {
       "id": "PRPKG24AccuracyDiversity",
@@ -284,7 +271,7 @@
       "human_review": "0/27",
       "human_translation": "0/27 reviewed",
       "llm_as_judge_translation": "27/27 match",
-      "lean_loc": 48376,
+      "lean_loc": 48617,
       "main_note": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
       "main_note_citation": null,
       "main_note_review": {
@@ -292,8 +279,7 @@
         "note": "Do not rewrite this summary without explicit human instruction."
       },
       "paper_folder": "papers/PRPKG24AccuracyDiversity",
-      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
-      "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/DependencyDAG.pdf"
+      "review_entrypoint": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md"
     }
   ]
 }

@@ -4,15 +4,25 @@
 
 - Lean formalization status: formalized.
 - Human dashboard review status: 0/26 rows reviewed; 0 stale; 0 mismatches.
-- LLM statement-translation audit: 26/26 rows match; 0 uncertain; 0 mismatch;
-  0 stale.
+- LLM statement-translation audit: 26/26 dashboard rows match; the 10
+  assumption-ledger rows also have current statement translations and
+  statement-judge entries.
 - Paper correctness verdict: no suspected paper error found.
 - Qualitative proof verdict: the Balance/MSVV structure, Section 6/8
-  extensions, and Theorem 9 lower-bound endpoint are closed. Source-route
-  Lemmas 1--7 remain available in the audit ledger, while the dashboard is
-  limited to paper-facing formulas and final source-section endpoints.
-- Lean footprint: 13,480 paper-local Lean lines, including 872 lines in
+  extensions, and Theorem 9 lower-bound endpoint are exposed and compile. The
+  paper-facing formulas and final source-section endpoints pass the current
+  source-premise audit; certificate-heavy helper APIs remain internal proof
+  infrastructure rather than dashboard targets.
+- Lean footprint: 13,598 paper-local Lean lines, including 902 lines in
   `PaperInterface.lean` and 26 dashboard review rows.
+
+<!-- transitive-source-premise-audit:start -->
+### Axiom, Premise, And Source-Hygiene Audit
+
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
+
+Current result: no unresolved hidden source-row or certificate premise remains in the paper-facing review surface.
+<!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
 
@@ -39,10 +49,31 @@ Theorem 8 route. They are not part of the compact dashboard surface because the
 review surface is reserved for paper-facing formulas and final section/theorem
 endpoints.
 
-## 4. Additional Assumptions Beyond Paper
+## 4. Paper Assumption Provenance
 
-None. Relevant finite-history, nonnegative-bid, positive-budget, distinctness,
-and small-bids side conditions appear explicitly in the Lean statements.
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json` records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 13/13 premises are judged source model primitives, derived representation conditions, or paper-statement conditions; 0 premises remain as partial-formalization boundaries.
+
+Every paper-facing premise is routed through `MSVV07AdWords/Assumptions.lean`
+and checked by `assumption_match_llm.json`. These are source model conditions
+or finite-run conditions for Theorem 8 and the Section 6/8 extensions; none are
+extra proof certificates.
+
+| Lean assumption/condition | Judgment | Source role |
+| --- | --- | --- |
+| `assumption_nonnegative_bids` | paper condition | AdWords bids are nonnegative revenue/payment amounts. |
+| `assumption_full_distinct_query_history` | paper condition | Finite query history enumerates the instance for explicit-error accounting. |
+| `assumption_epsilon_range` | paper condition | Small-bids error parameter is in `[0,1]`. |
+| `assumption_alive_bidder_predicate` | paper condition | Section 6 next-price variant among alive bidders. |
+| `assumption_next_highest_all_small_bids` | paper condition | All-bidders next-price effective bids satisfy small bids. |
+| `assumption_next_highest_alive_small_bids` | paper condition | Alive-bidders next-price effective bids satisfy small bids. |
+| `assumption_click_through_rates_probability_bounds` | paper condition | Click-through rates are probabilities. |
+| `assumption_availability_predicate` | paper condition | Delayed-entry availability predicate for Section 6. |
+| `assumption_weighted_bids_nonnegative_weights` | paper condition | Section 8 advertiser weights are nonnegative. |
+| `assumption_weighted_effective_small_bids` | paper condition | Weighted effective bids satisfy small bids. |
+
+Additional assumptions beyond the paper: none. Relevant finite-history,
+nonnegative-bid, positive-budget, distinctness, and small-bids side conditions
+appear explicitly in the Lean statements and in the provenance ledger above.
 
 ## 5. Proof-Strategy Deviations
 
@@ -91,16 +122,20 @@ None found.
 - Dashboard review surface curated from 39 rows to 26 rows. Removed rows were
   broad proof-adapter variants, duplicate payoff aliases, or support endpoints
   already represented by final source-section statements.
-- `python3 scripts/review_dashboard.py --paper MSVV07AdWords --export-format
-  json`: 26 rows; surface audit passes; statement audit reports 26 matches, 0
-  uncertain, 0 mismatches, 0 stale rows.
-- No Lean files changed in this curation pass.
+- `python3 scripts/review_dashboard.py --paper MSVV07AdWords --statement-precheck`:
+  36 rows; 36 Lean-to-TeX drafts; 36 statement-judge rows; no missing,
+  stale, or flagged items.
+- `python3 scripts/review_dashboard.py --paper MSVV07AdWords --assumption-precheck`:
+  10 assumption declarations; no missing, stale, or flagged provenance rows.
 
 ## 12. Final Verdict
 
 - Completion status: formalized.
-- Summary: MSVV is formalized. The human review surface now contains 26
-  curated paper-facing rows rather than the previous 39-row mixed surface.
+- Summary: MSVV's paper-facing statement surface compiles, and the human review
+  surface now contains 26 curated paper-facing rows rather than the previous
+  39-row mixed surface. The approximation-accounting, state-invariant, and
+  factor-revealing LP certificate APIs remain as internal proof infrastructure,
+  not as unresolved paper-facing assumptions.
 
 ## 13. Paper Definitions Checked
 

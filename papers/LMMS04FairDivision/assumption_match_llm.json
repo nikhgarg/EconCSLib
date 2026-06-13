@@ -1,0 +1,274 @@
+{
+  "schema": 1,
+  "paper": "LMMS04FairDivision",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-12T18:30:00Z",
+  "comment": "Premise-level source/provenance audit against the cached EC 2004 source text. Each audit-premise from Assumptions.lean is judged individually; the remaining Section 3 helper-certificate premises are visible partial boundaries where Lean still assumes selected min/max rounded-type fields.",
+  "items": {
+    "assumption_nonnegative_alpha_bound": {
+      "judgment": "paper_condition",
+      "reason": "Theorem 2.1 uses alpha as the maximum marginal utility; monotonicity of the source valuations makes this bound nonnegative.",
+      "source_location": "LMMS04FairDivision.txt:160-166 and Section 2 model lines 146-151",
+      "premise_count": 1,
+      "premise_judgments": {
+        "halpha_nonneg : 0 ≤ alpha": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from monotone source utilities and alpha as the maximum marginal utility",
+          "reason": "Every marginal utility is nonnegative under the source monotonicity assumption, so the maximum marginal utility alpha is nonnegative."
+        }
+      }
+    },
+    "assumption_alpha_marginal_value_bound": {
+      "judgment": "paper_condition",
+      "reason": "The alpha-bounded form of Theorem 2.1 assumes every marginal value is at most alpha; the source's named maximum-marginal version is the closed specialization.",
+      "source_location": "LMMS04FairDivision.txt:160-166 and Theorem 2.1",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hbound : MarginalBound v alpha": {
+          "judgment": "paper_condition",
+          "source_location": "LMMS04FairDivision.txt:160-166: alpha is the maximum marginal utility / an upper bound on every marginal item value",
+          "reason": "The Lean premise is the explicit upper-bound form of the source maximum-marginal condition."
+        }
+      }
+    },
+    "assumption_duplicate_free_goods_enumeration": {
+      "judgment": "paper_condition",
+      "reason": "The constructive algorithm allocates the finite set of goods one-by-one; Lean represents that finite set by a duplicate-free list.",
+      "source_location": "LMMS04FairDivision.txt:146-151 and Theorem 2.1 proof lines 216-235",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hnodup : goodsList.Nodup": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Finite-set/list representation of the source goods set M",
+          "reason": "Duplicate-freeness is not an extra mathematical assumption; it ensures the Lean list enumerates the paper's finite set of goods exactly."
+        }
+      }
+    },
+    "assumption_positive_atom_bound": {
+      "judgment": "paper_condition",
+      "reason": "The measure-valued extension separates the alpha = 0 divisible case and proves the finite partition route for alpha > 0.",
+      "source_location": "LMMS04FairDivision.txt:260-276",
+      "premise_count": 1,
+      "premise_judgments": {
+        "halpha_pos : 0 < alpha": {
+          "judgment": "source_text",
+          "source_location": "LMMS04FairDivision.txt:263-267: The case alpha = 0 is handled separately; for alpha > 0 reduce to indivisible pieces",
+          "reason": "The Lean endpoint is the positive-alpha branch of the source Theorem 2.3 proof."
+        }
+      }
+    },
+    "assumption_ptas_error_parameter_range": {
+      "judgment": "paper_condition",
+      "reason": "The PTAS/FPTAS theorem is stated for positive error epsilon; the exact finite arithmetic endpoint restricts to epsilon <= 1 without loss for the displayed small-error regime.",
+      "source_location": "LMMS04FairDivision.txt:310-318 and Theorem 3.3 proof around lambda = 56/epsilon",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hepsilon_pos : 0 < epsilon": {
+          "judgment": "source_text",
+          "source_location": "LMMS04FairDivision.txt:310-318: PTAS/FPTAS definitions quantify over an error parameter epsilon > 0",
+          "reason": "This is the standard source theorem domain for approximation schemes."
+        },
+        "hepsilon_le_one : epsilon ≤ 1": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Finite arithmetic wrapper for the source small-epsilon PTAS regime",
+          "reason": "For epsilon >= 1 the approximation guarantee is weaker/easier; the Lean exact constant proof records the nontrivial epsilon <= 1 case."
+        }
+      }
+    },
+    "assumption_external_graham_scheduling_boundary": {
+      "judgment": "partial_boundary",
+      "reason": "The source invokes Graham/Coffman-Langston scheduling approximation by citation; Lean proves the fair-division consequence from that external scheduling certificate, so the cited scheduling theorem remains a known partial/external-library boundary rather than a source caveat.",
+      "source_location": "LMMS04FairDivision.txt:332-337 and 367-370",
+      "premise_count": 1,
+      "premise_judgments": {
+        "C : Theorem32.Graham14SchedulingApproximationCertificate load optimalRatio": {
+          "judgment": "partial_boundary",
+          "source_location": "LMMS04FairDivision.txt:332-337 and 367-370: Graham/Coffman-Langston scheduling approximation is invoked by citation",
+          "reason": "The Lean endpoint proves the fair-division consequence from the scheduling approximation certificate; the reusable scheduling theorem remains the existing Section 3 partial boundary, not a source caveat."
+        }
+      }
+    },
+    "assumption_fixed_dimension_ip_runtime_boundary": {
+      "judgment": "partial_boundary",
+      "reason": "The final PTAS/FPTAS runtime conclusion uses Lenstra fixed-dimension integer programming, which remains an explicit reusable-library partial boundary rather than a source caveat.",
+      "source_location": "LMMS04FairDivision.txt:393-405 and 501-536",
+      "premise_count": 1,
+      "premise_judgments": {
+        "cert : Theorem33.RoundedInstanceSearchCertificate M L epsilon lambda optimal": {
+          "judgment": "partial_boundary",
+          "source_location": "LMMS04FairDivision.txt:393-405 and 501-536: finite rounded-type IP search and fixed-dimension IP runtime layer",
+          "reason": "The Lean endpoint is conditional on the rounded-instance search certificate; this is the already-documented Section 3 IP/solver partial boundary, not a source caveat."
+        }
+      }
+    },
+    "assumption_positive_rounding_and_load_parameters": {
+      "judgment": "paper_condition",
+      "reason": "The rounding construction uses positive average load L, rounded average LR, and a positive lambda chosen as O(1/epsilon).",
+      "source_location": "LMMS04FairDivision.txt:384-434 and 537-558",
+      "premise_count": 4,
+      "premise_judgments": {
+        "hlambda : 1 < lambda": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the source choice lambda = 56/epsilon in the nontrivial 0 < epsilon <= 1 regime",
+          "reason": "The exact Lean endpoint uses lambda > 1 for rounding arithmetic; it follows from the paper's lambda choice."
+        },
+        "hlambda : 0 < lambda": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from lambda = O(1/epsilon) with epsilon > 0",
+          "reason": "Positive lambda is a direct consequence of the source rounding parameter."
+        },
+        "hL : 0 < L": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the source positive job/good values and average load definition",
+          "reason": "The identical-utilities scheduling model uses positive processing times/values; L is their positive average in the nontrivial instance."
+        },
+        "hLR : 0 < LR": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from L <= LR and 0 < L in the rounded instance construction",
+          "reason": "The rounded average remains positive because it dominates the positive original average."
+        }
+      }
+    },
+    "assumption_base_load_at_most_rounded_average": {
+      "judgment": "paper_condition",
+      "reason": "The source explicitly states that the original average load is at most the rounded average load.",
+      "source_location": "LMMS04FairDivision.txt:428-434",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hbase_le_avg : L ≤ LR": {
+          "judgment": "source_text",
+          "source_location": "LMMS04FairDivision.txt:428-434: It is easy to see that L <= LR",
+          "reason": "The Lean premise is the displayed comparison between original and rounded average loads."
+        }
+      }
+    },
+    "assumption_claim34_positive_small_goods_domain": {
+      "judgment": "paper_condition",
+      "reason": "Claim 3.4 is stated after reducing to goods with positive value below L.",
+      "source_location": "LMMS04FairDivision.txt:373-383 and 437-446",
+      "premise_count": 4,
+      "premise_judgments": {
+        "hgoods_pos : ∀ g : SourceItem, g ∈ goods → 0 < v g": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "LMMS04FairDivision.txt:337-346: jobs/goods have positive processing time/value",
+          "reason": "The identical-utilities scheduling reduction uses positive item values."
+        },
+        "hgoods_lt : ∀ g : SourceItem, g ∈ goods → v g < L": {
+          "judgment": "source_text",
+          "source_location": "LMMS04FairDivision.txt:373-383: assume v(i) < L for every i",
+          "reason": "This is the small-good domain immediately preceding Claim 3.4."
+        },
+        "hitem_nonneg : ∀ A : Alloc, ∀ i : SourceAgent, ∀ g : SourceItem, g ∈ M.bundleOf A i → 0 ≤ M.commonValue g": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from positive source item values in the identical-utilities model",
+          "reason": "Nonnegativity is weaker than the source positive item-value condition."
+        },
+        "hitem_lt : ∀ A : Alloc, ∀ i : SourceAgent, ∀ g : SourceItem, g ∈ M.bundleOf A i → M.commonValue g < L": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the source small-good condition v(i) < L for every good",
+          "reason": "Every item appearing in an allocated bundle is one of the source goods satisfying the small-good bound."
+        }
+      }
+    },
+    "assumption_claim34_rounded_type_window_condition": {
+      "judgment": "paper_condition",
+      "reason": "The Claim 3.4 rounded finite-IP endpoint compares assignments whose rounded bundle types lie in the selected min/max load window.",
+      "source_location": "LMMS04FairDivision.txt:437-446 and 501-536",
+      "premise_count": 1,
+      "premise_judgments": {
+        "∀ i : SourceAgent, typeOf i ∈ Theorem33.roundedTypesInValueWindow L lambda p.1 p.2": {
+          "judgment": "source_text",
+          "source_location": "LMMS04FairDivision.txt:437-446: Claim 3.4 restricts every bundle load to the selected L/2-to-2L window; lines 501-536 encode the rounded type search over that window",
+          "reason": "The Lean predicate is the finite rounded-type representation of the source bounded-load window for the selected min/max pair."
+        }
+      }
+    },
+    "assumption_additive_transfer_load_window_conditions": {
+      "judgment": "paper_condition",
+      "reason": "Lemma 3.5 and Claim 3.4 work in the half-load window L/2 < load < 2L; Lean exposes the positivity/nonnegativity consequences used by the algebraic transfer endpoint.",
+      "source_location": "LMMS04FairDivision.txt:437-446 and 541-558",
+      "premise_count": 9,
+      "premise_judgments": {
+        "houtMin : 0 < outMin": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the Lemma 3.5 half-load lower bound for the output allocation",
+          "reason": "A load above L/2 is positive because the rounded construction has positive L."
+        },
+        "hroundedMin : 0 < roundedMin": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the Lemma 3.5 rounded half-load lower bound",
+          "reason": "A rounded load above L/2 is positive because L is positive."
+        },
+        "hoptMin : 0 < optMin": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from Claim 3.4 / Lemma 3.5 half-load window for the optimal allocation",
+          "reason": "The bounded optimum has minimum load above L/2."
+        },
+        "hoptMax : 0 ≤ optMax": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from nonnegative item values and the load definition",
+          "reason": "Maximum load is nonnegative in the nonnegative additive utility model."
+        },
+        "hroundedMax_nonneg : 0 ≤ roundedMax": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from nonnegative rounded item values and the load definition",
+          "reason": "Rounded maximum load is nonnegative in the rounded additive model."
+        },
+        "hroundedMin_half : L ≤ 2 * roundedMin": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Algebraic form of L/2 < roundedMin from Lemma 3.5",
+          "reason": "Lean uses the non-strict doubled form of the source lower half-load inequality."
+        },
+        "hroundedMax_half : L ≤ 2 * roundedMax": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the rounded allocation half-load window",
+          "reason": "The source window applies to every player load, including the maximum rounded load."
+        },
+        "hoptMin_half : L ≤ 2 * optMin": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Algebraic form of L/2 < optMin from Claim 3.4",
+          "reason": "Lean uses the non-strict doubled form of the source lower half-load inequality."
+        },
+        "hoptMax_half : L ≤ 2 * optMax": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the bounded optimum half-load window",
+          "reason": "The source window applies to every player load, including the maximum optimal load."
+        }
+      }
+    },
+    "assumption_uniform_random_weight_normalization": {
+      "judgment": "paper_condition",
+      "reason": "Theorem 4.2 assumes normalized nonnegative additive utilities with every item value at most alpha and proves a bound for any positive threshold parameter.",
+      "source_location": "LMMS04FairDivision.txt:655-680",
+      "premise_count": 5,
+      "premise_judgments": {
+        "halpha : 0 ≤ alpha": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from alpha as an upper bound on nonnegative item values",
+          "reason": "The source item weights are nonnegative, so their upper bound alpha is nonnegative in the nontrivial theorem domain."
+        },
+        "ht : 0 < t": {
+          "judgment": "source_text",
+          "source_location": "LMMS04FairDivision.txt:679-681: Chebyshev bound is stated for t > 0",
+          "reason": "The Lean probability bound keeps the source positive threshold parameter explicit."
+        },
+        "hnonneg : ∀ p : Agent, ∀ g : Item, 0 ≤ w p g": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "LMMS04FairDivision.txt:655-660: utilities are additive and normalized to total one",
+          "reason": "The finite weight model represents nonnegative additive item utilities."
+        },
+        "hsum : ∀ p : Agent, ∑ g : Item, w p g = 1": {
+          "judgment": "source_text",
+          "source_location": "LMMS04FairDivision.txt:655-660: assume the sum of utilities of each player over all goods is one",
+          "reason": "This is exactly the normalization used in Theorem 4.2."
+        },
+        "hbound : ∀ p : Agent, ∀ g : Item, w p g ≤ alpha": {
+          "judgment": "source_text",
+          "source_location": "LMMS04FairDivision.txt:659-661: Suppose v_{p,i} <= alpha for all players and goods",
+          "reason": "This is the source item-value upper-bound condition."
+        }
+      }
+    }
+  }
+}

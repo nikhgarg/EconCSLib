@@ -6,7 +6,7 @@
   "source_version": "Mathematics of Operations Research, 1982",
   "build_target": "lake build Roth82StableMatching",
   "status": "formalized",
-  "main_caveat": "The cached paper's named Theorems 1--7, Lemmas 1--2, and Corollary 5.1 are closed on Roth's stated strict marriage domain without extra model-certificate assumptions.",
+  "main_caveat": "",
   "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
@@ -17,7 +17,7 @@
   },
   "paper_interface": {
     "path": "papers/Roth82StableMatching/PaperInterface.lean",
-    "line_count": 481,
+    "line_count": 490,
     "declaration_rows": 27,
     "review_rows": 27,
     "oversized": false,
@@ -26,12 +26,23 @@
   "artifacts": {
     "readme": "papers/Roth82StableMatching/README.md",
     "paper_interface": "papers/Roth82StableMatching/PaperInterface.lean",
+    "assumptions": "papers/Roth82StableMatching/Assumptions.lean",
     "final_validation_report": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
     "dependency_dag_tex": "papers/Roth82StableMatching/DependencyDAG.tex",
     "dependency_dag_pdf": "papers/Roth82StableMatching/DependencyDAG.pdf"
   },
   "review_surface": {
     "source_file": "papers/Roth82StableMatching/PaperInterface.lean",
+    "assumption_source_file": "papers/Roth82StableMatching/Assumptions.lean",
+    "llm_assumption_review": {
+      "assumption_judgment_file": "papers/Roth82StableMatching/assumption_match_llm.json",
+      "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
+    },
+    "assumption_policy": "strict",
+    "assumption_names": [
+      "assumption_equal_cardinality",
+      "assumption_simple_report_ranks_partner_first"
+    ],
     "include_names": [
       "preferenceProfile",
       "completeMarriageOutcome",

@@ -1,4 +1,5 @@
 import GN21DriverSurgePricing.InterfaceAliases
+import GN21DriverSurgePricing.Assumptions
 
 /-!
 # Paper Interface: Driver Surge Pricing
@@ -68,7 +69,7 @@ def review_definition_dynamic_defined_reward (mu : Fin 2 → MeasureTheory.Measu
       ℝ
 
 /--
-Section 2.2: IID renewal-reward bridge for the single-state formula.
+Section 2.2: IID renewal-reward bridge for the single-state result.
 
 Source status: source-facing theorem summary
 Source note: Paper source map uses `source.txt` lines 279--292.
@@ -165,7 +166,10 @@ abbrev review_lemma5_fixed_response_policy_form := @lemma5_fixed_response_policy
 Lemma 6: upper-endpoint derivative formula.
 
 Source status: source-facing theorem summary
-Source note: Paper source map uses `source.txt` lines 3042--3049.
+Source note: Paper source map uses `source.txt` lines 3786--3808. This row
+proves the exact endpoint derivative formula without assuming positive endpoint
+density; positive density is only the conditional premise for the strict
+sign-transfer corollary in the conclusion.
 -/
 abbrev review_lemma6_upper_endpoint_derivative_formula := @lemma6_upper_endpoint_derivative_formula
 
@@ -272,13 +276,19 @@ Source note: Paper source map uses `source.txt` lines 3128--3148.
 abbrev review_theorem4_structural_policy_representatives := @theorem4_structural_policy_representatives_of_gn21_bracket_source_data
 
 /--
-Theorem 3: visible statement for the full feasible sequential current-bounds
-source-data route.  This is the main no-caveat paper-facing Theorem 3 endpoint.
+Theorem 3: denominator-valid dynamic incentive compatibility for structured
+surge prices.  There are prices of the paper's form
+`m_i * tau + z_i * q_{i->j}(tau)` such that accept-all is optimal for every
+feasible dynamic policy whose Appendix-D reward-rate denominators are defined,
+and every defined-reward optimum agrees with accept-all almost everywhere.
 
-Source status: source-facing theorem endpoint
-Source note: Paper source map uses `source.txt` lines 3216--3232; Lean exposes the feasible sequential current-bounds source-data assumptions used by the paper proof path.
+Source status: source-domain theorem endpoint
+Source note: Paper source map uses `source.txt` lines 722--733.  The source
+reward-rate formulas divide by accepted-trip mass/time quantities, so Lean
+states the theorem over `DynamicDefinedReward.of_total` rather than over the
+broader real-division totalization at zero denominators.
 -/
-theorem review_theorem3_feasible_sequential_current_bounds_source_data_statement
+theorem review_theorem3_defined_reward_source_statement
     (mu : Fin 2 → MeasureTheory.Measure TripLength) (arrival : Fin 2 → ℝ)
     (rho R1 R2 switch12 switch21 : ℝ)
     (hR1_eq : R1 = rho * R2)
@@ -309,24 +319,31 @@ theorem review_theorem3_feasible_sequential_current_bounds_source_data_statement
       IntegrableOn
         (fun τ : TripLength => gn21SwitchProb switch21 switch12 τ)
         acceptAllPolicy (mu 1))
-    (hmeasure1_pos : 0 < mu 0 acceptAllPolicy)
-    (hmeasure2_pos : 0 < mu 1 acceptAllPolicy)
-    (feasible_sequential_current_bounds_source :
+    (hmass1_pos : 0 < singleStateTripMass (mu 0) acceptAllPolicy)
+    (hmass2_pos : 0 < singleStateTripMass (mu 1) acceptAllPolicy)
+    (surge_reward_rate_data :
       ∀ m z : Fin 2 → ℝ,
         (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) →
           theorem3AcceptAllStructuredParameterEvidence
             mu arrival R1 R2 switch12 switch21 m z →
-          Theorem4MeasuredAggregateStructuredFeasibleSequentialCurrentBoundsSourceCertificate
-            mu arrival R2 switch12 switch21 m z) :
+          ∀ ρ : Fin 2 → TripPolicy,
+            dynamicFeasibleMeasurablePositiveMassPolicy mu ρ →
+              ∃ R1_current ratio : ℝ,
+                GN21SurgeLemma9AcceptAllAggregateRewardRateData
+                  (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21
+                  (m 1) R1_current (z 1) ratio (m 0) (z 0)
+                  (ρ 0) (ρ 1)) :
     ∃ m z : Fin 2 → ℝ,
       (0 ≤ m 0 ∧ 0 ≤ m 1 ∧ 0 ≤ z 1) ∧
-        dynamicMeasurableIncentiveCompatible
-          (gn21MeasuredCTMCStructuredDynamicReward
-            mu arrival switch12 switch21 m z) ∧
-        (∀ ρ : Fin 2 → TripPolicy,
-          dynamicMeasurableOptimal
+        dynamicDefinedMeasurableIncentiveCompatible
+          (DynamicDefinedReward.of_total mu
             (gn21MeasuredCTMCStructuredDynamicReward
-              mu arrival switch12 switch21 m z) ρ →
+              mu arrival switch12 switch21 m z)) ∧
+        (∀ ρ : Fin 2 → TripPolicy,
+          dynamicDefinedMeasurableOptimal
+            (DynamicDefinedReward.of_total mu
+              (gn21MeasuredCTMCStructuredDynamicReward
+                mu arrival switch12 switch21 m z)) ρ →
             dynamicAcceptAllAlmostEverywhere mu ρ) ∧
         (∃ q : Fin 2 → TripLength → ℝ,
           ∀ i τ,
@@ -335,7 +352,7 @@ theorem review_theorem3_feasible_sequential_current_bounds_source_data_statement
         theorem3AcceptAllStructuredParameterEvidence
           mu arrival R1 R2 switch12 switch21 m z := by
   let A :
-      Theorem3AcceptAllStructuredFeasibleSequentialCurrentBoundsSourceDataAssumptions
+      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions
         mu arrival rho R1 R2 switch12 switch21 :=
     { hR1_eq := hR1_eq
       hR1_pos := hR1_pos
@@ -351,12 +368,11 @@ theorem review_theorem3_feasible_sequential_current_bounds_source_data_statement
       htime2_integrable := htime2_integrable
       hq1_integrable := hq1_integrable
       hq2_integrable := hq2_integrable
-      hmeasure1_pos := hmeasure1_pos
-      hmeasure2_pos := hmeasure2_pos
-      feasible_sequential_current_bounds_source :=
-        feasible_sequential_current_bounds_source }
-  simpa [theorem3MeasuredStructuredMeasurableICAEUniqueConclusion] using
-    theorem3_feasible_sequential_current_bounds_source_data
+      hmass1_pos := hmass1_pos
+      hmass2_pos := hmass2_pos
+      surge_reward_rate_data := surge_reward_rate_data }
+  simpa [theorem3MeasuredStructuredDefinedMeasurableICAEUniqueConclusion] using
+    theorem3_defined_reward_source
       mu arrival rho R1 R2 switch12 switch21 A
 
 end PaperInterface

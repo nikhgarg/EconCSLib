@@ -928,9 +928,9 @@ def finiteRateFunctionTop (μ : PMF α) (score : α → ℝ)
 
 /--
 Finite-support Chernoff exponent for the left-tail event of a score with
-positive mean, written in the source-paper form `- inf_z log E exp(z X)`.
-The actual tail theorem is supplied by a paper-specific LDP/Chernoff
-certificate; this definition fixes the reusable formula.
+positive mean, written as `- inf_z log E exp(z X)`. The actual tail theorem is
+supplied by a caller-provided LDP/Chernoff certificate; this definition fixes
+the reusable finite-support formula.
 -/
 def finiteChernoffRate (μ : PMF α) (score : α → ℝ) : ℝ :=
   -sInf (Set.range fun z : ℝ => finiteLogMGF μ score z)
@@ -1352,10 +1352,7 @@ theorem finiteScoreGapLogMGF_bddBelow_of_pos_neg_atoms
     (μ := μ) (score := fun a => hiScore a - loScore a)
     hmassPos hgapPos hmassNeg hgapNeg
 
-/--
-Chernoff exponent for a finite score-gap law.  This is the source formula used
-by finite positional-score election papers after choosing two candidates.
--/
+/-- Chernoff exponent for a finite score-gap law after choosing two scores. -/
 def finiteScoreGapChernoffRate (μ : PMF α) (hiScore loScore : α → ℝ) :
     ℝ :=
   finiteChernoffRate μ (fun a => hiScore a - loScore a)
@@ -1771,7 +1768,7 @@ theorem ternaryGapClosedChernoffRate_eq_neg_sInf_logMGF
     ternaryGapLogMGF_chernoffDual_eq_neg_closedRate hUp hDown]
   ring
 
-/-- Bernoulli KL divergence, written with real arithmetic for source formulas. -/
+/-- Bernoulli KL divergence, written with real arithmetic. -/
 def bernoulliKL (a b : ℝ) : ℝ :=
   a * Real.log (a / b) + (1 - a) * Real.log ((1 - a) / (1 - b))
 

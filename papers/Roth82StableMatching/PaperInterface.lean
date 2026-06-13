@@ -1,4 +1,5 @@
 import Roth82StableMatching.MainTheorems
+import Roth82StableMatching.Assumptions
 
 /-!
 # Paper Interface: Roth 1982 Stable Matching
@@ -216,7 +217,10 @@ def manReportStrictlyRanksPartnerFirst {W : Type*} (report_m : W → ℝ)
   | none => ∀ w, report_m w < 0
   | some wstar => ∀ w, w ≠ wstar → report_m w < report_m wstar
 
-/-- A report changes the identity of some alternative that was truly ranked `k`. -/
+/--
+A report changes the identity of some alternative that was truly ranked `k`.
+Source status: direct paper definition
+-/
 def reportMisrepresentsKthChoice {A : Type*} [Fintype A] [DecidableEq A]
     (true_score report_score : A → ℝ) (k : ℕ) : Prop :=
   ∃ a,
@@ -316,7 +320,11 @@ theorem theorem4_serial_dictatorship_constructed {n : ℕ} :
     paper_matching_valM, paper_matching_valW] using
     paper_roth82_theorem4_serial_dictatorship_constructed (n := n)
 
-/-- Theorem 5: side-optimal deferred-acceptance procedures are strategyproof on equal-size strict marriage domains. -/
+/--
+Theorem 5: side-optimal deferred-acceptance procedures are strategyproof on
+equal-size strict marriage domains.
+Source status: direct paper statement
+-/
 theorem theorem5_optimal_side_truthful_on_strict_domain_of_card_eq
     {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W] :
     ∀ (val_m : M → W → ℝ) (val_w : W → M → ℝ),
@@ -469,6 +477,7 @@ theorem theorem6_weak_pareto_for_men_on_strict_marriage_domain
 /--
 Theorem 7: for any `k > 1`, some finite balanced strict-profile market admits a
 profitable stable-procedure `k`th-choice manipulation.
+Source status: direct paper statement
 -/
 theorem theorem7_arbitrary_k_on_strict_profiles :
     ∀ k, 1 < k →

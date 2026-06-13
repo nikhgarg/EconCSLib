@@ -1,9 +1,15 @@
 {
   "schema": 1,
   "paper": "TEMPLATE",
+  "prompt_version": "statement-match-v2-strict-full-statement",
   "validator": "",
   "validator_type": "",
   "validated_at": "",
-  "comment": "",
+  "comment": "Compare the complete original source statement against the context-free Lean-to-TeX translation. Use no proof context.",
+  "prompt_summary": [
+    "A matches verdict requires the same hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions.",
+    "Mark mismatch or uncertain for omitted source subclaims, added non-source conditions, conditional wrappers, broad aggregate rows, source-row packages, certificate packages, or weakened/strengthened statements.",
+    "For formula-bearing rows, check the exact formula rather than only the theorem label or qualitative interpretation."
+  ],
   "items": {}
 }

@@ -4,12 +4,23 @@
 
 - Lean formalization status: formalized
 - Human dashboard review status: 0/10 rows reviewed; 0 stale; 0 mismatches.
+- Axiom/premise/source-hygiene audit: 9/9 explicit premises are source-matched or derived from source primitives.
 
 - Lean formalization status: formalized.
 - Human dashboard review status: 0 reviewed rows, 0 stale rows, 0 mismatch rows, 10 total rows.
 - Paper correctness verdict: no source error found for the formalized finite-candidate theorem surface.
-- Qualitative proof verdict: paper-facing results are closed with explicit finite-support boundary handling.
-- Lean footprint: 34,984 paper-local Lean LOC, 307 `PaperInterface.lean` LOC, 10 review rows.
+- Qualitative proof verdict: the finite-candidate theorem surface is exposed
+  with explicit finite-support boundary handling. The remaining visible
+  premises are source-matched or derived from source primitives.
+- Lean footprint: 34,984 paper-local Lean LOC, 308 `PaperInterface.lean` LOC, 10 review rows.
+
+<!-- transitive-source-premise-audit:start -->
+### Axiom, Premise, And Source-Hygiene Audit
+
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
+
+Current result: no unresolved hidden source-row or certificate premise remains in the paper-facing review surface.
+<!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
 
@@ -33,67 +44,14 @@ Propositions 2-4 expose the finite-support one-sided and eventually-zero
 boundary cases explicitly. These are source-model boundary cases, not remaining
 proof obligations.
 
+Proposition 4's paper interface now uses the paper's source-shaped unweighted
+expected-error sum `Q^N`. The older generalized positive-weight aggregate is
+kept only as proof/library infrastructure, not as the paper-facing row.
+
 The paper's empirical and numerical sections are treated as reproducibility
 artifacts rather than Lean theorem targets.
 
-## 4. Additional Assumptions Beyond Paper
-
-None.
-
-## 5. Proof-Strategy Deviations
-
-- Propositions 2-4: Lean states finite-support boundary branches explicitly
-  rather than folding them into prose.
-- Empirical/numerical sections: treated as reproducibility artifacts outside
-  the Lean theorem surface.
-
-## 6. Proof Tricks Worth Reusing
-
-- Use `WithTop` rates for finite-support large-deviation boundary cases.
-- Split ranking-learning proofs into pairwise finite-support rates, K-approval
-  ternary specialization, and finite relevant-pair aggregation.
-- Keep one-loser/all-but-one K-approval facts in the shared social-choice
-  library and paper-specific terminology as thin wrappers.
-
-## 7. Library Lift Pass
-
-- `EconCSLib.Foundations.Probability.FiniteSupportMGF`: finite-support
-  log-MGF, rate, extended-rate, and pairwise threshold-rate APIs.
-- `EconCSLib.Foundations.Probability.LargeDeviations`: finite weighted-sum and
-  pairwise aggregation certificates.
-- `EconCSLib.SocialChoice.Ranking.Approval`: all-but-one K-approval last-rank
-  probability facts.
-- `EconCSLib.SocialChoice.Ranking.MallowsRankFactorization`: reusable Mallows
-  rank-factorization algebra.
-
-Further candidates are recorded in `POST_FORMALIZATION_AUDIT.md`.
-
-## 8. DAG Audit
-
-- Rendered artifact: yes, `DependencyDAG.pdf`.
-- Topology: source-facing named-result topology; empirical sections omitted.
-- Layout: visually inspected after rerendering; no known overlap or unintended
-  dashed-edge semantics.
-
-## 9. Conditional Results and Remaining Gaps
-
-None for the source-facing finite-candidate theorem surface.
-
-## 10. Suspected Paper Errors or Inconsistencies
-
-None.
-
-## 11. Validation Checks
-
-The targeted paper build passed for `lake build GGSG19TopThree`. The DAG was
-rendered from the paper folder with `latexmk`, converted to PNG, and visually
-inspected. Targeted `git diff --check` passed for the changed GGSG documents.
-
-## 12. Final Verdict
-
-- Completion status: formalized.
-
-## 13. Paper Definitions Checked
+## 4. Paper Definitions Checked
 
 - Large-deviation rate: `r = -lim_N (1 / N) log A_N`.
   Lean: `paper_definition_large_deviation_rate`.
@@ -106,7 +64,7 @@ inspected. Targeted `git diff --check` passed for the changed GGSG documents.
 | abbrev paper_definition_large_deviation_rate | `paper_definition_large_deviation_rate` | - Paper definition of an exponential large-deviation rate. |
 <!-- lean-derived-definitions:end -->
 
-## 14. Named Theorem Statements Checked
+## 5. Named Theorem Statements Checked
 
 ### Proposition 1
 
@@ -161,7 +119,7 @@ claims.
 | theorem source_theorem_lem_mallowsnotWK_counterexample | `source_theorem_lem_mallowsnotWK_counterexample` | - Source Theorem `lem:mallowsnotWK`: a four-candidate high-noise Mallows counterexample where W-approval is not approval-rate optimal. |
 <!-- lean-derived-statements:end -->
 
-## 15. Paper-Facing Statement Validator Ledger
+## 6. Paper-Facing Statement Validator Ledger
 
 Generated from dashboard status export:
 
@@ -181,3 +139,81 @@ Generated from dashboard status export:
 | theorem source_theorem_lem_randomizebetterapproval_w_selection_constructed | `source_theorem_lem_randomizebetterapproval_w_selection_constructed` | None recorded | None |
 
 Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
+
+## 7. Paper Assumption Provenance
+
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json`
+> records per-premise judgments for this paper's `Assumptions.lean` ledger.
+> Current result: 9/9 explicit premises are source-matched or derived from
+> source primitives, and 0/9 remain partial boundaries.
+
+Every non-derived paper-facing premise is routed through
+`GGSG19TopThree/Assumptions.lean` and checked by
+`assumption_match_llm.json`. These rows are source theorem/domain conditions:
+strict cross-tier prefix separation, ternary K-approval score gaps,
+randomized-mechanism probability weights, and nontrivial
+Mallows/K-approval domains. None are proof-only certificates.
+
+| Lean assumption/condition | Judgment | Source role |
+| --- | --- | --- |
+| `assumption_strict_cross_tier_no_ties` | source text | Proposition 1 strict cross-tier top-prefix inequalities. |
+| `assumption_pairwise_approval_ternary_gap_domain` | derived from source primitives | Proposition 3 K-approval ternary score-gap domain and `s_i > s_j`. |
+| `assumption_randomized_mechanism_probability_weights` | source model primitive | Randomized scoring/K-approval rule probabilities. |
+| `assumption_mallows_nontrivial_winner_and_noise` | paper condition | Mallows top-W pivotal-pair regime, including the non-uniform Mallows domain. |
+| `assumption_nontrivial_k_approval_cutoffs` | source text | Positive proper K-approval cutoffs in the randomized family. |
+
+## 8. Proof-Strategy Deviations
+
+- Propositions 2-4: Lean states finite-support boundary branches explicitly
+  rather than folding them into prose.
+- Empirical/numerical sections: treated as reproducibility artifacts outside
+  the Lean theorem surface.
+
+## 9. Proof Tricks Worth Reusing
+
+- Use `WithTop` rates for finite-support large-deviation boundary cases.
+- Split ranking-learning proofs into pairwise finite-support rates, K-approval
+  ternary specialization, and finite relevant-pair aggregation.
+- Keep one-loser/all-but-one K-approval facts in the shared social-choice
+  library and paper-specific terminology as thin wrappers.
+
+## 10. Library Lift Pass
+
+- `EconCSLib.Foundations.Probability.FiniteSupportMGF`: finite-support
+  log-MGF, rate, extended-rate, and pairwise threshold-rate APIs.
+- `EconCSLib.Foundations.Probability.LargeDeviations`: finite weighted-sum and
+  pairwise aggregation certificates.
+- `EconCSLib.SocialChoice.Ranking.Approval`: all-but-one K-approval last-rank
+  probability facts.
+- `EconCSLib.SocialChoice.Ranking.MallowsRankFactorization`: reusable Mallows
+  rank-factorization algebra.
+
+Further candidates are recorded in `POST_FORMALIZATION_AUDIT.md`.
+
+## 11. DAG Audit
+
+- Rendered artifact: yes, `DependencyDAG.pdf`.
+- Topology: source-facing named-result topology; empirical sections omitted.
+- Layout: visually inspected after rerendering; no known overlap or unintended
+  dashed-edge semantics.
+
+## 12. Conditional Results and Remaining Gaps
+
+None for the source-facing finite-candidate theorem surface.
+
+## 13. Suspected Paper Errors or Inconsistencies
+
+None.
+
+## 14. Validation Checks
+
+The targeted paper build passed for `lake build GGSG19TopThree`. The DAG was
+rendered from the paper folder with `latexmk`, converted to PNG, and visually
+inspected. Targeted `git diff --check` passed for the changed GGSG documents.
+
+## 15. Final Verdict
+
+- Completion status: formalized.
+- Summary: The finite-candidate source theorem surface is represented in Lean,
+  including the finite-support boundary branches and randomized pivotal-pair
+  cases exposed in the paper-facing interface.

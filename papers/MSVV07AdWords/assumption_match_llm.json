@@ -1,0 +1,255 @@
+{
+  "schema": 1,
+  "paper": "MSVV07AdWords",
+  "prompt_version": "assumption-provenance-v2-exact-premise-source",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-13T00:00:00Z",
+  "comment": "Refreshed under the exact premise-source provenance prompt. Every audit-premise is judged independently where present.",
+  "prompt_summary": [
+    "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
+    "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
+    "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
+    "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
+    "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption."
+  ],
+  "items": {
+    "assumption_nonnegative_bids": {
+      "judgment": "paper_assumption",
+      "reason": "The AdWords model treats bids as monetary bid/revenue quantities for assigning queries to bidders.",
+      "source_location": "Problem statement and Section 2 AdWords model",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hbid : I.NonnegativeBids": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 2: each bidder specifies a bid c_iq and assignment earns revenue c_iq",
+          "reason": "Bids are source monetary quantities/revenues. The Lean predicate records their nonnegative monetary domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_full_distinct_query_history": {
+      "judgment": "paper_condition",
+      "reason": "The finite Lean endpoint represents the online sequence as a complete enumeration of finitely many query events.",
+      "source_location": "Section 2 query sequence q_1, q_2, ..., q_M; finite Theorem 8 accounting surface",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hnodup : history.Nodup": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Section 2 finite query sequence representation",
+          "reason": "The Lean finite type treats query occurrences as distinct events and `history` as their enumeration; nodup is a representation invariant of that source sequence.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hcover : AdWordsInstance.historyFinset history = Finset.univ": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Section 2 finite query sequence representation",
+          "reason": "The cover condition states that the Lean history enumerates all finite query events in the source sequence.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_epsilon_range": {
+      "judgment": "paper_condition",
+      "reason": "The finite explicit-error theorem uses epsilon as the small-bids fraction/error parameter; the displayed finite bound is stated on the normalized small-bids range.",
+      "source_location": "Theorem 8 small-bids finite-error formulation",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hepsilon : 0 ≤ epsilon": {
+          "judgment": "paper_condition",
+          "source_location": "Theorem 8 small-bids parameter",
+          "reason": "A small-bids fraction/error parameter is nonnegative.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hepsilon_le_one : epsilon ≤ 1": {
+          "judgment": "paper_condition",
+          "source_location": "Theorem 8 finite explicit-error normalization",
+          "reason": "The finite Lean bound restricts to the normalized epsilon range; the limiting theorem uses arbitrarily small epsilon.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_alive_bidder_predicate": {
+      "judgment": "paper_assumption",
+      "reason": "Section 6 explicitly defines the next-highest bid variant over alive bidders.",
+      "source_location": "Section 6 next-highest-bid extension",
+      "premise_count": 1,
+      "premise_judgments": {
+        "alive : Advertiser → Query → Prop": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 6: alive bidders, i.e. bidders who still have money",
+          "reason": "The predicate is the Lean representation of the source's alive-bidder condition.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_next_highest_all_small_bids": {
+      "judgment": "paper_condition",
+      "reason": "The all-bidders next-price endpoint applies Theorem 8 to the next-price effective charges, so those effective charges must satisfy the same small-bids condition.",
+      "source_location": "Section 6 next-highest-bid extension via effective bids",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hnext_small : ∀ a q, section6_next_highest_bid_all I a q ≤ epsilon * I.budget a": {
+          "judgment": "paper_condition",
+          "source_location": "Section 6 next-highest-bid extension and Theorem 8 small-bids assumption",
+          "reason": "This is the small-bids theorem condition specialized to all-bidders next-price effective charges.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_next_highest_alive_small_bids": {
+      "judgment": "paper_condition",
+      "reason": "The alive-bidders next-price endpoint applies Theorem 8 to alive next-price effective charges, so those charges must satisfy the same small-bids condition.",
+      "source_location": "Section 6 next-highest-bid extension via effective bids",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hnext_small : ∀ a q, section6_next_highest_bid_alive I alive a q ≤ epsilon * I.budget a": {
+          "judgment": "paper_condition",
+          "source_location": "Section 6 alive-bidders next-highest-bid extension and Theorem 8 small-bids assumption",
+          "reason": "This is the small-bids theorem condition specialized to alive-bidders next-price effective charges.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_click_through_rates_probability_bounds": {
+      "judgment": "paper_assumption",
+      "reason": "Section 6 identifies click-through rate as the probability that a user clicks on the ad.",
+      "source_location": "Section 6 click-through-rate extension",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hctr_nonneg : ∀ a q, 0 ≤ ctr a q": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 6: CTR is the probability that a user clicks",
+          "reason": "Probabilities are nonnegative.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hctr_le_one : ∀ a q, ctr a q ≤ 1": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 6: CTR is the probability that a user clicks",
+          "reason": "Probabilities are at most one.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_availability_predicate": {
+      "judgment": "paper_assumption",
+      "reason": "Section 6 allows advertisers to enter during the query sequence, represented in Lean by an availability predicate.",
+      "source_location": "Section 6 delayed-entry / advertiser availability extension",
+      "premise_count": 1,
+      "premise_judgments": {
+        "available : Advertiser → Query → Prop": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Section 6: advertisers may enter at any time during the query sequence",
+          "reason": "The predicate is the Lean representation of source-time availability.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_weighted_bids_nonnegative_weights": {
+      "judgment": "paper_condition",
+      "reason": "Section 8 defines effective bids as actual bid times advertiser weight; the Lean theorem states the nonnegative-weight regime for preserving nonnegative effective bids.",
+      "source_location": "Section 8 weighted-bids extension",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hweight_nonneg : ∀ a, 0 ≤ weight a": {
+          "judgment": "paper_condition",
+          "source_location": "Section 8: each bidder is assigned a weight and effective bid is bid times weight",
+          "reason": "The condition records the nonnegative effective-bid regime for the paper's weighted-bid proposal.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_weighted_effective_small_bids": {
+      "judgment": "paper_condition",
+      "reason": "The weighted-bids endpoint applies Theorem 8 to weighted effective bids, so the weighted effective bids must satisfy the small-bids condition.",
+      "source_location": "Section 8 weighted-bids extension and Theorem 8 small-bids assumption",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hweighted_small : ∀ a q, weight a * I.bid a q ≤ epsilon * I.budget a": {
+          "judgment": "paper_condition",
+          "source_location": "Section 8 weighted effective bids; Theorem 8 small-bids assumption",
+          "reason": "This is the small-bids theorem condition specialized to the paper's weighted effective bids.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    }
+  }
+}

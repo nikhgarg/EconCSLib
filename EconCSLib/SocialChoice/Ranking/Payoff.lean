@@ -12,7 +12,7 @@ import Mathlib.Tactic.Ring
 Reusable finite PMF algebra for ranking laws with first-choice probabilities
 and top-vs-runner-up value gaps.
 
-These lemmas are paper-neutral.  Paper-specific welfare models, strategy names,
+These lemmas are paper-neutral.  Caller-specific welfare models, strategy names,
 and theorem-number wrappers should remain in paper folders and call this layer.
 
 ## Main declarations

@@ -148,7 +148,7 @@ theorem envyBoundedBy_zero_iff_envyFree
       (envy_eq_zero_iff v A i j).mpr (h i j)
     simp [hzero]
 
-/-- The paper's maximum-marginal-utility hypothesis, expressed as an upper bound. -/
+/-- Maximum-marginal-utility upper bound. -/
 def MarginalBound [DecidableEq Item] (v : Valuation Agent Item) (α : ℝ) : Prop :=
   ∀ agent (S : Bundle Item) (g : Item),
     v.value agent (insert g S) - v.value agent S ≤ α
@@ -166,7 +166,7 @@ theorem additiveValuation_marginalBound [DecidableEq Item]
 
 /--
 Maximum one-good marginal value over all finite agents, bundles, and goods.
-This is the paper's `α` when the universe of indivisible goods is finite.
+This supplies the canonical finite-universe marginal-bound constant.
 -/
 noncomputable def maxMarginal
     [Fintype Agent] [Fintype Item] [DecidableEq Item]
@@ -235,7 +235,7 @@ def AcyclicEnvyGraph (v : Valuation Agent Item) (A : Allocation Agent Item) :
 
 /--
 Every finite acyclic envy graph has a source.  Here the finite/no-cycle work is
-packaged as `AcyclicEnvyGraph`; the lemma extracts the paper's unenvied agent.
+packaged as `AcyclicEnvyGraph`; the lemma extracts an unenvied agent.
 -/
 theorem exists_noOneEnvies_of_acyclicEnvyGraph [Nonempty Agent]
     (v : Valuation Agent Item) (A : Allocation Agent Item)
@@ -697,7 +697,7 @@ def HasEnvyCycleListExtraction [DecidableEq Agent]
 
 /--
 Finite non-acyclic envy graphs contain an explicit simple envy cycle.  This
-closes the graph-theoretic cycle-extraction step used by the LMMS proof.
+closes the graph-theoretic cycle-extraction step used by bounded-envy proofs.
 -/
 theorem hasEnvyCycleListExtraction_of_finite
     [Finite Agent] [DecidableEq Agent] (v : Valuation Agent Item) :
@@ -800,9 +800,9 @@ theorem envyBoundedBy_addItem_of_unenvied [DecidableEq Agent] [DecidableEq Item]
         _ ≤ α := hbound i j
 
 /--
-The paper's cycle-elimination step, packaged as the exact property needed by
-the main induction: every bounded partial allocation can be transformed into a
-bounded allocation of the same goods with an unenvied owner.
+Cycle-elimination step packaged as the exact property needed by the main
+induction: every bounded partial allocation can be transformed into a bounded
+allocation of the same goods with an unenvied owner.
 -/
 def HasUnenviedReduction [DecidableEq Item]
     (v : Valuation Agent Item) (α : ℝ) : Prop :=
@@ -812,9 +812,9 @@ def HasUnenviedReduction [DecidableEq Item]
     ∃ B owner, IsAllocationOf B goods ∧ EnvyBoundedBy v B α ∧ NoOneEnvies v B owner
 
 /--
-Cycle elimination target used by the paper proof: every bounded partial
-allocation can be transformed into one with an acyclic envy graph while
-preserving the allocated goods and the envy bound.
+Cycle-elimination target: every bounded partial allocation can be transformed
+into one with an acyclic envy graph while preserving the allocated goods and the
+envy bound.
 -/
 def HasAcyclicReduction [DecidableEq Item]
     (v : Valuation Agent Item) (α : ℝ) : Prop :=
@@ -824,8 +824,8 @@ def HasAcyclicReduction [DecidableEq Item]
     ∃ B, IsAllocationOf B goods ∧ EnvyBoundedBy v B α ∧ AcyclicEnvyGraph v B
 
 /--
-Finite potential maximization reduces the paper's cycle-elimination lemma to
-the pure graph step `HasImprovingRotationExtraction`.
+Finite potential maximization reduces cycle elimination to the pure graph step
+`HasImprovingRotationExtraction`.
 -/
 theorem hasAcyclicReduction_of_improvingRotationExtraction
     [Finite Agent] [Finite Item] [DecidableEq Item]
@@ -875,10 +875,9 @@ theorem hasUnenviedReduction_of_acyclicReduction
   exact ⟨B, owner, hBalloc, hBbound, hunenvied⟩
 
 /--
-Main bounded-envy existence theorem for the indivisible-goods paper, assuming
-the cycle-elimination/unenvied-reduction lemma. This is the paper's Theorem 2.1
-with the algorithmic complexity claim omitted and Lemma 2.2 isolated as
-`HasUnenviedReduction`.
+Main bounded-envy existence theorem for indivisible goods, assuming the
+cycle-elimination/unenvied-reduction lemma. Algorithmic complexity claims are
+intentionally outside this reusable existence statement.
 -/
 theorem exists_envyBounded_allocation_of_unenviedReduction
     [DecidableEq Item]
@@ -995,7 +994,7 @@ theorem lmms_theorem_2_1_finite
   exact exists_envyBounded_allocation_of_finite v hαnonneg hmargin
 
 /--
-Paper-facing finite LMMS theorem with `α` instantiated as the maximum one-good
+Finite bounded-envy theorem with `α` instantiated as the maximum one-good
 marginal value over the finite economy.
 -/
 theorem lmms_theorem_2_1_finite_maxMarginal

@@ -91,6 +91,33 @@ lake build <PaperName>
 Use `PaperInterface.lean` as the human-facing statement surface. Keep theorem
 status, caveats, and dependency-graph styles synchronized when a result moves
 from partial or conditional to formalized.
+Any paper-facing theorem premise that is not derived in Lean must be an
+explicit paper assumption declaration in `Assumptions.lean`, listed in
+`status.json` `review_surface.assumption_names`, and checked in
+`assumption_match_llm.json` as a true source/model assumption. Hidden
+certificate fields, source-row shortcuts, and proof-only hypotheses do not
+qualify as fully formalized paper results.
+Reusable library theorems may require certificate arguments. That is acceptable
+when the certificate is part of the library API, but the paper code must either
+construct the certificate from source primitives or keep the paper result
+partial/conditional. A paper-facing alias to a certificate-taking library theorem
+does not count as a closed paper theorem by itself. Before claiming completion
+or opening a public paper PR, run
+`python3 scripts/audit_repository.py --library-only --library-premise-audit`; the audit follows
+transitive reusable-library dependencies, not just direct aliases.
+The default audit also follows paper-local helper chains. A paper-facing row is
+not closed if a local helper, or a helper used by that helper, still takes an
+unvalidated certificate, source-row equation, proof-only hypothesis, or other
+boundary premise. Evidence constructed internally from already proved facts is
+discharged; evidence merely consumed by a helper must be visible as a validated
+paper assumption or the endpoint remains partial. Do not use `axiom`,
+`constant`, `opaque`, or unsafe declarations to bypass this rule.
+When `Assumptions.lean` uses `-- audit-premise:` comments, the judge must
+validate each exact premise in `assumption_match_llm.json` `premise_judgments`;
+approving only the surrounding assumption group is not sufficient. Premises not
+explicitly source-matched or already derived in Lean should be marked
+`partial_boundary`, and the paper status should remain partial until they are
+closed.
 
 ## 5. Start A New Paper Privately
 
@@ -106,8 +133,7 @@ python3 scripts/new_paper.py <paper-url> \
   --version "<Venue or version>"
 ```
 
-Use the existing folder naming convention, for example `MSVV07AdWords` or
-`Roth82StableMatching`.
+Use the existing folder naming convention, for example `ABC24ShortTitle`.
 
 The first public pull request for a new paper should contain only public-safe
 work. It can be an intake PR if it contains:
@@ -121,7 +147,10 @@ work. It can be an intake PR if it contains:
 
 Do not mark a result formalized until the corresponding Lean declaration
 compiles without `sorry`, `admit`, new unreviewed axioms, or hidden certificate
-assumptions.
+assumptions. If a result still depends on a capacity equation, threshold row,
+probability mass formula, external certificate, or witness that the paper does
+not explicitly assume, mark the result conditional or partially formalized
+until that premise is derived.
 
 ## 6. Keep Unfinished Paper Work Private By Default
 

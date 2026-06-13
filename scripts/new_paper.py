@@ -170,26 +170,53 @@ Keep theorem/table content synchronized with `DependencyDAG.tex` node styles and
 `status.json` as the source of truth for review rows, artifact paths, and the
 paper's top-level public status.
 
-At the start of the paper, run the smaller statement target-setting pass before
-deep proof work. After the source inventory and first compact
-`PaperInterface.lean` skeleton exist, populate `lean_to_tex_llm.json`, populate
-`statement_match_llm.json`, and run
+At the start of the paper, fill in the `FORMALIZATION_PLAN.md`
+`Initial Outside-Lean Paper Audit` section before deep proof work. Read the
+source, sanity-check every named result and formula-bearing displayed claim for
+signs, constants, normalizations, quantifiers, domains, and dependencies, and
+record suspected bugs, missing assumptions, formula ambiguities, and proof
+strategy consequences. Alert the user early about any major issue. After that
+source inventory and the first compact `PaperInterface.lean` skeleton exist,
+run the smaller statement target-setting pass: populate `lean_to_tex_llm.json`,
+populate `statement_match_llm.json`, and run
 `python3 scripts/review_dashboard.py --paper {folder} --statement-precheck`.
-Use this pass only to correct theorem targets; do not update the DAG, final
-validation report, human-review log, or review-surface audit just because this
-early check ran.
+Then run `python3 scripts/review_dashboard.py --paper {folder}
+--assumption-precheck`: the statement judge is row-local and does not certify
+that theorem premises are source assumptions or derived facts. Use this pass
+only to correct theorem targets and premise provenance; do not update the DAG,
+final validation report, human-review log, or review-surface audit just because
+this early check ran.
 
 At review boundaries, populate `lean_to_tex_llm.json` with context-free
-Lean-to-TeX/prose translations generated from `PaperInterface.lean` alone. New
-tracked entries should use `{ "tex_statement": "...", "lean_statement_sha256":
-"..." }`. Then populate `statement_match_llm.json` with an independent
-no-context judgment of whether each translation matches the original paper
-statement, including Lean, paper, and TeX statement digests plus the judge
-model/agent name, validator type, validation timestamp, and any validator
-comment. If the judge flags a mismatch or uncertainty, iterate on the Lean
-statement before treating it as the paper theorem target. Run
+Lean-to-TeX/prose translations generated from `PaperInterface.lean` alone. The
+translator must preserve every visible variable, binder, hypothesis, domain
+condition, equivalence direction, and conclusion; it must not summarize a theorem
+as an endpoint label or omit conditions that appear in the Lean statement. New
+tracked entries should use `{{ "tex_statement": "...", "lean_statement_sha256":
+"..." }}`. Then populate `statement_match_llm.json` with an independent
+no-context judgment of whether each translation matches the original full paper
+statement, including all hypotheses, subparts, quantifiers, domains, constants,
+normalizations, signs, inequality directions, and conclusions. A row may be
+judged `matches` only if it is equivalent to the full source statement or to a
+clearly identified source subpart; if the Lean translation is a conditional
+wrapper, source-row package, omitted subclaim, weakened/strengthened statement,
+or broad aggregate for several displayed formulas, the judge must mark
+`mismatch` or `uncertain`. Include Lean, paper, and TeX statement digests plus
+the judge model/agent name, validator type, validation timestamp, and any
+validator comment. If the judge flags a mismatch or uncertainty, iterate on the
+Lean statement before treating it as the paper theorem target. Run
 `python3 scripts/review_dashboard.py --paper {folder} --precheck` before
 handoff so missing/stale statement-audit rows are explicit.
+If any paper-facing theorem takes a hypothesis that is not proved from prior
+Lean declarations, declare that hypothesis in `Assumptions.lean`, list it in
+`status.json` `review_surface.assumption_names`, and populate
+`assumption_match_llm.json` with an independent judgment that it is a true
+paper/source model assumption rather than a proof shortcut.
+The repository audit follows paper-local helper chains recursively: a theorem
+is not closed if any helper it depends on still consumes an unvalidated
+certificate, source-row equation, hidden hypothesis, or proof-boundary premise.
+Do not use `axiom`, `constant`, `opaque`, or unsafe declarations to bypass that
+provenance boundary.
 If the dashboard has more than 30 rows, also populate `review_surface_llm.json`
 with a no-paper-context LLM audit that checks whether every dashboard row is a
 paper-facing definition, formula, or named statement. At 50 or more rows, treat
@@ -206,21 +233,40 @@ the dashboard as oversized and curate `PaperInterface.lean` or
 
 - [ ] Confirm the official PDF URL, version, and bibliographic fields.
 - [ ] Extract/confirm all named definitions, lemmas, and theorems in source order.
-- [ ] Fill in `FORMALIZATION_PLAN.md` with the initial proof strategy and
-      likely hard seams before deep Lean work.
+- [ ] Fill in `FORMALIZATION_PLAN.md` with the initial outside-Lean paper audit,
+      formula/result sanity check, proof strategy, and likely hard seams before
+      deep Lean work.
 - [ ] Run the lightweight statement target-setting pass and fix mismatched
       theorem targets before serious proof work.
+- [ ] Run the assumption/hidden-premise precheck after the statement pass; do
+      not treat row-local statement matches as globally certified targets until
+      premise provenance also clears.
+- [ ] Confirm `python3 scripts/audit_repository.py` reports no recursive
+      paper-local hidden-premise dependency or axiom-like declaration for this
+      paper.
 - [ ] Populate `DependencyDAG.tex` with the same named-result inventory.
 - [ ] Replace placeholders in `MainTheorems.lean` and `PaperInterface.lean`
       before updating any status row.
 - [ ] Keep `PaperInterface.lean` and `status.json` `review_surface` limited to
       source-facing definitions and named statements.
+- [ ] Route every non-derived paper-facing theorem premise through
+      `Assumptions.lean`, then run the assumption-provenance LLM judge.
 - [ ] If the dashboard has more than 30 rows, run the LLM review-surface audit;
       if it has 50 or more rows, curate the interface before broad review.
 - [ ] Run the context-free Lean-to-TeX translation and third-LLM match judgment
       workflow before asking for human dashboard review.
 - [ ] Update `status.json`, then run `python3 scripts/sync_paper_status.py`.
 - [ ] Rebuild `DependencyDAG.pdf` and verify visually after each significant edit.
+
+## Post-Formalization Checklist
+
+- [ ] Run a library elevation pass over paper-local proof modules and record
+      reusable candidates or completed extractions in `FINAL_VALIDATION_REPORT.md`.
+- [ ] Run the combined recursive provenance audit and write a closeout report:
+      `python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0 --write-report docs/RECURSIVE_PROVENANCE_AUDIT_<date>.md`.
+      Resolve all findings for this paper before claiming `formalized`; if a
+      finding remains, mark the result partial/conditional in `status.json`,
+      `DependencyDAG.tex`, and `FINAL_VALIDATION_REPORT.md`.
 """
 
 
@@ -265,28 +311,49 @@ def status_text(args: argparse.Namespace, folder: str) -> str:
             "artifacts": {
                 "readme": f"papers/{folder}/README.md",
                 "paper_interface": f"papers/{folder}/PaperInterface.lean",
+                "assumptions": f"papers/{folder}/Assumptions.lean",
                 "final_validation_report": f"papers/{folder}/FINAL_VALIDATION_REPORT.md",
                 "dependency_dag_tex": f"papers/{folder}/DependencyDAG.tex",
                 "dependency_dag_pdf": f"papers/{folder}/DependencyDAG.pdf",
             },
             "review_surface": {
                 "source_file": f"papers/{folder}/PaperInterface.lean",
+                "assumption_source_file": f"papers/{folder}/Assumptions.lean",
                 "llm_statement_review": {
                     "lean_to_tex_file": f"papers/{folder}/lean_to_tex_llm.json",
                     "match_judgment_file": f"papers/{folder}/statement_match_llm.json",
                     "review_surface_audit_file": f"papers/{folder}/review_surface_llm.json",
+                    "assumption_judgment_file": f"papers/{folder}/assumption_match_llm.json",
                     "surface_audit_threshold": 30,
                     "surface_warning_threshold": 50,
                     "policy": (
-                        "Translate each Lean statement with an LLM that has no paper context; "
-                        "have a third LLM compare that TeX/prose translation with the original "
-                        "paper statement, record the model/agent validator metadata, and iterate "
-                        "on PaperInterface.lean until they match. "
+                        "Translate each Lean statement with an LLM that has no paper context "
+                        "and require it to preserve every visible binder, hypothesis, domain "
+                        "condition, equivalence direction, and conclusion. Have a third LLM "
+                        "compare that TeX/prose translation with the original full paper "
+                        "statement, not just the theorem label. A `matches` verdict requires "
+                        "equivalence of hypotheses, subparts, quantifiers, domains, constants, "
+                        "normalizations, signs, inequality directions, and conclusions; "
+                        "conditional wrappers, source-row packages, omitted subclaims, "
+                        "weakened/strengthened statements, or broad aggregates must be judged "
+                        "`mismatch` or `uncertain`. Record the model/agent validator metadata "
+                        "and iterate on PaperInterface.lean until the full statement matches. "
                         "If the dashboard has more than 30 rows, run a no-paper-context LLM "
                         "audit that checks whether every row is paper-facing; at 50 or more "
                         "rows, curate the surface before broad human review."
                     ),
                 },
+                "llm_assumption_review": {
+                    "assumption_judgment_file": f"papers/{folder}/assumption_match_llm.json",
+                    "policy": (
+                        "Every paper-facing theorem premise not derived from prior Lean declarations "
+                        "must be declared in Assumptions.lean, listed in assumption_names, "
+                        "and judged by an independent LLM as a true paper/source model assumption rather "
+                        "than a proof assumption."
+                    ),
+                },
+                "assumption_policy": "strict",
+                "assumption_names": [],
                 "include_names": [],
                 "slices": [
                     {
@@ -307,6 +374,15 @@ def lean_to_tex_llm_text(folder: str) -> str:
         {
             "schema": 1,
             "paper": folder,
+            "prompt_version": "lean-to-tex-v2-strict-context-free",
+            "translator": "",
+            "translator_type": "",
+            "translated_at": "",
+            "prompt_summary": [
+                "Translate each Lean declaration from the Lean statement alone, with no paper context.",
+                "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
+                "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries.",
+            ],
             "items": {},
         },
         indent=2,
@@ -318,10 +394,16 @@ def statement_match_llm_text(folder: str) -> str:
         {
             "schema": 1,
             "paper": folder,
+            "prompt_version": "statement-match-v2-strict-full-statement",
             "validator": "",
             "validator_type": "",
             "validated_at": "",
-            "comment": "",
+            "comment": "Compare the complete original source statement against the context-free Lean-to-TeX translation. Use no proof context.",
+            "prompt_summary": [
+                "A matches verdict requires the same hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions.",
+                "Mark mismatch or uncertain for omitted source subclaims, added non-source conditions, conditional wrappers, broad aggregate rows, source-row packages, certificate packages, or weakened/strengthened statements.",
+                "For formula-bearing rows, check the exact formula rather than only the theorem label or qualitative interpretation.",
+            ],
             "items": {},
         },
         indent=2,
@@ -341,6 +423,29 @@ def review_surface_llm_text(folder: str) -> str:
             "reason": "",
             "review_rows": 0,
             "review_surface_sha256": "",
+            "items": {},
+        },
+        indent=2,
+    ) + "\n"
+
+
+def assumption_match_llm_text(folder: str) -> str:
+    return json.dumps(
+        {
+            "schema": 1,
+            "paper": folder,
+            "prompt_version": "assumption-provenance-v2-exact-premise-source",
+            "validator": "",
+            "validator_type": "",
+            "validated_at": "",
+            "comment": "Validate every assumption declaration and every exact audit-premise against source text or a Lean derivation.",
+            "prompt_summary": [
+                "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
+                "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
+                "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
+                "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
+                "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption.",
+            ],
             "items": {},
         },
         indent=2,
@@ -475,7 +580,13 @@ namespace {namespace}
 /-- Placeholder for the first exact source definition. Replace before claiming progress. -/
 abbrev paperDefinition1 : Prop := True
 
-/-- Replace before claiming progress: explicit source formula wrapper. -/
+/--
+Replace before claiming progress: exact source formula row.
+
+This row is complete only if the formula is derived from source primitives or
+from separately validated paper assumptions; do not use it to assert an
+unproved source-row equation.
+-/
 theorem paperTheoremPlaceholder : paperDefinition1 := by
   trivial
 
@@ -487,9 +598,49 @@ end {namespace}
 """
 
 
+def assumption_source_text(title: str, folder: str, namespace: str) -> str:
+    display_title = title or "[Paper Title]"
+    return f"""import {folder}.MainTheorems
+
+/-!
+# Paper Assumptions: {display_title}
+
+This file is the only paper-local place for assumptions that are not derived in
+Lean. Keep it small. Each declaration must be explicitly stated by the paper,
+listed in `status.json` `review_surface.assumption_names`, and judged in
+`assumption_match_llm.json` as a true source/model assumption rather than a
+proof convenience.
+
+Use `-- audit-premise: <exact Lean binder>` comments to route hidden theorem
+premises to an approved assumption declaration when the audit reports an exact
+binder string.
+
+## Paper Assumptions
+
+- `assumption_source_model_conditions`: placeholder for a paper-stated model
+  assumption. Delete this row if no assumption is needed.
+-/
+
+namespace {namespace}
+
+/--
+Paper model assumption / first source assumption.
+
+Replace this placeholder with an assumption that is explicitly stated in the
+paper. Do not use this file for proof conveniences or certificates derived in
+the appendix.
+-/
+-- audit-premise: _h_source : assumption_source_model_conditions
+abbrev assumption_source_model_conditions : Prop := True
+
+end {namespace}
+"""
+
+
 def paper_interface_text(title: str, folder: str, namespace: str) -> str:
     display_title = title or "[Paper Title]"
     return f"""import {folder}.MainTheorems
+import {folder}.Assumptions
 
 /-!
 # Human-Facing Paper Interface: {display_title}
@@ -503,8 +654,12 @@ Rules for completing this file:
 - Keep the paper's definitions/formatted objects first, in source order.
 - Expose the actual paper formulas here; do not only point to generic library
   definitions or implementation witnesses.
+- If a named theorem needs a hypothesis that is not derived from earlier Lean
+  declarations, declare that hypothesis in `Assumptions.lean` and list it in
+  `status.json` `review_surface.assumption_names`.
 - Then state the named results directly, with assumptions visible in each
-  theorem signature.
+  theorem signature by referencing named paper assumptions imported from
+  `Assumptions.lean`.
 - Use short proofs that call into `MainTheorems.lean` or lower proof files.
 - If implementation endpoints become broad or helper-heavy, move them to
   `ProofInterface.lean`; keep this filename as the single review surface.
@@ -534,9 +689,12 @@ abbrev paperDefinition1_formula : Prop := True
 Theorem 1 / first named result.
 
 Replace this placeholder with the exact source theorem statement, using the
-visible paper-facing definitions above.
+visible paper-facing definitions and named paper assumptions imported from
+`Assumptions.lean`.
 -/
-theorem paper_theorem_1_statement : paperDefinition1_formula := by
+theorem paper_theorem_1_statement
+    (_h_source : assumption_source_model_conditions) :
+    paperDefinition1_formula := by
   simpa [paperDefinition1_formula] using paper_theorem_1
 
 end {namespace}
@@ -591,6 +749,10 @@ This is a lightweight handoff document for source-to-Lean mapping.
 - [ ] Post-formalization library elevation pass completed: reusable proof
       results, techniques, and primitives were moved into `EconCSLib` when
       local/low-risk, or recorded with destination modules in the final report.
+- [ ] Recursive provenance audit completed with
+      `python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0 --write-report docs/RECURSIVE_PROVENANCE_AUDIT_<date>.md`;
+      all findings for this paper are resolved or explicitly recorded as
+      partial/conditional boundaries.
 - [ ] Final status review completed before publishing.
 
 ## Notes
@@ -611,6 +773,20 @@ This is a working scratchpad for outside-Lean proof thinking. Keep it short and
 useful; it is not the final validation report.
 
 - Namespace: `{namespace}`
+
+## Initial Outside-Lean Paper Audit
+
+- Source version / local files inspected:
+- Formula sanity check:
+  - Signs, constants, normalizations, quantifiers, domains:
+  - Formula-bearing displayed claims that need derivation, not source-row assumptions:
+- Named result sanity check:
+  - Results that look correct as stated:
+  - Suspected bugs, missing assumptions, or ambiguous wording:
+- Proof strategy consequences:
+  - Source proof route to follow:
+  - Cleaner Lean route or reusable library route:
+  - Major issues already reported to the user:
 
 ## Source Inventory
 
@@ -635,7 +811,7 @@ useful; it is not the final validation report.
 ## Deviations And Assumptions
 
 - Source imprecision or proof deviation to report later:
-- Genuine paper assumptions:
+- Genuine paper assumptions to declare in `Assumptions.lean`:
 - Temporary certificate fields to discharge:
 """
 
@@ -656,15 +832,76 @@ def final_validation_report_text(title: str, folder: str) -> str:
 - Source version: <arXiv/publisher URL + version/date>
 - Lean folder: `papers/{folder}`
 - Human-facing theorem file: `papers/{folder}/PaperInterface.lean`
+- Paper assumption file: `papers/{folder}/Assumptions.lean`
 - DAG artifacts: `papers/{folder}/DependencyDAG.tex`, `papers/{folder}/DependencyDAG.pdf`
 
 ## 3. What Has Been Proven
 None yet.
 
-## 4. Paper Definitions Checked
+## 4. Paper Assumption Provenance
+Every paper-facing theorem premise that is not derived in Lean should appear as
+a named assumption declaration in `Assumptions.lean`, be listed in `status.json`
+`review_surface.assumption_names`, and be checked in `assumption_match_llm.json`
+as a true paper/source model assumption.
+
+| Assumption declaration | Lean declaration | Source location / statement | Assumption validators | Comments |
+| --- | --- | --- | --- | --- |
+| None | `none` | None | None | No paper assumptions recorded yet. |
+
+## 5. Additional Assumptions Beyond Paper
+- None
+
+## 6. Proof-Strategy Deviations
+- None
+
+## 7. Proof Tricks Worth Reusing
+- None
+
+## 8. Library Lift Pass
+- Reusable library extraction candidates: None
+- Library certificate/source-boundary audit: not run. Before a completion
+  claim, run `python3 scripts/audit_repository.py --library-only --library-premise-audit` and
+  confirm any certificate-taking library APIs used by paper wrappers are
+  constructed internally, validated as paper assumptions, or listed as partial
+  boundaries. This audit follows transitive helper chains, not only direct
+  aliases.
+- Paper-local hidden-premise audit: not run. The default repository audit should
+  report no reviewed row that recursively depends on a local helper with an
+  unvalidated certificate, source-row equation, hidden hypothesis, or other
+  proof-boundary premise.
+- Recursive provenance closeout report: not run. Before a completion claim,
+  run `python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0 --write-report docs/RECURSIVE_PROVENANCE_AUDIT_<date>.md`
+  and confirm this paper has no unresolved broad/opaque row, source-row formula
+  boundary, paper-local hidden premise, or transitive library certificate
+  finding. If a finding remains, record it here and mark the endpoint
+  partial/conditional.
+
+## 9. DAG Audit
+- Rendered artifact: not checked
+- Topology: not checked
+- Layout: not checked
+
+## 10. Conditional Results and Remaining Gaps
+- All named results remain open.
+
+## 11. Suspected Paper Errors or Inconsistencies
+- None
+
+## 12. Validation Checks
+- Not run.
+- Required closeout checks include targeted Lean build, statement precheck,
+  assumption/hidden-premise precheck, repository audit, and library premise
+  audit when reusable certificate APIs are used or when preparing a public PR.
+  The repository audit must also be clean of axiom-like declarations.
+
+## 13. Final Verdict
+- Completion status: not formalized
+- Summary: Scaffold only.
+
+## 14. Paper Definitions Checked
 - None yet.
 
-## 5. Named Theorem Statements Checked
+## 15. Named Theorem Statements Checked
 ### Theorem <n>
 **Paper statement.** <one theorem-box-level statement matching the source>
 
@@ -673,7 +910,7 @@ None yet.
 
 **Status.** not formalized.
 
-## 6. Paper-Facing Statement Validator Ledger
+## 16. Paper-Facing Statement Validator Ledger
 This table is one row per dashboard/PaperInterface row. Regenerate it with:
 
 `python3 scripts/review_dashboard.py --paper {folder} --export-format validators-md`
@@ -685,43 +922,13 @@ This table is one row per dashboard/PaperInterface row. Regenerate it with:
 Human dashboard reviews and model/agent statement checks may both appear here.
 This table is provenance for the statement targets; it does not change the
 human-only `human_review.reviewed_rows` counter.
-
-## 7. Additional Assumptions Beyond Paper
-- None
-
-## 8. Proof-Strategy Deviations
-- None
-
-## 9. Proof Tricks Worth Reusing
-- None
-
-## 10. Library Lift Pass
-- None
-
-## 11. DAG Audit
-- Rendered artifact: not checked
-- Topology: not checked
-- Layout: not checked
-
-## 12. Conditional Results and Remaining Gaps
-- All named results remain open.
-
-## 13. Suspected Paper Errors or Inconsistencies
-- None
-
-## 14. Validation Checks
-- Not run.
-
-## 15. Final Verdict
-- Completion status: not formalized
-- Summary: Scaffold only.
 """
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("url", help="paper URL; arXiv abs URLs are converted to PDF URLs")
-    parser.add_argument("--folder", help="citation-style folder name, e.g. DSWG24DiscretizationBias")
+    parser.add_argument("--folder", help="citation-style folder name, e.g. ABC24ShortTitle")
     parser.add_argument("--title", help="paper title for README and theorem ledger")
     parser.add_argument("--authors", help="paper authors for README")
     parser.add_argument("--version", help="source version, conference, journal, or arXiv version")
@@ -758,6 +965,7 @@ def main() -> int:
     write_file(paper_dir / "lean_to_tex_llm.json", lean_to_tex_llm_text(folder), args.force)
     write_file(paper_dir / "statement_match_llm.json", statement_match_llm_text(folder), args.force)
     write_file(paper_dir / "review_surface_llm.json", review_surface_llm_text(folder), args.force)
+    write_file(paper_dir / "assumption_match_llm.json", assumption_match_llm_text(folder), args.force)
     launch_script = paper_dir / "review-dashboard.sh"
     write_file(
         launch_script,
@@ -777,6 +985,11 @@ def main() -> int:
     )
     write_file(paper_dir / "DependencyDAG.tex", dag_text(), args.force)
     write_file(paper_dir / "MainTheorems.lean", main_theorems_text(args.title or "", namespace), args.force)
+    write_file(
+        paper_dir / "Assumptions.lean",
+        assumption_source_text(args.title or "", folder, namespace),
+        args.force,
+    )
     write_file(
         paper_dir / "PaperInterface.lean",
         paper_interface_text(args.title or "", folder, namespace),

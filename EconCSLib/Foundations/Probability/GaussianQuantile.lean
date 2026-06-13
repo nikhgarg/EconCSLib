@@ -134,9 +134,8 @@ theorem standardTail_lt_iff_quantile_one_sub_lt
       Q.cdfAPI.cdf_strictMono.lt_iff_lt
 
 /--
-The paper's selectivity condition relative to an eligible mass,
-`2 * capacity < mass`, makes the upper-tail quantile
-`Φ⁻¹(1 - capacity / mass)` positive.
+The selectivity condition relative to an eligible mass, `2 * capacity < mass`,
+makes the upper-tail quantile `Φ⁻¹(1 - capacity / mass)` positive.
 -/
 theorem quantile_pos_of_two_mul_capacity_lt_mass
     (Q : StandardGaussianQuantileAPI)

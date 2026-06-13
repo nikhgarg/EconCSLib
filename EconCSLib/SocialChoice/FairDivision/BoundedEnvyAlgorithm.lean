@@ -6,9 +6,10 @@ namespace FairDivision
 open scoped BigOperators
 
 variable {Agent Item : Type*} [Finite Agent] [Finite Item] [DecidableEq Agent] [DecidableEq Item] [Nonempty Agent]
-variable (v : Valuation Agent Item) {α : ℝ} (hαnonneg : 0 ≤ α) (hmargin : MarginalBound v α)
+variable (v : Valuation Agent Item) {α : ℝ}
 
-noncomputable def lmmsStep (g : Item) (state : Σ (goods : Finset Item), { A : Allocation Agent Item // IsAllocationOf A goods ∧ EnvyBoundedBy v A α }) :
+noncomputable def boundedEnvyStep (hαnonneg : 0 ≤ α) (hmargin : MarginalBound v α)
+    (g : Item) (state : Σ (goods : Finset Item), { A : Allocation Agent Item // IsAllocationOf A goods ∧ EnvyBoundedBy v A α }) :
     Σ (goods : Finset Item), { A : Allocation Agent Item // IsAllocationOf A goods ∧ EnvyBoundedBy v A α } :=
   let goods := state.1
   let A := state.2.val
@@ -34,49 +35,55 @@ noncomputable def lmmsStep (g : Item) (state : Σ (goods : Finset Item), { A : A
     exact envyBoundedBy_addItem_of_unenvied v B owner g hαnonneg hBbound hmargin hunenvied
   ⟨goods_new, ⟨A_new, halloc_new, hbound_new⟩⟩
 
-noncomputable def lmmsAlgorithm (goodsList : List Item) :
+noncomputable def boundedEnvyAlgorithm (hαnonneg : 0 ≤ α) (hmargin : MarginalBound v α)
+    (goodsList : List Item) :
     Σ (goods : Finset Item), { A : Allocation Agent Item // IsAllocationOf A goods ∧ EnvyBoundedBy v A α } :=
-  goodsList.foldr (lmmsStep v hαnonneg hmargin) 
+  goodsList.foldr (boundedEnvyStep v hαnonneg hmargin)
     ⟨∅, ⟨emptyAllocation Agent Item, isAllocationOf_empty, by
       intro i j
       simp [emptyAllocation, envy, hαnonneg]⟩⟩
 
-theorem lmmsAlgorithm_isAllocationOf_and_envyBoundedBy (goodsList : List Item) :
-    let res := lmmsAlgorithm v hαnonneg hmargin goodsList
+theorem boundedEnvyAlgorithm_isAllocationOf_and_envyBoundedBy
+    (hαnonneg : 0 ≤ α) (hmargin : MarginalBound v α) (goodsList : List Item) :
+    let res := boundedEnvyAlgorithm v hαnonneg hmargin goodsList
     IsAllocationOf res.2.val res.1 ∧ EnvyBoundedBy v res.2.val α := by
-  let res := lmmsAlgorithm v hαnonneg hmargin goodsList
+  let res := boundedEnvyAlgorithm v hαnonneg hmargin goodsList
   exact res.2.property
 
-theorem lmmsAlgorithm_goods_eq_list_toFinset (goodsList : List Item) (hnodup : goodsList.Nodup) :
-    (lmmsAlgorithm v hαnonneg hmargin goodsList).1 = goodsList.toFinset := by
+theorem boundedEnvyAlgorithm_goods_eq_list_toFinset
+    (hαnonneg : 0 ≤ α) (hmargin : MarginalBound v α)
+    (goodsList : List Item) (hnodup : goodsList.Nodup) :
+    (boundedEnvyAlgorithm v hαnonneg hmargin goodsList).1 = goodsList.toFinset := by
   induction goodsList with
   | nil => rfl
   | cons head tail ih =>
     simp at hnodup
-    have ih_eq : (lmmsAlgorithm v hαnonneg hmargin tail).1 = tail.toFinset := ih hnodup.2
+    have ih_eq : (boundedEnvyAlgorithm v hαnonneg hmargin tail).1 = tail.toFinset := ih hnodup.2
     have hnot_in : head ∉ tail.toFinset := by simp [hnodup.1]
-    have hnot_in_state : head ∉ (lmmsAlgorithm v hαnonneg hmargin tail).1 := by
+    have hnot_in_state : head ∉ (boundedEnvyAlgorithm v hαnonneg hmargin tail).1 := by
       rw [ih_eq]
       exact hnot_in
-    have h_foldr_cons : (lmmsAlgorithm v hαnonneg hmargin (head :: tail)) = 
-        lmmsStep v hαnonneg hmargin head (lmmsAlgorithm v hαnonneg hmargin tail) := rfl
+    have h_foldr_cons : (boundedEnvyAlgorithm v hαnonneg hmargin (head :: tail)) =
+        boundedEnvyStep v hαnonneg hmargin head
+          (boundedEnvyAlgorithm v hαnonneg hmargin tail) := rfl
     have h_toFinset_cons : (head :: tail).toFinset = insert head tail.toFinset := by
       exact List.toFinset_cons
     rw [h_foldr_cons, h_toFinset_cons]
-    unfold lmmsStep
+    unfold boundedEnvyStep
     simp [hnot_in_state]
     rw [ih_eq]
 
-theorem lmmsAlgorithm_isAllocationOf_list_toFinset_and_envyBoundedBy
+theorem boundedEnvyAlgorithm_isAllocationOf_list_toFinset_and_envyBoundedBy
+    (hαnonneg : 0 ≤ α) (hmargin : MarginalBound v α)
     (goodsList : List Item) (hnodup : goodsList.Nodup) :
-    let res := lmmsAlgorithm v hαnonneg hmargin goodsList
+    let res := boundedEnvyAlgorithm v hαnonneg hmargin goodsList
     IsAllocationOf res.2.val goodsList.toFinset ∧
       EnvyBoundedBy v res.2.val α := by
   classical
-  let res := lmmsAlgorithm v hαnonneg hmargin goodsList
-  have hres := lmmsAlgorithm_isAllocationOf_and_envyBoundedBy v hαnonneg hmargin goodsList
-  have hgoods := lmmsAlgorithm_goods_eq_list_toFinset v hαnonneg hmargin goodsList hnodup
+  let res := boundedEnvyAlgorithm v hαnonneg hmargin goodsList
+  have hres := boundedEnvyAlgorithm_isAllocationOf_and_envyBoundedBy v hαnonneg hmargin goodsList
+  have hgoods := boundedEnvyAlgorithm_goods_eq_list_toFinset v hαnonneg hmargin goodsList hnodup
   simpa [res, hgoods] using hres
-    
+
 end FairDivision
 end EconCSLib

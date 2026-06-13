@@ -16,6 +16,7 @@ rights have been checked separately.
 
 - Implementation theorem file: `TEMPLATE/MainTheorems.lean`
 - Human-facing theorem file: `TEMPLATE/PaperInterface.lean`
+- Paper assumption file: `TEMPLATE/Assumptions.lean`
 - Machine-readable status source: `TEMPLATE/status.json`
 - Outside-Lean proof plan: `TEMPLATE/FORMALIZATION_PLAN.md`
 - Final validation report: `TEMPLATE/FINAL_VALIDATION_REPORT.md`
@@ -29,6 +30,10 @@ and direct theorem statements there, with short proofs that call into
 is closed and the remaining assumptions cell is `None`.
 Keep the dashboard surface small: one row per paper-facing definition or named
 result, not every helper theorem, certificate, or proof-route alias.
+Every non-derived paper-facing theorem premise must be a named paper assumption
+declaration in `Assumptions.lean`, listed in `status.json`
+`review_surface.assumption_names`, and checked by `assumption_match_llm.json`
+as a true paper/source model assumption.
 
 Use the controlled status vocabulary from `../../docs/STATUS.md`:
 `formalized`, `formalized with caveat`, `partially formalized`, `conditional`,
@@ -43,21 +48,37 @@ deep proof work. After the source inventory and first compact
 `PaperInterface.lean` skeleton exist, populate `lean_to_tex_llm.json`, populate
 `statement_match_llm.json`, and run
 `python3 scripts/review_dashboard.py --paper TEMPLATE --statement-precheck`.
-Use this pass only to correct theorem targets; do not update the DAG, final
-validation report, human-review log, or review-surface audit just because this
-early check ran.
+Then run `python3 scripts/review_dashboard.py --paper TEMPLATE
+--assumption-precheck`: the statement judge is row-local and does not certify
+that theorem premises are source assumptions or derived facts. Use this pass
+only to correct theorem targets and premise provenance; do not update the DAG,
+final validation report, human-review log, or review-surface audit just because
+this early check ran.
 
 At review boundaries, populate `lean_to_tex_llm.json` with context-free
-Lean-to-TeX/prose translations generated from `PaperInterface.lean` alone. New
+Lean-to-TeX/prose translations generated from `PaperInterface.lean` alone. The
+translator must preserve every visible variable, binder, hypothesis, domain
+condition, equivalence direction, and conclusion; it must not summarize a theorem
+as an endpoint label or omit conditions that appear in the Lean statement. New
 tracked entries should use `{ "tex_statement": "...", "lean_statement_sha256":
 "..." }`. Then populate `statement_match_llm.json` with an independent
-no-context judgment of whether each translation matches the original paper
-statement, including Lean, paper, and TeX statement digests plus the judge
-model/agent name, validator type, validation timestamp, and any validator
-comment. If the judge flags a mismatch or uncertainty, iterate on the Lean
-statement before treating it as the paper theorem target. Run
+no-context judgment of whether each translation matches the original full paper
+statement, including all hypotheses, subparts, quantifiers, domains, constants,
+normalizations, signs, inequality directions, and conclusions. A row may be
+judged `matches` only if it is equivalent to the full source statement or to a
+clearly identified source subpart; if the Lean translation is a conditional
+wrapper, source-row package, omitted subclaim, weakened/strengthened statement,
+or broad aggregate for several displayed formulas, the judge must mark
+`mismatch` or `uncertain`. Include Lean, paper, and TeX statement digests plus
+the judge model/agent name, validator type, validation timestamp, and any
+validator comment. If the judge flags a mismatch or uncertainty, iterate on the
+Lean statement before treating it as the paper theorem target. Run
 `python3 scripts/review_dashboard.py --paper TEMPLATE --precheck` before
 handoff so missing/stale statement-audit rows are explicit.
+If any paper-facing theorem takes a hypothesis that is not proved from prior
+Lean declarations, declare it in `Assumptions.lean`, list it in
+`review_surface.assumption_names`, and populate `assumption_match_llm.json`
+with an independent source-assumption judgment.
 If the dashboard has more than 30 rows, also populate `review_surface_llm.json`
 with a no-paper-context LLM audit that checks whether every dashboard row is a
 paper-facing definition, formula, or named statement. At 50 or more rows, treat
@@ -79,8 +100,13 @@ the dashboard as oversized and curate `PaperInterface.lean` or
 - [ ] Replace placeholders in `MainTheorems.lean` and `PaperInterface.lean`.
 - [ ] Run the lightweight statement target-setting pass and fix mismatched
       theorem targets before serious proof work.
+- [ ] Run the assumption/hidden-premise precheck after the statement pass; do
+      not treat row-local statement matches as globally certified targets until
+      premise provenance also clears.
 - [ ] Keep `PaperInterface.lean` and `status.json` `review_surface` limited to
       source-facing definitions and named statements.
+- [ ] Route every non-derived paper-facing theorem premise through
+      `Assumptions.lean`, then run the assumption-provenance LLM judge.
 - [ ] If the dashboard has more than 30 rows, run the LLM review-surface audit;
       if it has 50 or more rows, curate the interface before broad review.
 - [ ] Run the context-free Lean-to-TeX translation and third-LLM match judgment
@@ -96,3 +122,9 @@ the dashboard as oversized and curate `PaperInterface.lean` or
       primitives into `EconCSLib` when the destination is clear and the
       extraction is local/low-risk; otherwise record the candidate and likely
       destination module in `FINAL_VALIDATION_REPORT.md`.
+- [ ] Run the combined recursive provenance audit and write the paper-by-paper
+      closeout report:
+      `python3 scripts/audit_repository.py --include-active --library-premise-audit --info-limit 0 --write-report docs/RECURSIVE_PROVENANCE_AUDIT_<date>.md`.
+      Resolve all findings for this paper before claiming `formalized`; if a
+      finding remains, mark the result partial/conditional in `status.json`,
+      `DependencyDAG.tex`, and `FINAL_VALIDATION_REPORT.md`.

@@ -23,6 +23,8 @@ or what a completed formalization proves without reading proof internals.
   a public-safe pull request when ready.
 - [PUBLIC_REPOSITORY_WORKFLOW.md](PUBLIC_REPOSITORY_WORKFLOW.md): public/private
   repository split, completed-paper imports, and private partial-paper policy.
+- [PRIVATE_DEVELOPMENT_WORKFLOW.md](PRIVATE_DEVELOPMENT_WORKFLOW.md):
+  public-based private repository workflow and private-to-public paper PR path.
 - [PUBLIC_RELEASE_CHECKLIST.md](PUBLIC_RELEASE_CHECKLIST.md): checks before a
   public announcement or broad external contribution request.
 - [REPOSITORY_LAUNCH_PLAN.md](REPOSITORY_LAUNCH_PLAN.md): current launch plan
@@ -44,11 +46,20 @@ They may assume Lean familiarity and may be more detailed.
 - [ECONCSLIB_DOMAIN_INDEX.md](ECONCSLIB_DOMAIN_INDEX.md): reusable library
   modules by domain.
 - [LEAN_STYLE.md](LEAN_STYLE.md): Lean style conventions.
+- [LIBRARY_PROVENANCE.md](LIBRARY_PROVENANCE.md): how to audit reusable
+  certificate/source-boundary APIs and paper wrapper obligations.
 - [STATUS.md](STATUS.md): controlled vocabulary for paper status rows.
 - [THEOREM_ERGONOMICS.md](THEOREM_ERGONOMICS.md): theorem statement and
   interface conventions.
 - [PROBABILITY_LIBRARY_ROADMAP.md](PROBABILITY_LIBRARY_ROADMAP.md) and
   [OPTIMIZATION_LIBRARY_ROADMAP.md](OPTIMIZATION_LIBRARY_ROADMAP.md): reusable
   library roadmaps.
+- [ECONCS_LIBRARY_EXTRACTION_PLAN.md](ECONCS_LIBRARY_EXTRACTION_PLAN.md):
+  cross-paper extraction and cleanup plan for probability, rankings,
+  stochastic processes, continuous analysis, and design optimization.
+- [LARGE_DEVIATIONS_LIBRARY_PLAN.md](LARGE_DEVIATIONS_LIBRARY_PLAN.md):
+  shared LDP, Chernoff, Laplace-principle, and binary-rate extraction plan for
+  ranking and rating-system paper formalizations.
+
 Detailed proof-strategy rules for agents live in
 [`skills/econcs-formalizer/`](../skills/econcs-formalizer/).

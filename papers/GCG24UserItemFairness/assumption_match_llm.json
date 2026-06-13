@@ -1,0 +1,444 @@
+{
+  "schema": 1,
+  "paper": "GCG24UserItemFairness",
+  "prompt_version": "assumption-provenance-v2-exact-premise-source",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-13T00:00:00Z",
+  "comment": "Refreshed under the exact premise-source provenance prompt. Every audit-premise is judged independently where present.",
+  "prompt_summary": [
+    "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
+    "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
+    "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
+    "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
+    "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption."
+  ],
+  "items": {
+    "assumption_positive_recommendation_utilities": {
+      "judgment": "paper_condition",
+      "reason": "The source model and Theorem 3 opposing-type construction use strictly positive recommendation utilities.",
+      "source_location": "Model/Theorem 3 setup, cached source text lines 368-370 and 2080-2083; Appendix C Lemma 1 lines 1740-1746",
+      "premise_count": 3,
+      "premise_judgments": {
+        "hPos : S.model.Positive": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 1740-1746",
+          "reason": "Appendix C Lemma 1 states the strictly positive utility premise w_ij > 0 for all items.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hPos : R.data.model.Positive": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 368-370 and 2080-2083",
+          "reason": "Theorem 3's opposing-type model states v1 > v2 > ... > vn > 0, so the corresponding original recommendation model has positive utilities.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hPos' : R'.data.model.Positive": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 368-370 and 2080-2083",
+          "reason": "The comparison model in Theorem 3 has the same positive value vector v with a different population share alpha.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_theorem3_opposing_type_model": {
+      "judgment": "paper_condition",
+      "reason": "Theorem 3 is stated for two opposing user types with a common strictly decreasing positive value vector.",
+      "source_location": "GCG24UserItemFairness.txt lines 367-397 and 2078-2086",
+      "premise_count": 4,
+      "premise_judgments": {
+        "hred : R.reduced = OpposingTypes.twoTypeReducedModel alpha v": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 367-374 and 2078-2083",
+          "reason": "The source defines the two-type model by the values v_j and v_{n-j+1}; the reduction witness equality pins the Lean model to that source construction.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hred' : R'.reduced = OpposingTypes.twoTypeReducedModel alpha' v": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 367-374 and 2078-2083",
+          "reason": "The comparison instance uses the same opposing-type construction and value vector at population share alpha'.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hpos : ∀ j : Item n, 0 < v j": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 368-370 and 2080-2083",
+          "reason": "The source assumes v1 > v2 > ... > vn > 0.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hdec : OpposingTypes.StrictlyDecreasingByIndex v": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 368-370 and 2080-2083",
+          "reason": "The strict ordering v1 > v2 > ... > vn is the Lean strict-decreasing-by-index condition.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_theorem3_first_half_alpha_domain": {
+      "judgment": "paper_condition",
+      "reason": "Theorem 3 first-half monotonicity is stated for 0 < alpha <= alpha' <= 1/2.",
+      "source_location": "GCG24UserItemFairness.txt lines 374-397 and 2080-2086",
+      "premise_count": 7,
+      "premise_judgments": {
+        "halpha0 : 0 < alpha": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 374-397 and 2080-2086",
+          "reason": "The source states the first-half interval as 0 < alpha <= 1/2.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha1 : alpha < 1": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 374-397 and 2080-2086",
+          "reason": "The theorem domain is alpha in (0,1), split around 1/2.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha0' : 0 < alpha'": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 374-397 and 2080-2086",
+          "reason": "The comparison alpha' is in the same first-half source interval.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha1' : alpha' < 1": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 374-397 and 2080-2086",
+          "reason": "The theorem domain is alpha' in (0,1), split around 1/2.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha_le : alpha ≤ alpha'": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 391-397 and 2085-2086",
+          "reason": "The Lean comparison expresses monotonicity in alpha over the first half.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha_half : alpha ≤ 1 / 2": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 391-397 and 2085-2086",
+          "reason": "The first-half theorem covers alpha <= 1/2.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha_half' : alpha' ≤ 1 / 2": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 391-397 and 2085-2086",
+          "reason": "The comparison endpoint alpha' remains in the first-half interval.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_theorem3_second_half_alpha_domain": {
+      "judgment": "paper_condition",
+      "reason": "Theorem 3 second-half monotonicity is stated for 1/2 <= alpha <= alpha' < 1.",
+      "source_location": "GCG24UserItemFairness.txt lines 374-397 and 2080-2086",
+      "premise_count": 7,
+      "premise_judgments": {
+        "halpha0 : 0 < alpha": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 374-397 and 2080-2086",
+          "reason": "The theorem domain is alpha in (0,1), split around 1/2.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha1 : alpha < 1": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 374-397 and 2080-2086",
+          "reason": "The second-half theorem uses alpha < 1.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha0' : 0 < alpha'": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 374-397 and 2080-2086",
+          "reason": "The comparison alpha' is in the same source domain.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha1' : alpha' < 1": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 374-397 and 2080-2086",
+          "reason": "The theorem states the second-half interval up to alpha < 1.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha_le : alpha ≤ alpha'": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 391-397 and 2085-2086",
+          "reason": "The Lean comparison expresses monotonicity in alpha over the second half.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha_half : 1 / 2 ≤ alpha": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 391-397 and 2085-2086",
+          "reason": "The second-half theorem covers alpha >= 1/2.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "halpha_half' : 1 / 2 ≤ alpha'": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 391-397 and 2085-2086",
+          "reason": "The comparison endpoint alpha' remains in the second-half interval.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_theorem4_at_least_three_items": {
+      "judgment": "paper_condition",
+      "reason": "The Theorem 4 construction uses a nontrivial item geometry with more than two items.",
+      "source_location": "Theorem 4 construction and Appendix E proof, cached source text lines 456-470 and 3338-3368",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hn : 2 < n": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 456-470, 496, 3338-3368, and 3515-3527",
+          "reason": "The source construction uses beta > 1/n and the three-type estimated matrix; the Lean wrapper records the nontrivial n > 2 item condition used by the construction.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_theorem4_true_model_reduction": {
+      "judgment": "paper_condition",
+      "reason": "The Theorem 4 wrapper identifies the true model with the paper's two-opposing-type source construction.",
+      "source_location": "Theorem 4 construction, cached source text lines 456-470 and appendix lines 3338-3368",
+      "premise_count": 1,
+      "premise_judgments": {
+        "htrue : E.trueModel = Rtrue.data.model": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 456-470 and 3338-3368",
+          "reason": "The theorem compares the true utility matrix w with the estimated matrix w-hat; the Lean premise connects the true model field to the two-type reduction witness representing w.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_theorem4_estimated_model_reduction": {
+      "judgment": "paper_condition",
+      "reason": "The Theorem 4 wrapper identifies the estimated model with the paper's three-type estimated utility construction.",
+      "source_location": "Theorem 4 construction, cached source text lines 456-470 and appendix lines 3338-3369",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hestimated : E.estimatedModel = Rest.data.model": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 456-470 and 3338-3369",
+          "reason": "The theorem's w-hat construction is represented by the three-type estimated reduction witness in Lean.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_theorem4_displayed_reduced_models": {
+      "judgment": "paper_condition",
+      "reason": "Theorem 4 uses the displayed true and estimated reduced matrices.",
+      "source_location": "GCG24UserItemFairness.txt lines 456-470 and 3338-3377",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hredTrue : Rtrue.reduced = OpposingTypes.twoTypeReducedModel (1 / 2 : ℝ) (OpposingTypes.theorem4SmallValueVector (n := n) eps)": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 456-470, 3338-3360, and 3557-3560",
+          "reason": "The no-misestimation true model uses the equal-proportion opposing two-type construction; Lean pins it to the displayed small-value vector used to make the misestimation price large.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hredEst : Rest.reduced = OpposingTypes.theorem4EstimatedReducedModel beta (OpposingTypes.theorem4SmallValueVector (n := n) eps)": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 456-470, 496, 3338-3377, and 3515-3554",
+          "reason": "The estimated model is the paper's three-type w-hat construction with the beta cold-start share and the small-value vector.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_theorem4_cold_start_type_wiring": {
+      "judgment": "paper_condition",
+      "reason": "Theorem 4's cold-start users are estimated as the third type while their true row is one of the two opposing rows.",
+      "source_location": "GCG24UserItemFairness.txt lines 456-470 and 3368-3377",
+      "premise_count": 5,
+      "premise_judgments": {
+        "hknown0 : ∀ u : User m, Rest.data.types.toType u = 0 → Rtrue.data.types.toType u = 0": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 3368-3377",
+          "reason": "The estimated known first type corresponds to the true first opposing row.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hknown1 : ∀ u : User m, Rest.data.types.toType u = 1 → Rtrue.data.types.toType u = 1": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 3368-3377",
+          "reason": "The estimated known second type corresponds to the true second opposing row.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "htrueType : Rtrue.data.types.toType u = 0": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 3368-3372 and 3527-3529",
+          "reason": "One Theorem 4 wrapper handles a mis-estimated user whose true row is the first opposing type.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "htrueType : Rtrue.data.types.toType u = 1": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 3368-3372 and 3527-3529",
+          "reason": "The second Theorem 4 wrapper handles a mis-estimated user whose true row is the second opposing type.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hestimatedType : Rest.data.types.toType u = 2": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GCG24UserItemFairness.txt lines 3368-3372",
+          "reason": "The paper denotes the third estimated type z as the mis-estimated users.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_theorem4_parameter_domain": {
+      "judgment": "paper_condition",
+      "reason": "Theorem 4's arbitrary-large misestimation conclusion is parameterized by epsilon and beta.",
+      "source_location": "GCG24UserItemFairness.txt lines 456-470, 496, and 3515-3554",
+      "premise_count": 3,
+      "premise_judgments": {
+        "heps : 0 < eps": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 470-476 and 3554-3556",
+          "reason": "The source states the large-misestimation bullet for arbitrary epsilon and chooses values to make the price exceed 1 - epsilon.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hbeta : (n : ℝ)⁻¹ < beta": {
+          "judgment": "source_text",
+          "source_location": "GCG24UserItemFairness.txt lines 456-470, 496, and 3515-3527",
+          "reason": "Theorem 4 explicitly assumes beta > 1/n.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hbeta_half : beta < 1 / 2": {
+          "judgment": "paper_condition",
+          "source_location": "GCG24UserItemFairness.txt lines 456-470 and 3368-3377",
+          "reason": "The Lean construction fixes the cold-start third type as a minority estimated type; beta < 1/2 is the formal domain used by this two-known-types plus cold-start construction.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    }
+  }
+}

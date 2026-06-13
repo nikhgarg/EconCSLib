@@ -1,0 +1,342 @@
+{
+  "schema": 1,
+  "paper": "GHW01DigitalGoods",
+  "prompt_version": "assumption-provenance-v2-exact-premise-source",
+  "validator": "gpt-5-codex",
+  "validator_type": "model",
+  "validated_at": "2026-06-13T00:00:00Z",
+  "comment": "Refreshed under the exact premise-source provenance prompt. Every audit-premise is judged independently where present.",
+  "prompt_summary": [
+    "For each Assumptions.lean declaration, decide whether it is an explicit paper/model assumption, a source theorem condition, a documented caveat, a partial-formalization boundary, not a paper assumption, or uncertain.",
+    "For every exact -- audit-premise entry, give an independent premise_judgments entry. Group-level approval is insufficient.",
+    "Use source_text_model_primitive, source_text, or paper_condition only for premises explicitly stated by the source; cite source_location.",
+    "Use derived_from_source_primitives only when the Lean development derives the premise from prior source primitives.",
+    "Displayed formulas, capacity equations, threshold identities, density/mass rows, source-row packages, certificates, and proof conveniences are not paper assumptions unless the source explicitly assumes them; otherwise mark partial_boundary or not_paper_assumption."
+  ],
+  "items": {
+    "assumption_high_value_scale_conditions": {
+      "judgment": "paper_condition",
+      "reason": "The paper normalizes the smallest bid to 1, denotes the highest bid by h, and the lower-bound sections use the two-value 1/h family.",
+      "source_location": "GHW01DigitalGoods.txt:236-239 and Theorems 9.1/9.3 around lines 979-1104",
+      "premise_count": 4,
+      "premise_judgments": {
+        "hh_ge_one : 1 ≤ h": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the paper's normalization ell=1 and h as the highest bid value",
+          "reason": "With the lowest bid normalized to 1 and h denoting the highest bid, the finite high-value wrapper's `1 <= h` is a source-model consequence.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hhigh_pos : 0 < highValue": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from highValue as the positive high bid / highest bid scale in Theorem 6.2 and the normalized bid model",
+          "reason": "The random-sampling endpoint's highValue is the paper's high bid bound h; positivity follows from the normalized positive bid scale.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hh_pos : 0 < h": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from `1 <= h` under the paper's normalized high-bid scale",
+          "reason": "This is not an extra assumption: Lean exposes the positive form needed by truncation lemmas, and it follows from the source normalization.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hhigh_ge_two : 2 ≤ highValue": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Theorems 9.1/9.3 two-value lower-bound construction with bid values 1 and h",
+          "reason": "The Nat two-value Lean model uses `2 <= highValue` to represent the nontrivial source family with distinct low value 1 and high value h > 1.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_bid_value_range_conditions": {
+      "judgment": "paper_condition",
+      "reason": "The paper fixes bid values in the normalized positive range from the lowest bid 1 to the highest bid h, and Theorem 6.2 uses h as a high-value bound.",
+      "source_location": "GHW01DigitalGoods.txt:236-239, Theorem 4.1, Corollary 4.2, and Theorem 6.2",
+      "premise_count": 4,
+      "premise_judgments": {
+        "hvalue_ge_one : ∀ i : Agent, 1 ≤ values i": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GHW01DigitalGoods.txt:236-239: lowest bid value ell is normalized to 1 and h is the highest bid value",
+          "reason": "The Lean condition is the finite-function representation of all bids lying at or above the normalized lowest bid.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hvalue_le_h : ∀ i : Agent, values i ≤ h": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GHW01DigitalGoods.txt:236-239: h is the highest bid value",
+          "reason": "The Lean condition states exactly that h bounds every bid value.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hvalues_nonneg : ∀ i : Agent, 0 ≤ values i": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Derived from the normalized source condition `1 <= values i`",
+          "reason": "Corollary 4.2 uses a nonnegative-values helper; nonnegativity follows from the source bid range.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hvalue_bound : ∀ i, values i ≤ highValue": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "Theorem 6.2 uses the source high-bid value h as the scale in the condition alpha h <= F",
+          "reason": "The Lean highValue parameter is the finite upper bound corresponding to the paper's h.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_high_value_attained": {
+      "judgment": "paper_condition",
+      "reason": "The paper defines h as the highest bid value, so the finite profile has some bidder attaining h.",
+      "source_location": "GHW01DigitalGoods.txt:236-239",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hmax : ∃ i : Agent, values i = h": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GHW01DigitalGoods.txt:236-239: h is the highest bid value",
+          "reason": "The existential is the finite-profile form of the source notation that h is the highest bid.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_total_value_notation": {
+      "judgment": "paper_condition",
+      "reason": "The paper explicitly defines T as the sum of all bids.",
+      "source_location": "GHW01DigitalGoods.txt:229-232",
+      "premise_count": 1,
+      "premise_judgments": {
+        "htotal : total = totalValue values": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GHW01DigitalGoods.txt:229-232: T is the sum of all bids",
+          "reason": "Lean exposes `total` as a named parameter tied to the finite sum so the paper's T notation can be used in theorem statements.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_weighted_pairing_large_market": {
+      "judgment": "paper_condition",
+      "reason": "Theorem 7.1 explicitly assumes 4h <= T.",
+      "source_location": "GHW01DigitalGoods.txt:563",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hlarge : 4 * h ≤ total": {
+          "judgment": "source_text",
+          "source_location": "GHW01DigitalGoods.txt:563: Theorem 7.1 If 4h <= T",
+          "reason": "The Lean side condition is the exact finite inequality from the theorem statement, after `total` is identified with T.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_two_winner_benchmark_large_enough": {
+      "judgment": "paper_condition",
+      "reason": "Theorem 7.2 explicitly assumes the fixed-price benchmark is at least twice the high bid.",
+      "source_location": "GHW01DigitalGoods.txt:626",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hF_ge_two_h : 2 * h ≤ twoWinnerBenchmark values": {
+          "judgment": "source_text",
+          "source_location": "GHW01DigitalGoods.txt:626: Theorem 7.2 If F >= 2h",
+          "reason": "The Lean benchmark is the paper's two-winner fixed-price benchmark F^(2); the inequality is the theorem's large-benchmark condition.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_weighted_pairing_log_factor": {
+      "judgment": "paper_condition",
+      "reason": "The Lean endpoint replaces the asymptotic square-root logarithmic factor with an explicit finite parameter s satisfying the required log bound.",
+      "source_location": "GHW01DigitalGoods.txt:623-627 and Theorem 7.2 proof",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hs_ge_two : 2 ≤ s": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Finite explicit wrapper for the source Theorem 7.2 `sqrt(log h)` factor",
+          "reason": "This is a harmless finite-domain/log-factor side condition for the exact constant statement, not an external proof certificate.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "hlog_le_s_sq : Real.logb 2 h + 2 ≤ s ^ 2": {
+          "judgment": "derived_from_source_primitives",
+          "source_location": "Finite explicit wrapper for the source Theorem 7.2 `sqrt(log h)` factor",
+          "reason": "The paper states the guarantee asymptotically in `sqrt(log h)`; Lean exposes a parameter s whose square dominates the base-two log expression used by the proof.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_truthful_auction_condition": {
+      "judgment": "paper_condition",
+      "reason": "Lemma 8.1 and Lemma 9.2 are explicitly stated for truthful auctions.",
+      "source_location": "GHW01DigitalGoods.txt:747 and 1105-1111",
+      "premise_count": 2,
+      "premise_judgments": {
+        "hM : truthful M": {
+          "judgment": "source_text",
+          "source_location": "GHW01DigitalGoods.txt:747: Lemma 8.1 Suppose in a truthful auction",
+          "reason": "The Lean premise is the direct truthfulness hypothesis in Lemma 8.1.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        },
+        "htruth : truthful M": {
+          "judgment": "source_text",
+          "source_location": "GHW01DigitalGoods.txt:1105-1111: Lemma 9.2 Any truthful deterministic auction is bid-independent",
+          "reason": "The Lean premise is the direct truthfulness hypothesis in Lemma 9.2.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_low_bid_below_high_bid": {
+      "judgment": "paper_condition",
+      "reason": "Lemma 8.1 compares a lower bid with a higher bid.",
+      "source_location": "GHW01DigitalGoods.txt:747-750",
+      "premise_count": 1,
+      "premise_judgments": {
+        "hlt : low < high": {
+          "judgment": "source_text",
+          "source_location": "GHW01DigitalGoods.txt:747-750: Lemma 8.1 Suppose bi < bj",
+          "reason": "The Lean variables `low` and `high` are the two compared bid values in the source lemma.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_lower_bound_positive_alpha": {
+      "judgment": "paper_condition",
+      "reason": "The lower-bound theorems quantify over a positive constant alpha in the `alpha h <= F` regime.",
+      "source_location": "GHW01DigitalGoods.txt:253-266 and Theorems 9.1/9.3",
+      "premise_count": 1,
+      "premise_judgments": {
+        "halpha_pos : 0 < alpha": {
+          "judgment": "source_text_model_primitive",
+          "source_location": "GHW01DigitalGoods.txt:253-266: for some constant alpha, assume alpha h <= F; Theorems 9.1/9.3 quantify over any constant alpha",
+          "reason": "The Lean lower-bound witness uses a positive natural alpha for the nontrivial source large-market lower-bound regime.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model": {
+      "judgment": "paper_condition",
+      "reason": "The paper folder intentionally uses the later journal version's monotone randomized-auction refinement as the controlled source statement for Section 8.2, rather than the broader preliminary SODA wording.",
+      "source_location": "GHW01DigitalGoods README/source-version note and GHW01DigitalGoods.txt:833 for the preliminary SODA Theorem 8.2 statement",
+      "premise_count": 1,
+      "premise_judgments": {
+        "model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price": {
+          "judgment": "paper_condition",
+          "source_location": "Recorded Section 8.2 journal-version source choice; the SODA cached text at GHW01DigitalGoods.txt:833 has the broader preliminary wording",
+          "reason": "The Lean source model expands the controlled journal endpoint into finite values, prices, marginal offer laws, nonnegativity, and raw-CDF monotone offer conditions. This is a source-version/domain condition, not a proof certificate.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    },
+    "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model": {
+      "judgment": "paper_condition",
+      "reason": "The SODA paper defines deterministic auctions on sets of bids and Lemma 9.2 studies the focused slice A_i(B_i^x); the Lean model makes that deterministic set-of-bids/focused-outcome convention explicit.",
+      "source_location": "GHW01DigitalGoods.txt:200-204 and 1105-1112",
+      "premise_count": 1,
+      "premise_judgments": {
+        "model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue": {
+          "judgment": "paper_condition",
+          "source_location": "GHW01DigitalGoods.txt:200-204 defines deterministic auctions as maps from sets of bids to outcomes; lines 1105-1112 define A_i(B_i^x) for Lemma 9.2",
+          "reason": "The Lean source model exposes the auction family, truthfulness/IR/NPT/binary deterministic conditions, and focused outcome representation used by the paper's set-of-bids convention. The erased-list/list-price representation is then derived internally.",
+          "validated_at": "2026-06-13T00:00:00Z",
+          "validator": "gpt-5-codex",
+          "validator_type": "model",
+          "prompt_version": "assumption-provenance-v2-exact-premise-source"
+        }
+      },
+      "validator": "gpt-5-codex",
+      "validator_type": "model",
+      "validated_at": "2026-06-13T00:00:00Z",
+      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+    }
+  }
+}

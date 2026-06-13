@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "description": "Repository-audit configuration. Generic audit code reads active_papers from here instead of hardcoding paper names.",
+  "active_papers": [],
+  "generic_source_hygiene_allowed_terms": [
+    "MSVV"
+  ]
+}

@@ -2474,7 +2474,7 @@ abbrev paper_source_sorted_erase_critical_window
     (bids : Bidder → EconCSLib.Auction.SingleMindedBid Item)
     (acceptedWithJ : Finset Bidder) (j : Bidder)
     (base : List Bidder) (windowOrder : ℝ → List Bidder) :=
-  EconCSLib.Auction.SingleMindedSourceSortedEraseCriticalWindow
+  EconCSLib.Auction.SingleMindedFullOrderSortedEraseCriticalWindow
     orderOf bids acceptedWithJ j base windowOrder
 
 /--
@@ -2553,14 +2553,14 @@ noncomputable def paper_average_value_update_window_source_sorted_erase_critical
       (EconCSLib.Auction.singleMindedGreedyAcceptedFromState bids ∅
         (before ++ [j]))
       j base (paper_average_value_update_window bids j base) :=
-  EconCSLib.Auction.singleMindedAverageValueUpdateWindow_sourceSortedEraseCriticalWindow_of_split
+  EconCSLib.Auction.singleMindedAverageValueUpdateWindow_fullOrderSortedEraseCriticalWindow_of_split
     bids horder hjaccepted hreject haccept
 
 /--
 Concrete average-order source-window constructor with the local-to-global bridge
 discharged by the ordered-insertion suffix-window equivalence.
 -/
-theorem paper_average_value_update_window_sorted_erase_critical_window_of_source_split
+theorem paper_average_value_update_window_sorted_erase_critical_window_of_split_data
     {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Item]
     [LinearOrder Bidder]
     (bids : Bidder → EconCSLib.Auction.SingleMindedBid Item)
@@ -2575,14 +2575,14 @@ theorem paper_average_value_update_window_sorted_erase_critical_window_of_source
         bids ∅ (before ++ [j]))
       j base (paper_average_value_update_window bids j base) := by
   exact
-    EconCSLib.Auction.singleMindedAverageValueUpdateWindow_sortedEraseCriticalWindow_of_source_split
+    EconCSLib.Auction.singleMindedAverageValueUpdateWindow_sortedEraseCriticalWindow_of_split_data
       bids horder hjaccepted
 
 /--
 Concrete average-order source-window package for the split around an accepted
 bid `j`, with no remaining bridge assumptions.
 -/
-noncomputable def paper_average_value_update_window_source_sorted_erase_critical_window_of_source_split
+noncomputable def paper_average_value_update_window_source_sorted_erase_critical_window_of_split_data
     {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Item]
     [LinearOrder Bidder]
     (bids : Bidder → EconCSLib.Auction.SingleMindedBid Item)
@@ -2596,7 +2596,7 @@ noncomputable def paper_average_value_update_window_source_sorted_erase_critical
       (EconCSLib.Auction.singleMindedGreedyAcceptedFromState
         bids ∅ (before ++ [j]))
       j base (paper_average_value_update_window bids j base) :=
-  EconCSLib.Auction.singleMindedAverageValueUpdateWindow_sourceSortedEraseCriticalWindow_of_source_split
+  EconCSLib.Auction.singleMindedAverageValueUpdateWindow_fullOrderSortedEraseCriticalWindow_of_split_data
     bids horder hjaccepted
 
 /--
@@ -2686,7 +2686,7 @@ theorem paper_greedy_accepted_mechanism_zero_branch_of_next_denied_none
 Source-window finite branch for Definition 10.1: a full-order split around `j`
 derives the local finite critical branch from the full-order `n(j)=n` search.
 -/
-theorem paper_greedy_accepted_mechanism_finite_branch_of_source_sorted_window
+theorem paper_greedy_accepted_mechanism_finite_branch_of_sorted_window
     {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
     (orderOf :
       (Bidder → EconCSLib.Auction.SingleMindedBid Item) → List Bidder)
@@ -2709,7 +2709,7 @@ theorem paper_greedy_accepted_mechanism_finite_branch_of_source_sorted_window
       j ∈ M.accepted (paper_single_minded_value_update bids j v)) ∧
     M.payment bids j = p := by
   exact
-    EconCSLib.Auction.singleMindedGreedyAcceptedMechanism_finite_branch_of_source_sorted_window
+    EconCSLib.Auction.singleMindedGreedyAcceptedMechanism_finite_branch_of_sorted_window
       orderOf bids acceptedWithJ pre nextPost windowOrder hsource
       hnext_order hj_nonempty
 
@@ -2718,7 +2718,7 @@ Source-window zero branch for Definition 10.1: a full-order split around `j`
 with no next denied bid gives zero payment and acceptance at every positive
 value over the nonnegative value domain.
 -/
-theorem paper_greedy_accepted_mechanism_zero_branch_of_source_sorted_window
+theorem paper_greedy_accepted_mechanism_zero_branch_of_sorted_window
     {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
     (orderOf :
       (Bidder → EconCSLib.Auction.SingleMindedBid Item) → List Bidder)
@@ -2739,7 +2739,7 @@ theorem paper_greedy_accepted_mechanism_zero_branch_of_source_sorted_window
       j ∈ M.accepted (paper_single_minded_value_update bids j v)) ∧
     M.payment bids j = 0 := by
   exact
-    EconCSLib.Auction.singleMindedGreedyAcceptedMechanism_zero_branch_of_source_sorted_window
+    EconCSLib.Auction.singleMindedGreedyAcceptedMechanism_zero_branch_of_sorted_window
       orderOf bids acceptedWithJ base windowOrder hsource hnext_order
 
 /--
@@ -2752,7 +2752,7 @@ abbrev paper_source_critical_branch_windows
     (orderOf :
       (Bidder → EconCSLib.Auction.SingleMindedBid Item) → List Bidder)
     (bids : Bidder → EconCSLib.Auction.SingleMindedBid Item) (j : Bidder) :=
-  EconCSLib.Auction.SingleMindedSourceCriticalBranchWindows orderOf bids j
+  EconCSLib.Auction.SingleMindedCriticalBranchWindows orderOf bids j
 
 /--
 For any bidder accepted by the concrete average-order greedy run, the average
@@ -2768,7 +2768,7 @@ noncomputable def paper_average_source_critical_branch_windows_of_accepted
       j ∈ EconCSLib.Auction.singleMindedGreedyAcceptedFromOrder
         bids (paper_average_order_of bids)) :
     paper_source_critical_branch_windows paper_average_order_of bids j :=
-  EconCSLib.Auction.singleMindedAverageSourceCriticalBranchWindows_of_accepted
+  EconCSLib.Auction.singleMindedAverageCriticalBranchWindows_of_accepted
     bids hjacc
 
 /--
@@ -2779,7 +2779,7 @@ abbrev paper_nonnegative_critical_source_branch_data
     {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
     (orderOf :
       (Bidder → EconCSLib.Auction.SingleMindedBid Item) → List Bidder) :=
-  EconCSLib.Auction.SingleMindedNonnegativeCriticalSourceBranchData orderOf
+  EconCSLib.Auction.SingleMindedNonnegativeCriticalBranchData orderOf
 
 /--
 Accepted-bid criticality for the full greedy mechanism: the actual Definition
@@ -2787,7 +2787,7 @@ Accepted-bid criticality for the full greedy mechanism: the actual Definition
 value on the nonnegative report domain, assuming source windows for the finite
 and no-next branches.
 -/
-theorem paper_greedy_accepted_mechanism_payment_critical_of_source_windows
+theorem paper_greedy_accepted_mechanism_payment_critical_of_branch_windows
     {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
     (orderOf :
       (Bidder → EconCSLib.Auction.SingleMindedBid Item) → List Bidder)
@@ -2801,7 +2801,7 @@ theorem paper_greedy_accepted_mechanism_payment_critical_of_source_windows
     (∀ v, M.payment bids j < v →
       j ∈ M.accepted (paper_single_minded_value_update bids j v)) := by
   exact
-    EconCSLib.Auction.singleMindedGreedyAcceptedMechanism_payment_critical_of_source_windows
+    EconCSLib.Auction.singleMindedGreedyAcceptedMechanism_payment_critical_of_branch_windows
       orderOf bids hwindows hj_nonempty
 
 /--
@@ -2824,7 +2824,7 @@ theorem paper_average_greedy_accepted_mechanism_payment_critical_of_accepted
     (∀ v, M.payment bids j < v →
       j ∈ M.accepted (paper_single_minded_value_update bids j v)) := by
   exact
-    paper_greedy_accepted_mechanism_payment_critical_of_source_windows
+    paper_greedy_accepted_mechanism_payment_critical_of_branch_windows
       paper_average_order_of bids
       (paper_average_source_critical_branch_windows_of_accepted bids hjacc)
       hj_nonempty
@@ -2890,7 +2890,7 @@ Build the Theorem 10.2 nonnegative-domain critical-value certificate from the
 source branch data. This is the paper-facing assembly point after the concrete
 sorted-order branch data have been supplied.
 -/
-noncomputable def paper_greedy_nonnegative_critical_certificate_of_source_branch_data
+noncomputable def paper_greedy_nonnegative_critical_certificate_of_branch_data
     {Bidder Item : Type*} [DecidableEq Bidder] [DecidableEq Item]
     (orderOf :
       (Bidder → EconCSLib.Auction.SingleMindedBid Item) → List Bidder)
@@ -2898,14 +2898,14 @@ noncomputable def paper_greedy_nonnegative_critical_certificate_of_source_branch
     (EconCSLib.Auction.singleMindedGreedyAcceptedMechanismFromOrderOf
       (Bidder := Bidder) (Item := Item)
       orderOf).NonnegativeCriticalValueWithInfinityCertificate :=
-  EconCSLib.Auction.singleMindedGreedyAcceptedMechanism_nonnegativeCriticalValueWithInfinityCertificate_of_source_branch_data
+  EconCSLib.Auction.singleMindedGreedyAcceptedMechanism_nonnegativeCriticalValueWithInfinityCertificate_of_branch_data
     orderOf data
 
 /--
 Concrete average-order assembly point for the Theorem 10.2
 nonnegative-domain critical-value certificate.
 -/
-noncomputable def paper_average_greedy_nonnegative_critical_certificate_of_source_branch_data
+noncomputable def paper_average_greedy_nonnegative_critical_certificate_of_branch_data
     {Bidder Item : Type*} [Fintype Bidder] [DecidableEq Item]
     [LinearOrder Bidder]
     (data :
@@ -2918,7 +2918,7 @@ noncomputable def paper_average_greedy_nonnegative_critical_certificate_of_sourc
           (Bidder := Bidder) (Item := Item)
           (EconCSLib.Auction.singleMindedAverageOrderOf
             (Bidder := Bidder) (Item := Item))) :=
-  paper_greedy_nonnegative_critical_certificate_of_source_branch_data
+  paper_greedy_nonnegative_critical_certificate_of_branch_data
     (Bidder := Bidder) (Item := Item)
     (EconCSLib.Auction.singleMindedAverageOrderOf
       (Bidder := Bidder) (Item := Item))
@@ -2935,7 +2935,7 @@ noncomputable def paper_average_greedy_nonnegative_critical_source_branch_data
       (Bidder := Bidder) (Item := Item)
       (EconCSLib.Auction.singleMindedAverageOrderOf
         (Bidder := Bidder) (Item := Item)) :=
-  EconCSLib.Auction.singleMindedAverageGreedyNonnegativeCriticalSourceBranchData
+  EconCSLib.Auction.singleMindedAverageGreedyNonnegativeCriticalBranchData
 
 /--
 Concrete nonnegative-domain critical-value certificate for the average-order
@@ -2949,7 +2949,7 @@ noncomputable def paper_average_greedy_nonnegative_critical_certificate
           (Bidder := Bidder) (Item := Item)
           (EconCSLib.Auction.singleMindedAverageOrderOf
             (Bidder := Bidder) (Item := Item))) :=
-  paper_average_greedy_nonnegative_critical_certificate_of_source_branch_data
+  paper_average_greedy_nonnegative_critical_certificate_of_branch_data
     (paper_average_greedy_nonnegative_critical_source_branch_data
       (Bidder := Bidder) (Item := Item))
 
@@ -3341,7 +3341,7 @@ theorem paper_theorem10_2_average_greedy_truthful_of_nonnegative_source_branch_d
       (EconCSLib.Auction.singleMindedAverageOrderOf
         (Bidder := Bidder) (Item := Item))
       hmono
-      (paper_average_greedy_nonnegative_critical_certificate_of_source_branch_data
+      (paper_average_greedy_nonnegative_critical_certificate_of_branch_data
         (Bidder := Bidder) (Item := Item) data)
 
 /--

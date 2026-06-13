@@ -1044,6 +1044,10 @@ noncomputable def lowerLeftRectangleMass (μ : Measure (ℝ × ℝ)) (x y : ℝ)
 noncomputable def firstCoordinateLowerMass (μ : Measure (ℝ × ℝ)) (x : ℝ) : ℝ :=
   μ.real {p : ℝ × ℝ | p.1 ≤ x}
 
+/-- Real-valued mass of the second-coordinate lower half-space `{(u,v) : v <= y}`. -/
+noncomputable def secondCoordinateLowerMass (μ : Measure (ℝ × ℝ)) (y : ℝ) : ℝ :=
+  μ.real {p : ℝ × ℝ | p.2 ≤ y}
+
 /-- Real-valued mass of the vertical strip `{(u,v) : u <= x, y <= v}`. -/
 noncomputable def verticalUpperStripMass (μ : Measure (ℝ × ℝ)) (x y : ℝ) : ℝ :=
   μ.real {p : ℝ × ℝ | p.1 ≤ x ∧ y ≤ p.2}
@@ -1057,6 +1061,10 @@ theorem measurableSet_lowerLeftRectangle (x y : ℝ) :
 theorem measurableSet_firstCoordinateLower (x : ℝ) :
     MeasurableSet ({p : ℝ × ℝ | p.1 ≤ x}) :=
   (isClosed_le continuous_fst continuous_const).measurableSet
+
+theorem measurableSet_secondCoordinateLower (y : ℝ) :
+    MeasurableSet ({p : ℝ × ℝ | p.2 ≤ y}) :=
+  (isClosed_le continuous_snd continuous_const).measurableSet
 
 theorem measurableSet_verticalUpperStrip (x y : ℝ) :
     MeasurableSet ({p : ℝ × ℝ | p.1 ≤ x ∧ y ≤ p.2}) := by
@@ -1249,6 +1257,138 @@ theorem lowerLeftRectangleMass_pos_of_isOpenPosMeasure
       0 < μ {p : ℝ × ℝ | p.1 ≤ x ∧ p.2 ≤ y} :=
     lt_of_lt_of_le (hopen.measure_pos μ hnonempty) (measure_mono hsubset)
   exact ENNReal.toReal_pos (ne_of_gt hpos) (measure_ne_top μ _)
+
+/--
+Moving the left threshold of a lower-left rectangle down strictly decreases
+its mass for any finite joint measure that is positive on nonempty open sets.
+-/
+theorem lowerLeftRectangleMass_strictAnti_of_strictAnti_left_const_right
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ] [Measure.IsOpenPosMeasure μ]
+    {a : ℝ → ℝ} (y : ℝ) (ha : StrictAnti a) :
+    StrictAnti fun q : ℝ => lowerLeftRectangleMass μ (a q) y := by
+  intro q₁ q₂ hq
+  have hmeasure_lt :
+      μ {p : ℝ × ℝ | p.1 ≤ a q₂ ∧ p.2 ≤ y} <
+        μ {p : ℝ × ℝ | p.1 ≤ a q₁ ∧ p.2 ≤ y} := by
+    refine measure_lt_of_imp_of_diff_ne_zero μ
+      (p := fun p : ℝ × ℝ => p.1 ≤ a q₂ ∧ p.2 ≤ y)
+      (q := fun p : ℝ × ℝ => p.1 ≤ a q₁ ∧ p.2 ≤ y)
+      (measurableSet_lowerLeftRectangle (a q₂) y)
+      (measurableSet_lowerLeftRectangle (a q₁) y) ?_ ?_
+    · intro p hp
+      exact ⟨hp.1.trans (ha hq).le, hp.2⟩
+    · let U : Set (ℝ × ℝ) :=
+        {p : ℝ × ℝ | a q₂ < p.1 ∧ p.1 < a q₁ ∧ p.2 < y}
+      have hU_open : IsOpen U := by
+        have hopen_left : IsOpen {p : ℝ × ℝ | a q₂ < p.1} :=
+          isOpen_lt (continuous_const : Continuous fun _ : ℝ × ℝ => a q₂)
+            (continuous_fst : Continuous fun p : ℝ × ℝ => p.1)
+        have hopen_mid : IsOpen {p : ℝ × ℝ | p.1 < a q₁} :=
+          isOpen_lt (continuous_fst : Continuous fun p : ℝ × ℝ => p.1)
+            (continuous_const : Continuous fun _ : ℝ × ℝ => a q₁)
+        have hopen_right : IsOpen {p : ℝ × ℝ | p.2 < y} :=
+          isOpen_lt (continuous_snd : Continuous fun p : ℝ × ℝ => p.2)
+            (continuous_const : Continuous fun _ : ℝ × ℝ => y)
+        simpa [U, Set.setOf_and, Set.inter_assoc] using
+          (hopen_left.inter hopen_mid).inter hopen_right
+      have hU_nonempty : U.Nonempty := by
+        refine ⟨((a q₂ + a q₁) / 2, y - 1), ?_⟩
+        have haq : a q₂ < a q₁ := ha hq
+        dsimp [U]
+        constructor
+        · nlinarith
+        · constructor
+          · nlinarith
+          · linarith
+      have hU_ne_zero : μ U ≠ 0 :=
+        hU_open.measure_ne_zero μ hU_nonempty
+      intro hzero
+      apply hU_ne_zero
+      refine measure_mono_null ?_ hzero
+      intro p hp
+      rcases hp with ⟨hp_left, hp_between, hp_lower⟩
+      exact
+        ⟨⟨hp_between.le, hp_lower.le⟩,
+          fun hnew => not_le_of_gt hp_left hnew.1⟩
+  exact (ENNReal.toReal_lt_toReal
+    (measure_ne_top μ {p : ℝ × ℝ | p.1 ≤ a q₂ ∧ p.2 ≤ y})
+    (measure_ne_top μ {p : ℝ × ℝ | p.1 ≤ a q₁ ∧ p.2 ≤ y})).2
+      hmeasure_lt
+
+/--
+If the left threshold of a lower-left rectangle tends to `-∞`, then the
+rectangle mass tends to zero.
+-/
+theorem lowerLeftRectangleMass_tendsto_zero_of_left_tendsto_atBot
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ] {a : ℝ → ℝ} (y : ℝ)
+    (ha : Filter.Tendsto a Filter.atTop Filter.atBot) :
+    Filter.Tendsto (fun q : ℝ => lowerLeftRectangleMass μ (a q) y)
+      Filter.atTop (nhds 0) := by
+  have hmeasure :
+      Filter.Tendsto
+        (fun q : ℝ => μ {p : ℝ × ℝ | p.1 ≤ a q ∧ p.2 ≤ y})
+        Filter.atTop (nhds (0 : ℝ≥0∞)) := by
+    simpa using
+      (MeasureTheory.tendsto_measure_of_tendsto_indicator_of_isFiniteMeasure
+        (L := Filter.atTop) (μ := μ)
+        (As := fun q : ℝ =>
+          {p : ℝ × ℝ | p.1 ≤ a q ∧ p.2 ≤ y})
+        (A := (∅ : Set (ℝ × ℝ)))
+        (fun q => measurableSet_lowerLeftRectangle (a q) y)
+        (by
+          intro p
+          filter_upwards [ha.eventually (Filter.eventually_lt_atBot p.1)]
+            with q hq
+          constructor
+          · intro hp
+            exact False.elim ((not_le_of_gt hq) hp.1)
+          · intro hp
+            exact False.elim hp))
+  change
+    Filter.Tendsto
+      (fun q : ℝ =>
+        (μ {p : ℝ × ℝ | p.1 ≤ a q ∧ p.2 ≤ y}).toReal)
+      Filter.atTop (nhds 0)
+  exact (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp hmeasure
+
+/--
+If the left threshold of a lower-left rectangle tends to `+∞` while the right
+threshold is fixed, then the rectangle mass tends to the second-coordinate
+lower half-space mass.
+-/
+theorem lowerLeftRectangleMass_tendsto_secondCoordinateLower_of_left_tendsto_atTop
+    (μ : Measure (ℝ × ℝ)) [IsFiniteMeasure μ] {a : ℝ → ℝ} (y : ℝ)
+    (ha : Filter.Tendsto a Filter.atBot Filter.atTop) :
+    Filter.Tendsto (fun q : ℝ => lowerLeftRectangleMass μ (a q) y)
+      Filter.atBot (nhds (secondCoordinateLowerMass μ y)) := by
+  have hmeasure :
+      Filter.Tendsto
+        (fun q : ℝ => μ {p : ℝ × ℝ | p.1 ≤ a q ∧ p.2 ≤ y})
+        Filter.atBot (nhds (μ {p : ℝ × ℝ | p.2 ≤ y})) := by
+    simpa using
+      (MeasureTheory.tendsto_measure_of_tendsto_indicator_of_isFiniteMeasure
+        (L := Filter.atBot) (μ := μ)
+        (As := fun q : ℝ =>
+          {p : ℝ × ℝ | p.1 ≤ a q ∧ p.2 ≤ y})
+        (A := {p : ℝ × ℝ | p.2 ≤ y})
+        (fun q => measurableSet_lowerLeftRectangle (a q) y)
+        (by
+          intro p
+          filter_upwards [ha.eventually (Filter.eventually_gt_atTop p.1)]
+            with q hq
+          constructor
+          · intro hp
+            exact hp.2
+          · intro hp
+            exact ⟨hq.le, hp⟩))
+  change
+    Filter.Tendsto
+      (fun q : ℝ =>
+        (μ {p : ℝ × ℝ | p.1 ≤ a q ∧ p.2 ≤ y}).toReal)
+      Filter.atBot (nhds ((μ {p : ℝ × ℝ | p.2 ≤ y}).toReal))
+  exact
+    (ENNReal.tendsto_toReal
+      (measure_ne_top μ {p : ℝ × ℝ | p.2 ≤ y})).comp hmeasure
 
 theorem measurableSet_horizontalBoundaryLeft (x y : ℝ) :
     MeasurableSet ({p : ℝ × ℝ | p.1 ≤ x ∧ p.2 = y}) := by

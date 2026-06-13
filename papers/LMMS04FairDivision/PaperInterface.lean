@@ -1,4 +1,5 @@
 import LMMS04FairDivision.ProofInterface
+import LMMS04FairDivision.Assumptions
 
 /-!
 # Paper Interface: Approximately Fair Allocations of Indivisible Goods
@@ -62,47 +63,67 @@ abbrev theorem2_1_alpha_bounded_allocation_exists :=
 abbrev theorem2_1_algorithm_correct_list_toFinset :=
   @LMMS04FairDivision.ProofInterface.theorem2_1_algorithm_correct_list_toFinset
 
-/-- Theorem 2.3 real-interval supported atom-bound endpoint. -/
+/--
+Theorem 2.3 real-interval supported atom-bound endpoint.
+Source status: direct source text
+-/
 abbrev theorem2_3_real_interval_supported_atom_bound :=
   @LMMS04FairDivision.ProofInterface.theorem2_3_real_interval_supported_atom_bound
 
 /-! ## Section 3: Approximation and PTAS Boundary -/
 
-/-- Theorem 3.1 adaptive-query lower bound. -/
+/--
+Theorem 3.1 adaptive-query lower bound.
+Source status: direct source text
+-/
 abbrev theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries :=
   @LMMS04FairDivision.ProofInterface.theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries
 
-/-- Theorem 3.1 adaptive-query ratio lower bound. -/
+/--
+Theorem 3.1 adaptive-query ratio lower bound.
+Source status: direct source text
+-/
 abbrev theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries :=
   @LMMS04FairDivision.ProofInterface.theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries
 
-/-- Theorem 3.2 Graham-certificate fair-division consequence. -/
+/--
+Theorem 3.2 Graham-certificate fair-division consequence.
+Source status: partial external dependency
+Source note: Lean proves the fair-division consequence from the Graham scheduling theorem cited by the paper.
+-/
 abbrev theorem3_2_graham_certificate_to_envy_ratio_bound :=
   @LMMS04FairDivision.ProofInterface.theorem3_2_graham_certificate_to_envy_ratio_bound
 
-/-- Theorem 3.2 evaluates the Graham factor as seven fifths. -/
+/--
+Theorem 3.2 evaluates the Graham factor as seven fifths.
+Source status: direct source formula
+-/
 abbrev theorem3_2_graham_factor_eq_seven_fifths :=
   @LMMS04FairDivision.ProofInterface.theorem3_2_graham_factor_eq_seven_fifths
 
-/-- Theorem 3.3 conditional fixed-dimension IP summary. -/
+/--
+Theorem 3.3 conditional fixed-dimension IP summary.
+Source status: partial boundary
+Source note: The fixed-dimension IP runtime theorem is a reusable library dependency, not yet derived in Lean.
+-/
 abbrev theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee :=
   @LMMS04FairDivision.ProofInterface.theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee
 
-/-- Claim 3.4 fixed-rounding ratio endpoint. -/
+/--
+Claim 3.4 fixed-rounding ratio endpoint.
+Source status: partial boundary
+Source note: Section 3 rounded-search helpers still expose selected-certificate premises.
+-/
 abbrev theorem3_3_claim34_fixed_rounding_ratio_endpoint :=
   @LMMS04FairDivision.ProofInterface.theorem3_3_claim34_fixed_rounding_ratio_endpoint
 
-/-- Claim 3.4 capped weighted-supply endpoint. -/
+/--
+Claim 3.4 capped weighted-supply endpoint.
+Source status: partial boundary
+Source note: Section 3 rounded-search helpers still expose selected-certificate premises.
+-/
 abbrev theorem3_3_claim34_capped_weighted_supply_ratio_endpoint :=
   @LMMS04FairDivision.ProofInterface.theorem3_3_claim34_capped_weighted_supply_ratio_endpoint
-
-/-- Claim 3.4 min/max-search certificate endpoint. -/
-abbrev theorem3_3_claim34_min_max_search_certificate_ratio_endpoint :=
-  @LMMS04FairDivision.ProofInterface.theorem3_3_claim34_min_max_search_certificate_ratio_endpoint
-
-/-- Claim 3.4 bounded-optimal certificate. -/
-abbrev claim3_4_bounded_optimal_certificate :=
-  @LMMS04FairDivision.ProofInterface.claim3_4_bounded_optimal_certificate
 
 /-- Claim 3.4 exact-allocation bounded optimum endpoint. -/
 abbrev claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods :=
@@ -112,12 +133,33 @@ abbrev claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_good
 abbrev claim3_4_bounded_optimal_of_identical_utilities_model :=
   @LMMS04FairDivision.ProofInterface.claim3_4_bounded_optimal_of_identical_utilities_model
 
-/-- Theorem 3.3 additive-load ratio transfer. -/
+/--
+Claim 3.4 identical-utilities bounded optimum bound.
+Source status: partial boundary
+Source note: This is the exact Claim 3.4 identical-utilities bound, but the
+Section 3 rounded-search runtime layer remains a partial boundary.
+-/
+abbrev claim3_4_identical_utilities_bounded_optimum_bound :=
+  @LMMS04FairDivision.ProofInterface.claim3_4_bounded_optimal_of_identical_utilities_model
+
+/--
+Theorem 3.3 additive-load ratio transfer.
+Source status: direct source proof step
+-/
 abbrev theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads :=
   @LMMS04FairDivision.ProofInterface.theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads
 
 /-- Lemma 3.5 additive transfer endpoint. -/
 abbrev lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads :=
+  @LMMS04FairDivision.ProofInterface.lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads
+
+/--
+Lemma 3.5 additive transfer epsilon bound.
+Source status: partial boundary
+Source note: This exposes the Lemma 3.5 additive-transfer inequality; the
+certificate/load-window premises are recorded in the paper assumption ledger.
+-/
+abbrev lemma3_5_additive_transfer_epsilon_bound :=
   @LMMS04FairDivision.ProofInterface.lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads
 
 /-! ## Section 4: Truthfulness and Random Allocation -/
@@ -126,7 +168,10 @@ abbrev lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads :=
 abbrev directMechanism (Agent Item : Type*) :=
   LMMS04FairDivision.paper_direct_mechanism Agent Item
 
-/-- A direct no-transfer mechanism consists only of an allocation rule. -/
+/--
+A direct no-transfer mechanism consists only of an allocation rule.
+Source status: direct paper definition
+-/
 theorem directMechanism_fields
     (Agent Item : Type*) (M : directMechanism Agent Item) :
     M = { allocation := M.allocation } := by
@@ -137,7 +182,10 @@ theorem directMechanism_fields
 abbrev randomizedDirectMechanism (Agent Item : Type*) :=
   LMMS04FairDivision.paper_randomized_direct_mechanism Agent Item
 
-/-- A randomized direct no-transfer mechanism consists only of an allocation law. -/
+/--
+A randomized direct no-transfer mechanism consists only of an allocation law.
+Source status: direct paper definition
+-/
 theorem randomizedDirectMechanism_fields
     (Agent Item : Type*) (M : randomizedDirectMechanism Agent Item) :
     M = { allocationLaw := M.allocationLaw } := by
@@ -177,6 +225,7 @@ abbrev theorem4_1_true_report :=
 /--
 Theorem 4.1's truthful report is the additive bundle valuation generated by
 the displayed two-player item weights.
+Source status: direct source formula
 -/
 theorem theorem4_1_true_report_formula :
     theorem4_1_true_report =
@@ -205,7 +254,10 @@ abbrev theorem4_1_source_minimum_envy_not_truthful :=
 abbrev theorem4_2_uniform_random_mechanism_truthful :=
   @LMMS04FairDivision.ProofInterface.theorem4_2_uniform_random_mechanism_truthful
 
-/-- Theorem 4.2 uniform-random maximum-envy probability bound. -/
+/--
+Theorem 4.2 uniform-random maximum-envy probability bound.
+Source status: direct source formula
+-/
 abbrev theorem4_2_uniform_random_max_envy_probability_bound :=
   @LMMS04FairDivision.ProofInterface.theorem4_2_uniform_random_max_envy_probability_bound
 

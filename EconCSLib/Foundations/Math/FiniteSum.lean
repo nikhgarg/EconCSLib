@@ -727,7 +727,7 @@ theorem nat_sub_pred_eq_sub_add_one_of_pos_le
     _ = m - k + 1 := by rw [hsub_one]
 
 /--
-Telescoping identity used in the GHW Theorem 8.2 revenue rearrangement.
+Telescoping identity used in the digital-goods revenue theorem rearrangement.
 The dummy probability `p 0` is zero, so adjacent probability increments against
 the bid levels combine with the utility-gap correction terms to leave only the
 last endpoint term.
@@ -746,7 +746,7 @@ theorem sum_range_gap_add_probabilityIncrement_mul
 
 /--
 Adjacent truthful-gain inequalities imply the accumulated utility-gap lower
-bound used in GHW Theorem 8.2.
+bound used in the digital-goods revenue theorem.
 -/
 theorem sum_range_gap_le_gain_of_adjacent
     (p b gain : ℕ → ℝ)
@@ -773,11 +773,12 @@ noncomputable def rankedFixedPriceRevenue (n : ℕ) (b : ℕ → ℝ) (j : ℕ) 
   ((n : ℝ) - j) * b j
 
 /--
-If each ranked bidder's expected payment is bounded by the paper's truthful-gain
+If each ranked bidder's expected payment is bounded by the truthful-gain
 upper bound, then total revenue is bounded by the telescoping weighted sum of
 ranked fixed-price revenues.
 
-This is the algebraic heart of GHW Theorem 8.2 before applying Lemma 8.1 and
+This is the algebraic heart of the digital-goods revenue theorem before applying
+the win-probability monotonicity lemma and
 the benchmark bound `V_j <= F`.
 -/
 theorem sum_range_revenue_le_probabilityIncrement_rankedFixedPriceRevenue
@@ -869,7 +870,7 @@ theorem le_bound_of_le_range_probabilityIncrement_weighted_sum
   exact le_trans hR hweighted
 
 /--
-GHW Theorem 8.2 algebra from the adjacent truthful-gain recursion all the way
+the digital-goods revenue theorem algebra from the adjacent truthful-gain recursion all the way
 to the benchmark bound.
 -/
 theorem revenue_le_bound_of_adjacent_gain_recursion
@@ -910,9 +911,8 @@ theorem revenue_le_bound_of_adjacent_gain_recursion
     n p (rankedFixedPriceRevenue n b) hrearranged hmono hendpoint hvalue hB
 
 /--
-GHW Theorem 8.2 algebra in the paper's `p_i`, `c_i`, `g_i` notation. The
-truthfulness comparison for adjacent bids is supplied as
-`p_i * (b_{i+1} - c_i) <= g_{i+1}`.
+Digital-goods revenue algebra in `p_i`, `c_i`, `g_i` notation. The truthfulness
+comparison for adjacent bids is supplied as `p_i * (b_{i+1} - c_i) <= g_{i+1}`.
 -/
 theorem revenue_le_bound_of_adjacent_truthful_cost_comparisons
     (n : ℕ) (p b cost gain : ℕ → ℝ) {R B : ℝ}
@@ -978,7 +978,7 @@ theorem sum_range_gap_le_gain_of_adjacent_bounded
       linarith
 
 /--
-Bounded adjacent-gain version of the GHW Theorem 8.2 algebra. The recursion
+Bounded adjacent-gain version of the digital-goods revenue theorem algebra. The recursion
 only needs adjacent steps `i -> i+1` when `i+1 < n`.
 -/
 theorem revenue_le_bound_of_adjacent_gain_recursion_bounded
@@ -1019,7 +1019,7 @@ theorem revenue_le_bound_of_adjacent_gain_recursion_bounded
     n p (rankedFixedPriceRevenue n b) hrearranged hmono hendpoint hvalue hB
 
 /--
-Bounded version of the paper's `p_i`, `c_i`, `g_i` Theorem 8.2 algebra. The
+Bounded version of the digital-goods `p_i`, `c_i`, `g_i` revenue algebra. The
 truthfulness comparison is required only for adjacent ranked bidders inside the
 finite profile.
 -/

@@ -628,9 +628,9 @@ structure CompetitiveRatioCertificate
     ∀ Opt, I.IsOptimalAssignment Opt → ratio * I.revenue Opt ≤ I.revenue A
 
 /--
-A primal-dual certificate for a competitive ratio. The paper's charging
-argument can be isolated to constructing `alpha`, `beta`, and the final scaled
-dual-objective bound for the algorithm's assignment.
+A primal-dual certificate for a competitive ratio. The charging argument can be
+isolated to constructing `alpha`, `beta`, and the final scaled dual-objective
+bound for the algorithm's assignment.
 -/
 structure PrimalDualCompetitiveCertificate
     [Fintype Advertiser] [Fintype Query] [DecidableEq Advertiser]
@@ -3490,7 +3490,7 @@ theorem competitive_of_primalDual
 The remaining finite MSVV objective-bound seam for the concrete Balance run.
 All feasibility and dual feasibility fields are already proved elsewhere; this
 certificate is exactly the scaled dual-objective inequality still requiring the
-paper's charging argument.
+charging argument.
 -/
 structure MsvvObjectiveBoundCertificate
     [Fintype Advertiser] [Nonempty Advertiser]
@@ -4292,13 +4292,13 @@ theorem balance_msvv_finRange_family_limit_competitive_of_smallBids_threshold_of
       hrevenue
 
 /--
-Paper-level small-bids limiting family for Balance/MSVV.
+Small-bids limiting family for Balance/MSVV.
 
-The paper's limiting theorem is not a statement about one fixed finite
-instance; it is a statement about a sequence of finite instances in which bids
-become small relative to budgets. This structure packages exactly the finite
-query model, positivity assumptions, small-bids threshold, and convergence
-hypotheses needed by the formal limiting theorem.
+The limiting theorem is not a statement about one fixed finite instance; it is
+a statement about a sequence of finite instances in which bids become small
+relative to budgets. This structure packages exactly the finite query model,
+positivity assumptions, small-bids threshold, and convergence hypotheses needed
+by the formal limiting theorem.
 -/
 structure MsvvSmallBidsLimitFamily
     (Advertiser : Type*) [Fintype Advertiser] [Nonempty Advertiser]

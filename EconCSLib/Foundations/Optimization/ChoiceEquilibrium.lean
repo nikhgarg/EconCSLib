@@ -22,7 +22,7 @@ certificate.
 /--
 Static choice-equilibrium data.  `Info` packages the agent's type or
 information, `Action` is the action space, and `consistency` carries any
-paper-specific fixed-point or estimation-consistency condition.
+domain-specific fixed-point or estimation-consistency condition.
 -/
 structure ChoiceEquilibriumData (Info Action : Type*) where
   actionFeasible : Info → Action → Prop

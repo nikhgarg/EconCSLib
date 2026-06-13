@@ -1,4 +1,5 @@
 import GJ18InformativeRatingSystems.MainTheorems
+import GJ18InformativeRatingSystems.Assumptions
 
 /-!
 # Human-Facing Interface: Designing Informative Rating Systems
@@ -22,31 +23,41 @@ open EconCSLib.Probability
 abbrev paperLogMGF {Seller Rating : Type*} [Fintype Rating]
     [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (θ : Seller) (z : ℝ) : ℝ :=
-  sourceLogMGF M θ z
+  ratingLogMGF M θ z
 
 /-- Source object: the paper's Legendre-transform rate function `I(a | theta)`. -/
 abbrev paperRateFunction {Seller Rating : Type*} [Fintype Rating]
     [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (θ : Seller) (a : ℝ) : ℝ :=
-  sourceRateFunction M θ a
+  ratingRateFunction M θ a
 
-/-- The paper's log-MGF formula `Λ(z | θ)`. -/
+/--
+The paper's log-MGF formula `Λ(z | θ)`.
+Source status: Direct source formula.
+Source note: Theorem 1 and Appendix Lemma `Pk_LD` define `Lambda` as the log
+moment generating function of one rating.
+-/
 theorem definition_log_mgf_formula
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (θ : Seller) (z : ℝ) :
     paperLogMGF M θ z =
       Real.log (∑ y : Rating,
         ((M.typeLaw θ) y).toReal * Real.exp (z * M.score y)) :=
-  sourceLogMGF_eq_finite_formula M θ z
+  ratingLogMGF_eq_finite_formula M θ z
 
-/-- The paper's Legendre-transform formula `I(a | θ)`. -/
+/--
+The paper's Legendre-transform formula `I(a | θ)`.
+Source status: Direct source formula.
+Source note: Theorem 1 and Appendix Lemma `Pk_LD` define `I(a | theta)` as the
+Legendre transform of the source log-MGF.
+-/
 theorem definition_rate_function_formula
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
     (M : FiniteRatingLDPModel Seller Rating) (θ : Seller) (a : ℝ) :
     paperRateFunction M θ a =
       sSup (Set.range fun z : ℝ =>
         z * a - paperLogMGF M θ z) :=
-  sourceRateFunction_eq_finite_formula M θ a
+  ratingRateFunction_eq_finite_formula M θ a
 
 /-- Lemma C.1/C.2 right-hand side: pairwise threshold-rate formula. -/
 theorem lemmaC_pairwise_threshold_rate_formula
@@ -57,7 +68,7 @@ theorem lemmaC_pairwise_threshold_rate_formula
       sInf (Set.range fun a : ℝ =>
         sampleRate hi * paperRateFunction M hi a +
           sampleRate lo * paperRateFunction M lo a) :=
-  pairwiseSellerThresholdRate_eq_source_formula M sampleRate hi lo
+  pairwiseSellerThresholdRate_eq_inf_ratingRateFunction M sampleRate hi lo
 
 /--
 Support-safe Lemma C threshold attainment: common-dual log-MGF derivatives
@@ -359,7 +370,7 @@ theorem lemmaC_integer_rate_block_source_threshold_rate_from_cramer
     ExponentialRateCertificate
       (twoSampleRateBlockErrorProb M hi lo gHi gLo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate
+  twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate
     M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
     hbdd_hi hbdd_lo hreverse C
 
@@ -405,7 +416,7 @@ theorem lemmaC_integer_rate_block_source_threshold_rate_from_stationary_tilt
     ExponentialRateCertificate
       (twoSampleRateBlockErrorProb M hi lo gHi gLo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_stationary_tilt
+  twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_stationary_tilt
     M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
     hbdd_hi hbdd_lo hreverse hmean hmassPos hscorePos hmassNeg hscoreNeg
     hstationary
@@ -455,7 +466,7 @@ theorem lemmaC_integer_rate_block_source_threshold_rate_from_common_derivatives
     ExponentialRateCertificate
       (twoSampleRateBlockErrorProb M hi lo gHi gLo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_common_derivatives
+  twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_common_derivatives
     M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
     hbdd_hi hbdd_lo a z hderiv_hi hderiv_lo hmean
     hmassPos hscorePos hmassNeg hscoreNeg hstationary
@@ -499,7 +510,7 @@ theorem lemmaC_integer_rate_block_source_threshold_rate_from_logMGF_derivatives
     ExponentialRateCertificate
       (twoSampleRateBlockErrorProb M hi lo gHi gLo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleRateBlock_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
+  twoSampleRateBlock_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
     M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
     hbdd_hi hbdd_lo a z hderiv_hi hderiv_lo hmean
     hmassPos hscorePos hmassNeg hscoreNeg
@@ -545,7 +556,7 @@ theorem lemmaC_integer_rate_two_population_source_threshold_rate_from_logMGF_der
         twoSampleScoreGapLeftTailProb M hi lo
           (n * gHi) (n * gLo) ((gHi : ℝ)⁻¹) ((gLo : ℝ)⁻¹))
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleIntegerRateLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
+  twoSampleIntegerRateLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
     M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
     hbdd_hi hbdd_lo a z hderiv_hi hderiv_lo hmean
     hmassPos hscorePos hmassNeg hscoreNeg
@@ -604,6 +615,9 @@ theorem lemmaC_pk_complement_error_rate_from_left_tail
 /--
 Lemma `Pk_LD` source-threshold exact-rate bridge from common one-rating
 log-MGF derivatives.
+Source status: Source lemma bridge.
+Source note: This is the integer-rate source-threshold transfer for the
+appendix `1 - P_k` large-deviation statement.
 -/
 theorem lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
@@ -641,7 +655,7 @@ theorem lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives
         twoSamplePkComplementErrorProb M hi lo
           (n * gHi) (n * gLo) ((gHi : ℝ)⁻¹) ((gLo : ℝ)⁻¹))
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSamplePkComplementError_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
+  twoSamplePkComplementError_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives
     M sampleRate hi lo gHi gLo hgHi hgLo hsample_hi hsample_lo
     hbdd_hi hbdd_lo a z hderiv_hi hderiv_lo hmean
     hmassPos hscorePos hmassNeg hscoreNeg
@@ -804,7 +818,7 @@ theorem lemmaC_floor_score_gap_rate_from_shifted_cramer_minimizer
     ExponentialRateCertificate
       (twoSampleFloorScoreGapLeftTailProb M sampleRate hi lo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
+  twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
     M sampleRate hi lo hgHi hgLo a z hz C_hi C_lo
     hshifted_rate hdual_rate
 
@@ -851,7 +865,7 @@ theorem lemmaC_floor_score_gap_rate_from_logMGF_derivative_minimizer
     ExponentialRateCertificate
       (twoSampleFloorScoreGapLeftTailProb M sampleRate hi lo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer
+  twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer
     M sampleRate hi lo hgHi hgLo a z hz hbdd_hi hbdd_lo
     hderiv_hi hderiv_lo hthreshold_eq hmean_hi hmean_lo
     hmass_hi_pos hscore_hi_pos hmass_hi_neg hscore_hi_neg
@@ -889,7 +903,7 @@ theorem lemmaC_floor_score_gap_rate_from_logMGF_derivative_minimizer_of_pos_neg_
     ExponentialRateCertificate
       (twoSampleFloorScoreGapLeftTailProb M sampleRate hi lo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_pos_neg_atoms
+  twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_pos_neg_atoms
     M sampleRate hi lo hgHi hgLo a z hz
     hderiv_hi hderiv_lo hthreshold_eq
     hmass_hi_pos hscore_hi_pos hmass_hi_neg hscore_hi_neg
@@ -920,7 +934,7 @@ theorem lemmaC_floor_score_gap_rate_from_logMGF_derivative_minimizer_of_straddli
     ExponentialRateCertificate
       (twoSampleFloorScoreGapLeftTailProb M sampleRate hi lo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
+  twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_minimizer_of_straddling_support
     M sampleRate hi lo hgHi hgLo a z hz
     hderiv_hi hderiv_lo hthreshold_eq hstraddle_hi hstraddle_lo
 
@@ -928,6 +942,9 @@ theorem lemmaC_floor_score_gap_rate_from_logMGF_derivative_minimizer_of_straddli
 Lemma C arbitrary-real floor-count pairwise score-gap rate from source
 log-MGF derivative data, two-sided support, and the source-level assertion that
 the displayed common threshold minimizes the pairwise rate objective.
+Source status: Auxiliary proof-route lemma.
+Source note: This row exposes the Appendix C derivative/minimizer route for
+reuse; the canonical Theorem 1 endpoint derives/packages the needed witnesses.
 -/
 theorem lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support
     {Seller Rating : Type*} [Fintype Rating] [DecidableEq Rating]
@@ -950,7 +967,7 @@ theorem lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_o
     ExponentialRateCertificate
       (twoSampleFloorScoreGapLeftTailProb M sampleRate hi lo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivative_threshold_minimizer_of_straddling_support
+  twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivative_threshold_minimizer_of_straddling_support
     M sampleRate hi lo hgHi hgLo a z hz
     hderiv_hi hderiv_lo hthreshold_min hstraddle_hi hstraddle_lo
 
@@ -983,7 +1000,7 @@ theorem lemmaC_floor_score_gap_rate_from_logMGF_derivatives_of_straddling_suppor
     ExponentialRateCertificate
       (twoSampleFloorScoreGapLeftTailProb M sampleRate hi lo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleFloorScoreGapLeftTail_sourceThresholdRate_exponentialRateCertificate_of_logMGF_derivatives_of_straddling_support
+  twoSampleFloorScoreGapLeftTail_pairwiseThresholdRate_exponentialRateCertificate_of_logMGF_derivatives_of_straddling_support
     M sampleRate hi lo hgHi hgLo hbdd_hi hbdd_lo a z hz
     hderiv_hi hderiv_lo hstraddle_hi hstraddle_lo
 
@@ -1020,7 +1037,7 @@ theorem lemmaC_floor_pk_complement_error_rate_from_shifted_cramer_minimizer
     ExponentialRateCertificate
       (twoSampleFloorPkComplementErrorProb M sampleRate hi lo)
       (pairwiseSellerThresholdRate M sampleRate hi lo) :=
-  twoSampleFloorPkComplementError_sourceThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
+  twoSampleFloorPkComplementError_pairwiseThresholdRate_exponentialRateCertificate_of_shifted_cramer_minimizer
     M sampleRate hi lo hgHi hgLo a z hz C_hi C_lo
     hshifted_rate hdual_rate
 
@@ -2157,6 +2174,9 @@ Theorem 1 support-safe adjacent-rate identification: at the same common-dual
 derivative thresholds used by the finite objective endpoint, the extended
 source adjacent threshold-rate minimum equals the displayed real adjacent
 objective minimum.
+Source status: Derived source-rate identification.
+Source note: This is the support-safe finite-rating version of the paper's
+displayed adjacent objective rate.
 -/
 theorem theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives
     {n : ℕ} {Rating : Type*} [Fintype Rating] [DecidableEq Rating]
@@ -2286,6 +2306,9 @@ theorem theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjace
 Theorem 1 source-facing support-safe endpoint from the paper's finite ordinal
 rating-scale primitive.  Full support of the ordinal rating law supplies the
 bottom/top atom support needed by the finite-support lower-bound route.
+Source status: Main source theorem endpoint.
+Source note: This is the canonical finite-support Theorem 1 statement for the
+paper's finite ordered rating model.
 -/
 theorem theorem1_finite_chain_uniform_floor_objective_oneSub_extended_min_adjacent_threshold_rate_from_rating_tail_dominance_and_full_support
     {n m : ℕ}
@@ -2354,6 +2377,9 @@ Theorem 1 real-rate bridge from the support-safe endpoint. If the finite-support
 extended adjacent threshold-rate minimum agrees with the paper's real adjacent
 threshold-rate minimum, the support-safe theorem is exactly the paper's
 real-valued exponential-rate statement.
+Source status: Compatibility wrapper.
+Source note: This optional row recovers the older all-real statement under an
+explicit extended-rate equality condition; it is not the canonical endpoint.
 -/
 theorem theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_threshold_rate_from_joint_floor_rating_law_logMGF_derivatives_and_score_bounds_of_extended_min_eq
     {n : ℕ} {Rating : Type*} [Fintype Rating] [DecidableEq Rating]

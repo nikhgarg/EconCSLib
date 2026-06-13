@@ -387,7 +387,7 @@ model.
 
 If prior shape has positive total mass, the number of reviews is positive, and
 true quality is not at a Bernoulli boundary, then increasing prior strength
-strictly decreases the variance term from Theorem 3.1.
+strictly decreases the variance term from the variance decomposition.
 -/
 theorem priorWeightedVariance_strict_decrease_of_interior_quality
     {alpha beta t q etaLow etaHigh : ℝ}

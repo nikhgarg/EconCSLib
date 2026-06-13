@@ -1,5 +1,14 @@
 {
   "schema": 1,
   "paper": "TEMPLATE",
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "translator": "",
+  "translator_type": "",
+  "translated_at": "",
+  "prompt_summary": [
+    "Translate each Lean declaration from the Lean statement alone, with no paper context.",
+    "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
+    "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
+  ],
   "items": {}
 }

@@ -152,6 +152,38 @@ theorem standardize_lt_standardize_of_same_mean_scale_lt_of_mean_lt
   exact div_lt_div_of_pos_left
     (sub_pos.mpr hx) Lsmall.scale_pos hscale
 
+theorem standardize_le_standardize_of_same_mean_scale_le_of_le_mean
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale ≤ Llarge.scale)
+    {x : ℝ} (hx : x ≤ Lsmall.mean) :
+    Lsmall.standardize x ≤ Llarge.standardize x := by
+  rw [standardize, standardize, ← hmean]
+  have hnum_nonpos : x - Lsmall.mean ≤ 0 := sub_nonpos.mpr hx
+  have hinv : 1 / Llarge.scale ≤ 1 / Lsmall.scale :=
+    one_div_le_one_div_of_le Lsmall.scale_pos hscale
+  have hmul :
+      (x - Lsmall.mean) * (1 / Lsmall.scale) ≤
+        (x - Lsmall.mean) * (1 / Llarge.scale) :=
+    mul_le_mul_of_nonpos_left hinv hnum_nonpos
+  simpa [div_eq_mul_inv] using hmul
+
+theorem standardize_lt_standardize_of_same_mean_scale_lt_of_lt_mean
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale < Llarge.scale)
+    {x : ℝ} (hx : x < Lsmall.mean) :
+    Lsmall.standardize x < Llarge.standardize x := by
+  rw [standardize, standardize, ← hmean]
+  have hnum_neg : x - Lsmall.mean < 0 := sub_neg.mpr hx
+  have hinv : 1 / Llarge.scale < 1 / Lsmall.scale :=
+    one_div_lt_one_div_of_lt Lsmall.scale_pos hscale
+  have hmul :
+      (x - Lsmall.mean) * (1 / Lsmall.scale) <
+        (x - Lsmall.mean) * (1 / Llarge.scale) :=
+    mul_lt_mul_of_neg_left hinv hnum_neg
+  simpa [div_eq_mul_inv] using hmul
+
 /-- Positive affine image of a Gaussian location-scale law. -/
 def affineImage (L : GaussianScaleLaw) (a b : ℝ) (hb : 0 < b) :
     GaussianScaleLaw where
@@ -321,7 +353,7 @@ theorem precisionStandardizedSameThreshold_lt_iff_cutoff_lt_skill
 Abstract standard-normal CDF/density API.
 
 Analytic papers can instantiate this once a concrete normal CDF/density library
-is available. Until then, paper-specific Gaussian proofs can state exactly
+is available. Until then, caller-specific Gaussian proofs can state exactly
 which normal facts they require without hiding them in theorem conclusions.
 -/
 structure StandardGaussianCDFAPI where
@@ -473,6 +505,130 @@ theorem normalTail_le_of_mean_le_same_scale (api : StandardGaussianCDFAPI)
   dsimp [normalTail]
   exact sub_le_sub_left
     (api.normalCDF_le_of_mean_le_same_scale hscale hmean x) 1
+
+theorem normalCDF_le_of_same_mean_scale_le_of_mean_le
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale ≤ Llarge.scale)
+    {threshold : ℝ} (hthreshold : Lsmall.mean ≤ threshold) :
+    api.normalCDF Llarge threshold ≤ api.normalCDF Lsmall threshold := by
+  dsimp [normalCDF]
+  exact api.cdf_mono
+    (GaussianScaleLaw.standardize_le_standardize_of_same_mean_scale_le_of_mean_le
+      hmean hscale hthreshold)
+
+theorem normalCDF_lt_of_same_mean_scale_lt_of_mean_lt
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale < Llarge.scale)
+    {threshold : ℝ} (hthreshold : Lsmall.mean < threshold) :
+    api.normalCDF Llarge threshold < api.normalCDF Lsmall threshold := by
+  dsimp [normalCDF]
+  exact api.cdf_strictMono
+    (GaussianScaleLaw.standardize_lt_standardize_of_same_mean_scale_lt_of_mean_lt
+      hmean hscale hthreshold)
+
+theorem normalCDF_le_of_same_mean_scale_le_of_le_mean
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale ≤ Llarge.scale)
+    {threshold : ℝ} (hthreshold : threshold ≤ Lsmall.mean) :
+    api.normalCDF Lsmall threshold ≤ api.normalCDF Llarge threshold := by
+  dsimp [normalCDF]
+  exact api.cdf_mono
+    (GaussianScaleLaw.standardize_le_standardize_of_same_mean_scale_le_of_le_mean
+      hmean hscale hthreshold)
+
+theorem normalCDF_lt_of_same_mean_scale_lt_of_lt_mean
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale < Llarge.scale)
+    {threshold : ℝ} (hthreshold : threshold < Lsmall.mean) :
+    api.normalCDF Lsmall threshold < api.normalCDF Llarge threshold := by
+  dsimp [normalCDF]
+  exact api.cdf_strictMono
+    (GaussianScaleLaw.standardize_lt_standardize_of_same_mean_scale_lt_of_lt_mean
+      hmean hscale hthreshold)
+
+theorem normalCDF_same_mean_scale_le_crosses_at_mean
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale ≤ Llarge.scale) :
+    (∀ {threshold : ℝ}, Lsmall.mean ≤ threshold →
+      api.normalCDF Llarge threshold ≤ api.normalCDF Lsmall threshold) ∧
+    (∀ {threshold : ℝ}, threshold ≤ Lsmall.mean →
+      api.normalCDF Lsmall threshold ≤ api.normalCDF Llarge threshold) :=
+  ⟨fun hthreshold =>
+      api.normalCDF_le_of_same_mean_scale_le_of_mean_le
+        hmean hscale hthreshold,
+    fun hthreshold =>
+      api.normalCDF_le_of_same_mean_scale_le_of_le_mean
+        hmean hscale hthreshold⟩
+
+theorem normalCDF_same_mean_scale_lt_strictly_crosses_at_mean
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale < Llarge.scale) :
+    (∀ {threshold : ℝ}, Lsmall.mean < threshold →
+      api.normalCDF Llarge threshold < api.normalCDF Lsmall threshold) ∧
+    (∀ {threshold : ℝ}, threshold < Lsmall.mean →
+      api.normalCDF Lsmall threshold < api.normalCDF Llarge threshold) :=
+  ⟨fun hthreshold =>
+      api.normalCDF_lt_of_same_mean_scale_lt_of_mean_lt
+        hmean hscale hthreshold,
+    fun hthreshold =>
+      api.normalCDF_lt_of_same_mean_scale_lt_of_lt_mean
+        hmean hscale hthreshold⟩
+
+theorem normalCDF_large_scale_lt_small_scale_iff_mean_lt
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale < Llarge.scale)
+    {threshold : ℝ} :
+    api.normalCDF Llarge threshold < api.normalCDF Lsmall threshold ↔
+      Lsmall.mean < threshold := by
+  constructor
+  · intro hcdf
+    by_contra hnot
+    have hthreshold : threshold ≤ Lsmall.mean := le_of_not_gt hnot
+    have hle :
+        api.normalCDF Lsmall threshold ≤
+          api.normalCDF Llarge threshold :=
+      api.normalCDF_le_of_same_mean_scale_le_of_le_mean
+        hmean hscale.le hthreshold
+    linarith
+  · intro hthreshold
+    exact api.normalCDF_lt_of_same_mean_scale_lt_of_mean_lt
+      hmean hscale hthreshold
+
+theorem normalCDF_small_scale_lt_large_scale_iff_lt_mean
+    (api : StandardGaussianCDFAPI)
+    {Lsmall Llarge : GaussianScaleLaw}
+    (hmean : Lsmall.mean = Llarge.mean)
+    (hscale : Lsmall.scale < Llarge.scale)
+    {threshold : ℝ} :
+    api.normalCDF Lsmall threshold < api.normalCDF Llarge threshold ↔
+      threshold < Lsmall.mean := by
+  constructor
+  · intro hcdf
+    by_contra hnot
+    have hthreshold : Lsmall.mean ≤ threshold := le_of_not_gt hnot
+    have hle :
+        api.normalCDF Llarge threshold ≤
+          api.normalCDF Lsmall threshold :=
+      api.normalCDF_le_of_same_mean_scale_le_of_mean_le
+        hmean hscale.le hthreshold
+    linarith
+  · intro hthreshold
+    exact api.normalCDF_lt_of_same_mean_scale_lt_of_lt_mean
+      hmean hscale hthreshold
 
 theorem normalTail_le_of_same_mean_scale_le_of_mean_le
     (api : StandardGaussianCDFAPI)
@@ -1417,9 +1573,9 @@ theorem posteriorMean_eq_weighted_sum
       ring)
 
 /--
-Posterior mean in the source-paper precision-weighted form:
-prior precision times prior mean plus signal precisions times observed signals,
-divided by total posterior precision.
+Posterior mean in precision-weighted form: prior precision times prior mean
+plus signal precisions times observed signals, divided by total posterior
+precision.
 -/
 theorem posteriorMean_eq_precision_weighted_div
     (M : GaussianSignalFamily ι) (x : ι → ℝ) :
@@ -1432,8 +1588,8 @@ theorem posteriorMean_eq_precision_weighted_div
   ring
 
 /--
-Marginal variance of the posterior mean in the finite-feature source-paper
-form: prior variance times total signal precision over posterior precision.
+Marginal variance of the posterior mean in finite-feature precision form: prior
+variance times total signal precision over posterior precision.
 -/
 theorem posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorPrecision
     (M : GaussianSignalFamily ι) :
@@ -1479,6 +1635,33 @@ theorem posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
   dsimp [posteriorMeanVariance]
   rw [hpriorVar]
   linarith
+
+theorem posteriorMeanVariance_lt_iff_of_priorVar_eq_sum_signalPrecision
+    {Mlow Mhigh : GaussianSignalFamily ι}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar) :
+    Mlow.posteriorMeanVariance < Mhigh.posteriorMeanVariance ↔
+      (∑ i : ι, Mlow.signalPrecision i) <
+        ∑ i : ι, Mhigh.signalPrecision i := by
+  constructor
+  · intro hvar
+    by_contra hnot
+    have hle :
+        (∑ i : ι, Mhigh.signalPrecision i) ≤
+          ∑ i : ι, Mlow.signalPrecision i := le_of_not_gt hnot
+    rcases lt_or_eq_of_le hle with hgt | heq
+    · have hrev :
+          Mhigh.posteriorMeanVariance < Mlow.posteriorMeanVariance :=
+        posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
+          (Mlow := Mhigh) (Mhigh := Mlow) hpriorVar.symm hgt
+      exact not_lt_of_ge hrev.le hvar
+    · have hvar_eq :
+          Mlow.posteriorMeanVariance = Mhigh.posteriorMeanVariance := by
+        rw [Mlow.posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorPrecision,
+          Mhigh.posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorPrecision]
+        simp [posteriorPrecision, priorPrecision, hpriorVar, heq]
+      exact (lt_irrefl Mhigh.posteriorMeanVariance)
+        (by simpa [hvar_eq] using hvar)
+  · exact posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt hpriorVar
 
 theorem posteriorMeanVariance_lt_of_priorVar_eq_signalPrecisionSum_lt
     {κ : Type*} [Fintype κ]
@@ -1661,7 +1844,7 @@ end GaussianSignalFamily
 /--
 Finite Gaussian signal family with nonzero signal-specific noise means.
 
-The observed signal has the source-paper form `x i = q + noiseMean i + error i`;
+The observed signal has the offset form `x i = q + noiseMean i + error i`;
 posterior formulas are delegated to `GaussianSignalFamily` after centering each
 coordinate by `noiseMean i`.
 -/
@@ -1809,8 +1992,8 @@ theorem posteriorMean_eq_weighted_sum
   rfl
 
 /--
-Posterior mean for offset signals in the source-paper precision-weighted form.
-Each raw signal is centered by its group-specific noise mean.
+Posterior mean for offset signals in precision-weighted form. Each raw signal
+is centered by its group-specific noise mean.
 -/
 theorem posteriorMean_eq_precision_weighted_div
     (M : GaussianOffsetSignalFamily ι) (x : ι → ℝ) :
@@ -1823,8 +2006,7 @@ theorem posteriorMean_eq_precision_weighted_div
   rfl
 
 /--
-Marginal variance of the offset-family posterior mean in source-paper
-precision notation.
+Marginal variance of the offset-family posterior mean in precision notation.
 -/
 theorem posteriorMeanVariance_eq_priorVar_mul_sum_signalPrecision_div_posteriorPrecision
     (M : GaussianOffsetSignalFamily ι) :
@@ -1844,6 +2026,16 @@ theorem posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
   exact GaussianSignalFamily.posteriorMeanVariance_lt_of_priorVar_eq_sum_signalPrecision_lt
     (Mlow := Mlow.centeredFamily) (Mhigh := Mhigh.centeredFamily)
     hpriorVar hsum
+
+theorem posteriorMeanVariance_lt_iff_of_priorVar_eq_sum_signalPrecision
+    {Mlow Mhigh : GaussianOffsetSignalFamily ι}
+    (hpriorVar : Mlow.priorVar = Mhigh.priorVar) :
+    Mlow.posteriorMeanVariance < Mhigh.posteriorMeanVariance ↔
+      (∑ i : ι, Mlow.centeredFamily.signalPrecision i) <
+        ∑ i : ι, Mhigh.centeredFamily.signalPrecision i :=
+  GaussianSignalFamily.posteriorMeanVariance_lt_iff_of_priorVar_eq_sum_signalPrecision
+    (Mlow := Mlow.centeredFamily) (Mhigh := Mhigh.centeredFamily)
+    hpriorVar
 
 theorem posteriorMeanVariance_lt_of_priorVar_eq_signalPrecisionSum_lt
     {κ : Type*} [Fintype κ]
@@ -2055,8 +2247,8 @@ theorem conditionalPosteriorMeanScaleLaw_scale_eq
         Real.sqrt M.centeredFamily.signalPrecisionSum := rfl
 
 /--
-Standardized threshold for the conditional posterior-score law.  This is the
-source-paper `numerator / sqrt(total signal precision)` expression.
+Standardized threshold for the conditional posterior-score law, in
+`numerator / sqrt(total signal precision)` form.
 -/
 theorem conditionalPosteriorMeanScaleLaw_standardize_threshold
     [Nonempty ι] (M : GaussianOffsetSignalFamily ι)
@@ -2085,9 +2277,8 @@ end GaussianOffsetSignalFamily
 /--
 Reusable certificate for normal-density/tail analytic facts.
 
-GLM/LG-style papers can use this as the boundary between algebraic Gaussian
-formalization and the hard analytic facts about inverse Mills ratios or hazard
-rates.
+Use this as the boundary between algebraic Gaussian formalization and hard
+analytic facts about inverse Mills ratios or hazard rates.
 -/
 structure GaussianHazardCertificate where
   api : StandardGaussianCDFAPI
@@ -2130,6 +2321,52 @@ location-scale Gaussian, expressed through the standard-normal hazard.
 def normalUpperTailMean (C : GaussianHazardCertificate)
     (L : GaussianScaleLaw) (threshold : ℝ) : ℝ :=
   L.mean + L.scale * C.hazard (L.standardize threshold)
+
+/--
+Upper-tail means are invariant under equal Gaussian location-scale laws and
+equal thresholds.
+
+This is a small transport lemma for testing/admissions papers where a source
+case analysis proves that an unaffected group's posterior law and cutoff are
+unchanged, then needs the corresponding admitted-merit row equality.
+-/
+theorem normalUpperTailMean_congr
+    (C : GaussianHazardCertificate) {L L' : GaussianScaleLaw}
+    {threshold threshold' : ℝ}
+    (hL : L = L') (hthreshold : threshold = threshold') :
+    C.normalUpperTailMean L threshold =
+      C.normalUpperTailMean L' threshold' := by
+  subst hL
+  subst hthreshold
+  rfl
+
+/--
+Upper-tail means are invariant under primitive equality of the offset-Gaussian
+parameters that determine the posterior-mean law.
+
+This parameter-level version of `normalUpperTailMean_congr` lets callers
+transport an admitted-merit quantity by proving equality of prior means, prior
+variances, total signal precisions, and thresholds, without first materializing
+the posterior-law equality.
+-/
+theorem normalUpperTailMean_congr_of_offset_prior_precision
+    (C : GaussianHazardCertificate)
+    {ι κ : Type*} [Fintype ι] [Fintype κ] [Nonempty ι] [Nonempty κ]
+    {M : GaussianOffsetSignalFamily ι}
+    {M' : GaussianOffsetSignalFamily κ}
+    {threshold threshold' : ℝ}
+    (hmean : M.priorMean = M'.priorMean)
+    (hpriorVar : M.priorVar = M'.priorVar)
+    (hsignalPrecisionSum :
+      M.centeredFamily.signalPrecisionSum =
+        M'.centeredFamily.signalPrecisionSum)
+    (hthreshold : threshold = threshold') :
+    C.normalUpperTailMean M.posteriorMeanScaleLaw threshold =
+      C.normalUpperTailMean M'.posteriorMeanScaleLaw threshold' :=
+  C.normalUpperTailMean_congr
+    (GaussianOffsetSignalFamily.posteriorMeanScaleLaw_eq_of_priorMean_eq_priorVar_eq_signalPrecisionSum_eq
+      M M' hmean hpriorVar hsignalPrecisionSum)
+    hthreshold
 
 theorem normalUpperTailMean_mono_threshold
     (C : GaussianHazardCertificate) (L : GaussianScaleLaw) :

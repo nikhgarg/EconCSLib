@@ -1,22 +1,75 @@
 {
-  "generated_at": "2026-06-11T03:15:56Z",
+  "comment": "Regenerated against the current dashboard review surface, including assumption rows. Assumption-row source provenance is recorded in assumption_match_llm.json.",
+  "generated_at": "2026-06-12T00:00:00Z",
   "generator": "codex-current-dashboard-statement-digest-refresh",
   "items": {
+    "assumption_additive_transfer_load_window_conditions": {
+      "lean_statement_sha256": "cfe94d2578535715e5d2f82f53c05496103d1ad8f7167dba33189155a206a43c",
+      "statement": "The additive transfer endpoint uses positive loads and the half-load window conditions for rounded and optimal minimum/maximum loads."
+    },
+    "assumption_base_load_at_most_rounded_average": {
+      "lean_statement_sha256": "79f545469c11a0223be32a02b43eae82846c29f8f09ea01ebf7179a9831dd61f",
+      "statement": "The base average load is at most the rounded average load: L \\le LR."
+    },
+    "assumption_claim34_positive_small_goods_domain": {
+      "lean_statement_sha256": "d375505c4d7f6601b3d26bb3f1a972840a668120cfb4da7eaca32dcb8adf2c99",
+      "statement": "Claim 3.4 uses positive small goods whose values are below L, and allocated item values inherit nonnegativity and the small-good bound."
+    },
+    "assumption_duplicate_free_goods_enumeration": {
+      "lean_statement_sha256": "1bdc5f130a3fe2b8774c4da0aaa13ccf3a368b79e402c51476d0b517c6896a3c",
+      "statement": "The finite goods list enumerates the source goods without duplicates."
+    },
+    "assumption_external_graham_scheduling_boundary": {
+      "lean_statement_sha256": "0a29fcf6373925cae5a52ef0c1564c334cc750ea0be8e20461643384e15e77ad",
+      "statement": "Theorem 3.2 uses the externally cited Graham scheduling theorem as a dependency."
+    },
+    "assumption_fixed_dimension_ip_runtime_boundary": {
+      "lean_statement_sha256": "82ef4fcdf23683837317908519f2fd061e7ce6e193de886cb26aa0b98f698e67",
+      "statement": "The final PTAS/FPTAS runtime endpoint depends on reusable fixed-dimension integer-program runtime infrastructure."
+    },
+    "assumption_nonnegative_alpha_bound": {
+      "lean_statement_sha256": "60f0c131fd701dc2b5bfd33b528abf847d603142d73fc0be86c1ab3f4488d542",
+      "statement": "The alpha marginal-value bound is nonnegative: 0 \\le alpha."
+    },
+    "assumption_positive_atom_bound": {
+      "lean_statement_sha256": "889219d452add8f9dc8561bc8fc68f4ff015a00c65ed353987b152df8b3d7aba",
+      "statement": "The measure-valued theorem branch assumes a positive atom bound: 0 < alpha."
+    },
+    "assumption_positive_rounding_and_load_parameters": {
+      "lean_statement_sha256": "bdfce0b8f8ae52129081637393f37e4d1ebb309f815dae62754556708274d95d",
+      "statement": "The rounding/load parameters are positive, with lambda > 1, lambda > 0, L > 0, and LR > 0."
+    },
+    "assumption_ptas_error_parameter_range": {
+      "lean_statement_sha256": "7bf6c6c9be9ccac5621a668916a61d28fbc68a158b06d59d4b1b389ec9a5ffbf",
+      "statement": "The PTAS/FPTAS error parameter is in the nontrivial positive range: 0 < epsilon and epsilon \\le 1."
+    },
+    "assumption_uniform_random_weight_normalization": {
+      "lean_statement_sha256": "58fc1eb46f42b6c852de96eda018a24c67c9edbebf4d1c26b9ef1e258cc2b899",
+      "statement": "The randomized allocation bound uses nonnegative normalized item weights, positive threshold t, nonnegative alpha, and item weights bounded by alpha."
+    },
+    "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods": {
+      "lean_statement_sha256": "9a8a397990eb3963dc543c16147b49ca89de7d2f512cf61b09e63ee6d0f1268e",
+      "statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} [inst : Fintype SourceAgent] [Fintype SourceItem] [inst_2 : Nonempty SourceAgent] [DecidableEq SourceAgent] [inst_4 : DecidableEq SourceItem] {goods : Finset SourceItem} {v : SourceItem \\to ℝ} {L : ℝ} (A₀ : Allocation SourceAgent SourceItem), IsOptimalRatio (fun A  =>  loadRatio (minCommonLoad v A) (maxCommonLoad v A)) A₀ \\to (\\forall (A : Allocation SourceAgent SourceItem), IsOptimalRatio (fun C  =>  loadRatio (minCommonLoad v C) (maxCommonLoad v C)) A \\to IsAllocationOf A goods) \\to 0 < L \\to commonLoad v goods = ↑(card SourceAgent) * L \\to (\\forall (A : Allocation SourceAgent SourceItem), IsOptimalRatio (fun C  =>  loadRatio (minCommonLoad v C) (maxCommonLoad v C)) A \\to (\\lnot\\forall (i : SourceAgent), boundedAroundAverage L (commonLoad v (A i))) \\to \\forall (i : SourceAgent), \\exists g, g \\in A i) \\to (\\forall g \\in goods, 0 < v g) \\to (\\forall g \\in goods, v g < L) \\to \\exists B, IsAllocationOf B goods \\land Claim34Certificate v L (fun A  =>  loadRatio (minCommonLoad v A) (maxCommonLoad v A)) (fun A i  =>  A i) B"
+    },
+    "claim3_4_identical_utilities_bounded_optimum_bound": {
+      "lean_statement_sha256": "d5f6e5001d02f0824247c58544b6df7324cc0b93623601834c98e20b13194946",
+      "statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [Fintype Alloc] [inst_2 : Nonempty SourceAgent] [inst_3 : DecidableEq SourceAgent] [inst_4 : DecidableEq SourceItem] (M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc) {L : ℝ} (moveAlloc : Alloc \\to SourceAgent \\to SourceAgent \\to SourceItem \\to Alloc) (A₀ : Alloc), IsOptimalRatio (allocationLoadRatio M) A₀ \\to 0 < L \\to (\\forall (A : Alloc), IsOptimalRatio (allocationLoadRatio M) A \\to \\sum i, commonLoad commonValue (bundleOf A i) = ↑(card SourceAgent) * L) \\to (\\forall (A : Alloc), IsOptimalRatio (allocationLoadRatio M) A \\to (\\lnot\\forall (i : SourceAgent), boundedAroundAverage L (commonLoad commonValue (bundleOf A i))) \\to 0 < minAllocationLoad M A) \\to (\\forall (A : Alloc) (i : SourceAgent), \\forall g \\in bundleOf A i, 0 \\le commonValue g) \\to (\\forall (A : Alloc) (i : SourceAgent), \\forall g \\in bundleOf A i, commonValue g < L) \\to (\\forall (A : Alloc) {i j : SourceAgent} {g : SourceItem}, g \\in bundleOf A i \\to g \\in bundleOf A j \\to i = j) \\to (\\forall (A : Alloc) (source target : SourceAgent) (g : SourceItem), bundleOf (moveAlloc A source target g) = moveBundle (bundleOf A) source target g) \\to \\exists B, Claim34Certificate commonValue L (allocationLoadRatio M) bundleOf B"
+    },
+    "directMechanism_fields": {
+      "lean_statement_sha256": "8ab5b0b5ac4b41cba89fe18ea1144ccf7fa25d7aca10b3ac71220f4fe1e357f9",
+      "statement": "\\forall (Agent : Type u_1) (Item : Type u_2) (M : directMechanism Agent Item), M = M"
+    },
     "envy": {
       "lean_statement_sha256": "29ef86d31ab45ecad510c8c52e498fa2ce459176fd2aaa5607157e8efe6ad372",
       "statement": "(v : Valuation Agent Item) (A : Allocation Agent Item) (i j : Agent) = max 0 (v.value i (A j) - v.value i (A i))"
-    },
-    "envyFree": {
-      "lean_statement_sha256": "ad3481ad773b394e252888fa1c88b29064784f561acc6ff5ccb1ce138f68b9c6",
-      "statement": "(v : Valuation Agent Item) (A : Allocation Agent Item) = \\forall i j, v.value i (A j) \\le v.value i (A i)"
     },
     "envyBoundedBy": {
       "lean_statement_sha256": "bdc36949647d5384216b6dd890ced728afa178fe7cab2b7921ebb8504f2344a8",
       "statement": "(v : Valuation Agent Item) (A : Allocation Agent Item) (alpha : ℝ) = \\forall i j, envy v A i j \\le alpha"
     },
-    "maxMarginal": {
-      "lean_statement_sha256": "a0057dccee68556803500867ac6754dedb2998ef2c8f1720ec368faa79d49583",
-      "statement": "(v : Valuation Agent Item) = LMMS04FairDivision.paper_max_marginal v"
+    "envyFree": {
+      "lean_statement_sha256": "ad3481ad773b394e252888fa1c88b29064784f561acc6ff5ccb1ce138f68b9c6",
+      "statement": "(v : Valuation Agent Item) (A : Allocation Agent Item) = \\forall i j, v.value i (A j) \\le v.value i (A i)"
     },
     "isAllocationOf": {
       "lean_statement_sha256": "60c009d7475966eb3b2bdc154df472208293c28677a46654e5aedb9570342a6b",
@@ -26,17 +79,33 @@
       "lean_statement_sha256": "efecbeb75c8abc0b50a5027b1c87bfba9c5565d055a87adabac53a5562a86d56",
       "statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [Fintype Agent] [Fintype Item] [DecidableEq Agent] [inst : DecidableEq Item] [Nonempty Agent] [Nonempty Item] (v : Valuation Agent Item) {alpha : ℝ} (goods : Finset Item) (A : Allocation Agent Item), isAllocationOf A goods \\to envyBoundedBy v A alpha \\to \\exists B, isAllocationOf B goods \\land envyBoundedBy v B alpha \\land AcyclicEnvyGraph v B"
     },
-    "theorem2_1_bounded_envy_allocation_exists": {
-      "lean_statement_sha256": "791c05636b420749647f0e2c49989e90a815773e4a284a5998b16fd0f2f3bf02",
-      "statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [inst : Fintype Agent] [inst_1 : Fintype Item] [DecidableEq Agent] [inst_3 : DecidableEq Item] [inst_4 : Nonempty Agent] [inst_5 : Nonempty Item] (v : Valuation Agent Item) (goods : Finset Item), \\exists A, isAllocationOf A goods \\land envyBoundedBy v A (maxMarginal v)"
+    "lemma3_5_additive_transfer_epsilon_bound": {
+      "lean_statement_sha256": "fe0f8c4e631a590fe0dda654511c472467c5f0481486345936d44045e3f8e9cb",
+      "statement": "\\forall {epsilon L optMin optMax roundedMin roundedMax outMin outMax : ℝ}, 0 < epsilon \\to epsilon \\le 1 \\to 0 < outMin \\to 0 < roundedMin \\to 0 < optMin \\to 0 \\le optMax \\to 0 \\le roundedMax \\to L \\le 2 * roundedMin \\to L \\le 2 * roundedMax \\to L \\le 2 * optMin \\to L \\le 2 * optMax \\to outMax \\le roundedMax + L / (56 / epsilon) \\to 56 / epsilon / (56 / epsilon + 1) * roundedMin - 2 / (56 / epsilon) * L \\le outMin \\to roundedMax \\le (56 / epsilon + 1) / (56 / epsilon) * optMax + L / (56 / epsilon) \\to optMin - L / (56 / epsilon) \\le roundedMin \\to ratio outMin outMax \\le ratio optMin optMax * (1 + epsilon)"
+    },
+    "maxMarginal": {
+      "lean_statement_sha256": "a0057dccee68556803500867ac6754dedb2998ef2c8f1720ec368faa79d49583",
+      "statement": "(v : Valuation Agent Item) = LMMS04FairDivision.paper_max_marginal v"
+    },
+    "randomizedDirectMechanism_fields": {
+      "lean_statement_sha256": "919c30471ee1937a41ef6894752fef74582de7c88e3a714462940e54120a04df",
+      "statement": "\\forall (Agent : Type u_1) (Item : Type u_2) (M : randomizedDirectMechanism Agent Item), M = M"
+    },
+    "randomizedTruthful": {
+      "lean_statement_sha256": "16b1f0e777f3f985f90e7a298c25cf2c245633d7c0392b761bb11bbd424bb925",
+      "statement": "[Fintype (Allocation Agent Item)] [DecidableEq (Allocation Agent Item)] [DecidableEq Agent] (M : randomizedDirectMechanism Agent Item) = LMMS04FairDivision.paper_randomized_fair_division_truthful M"
+    },
+    "theorem2_1_algorithm_correct_list_toFinset": {
+      "lean_statement_sha256": "32d92b88b05b3f0ed34b911f0a69bcff4ce7ad51238b9c9aa700a4e264cde417",
+      "statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [inst : Fintype Agent] [inst_1 : Fintype Item] [inst_2 : DecidableEq Agent] [inst_3 : DecidableEq Item] [inst_4 : Nonempty Agent] [Nonempty Item] (v : Valuation Agent Item) {alpha : ℝ} (halpha_nonneg : 0 \\le alpha) (hbound : MarginalBound v alpha) (goodsList : List Item), Nodup \\to isAllocationOf (paper_lmms_algorithm v halpha_nonneg hbound goodsList) toFinset \\land envyBoundedBy v (paper_lmms_algorithm v halpha_nonneg hbound goodsList) alpha"
     },
     "theorem2_1_alpha_bounded_allocation_exists": {
       "lean_statement_sha256": "80e46c83915d42bb75447cd36045e8d159b7607f960b99167752734a81bf0b0b",
       "statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [Fintype Agent] [Fintype Item] [DecidableEq Agent] [inst : DecidableEq Item] [Nonempty Agent] [Nonempty Item] (v : Valuation Agent Item) {alpha : ℝ}, 0 \\le alpha \\to MarginalBound v alpha \\to \\forall (goods : Finset Item), \\exists A, isAllocationOf A goods \\land envyBoundedBy v A alpha"
     },
-    "theorem2_1_algorithm_correct_list_toFinset": {
-      "lean_statement_sha256": "32d92b88b05b3f0ed34b911f0a69bcff4ce7ad51238b9c9aa700a4e264cde417",
-      "statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [inst : Fintype Agent] [inst_1 : Fintype Item] [inst_2 : DecidableEq Agent] [inst_3 : DecidableEq Item] [inst_4 : Nonempty Agent] [Nonempty Item] (v : Valuation Agent Item) {alpha : ℝ} (halpha_nonneg : 0 \\le alpha) (hbound : MarginalBound v alpha) (goodsList : List Item), Nodup \\to isAllocationOf (paper_lmms_algorithm v halpha_nonneg hbound goodsList) toFinset \\land envyBoundedBy v (paper_lmms_algorithm v halpha_nonneg hbound goodsList) alpha"
+    "theorem2_1_bounded_envy_allocation_exists": {
+      "lean_statement_sha256": "791c05636b420749647f0e2c49989e90a815773e4a284a5998b16fd0f2f3bf02",
+      "statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [inst : Fintype Agent] [inst_1 : Fintype Item] [DecidableEq Agent] [inst_3 : DecidableEq Item] [inst_4 : Nonempty Agent] [inst_5 : Nonempty Item] (v : Valuation Agent Item) (goods : Finset Item), \\exists A, isAllocationOf A goods \\land envyBoundedBy v A (maxMarginal v)"
     },
     "theorem2_3_real_interval_supported_atom_bound": {
       "lean_statement_sha256": "35ac3105a954e5695e92644ef8ccf44b2b2fe2c6f8c36b590ac74452dbdbd61d",
@@ -58,81 +127,49 @@
       "lean_statement_sha256": "e7e18bb9360945305b56a0f1354127ac0a09a461f21144f1a5ff2ec2e34caed0",
       "statement": "grahamApproximationFactor = 7 / 5"
     },
-    "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee": {
-      "lean_statement_sha256": "267ed8c1416a0fc8508dac80190cd7a823b20a7dc37acf8f6281c028c77c50c9",
-      "statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] [DecidableEq SourceItem] {M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc} {L LR epsilon : ℝ} {lambda : ℕ} {optimal : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (cert : RoundedInstanceSearchCertificate M L epsilon lambda optimal) (highGoods lowGoods : Finset SourceItem) (v : SourceItem \\to ℝ), 1 < lambda \\to 0 < L \\to (\\forall g \\in highGoods, L / ↑lambda < v g \\land v g < L) \\to (\\forall g \\in lowGoods, 0 \\le v g \\land v g < L / ↑lambda) \\to (\\forall g \\in highGoods, v g + L / ↑lambda ^ 2 \\le L) \\to (\\forall (indexOf : SourceItem \\to RoundedValueIndex lambda) (combinedSupply : RoundedValueIndex lambda \\to ℕ), (\\forall g \\in highGoods, v g \\le roundedValue L lambda (indexOf g) \\land roundedValue L lambda (indexOf g) < v g + L / ↑lambda ^ 2) \\to (\\forall (k : RoundedValueIndex lambda), combinedSupply k = paper_lmms_theorem_3_3_roundedGoodsSupplyOfGoods indexOf highGoods k + lowGoodsAggregatedSupply L lambda (sum v) k) \\to \\sum k, ↑(combinedSupply k) * roundedValue L lambda k = ↑(card SourceAgent) * LR) \\to (\\forall (indexOf : SourceItem \\to RoundedValueIndex lambda) (combinedSupply : RoundedValueIndex lambda \\to ℕ), (\\forall g \\in highGoods, v g \\le roundedValue L lambda (indexOf g) \\land roundedValue L lambda (indexOf g) < v g + L / ↑lambda ^ 2) \\to (\\forall (k : RoundedValueIndex lambda), combinedSupply k = paper_lmms_theorem_3_3_roundedGoodsSupplyOfGoods indexOf highGoods k + lowGoodsAggregatedSupply L lambda (sum v) k) \\to combinedSupply (paper_lmms_theorem_3_3_topRoundedValueIndex lambda) = 0 \\to \\sum k, ↑(combinedSupply k) * roundedValue L lambda k = ↑(card SourceAgent) * LR \\to \\exists p, Nonempty (RoundedConcrete"
+    "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint": {
+      "lean_statement_sha256": "e173cd729fef98bb044cc5147c397c50f5e08f4c5ec3c25cd2b0cefe61ab9085",
+      "statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] [DecidableEq SourceAgent] {M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc} {L LR epsilon : ℝ} {lambda maxCount : ℕ} {optimal : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (cert : RoundedInstanceSearchCertificate M L epsilon lambda optimal) (supply : RoundedValueIndex lambda \\to ℕ), \\sum k, ↑(supply k) * roundedValue L lambda k = ↑(card SourceAgent) * LR \\to L \\le LR \\to supply (paper_lmms_theorem_3_3_topRoundedValueIndex lambda) = 0 \\to 2 * LR \\le (↑maxCount + 1) * (L / ↑lambda) \\to 0 < lambda \\to 0 < L \\to 0 < LR \\to allocationLoadRatio M output \\le allocationLoadRatio M optimal * (1 + epsilon) \\land \\exists p typeOf, p \\in roundedAdmissibleValuePairSetWithCap L LR lambda maxCount \\land (\\forall (i : SourceAgent), typeOf i \\in roundedTypesInValueWindowWithCap L LR lambda maxCount p.1 p.2) \\land (\\forall (k : RoundedValueIndex lambda), \\sum i, (typeOf i).count k = supply k) \\land \\exists search, roundedValuePairRatio chosenPair \\le roundedValuePairRatio p"
     },
     "theorem3_3_claim34_fixed_rounding_ratio_endpoint": {
       "lean_statement_sha256": "4f423f3b28271407112cb4ac67d314ec0772786b594dbfc862f0f0d7e98ff6e4",
       "statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] [DecidableEq SourceAgent] [DecidableEq SourceItem] {M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc} {L epsilon : ℝ} {lambda : ℕ} {optimal : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (cert : RoundedInstanceSearchCertificate M L epsilon lambda optimal) (highGoods lowGoods : Finset SourceItem) (v : SourceItem \\to ℝ) (indexOf : SourceItem \\to RoundedValueIndex lambda) (combinedSupply : RoundedValueIndex lambda \\to ℕ), 1 < lambda \\to 0 < L \\to (\\forall g \\in highGoods, v g \\le roundedValue L lambda (indexOf g) \\land roundedValue L lambda (indexOf g) < v g + L / ↑lambda ^ 2) \\to (\\forall (k : RoundedValueIndex lambda), combinedSupply k = paper_lmms_theorem_3_3_roundedGoodsSupplyOfGoods indexOf highGoods k + lowGoodsAggregatedSupply L lambda (sum v) k) \\to (\\forall g \\in highGoods, v g + L / ↑lambda ^ 2 \\le L) \\to \\sum k, ↑(combinedSupply k) * roundedValue L lambda k = ↑(card SourceAgent) * L \\to allocationLoadRatio M output \\le allocationLoadRatio M optimal * (1 + epsilon) \\land combinedSupply (paper_lmms_theorem_3_3_topRoundedValueIndex lambda) = 0 \\land \\exists p typeOf, p \\in roundedAdmissibleValuePairSet L lambda \\land (\\forall (i : SourceAgent), typeOf i \\in roundedTypesInValueWindow L lambda p.1 p.2) \\land (\\forall (k : RoundedValueIndex lambda), \\sum i, (typeOf i).count k = combinedSupply k) \\land \\exists search, roundedValuePairRatio chosenPair \\le roundedValuePairRatio p"
     },
-    "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint": {
-      "lean_statement_sha256": "e173cd729fef98bb044cc5147c397c50f5e08f4c5ec3c25cd2b0cefe61ab9085",
-      "statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] [DecidableEq SourceAgent] {M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc} {L LR epsilon : ℝ} {lambda maxCount : ℕ} {optimal : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (cert : RoundedInstanceSearchCertificate M L epsilon lambda optimal) (supply : RoundedValueIndex lambda \\to ℕ), \\sum k, ↑(supply k) * roundedValue L lambda k = ↑(card SourceAgent) * LR \\to L \\le LR \\to supply (paper_lmms_theorem_3_3_topRoundedValueIndex lambda) = 0 \\to 2 * LR \\le (↑maxCount + 1) * (L / ↑lambda) \\to 0 < lambda \\to 0 < L \\to 0 < LR \\to allocationLoadRatio M output \\le allocationLoadRatio M optimal * (1 + epsilon) \\land \\exists p typeOf, p \\in roundedAdmissibleValuePairSetWithCap L LR lambda maxCount \\land (\\forall (i : SourceAgent), typeOf i \\in roundedTypesInValueWindowWithCap L LR lambda maxCount p.1 p.2) \\land (\\forall (k : RoundedValueIndex lambda), \\sum i, (typeOf i).count k = supply k) \\land \\exists search, roundedValuePairRatio chosenPair \\le roundedValuePairRatio p"
-    },
-    "theorem3_3_claim34_min_max_search_certificate_ratio_endpoint": {
-      "lean_statement_sha256": "53494a98267d9620fdbf5c8ff844baf66843c0127a67f97bf26f9a79a561e459",
-      "statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] (M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc) {L epsilon : ℝ} {lambda : ℕ} {optimal A : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (searchCert : RoundedInstanceSearchCertificate M L epsilon lambda optimal), 0 < lambda \\to 0 < L \\to Claim34Certificate commonValue L (allocationLoadRatio M) bundleOf A \\to \\forall (minType maxType : RoundedBundleType lambda), roundedBundleTypeLoad L minType = minAllocationLoad M A \\to roundedBundleTypeLoad L maxType = maxAllocationLoad M A \\to \\forall (ip : RoundedTypeIPCertificate lambda SourceAgent), admissibleTypes = roundedTypesInValueWindow L lambda (minAllocationLoad M A) (maxAllocationLoad M A) \\to allocationLoadRatio M output \\le allocationLoadRatio M optimal * (1 + epsilon) \\land \\exists search, roundedValuePairRatio chosenPair \\le allocationLoadRatio M A"
-    },
-    "claim3_4_bounded_optimal_certificate": {
-      "lean_statement_sha256": "5964468681715f0c4639cf5fc7bd14b81d2b84b10ac033ea262b9e6b1826bcc7",
-      "statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} {v : SourceItem \\to ℝ} {L : ℝ} {ratioOf : Alloc \\to ℝ} {bundleOf : Alloc \\to SourceAgent \\to Finset SourceItem} {A B : Alloc}, IsOptimalRatio ratioOf A \\to ratioOf B \\le ratioOf A \\to (\\forall (i : SourceAgent), boundedAroundAverage L (commonLoad v (bundleOf B i))) \\to Claim34Certificate v L ratioOf bundleOf B"
-    },
-    "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods": {
-      "lean_statement_sha256": "9a8a397990eb3963dc543c16147b49ca89de7d2f512cf61b09e63ee6d0f1268e",
-      "statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} [inst : Fintype SourceAgent] [Fintype SourceItem] [inst_2 : Nonempty SourceAgent] [DecidableEq SourceAgent] [inst_4 : DecidableEq SourceItem] {goods : Finset SourceItem} {v : SourceItem \\to ℝ} {L : ℝ} (A₀ : Allocation SourceAgent SourceItem), IsOptimalRatio (fun A  =>  loadRatio (minCommonLoad v A) (maxCommonLoad v A)) A₀ \\to (\\forall (A : Allocation SourceAgent SourceItem), IsOptimalRatio (fun C  =>  loadRatio (minCommonLoad v C) (maxCommonLoad v C)) A \\to IsAllocationOf A goods) \\to 0 < L \\to commonLoad v goods = ↑(card SourceAgent) * L \\to (\\forall (A : Allocation SourceAgent SourceItem), IsOptimalRatio (fun C  =>  loadRatio (minCommonLoad v C) (maxCommonLoad v C)) A \\to (\\lnot\\forall (i : SourceAgent), boundedAroundAverage L (commonLoad v (A i))) \\to \\forall (i : SourceAgent), \\exists g, g \\in A i) \\to (\\forall g \\in goods, 0 < v g) \\to (\\forall g \\in goods, v g < L) \\to \\exists B, IsAllocationOf B goods \\land Claim34Certificate v L (fun A  =>  loadRatio (minCommonLoad v A) (maxCommonLoad v A)) (fun A i  =>  A i) B"
-    },
-    "claim3_4_bounded_optimal_of_identical_utilities_model": {
-      "lean_statement_sha256": "f9dad5ae7a3c1c09fc6f48a350672026dda3cd5d1c011061433af77161b0c86f",
-      "statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [Fintype Alloc] [inst_2 : Nonempty SourceAgent] [inst_3 : DecidableEq SourceAgent] [inst_4 : DecidableEq SourceItem] (M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc) {L : ℝ} (moveAlloc : Alloc \\to SourceAgent \\to SourceAgent \\to SourceItem \\to Alloc) (A₀ : Alloc), IsOptimalRatio (allocationLoadRatio M) A₀ \\to 0 < L \\to (\\forall (A : Alloc), IsOptimalRatio (allocationLoadRatio M) A \\to \\sum i, commonLoad commonValue (bundleOf A i) = ↑(card SourceAgent) * L) \\to (\\forall (A : Alloc), IsOptimalRatio (allocationLoadRatio M) A \\to (\\lnot\\forall (i : SourceAgent), boundedAroundAverage L (commonLoad commonValue (bundleOf A i))) \\to 0 < minAllocationLoad M A) \\to (\\forall (A : Alloc) (i : SourceAgent), \\forall g \\in bundleOf A i, 0 \\le commonValue g) \\to (\\forall (A : Alloc) (i : SourceAgent), \\forall g \\in bundleOf A i, commonValue g < L) \\to (\\forall (A : Alloc) {i j : SourceAgent} {g : SourceItem}, g \\in bundleOf A i \\to g \\in bundleOf A j \\to i = j) \\to (\\forall (A : Alloc) (source target : SourceAgent) (g : SourceItem), bundleOf (moveAlloc A source target g) = moveBundle (bundleOf A) source target g) \\to \\exists B, Claim34Certificate commonValue L (allocationLoadRatio M) bundleOf B"
-    },
     "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads": {
       "lean_statement_sha256": "a801c6fbd70aeca37a0026ca5bc646dd0498ab19eb90a764b87f44cdff2fad7f",
       "statement": "\\forall {SourceAgent : Type u_1} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] {epsilon L : ℝ} {optLoad roundedLoad outLoad : SourceAgent \\to ℝ}, 0 < epsilon \\to epsilon \\le 1 \\to 0 < inf' ⋯ outLoad \\to 0 < inf' ⋯ roundedLoad \\to 0 < inf' ⋯ optLoad \\to 0 \\le sup' ⋯ optLoad \\to 0 \\le sup' ⋯ roundedLoad \\to L \\le 2 * inf' ⋯ roundedLoad \\to L \\le 2 * sup' ⋯ roundedLoad \\to L \\le 2 * inf' ⋯ optLoad \\to L \\le 2 * sup' ⋯ optLoad \\to (\\forall (i : SourceAgent), outLoad i \\le roundedLoad i + L / (56 / epsilon)) \\to (\\forall (i : SourceAgent), 56 / epsilon / (56 / epsilon + 1) * roundedLoad i - 2 / (56 / epsilon) * L \\le outLoad i) \\to (\\forall (i : SourceAgent), roundedLoad i \\le (56 / epsilon + 1) / (56 / epsilon) * optLoad i + L / (56 / epsilon)) \\to (\\forall (i : SourceAgent), optLoad i - L / (56 / epsilon) \\le roundedLoad i) \\to ratio (inf' ⋯ outLoad) (sup' ⋯ outLoad) \\le ratio (inf' ⋯ optLoad) (sup' ⋯ optLoad) * (1 + epsilon)"
     },
-    "lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads": {
-      "lean_statement_sha256": "32e7d27ac25c6daddfbd17034bdba337d572556444ad19eddaa1a8353326dc6e",
-      "statement": "\\forall {epsilon L optMin optMax roundedMin roundedMax outMin outMax : ℝ}, 0 < epsilon \\to epsilon \\le 1 \\to 0 < outMin \\to 0 < roundedMin \\to 0 < optMin \\to 0 \\le optMax \\to 0 \\le roundedMax \\to L \\le 2 * roundedMin \\to L \\le 2 * roundedMax \\to L \\le 2 * optMin \\to L \\le 2 * optMax \\to outMax \\le roundedMax + L / (56 / epsilon) \\to 56 / epsilon / (56 / epsilon + 1) * roundedMin - 2 / (56 / epsilon) * L \\le outMin \\to roundedMax \\le (56 / epsilon + 1) / (56 / epsilon) * optMax + L / (56 / epsilon) \\to optMin - L / (56 / epsilon) \\le roundedMin \\to ratio outMin outMax \\le ratio optMin optMax * (1 + epsilon)"
-    },
-    "directMechanism_fields": {
-      "lean_statement_sha256": "8ab5b0b5ac4b41cba89fe18ea1144ccf7fa25d7aca10b3ac71220f4fe1e357f9",
-      "statement": "\\forall (Agent : Type u_1) (Item : Type u_2) (M : directMechanism Agent Item), M = M"
-    },
-    "randomizedDirectMechanism_fields": {
-      "lean_statement_sha256": "919c30471ee1937a41ef6894752fef74582de7c88e3a714462940e54120a04df",
-      "statement": "\\forall (Agent : Type u_1) (Item : Type u_2) (M : randomizedDirectMechanism Agent Item), M = M"
-    },
-    "truthful": {
-      "lean_statement_sha256": "26a0847f643afe171962c1091d49a63673e16ce594555602ab569275f64b6905",
-      "statement": "[DecidableEq Agent] (M : directMechanism Agent Item) = LMMS04FairDivision.paper_fair_division_truthful M"
-    },
-    "randomizedTruthful": {
-      "lean_statement_sha256": "16b1f0e777f3f985f90e7a298c25cf2c245633d7c0392b761bb11bbd424bb925",
-      "statement": "[Fintype (Allocation Agent Item)] [DecidableEq (Allocation Agent Item)] [DecidableEq Agent] (M : randomizedDirectMechanism Agent Item) = LMMS04FairDivision.paper_randomized_fair_division_truthful M"
+    "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee": {
+      "lean_statement_sha256": "267ed8c1416a0fc8508dac80190cd7a823b20a7dc37acf8f6281c028c77c50c9",
+      "statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] [DecidableEq SourceItem] {M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc} {L LR epsilon : ℝ} {lambda : ℕ} {optimal : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (cert : RoundedInstanceSearchCertificate M L epsilon lambda optimal) (highGoods lowGoods : Finset SourceItem) (v : SourceItem \\to ℝ), 1 < lambda \\to 0 < L \\to (\\forall g \\in highGoods, L / ↑lambda < v g \\land v g < L) \\to (\\forall g \\in lowGoods, 0 \\le v g \\land v g < L / ↑lambda) \\to (\\forall g \\in highGoods, v g + L / ↑lambda ^ 2 \\le L) \\to (\\forall (indexOf : SourceItem \\to RoundedValueIndex lambda) (combinedSupply : RoundedValueIndex lambda \\to ℕ), (\\forall g \\in highGoods, v g \\le roundedValue L lambda (indexOf g) \\land roundedValue L lambda (indexOf g) < v g + L / ↑lambda ^ 2) \\to (\\forall (k : RoundedValueIndex lambda), combinedSupply k = paper_lmms_theorem_3_3_roundedGoodsSupplyOfGoods indexOf highGoods k + lowGoodsAggregatedSupply L lambda (sum v) k) \\to \\sum k, ↑(combinedSupply k) * roundedValue L lambda k = ↑(card SourceAgent) * LR) \\to (\\forall (indexOf : SourceItem \\to RoundedValueIndex lambda) (combinedSupply : RoundedValueIndex lambda \\to ℕ), (\\forall g \\in highGoods, v g \\le roundedValue L lambda (indexOf g) \\land roundedValue L lambda (indexOf g) < v g + L / ↑lambda ^ 2) \\to (\\forall (k : RoundedValueIndex lambda), combinedSupply k = paper_lmms_theorem_3_3_roundedGoodsSupplyOfGoods indexOf highGoods k + lowGoodsAggregatedSupply L lambda (sum v) k) \\to combinedSupply (paper_lmms_theorem_3_3_topRoundedValueIndex lambda) = 0 \\to \\sum k, ↑(combinedSupply k) * roundedValue L lambda k = ↑(card SourceAgent) * LR \\to \\exists p, Nonempty (RoundedConcrete"
     },
     "theorem4_1_source_goods_content": {
       "lean_statement_sha256": "b6cc66c8cc61fc19c3abd013c57242c86adf15296cd443b2bc8deade37d4acd3",
       "statement": "theorem4_1_source_goods = univ \\land card LMMS41Agent = 2 \\land card = 10 \\land card = 8"
     },
-    "theorem4_1_true_report_formula": {
-      "lean_statement_sha256": "929ca475a2c0fdbddae910c491f6dd065b232f106a1c9fab57cf0e23ad4784fb",
-      "statement": "theorem4_1_true_report = lmms41AdditiveReport lmms41TrueWeight \\land \\forall (agent : LMMS41Agent) (item : LMMS41Item), lmms41TrueWeight agent item = if agent = player1 then if item = a then 9 / 20 else if item = b then 7 / 20 else 1 / 40 else if item = a then 7 / 20 else if item = b then 9 / 20 else 1 / 40"
+    "theorem4_1_source_minimum_envy_not_truthful": {
+      "lean_statement_sha256": "e1e3f334352fd11398c1faa09e79598e15e9512c38c23889ab4234eb886af9f1",
+      "statement": "\\forall (M : LMMS41Mechanism), ReturnsMinimumReportEnvy M lmms41Goods \\to \\lnotTruthful M"
     },
     "theorem4_1_source_not_truthful_envy_free_whenever_exists": {
       "lean_statement_sha256": "cfa2eb15eb2416e2b306605edf1db9538f9a3a9f64ccfed8c1b53915c09ec52c",
       "statement": "\\forall (M : LMMS41Mechanism), ReturnsAllocationOf M lmms41Goods \\to ReturnsEnvyFreeWheneverExists M lmms41Goods \\to \\lnotTruthful M"
     },
-    "theorem4_1_source_minimum_envy_not_truthful": {
-      "lean_statement_sha256": "e1e3f334352fd11398c1faa09e79598e15e9512c38c23889ab4234eb886af9f1",
-      "statement": "\\forall (M : LMMS41Mechanism), ReturnsMinimumReportEnvy M lmms41Goods \\to \\lnotTruthful M"
+    "theorem4_1_true_report_formula": {
+      "lean_statement_sha256": "929ca475a2c0fdbddae910c491f6dd065b232f106a1c9fab57cf0e23ad4784fb",
+      "statement": "theorem4_1_true_report = lmms41AdditiveReport lmms41TrueWeight \\land \\forall (agent : LMMS41Agent) (item : LMMS41Item), lmms41TrueWeight agent item = if agent = player1 then if item = a then 9 / 20 else if item = b then 7 / 20 else 1 / 40 else if item = a then 7 / 20 else if item = b then 9 / 20 else 1 / 40"
+    },
+    "theorem4_2_uniform_random_max_envy_probability_bound": {
+      "lean_statement_sha256": "52ebb593788d9f158b4c106544cb85feb33a4b50dc9c358a7814833df3b124e9",
+      "statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [inst : Fintype Agent] [inst_1 : Fintype Item] [inst_2 : DecidableEq Agent] [inst_3 : DecidableEq Item] [inst_4 : Nonempty Agent] [Nonempty Item] (w : LMMS42ItemWeights Agent Item) {alpha t : ℝ}, 0 \\le alpha \\to 0 < t \\to (\\forall (p : Agent) (g : Item), 0 \\le w p g) \\to (\\forall (p : Agent), \\sum g, w p g = 1) \\to (\\forall (p : Agent) (g : Item), w p g \\le alpha) \\to 1 - 2 * alpha * ↑(card Agent) / t ^ 2 \\le pmfProb (lmms42UniformAssignmentLaw Agent Item) fun assign  =>  maxReportEnvy (lmms42AdditiveReport w) (lmms42AllocationOfAssignment assign) \\le t"
     },
     "theorem4_2_uniform_random_mechanism_truthful": {
       "lean_statement_sha256": "46024c8b13ba7f7b6bb754a0abbb396fd583333515ecf7fcdb021ca255652bb0",
       "statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [inst : Fintype Agent] [inst_1 : Fintype Item] [inst_2 : DecidableEq Agent] [inst_3 : DecidableEq Item] [inst_4 : Nonempty Agent] [Nonempty Item] [inst_6 : Fintype (Allocation Agent Item)] [inst_7 : DecidableEq (Allocation Agent Item)], randomizedTruthful (lmms42UniformRandomMechanism Agent Item)"
     },
-    "theorem4_2_uniform_random_max_envy_probability_bound": {
-      "lean_statement_sha256": "52ebb593788d9f158b4c106544cb85feb33a4b50dc9c358a7814833df3b124e9",
-      "statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [inst : Fintype Agent] [inst_1 : Fintype Item] [inst_2 : DecidableEq Agent] [inst_3 : DecidableEq Item] [inst_4 : Nonempty Agent] [Nonempty Item] (w : LMMS42ItemWeights Agent Item) {alpha t : ℝ}, 0 \\le alpha \\to 0 < t \\to (\\forall (p : Agent) (g : Item), 0 \\le w p g) \\to (\\forall (p : Agent), \\sum g, w p g = 1) \\to (\\forall (p : Agent) (g : Item), w p g \\le alpha) \\to 1 - 2 * alpha * ↑(card Agent) / t ^ 2 \\le pmfProb (lmms42UniformAssignmentLaw Agent Item) fun assign  =>  maxReportEnvy (lmms42AdditiveReport w) (lmms42AllocationOfAssignment assign) \\le t"
+    "truthful": {
+      "lean_statement_sha256": "26a0847f643afe171962c1091d49a63673e16ce594555602ab569275f64b6905",
+      "statement": "[DecidableEq Agent] (M : directMechanism Agent Item) = LMMS04FairDivision.paper_fair_division_truthful M"
     }
   },
   "paper": "LMMS04FairDivision",

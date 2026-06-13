@@ -1976,7 +1976,7 @@ def WomenStrictPreferenceProfile (val_w : W → M → ℝ) : Prop :=
 
 /--
 All potential pairs are acceptable to both sides. This is the marriage-problem
-specialization in Roth's proof, where every agent must be matched.
+specialization where every agent must be matched.
 -/
 def AllPairsAcceptable (val_m : M → W → ℝ) (val_w : W → M → ℝ) : Prop :=
   (∀ m w, 0 < val_m m w) ∧ (∀ w m, 0 < val_w w m)
@@ -2083,9 +2083,9 @@ theorem deferredAcceptance_complete_of_card_eq_all_pairs_acceptable
     simpa [deferredAcceptance, s] using hwComplete w
 
 /--
-Roth's "possible woman" invariant for the proposing side: if a man has already
-lost access to a woman and is not currently holding her, then no stable matching
-can pair them.
+The proposing-side "possible woman" invariant: if a man has already lost access
+to a woman and is not currently holding her, then no stable matching can pair
+them.
 -/
 def DARejectedPairImpossibleInvariant
     (val_m : M → W → ℝ) (val_w : W → M → ℝ) (s : DAState M W) : Prop :=
@@ -2112,7 +2112,7 @@ lemma better_than_best_not_remaining
 /--
 If woman `w` rejects `r` in favor of `a`, and `a` has just proposed to `w`,
 then no stable matching can pair `r` with `w`. This is the local blocking-pair
-step in Roth's proof of men-optimality.
+step in the proof of proposer optimality.
 -/
 lemma stable_matching_excludes_rejected_pair
     (val_m : M → W → ℝ) (val_w : W → M → ℝ)

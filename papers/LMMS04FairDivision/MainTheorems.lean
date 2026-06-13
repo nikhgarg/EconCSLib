@@ -1,6 +1,6 @@
 import EconCSLib.Algorithms.Complexity.Classes
 import EconCSLib.SocialChoice.FairDivision.IndivisibleGoods
-import EconCSLib.SocialChoice.FairDivision.LMMSAlgorithm
+import EconCSLib.SocialChoice.FairDivision.BoundedEnvyAlgorithm
 import EconCSLib.SocialChoice.FairDivision.Mechanisms
 import EconCSLib.Foundations.Optimization.FiniteSearch
 import LMMS04FairDivision.Lemma24MeasurePartition
@@ -121,14 +121,15 @@ theorem paper_lmms_theorem_2_1_existence_alpha
 noncomputable def paper_lmms_algorithm
     (v : Valuation Agent Item) {α : ℝ} (hαnonneg : 0 ≤ α) (hbound : MarginalBound v α) (goodsList : List Item) :
     Allocation Agent Item :=
-  (lmmsAlgorithm v hαnonneg hbound goodsList).2.val
+  (boundedEnvyAlgorithm v hαnonneg hbound goodsList).2.val
 
 theorem paper_lmms_algorithm_correct
     (v : Valuation Agent Item) {α : ℝ} (hαnonneg : 0 ≤ α) (hbound : MarginalBound v α) (goodsList : List Item) (hnodup : goodsList.Nodup) :
-    paper_is_allocation_of (paper_lmms_algorithm v hαnonneg hbound goodsList) (lmmsAlgorithm v hαnonneg hbound goodsList).1 ∧
+    paper_is_allocation_of (paper_lmms_algorithm v hαnonneg hbound goodsList)
+      (boundedEnvyAlgorithm v hαnonneg hbound goodsList).1 ∧
     paper_envy_bounded_by v (paper_lmms_algorithm v hαnonneg hbound goodsList) α := by
   rw [paper_is_allocation_of_eq, paper_envy_bounded_by_eq]
-  exact (lmmsAlgorithm v hαnonneg hbound goodsList).2.property
+  exact (boundedEnvyAlgorithm v hαnonneg hbound goodsList).2.property
 
 /--
 Theorem 2.1 (Algorithm, source-facing goods set): the LMMS algorithm produces a
@@ -146,7 +147,7 @@ theorem paper_lmms_algorithm_correct_list_toFinset
         (paper_lmms_algorithm v hαnonneg hbound goodsList) α := by
   rw [paper_is_allocation_of_eq, paper_envy_bounded_by_eq]
   exact
-    lmmsAlgorithm_isAllocationOf_list_toFinset_and_envyBoundedBy
+    boundedEnvyAlgorithm_isAllocationOf_list_toFinset_and_envyBoundedBy
       v hαnonneg hbound goodsList hnodup
 
 /-! ## 3) Measure-valued utility reduction -/

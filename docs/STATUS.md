@@ -11,7 +11,9 @@ Allowed paper-row statuses:
 
 - `formalized`: The listed Lean declaration(s) close the intended paper item.
   The remaining-assumptions cell must be `None` or start with `None;` followed
-  only by notes about paper assumptions already encoded in the declarations.
+  only by notes about explicit paper assumptions already encoded as
+  `Assumptions.lean` declarations, listed in `status.json`
+  `review_surface.assumption_names`, and checked by `assumption_match_llm.json`.
   DAG style: use `dag_result` for theorem/proposition/corollary nodes,
   `dag_lemma` for lemma/support nodes, and `dag_model` for definition/model
   nodes.
@@ -27,6 +29,10 @@ Allowed paper-row statuses:
   `dag_partial`.
 - `conditional`: A paper-facing statement or reduction is proved only under an
   explicit extra certificate, bridge theorem, or hypothesis not yet discharged.
+  A capacity equation, threshold identity, density formula, source row,
+  selection-mass expression, or certificate field is conditional unless it is
+  derived in Lean or separately validated as an explicit source/model
+  assumption.
   DAG style: `dag_conditional`.
 - `scaffold`: Names, interfaces, or theorem shells exist, but no substantive
   source proof has been closed. DAG style: `dag_scaffold`.

@@ -1,4 +1,5 @@
 import LG21TestOptionalPolicies.PostPaperAudit
+import LG21TestOptionalPolicies.Assumptions
 
 /-!
 # Human Review Interface: LG21 Test-Optional Policies
@@ -59,11 +60,11 @@ abbrev theorem3_2_report_required_no_test_relevance := @PostPaperAudit.audit_the
 /-- Lemma 4.1: observed access makes the policy strategy-proof. -/
 abbrev lemma4_1_observed_access_strategy_proofness := @PostPaperAudit.audit_lemma4_1_observed_access_strategy_proofness
 
-/-- Proposition 4.2: Bayesian optimal estimates are not latent-skill fair. -/
-abbrev proposition4_2_base_indexed_posterior_surface := @PostPaperAudit.audit_proposition4_2_base_indexed_posterior_surface
+/-- Proposition 4.2: Bayesian optimal access-side estimates are not latent-skill fair. -/
+abbrev proposition4_2_bayesian_access_estimates_not_latent_skill_fair := @PostPaperAudit.audit_proposition4_2_base_indexed_posterior_surface
 
 /-- Proposition 4.3: the full Bayesian optimal policy is not observable or demographic fair. -/
-abbrev proposition4_3_base_mixed_extra_signal_surface := @PostPaperAudit.audit_proposition4_3_base_mixed_extra_signal_surface
+abbrev proposition4_3_bayesian_optimal_not_observable_or_demographic_fair := @PostPaperAudit.audit_proposition4_3_base_mixed_extra_signal_surface
 
 /-- Definition 6: the re-sampling policy kernel. -/
 abbrev definition6_resampling_policy := @PostPaperAudit.audit_definition6_resampling_policy_observable_kernel

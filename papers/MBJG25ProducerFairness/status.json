@@ -6,7 +6,7 @@
   "source_version": "ICWSM 2025 / arXiv:2207.04369",
   "build_target": "lake build MBJG25ProducerFairness",
   "status": "formalized",
-  "main_caveat": "Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement.",
+  "main_caveat": "The strict variance-decrease statement is formalized with the documented interior-quality condition 0 < q_v < 1; the report records boundary counterexamples at q_v = 0 and q_v = 1.",
   "human_summary": "Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement.",
   "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
   "human_review": {
@@ -19,7 +19,7 @@
   },
   "paper_interface": {
     "path": "papers/MBJG25ProducerFairness/PaperInterface.lean",
-    "line_count": 317,
+    "line_count": 332,
     "declaration_rows": 17,
     "review_rows": 17,
     "oversized": false,
@@ -29,7 +29,9 @@
   },
   "artifacts": {
     "readme": "papers/MBJG25ProducerFairness/README.md",
+    "source_text": "papers/MBJG25ProducerFairness/MBJG25ProducerFairness.txt",
     "paper_interface": "papers/MBJG25ProducerFairness/PaperInterface.lean",
+    "assumptions": "papers/MBJG25ProducerFairness/Assumptions.lean",
     "final_validation_report": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
     "dependency_dag_tex": "papers/MBJG25ProducerFairness/DependencyDAG.tex",
     "dependency_dag_pdf": "papers/MBJG25ProducerFairness/DependencyDAG.pdf",
@@ -37,6 +39,24 @@
   },
   "review_surface": {
     "source_file": "papers/MBJG25ProducerFairness/PaperInterface.lean",
+    "assumption_source_file": "papers/MBJG25ProducerFairness/Assumptions.lean",
+    "llm_assumption_review": {
+      "assumption_judgment_file": "papers/MBJG25ProducerFairness/assumption_match_llm.json",
+      "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a paper/source model assumption, paper-statement condition, or documented caveat rather than a proof assumption."
+    },
+    "assumption_policy": "strict",
+    "assumption_names": [
+      "assumption_positive_prior_shape",
+      "assumption_positive_time",
+      "assumption_nonnegative_time",
+      "assumption_quality_nonnegative",
+      "assumption_quality_at_most_one",
+      "assumption_quality_positive",
+      "assumption_quality_lt_one",
+      "assumption_prior_strength_nonnegative",
+      "assumption_prior_strength_weak_order",
+      "assumption_prior_strength_strict_order"
+    ],
     "include_names": [
       "paper_posterior_mean",
       "paper_bias",

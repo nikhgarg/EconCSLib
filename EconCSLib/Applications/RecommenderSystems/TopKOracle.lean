@@ -10,7 +10,7 @@ namespace TopKExpectationOracle
 
 This module connects the probability-side `TopKExpectationOracle` abstraction to
 finite recommendation count allocations.  It is intentionally generic in the
-item/type index, so paper-specific models can keep their own names while using
+item/type index, so domain-specific models can keep their own names while using
 the same allocation objective and marginal bridges.
 -/
 

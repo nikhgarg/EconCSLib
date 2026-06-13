@@ -173,7 +173,7 @@ theorem restrict_compl_highAggregatePointMasses_singleton_le
 A finite measurable partition certificate for a family of measure-valued
 utilities.
 
-The `piece_value_le` field is the condition needed by the LMMS bounded-envy
+The `piece_value_le` field is the condition needed by the bounded-envy
 theorem after the measurable pieces are treated as indivisible goods.  The
 cover/disjoint fields record the intended cake-partition semantics; the finite
 allocation theorem below only needs the per-piece bound.

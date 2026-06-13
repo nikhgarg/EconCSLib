@@ -4,9 +4,17 @@
 
 - Lean formalization status: formalized
 - LLM statement-translation audit: 17/17 dashboard rows match; 0 stale, missing, uncertain, or mismatch rows.
-- Human dashboard review status: 10/17 rows have saved human review entries; 0 saved entries need resaving after a Lean-signature refresh; 0 human mismatches.
+- Human dashboard review status: 10/17 rows have saved human review entries; 0 stale entries; 0 human mismatches.
 - Human review notes: 8 reviewed rows were marked matching. Two reviewed rows were marked uncertain because the human review depends on trusting shared-library predicates (`EconCSLib.Statistics.JensenConvex` and `EconCSLib.Statistics.GlobalMinAt`).
 - Human summary: Formalization required an interior-quality assumption (`0 < q_v < 1`) for the strict variance-decrease statement.
+
+<!-- transitive-source-premise-audit:start -->
+### Axiom, Premise, And Source-Hygiene Audit
+
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
+
+Current result: the axiom/premise/source-hygiene audit finds no unresolved certificate/source-boundary dependency for the current paper-facing status; the documented MBJG caveat is the interior-quality condition for the strict variance-decrease statement. The former zero-denominator proof condition is derived in Lean and is no longer a caveat.
+<!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
 
@@ -20,11 +28,34 @@
 
 The paper-facing definitions and named results compile in Lean; detailed definition, theorem, and validator ledgers are collected at the end of the report. The current LLM statement-translation audit validates all 17 dashboard rows against the context-free Lean-to-TeX drafts. The saved human dashboard review is partial: 10 rows have human entries, two of those entries are intentionally marked uncertain because they require deciding how much trust to place in shared-library predicates, and 7 rows still need initial human review.
 
-## 4. Additional Assumptions Beyond Paper
+## 4. Paper Assumption Provenance And Modeling Notes
 
-- `0 < alpha + beta`: Required for the prior mean to be well-defined (non-zero denominator).
-- `0 < t`: Required for strictly positive variance (otherwise identically zero).
-- `0 < q_v < 1` (for strict Var. decrease): Required because variance is identically zero at boundaries `0` and `1`.
+> Axiom/premise/source-hygiene audit update (2026-06-12): `assumption_match_llm.json` records per-premise judgments for this paper's `Assumptions.lean` ledger. Current result: 11/11 visible premises are judged as source model primitives, paper-statement conditions, or the documented strict-variance caveat; 0 premises remain as partial-formalization boundaries. The former nonzero-denominator proof condition for Theorem 3.2 convexity has been removed from the assumption ledger and is now derived in Lean from positive prior-shape mass, nonnegative prior strength, and positive time.
+
+Every paper-facing theorem premise that is not derived in Lean is routed through
+`Assumptions.lean` and checked separately as a paper/source condition or a
+documented caveat.
+
+| Assumption or condition | Lean declaration | Source location / statement | Validators | Comments |
+|---|---|---|---|---|
+| Positive prior-shape mass | `assumption_positive_prior_shape` | Section 2.1 prior-weighted rating model / Theorems 3.1 and 3.2 | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Required by the displayed posterior denominator. |
+| Positive time | `assumption_positive_time` | Theorems 3.1 and 3.2, quality estimation after `t` timesteps | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Used by fixed-setting monotonicity rows. |
+| Nonnegative time | `assumption_nonnegative_time` | Theorem 3.2 variance-as-quality-function rows | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Used by concavity and maximum-at-half rows. |
+| Closed quality interval, lower bound | `assumption_quality_nonnegative` | Section 2.1 true quality `0 <= q_v <= 1` | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Source Bernoulli quality domain. |
+| Closed quality interval, upper bound | `assumption_quality_at_most_one` | Section 2.1 true quality `0 <= q_v <= 1` | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Source Bernoulli quality domain. |
+| Interior quality for strict variance decrease, lower bound | `assumption_quality_positive` | Theorem 3.1 strict variance-decrease repair | gpt-5-codex (model; documented_caveat; 2026-06-12T00:00:00Z) | Not in the literal theorem statement; needed because strict decrease fails at `q_v = 0`. |
+| Interior quality for strict variance decrease, upper bound | `assumption_quality_lt_one` | Theorem 3.1 strict variance-decrease repair | gpt-5-codex (model; documented_caveat; 2026-06-12T00:00:00Z) | Not in the literal theorem statement; needed because strict decrease fails at `q_v = 1`. |
+| Nonnegative prior strength | `assumption_prior_strength_nonnegative` | Section 2.1 prior strength `eta >= 0` | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Source prior-strength domain. |
+| Ordered prior strengths, weak order | `assumption_prior_strength_weak_order` | Theorem 3.1 monotonicity in `eta` | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Weak comparison form. |
+| Ordered prior strengths, strict order | `assumption_prior_strength_strict_order` | Theorem 3.1 monotonicity in `eta` | gpt-5-codex (model; paper_condition; 2026-06-12T00:00:00Z) | Strict comparison form. |
+
+### Additional Assumptions Beyond Paper
+
+- The only non-source condition is the documented caveat `0 < q_v < 1` for
+  strict variance decrease. It is recorded as a repair to the paper's boundary
+  bug, not as a hidden proof assumption.
+- The Theorem 3.2 convexity denominator condition is not exposed as a paper
+  assumption. It is derived in Lean from source-domain conditions.
 
 ## 5. Proof-Strategy Deviations
 
@@ -61,11 +92,13 @@ Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json`
 
 LLM summary: 17 rows; 17 match, 0 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
 
-Human-review summary: 10/17 rows have saved human entries; 8 reviewed rows are marked matching; 2 reviewed rows are marked uncertain; 0 saved human entries need resaving after the current Lean-signature rendering; 7 rows remain unreviewed; 0 rows are marked mismatch.
+Human-review summary: 10/17 rows have saved human entries; 8 reviewed rows are marked matching; 2 reviewed rows are marked uncertain; 0 saved entries are stale; 7 rows remain unreviewed; 0 rows are marked mismatch.
 
 Human-review flags:
 - Human reviewer marked `paper_facing_theorem3_2_squared_bias_convex_in_quality` uncertain because this requires trusting or auditing `EconCSLib.Statistics.JensenConvex`.
 - Human reviewer marked `paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean` uncertain because this requires trusting or auditing `EconCSLib.Statistics.GlobalMinAt`.
+- All saved human-review entries are current with respect to the dashboard statement hashes.
+
 ## 12. Final Verdict
 
 - Completion status: formalized.
@@ -96,7 +129,7 @@ Human-review flags:
 | Theorem 3.1, Var. Weak Decrease | `paper_facing_theorem3_1_variance_weak_decrease` | fully formalized | exact | Holds on closed interval `[0, 1]`. |
 | Theorem 3.1, Var. Strict Decrease | `paper_facing_theorem3_1_variance_strict_decrease_interior` | fully formalized | minor deviation | Interior assumption `0 < q_v < 1` added to fix boundary bug. |
 | Theorem 3.1, Bias Nondecreasing | `paper_facing_theorem3_1_squared_bias_nondecreasing` | fully formalized | exact | |
-| Theorem 3.2, Bias Convexity | `paper_facing_theorem3_2_squared_bias_convex_in_quality` | fully formalized | model exact; human uncertainty | Human review asks how to audit or trust the shared `JensenConvex` predicate. |
+| Theorem 3.2, Bias Convexity | `paper_facing_theorem3_2_squared_bias_convex_in_quality` | fully formalized | model exact; human uncertainty | Human review asks how to audit or trust the shared `JensenConvex` predicate; denominator nonzero is derived from source-domain conditions. |
 | Theorem 3.2, Bias Minimizer | `paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean` | fully formalized | model exact; human uncertainty | Human review asks how to audit or trust the shared `GlobalMinAt` predicate. |
 | Theorem 3.2, Var. Concavity | `paper_facing_theorem3_2_variance_concave_in_quality` | fully formalized | exact | |
 | Theorem 3.2, Var. Maximizer | `paper_facing_theorem3_2_variance_global_max_at_half` | fully formalized | exact | |
@@ -121,20 +154,20 @@ and `statement_match_llm.json`.
 | Bias | match | match | Posterior mean minus true quality. |
 | Variance | match | match | Matches the paper variance formula. |
 | Squared bias | match | match | Square of the bias definition. |
-| Theorem 3.1 variance, weak | match; resave | match | Corrected full-interval weak monotonicity statement. |
-| Theorem 3.1 variance, strict | match; resave | match | Adds the interior-quality condition `0 < q_v < 1`. |
-| Theorem 3.1 squared bias | match; resave | match | Same monotonic direction as the paper. |
-| Theorem 3.2 squared-bias convexity | uncertain; resave | match | Human review asks how to audit or trust shared predicate `JensenConvex`. |
-| Theorem 3.2 squared-bias minimizer | uncertain; resave | match | Human review asks how to audit or trust shared predicate `GlobalMinAt`. |
+| Theorem 3.1 variance, weak | match | match | Corrected full-interval weak monotonicity statement. |
+| Theorem 3.1 variance, strict | match | match | Adds the interior-quality condition `0 < q_v < 1`. |
+| Theorem 3.1 squared bias | match | match | Same monotonic direction as the paper. |
+| Theorem 3.2 squared-bias convexity | uncertain | match | Human review asks how to audit or trust shared predicate `JensenConvex`. |
+| Theorem 3.2 squared-bias minimizer | uncertain | match | Human review asks how to audit or trust shared predicate `GlobalMinAt`. |
 | Theorem 3.2 variance concavity | not yet reviewed | match | Model check matches the paper-facing concavity statement. |
 | Theorem 3.2 variance maximizer | not yet reviewed | match | Model check matches the maximum-at-half statement. |
 | Boundary caveat at `q_v = 0` | not yet reviewed | match | Records why unconditional strict decrease fails. |
 | Boundary caveat at `q_v = 1` | not yet reviewed | match | Records why unconditional strict decrease fails. |
-| Individual producer unfairness | not yet reviewed | match | Standard deviation of selection rates among equal-quality producers. |
+| Individual producer unfairness | match | match | Standard deviation of selection rates among equal-quality producers. |
 | Thompson sampling mechanism | not yet reviewed | match | Draw a quality profile from the belief and choose an argmax. |
 | Expected regret | not yet reviewed | match | Finite-horizon expected regret. |
 | Appendix C MSE decomposition | not yet reviewed | match | Handles random review count `N` explicitly. |
 
-Rows marked `resave` have saved human-review entries whose Lean-signature digest
-predates the current dashboard rendering. They should be resaved before treating
-the human dashboard as complete.
+All saved human-review entries are current. The remaining open human-review work
+is the set of rows marked `not yet reviewed`, plus the policy question around
+how to audit shared-library predicates used by rows marked `uncertain`.

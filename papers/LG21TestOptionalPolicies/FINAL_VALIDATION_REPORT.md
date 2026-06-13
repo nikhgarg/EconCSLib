@@ -2,37 +2,60 @@
 
 ## 1. Human Verdict
 
-- Lean formalization status: formalized
+- Lean formalization status: formalized.
 - Human dashboard review status: 0/16 rows reviewed; 0 stale; 0 mismatches.
-- Main caveat: All named definitions and Section 3--4 results are closed under paper-facing source models; dashboard review remains external.
+- Main caveat: none. The axiom/premise/source-hygiene audit records all
+  explicit source-model/domain premises as source-matched or source-derived,
+  and the refreshed dashboard cache exposes the mathlib-backed Gaussian
+  lower-tail instantiation rather than a hidden certificate premise.
 
 ### Verdict
 
-The paper-facing formalization is complete for the source models used in the
-paper.
+The paper-facing statement surface is compact and covers all named definitions
+and results in Sections 2--4. Every non-derived source-model/domain premise is
+listed in `Assumptions.lean` and validated premise-by-premise in
+`assumption_match_llm.json`. The Gaussian lower-tail fact used by the observed
+access rows is instantiated from the shared mathlib-backed
+`standardGaussianLowerTailMeanCertificate`.
 
 All named definitions and named results in Sections 2--4 have compiling Lean
 endpoints in the compact human-review interface. The formalization did not find
-a counterexample to a named theorem in the paper. It did identify two places
-where the informal source proof needs to be represented carefully:
+a counterexample to a named theorem in the paper. The current audit checks the
+target declarations reached by the dashboard aliases in `ProofInterface.lean`
+and confirms that their explicit source-model/domain premises are routed
+through the paper-local assumption ledger; no hidden certificate dependency is
+reported for the compact paper-facing surface.
+
+The existing proof work also identified two places where the informal source
+proof needs to be represented carefully:
 
 - continuous cutoff and tie cases should be stated as source-law or a.e.
   equilibrium facts, since boundary types have measure zero;
 - arbitrary raw-policy abstractions are broader than the paper's source model
   and can be false, so they are recorded only as diagnostics.
 
-Those are modeling repairs to the formal statement surface, not caveats on the
-paper-facing theorem claims.
+Those are modeling repairs to the formal statement surface, not paper-error
+caveats.
 
 Human review is still external: the dashboard currently reports `0/16`
-reviewed interface items, with no stale or mismatch entries.
+reviewed interface items. The model statement-translation and statement-match
+sidecars are current for all 16 compact rows; human review remains a separate
+dashboard lane.
 
 ### Lean Footprint
 
 - Paper-local Lean files: 127,936 total lines across nine modules.
-- `PaperInterface.lean`: 92 lines.
+- `PaperInterface.lean`: 77 lines.
 - Human-review surface: 16 declarations.
 - `PostPaperAudit.lean`: 1,073 importable audit declarations.
+
+<!-- transitive-source-premise-audit:start -->
+### Axiom, Premise, And Source-Hygiene Audit
+
+The current axiom/premise/source-hygiene audit passes for full-status provenance. It uses Lean-native #print axioms for transitive proof debt, expanded paper-facing signatures for visible premises, and source-assumption ledgers for any non-derived assumptions.
+
+Current result: no unresolved hidden source-row or certificate premise remains in the paper-facing review surface.
+<!-- transitive-source-premise-audit:end -->
 
 ## 2. Source and Scope
 
@@ -126,11 +149,11 @@ The dashboard source-statement map used for statement translation is:
   positive test scale, the fully specified optional-reporting and
   report-required source equilibria choose take-and-report in every student
   information state, giving the strategy-proofness step.
-- `proposition4_2_base_indexed_posterior_surface`: For the fully specified
+- `proposition4_2_bayesian_access_estimates_not_latent_skill_fair`: For the fully specified
   observed-access source equilibria, any positive-slope base-indexed one-test
   posterior-law surface chooses take-and-report in every information state and
   is not latent-skill fair.
-- `proposition4_3_base_mixed_extra_signal_surface`: For the fully specified
+- `proposition4_3_bayesian_optimal_not_observable_or_demographic_fair`: For the fully specified
   observed-access source equilibria, any base-mixed extra-signal posterior-law
   surface with positive extra-noise variance chooses take-and-report in every
   information state and is not observable fair or demographic fair.
@@ -176,15 +199,101 @@ The observed-access section is more direct:
   conditional test-score law, so observable fairness holds by construction and
   demographic fairness follows by mixing.
 
-## 4. Additional Assumptions Beyond Paper
+## 4. Paper Definitions Checked
 
-None separately recorded in the existing report.
+<!-- lean-derived-definitions:start -->
+### Lean-Derived Dashboard Definitions
 
-## 5. Proof-Strategy Deviations
+| Paper-facing item | Lean declaration | Source-facing statement |
+| --- | --- | --- |
+| abbrev definition1_source_equilibrium | `definition1_source_equilibrium` | A source equilibrium consists of feasible access decisions, best-response utility maximization among feasible actions in every student information state, and estimation consistency. |
+| abbrev definition2_latent_skill_fair | `definition2_latent_skill_fair` | A policy surface is latent-skill fair when, in every equilibrium, applicants with the same latent skill and base group receive the same estimate law whether or not they have access. |
+| abbrev definition3_observable_fair | `definition3_observable_fair` | A policy surface is observably fair when, in every equilibrium and base group, the access and no-access observable estimate laws are equal. |
+| abbrev definition4_demographic_fair | `definition4_demographic_fair` | A policy surface is demographically fair when, in every equilibrium, the demographic access and no-access estimate laws are equal. |
+| abbrev definition5_test_blank | `definition5_test_blank` | A policy surface is test-blank when, in every equilibrium, base group, and test value, the base-only estimate equals the full-feature estimate. |
+| abbrev theorem3_1_optional_reporting | `theorem3_1_optional_reporting` | In the hidden-access optional-reporting source model, when access fractions are below one, every source equilibrium has strategic withholding: everyone takes the test, some base-score pair is not reported, reporting is cutoff-shaped with... |
+| abbrev theorem3_1_report_required | `theorem3_1_report_required` | In the hidden-access report-required source model with positive slopes and access fractions below one, every source equilibrium has strategic withholding: some base-skill pair does not take the test, taking is cutoff-shaped within each b... |
+| abbrev theorem3_2_optional_reporting_fairness_impossibility | `theorem3_2_optional_reporting_fairness_impossibility` | In the optional-reporting source model, under source-equilibrium, threshold-reporting, and the no-reporter-to-test-blank normalization, latent-skill fairness or observable fairness of the event-share binary-mixture surface implies test-b... |
+| abbrev theorem3_2_optional_reporting_no_test_relevance | `theorem3_2_optional_reporting_no_test_relevance` | Under the same optional-reporting hypotheses, if the event-share binary-mixture surface is latent-skill fair or observable fair, then there is no base/test triple where the base-only and full-feature estimates differ. |
+| abbrev theorem3_2_report_required_fairness_impossibility | `theorem3_2_report_required_fairness_impossibility` | In the report-required source model, under source-equilibrium, threshold-taking, and the no-taker-to-test-blank normalization, latent-skill fairness or observable fairness of the event-share binary-mixture surface implies test-blankness. |
+| abbrev theorem3_2_report_required_no_test_relevance | `theorem3_2_report_required_no_test_relevance` | Under the same report-required hypotheses, if the event-share binary-mixture surface is latent-skill fair or observable fair, then there is no base/test triple where the base-only and full-feature estimates differ. |
+| abbrev lemma4_1_observed_access_strategy_proofness | `lemma4_1_observed_access_strategy_proofness` | With observed access and a positive test scale, the fully specified optional-reporting and report-required source equilibria choose take-and-report in every student information state, giving the strategy-proofness step. |
+| abbrev proposition4_2_bayesian_access_estimates_not_latent_skill_fair | `proposition4_2_bayesian_access_estimates_not_latent_skill_fair` | For the fully specified observed-access source equilibria, any positive-slope base-indexed one-test posterior-law surface chooses take-and-report in every information state and is not latent-skill fair. |
+| abbrev proposition4_3_bayesian_optimal_not_observable_or_demographic_fair | `proposition4_3_bayesian_optimal_not_observable_or_demographic_fair` | For the fully specified observed-access source equilibria, any base-mixed extra-signal posterior-law surface with positive extra-noise variance chooses take-and-report in every information state and is not observable fair or demographic... |
+| abbrev definition6_resampling_policy | `definition6_resampling_policy` | The resampling policy uses the resampling experiment's conditional signal-given-base kernel. |
+| abbrev theorem4_4_resampling_policy | `theorem4_4_resampling_policy` | For every resampling experiment, the fully specified observed-access source equilibria choose take-and-report in every information state, and the access-estimate and resampling-estimate kernels are observable fair and demographic fair wi... |
+<!-- lean-derived-definitions:end -->
 
-None separately recorded in the existing report.
+## 5. Named Theorem Statements Checked
 
-## 6. Proof Tricks Worth Reusing
+<!-- lean-derived-statements:start -->
+### Lean-Derived Dashboard Named Statements
+
+None exposed in the current dashboard surface.
+<!-- lean-derived-statements:end -->
+
+## 6. Paper-Facing Statement Validator Ledger
+
+Generated from dashboard status export:
+
+`python3 scripts/review_dashboard.py --paper LG21TestOptionalPolicies --export-format validators-md`
+
+| Paper-facing statement | Lean declaration | Validators | Validator comments |
+| --- | --- | --- | --- |
+| abbrev definition1_source_equilibrium | `definition1_source_equilibrium` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev definition2_latent_skill_fair | `definition2_latent_skill_fair` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev definition3_observable_fair | `definition3_observable_fair` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev definition4_demographic_fair | `definition4_demographic_fair` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev definition5_test_blank | `definition5_test_blank` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev definition6_resampling_policy | `definition6_resampling_policy` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev lemma4_1_observed_access_strategy_proofness | `lemma4_1_observed_access_strategy_proofness` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev proposition4_2_bayesian_access_estimates_not_latent_skill_fair | `proposition4_2_bayesian_access_estimates_not_latent_skill_fair` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev proposition4_3_bayesian_optimal_not_observable_or_demographic_fair | `proposition4_3_bayesian_optimal_not_observable_or_demographic_fair` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev theorem3_1_optional_reporting | `theorem3_1_optional_reporting` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev theorem3_1_report_required | `theorem3_1_report_required` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev theorem3_2_optional_reporting_fairness_impossibility | `theorem3_2_optional_reporting_fairness_impossibility` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev theorem3_2_optional_reporting_no_test_relevance | `theorem3_2_optional_reporting_no_test_relevance` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev theorem3_2_report_required_fairness_impossibility | `theorem3_2_report_required_fairness_impossibility` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev theorem3_2_report_required_no_test_relevance | `theorem3_2_report_required_no_test_relevance` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+| abbrev theorem4_4_resampling_policy | `theorem4_4_resampling_policy` | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z) | gpt-5-codex (model; matches; 2026-06-12T00:00:00Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
+
+Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
+
+## 7. Paper Assumption Provenance
+
+> Axiom/premise/source-hygiene audit update (2026-06-12): `Assumptions.lean` now
+> records only the compact paper-facing source-model/domain premises reached
+> from `PaperInterface.lean`. `assumption_match_llm.json` validates those
+> premises individually. Current result: 20/20 premises are source-matched or
+> source-derived, with no visible partial-boundary premises.
+
+Every non-derived compact paper-facing premise is routed through
+`LG21TestOptionalPolicies/Assumptions.lean` and checked by
+`assumption_match_llm.json`. LG21 has many source-model helper declarations in
+`PostPaperAudit.lean`; those implementation-only variants are not part of the
+public assumption ledger unless reached by a dashboard row. The repository
+audit still follows aliases into `ProofInterface.lean`, so the compact surface
+cannot hide theorem hypotheses behind an abbrev.
+
+| Lean assumption/condition group | Judgment | Source role |
+| --- | --- | --- |
+| `assumption_section3_access_fraction_domain` | paper condition / derived | Interior cohort access fractions give `0 <= C < 1`. |
+| `assumption_section3_source_equilibrium_instances` | paper condition | Section 3 optional-reporting and report-required source equilibria. |
+| `assumption_source_model_event_and_consistency_predicates` | paper condition | Reporting/taking event predicates and estimation-consistency components from the source model. |
+| `assumption_section3_threshold_decision_shapes` | paper condition | Threshold-shaped reporting/taking rules stated and proved in Section 3. |
+| `assumption_section3_zero_positive_event_blank_branch` | derived | Zero-positive reporter/taker branches collapse to the test-blank/no-relevance branch. |
+| `assumption_positive_gaussian_domain_conditions` | paper condition / derived | Positive Gaussian scales, variances, and posterior-slope conditions. |
+| `assumption_observed_access_source_equilibria` | paper condition | Observed-access optional-reporting and report-required source equilibria used by Lemma 4.1 and downstream rows. |
+
+## 8. Proof-Strategy Deviations
+
+The main workflow deviation was repaired in this pass: older report text
+treated broad source-model certificate buckets as the public ledger. The strict
+audit now validates only the compact paper-facing premise surface and follows
+dashboard aliases into `ProofInterface.lean` so hidden theorem premises are
+still checked.
+
+## 9. Proof Tricks Worth Reusing
 
 - Keep the paper-facing interface compact, and move proof-route variants into
   the audit ledger. This made the final review surface small enough to compare
@@ -198,7 +307,7 @@ None separately recorded in the existing report.
   source proof moves between finite support witnesses and Gaussian law
   arguments.
 
-## 7. Library Lift Pass
+## 10. Library Lift Pass
 
 ### Library Pass
 
@@ -228,7 +337,7 @@ wrappers may deserve a generic Gaussian-mixture law module if another
 standardized-testing paper needs the same constructors. They remain local for
 now because their current shape is tuned to LG21's source-law bookkeeping.
 
-## 8. DAG Audit
+## 11. DAG Audit
 
 `DependencyDAG.tex` is source-facing and follows the shared template styles:
 
@@ -241,11 +350,11 @@ routed the model-to-fairness dependency vertically so arrows do not cross node
 labels. `latexmk -pdf DependencyDAG.tex` rebuilt the PDF, and PNG inspection
 found no node-label or arrow-through-text overlap.
 
-## 9. Conditional Results and Remaining Gaps
+## 12. Conditional Results and Remaining Gaps
 
 None separately recorded in the existing report.
 
-## 10. Suspected Paper Errors or Inconsistencies
+## 13. Suspected Paper Errors or Inconsistencies
 
 ### Issues Found
 
@@ -261,103 +370,44 @@ This distinction is important for future agents: keep diagnostics about false
 overbroad abstractions out of the paper-facing theorem inventory unless they
 change a named paper theorem. Here, they do not.
 
-No named paper result remains conditional or unformalized under the
-paper-facing source models.
+No named paper result is marked false. The refreshed strict provenance audit
+reports no unresolved hidden source-row or certificate premise for the
+paper-facing surface.
 
-## 11. Validation Checks
+## 14. Validation Checks
 
 ### Verification Checks
 
 Passed:
 
 - `lake build LG21TestOptionalPolicies`
-- placeholder scan for `sorry`, `admit`, `axiom`, and `unsafe` in LG21 Lean
-  files
-- `git diff --check` on the touched LG21/status/skill/library files
-- `latexmk -pdf DependencyDAG.tex`
-- dashboard cache refresh for `LG21TestOptionalPolicies`
+- `python3 scripts/review_dashboard.py --paper LG21TestOptionalPolicies --statement-check`
+- `python3 scripts/review_dashboard.py --paper LG21TestOptionalPolicies --assumption-check`
+- `python3 scripts/sync_paper_status.py --check`
 
-Expected non-passing human-review check:
+Expected human-review precheck warning:
 
-- `review-dashboard.sh --check` reports `0/16 reviewed`, `16 unreviewed`, `0`
-  stale, and `0` mismatch. This is expected until a human completes dashboard
-  review.
-
-Repository audit:
-
-- `python3 scripts/audit_repository.py --include-active` reports no
-  elsewhere in the repository.
+- `python3 scripts/review_dashboard.py --paper LG21TestOptionalPolicies --precheck`
+  reports 23 unreviewed dashboard items because human review remains external.
 
 ### Statement Translation Audit
 
-Audit date: 2026-06-06.
+Audit date: 2026-06-12 for the statement rows and assumption-provenance audit.
 Scope: current dashboard rows from `PaperInterface.lean`; `lean_to_tex_llm.json` records context-free Lean-to-TeX drafts and `statement_match_llm.json` records the context-free paper-vs-translation judgment.
 
-Summary: 16 rows; 16 match, 0 uncertain, 0 mismatch, 0 missing. Stale sidecar rows: none. Surface audit: not required (30 or fewer rows).
+Previous statement summary: 16 rows; 16 match, 0 uncertain, 0 mismatch, 0
+missing. Current statement sidecars are refreshed against the compact
+`PaperInterface.lean` surface, and the assumption-provenance sidecar validates
+20/20 compact source-model/domain premises with no partial-boundary rows.
 
-No flagged rows remain after the current statement check.
+Flagged rows:
+- None.
 
-## 12. Final Verdict
+## 15. Final Verdict
 
 - Completion status: formalized.
-- Summary: All named definitions and Section 3--4 results are closed under paper-facing source models; dashboard review remains external.
-
-## 13. Paper Definitions Checked
-
-<!-- lean-derived-definitions:start -->
-### Lean-Derived Dashboard Definitions
-
-| Paper-facing item | Lean declaration | Source-facing statement |
-| --- | --- | --- |
-| abbrev definition1_source_equilibrium | `definition1_source_equilibrium` | A source equilibrium consists of feasible access decisions, best-response utility maximization among feasible actions in every student information state, and estimation consistency. |
-| abbrev definition2_latent_skill_fair | `definition2_latent_skill_fair` | A policy surface is latent-skill fair when, in every equilibrium, applicants with the same latent skill and base group receive the same estimate law whether or not they have access. |
-| abbrev definition3_observable_fair | `definition3_observable_fair` | A policy surface is observably fair when, in every equilibrium and base group, the access and no-access observable estimate laws are equal. |
-| abbrev definition4_demographic_fair | `definition4_demographic_fair` | A policy surface is demographically fair when, in every equilibrium, the demographic access and no-access estimate laws are equal. |
-| abbrev definition5_test_blank | `definition5_test_blank` | A policy surface is test-blank when, in every equilibrium, base group, and test value, the base-only estimate equals the full-feature estimate. |
-| abbrev theorem3_1_optional_reporting | `theorem3_1_optional_reporting` | In the hidden-access optional-reporting source model, when access fractions are below one, every source equilibrium has strategic withholding: everyone takes the test, some base-score pair is not reported, reporting is cutoff-shaped with... |
-| abbrev theorem3_1_report_required | `theorem3_1_report_required` | In the hidden-access report-required source model with positive slopes and access fractions below one, every source equilibrium has strategic withholding: some base-skill pair does not take the test, taking is cutoff-shaped within each b... |
-| abbrev theorem3_2_optional_reporting_fairness_impossibility | `theorem3_2_optional_reporting_fairness_impossibility` | In the optional-reporting source model, under source-equilibrium, threshold-reporting, and the no-reporter-to-test-blank normalization, latent-skill fairness or observable fairness of the event-share binary-mixture surface implies test-b... |
-| abbrev theorem3_2_optional_reporting_no_test_relevance | `theorem3_2_optional_reporting_no_test_relevance` | Under the same optional-reporting hypotheses, if the event-share binary-mixture surface is latent-skill fair or observable fair, then there is no base/test triple where the base-only and full-feature estimates differ. |
-| abbrev theorem3_2_report_required_fairness_impossibility | `theorem3_2_report_required_fairness_impossibility` | In the report-required source model, under source-equilibrium, threshold-taking, and the no-taker-to-test-blank normalization, latent-skill fairness or observable fairness of the event-share binary-mixture surface implies test-blankness. |
-| abbrev theorem3_2_report_required_no_test_relevance | `theorem3_2_report_required_no_test_relevance` | Under the same report-required hypotheses, if the event-share binary-mixture surface is latent-skill fair or observable fair, then there is no base/test triple where the base-only and full-feature estimates differ. |
-| abbrev lemma4_1_observed_access_strategy_proofness | `lemma4_1_observed_access_strategy_proofness` | With observed access and a positive test scale, the fully specified optional-reporting and report-required source equilibria choose take-and-report in every student information state, giving the strategy-proofness step. |
-| abbrev proposition4_2_base_indexed_posterior_surface | `proposition4_2_base_indexed_posterior_surface` | For the fully specified observed-access source equilibria, any positive-slope base-indexed one-test posterior-law surface chooses take-and-report in every information state and is not latent-skill fair. |
-| abbrev proposition4_3_base_mixed_extra_signal_surface | `proposition4_3_base_mixed_extra_signal_surface` | For the fully specified observed-access source equilibria, any base-mixed extra-signal posterior-law surface with positive extra-noise variance chooses take-and-report in every information state and is not observable fair or demographic... |
-| abbrev definition6_resampling_policy | `definition6_resampling_policy` | The resampling policy uses the resampling experiment's conditional signal-given-base kernel. |
-| abbrev theorem4_4_resampling_policy | `theorem4_4_resampling_policy` | For every resampling experiment, the fully specified observed-access source equilibria choose take-and-report in every information state, and the access-estimate and resampling-estimate kernels are observable fair and demographic fair wi... |
-<!-- lean-derived-definitions:end -->
-
-## 14. Named Theorem Statements Checked
-
-<!-- lean-derived-statements:start -->
-### Lean-Derived Dashboard Named Statements
-
-None exposed in the current dashboard surface.
-<!-- lean-derived-statements:end -->
-
-## 15. Paper-Facing Statement Validator Ledger
-
-Generated from dashboard status export:
-
-`python3 scripts/review_dashboard.py --paper LG21TestOptionalPolicies --export-format validators-md`
-
-| Paper-facing statement | Lean declaration | Validators | Validator comments |
-| --- | --- | --- | --- |
-| abbrev definition1_source_equilibrium | `definition1_source_equilibrium` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev definition2_latent_skill_fair | `definition2_latent_skill_fair` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev definition3_observable_fair | `definition3_observable_fair` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev definition4_demographic_fair | `definition4_demographic_fair` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev definition5_test_blank | `definition5_test_blank` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev definition6_resampling_policy | `definition6_resampling_policy` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev lemma4_1_observed_access_strategy_proofness | `lemma4_1_observed_access_strategy_proofness` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev proposition4_2_base_indexed_posterior_surface | `proposition4_2_base_indexed_posterior_surface` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev proposition4_3_base_mixed_extra_signal_surface | `proposition4_3_base_mixed_extra_signal_surface` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev theorem3_1_optional_reporting | `theorem3_1_optional_reporting` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev theorem3_1_report_required | `theorem3_1_report_required` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev theorem3_2_optional_reporting_fairness_impossibility | `theorem3_2_optional_reporting_fairness_impossibility` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev theorem3_2_optional_reporting_no_test_relevance | `theorem3_2_optional_reporting_no_test_relevance` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev theorem3_2_report_required_fairness_impossibility | `theorem3_2_report_required_fairness_impossibility` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev theorem3_2_report_required_no_test_relevance | `theorem3_2_report_required_no_test_relevance` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-| abbrev theorem4_4_resampling_policy | `theorem4_4_resampling_policy` | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z) | gpt-5-codex (model; matches; 2026-06-06T20:39:39Z): The declaration-keyed source statement and context-free Lean-to-TeX draft state the same source-model definition or result. |
-
-Human dashboard reviews and model/agent statement checks may both appear here. This table is provenance for the statement targets; it does not change the human-only `human_review.reviewed_rows` counter.
+- Summary: The compact statement surface covers the paper. The statement
+  translation lane is current for all 16 rows, and the assumption-provenance
+  lane validates the compact-source premises. The Gaussian lower-tail rows use
+  the shared mathlib-backed standard Gaussian certificate, and the refreshed
+  audit reports no hidden certificate boundary on the paper-facing surface.

@@ -23,7 +23,7 @@
       },
       "paper_interface": {
         "path": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
-        "line_count": 417,
+        "line_count": 456,
         "declaration_rows": 32,
         "review_rows": 32,
         "oversized": false,
@@ -34,10 +34,26 @@
         "paper_interface": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
         "final_validation_report": "papers/DSWG24DiscretizationBias/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/DSWG24DiscretizationBias/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/DSWG24DiscretizationBias/DependencyDAG.pdf"
+        "dependency_dag_pdf": "papers/DSWG24DiscretizationBias/DependencyDAG.pdf",
+        "source_text": "papers/DSWG24DiscretizationBias/DSWG24DiscretizationBias.txt",
+        "assumptions": "papers/DSWG24DiscretizationBias/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/DSWG24DiscretizationBias/PaperInterface.lean",
+        "assumption_source_file": "papers/DSWG24DiscretizationBias/Assumptions.lean",
+        "llm_assumption_review": "papers/DSWG24DiscretizationBias/assumption_match_llm.json",
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_theorem1_no_information_case",
+          "assumption_theorem1_plurality_argmax_class",
+          "assumption_theorem1_perfect_classifier",
+          "assumption_theorem1_argmax_rule_measurable",
+          "assumption_theorem1_calibrated_classifier",
+          "assumption_theorem2_at_least_two_classes",
+          "assumption_theorem2_more_rows_than_classes",
+          "assumption_theorem2_positive_sample_count",
+          "assumption_theorem2_reference_nonnegative"
+        ],
         "include_names": [
           "prior",
           "marginalLabelShare",
@@ -69,7 +85,7 @@
           "theorem2i_joint_rule_exists",
           "theorem2ii_argmax_accuracy_maximizing",
           "theorem2iii_non_argmax_not_pareto",
-          "theorem2iii_weighted_objective_maximizer_iff_agrees_argmax",
+          "theorem2iii_weighted_objective_maximizer_agrees_argmax",
           "theorem2iii_strict_disagreement_not_weighted_objective_maximizer"
         ],
         "slices": [
@@ -107,7 +123,7 @@
               "theorem2i_joint_rule_exists",
               "theorem2ii_argmax_accuracy_maximizing",
               "theorem2iii_non_argmax_not_pareto",
-              "theorem2iii_weighted_objective_maximizer_iff_agrees_argmax",
+              "theorem2iii_weighted_objective_maximizer_agrees_argmax",
               "theorem2iii_strict_disagreement_not_weighted_objective_maximizer"
             ]
           }
@@ -122,7 +138,7 @@
       "source_version": "NeurIPS 2024 / arXiv:2412.04466",
       "build_target": "lake build GCG24UserItemFairness",
       "status": "formalized",
-      "main_caveat": "Recommendation fairness propositions and theorem statements are closed under the formal source model.",
+      "main_caveat": "",
       "review_entrypoint": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -133,7 +149,7 @@
       },
       "paper_interface": {
         "path": "papers/GCG24UserItemFairness/PaperInterface.lean",
-        "line_count": 235,
+        "line_count": 286,
         "declaration_rows": 18,
         "review_rows": 18,
         "oversized": false,
@@ -141,13 +157,33 @@
       },
       "artifacts": {
         "readme": "papers/GCG24UserItemFairness/README.md",
+        "source_text": "papers/GCG24UserItemFairness/GCG24UserItemFairness.txt",
         "paper_interface": "papers/GCG24UserItemFairness/PaperInterface.lean",
+        "assumptions": "papers/GCG24UserItemFairness/Assumptions.lean",
         "final_validation_report": "papers/GCG24UserItemFairness/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/GCG24UserItemFairness/DependencyDAG.tex",
         "dependency_dag_pdf": "papers/GCG24UserItemFairness/DependencyDAG.pdf"
       },
       "review_surface": {
         "source_file": "papers/GCG24UserItemFairness/PaperInterface.lean",
+        "assumption_source_file": "papers/GCG24UserItemFairness/Assumptions.lean",
+        "llm_assumption_review": {
+          "assumption_judgment_file": "papers/GCG24UserItemFairness/assumption_match_llm.json",
+          "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption or paper-statement condition rather than a proof assumption."
+        },
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_positive_recommendation_utilities",
+          "assumption_theorem3_opposing_type_model",
+          "assumption_theorem3_first_half_alpha_domain",
+          "assumption_theorem3_second_half_alpha_domain",
+          "assumption_theorem4_at_least_three_items",
+          "assumption_theorem4_true_model_reduction",
+          "assumption_theorem4_estimated_model_reduction",
+          "assumption_theorem4_displayed_reduced_models",
+          "assumption_theorem4_cold_start_type_wiring",
+          "assumption_theorem4_parameter_domain"
+        ],
         "include_names": [
           "recommendationUtility",
           "rawUserUtility",
@@ -163,8 +199,8 @@
           "priceOfMisestimation",
           "proposition1_symmetric_lp_reduction",
           "proposition2_symmetric_optimum_exists",
-          "theorem3_price_of_fairness_decreases",
-          "theorem3_price_of_fairness_strictly_decreases",
+          "theorem3_price_decreases_first_half",
+          "theorem3_price_increases_second_half",
           "theorem4_misestimation_tradeoff_typeZero",
           "theorem4_misestimation_tradeoff_typeOne"
         ],
@@ -187,8 +223,8 @@
               "priceOfMisestimation",
               "proposition1_symmetric_lp_reduction",
               "proposition2_symmetric_optimum_exists",
-              "theorem3_price_of_fairness_decreases",
-              "theorem3_price_of_fairness_strictly_decreases",
+              "theorem3_price_decreases_first_half",
+              "theorem3_price_increases_second_half",
               "theorem4_misestimation_tradeoff_typeZero",
               "theorem4_misestimation_tradeoff_typeOne"
             ]
@@ -206,7 +242,6 @@
       "build_target": "lake build GGSG19TopThree",
       "status": "formalized",
       "main_caveat": "",
-      "human_summary": "",
       "review_entrypoint": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -217,7 +252,7 @@
       },
       "paper_interface": {
         "path": "papers/GGSG19TopThree/PaperInterface.lean",
-        "line_count": 307,
+        "line_count": 317,
         "declaration_rows": 10,
         "review_rows": 10,
         "oversized": false,
@@ -233,10 +268,24 @@
         "final_validation_report": "papers/GGSG19TopThree/FINAL_VALIDATION_REPORT.md",
         "post_formalization_audit": "papers/GGSG19TopThree/POST_FORMALIZATION_AUDIT.md",
         "dependency_dag_tex": "papers/GGSG19TopThree/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GGSG19TopThree/DependencyDAG.pdf"
+        "dependency_dag_pdf": "papers/GGSG19TopThree/DependencyDAG.pdf",
+        "source_pdf": "papers/GGSG19TopThree/source.pdf",
+        "source_archive": "papers/GGSG19TopThree/source.tar.gz",
+        "source_tex": "papers/GGSG19TopThree/source_tex/arxiv.tex",
+        "assumptions": "papers/GGSG19TopThree/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/GGSG19TopThree/PaperInterface.lean",
+        "assumption_source_file": "papers/GGSG19TopThree/Assumptions.lean",
+        "llm_assumption_review": "papers/GGSG19TopThree/assumption_match_llm.json",
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_strict_cross_tier_no_ties",
+          "assumption_pairwise_approval_ternary_gap_domain",
+          "assumption_randomized_mechanism_probability_weights",
+          "assumption_mallows_nontrivial_winner_and_noise",
+          "assumption_nontrivial_k_approval_cutoffs"
+        ],
         "include_names": [
           "paper_definition_large_deviation_rate",
           "source_proposition1_thm_consistency_tiered",
@@ -267,8 +316,7 @@
             ]
           }
         ]
-      },
-      "source_url": "https://arxiv.org/abs/1906.08160"
+      }
     },
     {
       "schema": 1,
@@ -278,7 +326,7 @@
       "source_version": "SODA 2001 paper; Theorem 8.2 is checked against the later Goldberg-Hartline-Karlin-Saks-Wright journal monotone-auction formulation.",
       "build_target": "lake build GHW01DigitalGoods",
       "status": "formalized",
-      "main_caveat": "This folder formalizes the SODA paper, not a full inventory of all named results in the 2006 journal article. Theorem 8.2 uses the later journal version's refined monotone truthful randomized-auction wording. The preliminary unrestricted Section 8 wording is retained only as a source-version audit note. Theorem 9.3 is closed against the paper's focused set-of-bids deterministic auction convention.",
+      "main_caveat": "",
       "human_summary": "Formalizes the SODA paper; Theorem 8.2 uses the refined monotone-auction wording from the journal version.",
       "human_summary_citation": {
         "label": "Goldberg-Hartline-Karlin-Saks-Wright 2006",
@@ -294,7 +342,7 @@
       },
       "paper_interface": {
         "path": "papers/GHW01DigitalGoods/PaperInterface.lean",
-        "line_count": 280,
+        "line_count": 326,
         "declaration_rows": 18,
         "review_rows": 18,
         "oversized": false,
@@ -305,10 +353,29 @@
         "paper_interface": "papers/GHW01DigitalGoods/PaperInterface.lean",
         "final_validation_report": "papers/GHW01DigitalGoods/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/GHW01DigitalGoods/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GHW01DigitalGoods/DependencyDAG.pdf"
+        "dependency_dag_pdf": "papers/GHW01DigitalGoods/DependencyDAG.pdf",
+        "source_text": "papers/GHW01DigitalGoods/GHW01DigitalGoods.txt",
+        "assumptions": "papers/GHW01DigitalGoods/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/GHW01DigitalGoods/PaperInterface.lean",
+        "assumption_source_file": "papers/GHW01DigitalGoods/Assumptions.lean",
+        "llm_assumption_review": "papers/GHW01DigitalGoods/assumption_match_llm.json",
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_high_value_scale_conditions",
+          "assumption_bid_value_range_conditions",
+          "assumption_high_value_attained",
+          "assumption_total_value_notation",
+          "assumption_weighted_pairing_large_market",
+          "assumption_two_winner_benchmark_large_enough",
+          "assumption_weighted_pairing_log_factor",
+          "assumption_truthful_auction_condition",
+          "assumption_low_bid_below_high_bid",
+          "assumption_lower_bound_positive_alpha",
+          "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model",
+          "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model"
+        ],
         "include_names": [
           "revenue",
           "truthful",
@@ -365,21 +432,21 @@
       "source_version": "arXiv 1810.13028 TeX/PDF cache; publication citation: Manufacturing & Service Operations Management 23(3):589-605, published online 2020 (issue 2021)",
       "build_target": "lake build GJ18InformativeRatingSystems",
       "status": "formalized",
-      "main_caveat": "Theorem 1 is closed as a source-facing support-safe finite-rate endpoint for finite ordinal ratings. Lean derives the pairwise common-dual witnesses and support-safe LDP certificates from positive match rates, the paper's upper-tail rating dominance, monotone scores, and full finite ordinal rating support; the bottom/top atom support used by the lower-bound route is derived internally. The old all-real real-rate bridge remains only as a compatibility theorem for users who supply stronger real-valued boundedness/domain conditions. Empirical sections are source scope but not Lean theorem targets.",
-      "human_summary": "",
+      "main_caveat": "",
+      "human_summary": "Theorem 1 is formalized under the support-safe finite-rate convention from ordinal upper-tail dominance and full finite ordinal rating support.",
       "review_entrypoint": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 8,
+        "total_rows": 7,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
         "path": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
-        "line_count": 2914,
+        "line_count": 2940,
         "declaration_rows": 85,
-        "review_rows": 8,
+        "review_rows": 7,
         "oversized": false,
         "maintainability_issue": null
       },
@@ -388,14 +455,28 @@
         "paper_interface": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
         "final_validation_report": "papers/GJ18InformativeRatingSystems/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/GJ18InformativeRatingSystems/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/GJ18InformativeRatingSystems/DependencyDAG.pdf"
+        "dependency_dag_pdf": "papers/GJ18InformativeRatingSystems/DependencyDAG.pdf",
+        "source_archive": "papers/GJ18InformativeRatingSystems/source.tar.gz",
+        "assumptions": "papers/GJ18InformativeRatingSystems/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/GJ18InformativeRatingSystems/PaperInterface.lean",
+        "assumption_source_file": "papers/GJ18InformativeRatingSystems/Assumptions.lean",
+        "llm_assumption_review": "papers/GJ18InformativeRatingSystems/assumption_match_llm.json",
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_positive_match_rates",
+          "assumption_positive_integer_sample_rates",
+          "assumption_nonpositive_common_dual_parameters",
+          "assumption_pairwise_threshold_minimizer",
+          "assumption_two_sided_score_witnesses",
+          "assumption_monotone_rating_scores",
+          "assumption_full_finite_ordinal_rating_support",
+          "assumption_score_range_and_strict_span"
+        ],
         "include_names": [
           "definition_log_mgf_formula",
           "definition_rate_function_formula",
-          "lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support",
           "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives",
           "theorem1_finite_chain_uniform_floor_objective_oneSub_exact_min_adjacent_rate_from_joint_floor_rating_law",
           "theorem1_finite_chain_adjacent_threshold_rate_top_min_eq_displayed_objective_min_of_logMGF_derivatives",
@@ -415,7 +496,6 @@
             "id": "appendix-c",
             "title": "Appendix C named large-deviation results",
             "names": [
-              "lemmaC_floor_score_gap_rate_from_logMGF_derivative_threshold_minimizer_of_straddling_support",
               "lemmaC_pk_complement_source_threshold_rate_from_logMGF_derivatives"
             ]
           },
@@ -440,7 +520,7 @@
       "source_version": "Management Science 2022 / arXiv v4, 2021",
       "build_target": "lake build GN21DriverSurgePricing",
       "status": "formalized",
-      "main_caveat": "Named CTMC lemmas and Theorems 1--4 are exposed; zero-mass boundary behavior is audited separately.",
+      "main_caveat": "",
       "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -451,7 +531,7 @@
       },
       "paper_interface": {
         "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
-        "line_count": 363,
+        "line_count": 379,
         "declaration_rows": 24,
         "review_rows": 24,
         "oversized": false,
@@ -465,10 +545,27 @@
         "final_validation_report": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/GN21DriverSurgePricing/DependencyDAG.tex",
         "dependency_dag_pdf": "papers/GN21DriverSurgePricing/DependencyDAG.pdf",
-        "proof_interface": "papers/GN21DriverSurgePricing/ProofInterface.lean"
+        "proof_interface": "papers/GN21DriverSurgePricing/ProofInterface.lean",
+        "source_text": "papers/GN21DriverSurgePricing/source.txt",
+        "assumptions": "papers/GN21DriverSurgePricing/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/GN21DriverSurgePricing/PaperInterface.lean",
+        "assumption_source_file": "papers/GN21DriverSurgePricing/Assumptions.lean",
+        "llm_assumption_review": "papers/GN21DriverSurgePricing/assumption_match_llm.json",
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_affine_single_state_parameter_domain",
+          "assumption_single_state_defined_reward_domain",
+          "assumption_dynamic_time_fraction_denominators",
+          "assumption_switch_rate_domain",
+          "assumption_fixed_response_policy_form_conditions",
+          "assumption_upper_endpoint_derivative_domain",
+          "assumption_affine_response_shape_domains",
+          "assumption_surge_derivative_source_bounds",
+          "assumption_nonsurge_derivative_source_bounds",
+          "assumption_theorem3_source_data_domain"
+        ],
         "include_names": [
           "review_definition_single_state_ic",
           "review_definition_dynamic_ic",
@@ -493,7 +590,7 @@
           "review_theorem2_multiplicative_policy_shape_ae",
           "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states",
           "review_theorem4_structural_policy_representatives",
-          "review_theorem3_feasible_sequential_current_bounds_source_data_statement"
+          "review_theorem3_defined_reward_source_statement"
         ],
         "slices": [
           {
@@ -523,7 +620,7 @@
               "review_theorem2_multiplicative_policy_shape_ae",
               "review_theorem2_multiplicative_positive_finite_cutoff_not_ic_both_states",
               "review_theorem4_structural_policy_representatives",
-              "review_theorem3_feasible_sequential_current_bounds_source_data_statement"
+              "review_theorem3_defined_reward_source_statement"
             ]
           }
         ]
@@ -537,7 +634,7 @@
       "source_version": "American Mathematical Monthly, 1962",
       "build_target": "lake build GS62CollegeAdmissions",
       "status": "formalized",
-      "main_caveat": "Lean endpoints are closed without extra certificates or conditional proof gaps; the cached PDF scan has poor OCR, recorded as a source-audit note rather than a formalization caveat.",
+      "main_caveat": "",
       "human_summary": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.",
       "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
       "human_review": {
@@ -564,6 +661,12 @@
       },
       "review_surface": {
         "source_file": "papers/GS62CollegeAdmissions/PaperInterface.lean",
+        "llm_assumption_review": {
+          "assumption_judgment_file": "papers/GS62CollegeAdmissions/assumption_match_llm.json",
+          "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
+        },
+        "assumption_policy": "strict",
+        "assumption_names": [],
         "include_names": [
           "strictMarriageDomain",
           "stableMarriage",
@@ -598,7 +701,7 @@
       "source_version": "EAAMO 2021 / arXiv:2107.08922",
       "build_target": "lake build LG21TestOptionalPolicies",
       "status": "formalized",
-      "main_caveat": "All named definitions and Section 3--4 results are closed under paper-facing source models; dashboard review remains external.",
+      "main_caveat": "",
       "review_entrypoint": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -609,7 +712,7 @@
       },
       "paper_interface": {
         "path": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
-        "line_count": 76,
+        "line_count": 77,
         "declaration_rows": 16,
         "review_rows": 16,
         "oversized": false,
@@ -623,10 +726,24 @@
         "final_validation_report": "papers/LG21TestOptionalPolicies/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/LG21TestOptionalPolicies/DependencyDAG.tex",
         "dependency_dag_pdf": "papers/LG21TestOptionalPolicies/DependencyDAG.pdf",
-        "proof_interface": "papers/LG21TestOptionalPolicies/ProofInterface.lean"
+        "proof_interface": "papers/LG21TestOptionalPolicies/ProofInterface.lean",
+        "source_text": "papers/LG21TestOptionalPolicies/source.txt",
+        "assumptions": "papers/LG21TestOptionalPolicies/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/LG21TestOptionalPolicies/PaperInterface.lean",
+        "assumption_source_file": "papers/LG21TestOptionalPolicies/Assumptions.lean",
+        "llm_assumption_review": "papers/LG21TestOptionalPolicies/assumption_match_llm.json",
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_section3_access_fraction_domain",
+          "assumption_section3_source_equilibrium_instances",
+          "assumption_source_model_event_and_consistency_predicates",
+          "assumption_section3_threshold_decision_shapes",
+          "assumption_section3_zero_positive_event_blank_branch",
+          "assumption_positive_gaussian_domain_conditions",
+          "assumption_observed_access_source_equilibria"
+        ],
         "include_names": [
           "definition1_source_equilibrium",
           "definition2_latent_skill_fair",
@@ -640,8 +757,8 @@
           "theorem3_2_report_required_fairness_impossibility",
           "theorem3_2_report_required_no_test_relevance",
           "lemma4_1_observed_access_strategy_proofness",
-          "proposition4_2_base_indexed_posterior_surface",
-          "proposition4_3_base_mixed_extra_signal_surface",
+          "proposition4_2_bayesian_access_estimates_not_latent_skill_fair",
+          "proposition4_3_bayesian_optimal_not_observable_or_demographic_fair",
           "definition6_resampling_policy",
           "theorem4_4_resampling_policy"
         ],
@@ -662,8 +779,8 @@
               "theorem3_2_report_required_fairness_impossibility",
               "theorem3_2_report_required_no_test_relevance",
               "lemma4_1_observed_access_strategy_proofness",
-              "proposition4_2_base_indexed_posterior_surface",
-              "proposition4_3_base_mixed_extra_signal_surface",
+              "proposition4_2_bayesian_access_estimates_not_latent_skill_fair",
+              "proposition4_3_bayesian_optimal_not_observable_or_demographic_fair",
               "definition6_resampling_policy",
               "theorem4_4_resampling_policy"
             ]
@@ -679,21 +796,21 @@
       "source_version": "ACM EC 2004",
       "build_target": "lake build LMMS04FairDivision",
       "status": "partially formalized",
-      "main_caveat": "Public partial: Sections 2 and 4 are formalized and much of the Section 3 rounding/search surface is formalized. The final PTAS/FPTAS runtime claim is conditional on reusable fixed-dimension integer-program complexity infrastructure, represented by ExternalSolverConsequence.",
+      "main_caveat": "Partial-formalization boundary: the Section 3 runtime/search layer and some rounded-IP/counterexample endpoints remain certificate boundaries; Sections 2 and 4 stay formalized at their existing boundary.",
       "human_summary": "Sections 2 and 4 are fully formalized. Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure.",
       "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 33,
+        "total_rows": 31,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
         "path": "papers/LMMS04FairDivision/PaperInterface.lean",
-        "line_count": 215,
-        "declaration_rows": 33,
-        "review_rows": 33,
+        "line_count": 267,
+        "declaration_rows": 31,
+        "review_rows": 31,
         "oversized": false,
         "maintainability_issue": null,
         "proof_interface_path": "papers/LMMS04FairDivision/ProofInterface.lean",
@@ -705,10 +822,30 @@
         "final_validation_report": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/LMMS04FairDivision/DependencyDAG.tex",
         "dependency_dag_pdf": "papers/LMMS04FairDivision/DependencyDAG.pdf",
-        "proof_interface": "papers/LMMS04FairDivision/ProofInterface.lean"
+        "proof_interface": "papers/LMMS04FairDivision/ProofInterface.lean",
+        "source_text": "papers/LMMS04FairDivision/LMMS04FairDivision.txt",
+        "assumptions": "papers/LMMS04FairDivision/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/LMMS04FairDivision/PaperInterface.lean",
+        "assumption_source_file": "papers/LMMS04FairDivision/Assumptions.lean",
+        "llm_assumption_review": "papers/LMMS04FairDivision/assumption_match_llm.json",
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_nonnegative_alpha_bound",
+          "assumption_alpha_marginal_value_bound",
+          "assumption_duplicate_free_goods_enumeration",
+          "assumption_positive_atom_bound",
+          "assumption_ptas_error_parameter_range",
+          "assumption_external_graham_scheduling_boundary",
+          "assumption_fixed_dimension_ip_runtime_boundary",
+          "assumption_positive_rounding_and_load_parameters",
+          "assumption_base_load_at_most_rounded_average",
+          "assumption_claim34_positive_small_goods_domain",
+          "assumption_claim34_rounded_type_window_condition",
+          "assumption_additive_transfer_load_window_conditions",
+          "assumption_uniform_random_weight_normalization"
+        ],
         "include_names": [
           "envy",
           "envyFree",
@@ -727,12 +864,10 @@
           "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee",
           "theorem3_3_claim34_fixed_rounding_ratio_endpoint",
           "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint",
-          "theorem3_3_claim34_min_max_search_certificate_ratio_endpoint",
-          "claim3_4_bounded_optimal_certificate",
           "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods",
-          "claim3_4_bounded_optimal_of_identical_utilities_model",
+          "claim3_4_identical_utilities_bounded_optimum_bound",
           "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads",
-          "lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads",
+          "lemma3_5_additive_transfer_epsilon_bound",
           "directMechanism_fields",
           "randomizedDirectMechanism_fields",
           "truthful",
@@ -778,8 +913,6 @@
               "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee",
               "theorem3_3_claim34_fixed_rounding_ratio_endpoint",
               "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint",
-              "theorem3_3_claim34_min_max_search_certificate_ratio_endpoint",
-              "claim3_4_bounded_optimal_certificate",
               "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods",
               "claim3_4_bounded_optimal_of_identical_utilities_model",
               "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads",
@@ -813,7 +946,7 @@
       "source_version": "Journal of the ACM 49(5), 2002",
       "build_target": "lake build LOS02CombinatorialAuctions",
       "status": "partially formalized",
-      "main_caveat": "Public partial: all auction, greedy approximation, critical-price, and single-minded-truthfulness endpoints are formalized in the current model. The final Theorem 6.1 machine-level NP-hardness/NP = ZPP consequences remain conditional on reusable complexity-class and hardness infrastructure.",
+      "main_caveat": "Partial-formalization boundary: the external complexity consequences, critical-value infinity axioms, and greedy-order blocking windows remain explicit partial boundaries.",
       "human_summary": "Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope.",
       "review_entrypoint": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
       "human_review": {
@@ -825,7 +958,7 @@
       },
       "paper_interface": {
         "path": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
-        "line_count": 322,
+        "line_count": 371,
         "declaration_rows": 30,
         "review_rows": 30,
         "oversized": false,
@@ -839,10 +972,26 @@
         "final_validation_report": "papers/LOS02CombinatorialAuctions/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/LOS02CombinatorialAuctions/DependencyDAG.tex",
         "dependency_dag_pdf": "papers/LOS02CombinatorialAuctions/DependencyDAG.pdf",
-        "proof_interface": "papers/LOS02CombinatorialAuctions/ProofInterface.lean"
+        "proof_interface": "papers/LOS02CombinatorialAuctions/ProofInterface.lean",
+        "source_text": "papers/LOS02CombinatorialAuctions/LOS02CombinatorialAuctions.txt",
+        "assumptions": "papers/LOS02CombinatorialAuctions/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/LOS02CombinatorialAuctions/PaperInterface.lean",
+        "assumption_source_file": "papers/LOS02CombinatorialAuctions/Assumptions.lean",
+        "llm_assumption_review": "papers/LOS02CombinatorialAuctions/assumption_match_llm.json",
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_admissible_combinatorial_report_domain",
+          "assumption_external_exact_set_packing_complexity_boundary",
+          "assumption_external_approximation_set_packing_complexity_boundary",
+          "assumption_theorem7_optimal_allocation_feasible",
+          "assumption_theorem7_optimal_bidders_in_order",
+          "assumption_lemma9_denied_bidder_case",
+          "assumption_lemma9_nonnegative_value_deviation",
+          "assumption_lemma9_nonnegative_critical_value_axioms",
+          "assumption_lemma9_finite_large_threshold"
+        ],
         "include_names": [
           "utility_formula",
           "truthfulOn_iff",
@@ -869,7 +1018,7 @@
           "theorem7_2_sqrt_norm_approx_of_sorted_order",
           "lemma9_1_exists_nonnegative_critical_value_of_monotonicity",
           "lemma9_2_denied_bidder_utility_eq_zero",
-          "lemma9_3_truthful_utility_nonnegative_of_nonnegative_infinity_certificate",
+          "lemma9_3_truthful_utility_nonnegative_condition",
           "lemma9_4_no_profitable_value_only_lie_of_nonnegative_infinity_axioms",
           "lemma9_5_finite_threshold_mono_of_nonnegative_infinity_certificate",
           "theorem9_6_single_minded_truthful_of_nonnegative_infinity_axioms",
@@ -935,7 +1084,7 @@
       "source_version": "ICWSM 2025 / arXiv:2207.04369",
       "build_target": "lake build MBJG25ProducerFairness",
       "status": "formalized",
-      "main_caveat": "Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement.",
+      "main_caveat": "The strict variance-decrease statement is formalized with the documented interior-quality condition 0 < q_v < 1; the report records boundary counterexamples at q_v = 0 and q_v = 1.",
       "human_summary": "Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement.",
       "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
       "human_review": {
@@ -948,7 +1097,7 @@
       },
       "paper_interface": {
         "path": "papers/MBJG25ProducerFairness/PaperInterface.lean",
-        "line_count": 317,
+        "line_count": 332,
         "declaration_rows": 17,
         "review_rows": 17,
         "oversized": false,
@@ -958,7 +1107,9 @@
       },
       "artifacts": {
         "readme": "papers/MBJG25ProducerFairness/README.md",
+        "source_text": "papers/MBJG25ProducerFairness/MBJG25ProducerFairness.txt",
         "paper_interface": "papers/MBJG25ProducerFairness/PaperInterface.lean",
+        "assumptions": "papers/MBJG25ProducerFairness/Assumptions.lean",
         "final_validation_report": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/MBJG25ProducerFairness/DependencyDAG.tex",
         "dependency_dag_pdf": "papers/MBJG25ProducerFairness/DependencyDAG.pdf",
@@ -966,6 +1117,24 @@
       },
       "review_surface": {
         "source_file": "papers/MBJG25ProducerFairness/PaperInterface.lean",
+        "assumption_source_file": "papers/MBJG25ProducerFairness/Assumptions.lean",
+        "llm_assumption_review": {
+          "assumption_judgment_file": "papers/MBJG25ProducerFairness/assumption_match_llm.json",
+          "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a paper/source model assumption, paper-statement condition, or documented caveat rather than a proof assumption."
+        },
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_positive_prior_shape",
+          "assumption_positive_time",
+          "assumption_nonnegative_time",
+          "assumption_quality_nonnegative",
+          "assumption_quality_at_most_one",
+          "assumption_quality_positive",
+          "assumption_quality_lt_one",
+          "assumption_prior_strength_nonnegative",
+          "assumption_prior_strength_weak_order",
+          "assumption_prior_strength_strict_order"
+        ],
         "include_names": [
           "paper_posterior_mean",
           "paper_bias",
@@ -1020,8 +1189,7 @@
       "source_version": "Journal of the ACM, 2007",
       "build_target": "lake build MSVV07AdWords",
       "status": "formalized",
-      "main_caveat": "Core AdWords, Theorems 8--9, and Section 6/8 extensions are closed, including a source-shaped page-level guarantee.",
-      "human_summary": "",
+      "main_caveat": "",
       "review_entrypoint": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -1032,7 +1200,7 @@
       },
       "paper_interface": {
         "path": "papers/MSVV07AdWords/PaperInterface.lean",
-        "line_count": 872,
+        "line_count": 902,
         "declaration_rows": 26,
         "review_rows": 26,
         "oversized": false,
@@ -1046,10 +1214,27 @@
         "final_validation_report": "papers/MSVV07AdWords/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/MSVV07AdWords/DependencyDAG.tex",
         "dependency_dag_pdf": "papers/MSVV07AdWords/DependencyDAG.pdf",
-        "proof_interface": "papers/MSVV07AdWords/ProofInterface.lean"
+        "proof_interface": "papers/MSVV07AdWords/ProofInterface.lean",
+        "source_text": "papers/MSVV07AdWords/MSVV07AdWords.txt",
+        "assumptions": "papers/MSVV07AdWords/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/MSVV07AdWords/PaperInterface.lean",
+        "assumption_source_file": "papers/MSVV07AdWords/Assumptions.lean",
+        "llm_assumption_review": "papers/MSVV07AdWords/assumption_match_llm.json",
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_nonnegative_bids",
+          "assumption_full_distinct_query_history",
+          "assumption_epsilon_range",
+          "assumption_alive_bidder_predicate",
+          "assumption_next_highest_all_small_bids",
+          "assumption_next_highest_alive_small_bids",
+          "assumption_click_through_rates_probability_bounds",
+          "assumption_availability_predicate",
+          "assumption_weighted_bids_nonnegative_weights",
+          "assumption_weighted_effective_small_bids"
+        ],
         "include_names": [
           "paperSlotsPerPageDistinct_iff",
           "paperSpend_formula",
@@ -1095,7 +1280,7 @@
       "source_version": "The ACM Web Conference, 2024, pp. 1318--1329; arXiv:2307.15142v1",
       "build_target": "lake build PRPKG24AccuracyDiversity",
       "status": "partially formalized",
-      "main_caveat": "Finite optimization, Bernoulli, uniform, bounded density/tail-mass, exponential, Pareto, Example 1 exact harmonic calibration, Corollary 1 concrete model existence, Theorems 1-3, Proposition 2's corrected finite/asymptotic homogeneity route, Lemma D.1/D.5 downstream routes, and Proposition 4 averaging/kernel checkpoint layers are exposed. The only remaining literal source gap is Proposition 4's continuous sphere/Laplace analytic certificate. Proposition 2's printed sharp finite constant and Lemma D.1(i)'s printed sign convention are documented as nonblocking source deviations.",
+      "main_caveat": "Partial-formalization boundary: the Top-K oracle, Bernoulli tail/Laplace, rounding, averaging, and integral-asymptotic certificates remain explicit partial boundaries.",
       "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. Fully formalizing the remaining result, Proposition 4, requires a general Laplace-principle-related analysis library.",
       "human_summary_review": {
         "status": "human_approved",
@@ -1111,7 +1296,7 @@
       },
       "paper_interface": {
         "path": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
-        "line_count": 148,
+        "line_count": 247,
         "declaration_rows": 27,
         "review_rows": 27,
         "oversized": false,
@@ -1123,37 +1308,59 @@
         "final_validation_report": "papers/PRPKG24AccuracyDiversity/FINAL_VALIDATION_REPORT.md",
         "post_formalization_audit": "papers/PRPKG24AccuracyDiversity/POST_FORMALIZATION_AUDIT.md",
         "dependency_dag_tex": "papers/PRPKG24AccuracyDiversity/DependencyDAG.tex",
-        "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/DependencyDAG.pdf"
+        "dependency_dag_pdf": "papers/PRPKG24AccuracyDiversity/DependencyDAG.pdf",
+        "source_text": "papers/PRPKG24AccuracyDiversity/PRPKG24AccuracyDiversity.txt",
+        "assumptions": "papers/PRPKG24AccuracyDiversity/Assumptions.lean"
       },
       "review_surface": {
         "source_file": "papers/PRPKG24AccuracyDiversity/PaperInterface.lean",
+        "assumption_source_file": "papers/PRPKG24AccuracyDiversity/Assumptions.lean",
+        "llm_assumption_review": "papers/PRPKG24AccuracyDiversity/assumption_match_llm.json",
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_example1_positive_calibrated_exponential_parameters",
+          "assumption_finite_discrete_top_value_domain",
+          "assumption_positive_type_likelihoods",
+          "assumption_bounded_upper_endpoint_density_domain",
+          "assumption_exponential_order_statistic_domain",
+          "assumption_pareto_finite_mean_domain",
+          "assumption_common_mean_argmax_domain",
+          "assumption_unique_common_mean_argmax_domain",
+          "assumption_nonnegative_homogeneity_exponent",
+          "assumption_decaying_bernoulli_parameter_domain",
+          "assumption_varying_bernoulli_probability_domain",
+          "assumption_uniform_top_k_positive_count_domain",
+          "assumption_proposition4_continuous_sphere_laplace_boundary",
+          "assumption_lemmaD2_split_integral_analytic_boundary",
+          "assumption_positive_rounding_population_size"
+        ],
         "include_names": [
           "definition1",
           "definition2",
           "definition3_expectedTopSum_formula",
           "example1",
-          "theorem1_i",
-          "theorem1_ii",
-          "theorem1_iii",
-          "theorem1_iv",
+          "theorem1_i_formula",
+          "theorem1_ii_formula",
+          "theorem1_iii_formula",
+          "theorem1_iv_formula",
           "theorem1_v_common_mean",
           "theorem1_v_unique_common_mean",
           "corollary1",
-          "theorem2_i",
-          "theorem2_ii",
-          "theorem2_iii",
+          "theorem2_i_formula",
+          "theorem2_ii_formula",
+          "theorem2_iii_formula",
           "theorem2_iv_positive_alpha",
-          "theorem2_iv_alpha_zero",
-          "theorem3",
+          "theorem2_iv_alpha_zero_condition",
+          "theorem3_formula",
           "corollary3",
           "proposition2",
           "proposition4",
-          "proposition5",
+          "proposition5_identity",
           "lemmaD1",
-          "lemmaD2",
-          "lemma1",
-          "lemmaD3",
-          "lemmaD4",
+          "lemmaD2_formula",
+          "lemma1_tail_formula",
+          "lemmaD3_formula",
+          "lemmaD4_formula",
           "lemmaD5"
         ],
         "slices": [
@@ -1178,7 +1385,7 @@
       "source_version": "Mathematics of Operations Research, 1982",
       "build_target": "lake build Roth82StableMatching",
       "status": "formalized",
-      "main_caveat": "The cached paper's named Theorems 1--7, Lemmas 1--2, and Corollary 5.1 are closed on Roth's stated strict marriage domain without extra model-certificate assumptions.",
+      "main_caveat": "",
       "review_entrypoint": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
@@ -1189,7 +1396,7 @@
       },
       "paper_interface": {
         "path": "papers/Roth82StableMatching/PaperInterface.lean",
-        "line_count": 481,
+        "line_count": 490,
         "declaration_rows": 27,
         "review_rows": 27,
         "oversized": false,
@@ -1198,12 +1405,23 @@
       "artifacts": {
         "readme": "papers/Roth82StableMatching/README.md",
         "paper_interface": "papers/Roth82StableMatching/PaperInterface.lean",
+        "assumptions": "papers/Roth82StableMatching/Assumptions.lean",
         "final_validation_report": "papers/Roth82StableMatching/FINAL_VALIDATION_REPORT.md",
         "dependency_dag_tex": "papers/Roth82StableMatching/DependencyDAG.tex",
         "dependency_dag_pdf": "papers/Roth82StableMatching/DependencyDAG.pdf"
       },
       "review_surface": {
         "source_file": "papers/Roth82StableMatching/PaperInterface.lean",
+        "assumption_source_file": "papers/Roth82StableMatching/Assumptions.lean",
+        "llm_assumption_review": {
+          "assumption_judgment_file": "papers/Roth82StableMatching/assumption_match_llm.json",
+          "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
+        },
+        "assumption_policy": "strict",
+        "assumption_names": [
+          "assumption_equal_cardinality",
+          "assumption_simple_report_ranks_partner_first"
+        ],
         "include_names": [
           "preferenceProfile",
           "completeMarriageOutcome",

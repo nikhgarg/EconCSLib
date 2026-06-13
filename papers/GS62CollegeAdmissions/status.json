@@ -6,7 +6,7 @@
   "source_version": "American Mathematical Monthly, 1962",
   "build_target": "lake build GS62CollegeAdmissions",
   "status": "formalized",
-  "main_caveat": "Lean endpoints are closed without extra certificates or conditional proof gaps; the cached PDF scan has poor OCR, recorded as a source-audit note rather than a formalization caveat.",
+  "main_caveat": "",
   "human_summary": "This only uses a few lines of code as its infrastructure has largely been elevated to the shared matching library.",
   "review_entrypoint": "papers/GS62CollegeAdmissions/FINAL_VALIDATION_REPORT.md",
   "human_review": {
@@ -33,6 +33,12 @@
   },
   "review_surface": {
     "source_file": "papers/GS62CollegeAdmissions/PaperInterface.lean",
+    "llm_assumption_review": {
+      "assumption_judgment_file": "papers/GS62CollegeAdmissions/assumption_match_llm.json",
+      "policy": "Every paper-facing theorem premise not derived from prior Lean declarations must be declared in Assumptions.lean, listed in assumption_names, and judged by an independent LLM as a true paper/source model assumption rather than a proof assumption."
+    },
+    "assumption_policy": "strict",
+    "assumption_names": [],
     "include_names": [
       "strictMarriageDomain",
       "stableMarriage",
