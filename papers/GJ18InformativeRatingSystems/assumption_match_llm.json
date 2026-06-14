@@ -38,7 +38,7 @@
           "validator_type": "model",
           "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hpositive_sample : ∀ θ : Fin n, 0 < sampleRate θ": {
+        "hpositive_sample : \u2200 \u03b8 : Fin n, 0 < sampleRate \u03b8": {
           "judgment": "paper_condition",
           "source_location": "adjectivesmodel.tex Rating accumulation model; appendix_theory.tex Theorem 1 finite ordered type formula",
           "reason": "The finite-chain endpoint applies the same positive sample-rate convention uniformly across the finite seller-type chain used in Theorem 1.",
@@ -51,7 +51,8 @@
       "validator": "gpt-5-codex",
       "validator_type": "model",
       "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "prompt_version": "assumption-provenance-v2-exact-premise-source",
+      "lean_statement_sha256": "c36c37f019ee52db5b5046ff9734ccbf34df5fc94aeb7e378c74287e09a916ce"
     },
     "assumption_positive_integer_sample_rates": {
       "judgment": "paper_condition",
@@ -81,7 +82,8 @@
       "validator": "gpt-5-codex",
       "validator_type": "model",
       "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "prompt_version": "assumption-provenance-v2-exact-premise-source",
+      "lean_statement_sha256": "3532aeed4bae7b0f15d68ee10c8c9ecd52178bb2d065404d7fc4da2fe2322444"
     },
     "assumption_nonpositive_common_dual_parameters": {
       "judgment": "paper_condition",
@@ -89,7 +91,7 @@
       "source_location": "appendix_theory.tex Lemma problessthan proof and Theorem 1 variational formula",
       "premise_count": 2,
       "premise_judgments": {
-        "hz : z ≤ 0": {
+        "hz : z \u2264 0": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived by the source lower-tail large-deviation route for x_k(theta_hi)-x_k(theta_lo) <= 0",
           "reason": "This is not an extra model assumption. It is the sign of the common-dual witness exposed by an auxiliary helper; the canonical endpoint packages/derives the witness from the source variational problem.",
@@ -98,7 +100,7 @@
           "validator_type": "model",
           "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hz : ∀ p : finiteChainOrderedPair n, z p ≤ 0": {
+        "hz : \u2200 p : finiteChainOrderedPair n, z p \u2264 0": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Finite-chain pointwise version of the source lower-tail large-deviation route",
           "reason": "This is the finite ordered-chain form of the same lower-tail common-dual witness condition, exposed for helper reuse rather than assumed by the canonical source endpoint.",
@@ -111,7 +113,8 @@
       "validator": "gpt-5-codex",
       "validator_type": "model",
       "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "prompt_version": "assumption-provenance-v2-exact-premise-source",
+      "lean_statement_sha256": "f7ceb57770194a94ecf9ff11bece72d92bfc344cd62f51eea329173376bc5c3a"
     },
     "assumption_pairwise_threshold_minimizer": {
       "judgment": "paper_condition",
@@ -119,7 +122,7 @@
       "source_location": "appendix_theory.tex Lemma problessthan; adjectivesmodel.tex Theorem 1 equation rW",
       "premise_count": 1,
       "premise_judgments": {
-        "hthreshold_min : ∀ b : ℝ, M.pairwiseRateObjective sampleRate hi lo a ≤ M.pairwiseRateObjective sampleRate hi lo b": {
+        "hthreshold_min : \u2200 b : \u211d, M.pairwiseRateObjective sampleRate hi lo a \u2264 M.pairwiseRateObjective sampleRate hi lo b": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived from the paper's inf_a pairwise objective together with the finite support-safe threshold-rate endpoint",
           "reason": "The premise says the selected threshold realizes the source displayed infimum; it is a helper-level witness, not an independent paper assumption.",
@@ -132,7 +135,8 @@
       "validator": "gpt-5-codex",
       "validator_type": "model",
       "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "prompt_version": "assumption-provenance-v2-exact-premise-source",
+      "lean_statement_sha256": "01dd6e34c80e77ef7a344fdc4f537eb4386e2ed4547f3b1aa94adc4bce6cb236"
     },
     "assumption_two_sided_score_witnesses": {
       "judgment": "paper_condition",
@@ -162,7 +166,8 @@
       "validator": "gpt-5-codex",
       "validator_type": "model",
       "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "prompt_version": "assumption-provenance-v2-exact-premise-source",
+      "lean_statement_sha256": "000065c2bf627058b4e66776f9d403fa135f512e2efc6b4f5d9a680176ed84e7"
     },
     "assumption_monotone_rating_scores": {
       "judgment": "paper_assumption",
@@ -183,7 +188,8 @@
       "validator": "gpt-5-codex",
       "validator_type": "model",
       "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "prompt_version": "assumption-provenance-v2-exact-premise-source",
+      "lean_statement_sha256": "60cdc840b220d9c5a333f8b123541eb2061f0a875995f647f7c53d10c9df80a5"
     },
     "assumption_full_finite_ordinal_rating_support": {
       "judgment": "paper_condition",
@@ -204,7 +210,8 @@
       "validator": "gpt-5-codex",
       "validator_type": "model",
       "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "prompt_version": "assumption-provenance-v2-exact-premise-source",
+      "lean_statement_sha256": "4aab6849d660399b1eee59792877a8b3058c5f840cebe3f0e4eb5a8ebf116ce5"
     },
     "assumption_score_range_and_strict_span": {
       "judgment": "paper_condition",
@@ -212,7 +219,7 @@
       "source_location": "adjectivesmodel.tex Ratings model and design optimization paragraph",
       "premise_count": 3,
       "premise_judgments": {
-        "hscore_low_le : ∀ r : Rating, M.score rLow ≤ M.score r": {
+        "hscore_low_le : \u2200 r : Rating, M.score rLow \u2264 M.score r": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived from the source ordered finite rating scale and increasing score function phi",
           "reason": "The selected lowest rating level is below every other rating in the ordinal score order.",
@@ -221,7 +228,7 @@
           "validator_type": "model",
           "prompt_version": "assumption-provenance-v2-exact-premise-source"
         },
-        "hscore_le_high : ∀ r : Rating, M.score r ≤ M.score rHigh": {
+        "hscore_le_high : \u2200 r : Rating, M.score r \u2264 M.score rHigh": {
           "judgment": "derived_from_source_primitives",
           "source_location": "Derived from the source ordered finite rating scale and increasing score function phi",
           "reason": "The selected highest rating level is above every other rating in the ordinal score order.",
@@ -243,7 +250,8 @@
       "validator": "gpt-5-codex",
       "validator_type": "model",
       "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "assumption-provenance-v2-exact-premise-source"
+      "prompt_version": "assumption-provenance-v2-exact-premise-source",
+      "lean_statement_sha256": "2adc47c797b7e88188f9f262817fcb16efa8177aa49d99b92ef150680533401e"
     }
   }
 }

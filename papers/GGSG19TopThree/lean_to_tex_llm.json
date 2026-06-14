@@ -9,7 +9,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "fc60c4098cf0ce3d63300a2740a66650085f8bda2cf3e14b65ab86188467bfb1",
+      "lean_statement_sha256": "13be07790831e316040d153984d00dfeca7455a9b4f3a8f6ab2c001ceb8287ff",
       "paper_statement_sha256": "8a964ecbd60b59f8789b06eff4134768e0df0516aa9c0fda1783abff8efb80db",
       "tex_statement": "Prop"
     },
@@ -18,7 +18,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "67fe184ad4d20e728a9179d5580134afdf82f9e238f95a93ca0271f1954a6739",
+      "lean_statement_sha256": "952c5858f9376a6544bf3eec646760beecae2b12ebcb5082bdf3983288c1e8b3",
       "paper_statement_sha256": "3998841e1d0354d2fa4d6697c0d0c7efbe4a83759c32fff2fa285ce837917a56",
       "tex_statement": "Prop"
     },
@@ -27,7 +27,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "ae2895e098677d34fca5d64c4d3da08a2e1f01104808774f19cca93f63e2190a",
+      "lean_statement_sha256": "08c3ed3458916508b01fa7d42853b5585b515fdf5116600e53981b6a70218068",
       "paper_statement_sha256": "2b198efdd2e44cd58ac0e50cee946df60bdcf04e1631f918d42e2c4de79fa52e",
       "tex_statement": "Prop"
     },
@@ -36,7 +36,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "312fa693dd6cef536d826bbf014e8066bb627fdbef13bca70d3a8cb975235322",
+      "lean_statement_sha256": "4c557344aeeeaad443362287ff29138717f3bcce26602cbb8c53c67bcca8ec3a",
       "paper_statement_sha256": "652cce3fee59a3829a255835f273d964c0ff5e7ee7a1ebdc3e3d69bc815d6bc3",
       "tex_statement": "Prop"
     },
@@ -45,7 +45,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "81f5745fdca1d75154d7238a66f1e8e41cffaf51ba17f9ffeb04dda555f33704",
+      "lean_statement_sha256": "1ac5e4ce529cd240c94ace46e6d3807b0828b7cd3460dafef0620da7ca2e1ce5",
       "paper_statement_sha256": "14738df3047384c164f33095d5bb750d194c554f7970f5b5a6e3671640f76923",
       "tex_statement": "Prop"
     },
@@ -54,7 +54,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "e0e27bae7bdb99d2c7803e82dfa036be8cf5ee9aec810e3f60eee217e7b51283",
+      "lean_statement_sha256": "386fb05ef5d8773b36d583a42776d1770b9400fa588af20571562aabcf907426",
       "paper_statement_sha256": "55f8f598fa3ad4d4fd4f37854b64934d764d44d904c22059e75ec38e8a70dd68",
       "tex_statement": "For a real sequence A indexed by sample size and a real number r, paper_definition_large_deviation_rate A r is exactly the paper large-deviation-rate predicate definition_large_deviation_rate A r."
     },
@@ -63,7 +63,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "f2f169f2ee4c585305145a17307b12289cb1b3d5b5fe935749da1439271b97a4",
+      "lean_statement_sha256": "e8da7a4c959db9a9ff8818e074a3c549740cee5db3023b0d5fa65610e7055a42",
       "paper_statement_sha256": "7fb12609a98130586cad7c72dcbfe75ed3aa142550b831c8454b5e1a28cd8c0b",
       "tex_statement": "For a finite Mallows model with q < 1 and a target W candidate, any finite randomized family of nontrivial K-approval rules is weakly dominated by some static proper-prefix cutoff, and that cutoff is optimal among static cutoffs for the Mallows top-W K-approval outcome rate."
     },
@@ -72,7 +72,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "04d4ba26d13b6f8cddcfe237a27a6afd80728d00db3d25accd64169f414248d2",
+      "lean_statement_sha256": "8fb204d38c2c54d33ad13b7d4bb646c2923ae6592dc7cdc77f5e829982249395",
       "paper_statement_sha256": "e67fafd5c22525c5f7265196a7ae82be80067fbf8ad0aa2af6c817d1bb3ca7cf",
       "tex_statement": "For a finite ranking law and staged target prefix sets, assuming every stage has a cross-tier pair and no cross-tier top-prefix probabilities tie, strict top-prefix dominance of every target member over every nonmember at every cut is equivalent to every reasonable prefix-score rule learning the staged target sets, meaning the selection error probability tends to 0."
     },
@@ -81,7 +81,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "e58a76877b7a0603df219c054fb1e3c3c7fe12231798f0277d9a5baa09e43a4e",
+      "lean_statement_sha256": "f0cac9695820eaec11495277f3fb6dfccd32aa7bec923910d9e23b180fea7dad",
       "paper_statement_sha256": "6b8c2a16a415fbadd8518dbbc79f9208c1740f57664108d67c6b2aae6adb09d2",
       "tex_statement": "For a finite signal law and two score functions with nonnegative expected score gap, the pairwise scoring error probability either has exponential rate pairwiseScoringRate, or has exponential rate -log pZero for a positive zero-gap probability pZero, or is eventually zero."
     },
@@ -90,7 +90,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "6a1a99b56295e893dfc3162db790ed6a91b86ad88c16764b3f210b817f169afc",
+      "lean_statement_sha256": "614beddf6226ea3217f4a248cab7798310a92271612420f9270d329547d2fae4",
       "paper_statement_sha256": "d7232c3fd2da45ef75b48e304c696947bfe9b52af53155f71d5b69ece2304c19",
       "tex_statement": "For finite ternary approval score gaps taking values 1, 0, and -1 with probabilities pUp, pZero, and pDown and pDown <= pUp, the pairwise scoring error probability either has exponential rate approvalPairwiseRate pUp pDown or is eventually zero."
     },
@@ -99,7 +99,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "8be37fc2863db1df27fd1f3d0e35df81235e297515b3f4370014957e3f43d611",
+      "lean_statement_sha256": "cd715d2c783931485885cc58d063977268a84426e9f6eef56320c0b79ca96e16",
       "paper_statement_sha256": "1a17ea4a9bdab1e2b50f6f551bb91151cdf997bfea1375b3c461ca055b5243b2",
       "tex_statement": "For finitely many relevant pairs under a finite signal law, if every pair has nonnegative expected score gap, then the unweighted sum of the pairwise finite-score-gap error probabilities has some extended exponential rate."
     },
@@ -108,7 +108,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "c469b09e36976c9b9b9a15c3c20bbbb78aebddd9d62f809f3d4f4d645941fd21",
+      "lean_statement_sha256": "80beef6814a6f23ff8cdcc36fe79c56882f99c5c3dab57bbb2f342ab409c999d",
       "paper_statement_sha256": "fe5440e9a614f024eb99f548d8064d099ca86bf1a7476b860bf63f5fc181d351",
       "tex_statement": "For any finite randomized family of reasonable prefix scoring rules whose weights are nonnegative and sum to 1, if the target winner set satisfies strict top-prefix dominance, then the weight-averaged static scoring rule is reasonable, learns the winner set with error probability tending to 0, and has a static finite outcome-learning rate at least as large as the randomized scoring rule rate."
     },
@@ -117,7 +117,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "ae1e663667cbd89c3f294c7720b0c75e7f388c9e9a122207b32d70671976242e",
+      "lean_statement_sha256": "bb66a30cb22cfb7b0441ffdfd384899ddd717edb2356478d65fb3ee5fbbaeea9",
       "paper_statement_sha256": "67eea6b1e1e77f54c462c6978f1c24cab48fc679ae482b073268dec63f6e1d7e",
       "tex_statement": "For any finite randomized K-approval rule with nonnegative weights summing to 1 and any candidate pair, there exists a static component rule whose extended approval pairwise rate weakly dominates the randomized rule pairwise rate."
     },
@@ -126,7 +126,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "f0e151770a69a44f674c9a267bdc683a8661b01c7e6b5b2bc0823d405af2be7d",
+      "lean_statement_sha256": "345c1004708f1a5569122416775302259271ded724f74eeaeedefde1d4f6e420",
       "paper_statement_sha256": "4451ab20640966f9c8d01596e28dfc82050b10eb575d997fca5f0157edacc8c5",
       "tex_statement": "There exists a high-noise Mallows instance centered at the identity in the four-candidate setting such that the W-approval cutoff is not approval-rate optimal: some different cutoff has strictly larger finite outcome-learning rate."
     },
@@ -135,7 +135,7 @@
       "generated_at": "2026-06-13T21:43:40Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "399f67c45ab466b70117575e5883a8dbfa39feec417e76ef23451ce6ebe62999",
+      "lean_statement_sha256": "f24b64f4a853770dba3f52e01f68fcf4080edd4cca995ed490f6ede663d64fea",
       "paper_statement_sha256": "e2c398d7405e9da007c11b62a9ef18771737fbb0bb2ce4307f86955ea5c224e3",
       "tex_statement": "In the constructed four-candidate W-selection ranking law, strict top-prefix dominance holds for the relevant cross-tier pairs, and the 50/50 randomized approval rule has finite outcome-learning rate strictly larger than the best static K-approval cutoff among the finite static family."
     }

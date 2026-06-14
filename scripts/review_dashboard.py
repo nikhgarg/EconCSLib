@@ -504,6 +504,24 @@ def statement_digest(text: str) -> str:
     return hashlib.sha256(normalize_statement(text).encode("utf-8")).hexdigest()
 
 
+def lean_statement_digest_candidates(
+    lean_statement: str, interface_source: str = ""
+) -> set[str]:
+    """Return acceptable Lean-statement digests for freshness checks.
+
+    `lean_statement` may include a rendered `#check` preview when the local Lean
+    subprocess succeeds. `interface_source` is the source-level declaration text
+    from the paper-facing Lean file. Sidecar freshness must remain stable when
+    CI cannot render the optional preview and falls back to source text.
+    """
+
+    digests: set[str] = set()
+    for text in (interface_source, lean_statement):
+        if text and text.strip():
+            digests.add(statement_digest(text))
+    return digests
+
+
 def source_metadata_digest(source_status: str, source_note: str) -> str:
     """Digest source-provenance metadata that should invalidate old reviews."""
 
@@ -2257,7 +2275,11 @@ def parse_interface_items(
             recorded_paper = judgment.get("paper_statement_sha256", "")
             recorded_tex = judgment.get("tex_statement_sha256", "")
             llm_match_stale = (
-                (bool(recorded_lean) and recorded_lean != statement_digest(lean_statement))
+                (
+                    bool(recorded_lean)
+                    and recorded_lean
+                    not in lean_statement_digest_candidates(lean_statement, raw_sig)
+                )
                 or (
                     bool(recorded_paper)
                     and recorded_paper != statement_digest(displayed_paper_statement)
@@ -2275,7 +2297,11 @@ def parse_interface_items(
             recorded_lean = assumption_judgment.get("lean_statement_sha256", "")
             recorded_paper = assumption_judgment.get("paper_statement_sha256", "")
             llm_assumption_stale = (
-                (bool(recorded_lean) and recorded_lean != statement_digest(lean_statement))
+                (
+                    bool(recorded_lean)
+                    and recorded_lean
+                    not in lean_statement_digest_candidates(lean_statement, raw_sig)
+                )
                 or (
                     bool(recorded_paper)
                     and recorded_paper != statement_digest(displayed_paper_statement)
@@ -2661,7 +2687,9 @@ def statement_translation_audit_summary(folder: Path, items: list[ReviewItem]) -
             missing_draft.append(item.name)
         else:
             recorded_lean = str(draft.get("lean_statement_sha256") or "").strip()
-            if recorded_lean and recorded_lean != statement_digest(item.lean_statement):
+            if recorded_lean and recorded_lean not in lean_statement_digest_candidates(
+                item.lean_statement, item.interface_source
+            ):
                 stale_draft.append(item.name)
 
         judgment = judgments.get(item.name)
