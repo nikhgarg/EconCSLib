@@ -1390,8 +1390,13 @@ the Lean statements against the paper.
   do not rewrite it as "formalized with caveat" or "partial formalization"
   unless the mathematical formalization itself has that status.
 - Use the dashboard's normalized `statement_digest` values for sidecar digests,
-  not raw SHA-256 of unnormalized strings. New tracked `lean_to_tex_llm.json`
-  entries should include `lean_statement_sha256`; new
+  not raw SHA-256 of unnormalized strings. Lean-statement sidecar hashes must
+  be source-stable: hash the source declaration text exposed by the review
+  surface (`interface_source` / raw paper-facing declaration), not optional
+  rendered `#check` preview text. The preview is useful for humans, but it can
+  differ between a warm local checkout and a cold CI checkout if Lean preview
+  subprocesses time out or fall back to raw signatures. New tracked
+  `lean_to_tex_llm.json` entries should include `lean_statement_sha256`; new
   `statement_match_llm.json` entries should include Lean, paper, and TeX
   statement digests so stale target checks work.
 - At a statement-review boundary, run the exact statement-translation workflow:
@@ -1446,16 +1451,15 @@ the Lean statements against the paper.
      unless the translation is plainly wrong. Usually the fix is to make the
      `PaperInterface.lean` declaration more paper-facing and self-contained,
      then rerun both LLM passes.
-     When refreshing stale sidecars after editing `PaperInterface.lean`, build
-     the affected paper target before taking final digests if the dashboard
-     obtains theorem previews from compiled Lean state. A stale row immediately
-     after a hash refresh often means the Lean preview cache still reflects the
-     previous build.
-     In mirrored public/private checkouts, run the build and
-     `python3 scripts/review_dashboard.py --paper <paper-folder> --refresh-cache`
-     in each checkout before comparing or reusing dashboard digests; if one
-     checkout lacks `.olean` files, the dashboard may fall back to raw signatures
-     and make otherwise current LLM sidecars look stale.
+     When refreshing stale sidecars after editing `PaperInterface.lean`, do not
+     try to clear CI by lengthening preview timeouts, relying on ignored
+     dashboard caches, or copying hashes from a warm checkout. Regenerate the
+     tracked sidecars from the current uncached review surface and store the
+     source-stable Lean declaration digest. Then run a cache-free paper-local
+     summary or `--statement-check`, followed by `scripts/audit_repository.py`
+     or CI. If local dashboard checks pass but CI reports every row stale for a
+     paper, suspect environment-dependent preview hashing first; fix the digest
+     source rather than fighting the build cache.
   6. Record statement-translation results in the final report's validator
      surfaces, not in an ad-hoc extra report heading. Summarize row counts,
      match/uncertain/mismatch counts, stale status, and surface-audit status in
