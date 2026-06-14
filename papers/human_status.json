@@ -270,6 +270,35 @@
       }
     },
     {
+      "id": "PKG25NoFreeLunch",
+      "title": "A No Free Lunch Theorem for Human-AI Collaboration",
+      "authors": "Kenny Peng, Nikhil Garg, Jon Kleinberg",
+      "publication": "AAAI, 2025",
+      "publication_year": 2025,
+      "source_url": "https://ojs.aaai.org/index.php/AAAI/article/view/33574",
+      "paper_info": "A No Free Lunch Theorem for Human-AI Collaboration by Kenny Peng, Nikhil Garg, Jon Kleinberg; AAAI, 2025.",
+      "status": "Formalized",
+      "human_review": "0/6",
+      "human_translation": "0/6 reviewed",
+      "llm_as_judge_translation": "6/6 match",
+      "lean_loc": 1938,
+      "main_note": "",
+      "main_note_citation": null,
+      "main_note_review": {
+        "status": "draft",
+        "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
+      },
+      "paper_folder": "papers/PKG25NoFreeLunch",
+      "review_entrypoint": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
+      "artifacts": {
+        "readme": "papers/PKG25NoFreeLunch/README.md",
+        "paper_interface": "papers/PKG25NoFreeLunch/PaperInterface.lean",
+        "final_validation_report": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/PKG25NoFreeLunch/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/PKG25NoFreeLunch/DependencyDAG.pdf"
+      }
+    },
+    {
       "id": "DSWG24DiscretizationBias",
       "title": "Addressing Discretization-Induced Bias in Demographic Prediction",
       "authors": "Evan Dong, Aaron Schein, Yixin Wang, and Nikhil Garg",

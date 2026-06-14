@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "id": "PKG25NoFreeLunch",
+  "title": "A No Free Lunch Theorem for Human-AI Collaboration",
+  "authors": "Kenny Peng, Nikhil Garg, Jon Kleinberg",
+  "source_version": "Proceedings of the AAAI Conference on Artificial Intelligence, 39(13), 14369–14376 (AAAI 2025)",
+  "build_target": "lake build PKG25NoFreeLunch",
+  "status": "formalized",
+  "main_caveat": "None",
+  "human_summary": "",
+  "human_summary_review": {
+    "status": "draft",
+    "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
+  },
+  "review_entrypoint": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
+  "human_review": {
+    "reviewed_rows": 0,
+    "total_rows": 6,
+    "stale_rows": 0,
+    "mismatch_rows": 0,
+    "source": "paper-local status.json review_surface; human entries come from dashboard logs"
+  },
+  "paper_interface": {
+    "path": "papers/PKG25NoFreeLunch/PaperInterface.lean",
+    "line_count": 71,
+    "declaration_rows": 6,
+    "review_rows": 6,
+    "oversized": false,
+    "maintainability_issue": null
+  },
+  "artifacts": {
+    "readme": "papers/PKG25NoFreeLunch/README.md",
+    "paper_interface": "papers/PKG25NoFreeLunch/PaperInterface.lean",
+    "final_validation_report": "papers/PKG25NoFreeLunch/FINAL_VALIDATION_REPORT.md",
+    "dependency_dag_tex": "papers/PKG25NoFreeLunch/DependencyDAG.tex",
+    "dependency_dag_pdf": "papers/PKG25NoFreeLunch/DependencyDAG.pdf"
+  },
+  "review_surface": {
+    "source_file": "papers/PKG25NoFreeLunch/PaperInterface.lean",
+    "llm_statement_review": {
+      "lean_to_tex_file": "papers/PKG25NoFreeLunch/lean_to_tex_llm.json",
+      "match_judgment_file": "papers/PKG25NoFreeLunch/statement_match_llm.json",
+      "review_surface_audit_file": "papers/PKG25NoFreeLunch/review_surface_llm.json",
+      "surface_audit_threshold": 30,
+      "surface_warning_threshold": 50,
+      "policy": "Translate each Lean statement with an LLM that has no paper context; have a third LLM compare that TeX/prose translation with the original paper statement, record the model/agent validator metadata, and iterate on PaperInterface.lean until they match. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 50 or more rows, curate the surface before broad human review."
+    },
+    "include_names": [
+      "definition_rounding_convention",
+      "definition_collaboration_strategy",
+      "definition_interior_prediction_profile",
+      "definition_non_collaborative",
+      "definition_reliable",
+      "theorem_main_no_free_lunch"
+    ],
+    "slices": [
+      {
+        "id": "all",
+        "title": "All source-facing review rows",
+        "names": [
+          "definition_rounding_convention",
+          "definition_collaboration_strategy",
+          "definition_interior_prediction_profile",
+          "definition_non_collaborative",
+          "definition_reliable",
+          "theorem_main_no_free_lunch"
+        ]
+      }
+    ]
+  }
+}

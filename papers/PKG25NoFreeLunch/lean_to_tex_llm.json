@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "paper": "PKG25NoFreeLunch",
+  "generator": "gpt-5-codex-subagent",
+  "generator_type": "model",
+  "generated_at": "2026-06-14T04:17:03Z",
+  "comment": "Context-free Lean-to-TeX drafts generated from the current PaperInterface statement surface; definition abbrevs use PaperInterface source comments to expand the source-facing meaning.",
+  "items": {
+    "definition_rounding_convention": {
+      "tex_statement": "\\(\\operatorname{roundProb}(p)\\) is the binary rounding rule for probabilities with the convention \\(\\operatorname{roundProb}(1/2)=1\\).",
+      "lean_statement_sha256": "93f147c5678bd296936333b1b9d3de405918c1a6d109e8f28eaabbde986b9ace",
+      "paper_statement_sha256": "1bec226d6885d186f46931d80ca90571066d2f81eec2880f7c8efcd13a85c84e",
+      "generator": "gpt-5-codex-subagent",
+      "generator_type": "model",
+      "generated_at": "2026-06-14T04:17:03Z",
+      "comment": "Defines the paper's probability-to-label rounding convention."
+    },
+    "definition_collaboration_strategy": {
+      "tex_statement": "For \\(n\\in\\mathbb{N}\\), a collaboration strategy is \\(C : [0,1]^n \\to \\{0,1\\}\\).",
+      "lean_statement_sha256": "b3b2404f1169a4daacfab8c0444f1f8f14f09ef7db096165d8002bc973a0d613",
+      "paper_statement_sha256": "b31041d74b0061aaed5241d1d95ffd103e3f0c3d871eccdb77639510ec9c0436",
+      "generator": "gpt-5-codex-subagent",
+      "generator_type": "model",
+      "generated_at": "2026-06-14T04:17:03Z",
+      "comment": "A deterministic map from an \\(n\\)-agent prediction profile to a binary label."
+    },
+    "definition_interior_prediction_profile": {
+      "tex_statement": "For a prediction profile \\(p\\), \\(\\operatorname{Interior}(p)\\) means \\(0 < p_i < 1\\) for every coordinate \\(i\\).",
+      "lean_statement_sha256": "9b1b61f3f6894698a9766c2f287e448a705dfd94fead3d266047af7f8d45a500",
+      "paper_statement_sha256": "6f60ea03913ea9ab4e8f605348f450f2c62448bae0961dec84bd3139760ca861",
+      "generator": "gpt-5-codex-subagent",
+      "generator_type": "model",
+      "generated_at": "2026-06-14T04:17:03Z",
+      "comment": "All agent predictions lie strictly inside the unit interval."
+    },
+    "definition_non_collaborative": {
+      "tex_statement": "\\(\\operatorname{NonCollaborative}(C)\\) means that there exist an agent \\(k\\) and a tie label \\(\\alpha\\in\\{0,1\\}\\) such that for every interior profile \\(p\\), if \\(p_k\\ne 1/2\\) then \\(C(p)=\\operatorname{roundProb}(p_k)\\), and if \\(p_k=1/2\\) then \\(C(p)=\\alpha\\).",
+      "lean_statement_sha256": "a75595ae4dc829201575e38b3b163a5d0de7475cf0f68c6b445023b040669af6",
+      "paper_statement_sha256": "1894edd6dd6458fda6b5434a67d5ecfe103716876aaba8483613088feea0d55b",
+      "generator": "gpt-5-codex-subagent",
+      "generator_type": "model",
+      "generated_at": "2026-06-14T04:17:03Z",
+      "comment": "The strategy follows a single agent's rounded prediction, with a fixed label at that agent's tie."
+    },
+    "definition_reliable": {
+      "tex_statement": "For \\(n\\in\\mathbb{N}\\), \\(\\mathrm{Reliable}(C)\\) means that for every collaboration setting \\(S\\), the accuracy of \\(C\\) on \\(S\\) is at least the least individual agent accuracy on \\(S\\): \\(\\operatorname{Acc}(C,S) \\ge \\min_i \\operatorname{Acc}(i,S)\\).",
+      "lean_statement_sha256": "eaf39547e8450e414b24c89df4bb721e59c0b6a6f0a35c65a641ff2d2a23b464",
+      "paper_statement_sha256": "21567e3a21a2aae7840fd4c39a5420d027a81520182c49865668e274881430d6",
+      "generator": "gpt-5-codex-subagent",
+      "generator_type": "model",
+      "generated_at": "2026-06-14T04:17:03Z",
+      "comment": "This is the source reliability predicate over collaboration-setting accuracy surfaces."
+    },
+    "theorem_main_no_free_lunch": {
+      "tex_statement": "For every \\(n\\in\\mathbb{N}\\) with \\(\\operatorname{Fin}(n)\\) nonempty and every collaboration strategy \\(C\\), if \\(C\\) is reliable, then \\(C\\) is non-collaborative.",
+      "lean_statement_sha256": "2db5b4971d414464322a595dfff953ec560c4fba1da24b000d27800e0f9eb073",
+      "paper_statement_sha256": "974f37c7d9435bb8e0b3bfb83ee10b33d5885b0b88a34521f240d930633c72d7",
+      "generator": "gpt-5-codex-subagent",
+      "generator_type": "model",
+      "generated_at": "2026-06-14T04:17:03Z",
+      "comment": "Equivalently, reliability forces the strategy to follow one fixed agent away from that agent's tie point, with one fixed tie label."
+    }
+  }
+}

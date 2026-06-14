@@ -50,6 +50,10 @@
       "publication": "Journal of the ACM, 2007",
       "year": 2007
     },
+    "PKG25NoFreeLunch": {
+      "publication": "AAAI, 2025",
+      "year": 2025
+    },
     "PRPKG24AccuracyDiversity": {
       "publication": "The ACM Web Conference, 2024",
       "year": 2024
@@ -72,6 +76,7 @@
     "LOS02CombinatorialAuctions": "https://jmvidal.cse.sc.edu/library/lehmann02a.pdf",
     "MBJG25ProducerFairness": "https://arxiv.org/pdf/2207.04369",
     "MSVV07AdWords": "https://people.eecs.berkeley.edu/~vazirani/pubs/adwords.pdf",
+    "PKG25NoFreeLunch": "https://ojs.aaai.org/index.php/AAAI/article/view/33574",
     "PRPKG24AccuracyDiversity": "https://arxiv.org/abs/2307.15142",
     "Roth82StableMatching": "https://pubsonline.informs.org/doi/epdf/10.1287/moor.7.4.617"
   },
