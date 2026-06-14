@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "paper": "PKG25NoFreeLunch",
+  "validator": "gpt-5-codex-subagent",
+  "validator_type": "model",
+  "validated_at": "2026-06-14T04:17:03Z",
+  "comment": "Independent no-paper-context statement-match judgments against source snippets from the paper TeX. The initial finite-reliability row was rejected and the interface was updated to source reliability before these final judgments were recorded.",
+  "items": {
+    "definition_rounding_convention": {
+      "judgment": "matches",
+      "reason": "It states the binary probability rounding rule and explicitly includes the paper's tie convention round(1/2)=1.",
+      "comment": "",
+      "lean_statement_sha256": "93f147c5678bd296936333b1b9d3de405918c1a6d109e8f28eaabbde986b9ace",
+      "paper_statement_sha256": "1bec226d6885d186f46931d80ca90571066d2f81eec2880f7c8efcd13a85c84e",
+      "tex_statement_sha256": "aa9f6a3a1a9c2d5af9b118ac90226996c7f244bb73ae87378864ac15a31fc83f",
+      "validator": "gpt-5-codex-subagent",
+      "validator_type": "model",
+      "validated_at": "2026-06-14T04:17:03Z"
+    },
+    "definition_collaboration_strategy": {
+      "judgment": "matches",
+      "reason": "It matches the paper's deterministic function type C : [0,1]^n -> {0,1}; determinism is inherent in the function formulation.",
+      "comment": "",
+      "lean_statement_sha256": "b3b2404f1169a4daacfab8c0444f1f8f14f09ef7db096165d8002bc973a0d613",
+      "paper_statement_sha256": "b31041d74b0061aaed5241d1d95ffd103e3f0c3d871eccdb77639510ec9c0436",
+      "tex_statement_sha256": "4737406526c40b42f24954d0c22ab39c9df8d05ac45f10f1429bdfad57d0ce00",
+      "validator": "gpt-5-codex-subagent",
+      "validator_type": "model",
+      "validated_at": "2026-06-14T04:17:03Z"
+    },
+    "definition_interior_prediction_profile": {
+      "judgment": "matches",
+      "reason": "It captures the paper's domain restriction (0,1)^n for non-collaboration by requiring every coordinate to lie strictly between 0 and 1.",
+      "comment": "",
+      "lean_statement_sha256": "9b1b61f3f6894698a9766c2f287e448a705dfd94fead3d266047af7f8d45a500",
+      "paper_statement_sha256": "6f60ea03913ea9ab4e8f605348f450f2c62448bae0961dec84bd3139760ca861",
+      "tex_statement_sha256": "e8bbae259a0f67fcde29b9e43e30cfa186b10082925d5dfb3a546512c51aa004",
+      "validator": "gpt-5-codex-subagent",
+      "validator_type": "model",
+      "validated_at": "2026-06-14T04:17:03Z"
+    },
+    "definition_non_collaborative": {
+      "judgment": "matches",
+      "reason": "It matches the paper's existential choice of agent k and tie label alpha, with the same behavior on all interior profiles and the same exemption of boundary predictions.",
+      "comment": "",
+      "lean_statement_sha256": "a75595ae4dc829201575e38b3b163a5d0de7475cf0f68c6b445023b040669af6",
+      "paper_statement_sha256": "1894edd6dd6458fda6b5434a67d5ecfe103716876aaba8483613088feea0d55b",
+      "tex_statement_sha256": "5ecb195d5c4012d6be4a119be4df600411ad8797792088f742a5b1e6ee463888",
+      "validator": "gpt-5-codex-subagent",
+      "validator_type": "model",
+      "validated_at": "2026-06-14T04:17:03Z"
+    },
+    "definition_reliable": {
+      "judgment": "matches",
+      "reason": "The translation preserves the iff definition: reliability means Acc(C,S) is at least the minimum individual agent accuracy for every collaboration setting S.",
+      "comment": "No material domain or quantifier change apparent.",
+      "lean_statement_sha256": "eaf39547e8450e414b24c89df4bb721e59c0b6a6f0a35c65a641ff2d2a23b464",
+      "paper_statement_sha256": "21567e3a21a2aae7840fd4c39a5420d027a81520182c49865668e274881430d6",
+      "tex_statement_sha256": "ab6a9ea76b51830e5762c217c3f8c0ec6ff54a845ed50fe6a227abc77d3e8eeb",
+      "validator": "gpt-5-codex-subagent",
+      "validator_type": "model",
+      "validated_at": "2026-06-14T04:17:03Z"
+    },
+    "theorem_main_no_free_lunch": {
+      "judgment": "matches",
+      "reason": "The translation preserves the theorem direction from reliable to non-collaborative and includes the existential single agent k and tie label alpha with the same interior-profile behavior.",
+      "comment": "The explicit nonempty Fin(n) condition is consistent with the paper's use of k in [n].",
+      "lean_statement_sha256": "2db5b4971d414464322a595dfff953ec560c4fba1da24b000d27800e0f9eb073",
+      "paper_statement_sha256": "974f37c7d9435bb8e0b3bfb83ee10b33d5885b0b88a34521f240d930633c72d7",
+      "tex_statement_sha256": "4e6d242328cfc229774b51dded0f7b21843f0a52ec2dc40d546b1700841c88be",
+      "validator": "gpt-5-codex-subagent",
+      "validator_type": "model",
+      "validated_at": "2026-06-14T04:17:03Z"
+    }
+  }
+}

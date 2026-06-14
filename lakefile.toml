@@ -14,6 +14,7 @@ defaultTargets = [
   "MSVV07AdWords",
   "GJ18InformativeRatingSystems",
   "GGSG19TopThree",
+  "PKG25NoFreeLunch",
   "LMMS04FairDivision",
   "LOS02CombinatorialAuctions",
 ]
@@ -99,4 +100,8 @@ srcDir = "papers"
 
 [[lean_lib]]
 name = "GGSG19TopThree"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "PKG25NoFreeLunch"
 srcDir = "papers"

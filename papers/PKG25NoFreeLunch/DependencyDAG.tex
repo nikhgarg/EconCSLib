@@ -1,0 +1,101 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={outer sep=4pt}
+]
+
+\dagPaperMetadata
+  {A No Free Lunch Theorem for Human-AI Collaboration}
+  {Peng, Garg, Kleinberg}
+  {AAAI}
+  {2025}
+  {https://ojs.aaai.org/index.php/AAAI/article/view/33574}
+
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) at (0,0) {formalized\\result};
+\node[dag_lemma, dag_template_legend] (legLem) at (4.2,0) {formalized\\lemma};
+\node[dag_model, dag_template_legend] (legDef) at (8.4,0) {formalized\\definition};
+\node[dag_caveat_legend] (legCav) at (12.6,0) {formalized\\with caveat};
+\node[dag_partial, dag_template_legend] (legPart) at (0,-2.6) {partially\\formalized};
+\node[dag_conditional, dag_template_legend] (legCond) at (4.2,-2.6) {conditional};
+\node[dag_scaffold, dag_template_legend] (legScaf) at (8.4,-2.6) {scaffold};
+\node[dag_unformalized, dag_template_legend] (legNot) at (12.6,-2.6) {not started /\\not formalized};
+}
+\daglegend{(legRes)(legLem)(legDef)(legCav)(legPart)(legCond)(legScaf)(legNot)}{Legend}
+
+\begin{dagPaperBody}
+
+\node[dag_model] (Defs) at (-2,0) {
+  \textbf{Definitions} \\
+  labels, rounding, strategies,\\
+  reliability, non-collaboration
+};
+
+\node[dag_model] (Finite) at (6,0) {
+  \textbf{Finite Settings} \\
+  finite masses, calibration,\\
+  pointwise accuracy
+};
+
+\node[dag_lemma] (Mixture) at (14,0) {
+  \textbf{Linear Combination} \\
+  disjoint-union mixture preserves\\
+  calibration and accuracies
+};
+
+\node[dag_lemma] (Counter) at (-2,-4) {
+  \textbf{Counterexample Lemma} \\
+  failed off-half deferral gives\\
+  one finite witness setting
+};
+
+\node[dag_result] (Prop1) at (6,-4) {
+  \textbf{Proposition 1} \\
+  reliability forces one fixed\\
+  off-half deferral coordinate
+};
+
+\node[dag_lemma] (S1) at (-2,-9) {
+  \textbf{Proposition 2: $S_1$} \\
+  strategy ties agent $k$;\\
+  non-$k$ agents have gap
+};
+
+\node[dag_lemma] (S2) at (6,-9) {
+  \textbf{Proposition 2: $S_2$} \\
+  nonconstant half-slice gives\\
+  strict gap for agent $k$
+};
+
+\node[dag_result] (Prop2) at (14,-9) {
+  \textbf{Proposition 2} \\
+  reliability forces a fixed\\
+  tie label on the half-slice
+};
+
+\node[dag_result] (Main) at (10,-13.5) {
+  \textbf{Theorem 1} \\
+  every reliable strategy is\\
+  non-collaborative
+};
+
+\draw[dag_arrow] (Defs.east) -- (Finite.west);
+\draw[dag_arrow] (Finite.east) -- (Mixture.west);
+\draw[dag_arrow] (Finite.south west) -- (Counter.north east);
+\draw[dag_arrow] (Counter) -- (Prop1);
+\draw[dag_arrow] (Mixture.south) -- ++(0,-1.2) -| (Prop1.north);
+\draw[dag_arrow] (Defs.west) -- ++(-2.0,0) |- (S1.north west);
+\draw[dag_arrow] (Finite.east) -- ++(2.0,0) |- (S2.north east);
+\draw[dag_arrow] (Mixture.south) -- (Prop2.north);
+\draw[dag_arrow] (S1.south) -- ++(0,-1.0) -| (Prop2.south west);
+\draw[dag_arrow] (S2.east) -- (Prop2.west);
+\draw[dag_arrow] (Prop1.east) -- ++(2.0,0) |- (Main.north west);
+\draw[dag_arrow] (Prop2.south) -- ++(0,-1.0) -| (Main.north east);
+
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

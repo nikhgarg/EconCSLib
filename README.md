@@ -71,6 +71,7 @@ published citation title and year.
 | [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 77 lines |  |
 | [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 379 lines |  |
 | [GCG24 User Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 286 lines |  |
+| [PKG25 No Free Lunch](papers/PKG25NoFreeLunch) | Formalized | 0/6 | OK: 71 lines |  |
 | [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | 0/32 | OK: 456 lines |  |
 | [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized | 10/17 | OK: 332 lines | Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement. |
 | [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 371 lines | Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope. |
