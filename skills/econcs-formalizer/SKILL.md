@@ -348,6 +348,10 @@ superseded pushes on the same branch do not burn a full build. In the workflow,
 run fast source-only checks such as `scripts/sync_paper_status.py --check` and
 the library premise audit before `leanprover/lean-action`; that fails status or
 provenance drift before the expensive Lean build starts.
+Do not block your own work by watching GitHub CI unless the next action
+actually depends on the result, such as merging a PR, cutting a public release,
+or diagnosing a known failure. For routine pushes, confirm that the run started
+or was intentionally skipped, record the run if useful, and keep working.
 Treat suffix-named structures such as `...Certificate`, `...Oracle`,
 `...Window`, `...Package`, `...Regularity`, and `...Invariant` as
 proof-boundary evidence even when they are not named `hcert`. Do not keep these
