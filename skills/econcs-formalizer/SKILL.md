@@ -340,6 +340,14 @@ folder.
 Use `--info-limit -1` when you need the complete library-boundary inventory.
 CI should use `--info-limit 0` so only actionable errors/warnings appear in
 logs.
+Keep CI fast by separating metadata/workflow churn from proof changes. A
+skill-only commit should not run full Lean CI; configure workflow
+`paths-ignore` for `skills/**` and commit proof-affecting changes separately.
+Use GitHub Actions `concurrency` with `cancel-in-progress: true` for Lean CI so
+superseded pushes on the same branch do not burn a full build. In the workflow,
+run fast source-only checks such as `scripts/sync_paper_status.py --check` and
+the library premise audit before `leanprover/lean-action`; that fails status or
+provenance drift before the expensive Lean build starts.
 Treat suffix-named structures such as `...Certificate`, `...Oracle`,
 `...Window`, `...Package`, `...Regularity`, and `...Invariant` as
 proof-boundary evidence even when they are not named `hcert`. Do not keep these

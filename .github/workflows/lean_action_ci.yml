@@ -2,11 +2,19 @@ name: Lean Action CI
 
 on:
   push:
+    paths-ignore:
+      - "skills/**"
   pull_request:
+    paths-ignore:
+      - "skills/**"
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: lean-action-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -14,10 +22,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-      - uses: leanprover/lean-action@v1
       - name: Check paper status aggregate
         run: python3 scripts/sync_paper_status.py --check
       - name: Audit reusable library provenance
         run: python3 scripts/audit_repository.py --library-only --library-premise-audit --info-limit 0
+      - uses: leanprover/lean-action@v1
       - name: Audit repository
         run: python3 scripts/audit_repository.py
