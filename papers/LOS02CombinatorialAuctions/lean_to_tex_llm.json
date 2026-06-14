@@ -1,128 +1,365 @@
 {
-  "generated_at": "2026-06-12T00:00:00Z",
-  "generator": "codex-current-dashboard-statement-digest-refresh",
+  "comment": "Refreshed against the current paper-facing statement surface.",
+  "generated_at": "2026-06-13T21:43:40Z",
+  "generator": "gpt-5-codex",
+  "generator_type": "model",
   "items": {
+    "assumption_admissible_combinatorial_report_domain": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "ed7d323d2bddf6f5b180b592c72b3fa6f16ff198e892894825d250e93d39796a",
+      "paper_statement_sha256": "ad5652fc7ae5dfccda8f0974c79f3a13c5466a4bb3e029819eff41840b7046f5",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to (CombinatorialReport Bidder Item \\to Prop) \\to Prop"
+    },
+    "assumption_external_approximation_set_packing_complexity_boundary": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "b9d2a751283c3b0c06725f958fcb667ebc99e2c48b94801b06f04b754628507e",
+      "paper_statement_sha256": "56d86e5365ee02b6f0d2b77b6a1a51347bb47b8db8c280062b8580ac65ff4d95",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to {Language : Type u_3} \\to \u211d \\to ComplexityClassModel Language \\to (((Bidder \\to Finset Item) \\to (Bidder \\to \u211d) \\to Finset Bidder) \\to Prop) \\to Prop"
+    },
+    "assumption_external_exact_set_packing_complexity_boundary": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "32f0c9471c49c08b1d4eb6d7153c41d49f5652475ebdbca2a43dbafd63cf1888",
+      "paper_statement_sha256": "b3e84c82d8d2cc28cb6fb169273450690c0fff9ad8d6fbf6ae8b15adc183f04c",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to {Language : Type u_3} \\to ComplexityClassModel Language \\to (((Bidder \\to Finset Item) \\to (Bidder \\to \u211d) \\to Finset Bidder) \\to Prop) \\to Prop"
+    },
+    "assumption_lemma9_denied_bidder_case": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "70b680e3d39ce53eb28d3cce9f05b13f68ae5023e267e0ef3391ab16b09d5d84",
+      "paper_statement_sha256": "32e99b6b9b9f77351eeb300db85b0aba2f229b8d837f79370ac213fd18cd6608",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to SingleMindedAcceptedMechanism Bidder Item \\to (Bidder \\to SingleMindedBid Item) \\to Bidder \\to Prop"
+    },
+    "assumption_lemma9_finite_large_threshold": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "9177e2fbe57360d9b053aba4882ecdbddb7c28465295f12d6cb75b7fbd0bcc00",
+      "paper_statement_sha256": "006271d56041bdd5a284dc70ca9df80e078676d89c3f65955adc3acaa2ade604",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to [inst : DecidableEq Bidder] \\to [inst_1 : DecidableEq Item] \\to (M : SingleMindedAcceptedMechanism Bidder Item) \\to NonnegativeCriticalValueWithInfinityCertificate \\to (Bidder \\to SingleMindedBid Item) \\to Bidder \\to Finset Item \\to \u211d \\to Prop"
+    },
+    "assumption_lemma9_nonnegative_critical_value_axioms": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "78d61e861e7531783eb7279e78dcd078d92b3b4074b54b7525c74fa5bd61dabc",
+      "paper_statement_sha256": "ca2a36df30a025bb7c02a151968dbdaffb4ea236b9761a9358aaa5742e97d06c",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to [DecidableEq Bidder] \\to [DecidableEq Item] \\to SingleMindedAcceptedMechanism Bidder Item \\to Prop"
+    },
+    "assumption_lemma9_nonnegative_value_deviation": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "90eb68de3319dfd39c0298dd7e4f93f34f13b479de92ee3b959431e182272c4e",
+      "paper_statement_sha256": "61c3c9ee0b05f8cfbdac1b2c4f4bd78d79a48e4ae0c73714e3d6f6d58c8655c2",
+      "tex_statement": "\u211d \\to Prop"
+    },
+    "assumption_theorem7_optimal_allocation_feasible": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "489b5917f38c6cdafa4afb5affd171688e7daeb73c2c18d77961d931f0d52152",
+      "paper_statement_sha256": "6e2c6e952e2448ae497e8c7bc5aacb50039a20bec5ef3ce357bb9ee9c3a7fc62",
+      "tex_statement": "{Bidder : Type u_1} \\to {Item : Type u_2} \\to [DecidableEq Bidder] \\to [DecidableEq Item] \\to (Bidder \\to SingleMindedBid Item) \\to Finset Bidder \\to Prop"
+    },
+    "assumption_theorem7_optimal_bidders_in_order": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "cf9ae4b227ac637e9bbd7df2b0832688cb467ad607f59b17f9b01b954a18131e",
+      "paper_statement_sha256": "e2562c612a5c1d0129cb566c49ea0aa6282a91bfa450baa306b0e74cc58e2d88",
+      "tex_statement": "{Bidder : Type u_1} \\to Finset Bidder \\to List Bidder \\to Prop"
+    },
     "averageAmountPerGood_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "ae0192061030fe6581bb84c64c8977a1e60079625bab1512bb1fd3974bf7d157",
-      "statement": "\\forall {Item : Type u_1} [inst : DecidableEq Item] (b : SingleMindedBid Item), averageAmountPerGood b = value / bundleSize"
+      "paper_statement_sha256": "0c87449ba594c51db6de5d669166746cc9a77d19725ae0fbbe3e8f0aaf41d6d5",
+      "tex_statement": "\\forall {Item : Type u_1} [inst : DecidableEq Item] (b : SingleMindedBid Item), averageAmountPerGood b = value / bundleSize"
     },
     "averageGreedyAcceptedSet_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "69acb72e338e7aed5ad1761fa5f678b822485283451901702a1407397742d986",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] [inst_2 : DecidableEq Item] [inst_3 : LinearOrder Bidder] (bids : Bidder \\to SingleMindedBid Item), averageGreedyAcceptedSet bids = greedyAcceptedFromOrder bids (averageOrderOf bids)"
+      "paper_statement_sha256": "eb528177091b48d1d461f5032fc8708960f38a117218956a21e44e9e5991598c",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] [inst_2 : DecidableEq Item] [inst_3 : LinearOrder Bidder] (bids : Bidder \\to SingleMindedBid Item), averageGreedyAcceptedSet bids = greedyAcceptedFromOrder bids (averageOrderOf bids)"
     },
     "averageGreedyPayment_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "8c493be38aa4e4e820cfef36ac078cd6c0c614b11189a9fc1ce5be1f3eb7a900",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] [inst_2 : DecidableEq Item] [inst_3 : LinearOrder Bidder] (bids : Bidder \\to SingleMindedBid Item) (j : Bidder), averageGreedyPayment bids j = if j \\in averageGreedyAcceptedSet bids then match paper_greedy_next_denied_from_order bids (averageOrderOf bids) j with | none  =>  0 | some n  =>  (bids j).bundleSize * (bids n).averageAmountPerGood else 0"
+      "paper_statement_sha256": "88ce14f3bc005ec983cb635c19f753839716c35efc71154e4f28ecb0c68b1fa5",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] [inst_2 : DecidableEq Item] [inst_3 : LinearOrder Bidder] (bids : Bidder \\to SingleMindedBid Item) (j : Bidder), averageGreedyPayment bids j = if j \\in averageGreedyAcceptedSet bids then match paper_greedy_next_denied_from_order bids (averageOrderOf bids) j with | none  =>  0 | some n  =>  (bids j).bundleSize * (bids n).averageAmountPerGood else 0"
     },
     "averageOrderOf_rule": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "6c480cda443ac1674bd39ba8265570eb63083f5b607108072b7c6230c4256950",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Item] [inst_2 : LinearOrder Bidder] (bids : Bidder \\to SingleMindedBid Item), (averageOrderOf bids).Nodup \\land (\\forall (i : Bidder), i \\in averageOrderOf bids) \\land SingleMindedAverageAmountDescending bids (averageOrderOf bids)"
+      "paper_statement_sha256": "67f6529c90fb418fa461ffe29713deaa8e0633b6d55c0ec83cf54f646dc806ae",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Item] [inst_2 : LinearOrder Bidder] (bids : Bidder \\to SingleMindedBid Item), (averageOrderOf bids).Nodup \\land (\\forall (i : Bidder), i \\in averageOrderOf bids) \\land SingleMindedAverageAmountDescending bids (averageOrderOf bids)"
     },
     "complexity_note_np_eq_zpp_implies_randomized_collapse": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "8a2f3af1cf0351ff06ba48a9fd8dd64ab6dfc09bf9e4311824ee7abeeb5f995d",
-      "statement": "\\forall {Language : Type u_1} (complexityModel : randomizedComplexityClassModel Language), npEqZPP \\to NP = RP \\land NP = coRP \\land NP = coNP"
+      "paper_statement_sha256": "1a75fd1961e2ba941328af2914013194c5ea2bd5d83a129cc3a9ced905e51a50",
+      "tex_statement": "\\forall {Language : Type u_1} (complexityModel : randomizedComplexityClassModel Language), npEqZPP \\to NP = RP \\land NP = coRP \\land NP = coNP"
     },
     "generalizedVickreyAuction_allocation_payment": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "a2703670c4a5468ba1869b59ee077768fccd8868e4b2212a02eae93060fb83b0",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] (alloc : CombinatorialReport Bidder Item \\to BundleAllocation Bidder Item) (reports : CombinatorialReport Bidder Item) (i : Bidder), (generalizedVickreyAuction alloc).allocation reports = alloc reports \\land (generalizedVickreyAuction alloc).payment reports i = allocationValueExcept reports (alloc (reportsWithoutBidder reports i)) i - allocationValueExcept reports (alloc reports) i"
+      "paper_statement_sha256": "98a1fce1a7198aeba0f85255d66b3cb34fc5dc7bd36e498919a17c7200b3747f",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] (alloc : CombinatorialReport Bidder Item \\to BundleAllocation Bidder Item) (reports : CombinatorialReport Bidder Item) (i : Bidder), (generalizedVickreyAuction alloc).allocation reports = alloc reports \\land (generalizedVickreyAuction alloc).payment reports i = allocationValueExcept reports (alloc (reportsWithoutBidder reports i)) i - allocationValueExcept reports (alloc reports) i"
     },
     "greedyAcceptedFromOrder_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "ecc19cde10cae82357c54eb1fd4a34d4c80035a91b02dee8439f0009f377e965",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (bids : Bidder \\to SingleMindedBid Item) (order : List Bidder), greedyAcceptedFromOrder bids order = foldl (singleMindedGreedyStep bids) \\varnothing order"
+      "paper_statement_sha256": "a3fe825c5d9754b38ff0001cdff77ebc113570938c0162b0b7f781c1daf28dc6",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (bids : Bidder \\to SingleMindedBid Item) (order : List Bidder), greedyAcceptedFromOrder bids order = foldl (singleMindedGreedyStep bids) \\varnothing order"
     },
     "lemma9_1_exists_nonnegative_critical_value_of_monotonicity": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "f73896a1acb7f0f3f5cbaeac1755058f4e176b648d76c7a3dd14d1b036635248",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to \\forall (reports : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile reports \\to \\forall (i : Bidder) (s : Finset Item), Nonempty \\to (\\exists c, 0 \\le c \\land (\\forall (v : ℝ), 0 \\le v \\to v < c \\to i ∉ accepted (update reports i { desired := s, value := v })) \\land \\forall (v : ℝ), 0 \\le v \\to c < v \\to i \\in accepted (update reports i { desired := s, value := v })) \\lor \\forall (v : ℝ), 0 \\le v \\to i ∉ accepted (update reports i { desired := s, value := v })"
+      "paper_statement_sha256": "843fcd42a82ef494c39b5afd9aee22a1e38c84e7e4ddfbd68e9706c8214eed37",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to \\forall (reports : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile reports \\to \\forall (i : Bidder) (s : Finset Item), Nonempty \\to (\\exists c, 0 \\le c \\land (\\forall (v : \u211d), 0 \\le v \\to v < c \\to i \u2209 accepted (update reports i { desired := s, value := v })) \\land \\forall (v : \u211d), 0 \\le v \\to c < v \\to i \\in accepted (update reports i { desired := s, value := v })) \\lor \\forall (v : \u211d), 0 \\le v \\to i \u2209 accepted (update reports i { desired := s, value := v })"
     },
     "lemma9_2_denied_bidder_utility_eq_zero": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "b7b496813da85958b3684617df51cae653584417cc1224286f554847ff923fb2",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), Participation \\to \\forall (values reports : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile values \\to \\forall {i : Bidder}, i ∉ accepted reports \\to utility values reports i = 0"
+      "paper_statement_sha256": "789e2969d448face72b57406dfa46f4bed9b1a883cc5105eef5ad49e29ef8786",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), Participation \\to \\forall (values reports : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile values \\to \\forall {i : Bidder}, i \u2209 accepted reports \\to utility values reports i = 0"
     },
     "lemma9_3_truthful_utility_nonnegative_condition": {
-      "lean_statement_sha256": "cf7e89131ba34ce678fa4104754c97499cd649ef2cb9e13e91e9f81a5a742919",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), Participation \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate) (values : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile values \\to \\forall (i : Bidder), 0 \\le utility values values i"
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "54fc04a24fe62daa5ae6342bc22ae1d3e4e83d65e327df05055821f74ff6564c",
+      "paper_statement_sha256": "055ff036a62132154fdc7704088d42c4c43e1b12f38ced9912fa284878600c2e",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), Participation \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate) (values : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile values \\to \\forall (i : Bidder), 0 \\le utility values values i"
     },
     "lemma9_4_no_profitable_value_only_lie_of_nonnegative_infinity_axioms": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "17e2cbadbc7cc3c508ec808b214c794db934c9bd93adcc5da8d34b8ea31b3bcb",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to Participation \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate) (values : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile values \\to \\forall (i : Bidder) {v' : ℝ}, 0 \\le v' \\to utility values (update values i { desired := (values i).desired, value := v' }) i \\le utility values values i"
+      "paper_statement_sha256": "a7ec3b1186351418d53871a92eaca28c059ae78cfff3ad63aa3d0c39b02f0db9",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to Participation \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate) (values : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile values \\to \\forall (i : Bidder) {v' : \u211d}, 0 \\le v' \\to utility values (update values i { desired := (values i).desired, value := v' }) i \\le utility values values i"
     },
     "lemma9_5_finite_threshold_mono_of_nonnegative_infinity_certificate": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "6f052b3629aef684aa929b8e8d2db57a1b17da122aaca2d7524946b177e1a542",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate) (reports : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile reports \\to \\forall (i : Bidder) {sSmall sLarge : Finset Item} {pLarge : ℝ}, Nonempty \\to Nonempty \\to sSmall \\subseteq sLarge \\to threshold reports i sLarge = some pLarge \\to \\exists pSmall, threshold reports i sSmall = some pSmall \\land pSmall \\le pLarge"
+      "paper_statement_sha256": "ccb4b234cf952acb35b415695ee645e30e90b4ee7a419a695fc1c2411188a2c3",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate) (reports : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile reports \\to \\forall (i : Bidder) {sSmall sLarge : Finset Item} {pLarge : \u211d}, Nonempty \\to Nonempty \\to sSmall \\subseteq sLarge \\to threshold reports i sLarge = some pLarge \\to \\exists pSmall, threshold reports i sSmall = some pSmall \\land pSmall \\le pLarge"
     },
     "nonnegativeNonemptySingleMindedProfile_iff": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "df160768a23ed860714ce075390383bf2fd97b0809fd848a1c4acd67f0170743",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Item] (bids : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile bids \\iff \\forall (i : Bidder), Nonempty (bids i).desired \\land 0 \\le (bids i).value"
+      "paper_statement_sha256": "12b94d1197cacb840ad2e18a038d385d0a30c7fdc0dda035660aa585f609735e",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Item] (bids : Bidder \\to SingleMindedBid Item), nonnegativeNonemptySingleMindedProfile bids \\iff \\forall (i : Bidder), Nonempty (bids i).desired \\land 0 \\le (bids i).value"
     },
     "proposition4_2_generalized_vickrey_truthful_utility_nonneg": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "d59872c62b374ac10cb60fefe30b46701772c84629bdee23a365ef7e59ac4dae",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] (alloc : CombinatorialReport Bidder Item \\to BundleAllocation Bidder Item), gvaWelfareMaximizingAllocationRule alloc \\to \\forall (values : CombinatorialReport Bidder Item), nonnegativeValues values \\to \\forall (i : Bidder), 0 \\le (generalizedVickreyAuction alloc).utility values values i"
+      "paper_statement_sha256": "02d3181000301d021b02440397648646188c9e1a2dc27fc3a2167047cc2226b8",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] (alloc : CombinatorialReport Bidder Item \\to BundleAllocation Bidder Item), gvaWelfareMaximizingAllocationRule alloc \\to \\forall (values : CombinatorialReport Bidder Item), nonnegativeValues values \\to \\forall (i : Bidder), 0 \\le (generalizedVickreyAuction alloc).utility values values i"
     },
     "setPackingSingleMindedBids_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "47d3269ae189f2a72392df21c3f5dd908414809eee91cbeb5d01da73f917d1c9",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} (sets : Bidder \\to Finset Item) (weights : Bidder \\to ℝ) (i : Bidder), setPackingSingleMindedBids sets weights i = { desired := sets i, value := weights i }"
+      "paper_statement_sha256": "8f94b74508cf5213b61712c4f99cc17a930bfe94e0decd3540af8a3e6a336b1d",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} (sets : Bidder \\to Finset Item) (weights : Bidder \\to \u211d) (i : Bidder), setPackingSingleMindedBids sets weights i = { desired := sets i, value := weights i }"
     },
     "singleMindedAcceptedMechanism_fields": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "e1c9d533d03e26ac09bc04ce909a8565cb35f90d32ecc06b1ea21117072a2bbc",
-      "statement": "\\forall (Bidder : Type u_1) (Item : Type u_2) (M : singleMindedAcceptedMechanism Bidder Item), M = M"
+      "paper_statement_sha256": "cc4227896ab06f82bc44078d12eef42a1b98f4471d5de2598a43994924e1a20f",
+      "tex_statement": "\\forall (Bidder : Type u_1) (Item : Type u_2) (M : singleMindedAcceptedMechanism Bidder Item), M = M"
     },
     "singleMindedTruthfulOn_iff": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "a9b10cc5b89e6648a9aad503f8e17db151bffb5b699963e6b308f455cafae209",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item) (admissible : (Bidder \\to SingleMindedBid Item) \\to Prop), singleMindedTruthfulOn M admissible \\iff \\forall (values : Bidder \\to SingleMindedBid Item), admissible values \\to \\forall (i : Bidder) (report : SingleMindedBid Item), admissible (update values i report) \\to utility values (update values i report) i \\le utility values values i"
+      "paper_statement_sha256": "617976a0e0d19febdc674a7d0960074059cc9d918720c4d52d63bcb7545cc67a",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item) (admissible : (Bidder \\to SingleMindedBid Item) \\to Prop), singleMindedTruthfulOn M admissible \\iff \\forall (values : Bidder \\to SingleMindedBid Item), admissible values \\to \\forall (i : Bidder) (report : SingleMindedBid Item), admissible (update values i report) \\to utility values (update values i report) i \\le utility values values i"
     },
     "theorem10_2_averageGreedy_truthful": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "766d9c630ca4c6be38244bed03c176f3d463e90c33cdac98e0153459fdb1c176",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Item] [inst_2 : LinearOrder Bidder], singleMindedTruthfulOn averageGreedyAcceptedMechanism nonnegativeNonemptySingleMindedProfile"
+      "paper_statement_sha256": "8563cefe4258cee6134c5773fe90407ec724d6953d4641fb215ccf0dd4089d36",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Item] [inst_2 : LinearOrder Bidder], singleMindedTruthfulOn averageGreedyAcceptedMechanism nonnegativeNonemptySingleMindedProfile"
     },
     "theorem4_1_generalized_vickrey_truthful": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "b4b8053bfff524615f65c0730d1de0686ebe7b89d922984d3ffcd641fe2ca152",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] (alloc : CombinatorialReport Bidder Item \\to BundleAllocation Bidder Item), gvaWelfareMaximizingAllocationRule alloc \\to (generalizedVickreyAuction alloc).TruthfulDominantStrategy"
+      "paper_statement_sha256": "def68d914574caa5f5ff8751f5efc8b29ea06f682b238a603f0eb7af6aeaf2ed",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : Fintype Bidder] [inst_1 : DecidableEq Bidder] (alloc : CombinatorialReport Bidder Item \\to BundleAllocation Bidder Item), gvaWelfareMaximizingAllocationRule alloc \\to (generalizedVickreyAuction alloc).TruthfulDominantStrategy"
     },
     "theorem6_1_clique_decision_single_minded_welfare_reduction": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "40fe2f20ed96d9dfc1174a21cd727b18ce992e7cbfcd76a6fc7f148e9b466859",
-      "statement": "\\forall {Vertex : Type u_1} [inst : Fintype Vertex] [inst_1 : DecidableEq Vertex] (problem : graphCliqueDecisionInstance Vertex), graphCliqueDecisionProblem problem \\iff singleMindedWelfareDecisionProblem (graphCliqueDecisionToSingleMindedWelfareDecision problem)"
+      "paper_statement_sha256": "59f52c6f8dd18f169977dfc0a7da9b32d846be83f49a2b20c35a6e7a31f67b48",
+      "tex_statement": "\\forall {Vertex : Type u_1} [inst : Fintype Vertex] [inst_1 : DecidableEq Vertex] (problem : graphCliqueDecisionInstance Vertex), graphCliqueDecisionProblem problem \\iff singleMindedWelfareDecisionProblem (graphCliqueDecisionToSingleMindedWelfareDecision problem)"
     },
     "theorem6_1_external_approximation_solver_np_eq_zpp": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "2e32773bee1b2a1fa42dc21f3f31baeb7f28e84fca60d77468f1472316e31da1",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} {Language : Type u_3} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (factor : ℝ) (complexityModel : ComplexityClassModel Language) (FeasibleSM : ((Bidder \\to SingleMindedBid Item) \\to Finset Bidder) \\to Prop) (FeasibleWSP : ((Bidder \\to Finset Item) \\to (Bidder \\to ℝ) \\to Finset Bidder) \\to Prop) (solver : (Bidder \\to SingleMindedBid Item) \\to Finset Bidder), singleMindedApproximationSolverAtLeast factor solver \\to FeasibleSM solver \\to (FeasibleSM solver \\to FeasibleWSP (setPackingSolverOfSingleMindedSolver solver)) \\to (\\forall (wspSolver : (Bidder \\to Finset Item) \\to (Bidder \\to ℝ) \\to Finset Bidder), weightedSetPackingApproximationSolverAtLeast factor wspSolver \\to FeasibleWSP wspSolver \\to npEqZPP) \\to npEqZPP"
+      "paper_statement_sha256": "838b169fca99a821b46ff5eafce61e1bfcdede43e3f8f9cd5b7e3b17e4320762",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} {Language : Type u_3} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (factor : \u211d) (complexityModel : ComplexityClassModel Language) (FeasibleSM : ((Bidder \\to SingleMindedBid Item) \\to Finset Bidder) \\to Prop) (FeasibleWSP : ((Bidder \\to Finset Item) \\to (Bidder \\to \u211d) \\to Finset Bidder) \\to Prop) (solver : (Bidder \\to SingleMindedBid Item) \\to Finset Bidder), singleMindedApproximationSolverAtLeast factor solver \\to FeasibleSM solver \\to (FeasibleSM solver \\to FeasibleWSP (setPackingSolverOfSingleMindedSolver solver)) \\to (\\forall (wspSolver : (Bidder \\to Finset Item) \\to (Bidder \\to \u211d) \\to Finset Bidder), weightedSetPackingApproximationSolverAtLeast factor wspSolver \\to FeasibleWSP wspSolver \\to npEqZPP) \\to npEqZPP"
     },
     "theorem6_1_external_optimal_solver_np_eq_zpp": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "563284e06182191a1e130031fd512dcf687bbee12d7d47dc3a9c9b5c1f33c297",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} {Language : Type u_3} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (complexityModel : ComplexityClassModel Language) (FeasibleSM : ((Bidder \\to SingleMindedBid Item) \\to Finset Bidder) \\to Prop) (FeasibleWSP : ((Bidder \\to Finset Item) \\to (Bidder \\to ℝ) \\to Finset Bidder) \\to Prop) (solver : (Bidder \\to SingleMindedBid Item) \\to Finset Bidder), singleMindedOptimalSolver solver \\to FeasibleSM solver \\to (FeasibleSM solver \\to FeasibleWSP (setPackingSolverOfSingleMindedSolver solver)) \\to (\\forall (wspSolver : (Bidder \\to Finset Item) \\to (Bidder \\to ℝ) \\to Finset Bidder), weightedSetPackingOptimalSolver wspSolver \\to FeasibleWSP wspSolver \\to npEqZPP) \\to npEqZPP"
+      "paper_statement_sha256": "acd4517c9dcfdd3d2fe41eae90875b0cc10aa5573f0c15e27fa40df1565655a3",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} {Language : Type u_3} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (complexityModel : ComplexityClassModel Language) (FeasibleSM : ((Bidder \\to SingleMindedBid Item) \\to Finset Bidder) \\to Prop) (FeasibleWSP : ((Bidder \\to Finset Item) \\to (Bidder \\to \u211d) \\to Finset Bidder) \\to Prop) (solver : (Bidder \\to SingleMindedBid Item) \\to Finset Bidder), singleMindedOptimalSolver solver \\to FeasibleSM solver \\to (FeasibleSM solver \\to FeasibleWSP (setPackingSolverOfSingleMindedSolver solver)) \\to (\\forall (wspSolver : (Bidder \\to Finset Item) \\to (Bidder \\to \u211d) \\to Finset Bidder), weightedSetPackingOptimalSolver wspSolver \\to FeasibleWSP wspSolver \\to npEqZPP) \\to npEqZPP"
     },
     "theorem6_1_set_packing_feasibility_encoding_correct": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "caffc02064765277641ce820111f1db17a0dc3870a082be421ac068c45c57264",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (sets : Bidder \\to Finset Item) (weights : Bidder \\to ℝ) (selected : Finset Bidder), PairwiseDisjointDesired (setPackingSingleMindedBids sets weights) selected \\iff setPackingFeasible sets selected"
+      "paper_statement_sha256": "4e928e0d5132d80a4b7f137adf5fccd7a72629a8c459bd56b03eeb525646de39",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (sets : Bidder \\to Finset Item) (weights : Bidder \\to \u211d) (selected : Finset Bidder), PairwiseDisjointDesired (setPackingSingleMindedBids sets weights) selected \\iff setPackingFeasible sets selected"
     },
     "theorem6_1_set_packing_value_encoding_correct": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "2ce79b59bbfb14168b2d059507fc8b81faa15a959c01901ef38f789eabbc955f",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] (sets : Bidder \\to Finset Item) (weights : Bidder \\to ℝ) (selected : Finset Bidder), paper_single_minded_total_value (setPackingSingleMindedBids sets weights) selected = weightedSetPackingValue weights selected"
+      "paper_statement_sha256": "430b423da8a5b7daabccf1fc75d84c08288d77fe3217c09650cbc1dd864d7c5b",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] (sets : Bidder \\to Finset Item) (weights : Bidder \\to \u211d) (selected : Finset Bidder), paper_single_minded_total_value (setPackingSingleMindedBids sets weights) selected = weightedSetPackingValue weights selected"
     },
     "theorem6_1_weighted_set_packing_reduction": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "18bfd05f55694b6d12917623bf3467f86923418bc2ef5397f3406ba8ac9f4210",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (sets : Bidder \\to Finset Item) (weights : Bidder \\to ℝ) (selected : Finset Bidder), weightedSetPackingOptimal sets weights selected \\iff singleMindedOptimalAcceptedSet (setPackingSingleMindedBids sets weights) selected"
+      "paper_statement_sha256": "c295d19f4a3fc20f69cb6b59876783005ee7038c4f67831ad589a7fc29f61cb8",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (sets : Bidder \\to Finset Item) (weights : Bidder \\to \u211d) (selected : Finset Bidder), weightedSetPackingOptimal sets weights selected \\iff singleMindedOptimalAcceptedSet (setPackingSingleMindedBids sets weights) selected"
     },
     "theorem7_2_sqrt_norm_approx_of_sorted_order": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "4e0ae9f7e6abec5803683e228a29e09284c735bec60964e10849a986244a2736",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] [Inhabited Bidder] [Inhabited Item] (bids : Bidder \\to SingleMindedBid Item) (optimal : Finset Bidder) (goods : Finset Item) (order : List Bidder), (\\forall i \\in optimal, (bids i).desired \\subseteq goods) \\to PairwiseDisjointDesired bids optimal \\to (\\forall i \\in optimal, Nonempty (bids i).desired) \\to (\\forall i \\in greedyAcceptedFromOrder bids order, Nonempty (bids i).desired) \\to (\\forall i \\in optimal, 0 \\le (bids i).value) \\to (\\forall i \\in greedyAcceptedFromOrder bids order, 0 \\le (bids i).value) \\to SingleMindedSqrtNormDescending bids order \\to (\\forall i \\in optimal, i \\in order) \\to singleMindedTotalValue bids optimal \\le √↑card * singleMindedTotalValue bids (greedyAcceptedFromOrder bids order)"
+      "paper_statement_sha256": "75a0f88946f3a89fa1e70fde254cd10e2d58dbacdcf27bb862e9bc6202974dbc",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] [Inhabited Bidder] [Inhabited Item] (bids : Bidder \\to SingleMindedBid Item) (optimal : Finset Bidder) (goods : Finset Item) (order : List Bidder), (\\forall i \\in optimal, (bids i).desired \\subseteq goods) \\to PairwiseDisjointDesired bids optimal \\to (\\forall i \\in optimal, Nonempty (bids i).desired) \\to (\\forall i \\in greedyAcceptedFromOrder bids order, Nonempty (bids i).desired) \\to (\\forall i \\in optimal, 0 \\le (bids i).value) \\to (\\forall i \\in greedyAcceptedFromOrder bids order, 0 \\le (bids i).value) \\to SingleMindedSqrtNormDescending bids order \\to (\\forall i \\in optimal, i \\in order) \\to singleMindedTotalValue bids optimal \\le \u221a\u2191card * singleMindedTotalValue bids (greedyAcceptedFromOrder bids order)"
     },
     "theorem9_6_single_minded_truthful_of_nonnegative_infinity_axioms": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "62422c5754fe2a5c2fed15baf9570d9d9e17dd4ed90655a124f410162a8e2595",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to Participation \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate), singleMindedTruthfulOn M nonnegativeNonemptySingleMindedProfile"
+      "paper_statement_sha256": "6671f539544015d28c91e75d1bdfe4f2efb63284136f22a4490e7a2e6ef01978",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] [inst_1 : DecidableEq Item] (M : SingleMindedAcceptedMechanism Bidder Item), MonotonicityOn nonnegativeNonemptySingleMindedProfile \\to Participation \\to \\forall (C : NonnegativeCriticalValueWithInfinityCertificate), singleMindedTruthfulOn M nonnegativeNonemptySingleMindedProfile"
     },
     "truthfulOn_iff": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "a96ab4e59eff4ebf2a52ac946cc32933b396c802fd0e2f44829103c049503e32",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] (M : CombinatorialAuction Bidder Item) (admissible : CombinatorialReport Bidder Item \\to Prop), truthfulOn M admissible \\iff \\forall (values : CombinatorialReport Bidder Item), admissible values \\to \\forall (i : Bidder) (report : Bundle Item \\to ℝ), utility M values (update values i report) i \\le utility M values values i"
+      "paper_statement_sha256": "79fa0199a8ede88affbffb8420c97109e43e6a35ccfab7a0749bd91b6df3f821",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} [inst : DecidableEq Bidder] (M : CombinatorialAuction Bidder Item) (admissible : CombinatorialReport Bidder Item \\to Prop), truthfulOn M admissible \\iff \\forall (values : CombinatorialReport Bidder Item), admissible values \\to \\forall (i : Bidder) (report : Bundle Item \\to \u211d), utility M values (update values i report) i \\le utility M values values i"
     },
     "utility_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "9e0418fb713877d083c16d5458d63fda88afcba021bbea6d1884fa4071baf3db",
-      "statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} (M : CombinatorialAuction Bidder Item) (values reports : CombinatorialReport Bidder Item) (i : Bidder), utility M values reports i = values i (allocation reports i) - payment reports i"
+      "paper_statement_sha256": "55aff0ecd5aeead4824a610890bdd0e46d0479aff11ee3505af9b980fefc8d21",
+      "tex_statement": "\\forall {Bidder : Type u_1} {Item : Type u_2} (M : CombinatorialAuction Bidder Item) (values reports : CombinatorialReport Bidder Item) (i : Bidder), utility M values reports i = values i (allocation reports i) - payment reports i"
     },
     "weightedSetPackingValue_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
       "lean_statement_sha256": "514e103ddc4142f3531c93d3343fbadb2d3bce92cfe0afc83048161c8afb5743",
-      "statement": "\\forall {Bidder : Type u_1} [inst : DecidableEq Bidder] (weights : Bidder \\to ℝ) (selected : Finset Bidder), weightedSetPackingValue weights selected = \\sum i \\in selected, weights i"
+      "paper_statement_sha256": "8109a4fe4b37b3e2118728dcfe11d9b18c0c2681974e4fa83aababe6f536e671",
+      "tex_statement": "\\forall {Bidder : Type u_1} [inst : DecidableEq Bidder] (weights : Bidder \\to \u211d) (selected : Finset Bidder), weightedSetPackingValue weights selected = \\sum i \\in selected, weights i"
     }
   },
   "paper": "LOS02CombinatorialAuctions",
+  "prompt_summary": [
+    "Translate from the Lean statement alone, with no paper context."
+  ],
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
   "schema": 1
 }

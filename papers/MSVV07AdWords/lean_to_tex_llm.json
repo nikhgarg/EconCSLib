@@ -1,152 +1,340 @@
 {
-  "schema": 1,
+  "comment": "Filtered to the curated 26-row paper-facing dashboard surface after removing proof-adapter and duplicate support rows.",
+  "generated_at": "2026-06-13T21:43:40Z",
+  "generator": "gpt-5-codex",
+  "generator_type": "model",
+  "items": {
+    "assumption_alive_bidder_predicate": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "1a72eaa6418ed190516256c48ff9009ce883853f6e5f32b5f73fad3cf15727b0",
+      "paper_statement_sha256": "3b0a1826c4539f2f9f941dceb20bbc206bccbf95100a21f56c71dafef08d6016",
+      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to (Advertiser \\to Query \\to Prop) \\to Prop"
+    },
+    "assumption_availability_predicate": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "f28ff43539505bb5b1a386db317ffbcb5406dad2e3334f35b4e6c0f2594dd990",
+      "paper_statement_sha256": "bfb815a62b980fecd8d9ac3a45ec8e6d21a2b5542f37d60af4d292d97dbea45d",
+      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to (Advertiser \\to Query \\to Prop) \\to Prop"
+    },
+    "assumption_click_through_rates_probability_bounds": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "3fa3402b0a18121b0b524ba245039781ef0dd670091c2b199a9fc42924860889",
+      "paper_statement_sha256": "7a0fb02cc79cc22c687d7e7e46897c1063236b89ab75fd783aefac8676787c05",
+      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to (Advertiser \\to Query \\to \u211d) \\to Prop"
+    },
+    "assumption_epsilon_range": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "87466f723a40b8679b8a5ea4d3646963de8f7d363f8bee686193f1fbbf10e56c",
+      "paper_statement_sha256": "360154d67328df44ba93cad3001809016db0fdc0f7fddc68c1b8678092eebd1a",
+      "tex_statement": "\u211d \\to Prop"
+    },
+    "assumption_full_distinct_query_history": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "162780c4667e2fa0493b551ba2111c58d2ae17791f601854495801e8a487f6e4",
+      "paper_statement_sha256": "a9427c9c88776554dc04eff73b60e316c6c1eaaf0914548c550dc331626fb186",
+      "tex_statement": "{Query : Type u_1} \\to [Fintype Query] \\to [DecidableEq Query] \\to List Query \\to Prop"
+    },
+    "assumption_next_highest_alive_small_bids": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "ade7b1639975f83a52d90c0c05350c11c837677d72422f1bdda492c42ba01dd4",
+      "paper_statement_sha256": "b2fba3c7c00b6fdb40b8943cc7011e93c39b05b92116f473a8ea983b19265fe4",
+      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Advertiser] \\to [DecidableEq Advertiser] \\to PaperInstance Advertiser Query \\to (alive : Advertiser \\to Query \\to Prop) \\to [(a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] \\to \u211d \\to Prop"
+    },
+    "assumption_next_highest_all_small_bids": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "db1c69f6edada135b4712874cd65ce2e17ea1caa3fcf93134f026e16bb8eed46",
+      "paper_statement_sha256": "05752b5434ad13a3c9b194a115d6e6299ed25d12296dde169511ba4a8809e3de",
+      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to [Fintype Advertiser] \\to [DecidableEq Advertiser] \\to PaperInstance Advertiser Query \\to \u211d \\to Prop"
+    },
+    "assumption_nonnegative_bids": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "4c5cd2e6e948d20f239323db9742c3d1b4b8762d2f804aedb55ae151722b9d3e",
+      "paper_statement_sha256": "a9f975a1a8857dfaa905fa26de2cee2e4b1eb046a037e5523b33e1d988c1a913",
+      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to PaperInstance Advertiser Query \\to Prop"
+    },
+    "assumption_weighted_bids_nonnegative_weights": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "ca40bc7e38215ab68a3091fd264e71d8a66254731c828ba4cadc3ae628f16c75",
+      "paper_statement_sha256": "645a7c482ead29387e90a584e6a97c8b240c31776ee750e05c5cce359d3d6d69",
+      "tex_statement": "{Advertiser : Type u_1} \\to (Advertiser \\to \u211d) \\to Prop"
+    },
+    "assumption_weighted_effective_small_bids": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "d65e53857aabb023ff17e4263d4604ff8d5dd0a53dce54a536a7d243ba793e52",
+      "paper_statement_sha256": "584cfacc3de4c457741d2afced347f3858ae8c9c72f7992099667980116f86d7",
+      "tex_statement": "{Advertiser : Type u_1} \\to {Query : Type u_2} \\to PaperInstance Advertiser Query \\to (Advertiser \\to \u211d) \\to \u211d \\to Prop"
+    },
+    "paperBalanceScore_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "d1e71deeff0a5f3eefbd5240b378653a31c3519157a63329be434f0feadda3ff",
+      "paper_statement_sha256": "395e6b48a20abb93d38cce0930c49a9cc2f510ce2105fb863becfe2c5a96b283",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (a : Advertiser) (q : Query), paperBalanceScore I A a q = bid a q * paperTradeoff (paperSpend I A a / budget a)"
+    },
+    "paperCanAssign_iff": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "7579e406b05cb53dd152eab225a7507aa1f66b86e5e104df586018111b19650b",
+      "paper_statement_sha256": "98cffece1bde6f6efd2b1153e551f6e614333c7db1c12d9c4b56ec68f4657fb9",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser), paperCanAssign I A q a \\iff paperSpend I A a + bid a q \\le budget a"
+    },
+    "paperFeasible_iff": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "60335f0b8d975fa0fd6ce5ec6021ac2d0a7b5fe616880e83f60f0556e9ecf51f",
+      "paper_statement_sha256": "84a5fe99aababc80ecd00e2c252421d680e319f952f0adf037bbd223ee3cb074",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query), paperFeasible I A \\iff \\forall (a : Advertiser), paperSpend I A a \\le budget a"
+    },
+    "paperFractionalFeasible_iff": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "fc1d5d16c11fabc8b9cadf3ac328494e94af3276512e11cbde8bfab949f91e14",
+      "paper_statement_sha256": "30b1d8c5b0b7272347145d8c625b169cdd1bf815f3b8612c5aafc0f991e77757",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] (I : PaperInstance Advertiser Query) (x : Advertiser \\to Query \\to \u211d), PaperFractionalFeasible I x \\iff (\\forall (a : Advertiser) (q : Query), 0 \\le x a q) \\land (\\forall (q : Query), \\sum a, x a q \\le 1) \\land \\forall (a : Advertiser), \\sum q, bid a q * x a q \\le budget a"
+    },
+    "paperFractionalRevenue_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "34350affe920424bcbf8f1fe915f1019abf6df5e0779b7fd8e537cf9ebd673d5",
+      "paper_statement_sha256": "bdf1fec1c513c39f77df8cbd8fca620740f722133c854462f56f05d93a6e9edc",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] (I : PaperInstance Advertiser Query) (x : Advertiser \\to Query \\to \u211d), paperFractionalRevenue I x = \\sum q, \\sum a, bid a q * x a q"
+    },
+    "paperIsBalanceChoice_iff": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "350d66678cff4cf8ada7a28bb93ff83f4099102746e08f789556bd18bd0a5825",
+      "paper_statement_sha256": "ab3798bd7530de0f5f6c6aceeb5eeec0966583f716e0c2bd3ce841b989ff5466",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] [inst_2 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser), paperIsBalanceChoice I A q a \\iff paperCanAssign I A q a \\land \\forall (b : Advertiser), paperCanAssign I A q b \\to paperBalanceScore I A b q \\le paperBalanceScore I A a q"
+    },
+    "paperMsvvRatio_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "0dad2735b53871db0fac0c2da3198e1043e3734d1ab5a852163c6cb407a134e1",
+      "paper_statement_sha256": "bae4213b720d54fee7ec2f69ed3345a0673d8475b229def8645e72d2a34ce2be",
+      "tex_statement": "paperMsvvRatio = 1 - 1 / exp 1"
+    },
+    "paperRevenue_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "fc49d0395ebf9f63aa9df30f0fdb80e277c721ac8ee954a37b587c2cb3f8bcd5",
+      "paper_statement_sha256": "e1136bfc18a7f30dbc3c28bc27f06aa3432175aaaabd43d93e7342ebca0dd44d",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query), paperRevenue I A = \\sum q, match A q with | none  =>  0 | some a  =>  bid a q"
+    },
+    "paperSlotsPerPageDistinct_iff": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "fecacecc3c3c482fb41448fe9f2892d3e2feb4fdceca8d6f231691cfcd6fa03d",
+      "paper_statement_sha256": "0e08a36ecf5d6e882288355dbced62d86e8a097df24ff8475c6c18fb1bdc89f2",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} (Slot : Query \\to Type u_3) (A : PaperAssignment Advertiser ((q : Query) \u00d7 Slot q)), paperSlotsPerPageDistinct Slot A \\iff \\forall (q : Query) (s\u2081 s\u2082 : Slot q) (a : Advertiser), A \u27e8q, s\u2081\u27e9 = some a \\to A \u27e8q, s\u2082\u27e9 = some a \\to s\u2081 = s\u2082"
+    },
+    "paperSmallBidsLimitFamily_fields": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "672fb596eb77c9f9beebad6ca6c80aceff4603bc63a2ce93c96935c1da2079c8",
+      "paper_statement_sha256": "a61e6108077101f066d3ef40fc50ed5e4310e41bdd5022434569e66913e4f572",
+      "tex_statement": "\\forall {Advertiser : Type u_1} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : DecidableEq Advertiser] (F : PaperSmallBidsLimitFamily Advertiser), (\\forall (k : \u2115), NonnegativeBids (instanceAt k)) \\land (\\forall (k : \u2115), PositiveBudgets (instanceAt k)) \\land (\\forall (k : \u2115), 0 < \\sum q, maxBidForQuery (instanceAt k) q) \\land (\\forall (delta : \u211d), 0 < delta \\to \\exists N, \\forall (k : \u2115), N \\le k \\to paperSmallBids (instanceAt k) (min 1 (delta / ((exp 1 + 1) * \\sum q, maxBidForQuery (instanceAt k) q)))) \\land SeqTendsTo (fun k  =>  offlineOptimumValue (instanceAt k) \u22ef) optLimit \\land SeqTendsTo (fun k  =>  revenue (instanceAt k) (runAssignment (instanceAt k) (balanceChoiceRule (instanceAt k)) (finRange (queryCount k)))) revenueLimit"
+    },
+    "paperSmallBids_iff": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "c3f543828b4962a85c559e78dc2431231d9daf4d8555c636aaa4c90293225fb2",
+      "paper_statement_sha256": "be4f216a813324ae2e1b48bc861859dfe40be6c346fd10f63c33e806aff49666",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} (I : PaperInstance Advertiser Query) (epsilon : \u211d), paperSmallBids I epsilon \\iff \\forall (a : Advertiser) (q : Query), bid a q \\le epsilon * budget a"
+    },
+    "paperSpend_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "d3305cdbe23d4c840ed2af9e7eeeb93f12e3dcaecae3cce62f4ac3bf4b2dcbd6",
+      "paper_statement_sha256": "b248d226d731f63ea15fa2a5aef4ec1b2c19e5300c61cc9e62568980c983ba6f",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (a : Advertiser), paperSpend I A a = \\sum q, match A q with | none  =>  0 | some a'  =>  if a' = a then bid a q else 0"
+    },
+    "paperTradeoff_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "37c6ed0998fa6953d269672c9844e72938966a99d37e0c6ddf469559097f7dd1",
+      "paper_statement_sha256": "5c4792e13a51e446b4ee1337b88bd8da79c53e5297cd6244d37c5ffc2adfe0d7",
+      "tex_statement": "\\forall (s : \u211d), paperTradeoff s = 1 - exp (s - 1)"
+    },
+    "section6_availability_theorem8_finite_explicit_error": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "5eb3668a8c66bcdd155735ecd87608bdacf31c13b27c8c69f6a26b601293c22c",
+      "paper_statement_sha256": "88b8baa33c95123b42403f2316fc2603669de65deedacd69e9e17011f674eee5",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (available : Advertiser \\to Query \\to Prop) [inst_5 : (a : Advertiser) \\to (q : Query) \\to Decidable (available a q)], NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withAvailability I available).offlineOptimumValue \u22ef \\le (withAvailability I available).revenue ((withAvailability I available).runAssignment (withAvailability I available).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withAvailability I available).maxBidForQuery q"
+    },
+    "section6_click_through_rates_theorem8_finite_explicit_error": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "c90048abdc4a03fb2d772072f02b86f223bba32d0a0e93860d49e4902fb6fc0d",
+      "paper_statement_sha256": "3242b4c2b841018f4caa8b266783484d163c9979e21352a9a2631a86f3413055",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (ctr : Advertiser \\to Query \\to \u211d), (\\forall (a : Advertiser) (q : Query), 0 \\le ctr a q) \\to (\\forall (a : Advertiser) (q : Query), ctr a q \\le 1) \\to NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withClickThroughRates I ctr).offlineOptimumValue \u22ef \\le (withClickThroughRates I ctr).revenue ((withClickThroughRates I ctr).runAssignment (withClickThroughRates I ctr).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withClickThroughRates I ctr).maxBidForQuery q"
+    },
+    "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "580ead48bea390c4f0fb78a40a9c6c51b5479925c901eb735b0473a6a87021c2",
+      "paper_statement_sha256": "320d032d558c848ce0c2b01e27cd6456b2c677481c31ba37f171d13462bdc88b",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * offlineOptimumValue I \u22ef \\le paperRevenue I (runAssignment I (balanceChoiceRule I) history) + epsilon * (exp 1 + 1) * \\sum q, maxBidForQuery I q"
+    },
+    "section6_next_highest_bid_alive_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "8d4049e71ea7a59982aa462836ee16afa572542157f7d6902d87a56b898526ab",
+      "paper_statement_sha256": "14664b15d69f57fde448d0b1f1d670f90b5444130b7ccc65cb39c72fff66d9de",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (alive : Advertiser \\to Query \\to Prop) [inst_2 : (a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] (a : Advertiser) (q : Query), section6_next_highest_bid_alive I alive a q = have others := {b \\in erase a | alive b q}; if h : Nonempty then max 0 (sup' h fun b  =>  bid b q) else 0"
+    },
+    "section6_next_highest_bid_alive_theorem8_finite_explicit_error": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "22f20b3a8953cf646bd5c222d11e1b1ee07c3fb77cf7b52d0ea4390737618e57",
+      "paper_statement_sha256": "55ca76afa4e54230f54a60e91983500c520433d1aea8a7e83924350672f83860",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (alive : Advertiser \\to Query \\to Prop) [inst_5 : (a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), section6_next_highest_bid_alive I alive a q \\le epsilon * budget a) \\to paperMsvvRatio * (withEffectiveBids I (section6_next_highest_bid_alive I alive)).offlineOptimumValue \u22ef \\le paperRevenue (withEffectiveBids I (section6_next_highest_bid_alive I alive)) ((withEffectiveBids I (section6_next_highest_bid_alive I alive)).runAssignment (withEffectiveBids I (section6_next_highest_bid_alive I alive)).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withEffectiveBids I (section6_next_highest_bid_alive I alive)).maxBidForQuery q"
+    },
+    "section6_next_highest_bid_all_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "a06253da179f90c389b62df59559ac2ab8c812ba9b8dd24a28972c817b77d1bc",
+      "paper_statement_sha256": "a330f887a9b31810e6b6787523a24c5bd65f1fad6369fe494b4d97fdad73f6b6",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (a : Advertiser) (q : Query), section6_next_highest_bid_all I a q = have others := erase a; if h : Nonempty then max 0 (sup' h fun b  =>  bid b q) else 0"
+    },
+    "section6_next_highest_bid_all_theorem8_finite_explicit_error": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "2fdbbee4b32828961eef3abb585780cdac78695a2d39daaf772334cacb86720d",
+      "paper_statement_sha256": "25f32ef9eb013b7a135229db4b374ce8b7e53e1e5fd5194275b5bc71ed0f7529",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), section6_next_highest_bid_all I a q \\le epsilon * budget a) \\to paperMsvvRatio * (withEffectiveBids I (section6_next_highest_bid_all I)).offlineOptimumValue \u22ef \\le paperRevenue (withEffectiveBids I (section6_next_highest_bid_all I)) ((withEffectiveBids I (section6_next_highest_bid_all I)).runAssignment (withEffectiveBids I (section6_next_highest_bid_all I)).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withEffectiveBids I (section6_next_highest_bid_all I)).maxBidForQuery q"
+    },
+    "section6_page_top_balance_theorem8_finite_explicit_error": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "4be57273b7da506ce056a3abb9f8cb920e713f187f6d0e7c6c91b2606d198e14",
+      "paper_statement_sha256": "816ba031fca719556c9fdfee8cdb93ef747d2f1b35704d20db90a87a5f4e2b62",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (slots : Query \\to \u2115), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * pageOfflineOptimumValue I slots \u22ef \\le pageRevenue I (runPageAssignment I slots (pageTopBalanceRule I slots) history) + epsilon * (exp 1 + 1) * pageHistoryMaxBidSum I slots history"
+    },
+    "section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "84b26bcf5a3b821c884f3a4098c006563e84a78aa0f84ccf31bec496cacbd0a4",
+      "paper_statement_sha256": "3b3261240cd78c6ddc8fd3e0bfcf9ff3aa0bf6a72b402ff8373d8f2a4b7a2786",
+      "tex_statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (weight : Advertiser \\to \u211d), (\\forall (a : Advertiser), 0 \\le weight a) \\to NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : \u211d}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), weight a * bid a q \\le epsilon * budget a) \\to paperMsvvRatio * (withAdvertiserWeights I weight).offlineOptimumValue \u22ef \\le (withAdvertiserWeights I weight).revenue ((withAdvertiserWeights I weight).runAssignment (withAdvertiserWeights I weight).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withAdvertiserWeights I weight).maxBidForQuery q"
+    },
+    "theorem8_balance_msvv_competitive_of_small_bids_limit_family": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "13f9676b65d7c8c90edb4653345429e9af8f1c35e483934a79e2ac1aae3077fe",
+      "paper_statement_sha256": "c36a32652a591b11ed6ae6e2602f25af2be4842faed7114a07f06ed515e919e0",
+      "tex_statement": "\\forall {Advertiser : Type u_1} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : DecidableEq Advertiser] (F : PaperSmallBidsLimitFamily Advertiser), paperMsvvRatio * optLimit \\le revenueLimit"
+    },
+    "theorem9CappedNormalizedRevenue_formula": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "096f80d9a7054decb3a819ae9217a7285016ecfa66f73b1c73e5ac2b04a8765a",
+      "paper_statement_sha256": "de391faeaf871b6c249041a67762cc90ffcbe3a13fa53c04f01fd1aded20f3b6",
+      "tex_statement": "\\forall (N : \u2115) (algorithm : theorem9IntegralPrefixAlgorithm N) (permutation : Perm (Fin N)), theorem9CappedNormalizedRevenue N algorithm permutation = (\\sum bidder, min 1 (\\sum round, prefixAllocation algorithm (theorem9ObservedPrefix N permutation round) round (permutation bidder))) / \u2191N"
+    },
+    "theorem9HardDistribution_uniform": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "33efe7295a20b956bbb0b84549e27d5edae84a80891d3eac758d9cd971734dc4",
+      "paper_statement_sha256": "2b3473368866d77a76e7e22749d15e2594fe9bca42d02a10670cb160c775473a",
+      "tex_statement": "\\forall (N : \u2115), theorem9HardDistribution N = uniformPermutationDistribution N"
+    },
+    "theorem9_no_randomized_online_algorithm_beats_msvv_ratio": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "e00c2366e6075a7c96751fa898cf6fe8b6a4b1cf2e056af9913548b552bb7798",
+      "paper_statement_sha256": "6cd6d9e9638b593a3d6f4c1300a90ff539e79afb2455bcbf213d678b36b59a7d",
+      "tex_statement": "\\forall (delta : \u211d), 0 < delta \\to \\exists N0, \\forall (N : \u2115), N0 \\le N \\to \\forall (randomizedAlgorithm : theorem9RandomizedOnlineAlgorithm N), \\lnot\\forall (permutation : Perm (Fin N)), paperMsvvRatio + delta < pmfExp randomizedAlgorithm fun algorithm  =>  theorem9CappedNormalizedRevenue N algorithm permutation"
+    }
+  },
   "paper": "MSVV07AdWords",
-  "prompt_version": "lean-to-tex-v2-strict-context-free",
-  "translator": "gpt-5-codex",
-  "translator_type": "model",
-  "translated_at": "2026-06-13T00:00:00Z",
   "prompt_summary": [
     "Translate each Lean declaration from the Lean statement alone, with no paper context.",
     "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
     "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
   ],
-  "generated_at": "2026-06-11T03:15:56Z",
-  "generator": "codex-current-dashboard-statement-digest-refresh",
-  "items": {
-    "assumption_nonnegative_bids": {
-      "statement": "The AdWords instance has nonnegative bids: for every advertiser \\(a\\) and query \\(q\\), \\(0\\le c_{a q}\\)."
-    },
-    "assumption_full_distinct_query_history": {
-      "statement": "The finite history list is a complete, duplicate-free enumeration of the finite query-event set."
-    },
-    "assumption_epsilon_range": {
-      "statement": "The finite explicit-error parameter satisfies \\(0\\le \\varepsilon\\le 1\\)."
-    },
-    "assumption_alive_bidder_predicate": {
-      "statement": "The alive-bidders next-price variant is parameterized by a predicate saying whether advertiser \\(a\\) is alive for query \\(q\\)."
-    },
-    "assumption_next_highest_all_small_bids": {
-      "statement": "The all-bidders next-price effective charge satisfies the small-bids condition: for every advertiser \\(a\\) and query \\(q\\), the charge is at most \\(\\varepsilon B_a\\)."
-    },
-    "assumption_next_highest_alive_small_bids": {
-      "statement": "The alive-bidders next-price effective charge satisfies the small-bids condition: for every advertiser \\(a\\) and query \\(q\\), the charge is at most \\(\\varepsilon B_a\\)."
-    },
-    "assumption_click_through_rates_probability_bounds": {
-      "statement": "Click-through rates are probabilities: for every advertiser \\(a\\) and query \\(q\\), \\(0\\le \\mathrm{ctr}_{a q}\\le 1\\)."
-    },
-    "assumption_availability_predicate": {
-      "statement": "The delayed-entry extension is parameterized by a predicate saying whether advertiser \\(a\\) is available for query \\(q\\)."
-    },
-    "assumption_weighted_bids_nonnegative_weights": {
-      "statement": "Advertiser weights are in the nonnegative regime: for every advertiser \\(a\\), \\(0\\le w_a\\)."
-    },
-    "assumption_weighted_effective_small_bids": {
-      "statement": "Weighted effective bids satisfy the small-bids condition: for every advertiser \\(a\\) and query \\(q\\), \\(w_a c_{a q}\\le \\varepsilon B_a\\)."
-    },
-    "paperSlotsPerPageDistinct_iff": {
-      "lean_statement_sha256": "fecacecc3c3c482fb41448fe9f2892d3e2feb4fdceca8d6f231691cfcd6fa03d",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} (Slot : Query \\to Type u_3) (A : PaperAssignment Advertiser ((q : Query) × Slot q)), paperSlotsPerPageDistinct Slot A \\iff \\forall (q : Query) (s₁ s₂ : Slot q) (a : Advertiser), A ⟨q, s₁⟩ = some a \\to A ⟨q, s₂⟩ = some a \\to s₁ = s₂"
-    },
-    "paperSpend_formula": {
-      "lean_statement_sha256": "d3305cdbe23d4c840ed2af9e7eeeb93f12e3dcaecae3cce62f4ac3bf4b2dcbd6",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (a : Advertiser), paperSpend I A a = \\sum q, match A q with | none  =>  0 | some a'  =>  if a' = a then bid a q else 0"
-    },
-    "paperRevenue_formula": {
-      "lean_statement_sha256": "fc49d0395ebf9f63aa9df30f0fdb80e277c721ac8ee954a37b587c2cb3f8bcd5",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query), paperRevenue I A = \\sum q, match A q with | none  =>  0 | some a  =>  bid a q"
-    },
-    "paperFeasible_iff": {
-      "lean_statement_sha256": "60335f0b8d975fa0fd6ce5ec6021ac2d0a7b5fe616880e83f60f0556e9ecf51f",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query), paperFeasible I A \\iff \\forall (a : Advertiser), paperSpend I A a \\le budget a"
-    },
-    "paperSmallBids_iff": {
-      "lean_statement_sha256": "c3f543828b4962a85c559e78dc2431231d9daf4d8555c636aaa4c90293225fb2",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} (I : PaperInstance Advertiser Query) (epsilon : ℝ), paperSmallBids I epsilon \\iff \\forall (a : Advertiser) (q : Query), bid a q \\le epsilon * budget a"
-    },
-    "paperFractionalRevenue_formula": {
-      "lean_statement_sha256": "34350affe920424bcbf8f1fe915f1019abf6df5e0779b7fd8e537cf9ebd673d5",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] (I : PaperInstance Advertiser Query) (x : Advertiser \\to Query \\to ℝ), paperFractionalRevenue I x = \\sum q, \\sum a, bid a q * x a q"
-    },
-    "paperFractionalFeasible_iff": {
-      "lean_statement_sha256": "fc1d5d16c11fabc8b9cadf3ac328494e94af3276512e11cbde8bfab949f91e14",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] (I : PaperInstance Advertiser Query) (x : Advertiser \\to Query \\to ℝ), PaperFractionalFeasible I x \\iff (\\forall (a : Advertiser) (q : Query), 0 \\le x a q) \\land (\\forall (q : Query), \\sum a, x a q \\le 1) \\land \\forall (a : Advertiser), \\sum q, bid a q * x a q \\le budget a"
-    },
-    "paperTradeoff_formula": {
-      "lean_statement_sha256": "37c6ed0998fa6953d269672c9844e72938966a99d37e0c6ddf469559097f7dd1",
-      "statement": "\\forall (s : ℝ), paperTradeoff s = 1 - exp (s - 1)"
-    },
-    "paperMsvvRatio_formula": {
-      "lean_statement_sha256": "0dad2735b53871db0fac0c2da3198e1043e3734d1ab5a852163c6cb407a134e1",
-      "statement": "paperMsvvRatio = 1 - 1 / exp 1"
-    },
-    "paperBalanceScore_formula": {
-      "lean_statement_sha256": "d1e71deeff0a5f3eefbd5240b378653a31c3519157a63329be434f0feadda3ff",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (a : Advertiser) (q : Query), paperBalanceScore I A a q = bid a q * paperTradeoff (paperSpend I A a / budget a)"
-    },
-    "paperCanAssign_iff": {
-      "lean_statement_sha256": "7579e406b05cb53dd152eab225a7507aa1f66b86e5e104df586018111b19650b",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Query] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser), paperCanAssign I A q a \\iff paperSpend I A a + bid a q \\le budget a"
-    },
-    "paperIsBalanceChoice_iff": {
-      "lean_statement_sha256": "350d66678cff4cf8ada7a28bb93ff83f4099102746e08f789556bd18bd0a5825",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Fintype Query] [inst_2 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (A : PaperAssignment Advertiser Query) (q : Query) (a : Advertiser), paperIsBalanceChoice I A q a \\iff paperCanAssign I A q a \\land \\forall (b : Advertiser), paperCanAssign I A q b \\to paperBalanceScore I A b q \\le paperBalanceScore I A a q"
-    },
-    "paperSmallBidsLimitFamily_fields": {
-      "lean_statement_sha256": "672fb596eb77c9f9beebad6ca6c80aceff4603bc63a2ce93c96935c1da2079c8",
-      "statement": "\\forall {Advertiser : Type u_1} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : DecidableEq Advertiser] (F : PaperSmallBidsLimitFamily Advertiser), (\\forall (k : ℕ), NonnegativeBids (instanceAt k)) \\land (\\forall (k : ℕ), PositiveBudgets (instanceAt k)) \\land (\\forall (k : ℕ), 0 < \\sum q, maxBidForQuery (instanceAt k) q) \\land (\\forall (delta : ℝ), 0 < delta \\to \\exists N, \\forall (k : ℕ), N \\le k \\to paperSmallBids (instanceAt k) (min 1 (delta / ((exp 1 + 1) * \\sum q, maxBidForQuery (instanceAt k) q)))) \\land SeqTendsTo (fun k  =>  offlineOptimumValue (instanceAt k) ⋯) optLimit \\land SeqTendsTo (fun k  =>  revenue (instanceAt k) (runAssignment (instanceAt k) (balanceChoiceRule (instanceAt k)) (finRange (queryCount k)))) revenueLimit"
-    },
-    "theorem8_balance_msvv_competitive_of_small_bids_limit_family": {
-      "lean_statement_sha256": "13f9676b65d7c8c90edb4653345429e9af8f1c35e483934a79e2ac1aae3077fe",
-      "statement": "\\forall {Advertiser : Type u_1} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : DecidableEq Advertiser] (F : PaperSmallBidsLimitFamily Advertiser), paperMsvvRatio * optLimit \\le revenueLimit"
-    },
-    "section6_different_budgets_and_nonexhaustive_optimum_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "580ead48bea390c4f0fb78a40a9c6c51b5479925c901eb735b0473a6a87021c2",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * offlineOptimumValue I ⋯ \\le paperRevenue I (runAssignment I (balanceChoiceRule I) history) + epsilon * (exp 1 + 1) * \\sum q, maxBidForQuery I q"
-    },
-    "section6_next_highest_bid_all_formula": {
-      "lean_statement_sha256": "a06253da179f90c389b62df59559ac2ab8c812ba9b8dd24a28972c817b77d1bc",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (a : Advertiser) (q : Query), section6_next_highest_bid_all I a q = have others := erase a; if h : Nonempty then max 0 (sup' h fun b  =>  bid b q) else 0"
-    },
-    "section6_next_highest_bid_alive_formula": {
-      "lean_statement_sha256": "8d4049e71ea7a59982aa462836ee16afa572542157f7d6902d87a56b898526ab",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : DecidableEq Advertiser] (I : PaperInstance Advertiser Query) (alive : Advertiser \\to Query \\to Prop) [inst_2 : (a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] (a : Advertiser) (q : Query), section6_next_highest_bid_alive I alive a q = have others := {b \\in erase a | alive b q}; if h : Nonempty then max 0 (sup' h fun b  =>  bid b q) else 0"
-    },
-    "section6_next_highest_bid_all_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "2fdbbee4b32828961eef3abb585780cdac78695a2d39daaf772334cacb86720d",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), section6_next_highest_bid_all I a q \\le epsilon * budget a) \\to paperMsvvRatio * (withEffectiveBids I (section6_next_highest_bid_all I)).offlineOptimumValue ⋯ \\le paperRevenue (withEffectiveBids I (section6_next_highest_bid_all I)) ((withEffectiveBids I (section6_next_highest_bid_all I)).runAssignment (withEffectiveBids I (section6_next_highest_bid_all I)).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withEffectiveBids I (section6_next_highest_bid_all I)).maxBidForQuery q"
-    },
-    "section6_next_highest_bid_alive_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "22f20b3a8953cf646bd5c222d11e1b1ee07c3fb77cf7b52d0ea4390737618e57",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (alive : Advertiser \\to Query \\to Prop) [inst_5 : (a : Advertiser) \\to (q : Query) \\to Decidable (alive a q)] (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), section6_next_highest_bid_alive I alive a q \\le epsilon * budget a) \\to paperMsvvRatio * (withEffectiveBids I (section6_next_highest_bid_alive I alive)).offlineOptimumValue ⋯ \\le paperRevenue (withEffectiveBids I (section6_next_highest_bid_alive I alive)) ((withEffectiveBids I (section6_next_highest_bid_alive I alive)).runAssignment (withEffectiveBids I (section6_next_highest_bid_alive I alive)).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withEffectiveBids I (section6_next_highest_bid_alive I alive)).maxBidForQuery q"
-    },
-    "section6_click_through_rates_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "c90048abdc4a03fb2d772072f02b86f223bba32d0a0e93860d49e4902fb6fc0d",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (ctr : Advertiser \\to Query \\to ℝ), (\\forall (a : Advertiser) (q : Query), 0 \\le ctr a q) \\to (\\forall (a : Advertiser) (q : Query), ctr a q \\le 1) \\to NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withClickThroughRates I ctr).offlineOptimumValue ⋯ \\le (withClickThroughRates I ctr).revenue ((withClickThroughRates I ctr).runAssignment (withClickThroughRates I ctr).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withClickThroughRates I ctr).maxBidForQuery q"
-    },
-    "section6_availability_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "5eb3668a8c66bcdd155735ecd87608bdacf31c13b27c8c69f6a26b601293c22c",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (available : Advertiser \\to Query \\to Prop) [inst_5 : (a : Advertiser) \\to (q : Query) \\to Decidable (available a q)], NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * (withAvailability I available).offlineOptimumValue ⋯ \\le (withAvailability I available).revenue ((withAvailability I available).runAssignment (withAvailability I available).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withAvailability I available).maxBidForQuery q"
-    },
-    "section6_page_top_balance_theorem8_finite_explicit_error": {
-      "lean_statement_sha256": "4be57273b7da506ce056a3abb9f8cb920e713f187f6d0e7c6c91b2606d198e14",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (slots : Query \\to ℕ), NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to paperSmallBids I epsilon \\to paperMsvvRatio * pageOfflineOptimumValue I slots ⋯ \\le pageRevenue I (runPageAssignment I slots (pageTopBalanceRule I slots) history) + epsilon * (exp 1 + 1) * pageHistoryMaxBidSum I slots history"
-    },
-    "section8_weighted_bids_theorem8_finite_explicit_error_of_weighted_small_bids": {
-      "lean_statement_sha256": "84b26bcf5a3b821c884f3a4098c006563e84a78aa0f84ccf31bec496cacbd0a4",
-      "statement": "\\forall {Advertiser : Type u_1} {Query : Type u_2} [inst : Fintype Advertiser] [inst_1 : Nonempty Advertiser] [inst_2 : Fintype Query] [inst_3 : DecidableEq Advertiser] [inst_4 : DecidableEq Query] (I : PaperInstance Advertiser Query) (weight : Advertiser \\to ℝ), (\\forall (a : Advertiser), 0 \\le weight a) \\to NonnegativeBids I \\to \\forall (hbudget : PositiveBudgets I) (history : List Query), Nodup \\to historyFinset history = univ \\to \\forall {epsilon : ℝ}, 0 \\le epsilon \\to epsilon \\le 1 \\to (\\forall (a : Advertiser) (q : Query), weight a * bid a q \\le epsilon * budget a) \\to paperMsvvRatio * (withAdvertiserWeights I weight).offlineOptimumValue ⋯ \\le (withAdvertiserWeights I weight).revenue ((withAdvertiserWeights I weight).runAssignment (withAdvertiserWeights I weight).balanceChoiceRule history) + epsilon * (exp 1 + 1) * \\sum q, (withAdvertiserWeights I weight).maxBidForQuery q"
-    },
-    "theorem9HardDistribution_uniform": {
-      "lean_statement_sha256": "33efe7295a20b956bbb0b84549e27d5edae84a80891d3eac758d9cd971734dc4",
-      "statement": "\\forall (N : ℕ), theorem9HardDistribution N = uniformPermutationDistribution N"
-    },
-    "theorem9CappedNormalizedRevenue_formula": {
-      "lean_statement_sha256": "096f80d9a7054decb3a819ae9217a7285016ecfa66f73b1c73e5ac2b04a8765a",
-      "statement": "\\forall (N : ℕ) (algorithm : theorem9IntegralPrefixAlgorithm N) (permutation : Perm (Fin N)), theorem9CappedNormalizedRevenue N algorithm permutation = (\\sum bidder, min 1 (\\sum round, prefixAllocation algorithm (theorem9ObservedPrefix N permutation round) round (permutation bidder))) / ↑N"
-    },
-    "theorem9_no_randomized_online_algorithm_beats_msvv_ratio": {
-      "lean_statement_sha256": "e00c2366e6075a7c96751fa898cf6fe8b6a4b1cf2e056af9913548b552bb7798",
-      "statement": "\\forall (delta : ℝ), 0 < delta \\to \\exists N0, \\forall (N : ℕ), N0 \\le N \\to \\forall (randomizedAlgorithm : theorem9RandomizedOnlineAlgorithm N), \\lnot\\forall (permutation : Perm (Fin N)), paperMsvvRatio + delta < pmfExp randomizedAlgorithm fun algorithm  =>  theorem9CappedNormalizedRevenue N algorithm permutation"
-    }
-  },
-  "comment": "Filtered to the curated 26-row paper-facing dashboard surface after removing proof-adapter and duplicate support rows."
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "schema": 1
 }

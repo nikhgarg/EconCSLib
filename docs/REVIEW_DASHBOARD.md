@@ -239,6 +239,13 @@ is useful for the initial target-setting pass. `--statement-check` is the same
 check with a non-zero exit when any statement-audit row is missing, stale,
 uncertain, mismatched, or otherwise invalid.
 
+The repository audit enforces this for completed papers as well. A paper marked
+`formalized` or `formalized with caveat` should not pass
+`python3 scripts/audit_repository.py` if its statement-translation sidecars or
+review-surface sidecar are stale, missing, uncertain, mismatched, or otherwise
+flagged. Treat the dashboard check as the fast paper-local diagnostic and the
+repository audit/CI as the backstop.
+
 ## Assumption Provenance
 
 Paper-facing theorem hypotheses are allowed only when they are explicit source
@@ -352,6 +359,12 @@ check with a non-zero exit when any assumption declaration is missing, stale,
 uncertain, judged not to be a paper assumption, or any paper-facing theorem
 premise is still not routed through `Assumptions.lean`. Full `--precheck`
 includes this lane.
+
+Because the hidden-premise lane expands Lean declarations, assumption checks may
+need built `.olean` artifacts even when a paper has no explicit
+`Assumptions.lean` rows. If a fresh checkout is slow locally, use the JSON
+dashboard export only for triage and rely on the full repository audit in CI
+before declaring the paper clean.
 
 ## Review-Surface Audit
 

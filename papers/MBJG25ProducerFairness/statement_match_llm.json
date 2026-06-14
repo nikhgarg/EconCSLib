@@ -1,287 +1,313 @@
 {
-  "schema": 1,
-  "paper": "MBJG25ProducerFairness",
-  "prompt_version": "statement-match-v2-strict-full-statement",
-  "validator": "gpt-5-codex",
-  "validator_type": "model",
-  "validated_at": "2026-06-13T00:00:00Z",
   "comment": "Refreshed under the strict full-statement match prompt; existing per-row judgments and reasons remain row-local and digest-checked.",
+  "items": {
+    "assumption_nonnegative_time": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "3323bbd8c8d7ccc0b4ae792b3f072a68be24b3842aad0dd8eb129adf07d71f74",
+      "paper_statement_sha256": "c94cc8e3f8e737b50627757b972d1737521f34cae1044ae66925df8f1c0fa17d",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "795f067dbeb6519d1efd9774b5787536707834a57546eb28c480a8319d854079",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_positive_prior_shape": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "e69d47dd000d6540ed0a703d89073e4841dd7205d02f70405fe97e1839e580a1",
+      "paper_statement_sha256": "d8baf3c85210282a9ce7a6388206b4b50f56f8bac4de608e1a1ce22dadb6d0c3",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "3a31325e9fead46565f006392b05296da7910fd281623c0e14a97ed0b277953e",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_positive_time": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "6b9550ce4e9206942aa96f2aa7a189eb88210280991da3bc76fca8a8a83cd536",
+      "paper_statement_sha256": "3cf265af47438ca3af58c342805b345e5321e6855b6e4170a086df9ea59f94bb",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "795f067dbeb6519d1efd9774b5787536707834a57546eb28c480a8319d854079",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_prior_strength_nonnegative": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "bc2c234a29c72537bbb83838c2eea2a563dc86bbc8b68adf7aee4c459bf732ea",
+      "paper_statement_sha256": "15f4d821b209923a98b3bc210ec7a0f94a6d27408619f1fb3a80084e2cfcc23d",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "795f067dbeb6519d1efd9774b5787536707834a57546eb28c480a8319d854079",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_prior_strength_strict_order": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "cc792e4928bb87c8c16b3087da2a3a2ae8994a39ee05609bfd51af81a13c1d90",
+      "paper_statement_sha256": "e977a6e2e98cb580c41e39c153c59378d279b3708c702e69e58415339b29bd14",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "3a31325e9fead46565f006392b05296da7910fd281623c0e14a97ed0b277953e",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_prior_strength_weak_order": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "cd9a5cc75e5c4a7e1fa183aabc28f60f3942a72d83af7a0ac0ee39b8717b7691",
+      "paper_statement_sha256": "3a6cdd32d7f6c618d626bf76b534aa6af2431c6c58581a42fc2e60b7cca0e621",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "3a31325e9fead46565f006392b05296da7910fd281623c0e14a97ed0b277953e",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_quality_at_most_one": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "9ce9a936b0355b3f3b262ca57f4c384434d60495f022813c4b84f5a9d92b74bd",
+      "paper_statement_sha256": "374fd59252f00544d4d26519748b1270b39ef2174f04ef2826e8dd7c2fc8765b",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "795f067dbeb6519d1efd9774b5787536707834a57546eb28c480a8319d854079",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_quality_lt_one": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "b51bb080ec2ee03a1e10b59293c5d0e44e8fa2a7404e7a3da37ef1bba32603e8",
+      "paper_statement_sha256": "17f443a09138bc246f80a7350a168d4f8a2a6e3a8d0b9b232715fbb8ace5b8e6",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "795f067dbeb6519d1efd9774b5787536707834a57546eb28c480a8319d854079",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_quality_nonnegative": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "bf88912a2847d32b3d618776e7b71a14a694309f3c39d6adecf9d8f610cb4f1c",
+      "paper_statement_sha256": "374fd59252f00544d4d26519748b1270b39ef2174f04ef2826e8dd7c2fc8765b",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "795f067dbeb6519d1efd9774b5787536707834a57546eb28c480a8319d854079",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_quality_positive": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "240d2198d371551184d63ace064cea7c8662dc0e38364268f8907386954d93d6",
+      "paper_statement_sha256": "17f443a09138bc246f80a7350a168d4f8a2a6e3a8d0b9b232715fbb8ace5b8e6",
+      "reason": "Refreshed statement-match row preserves the current paper-facing row.",
+      "tex_statement_sha256": "795f067dbeb6519d1efd9774b5787536707834a57546eb28c480a8319d854079",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_bias": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "7eed6e8f8f7a9ff3deba2065aab1ca54f7abb5ff2a2b6b1617885e01d4b722c0",
+      "paper_statement_sha256": "c35f277d413c8df1fc7b8774f612ec0d8380139c66363b4144a7f1f121f7aa00",
+      "reason": "Translation expands E[hat q_v]-q_v using the posterior mean definition; direction and subtraction match.",
+      "tex_statement_sha256": "8476b6de5b81cfff22d256467f1c98c01cd61301ca4724971ab09fef06d63bda",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_expected_regret": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "211b4f9bf382130b3aa2d1d1a21e3dce703daf5a30dfcd449c30339b962d44e1",
+      "paper_statement_sha256": "aabbf196c4bcde1795fe55c6b9f29f29ac77d3551bd2e93fb48cd542ac7a607a",
+      "reason": "Translation is total finite-horizon expected regret as best feasible quality minus policy-expected quality summed over time.",
+      "tex_statement_sha256": "85796f9471e2812bcc7ee580f7fc1c70fd49691ef2c824b9d430cd1f0f5febf2",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_individual_producer_unfairness": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "680c83b2c9e979dafd32085b0d55256732bdcd7d802d7f3d7317965b5c194f2e",
+      "paper_statement_sha256": "63db4a33afe09c84254afb346e46f3163a6dabf5eebfaccca6fa8bcab55957ce",
+      "reason": "Translation gives standard deviation of selection rates among producers with the same true quality.",
+      "tex_statement_sha256": "49c25e4ab80115866ebdaff8b89fd230062a66f3ee52690198ebac4037b0f5f4",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_responsive_mse_decomposition": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "002a2f8e3c296ad211cb96ecfef17d08dbbccaf916015a0bd03a9f022729ce02",
+      "paper_statement_sha256": "eb19cfbcf3ffd9d8c68c03a899b7eb4805fa4366588aa4090967d63893ef1a3a",
+      "reason": "Translation matches: it states the responsive expected MSE decomposition as expected squared bias plus expected variance, conditional on statewise bias and variance identities for the random review count N.",
+      "tex_statement_sha256": "df69b1bb2f906c9d521384cf7af32bd29b073724bf634b443544047e3060fed4",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_squared_bias_nondecreasing": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "0da355ffe41b3b6dcc6a406849cad4298f1ce551621bd133842368310a6ed03a",
+      "paper_statement_sha256": "dbd5329cbde0c3fdf5db2fd8f2d6a54e60db6a03d3b08826e5184811b4b1f480",
+      "reason": "Translation matches: it preserves the Theorem 3.1 direction that squared bias at lower prior strength is no larger than squared bias at higher prior strength, under the explicit regularity assumptions.",
+      "tex_statement_sha256": "9de4e83e8b4abf12ed20d367295ab2957dcf8717a7810a8e16e4839293a7de19",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "e674048a3a2467b9385fc29598a621f720273bbed9d50841db704e8599c93a69",
+      "paper_statement_sha256": "8f5d3289ec2f9b30b7bbb4d361843ea63c9e70994c5a18a168159b25e445e8b2",
+      "reason": "Translation matches: it records the q = 1 boundary case where strict variance decrease cannot hold because the variance term is zero.",
+      "tex_statement_sha256": "4fd60e9290788be0be04215562deab7927b120af85d8e49d4cbdb33ed16d7050",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "86f07e5853f213e8c8d533b6d18b4f0438dca3518c385f20a8c982eccd71c6ee",
+      "paper_statement_sha256": "8ed50675d3504052d690a11b47c6ad60057730c9272da5e073216db06a79103e",
+      "reason": "Translation matches: it records the q = 0 boundary case where strict variance decrease cannot hold because the variance term is zero.",
+      "tex_statement_sha256": "919a6ccea0ca6eab5a3ffd3c0d342c8256c2d9c36eff5098e2c4cdd8c1850cd2",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_strict_decrease_interior": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "734a5cdae72b190fcfe79116b1a587b42c28d0d6d06cd0ad302a79465bfa880f",
+      "paper_statement_sha256": "6e33f96c2e07ba1032eea32e01aff79fe91fa9f9424e09f640607b621af84b58",
+      "reason": "Translation matches: it states strict variance decrease under etaLow < etaHigh on the interior quality range 0 < q < 1, with the Lean statement making the paper boundary condition explicit.",
+      "tex_statement_sha256": "d9b7af55288d6f73cecf458fb2ae17f8402b414943d4e581ab2813b9dba5ca76",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_1_variance_weak_decrease": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "f214acac0542dc828f697fa43cff8b1353b0b7e9845ac7769983b9fb300b4651",
+      "paper_statement_sha256": "8fdcd5d6275285696170b2a8ce842252d23edb7fae26e7842fec92b490f00672",
+      "reason": "Translation matches: it states that increasing prior strength weakly decreases the posterior-mean variance on 0 <= q <= 1, with the Lean statement making the positive shape mass, positive t, nonnegative low prior strength, and etaLow <= etaHigh assumptions explicit.",
+      "tex_statement_sha256": "745831eaaf6ab03088e2d7739b6ce5e496965f0877f1dd6802263c55847acad6",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_squared_bias_convex_in_quality": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "7883731cd2d1f8a216f684b73bc3663ca10559083c1a0fb89fcd8b1b7ba49437",
+      "paper_statement_sha256": "2fe88dfe9995fbb1be2fa24c30695f5b744b3d17ddd8269995fea666108e107a",
+      "reason": "Translation matches: the Lean statement says the squared-bias function of q is Jensen-convex under the source-domain conditions alpha + beta > 0, eta >= 0, and t > 0. The previous raw nonzero-denominator side condition is now derived in Lean from these conditions.",
+      "tex_statement_sha256": "a5e80380154d624e2f6648fe810957caf590e8d6fd190419d2088ee05f6ce721",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "b3971eaef8f6e007eaf62fe5413a5ef080212ce95184068664829a91c21b2c59",
+      "paper_statement_sha256": "f41cac6b1de2719b0e07dc9a28fa9f7c72bcb96a3210ed9b658c71c23c5e26a8",
+      "reason": "Translation matches: it states that squared bias is globally minimized at alpha/(alpha+beta), under positive shape mass, nonnegative eta, and positive sample weight.",
+      "tex_statement_sha256": "fc916657ab75bf81b08f4c5c06ff4fbc91c47462a5d2e5bb14bfd2e3b02b2f20",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_variance_concave_in_quality": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "a2b822d7eede6bab60812b065027ffc7d87bbf11eb650e2e5910108bd3b1b12a",
+      "paper_statement_sha256": "9ede64b9229841cd19d7df522338f63410a3b71762e9ea2a2d5b907301f866a6",
+      "reason": "Translation matches: it states Jensen concavity of the posterior-mean variance as a function of q for nonnegative sample mass t.",
+      "tex_statement_sha256": "8b529dd1275078cda350746cb103655b5bd6b6d024c0105ee0e05366b59b3b80",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_theorem3_2_variance_global_max_at_half": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "82f51a4a34e4787e8d90f609de8655016a2303eb66d2c0e17b688f46c0786ac0",
+      "paper_statement_sha256": "e93c55fa90618724f5750c2b40c1f00edc82e711890e679e7ed0797ec480b09c",
+      "reason": "Translation matches: it states the variance function is globally maximized at q = 1/2 when t is nonnegative.",
+      "tex_statement_sha256": "71f41e13487f8aa5f0b8c157f6db11534d425583f6791546d4b9b005fbc8ba86",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_facing_thompson_sampling_mechanism": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "44a7d0fb8c83c612cdddb76b61a7aefa23faf1c398e88e35a6592136b2435476",
+      "paper_statement_sha256": "7ee56e5839aa7854f872923d8114fd7dd9ad5b7ce29c8cc9fe5298dc20184ac7",
+      "reason": "Translation states drawing from the belief and selecting an argmax, adding a tie-breaker detail consistent with argmax selection.",
+      "tex_statement_sha256": "f9e1eb65f505665693237084e44800dcec82e9138f01e24719e0f6cce01676d0",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_posterior_mean": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "15aa00ee7d7634af4fa043cb2e7e6f6af452f8582145748892f3c8138a4a3081",
+      "paper_statement_sha256": "3bad7fc58bd564ef5e7fe4a2d6727ca73fd77bfb270b97aeaf8930b2c7a16154",
+      "reason": "Formula matches after identifying alpha,beta with the paper tilded shapes.",
+      "tex_statement_sha256": "de23d0e16031e229fc98a4df545b04fa9488b913ecca75378bdc2bda1ca807e5",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_squared_bias": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "e2b2170e1f5145a190d4241a33dbec473009901c741b216b00bfd4ace7ec12b4",
+      "paper_statement_sha256": "3b8a432cd8d75843dce7705257233ca316360987f2b0d7e6ea09fe57ea89ed16",
+      "reason": "Translation is exactly the square of posterior mean bias.",
+      "tex_statement_sha256": "0d405f9ccdf68ccb4b09a41d542291f0ca620310902a4e44cf58499448091d9b",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_variance": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "d0c1c8ce630c9a1e444d6d926bbd08ebbfb86babf92d2c60c6e41eb6a61770aa",
+      "paper_statement_sha256": "1dd7c656a75ba2cfbcec78c9e161cc99ef8c163677b50cfde836050b78acfc70",
+      "reason": "Formula matches the paper variance expression with eta(alpha+beta)+t in the denominator.",
+      "tex_statement_sha256": "a25824387f21e2fd6e200092aab4972c7272345270634665d387d085b5d66b44",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    }
+  },
+  "paper": "MBJG25ProducerFairness",
   "prompt_summary": [
     "A matches verdict requires the same hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions.",
     "Mark mismatch or uncertain for omitted source subclaims, added non-source conditions, conditional wrappers, broad aggregate rows, source-row packages, certificate packages, or weakened/strengthened statements.",
     "For formula-bearing rows, check the exact formula rather than only the theorem label or qualitative interpretation."
   ],
-  "items": {
-    "assumption_positive_prior_shape": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches the source-domain prior-shape condition used by the Beta prior model.",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_positive_time": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches the positive elapsed review horizon used in the fixed-setting theorem rows.",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_nonnegative_time": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches the nonnegative count/time domain of the review-count variable.",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_quality_nonnegative": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches the lower half of the source quality interval.",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_quality_at_most_one": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches the upper half of the source quality interval.",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_quality_positive": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches the documented interior-quality repair for the strict variance statement.",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_quality_lt_one": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches the documented interior-quality repair for the strict variance statement.",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_prior_strength_nonnegative": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches the source prior-strength domain.",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_prior_strength_weak_order": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches the weak comparison condition for monotonicity in prior strength.",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "assumption_prior_strength_strict_order": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches the strict comparison condition for strict monotonicity in prior strength.",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_bias": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation expands E[hat q_v]-q_v using the posterior mean definition; direction and subtraction match.",
-      "tex_statement_sha256": "",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_expected_regret": {
-      "judgment": "matches",
-      "lean_statement_sha256": "211b4f9bf382130b3aa2d1d1a21e3dce703daf5a30dfcd449c30339b962d44e1",
-      "matches": true,
-      "paper_statement_sha256": "aabbf196c4bcde1795fe55c6b9f29f29ac77d3551bd2e93fb48cd542ac7a607a",
-      "reason": "Translation is total finite-horizon expected regret as best feasible quality minus policy-expected quality summed over time.",
-      "tex_statement_sha256": "85796f9471e2812bcc7ee580f7fc1c70fd49691ef2c824b9d430cd1f0f5febf2",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_individual_producer_unfairness": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation gives standard deviation of selection rates among producers with the same true quality.",
-      "tex_statement_sha256": "",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_responsive_mse_decomposition": {
-      "judgment": "matches",
-      "lean_statement_sha256": "002a2f8e3c296ad211cb96ecfef17d08dbbccaf916015a0bd03a9f022729ce02",
-      "matches": true,
-      "paper_statement_sha256": "eb19cfbcf3ffd9d8c68c03a899b7eb4805fa4366588aa4090967d63893ef1a3a",
-      "reason": "Translation matches: it states the responsive expected MSE decomposition as expected squared bias plus expected variance, conditional on statewise bias and variance identities for the random review count N.",
-      "tex_statement_sha256": "df69b1bb2f906c9d521384cf7af32bd29b073724bf634b443544047e3060fed4",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_theorem3_1_squared_bias_nondecreasing": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches: it preserves the Theorem 3.1 direction that squared bias at lower prior strength is no larger than squared bias at higher prior strength, under the explicit regularity assumptions.",
-      "tex_statement_sha256": "",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_one": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches: it records the q = 1 boundary case where strict variance decrease cannot hold because the variance term is zero.",
-      "tex_statement_sha256": "",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_theorem3_1_variance_strict_decrease_counterexample_quality_zero": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches: it records the q = 0 boundary case where strict variance decrease cannot hold because the variance term is zero.",
-      "tex_statement_sha256": "",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_theorem3_1_variance_strict_decrease_interior": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches: it states strict variance decrease under etaLow < etaHigh on the interior quality range 0 < q < 1, with the Lean statement making the paper boundary condition explicit.",
-      "tex_statement_sha256": "",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_theorem3_1_variance_weak_decrease": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches: it states that increasing prior strength weakly decreases the posterior-mean variance on 0 <= q <= 1, with the Lean statement making the positive shape mass, positive t, nonnegative low prior strength, and etaLow <= etaHigh assumptions explicit.",
-      "tex_statement_sha256": "",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_theorem3_2_squared_bias_convex_in_quality": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches: the Lean statement says the squared-bias function of q is Jensen-convex under the source-domain conditions alpha + beta > 0, eta >= 0, and t > 0. The previous raw nonzero-denominator side condition is now derived in Lean from these conditions.",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_theorem3_2_squared_bias_global_min_at_prior_mean": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches: it states that squared bias is globally minimized at alpha/(alpha+beta), under positive shape mass, nonnegative eta, and positive sample weight.",
-      "tex_statement_sha256": "",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_theorem3_2_variance_concave_in_quality": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches: it states Jensen concavity of the posterior-mean variance as a function of q for nonnegative sample mass t.",
-      "tex_statement_sha256": "",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_theorem3_2_variance_global_max_at_half": {
-      "judgment": "matches",
-      "matches": true,
-      "reason": "Translation matches: it states the variance function is globally maximized at q = 1/2 when t is nonnegative.",
-      "tex_statement_sha256": "",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_facing_thompson_sampling_mechanism": {
-      "judgment": "matches",
-      "lean_statement_sha256": "44a7d0fb8c83c612cdddb76b61a7aefa23faf1c398e88e35a6592136b2435476",
-      "matches": true,
-      "paper_statement_sha256": "7ee56e5839aa7854f872923d8114fd7dd9ad5b7ce29c8cc9fe5298dc20184ac7",
-      "reason": "Translation states drawing from the belief and selecting an argmax, adding a tie-breaker detail consistent with argmax selection.",
-      "tex_statement_sha256": "f9e1eb65f505665693237084e44800dcec82e9138f01e24719e0f6cce01676d0",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_posterior_mean": {
-      "judgment": "matches",
-      "lean_statement_sha256": "15aa00ee7d7634af4fa043cb2e7e6f6af452f8582145748892f3c8138a4a3081",
-      "matches": true,
-      "paper_statement_sha256": "3bad7fc58bd564ef5e7fe4a2d6727ca73fd77bfb270b97aeaf8930b2c7a16154",
-      "reason": "Formula matches after identifying alpha,beta with the paper tilded shapes.",
-      "tex_statement_sha256": "de23d0e16031e229fc98a4df545b04fa9488b913ecca75378bdc2bda1ca807e5",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_squared_bias": {
-      "judgment": "matches",
-      "lean_statement_sha256": "e2b2170e1f5145a190d4241a33dbec473009901c741b216b00bfd4ace7ec12b4",
-      "matches": true,
-      "paper_statement_sha256": "3b8a432cd8d75843dce7705257233ca316360987f2b0d7e6ea09fe57ea89ed16",
-      "reason": "Translation is exactly the square of posterior mean bias.",
-      "tex_statement_sha256": "0d405f9ccdf68ccb4b09a41d542291f0ca620310902a4e44cf58499448091d9b",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    },
-    "paper_variance": {
-      "judgment": "matches",
-      "lean_statement_sha256": "d0c1c8ce630c9a1e444d6d926bbd08ebbfb86babf92d2c60c6e41eb6a61770aa",
-      "matches": true,
-      "paper_statement_sha256": "1dd7c656a75ba2cfbcec78c9e161cc99ef8c163677b50cfde836050b78acfc70",
-      "reason": "Formula matches the paper variance expression with eta(alpha+beta)+t in the denominator.",
-      "tex_statement_sha256": "a25824387f21e2fd6e200092aab4972c7272345270634665d387d085b5d66b44",
-      "validator": "gpt-5-codex",
-      "validator_type": "model",
-      "validated_at": "2026-06-13T00:00:00Z",
-      "prompt_version": "statement-match-v2-strict-full-statement"
-    }
-  }
+  "prompt_version": "statement-match-v2-strict-full-statement",
+  "schema": 1,
+  "validated_at": "2026-06-13T21:43:40Z",
+  "validator": "gpt-5-codex",
+  "validator_type": "model"
 }

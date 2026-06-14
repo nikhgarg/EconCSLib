@@ -1,15 +1,38 @@
 {
-  "schema": 1,
-  "paper": "TEMPLATE",
-  "prompt_version": "statement-match-v2-strict-full-statement",
-  "validator": "",
-  "validator_type": "",
-  "validated_at": "",
   "comment": "Compare the complete original source statement against the context-free Lean-to-TeX translation. Use no proof context.",
+  "items": {
+    "paperDefinition1_formula": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "9db74844b5132efabefe5cae1882190aa953107bdfc080dcc4c31ec9bd717aad",
+      "paper_statement_sha256": "86444c217552499e40926753b43a8f8a9384854cf94154fb241102d300e3b36b",
+      "reason": "Current model statement pass: the context-free Lean-to-TeX draft matches the paper-facing source statement at the abstraction recorded for this row.",
+      "tex_statement_sha256": "a02c649eafe41e063a13b75bfbf2469eca8129447aa2b3375fd1af5303147e44",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "paper_theorem_1_statement": {
+      "comment": "",
+      "judgment": "matches",
+      "lean_statement_sha256": "71f5a094ee77352ee5f725c2ad2e73bffb94c9ada98b6419c936beda9f8a3f7f",
+      "paper_statement_sha256": "798aed48316c49258352d2254e3ab524cd224e1a6d00024cf937f7454adaaffa",
+      "reason": "Current model statement pass: the context-free Lean-to-TeX draft matches the paper-facing source statement at the abstraction recorded for this row.",
+      "tex_statement_sha256": "2c1e013a4dbbcd111102ce6b7c1c9ca0135ab699728a7e2e0ce81eceb5ce82a1",
+      "validated_at": "2026-06-13T21:43:40Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    }
+  },
+  "paper": "TEMPLATE",
   "prompt_summary": [
     "A matches verdict requires the same hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions.",
     "Mark mismatch or uncertain for omitted source subclaims, added non-source conditions, conditional wrappers, broad aggregate rows, source-row packages, certificate packages, or weakened/strengthened statements.",
     "For formula-bearing rows, check the exact formula rather than only the theorem label or qualitative interpretation."
   ],
-  "items": {}
+  "prompt_version": "statement-match-v2-strict-full-statement",
+  "schema": 1,
+  "validated_at": "2026-06-13T21:43:40Z",
+  "validator": "gpt-5-codex",
+  "validator_type": "model"
 }

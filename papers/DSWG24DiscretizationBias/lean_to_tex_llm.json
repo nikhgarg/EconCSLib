@@ -1,145 +1,385 @@
 {
-  "schema": 1,
+  "comment": "Refreshed against the current paper-facing statement surface.",
+  "generated_at": "2026-06-13T21:43:40Z",
+  "generator": "gpt-5-codex",
+  "generator_type": "model",
+  "items": {
+    "aggregatePosterior": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "daacf6d7f57db8f1b67092ad1e2e68687460659df801693ca7c067976cc3aee5",
+      "paper_statement_sha256": "548a2bce0d378883aabad89d21a3f3721b3cc5098daa0dd7191da9a54d7385d8",
+      "tex_statement": "$p_{\\mathrm{agg}}^q(y)=\\frac{1}{N}\\sum_{i=1}^N q_i(y)$."
+    },
+    "assumption_theorem1_argmax_rule_measurable": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "7614fb8d602d200a7f8fbdaf034a70178ec352459fb2927c01f74e42e867a7a7",
+      "paper_statement_sha256": "6f103c5a103d554a242628a1456def065016c537f209f62325827695bfea9fbc",
+      "tex_statement": "Prop"
+    },
+    "assumption_theorem1_calibrated_classifier": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "64136b43fbaade2678e8441b2124e56acbe747704274209b351d4a0a6e978195",
+      "paper_statement_sha256": "657a08d76ad161589c01a23481d620ee4ad3a62f296c116d76ac6004fd6b288d",
+      "tex_statement": "Prop"
+    },
+    "assumption_theorem1_no_information_case": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "ba32e3f0f5fb4e5447eaad8a36697836eede0d7ef8b4a5bbc1c0e16689a0283b",
+      "paper_statement_sha256": "3d8a0ad7e1a29efde0ff7aa4872f1c0475340bee3d73a8dbb865d981b00266f7",
+      "tex_statement": "Prop"
+    },
+    "assumption_theorem1_perfect_classifier": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "141576a9860d65d8fbfa7b736ea7130b0f253c9a410f99f8a4e1edba4ab279e0",
+      "paper_statement_sha256": "b8298e5d8e1254958028cbe0e785ccc7c3f78e96e21c6ff438a964f2be5421ae",
+      "tex_statement": "Prop"
+    },
+    "assumption_theorem1_plurality_argmax_class": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "cacbb1850293ac35b7851febdafb8086a0b493681d02c8aedf2945b5a8c5cd51",
+      "paper_statement_sha256": "9961d98c45f5acc14f6e9150ea408114079f8c1b8ba77e1439f0289c3b92b098",
+      "tex_statement": "Prop"
+    },
+    "assumption_theorem2_at_least_two_classes": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "473ec6fa7bd6e6ffdd972e5aacc8f6f553fd1f36a27bdf13a88bc3a90394a2cf",
+      "paper_statement_sha256": "8983e7e970c31ccc96974e5dbd673bf6a557256027ebbbc2a2fa657ca9b71228",
+      "tex_statement": "Prop"
+    },
+    "assumption_theorem2_more_rows_than_classes": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "0eb461f97ea79426244586cc9f8a46edee56c63c9d3cefd8b1a80ec51b478874",
+      "paper_statement_sha256": "5a9f9e91322d79450c50211f335e5320c939b731f96c6030bbc80a99176413a5",
+      "tex_statement": "Prop"
+    },
+    "assumption_theorem2_positive_sample_count": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "c250817b5d56557e8dc875a7dca7e1ff09a89e0894d0fe0a046514e54701df72",
+      "paper_statement_sha256": "758fbda4f2a5c5b8fcc9065b53b92ef5f02707033ca2ff2b82055811493d1b89",
+      "tex_statement": "Prop"
+    },
+    "assumption_theorem2_reference_nonnegative": {
+      "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "7e04bdfcd2607f332959561eafd1a4ba8b3ad7861fc2f9a9c3c1959789418682",
+      "paper_statement_sha256": "95779010a9eb3d437d6a92d711ce0df3b3230b9fc35eb79992b3e7d3a1d297ec",
+      "tex_statement": "Prop"
+    },
+    "bias": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "454127ea5b28de00779132f6e40003caea5d75522e0aa63afa86e14664b84dfa",
+      "paper_statement_sha256": "92b19368c593c53a6455e2d7cdd15e3ed1c8cc06d8b59d37f2678485802c2922",
+      "tex_statement": "$bias(y,decision,p_{ref})=\\hat p_{\\mathrm{marg}}(y;decision)-p_{ref}(y)$."
+    },
+    "calibrated": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "62820718fb5e4ab5cbbe1f90fdbdb8e9e06cf0dc8d626cd8c289fd801d1a462e",
+      "paper_statement_sha256": "283b99e171e80bdda1f7d3968f2380e5a62e536c999fe0f4f7ed6a9c644ad686",
+      "tex_statement": "$q$ is calibrated under joint measure $\\mu$ iff for every label $y$ and measurable set $S\\subseteq\\mathbb{R}$, $\\int 1\\{q(x,y)\\in S\\}1\\{y'=y\\}\\,d\\mu(x,y')=\\int 1\\{q(x,y)\\in S\\}q(x,y)\\,d\\mu(x,y')$."
+    },
+    "classifierMAE": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "d329fde0263062d717e8da6195a97b2ca1400c5a7c38783cca4e3fa2a6668eaf",
+      "paper_statement_sha256": "66bb4872f6cedefb13037ec23fffedb10685fbcd659a5f14a412d4c7d08bbc5f",
+      "tex_statement": "$classifierMAE_\\mu(q)=\\mathbb{E}_{x\\sim \\mu_X}\\left[\\sum_{y\\in Y}q(x,y)(1-q(x,y))\\right]$."
+    },
+    "continuousAggregateBias": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "d7bd2ae66035834885fe56c5af5439b883eea04147ed1214b01532e0e480528c",
+      "paper_statement_sha256": "5e71af749171eb18887df60826371e8ad27a2b9537c73c7db5f49c9c43d20f99",
+      "tex_statement": "$continuousAggregateBias_\\mu(q,rule,y)=continuousMarginalLabelShare_\\mu(rule,y)-continuousAggregatePosterior_\\mu(q,y)$."
+    },
+    "continuousAggregatePosterior": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "6f57bddbb406194827e2f086fb48f71bc6e66530e0abd94dd17b55328434bdad",
+      "paper_statement_sha256": "3e04149fc47439a5c58c3f14e69937ecc81c12eca0a4544036dad410bfdefeda",
+      "tex_statement": "$continuousAggregatePosterior_\\mu(q,y)=\\int q(x,y)\\,d\\mu(x)$."
+    },
+    "continuousBias": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "39b898bc757a1cfc985dcf2e05b6e02c1d1b4a4b1bb00c634f9949854dcfcd68",
+      "paper_statement_sha256": "8e079fa1f2430e84d547e6a9af9ab7f662b2a43ac43976f3c24536931993d8b8",
+      "tex_statement": "$continuousBias_\\mu(rule,pref,y)=continuousMarginalLabelShare_\\mu(rule,y)-pref(y)$."
+    },
+    "continuousClassifierMAE": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "f004aa2a0941febdb2eea819a6ffa81ae56f4e0d66487632d6f95ab686b46c5b",
+      "paper_statement_sha256": "a41063bf1a2fb3948ad30a5587473d4a9a13b1ddaf21a0573e1d8d5ac6f07c3c",
+      "tex_statement": "$continuousClassifierMAE_\\mu(q)=\\int \\sum_{y\\in Y}q(x,y)(1-q(x,y))\\,d\\mu(x)$."
+    },
+    "continuousJointClassifierMAE": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "1ac50607ddf90e67ccb316d29e6730b2d0ffd164c38a57ae00f7cb6119f5273c",
+      "paper_statement_sha256": "77991f7157b389b0f137f43adc122ca043c232752d597b1472db39a4ec04972b",
+      "tex_statement": "$continuousJointClassifierMAE_\\mu(q)=\\int \\sum_{y\\in Y}q(x,y)(1-q(x,y))\\,d\\mu(x,y')$."
+    },
+    "continuousJointPriorBias": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "c462306edf42b0310809dae3f50c88c7d574f5295f0d3ca6622138ce477e5d61",
+      "paper_statement_sha256": "e581ab91e11dfec1af16577d49b5c31052c4d40fea2d31ea285e711822dedb14",
+      "tex_statement": "$continuousJointPriorBias_\\mu(rule,y)=\\int 1\\{rule(x)=y\\}\\,d\\mu(x,y')-\\int 1\\{y'=y\\}\\,d\\mu(x,y')$."
+    },
+    "continuousMarginalLabelShare": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "6b96b90304b344beeb12e3fd7c8f6095e9d034cdbf1b0978b29ecdc818a355d3",
+      "paper_statement_sha256": "d13a5c229e69df3de49d50415463af30c2064ce91c8a54ff6d5823d462751b6c",
+      "tex_statement": "$continuousMarginalLabelShare_\\mu(rule,y)=\\int 1\\{rule(x)=y\\}\\,d\\mu(x)$."
+    },
+    "expectedObjective": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "ceaefffea67a5c56f358e953200f51457ed549f854c5eb23e1a9f10768febce0",
+      "paper_statement_sha256": "886bf2eac3272fa99bdd725f64aa7494360571c8c6e1924d786efb092dbe5f68",
+      "tex_statement": "$expectedObjective_\\gamma(rule)=\\gamma\\,expectedDecisionAccuracy(expect,observedDataset,trueLabels,rule)+(1-\\gamma)\\,expectedObjective(expect,observedDataset,fidelityTerm,rule)$."
+    },
+    "fidelity": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "12b1c56d5b40dd79993974db49f323614a54c2f0401b1085ee31b234c1208563",
+      "paper_statement_sha256": "533c3de082047780b4364bb892e8025cafdc2c5af9e9b5f5df9e4f8904624d44",
+      "tex_statement": "$fid(p_{ref},decision)=-\\sum_y |bias(y,decision,p_{ref})|$."
+    },
+    "isArgmaxRule": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "1c446e9f2abe3f13a5879110792f7180f1cf8e75d8e52489b56f6ab68a8363a3",
+      "paper_statement_sha256": "6638367308f6da27ea0199e39d86e497126295af20c928307b3d746f228acb8a",
+      "tex_statement": "$rule$ is an argmax rule for $q$ iff for every $x,y$, $q(x,y)\\le q(x,rule(x))$."
+    },
+    "marginalLabelShare": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "40f8886b2e455d90860080d2f3f6d9f2fa5613ecff40cfd7fd8c5448db887380",
+      "paper_statement_sha256": "f67a96af0e9156420703cd053352ac412a796e6a011810a8fda7596c80b038aa",
+      "tex_statement": "$\\hat p_{\\mathrm{marg}}(y;decision)=\\frac{1}{N}\\sum_{i=1}^N \\mathbf{1}\\{decision_i=y\\}$."
+    },
+    "objective": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "24f01fba48f800547360d4ddb66c62c4055f816884674445b39e62b4f94c2559",
+      "paper_statement_sha256": "30a9732c5e4d38a0a4d873109832a54fbb94c2817c4cb4240237590d4f5f04fe",
+      "tex_statement": "$objective_\\gamma(xs,decision)=\\gamma\\,averageScore(posterior(xs),decision)+(1-\\gamma)\\,fidelityTerm(xs,decision)$."
+    },
+    "posteriorSimplex": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "2467c0edd1736bc3a1d3aaac6fd143a28feb9e224895b7c5b9450bbdc1c8c399",
+      "paper_statement_sha256": "f1f6d75eea542c330928dace76226e5ba0babf62819432a9b13e16db3f1f7dc7",
+      "tex_statement": "$q$ lies in the posterior simplex iff for every $x$, $\\sum_y q(x,y)=1$, and for every $x,y$, $0\\le q(x,y)\\le 1$."
+    },
+    "prior": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "baf224ef2f8a8b7070b168401ba913e8598bf8e647cd0b20b74feaee715c6235",
+      "paper_statement_sha256": "88b62ef37e98fd9e1235bcda622f096718c1c0b9857d1c8ca4cc4c43f3ba9742",
+      "tex_statement": "$prior_\\mu(y)$ is the real-valued marginal probability of label $y$ under the label marginal of $\\mu$."
+    },
+    "sourceSa": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "d2012d24d11b071d582e009a874ee15cbeec618b9b83d9a2e83ba6617e38ed4c",
+      "paper_statement_sha256": "a65d04569231d1b7ee93e5ea0e5065be650a4b872d6436808c1b11cd593c6b74",
+      "tex_statement": "$S_a(z)=\\{x:q(x,z)=1\\}$."
+    },
+    "sourceSb": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "a47b21ee6474281a4afc65958218e26b0d6dbde5b524119beae473c04a1089fa",
+      "paper_statement_sha256": "3ff6917c81fc078c19a740cc40c078fa08e071436e898532c202669f4c41abce",
+      "tex_statement": "$S_b(z)=\\{x:|Y|^{-1}<q(x,z)<1\\}$."
+    },
+    "sourceSc": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "850fe9c929814a5f1475617178b68afe0211b4b8b548821ba68b926849093a9c",
+      "paper_statement_sha256": "1fd8b6c437b41ebce2f69af5266d61335241d7c5c9c8d01b8b556b202f747493",
+      "tex_statement": "$S_c(z)=\\{x:q(x,z)=|Y|^{-1}\\}$."
+    },
+    "sourceSd": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "a5819e0c9928f50e4dff41404f689b4e1883f28d7544297947dd2d2513f59831",
+      "paper_statement_sha256": "48271f3a446bb8464db016c297b5b675bf1ba13e2cc6da33c69b312cfa9029ba",
+      "tex_statement": "$S_d(z)=\\{x:0<q(x,z)<|Y|^{-1}\\}$."
+    },
+    "sourceSe": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "ddd20d3a661a993f9f101f9eb60c88a5ef6905dc329c677a0eaddf096035dcb6",
+      "paper_statement_sha256": "6f4539de740d9daed211677a519ed2a1feb91258e45c89259f91922087feace0",
+      "tex_statement": "$S_e(z)=\\{x:q(x,z)=0\\}$."
+    },
+    "theorem1i_no_information_bias": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "2a89ce90d390fbe36f3cfc02fe917d31d01a8c2f7db49992d82b081ff4dedb7f",
+      "paper_statement_sha256": "903e51e3a1f394aac062b60a5eed95ae18042920d30faae10c75da82d74d9069",
+      "tex_statement": "If $q(x,a)=prior_\\mu(a)$ for all $x,a$ and $z$ has maximal prior probability, then for every label $y$, both $bias_\\mu(x\\mapsto z,prior_\\mu,y)$ and $bias_\\mu(x\\mapsto z,aggregatePosterior_\\mu(q),y)$ equal $1-prior_\\mu(y)$ if $z=y$, and $-prior_\\mu(y)$ otherwise."
+    },
+    "theorem1ii_perfect_classifier_zero_bias": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "703c9ec58a524029707fb253b4fd29f2b92b2eec9c3cc267e38b16ce00aa96af",
+      "paper_statement_sha256": "80b9d8cc9aaba24d0fd8cd9d33c682cbad7d81f6219eb2750d57dfe7c4040a25",
+      "tex_statement": "If $rule(x)=y$ for every joint outcome $(x,y)$ in $\\mu$, then for every label $y$, $bias_\\mu(rule,prior_\\mu,y)=0$."
+    },
+    "theorem1iii_argmax_bias_le_mae": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "d9560a08b7547cb75aa382af300222e0e8857a60695a9c20e4c8f34fa2bcc04b",
+      "paper_statement_sha256": "772c4bfeaa0dbea9d3b06c97d5112b95c2f6502407324b2ed24626f63e700183",
+      "tex_statement": "For finite-label finite-measure spaces, if $argmaxRule$ is measurable, is an argmax rule for $q$, $q$ is a posterior simplex, each $q(\\cdot,y)$ is measurable, and $q$ is calibrated under $\\mu$, then for every label $y$, $continuousJointPriorBias_\\mu(argmaxRule,y)\\le continuousJointClassifierMAE_\\mu(q)$."
+    },
+    "theorem1iii_tight_binary_example": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "a408767461fc14442c83fb509b6890813c0489d9a43c7f6d02e991a116d70748",
+      "paper_statement_sha256": "a4292cd349410c4a13fabf9d597d1701208870513118725e17cf417aea4aa4ce",
+      "tex_statement": "In the specified tight binary example, the aggregate-posterior bias of the argmax rule at label $0$ equals the classifier MAE."
+    },
+    "theorem2i_joint_rule_exists": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "b788808059cabf1d7c4e95531c2e7679c9053d4efb485bd2fcf70ff014833936",
+      "paper_statement_sha256": "bcb6546ee9f53b94d86e50b45b5fae679f9027ea0e7d9a9b90a0969f160293a6",
+      "tex_statement": "If $2\\le K<N$, $expect$ is a finite linear expectation, and expected 0-1 accuracy for each coordinate equals the expected posterior score for every choice rule, then for every $\\gamma$, posterior, and fidelity term, there exists an optimal rule $optRule$ maximizing the expected objective over all rules."
+    },
+    "theorem2ii_argmax_accuracy_maximizing": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "f1024feb46d3cd6ccc1437c20b7edcd22d2081704535a9246274c4f1c1145f38",
+      "paper_statement_sha256": "c909723efab2b79d1256bb9f7e23d9b465839b5bd14dc4ed5c134df9572554a4",
+      "tex_statement": "If $2\\le K<N$, $expect$ is a finite linear expectation, $argmaxRule$ is pointwise maximizing for every observed dataset, and expected 0-1 accuracy equals expected posterior score for each coordinate and choice rule, then every decision rule has expected accuracy at most that of $argmaxRule$."
+    },
+    "theorem2iii_non_argmax_not_pareto": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "685071cd3243e352e47a982257f9f33240372f853fc3cd473e9f24ad0b89c721",
+      "paper_statement_sha256": "0d6be016867dfbd14fbff6603327eb92dcd40590405cf14cf4b9ee4156ab714e",
+      "tex_statement": "For finite $X$, if $\\Pr_\\mu[rule\\ne argmaxRule]>0$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, and $argmaxRule$ weakly maximizes $posterior(x,\\cdot)$ for every $x$, then the sampled decision induced by $rule$ is not Pareto optimal for expected dataset accuracy and expected dataset fidelity."
+    },
+    "theorem2iii_strict_disagreement_not_weighted_objective_maximizer": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "7dcb93c80be87cfe9a7974a24f27bb10cdf693128c6ce6c70cfb479dc1baef30",
+      "paper_statement_sha256": "567a53af8dacbddb3b387acaa716e7730879b39f49eed7d800669c8321ec278f",
+      "tex_statement": "For finite $X$, if $0<\\gamma\\le 1$, $\\Pr_\\mu[rule\\ne argmaxRule]>0$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, and every disagreement satisfies $posterior(x,rule(x))<posterior(x,argmaxRule(x))$, then the sampled decision from $rule$ does not maximize the weighted objective."
+    },
+    "theorem2iii_weighted_objective_maximizer_agrees_argmax": {
+      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
+      "generated_at": "2026-06-13T21:43:40Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "bfe091ae7015f3c13831e31cfc083decb0c193f7a36469c49a5f8ac8455e0655",
+      "paper_statement_sha256": "72702b7972543962007f18ae8e390b4bd01f40a615b174318f7ae71a700abc3a",
+      "tex_statement": "For finite $X$, if $0\\le\\gamma<1$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, $argmaxRule$ weakly maximizes $posterior(x,\\cdot)$ pointwise, and the sampled decision induced by $rule$ maximizes the weighted expected objective, then $\\Pr_\\mu[rule\\ne argmaxRule]=0$."
+    }
+  },
   "paper": "DSWG24DiscretizationBias",
-  "prompt_version": "lean-to-tex-v2-strict-context-free",
-  "translator": "gpt-5-codex",
-  "translator_type": "model",
-  "translated_at": "2026-06-13T00:00:00Z",
   "prompt_summary": [
     "Translate each Lean declaration from the Lean statement alone, with no paper context.",
     "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
     "Do not replace formulas with theorem labels, informal endpoints, or proof-route summaries."
   ],
-  "generated_at": "2026-06-07T00:00:39Z",
-  "generator": "codex-refresh-current-lean-statements",
-  "items": {
-    "aggregatePosterior": {
-      "lean_statement_sha256": "daacf6d7f57db8f1b67092ad1e2e68687460659df801693ca7c067976cc3aee5",
-      "statement": "$p_{\\mathrm{agg}}^q(y)=\\frac{1}{N}\\sum_{i=1}^N q_i(y)$."
-    },
-    "bias": {
-      "lean_statement_sha256": "454127ea5b28de00779132f6e40003caea5d75522e0aa63afa86e14664b84dfa",
-      "statement": "$bias(y,decision,p_{ref})=\\hat p_{\\mathrm{marg}}(y;decision)-p_{ref}(y)$."
-    },
-    "calibrated": {
-      "lean_statement_sha256": "62820718fb5e4ab5cbbe1f90fdbdb8e9e06cf0dc8d626cd8c289fd801d1a462e",
-      "statement": "$q$ is calibrated under joint measure $\\mu$ iff for every label $y$ and measurable set $S\\subseteq\\mathbb{R}$, $\\int 1\\{q(x,y)\\in S\\}1\\{y'=y\\}\\,d\\mu(x,y')=\\int 1\\{q(x,y)\\in S\\}q(x,y)\\,d\\mu(x,y')$."
-    },
-    "classifierMAE": {
-      "lean_statement_sha256": "d329fde0263062d717e8da6195a97b2ca1400c5a7c38783cca4e3fa2a6668eaf",
-      "statement": "$classifierMAE_\\mu(q)=\\mathbb{E}_{x\\sim \\mu_X}\\left[\\sum_{y\\in Y}q(x,y)(1-q(x,y))\\right]$."
-    },
-    "continuousAggregateBias": {
-      "lean_statement_sha256": "d7bd2ae66035834885fe56c5af5439b883eea04147ed1214b01532e0e480528c",
-      "statement": "$continuousAggregateBias_\\mu(q,rule,y)=continuousMarginalLabelShare_\\mu(rule,y)-continuousAggregatePosterior_\\mu(q,y)$."
-    },
-    "continuousAggregatePosterior": {
-      "lean_statement_sha256": "6f57bddbb406194827e2f086fb48f71bc6e66530e0abd94dd17b55328434bdad",
-      "statement": "$continuousAggregatePosterior_\\mu(q,y)=\\int q(x,y)\\,d\\mu(x)$."
-    },
-    "continuousBias": {
-      "lean_statement_sha256": "39b898bc757a1cfc985dcf2e05b6e02c1d1b4a4b1bb00c634f9949854dcfcd68",
-      "statement": "$continuousBias_\\mu(rule,pref,y)=continuousMarginalLabelShare_\\mu(rule,y)-pref(y)$."
-    },
-    "continuousClassifierMAE": {
-      "lean_statement_sha256": "f004aa2a0941febdb2eea819a6ffa81ae56f4e0d66487632d6f95ab686b46c5b",
-      "statement": "$continuousClassifierMAE_\\mu(q)=\\int \\sum_{y\\in Y}q(x,y)(1-q(x,y))\\,d\\mu(x)$."
-    },
-    "continuousJointClassifierMAE": {
-      "lean_statement_sha256": "1ac50607ddf90e67ccb316d29e6730b2d0ffd164c38a57ae00f7cb6119f5273c",
-      "statement": "$continuousJointClassifierMAE_\\mu(q)=\\int \\sum_{y\\in Y}q(x,y)(1-q(x,y))\\,d\\mu(x,y')$."
-    },
-    "continuousJointPriorBias": {
-      "lean_statement_sha256": "c462306edf42b0310809dae3f50c88c7d574f5295f0d3ca6622138ce477e5d61",
-      "statement": "$continuousJointPriorBias_\\mu(rule,y)=\\int 1\\{rule(x)=y\\}\\,d\\mu(x,y')-\\int 1\\{y'=y\\}\\,d\\mu(x,y')$."
-    },
-    "continuousMarginalLabelShare": {
-      "lean_statement_sha256": "6b96b90304b344beeb12e3fd7c8f6095e9d034cdbf1b0978b29ecdc818a355d3",
-      "statement": "$continuousMarginalLabelShare_\\mu(rule,y)=\\int 1\\{rule(x)=y\\}\\,d\\mu(x)$."
-    },
-    "expectedObjective": {
-      "lean_statement_sha256": "ceaefffea67a5c56f358e953200f51457ed549f854c5eb23e1a9f10768febce0",
-      "statement": "$expectedObjective_\\gamma(rule)=\\gamma\\,expectedDecisionAccuracy(expect,observedDataset,trueLabels,rule)+(1-\\gamma)\\,expectedObjective(expect,observedDataset,fidelityTerm,rule)$."
-    },
-    "fidelity": {
-      "lean_statement_sha256": "12b1c56d5b40dd79993974db49f323614a54c2f0401b1085ee31b234c1208563",
-      "statement": "$fid(p_{ref},decision)=-\\sum_y |bias(y,decision,p_{ref})|$."
-    },
-    "isArgmaxRule": {
-      "lean_statement_sha256": "1c446e9f2abe3f13a5879110792f7180f1cf8e75d8e52489b56f6ab68a8363a3",
-      "statement": "$rule$ is an argmax rule for $q$ iff for every $x,y$, $q(x,y)\\le q(x,rule(x))$."
-    },
-    "marginalLabelShare": {
-      "lean_statement_sha256": "40f8886b2e455d90860080d2f3f6d9f2fa5613ecff40cfd7fd8c5448db887380",
-      "statement": "$\\hat p_{\\mathrm{marg}}(y;decision)=\\frac{1}{N}\\sum_{i=1}^N \\mathbf{1}\\{decision_i=y\\}$."
-    },
-    "objective": {
-      "lean_statement_sha256": "24f01fba48f800547360d4ddb66c62c4055f816884674445b39e62b4f94c2559",
-      "statement": "$objective_\\gamma(xs,decision)=\\gamma\\,averageScore(posterior(xs),decision)+(1-\\gamma)\\,fidelityTerm(xs,decision)$."
-    },
-    "posteriorSimplex": {
-      "lean_statement_sha256": "2467c0edd1736bc3a1d3aaac6fd143a28feb9e224895b7c5b9450bbdc1c8c399",
-      "statement": "$q$ lies in the posterior simplex iff for every $x$, $\\sum_y q(x,y)=1$, and for every $x,y$, $0\\le q(x,y)\\le 1$."
-    },
-    "prior": {
-      "lean_statement_sha256": "baf224ef2f8a8b7070b168401ba913e8598bf8e647cd0b20b74feaee715c6235",
-      "statement": "$prior_\\mu(y)$ is the real-valued marginal probability of label $y$ under the label marginal of $\\mu$."
-    },
-    "sourceSa": {
-      "lean_statement_sha256": "d2012d24d11b071d582e009a874ee15cbeec618b9b83d9a2e83ba6617e38ed4c",
-      "statement": "$S_a(z)=\\{x:q(x,z)=1\\}$."
-    },
-    "sourceSb": {
-      "lean_statement_sha256": "a47b21ee6474281a4afc65958218e26b0d6dbde5b524119beae473c04a1089fa",
-      "statement": "$S_b(z)=\\{x:|Y|^{-1}<q(x,z)<1\\}$."
-    },
-    "sourceSc": {
-      "lean_statement_sha256": "850fe9c929814a5f1475617178b68afe0211b4b8b548821ba68b926849093a9c",
-      "statement": "$S_c(z)=\\{x:q(x,z)=|Y|^{-1}\\}$."
-    },
-    "sourceSd": {
-      "lean_statement_sha256": "a5819e0c9928f50e4dff41404f689b4e1883f28d7544297947dd2d2513f59831",
-      "statement": "$S_d(z)=\\{x:0<q(x,z)<|Y|^{-1}\\}$."
-    },
-    "sourceSe": {
-      "lean_statement_sha256": "ddd20d3a661a993f9f101f9eb60c88a5ef6905dc329c677a0eaddf096035dcb6",
-      "statement": "$S_e(z)=\\{x:q(x,z)=0\\}$."
-    },
-    "theorem1i_no_information_bias": {
-      "lean_statement_sha256": "2a89ce90d390fbe36f3cfc02fe917d31d01a8c2f7db49992d82b081ff4dedb7f",
-      "statement": "If $q(x,a)=prior_\\mu(a)$ for all $x,a$ and $z$ has maximal prior probability, then for every label $y$, both $bias_\\mu(x\\mapsto z,prior_\\mu,y)$ and $bias_\\mu(x\\mapsto z,aggregatePosterior_\\mu(q),y)$ equal $1-prior_\\mu(y)$ if $z=y$, and $-prior_\\mu(y)$ otherwise."
-    },
-    "theorem1ii_perfect_classifier_zero_bias": {
-      "lean_statement_sha256": "703c9ec58a524029707fb253b4fd29f2b92b2eec9c3cc267e38b16ce00aa96af",
-      "statement": "If $rule(x)=y$ for every joint outcome $(x,y)$ in $\\mu$, then for every label $y$, $bias_\\mu(rule,prior_\\mu,y)=0$."
-    },
-    "theorem1iii_argmax_bias_le_mae": {
-      "lean_statement_sha256": "d9560a08b7547cb75aa382af300222e0e8857a60695a9c20e4c8f34fa2bcc04b",
-      "statement": "For finite-label finite-measure spaces, if $argmaxRule$ is measurable, is an argmax rule for $q$, $q$ is a posterior simplex, each $q(\\cdot,y)$ is measurable, and $q$ is calibrated under $\\mu$, then for every label $y$, $continuousJointPriorBias_\\mu(argmaxRule,y)\\le continuousJointClassifierMAE_\\mu(q)$."
-    },
-    "theorem1iii_tight_binary_example": {
-      "lean_statement_sha256": "a408767461fc14442c83fb509b6890813c0489d9a43c7f6d02e991a116d70748",
-      "statement": "In the specified tight binary example, the aggregate-posterior bias of the argmax rule at label $0$ equals the classifier MAE."
-    },
-    "theorem2i_joint_rule_exists": {
-      "lean_statement_sha256": "b788808059cabf1d7c4e95531c2e7679c9053d4efb485bd2fcf70ff014833936",
-      "statement": "If $2\\le K<N$, $expect$ is a finite linear expectation, and expected 0-1 accuracy for each coordinate equals the expected posterior score for every choice rule, then for every $\\gamma$, posterior, and fidelity term, there exists an optimal rule $optRule$ maximizing the expected objective over all rules."
-    },
-    "theorem2ii_argmax_accuracy_maximizing": {
-      "lean_statement_sha256": "f1024feb46d3cd6ccc1437c20b7edcd22d2081704535a9246274c4f1c1145f38",
-      "statement": "If $2\\le K<N$, $expect$ is a finite linear expectation, $argmaxRule$ is pointwise maximizing for every observed dataset, and expected 0-1 accuracy equals expected posterior score for each coordinate and choice rule, then every decision rule has expected accuracy at most that of $argmaxRule$."
-    },
-    "theorem2iii_non_argmax_not_pareto": {
-      "lean_statement_sha256": "685071cd3243e352e47a982257f9f33240372f853fc3cd473e9f24ad0b89c721",
-      "statement": "For finite $X$, if $\\Pr_\\mu[rule\\ne argmaxRule]>0$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, and $argmaxRule$ weakly maximizes $posterior(x,\\cdot)$ for every $x$, then the sampled decision induced by $rule$ is not Pareto optimal for expected dataset accuracy and expected dataset fidelity."
-    },
-    "theorem2iii_strict_disagreement_not_weighted_objective_maximizer": {
-      "lean_statement_sha256": "7dcb93c80be87cfe9a7974a24f27bb10cdf693128c6ce6c70cfb479dc1baef30",
-      "statement": "For finite $X$, if $0<\\gamma\\le 1$, $\\Pr_\\mu[rule\\ne argmaxRule]>0$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, and every disagreement satisfies $posterior(x,rule(x))<posterior(x,argmaxRule(x))$, then the sampled decision from $rule$ does not maximize the weighted objective."
-    },
-    "theorem2iii_weighted_objective_maximizer_agrees_argmax": {
-      "lean_statement_sha256": "bfe091ae7015f3c13831e31cfc083decb0c193f7a36469c49a5f8ac8455e0655",
-      "statement": "For finite $X$, if $0\\le\\gamma<1$, $N>0$, $pref$ is a probability vector with $pref(y)\\ge 1/N$, $argmaxRule$ weakly maximizes $posterior(x,\\cdot)$ pointwise, and the sampled decision induced by $rule$ maximizes the weighted expected objective, then $\\Pr_\\mu[rule\\ne argmaxRule]=0$."
-    }
-  }
+  "prompt_version": "lean-to-tex-v2-strict-context-free",
+  "schema": 1
 }
