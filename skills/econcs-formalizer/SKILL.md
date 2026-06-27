@@ -9,6 +9,12 @@ Use this skill to turn economics-and-computation papers into maintainable Lean
 code. Keep repository-specific status out of this file; in `EconCSLib`, that
 belongs in `docs/ECONCSLEAN_CURRENT_STATUS.md`.
 
+When planning automation-heavy formalization workflows, multi-agent proof
+campaigns, retrieval-grounded statement translation, or compiler-guided repair
+loops, also consult `skills/ai-formalization-workflows/SKILL.md`. That skill is
+a source-credited ledger of external AI-formalization workflow patterns; this
+formalizer skill remains the operational rulebook for EconCSLib.
+
 ## Component 1: Workflow and Organization
 
 ### 1.1 Core Rule
@@ -1237,11 +1243,23 @@ formalization, execute the standard intake before deep proof work:
 - Read the abstract, introduction, model section, and theorem statements first;
   then search the cached text for every named `Definition`, `Lemma`,
   `Proposition`, `Theorem`, `Corollary`, and appendix result.
+- Before deep proof work, build a source-block map: one row per paper-facing
+  definition, displayed formula, named result, and proof-critical appendix
+  claim, with source location, dependencies, intended Lean declaration, status,
+  and likely library APIs. Use this map to drive the DAG, paper-facing skeleton,
+  and review dashboard. Keep public theorem signatures stable once proof work
+  begins; if translation is wrong, repair the statement early rather than
+  letting proof search drift the target.
 - Create the paper folder contract artifacts immediately: `README.md`,
   `DependencyDAG.tex`, `MainTheorems.lean`, and local `.gitignore`.
 - Draft paper-facing theorem signatures before building a helper tower. If the
   direct statement is too hard, create an explicit bridge theorem whose name and
   assumptions describe the remaining gap.
+- Run a retrieval-grounding pass before inventing a new model or helper API:
+  search Mathlib, Cslib, Optlib when present, and existing `EconCSLib/` modules
+  for the source concept and proof role. Prefer existing formal concepts; if a
+  paper-local encoding is necessary, add a small equivalence or sanity theorem
+  before using it downstream.
 - During intake, classify reusable primitives by library area. Upstream only
   seams that pass the second-paper test, such as finite PMF/Markov kernels/MDPs,
   probability inequalities, monotonicity/comparison lemmas, allocation
@@ -1561,6 +1579,15 @@ the Lean statements against the paper.
   proofs around that row. If `--assumption-precheck` reports hidden premises,
   derive them, move true paper assumptions to `Assumptions.lean`, or mark the
   endpoint partial/conditional before calling the target ready.
+  Use automated semantic-alignment checks as triage, not certification. A high
+  match score or `matches` judgment is evidence that a human should inspect the
+  row less urgently; it is not proof that the theorem is source-faithful. A low,
+  stale, or inconsistent alignment result should block deep proof work on that
+  row until the source statement, Lean declaration, or visible assumptions are
+  repaired. Give special attention to quantifier order, implication direction,
+  constants/factors, domains/support assumptions, equivalence-vs-one-way
+  statements, asymptotic notation, and hypotheses moved from definitions into
+  theorem parameters.
   This early pass deliberately skips workflow scaffolding: do not update the
   DAG, final validation report, human-review log, or review-surface audit just
   because the target-setting pass ran. Its purpose is to catch wrong theorem
@@ -1894,6 +1921,17 @@ the Lean statements against the paper.
     through certificates, finite analogues, positive-base restrictions,
     two-sided support, or other undisclosed hypotheses, mark the downstream
     theorem conditional/partial rather than green.
+  - **Blueprint/source-map consistency:** Treat the DAG as a human-readable
+    view over the source-block map, not as the source of truth. Before closeout
+    or any public-facing handoff, cross-check three inventories: source-block
+    map, `PaperInterface.lean`/review dashboard rows, and DAG nodes/edges. Every
+    source-named paper result should have exactly one paper-facing row or an
+    explicit reason for omission, every paper-facing row should trace back to a
+    source block, and every required source dependency should either appear as
+    an edge or be documented as an intentionally omitted redundant edge. If a
+    script or table can generate the node/edge inventory, prefer that over
+    maintaining duplicate hand-written lists; still inspect the rendered DAG for
+    readability.
 - **DAG Formatting and Clarity Mandates:**
   - **Visual Iteration Requirement:** After every substantive DAG edit, render the DAG, inspect the visual output, and keep adjusting layout until you can explicitly confirm that it looks clean with no box, legend, note, edge, or label overlap. Do not claim the DAG is done if you have not visually checked it or if any overlap remains.
   - **Minimum Node Spacing:** Keep visible whitespace between neighboring DAG
@@ -2257,6 +2295,10 @@ search.
    handoff documents. Identify the public theorem target and the smallest local
    lemma that moves it forward.
    For a brand-new paper, your *very first task* is to read through the paper to extract the proof roadmap. Produce the comprehensive named-result dependency DAG (capturing every definition, lemma, proposition, theorem, and corollary and their exact relationships) as a TikZ diagram using the shared preamble. This serves as your master plan to understand the paper's architecture. Keep it current through the campaign as results change status.
+   Also create or refresh the source-block map before proof search: named
+   result, source location, dependencies, Lean declaration, proof status, and
+   reusable library candidates. Use it to choose the fastest route to overall
+   completion, not merely the smallest next green lemma.
 
 2. Context Efficiency vs. Edit Accuracy (File Reading Strategy).
    Do not over-optimize context limits by reading tiny chunks of files (e.g., using `sed` to read 15-20 lines) if you are about to use the `replace` tool. Micro-reading frequently drops necessary surrounding whitespace or context, causing the `replace` tool to fail repeatedly with "0 occurrences found". The cost of spinning in a multi-turn failure loop is far higher than the cost of reading the entire file once. Use `read_file` to ingest small-to-medium files completely, or use `grep -C 20` to get substantial context, ensuring you capture exact, copy-pasteable blocks for your `old_string`.
@@ -2265,6 +2307,13 @@ search.
    Run targeted `lake build <module>` commands before making broad changes. Fix
    dependency, import, or cache problems before interpreting downstream proof
    errors.
+   During proof work, use a compiler-guided repair loop: make one candidate
+   statement or proof edit, run the narrowest Lean check that exercises it,
+   inspect the first concrete error and goal state, then repair locally under
+   the fixed paper-facing signature whenever the source translation is already
+   correct. If the same failure recurs, split out the missing lemma, retrieve a
+   similar proof/API, or record the failed route in the handoff rather than
+   repeatedly changing the public theorem target.
 
 3. Choose the model level that closes the theorem fastest.
    EC papers often have useful finite entry points: finite agents, items,
@@ -2318,7 +2367,9 @@ search.
    When stopping mid-proof, record the module, theorem, assumptions still
    missing, commands run, the next lemma to prove, and any closed layers that
    should not be revisited. Future agents should not have to rediscover the
-   proof state. If a paper is plausibly beyond the current model's effective
+   proof state. Include useful failed proof attempts, Lean error patterns, and
+   successful repair lemmas when they would help future retrieval or prevent the
+   same dead end. If a paper is plausibly beyond the current model's effective
    proof-search capacity, make that explicit in the paper README and handoff:
    name the reduced target, record failed/counterexample-search evidence, and
    mark it as a future stronger-model pickup instead of leaving an ambiguous
