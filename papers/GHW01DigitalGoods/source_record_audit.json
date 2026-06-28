@@ -1,0 +1,236 @@
+{
+  "configured_review_row_count": 30,
+  "expected_field_judgment_keys": [
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.cdf_monotone",
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.offerLaw",
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price",
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price_nonneg",
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.value_nonneg",
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.values",
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.auctionFamily",
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.binary",
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome",
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome_represents",
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.individuallyRational",
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.noPositiveTransfers",
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.truthful"
+  ],
+  "import_module": "GHW01DigitalGoods.PaperInterface",
+  "lean_check": {
+    "command": "lake build GHW01DigitalGoods.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "GHW01DigitalGoods.PaperInterface.theorem8_2_truthful_revenue_upper_bound.{u_1, u_2} {Agent : Type u_1}\n  {Price : Type u_2} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\n  [LinearOrder Agent] (model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\n  paper_theorem8_2_raw_cdf_expected_revenue model.values model.price model.offerLaw \u2264\n    PaperInterface.fixedPriceBenchmark model.values 1\n'GHW01DigitalGoods.PaperInterface.theorem8_2_truthful_revenue_upper_bound' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.PaperInterface.theorem9_3_deterministic_truthful_lower_bound {highValue alpha : \u2115}\n  (model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) (hhigh_ge_two : 2 \u2264 highValue)\n  (halpha_pos : 0 < alpha) :\n  \u2203 highCount lowCount,\n    (model.auctionFamily highCount lowCount).revenue (twoValueBidProfile highValue highCount lowCount) /\n          twoValueFixedPriceBenchmark highValue highCount lowCount \u2264\n        1 / \u2191highValue \u2227\n      \u2191highValue * \u2191alpha \u2264 twoValueFixedPriceBenchmark highValue highCount lowCount\n'GHW01DigitalGoods.PaperInterface.theorem9_3_deterministic_truthful_lower_bound' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.assumption_lower_bound_positive_alpha (alpha : \u2115) : Prop\n'GHW01DigitalGoods.assumption_lower_bound_positive_alpha' does not depend on any axioms\nGHW01DigitalGoods.assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model.{u_1, u_2} {Agent : Type u_1}\n  {Price : Type u_2} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\n  (_model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) : Prop\n'GHW01DigitalGoods.assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGHW01DigitalGoods.assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model {highValue : \u2115}\n  (_model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) : Prop\n'GHW01DigitalGoods.assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "returncode": 0,
+    "truncated": false
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: GHW01DigitalGoods\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Classify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/source-model field that states convexity, response semantics, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"field\": \"values\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.values\",\n    \"line\": 10803,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.values\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"Agent \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"price\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price\",\n    \"line\": 10804,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"Price \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"offerLaw\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.offerLaw\",\n    \"line\": 10805,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.offerLaw\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"Agent \\u2192 PMF Price\"\n  },\n  {\n    \"field\": \"value_nonneg\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.value_nonneg\",\n    \"line\": 10806,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.value_nonneg\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"\\u2200 i, 0 \\u2264 values i\"\n  },\n  {\n    \"field\": \"price_nonneg\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price_nonneg\",\n    \"line\": 10807,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price_nonneg\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"\\u2200 p, 0 \\u2264 price p\"\n  },\n  {\n    \"field\": \"cdf_monotone\",\n    \"judgment_key\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.cdf_monotone\",\n    \"line\": 10808,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.cdf_monotone\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem82JournalRawCDFMonotoneOfferSourceModel\",\n    \"type\": \"\\u2200 i j, values i \\u2264 values j \\u2192 \\u2200 t, t \\u2264 values i \\u2192 pmfProb (offerLaw i) (fun p => price p \\u2264 t) \\u2264 pmfProb (offerLaw j) (fun p => price p \\u2264 t)\"\n  },\n  {\n    \"field\": \"auctionFamily\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.auctionFamily\",\n    \"line\": 12971,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.auctionFamily\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, DigitalGoodsAuction (TwoValueAgent highCount lowCount)\"\n  },\n  {\n    \"field\": \"truthful\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.truthful\",\n    \"line\": 12974,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.truthful\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, paper_digital_goods_truthful (auctionFamily highCount lowCount)\"\n  },\n  {\n    \"field\": \"binary\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.binary\",\n    \"line\": 12977,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.binary\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, (auctionFamily highCount lowCount).BinaryAllocation\"\n  },\n  {\n    \"field\": \"individuallyRational\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.individuallyRational\",\n    \"line\": 12980,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.individuallyRational\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, (auctionFamily highCount lowCount).IndividuallyRational\"\n  },\n  {\n    \"field\": \"noPositiveTransfers\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.noPositiveTransfers\",\n    \"line\": 12983,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.noPositiveTransfers\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 highCount lowCount, (auctionFamily highCount lowCount).NoPositiveTransfers\"\n  },\n  {\n    \"field\": \"focusedOutcome\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome\",\n    \"line\": 12986,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"List \\u211d \\u2192 \\u211d \\u2192 Option \\u211d\"\n  },\n  {\n    \"field\": \"focusedOutcome_represents\",\n    \"judgment_key\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome_represents\",\n    \"line\": 12987,\n    \"nested_structures\": [],\n    \"path\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome_represents\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GHW01DigitalGoods/AuctionMainTheorems.lean\",\n    \"structure\": \"PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel\",\n    \"type\": \"\\u2200 {highCount lowCount : \\u2115} (bids : TwoValueAgent highCount lowCount \\u2192 \\u211d) (i : TwoValueAgent highCount lowCount), deterministicAuctionOffer (auctionFamily highCount lowCount) bids i = focusedOutcome (paper_theorem9_3_erased_report_list bids i)\"\n  }\n]",
+  "paper": "GHW01DigitalGoods",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/GHW01DigitalGoods",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 13,
+  "recursive_field_items": [
+    {
+      "field": "values",
+      "judgment_key": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.values",
+      "line": 10803,
+      "nested_structures": [],
+      "path": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.values",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel",
+      "type": "Agent \u2192 \u211d"
+    },
+    {
+      "field": "price",
+      "judgment_key": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price",
+      "line": 10804,
+      "nested_structures": [],
+      "path": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel",
+      "type": "Price \u2192 \u211d"
+    },
+    {
+      "field": "offerLaw",
+      "judgment_key": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.offerLaw",
+      "line": 10805,
+      "nested_structures": [],
+      "path": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.offerLaw",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel",
+      "type": "Agent \u2192 PMF Price"
+    },
+    {
+      "field": "value_nonneg",
+      "judgment_key": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.value_nonneg",
+      "line": 10806,
+      "nested_structures": [],
+      "path": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.value_nonneg",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel",
+      "type": "\u2200 i, 0 \u2264 values i"
+    },
+    {
+      "field": "price_nonneg",
+      "judgment_key": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price_nonneg",
+      "line": 10807,
+      "nested_structures": [],
+      "path": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price_nonneg",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel",
+      "type": "\u2200 p, 0 \u2264 price p"
+    },
+    {
+      "field": "cdf_monotone",
+      "judgment_key": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.cdf_monotone",
+      "line": 10808,
+      "nested_structures": [],
+      "path": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel -> PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.cdf_monotone",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel",
+      "type": "\u2200 i j, values i \u2264 values j \u2192 \u2200 t, t \u2264 values i \u2192 pmfProb (offerLaw i) (fun p => price p \u2264 t) \u2264 pmfProb (offerLaw j) (fun p => price p \u2264 t)"
+    },
+    {
+      "field": "auctionFamily",
+      "judgment_key": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.auctionFamily",
+      "line": 12971,
+      "nested_structures": [],
+      "path": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.auctionFamily",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel",
+      "type": "\u2200 highCount lowCount, DigitalGoodsAuction (TwoValueAgent highCount lowCount)"
+    },
+    {
+      "field": "truthful",
+      "judgment_key": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.truthful",
+      "line": 12974,
+      "nested_structures": [],
+      "path": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.truthful",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel",
+      "type": "\u2200 highCount lowCount, paper_digital_goods_truthful (auctionFamily highCount lowCount)"
+    },
+    {
+      "field": "binary",
+      "judgment_key": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.binary",
+      "line": 12977,
+      "nested_structures": [],
+      "path": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.binary",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel",
+      "type": "\u2200 highCount lowCount, (auctionFamily highCount lowCount).BinaryAllocation"
+    },
+    {
+      "field": "individuallyRational",
+      "judgment_key": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.individuallyRational",
+      "line": 12980,
+      "nested_structures": [],
+      "path": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.individuallyRational",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel",
+      "type": "\u2200 highCount lowCount, (auctionFamily highCount lowCount).IndividuallyRational"
+    },
+    {
+      "field": "noPositiveTransfers",
+      "judgment_key": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.noPositiveTransfers",
+      "line": 12983,
+      "nested_structures": [],
+      "path": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.noPositiveTransfers",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel",
+      "type": "\u2200 highCount lowCount, (auctionFamily highCount lowCount).NoPositiveTransfers"
+    },
+    {
+      "field": "focusedOutcome",
+      "judgment_key": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome",
+      "line": 12986,
+      "nested_structures": [],
+      "path": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel",
+      "type": "List \u211d \u2192 \u211d \u2192 Option \u211d"
+    },
+    {
+      "field": "focusedOutcome_represents",
+      "judgment_key": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome_represents",
+      "line": 12987,
+      "nested_structures": [],
+      "path": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel -> PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome_represents",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GHW01DigitalGoods/AuctionMainTheorems.lean",
+      "structure": "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel",
+      "type": "\u2200 {highCount lowCount : \u2115} (bids : TwoValueAgent highCount lowCount \u2192 \u211d) (i : TwoValueAgent highCount lowCount), deterministicAuctionOffer (auctionFamily highCount lowCount) bids i = focusedOutcome (paper_theorem9_3_erased_report_list bids i)"
+    }
+  ],
+  "review_row_count": 30,
+  "rows_with_record_premises": [
+    {
+      "lean_source_declaration": "theorem theorem8_2_truthful_revenue_upper_bound\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent]\n    [DecidableEq Agent] [Fintype Price] [DecidableEq Price]\n    [LinearOrder Agent]\n    (model :\n      PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\n    paper_theorem8_2_raw_cdf_expected_revenue\n        model.values model.price model.offerLaw \u2264\n      fixedPriceBenchmark model.values 1 := by\n  change\n    paper_theorem8_2_raw_cdf_expected_revenue\n        model.values model.price model.offerLaw \u2264\n      finiteCandidateFixedPriceBenchmark model.values 1\n  exact\n    paper_theorem8_2_expected_revenue_le_finite_candidate_benchmark_of_raw_cdf_monotone_offer_source_model\n      model",
+      "record_premises": [
+        "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem8_2_truthful_revenue_upper_bound"
+    },
+    {
+      "lean_source_declaration": "theorem theorem9_3_deterministic_truthful_lower_bound\n    {highValue alpha : \u2115}\n    (model :\n      PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue)\n    (hhigh_ge_two : 2 \u2264 highValue) (halpha_pos : 0 < alpha) :\n    \u2203 highCount lowCount : \u2115,\n      (model.auctionFamily highCount lowCount).revenue\n          (twoValueBidProfile highValue highCount lowCount) /\n          twoValueFixedPriceBenchmark highValue highCount lowCount \u2264\n        1 / (highValue : \u211d) \u2227\n      (highValue : \u211d) * (alpha : \u211d) \u2264\n        twoValueFixedPriceBenchmark highValue highCount lowCount := by\n  exact\n    paper_theorem9_3_deterministic_truthful_ratio_witness_of_primitive_set_of_bids_source_model\n      model hhigh_ge_two halpha_pos",
+      "record_premises": [
+        "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem9_3_deterministic_truthful_lower_bound"
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_lower_bound_positive_alpha (alpha : \u2115) : Prop :=\n  0 < alpha\n\n   \n                                                                              \n                                                                   \n  \n-- audit-premise: model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price",
+      "record_premises": [
+        "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_lower_bound_positive_alpha"
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model\n    {Agent Price : Type*} [Fintype Agent] [Nonempty Agent] [DecidableEq Agent]\n    [Fintype Price] [DecidableEq Price]\n    (_model : PaperTheorem82JournalRawCDFMonotoneOfferSourceModel Agent Price) :\n    Prop :=\n  True\n\n   \n                                                                             \n                                                                               \n                            \n  \n-- audit-premise: model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue",
+      "record_premises": [
+        "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel",
+        "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_theorem8_2_journal_raw_cdf_monotone_offer_source_model"
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model\n    {highValue : \u2115}\n    (_model : PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel highValue) :\n    Prop :=\n  True",
+      "record_premises": [
+        "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_theorem9_3_primitive_set_of_bids_deterministic_source_model"
+    }
+  ],
+  "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": []
+}

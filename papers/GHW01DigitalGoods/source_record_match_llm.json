@@ -1,0 +1,115 @@
+{
+  "comment": "Digest refreshed after source-record helper namespace update; field classifications preserved.",
+  "items": {
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.cdf_monotone": {
+      "classification": "validated_source_assumption",
+      "reason": "Journal-version monotone-offer source condition used to state Theorem 8.2.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.offerLaw": {
+      "classification": "validated_source_assumption",
+      "reason": "Primitive randomized-offer law in the journal-version Theorem 8.2 source model.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price": {
+      "classification": "validated_source_assumption",
+      "reason": "Primitive price map in the journal-version Theorem 8.2 source model.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.price_nonneg": {
+      "classification": "validated_source_assumption",
+      "reason": "Paper/source domain condition that offered prices are nonnegative.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.value_nonneg": {
+      "classification": "validated_source_assumption",
+      "reason": "Paper/source domain condition that bidder values are nonnegative.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem82JournalRawCDFMonotoneOfferSourceModel.values": {
+      "classification": "validated_source_assumption",
+      "reason": "Primitive valuation function in the journal-version Theorem 8.2 source model.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.auctionFamily": {
+      "classification": "validated_source_assumption",
+      "reason": "Primitive deterministic digital-goods auction family quantified by Theorem 9.3.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.binary": {
+      "classification": "validated_source_assumption",
+      "reason": "Paper/source hypothesis that allocations are binary.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome": {
+      "classification": "validated_source_assumption",
+      "reason": "Paper convention packaging deterministic erased-bid outcomes for Theorem 9.3.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.focusedOutcome_represents": {
+      "classification": "validated_source_assumption",
+      "reason": "Paper convention connecting the deterministic auction offer to the erased-bid focused outcome.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.individuallyRational": {
+      "classification": "validated_source_assumption",
+      "reason": "Paper/source individual-rationality hypothesis.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.noPositiveTransfers": {
+      "classification": "validated_source_assumption",
+      "reason": "Paper/source no-positive-transfers hypothesis.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "PaperTheorem93PrimitiveSetOfBidsDeterministicSourceModel.truthful": {
+      "classification": "validated_source_assumption",
+      "reason": "Paper/source hypothesis that the auction family is truthful.",
+      "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    }
+  },
+  "paper": "GHW01DigitalGoods",
+  "schema": 1,
+  "source_record_audit_sha256": "422fc1778171a4243d666b64a5424aff1dff519813a5978e6aae3a7f8b42424a",
+  "validated_at": "2026-06-28T01:37:31Z",
+  "validator": "codex-source-record-audit",
+  "validator_type": "model"
+}

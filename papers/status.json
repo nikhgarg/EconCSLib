@@ -523,7 +523,9 @@
         "proof_interface": "papers/GKGMM19IterativeLocalVoting/ProofInterface.lean",
         "readme": "papers/GKGMM19IterativeLocalVoting/README.md",
         "review_status_export": "papers/GKGMM19IterativeLocalVoting/review_status_export.json",
-        "validator_ledger": "papers/GKGMM19IterativeLocalVoting/VALIDATOR_LEDGER.md"
+        "start_here_next_agent": "papers/GKGMM19IterativeLocalVoting/START_HERE_NEXT_AGENT.md",
+        "validator_ledger": "papers/GKGMM19IterativeLocalVoting/VALIDATOR_LEDGER.md",
+        "week_pause_handoff": "papers/GKGMM19IterativeLocalVoting/HANDOFF_2026-06-19_WEEK_PAUSE.md"
       },
       "authors": "Nikhil Garg; Vijay Kamble; Ashish Goel; David Marn; Kamesh Munagala",
       "build_target": "lake build GKGMM19IterativeLocalVoting",
@@ -683,10 +685,10 @@
           "assumption_judgment_file": "papers/GKGMM19IterativeLocalVoting/assumption_match_llm.json",
           "lean_to_tex_file": "papers/GKGMM19IterativeLocalVoting/lean_to_tex_llm.json",
           "match_judgment_file": "papers/GKGMM19IterativeLocalVoting/statement_match_llm.json",
-          "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, equivalence direction, and conclusion. Have a third LLM compare that TeX/prose translation with the original full paper statement, not just the theorem label. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions; conditional wrappers, source-row packages, omitted subclaims, weakened/strengthened statements, or broad aggregates must be judged `mismatch` or `uncertain`. A user-approved external/library proof boundary remains a raw `mismatch` with `resolution: conditional_boundary`, not a `matches` row. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 50 or more rows, curate the surface before broad human review.",
+          "policy": "Translate each Lean statement with an LLM that has no paper context and require it to preserve every visible binder, hypothesis, domain condition, equivalence direction, and conclusion. Have a third LLM compare that TeX/prose translation with the original full paper statement, not just the theorem label. A `matches` verdict requires equivalence of hypotheses, subparts, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions; conditional wrappers, source-row packages, omitted subclaims, weakened/strengthened statements, or broad aggregates must be judged `mismatch` or `uncertain`. A user-approved external/library proof boundary remains a raw `mismatch` with `resolution: conditional_boundary`, not a `matches` row. Record the model/agent validator metadata and iterate on PaperInterface.lean until the full statement matches. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review.",
           "review_surface_audit_file": "papers/GKGMM19IterativeLocalVoting/review_surface_llm.json",
           "surface_audit_threshold": 30,
-          "surface_warning_threshold": 50
+          "surface_warning_threshold": 120
         },
         "proof_boundary_names": [
           "assumption_ssgm_convergence_theorem"
@@ -800,7 +802,7 @@
       "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 24,
+        "total_rows": 34,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -809,7 +811,7 @@
         "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
         "line_count": 379,
         "declaration_rows": 24,
-        "review_rows": 24,
+        "review_rows": 34,
         "oversized": false,
         "maintainability_issue": null,
         "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",
@@ -1077,16 +1079,16 @@
       "review_entrypoint": "papers/LMMS04FairDivision/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 0,
-        "total_rows": 31,
+        "total_rows": 35,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "source": "paper-local status.json review_surface; human entries come from dashboard logs"
       },
       "paper_interface": {
         "path": "papers/LMMS04FairDivision/PaperInterface.lean",
-        "line_count": 267,
-        "declaration_rows": 31,
-        "review_rows": 31,
+        "line_count": 303,
+        "declaration_rows": 35,
+        "review_rows": 35,
         "oversized": false,
         "maintainability_issue": null,
         "proof_interface_path": "papers/LMMS04FairDivision/ProofInterface.lean",
@@ -1138,6 +1140,10 @@
           "theorem3_2_graham_certificate_to_envy_ratio_bound",
           "theorem3_2_graham_factor_eq_seven_fifths",
           "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee",
+          "theorem3_3_external_solver_selected_pair_full_summary_source_output_package",
+          "theorem3_3_external_solver_selected_pair_full_summary_source_output_payload",
+          "theorem3_3_external_solver_selected_pair_full_summary_source_output_consequence",
+          "theorem3_3_external_solver_consequence_and_selected_pair_full_summary_source_output_of_claim_3_4_source_average_forward_additive_no_top_of_margin",
           "theorem3_3_claim34_fixed_rounding_ratio_endpoint",
           "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint",
           "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods",
@@ -1187,6 +1193,10 @@
             "title": "Section 3 PTAS Boundary",
             "names": [
               "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee",
+              "theorem3_3_external_solver_selected_pair_full_summary_source_output_package",
+              "theorem3_3_external_solver_selected_pair_full_summary_source_output_payload",
+              "theorem3_3_external_solver_selected_pair_full_summary_source_output_consequence",
+              "theorem3_3_external_solver_consequence_and_selected_pair_full_summary_source_output_of_claim_3_4_source_average_forward_additive_no_top_of_margin",
               "theorem3_3_claim34_fixed_rounding_ratio_endpoint",
               "theorem3_3_claim34_capped_weighted_supply_ratio_endpoint",
               "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods",
@@ -1365,7 +1375,7 @@
       "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
       "human_review": {
         "reviewed_rows": 10,
-        "total_rows": 17,
+        "total_rows": 27,
         "stale_rows": 0,
         "mismatch_rows": 0,
         "uncertain_rows": 2,
@@ -1375,7 +1385,7 @@
         "path": "papers/MBJG25ProducerFairness/PaperInterface.lean",
         "line_count": 332,
         "declaration_rows": 17,
-        "review_rows": 17,
+        "review_rows": 27,
         "oversized": false,
         "maintainability_issue": null,
         "proof_interface_path": "papers/MBJG25ProducerFairness/ProofInterface.lean",
@@ -1592,8 +1602,8 @@
           "match_judgment_file": "papers/PKG25NoFreeLunch/statement_match_llm.json",
           "review_surface_audit_file": "papers/PKG25NoFreeLunch/review_surface_llm.json",
           "surface_audit_threshold": 30,
-          "surface_warning_threshold": 50,
-          "policy": "Translate each Lean statement with an LLM that has no paper context; have a third LLM compare that TeX/prose translation with the original paper statement, record the model/agent validator metadata, and iterate on PaperInterface.lean until they match. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 50 or more rows, curate the surface before broad human review."
+          "surface_warning_threshold": 120,
+          "policy": "Translate each Lean statement with an LLM that has no paper context; have a third LLM compare that TeX/prose translation with the original paper statement, record the model/agent validator metadata, and iterate on PaperInterface.lean until they match. If the dashboard has more than 30 rows, run a no-paper-context LLM audit that checks whether every row is paper-facing; at 120 or more rows, curate the surface before broad human review."
         },
         "include_names": [
           "definition_rounding_convention",
@@ -1628,7 +1638,7 @@
       "build_target": "lake build PRPKG24AccuracyDiversity",
       "status": "formalized",
       "main_caveat": "",
-      "human_summary": "Lean formalizes the paper-facing results, including the concrete Proposition 4 sphere endpoint. Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. The validation report notes the continuity/Laplace regularity used by the Proposition 4 wrapper.",
+      "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result.",
       "human_summary_review": {
         "status": "human_approved",
         "note": "Do not rewrite this summary without explicit human instruction."

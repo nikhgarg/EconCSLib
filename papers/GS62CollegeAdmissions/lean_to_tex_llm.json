@@ -1,6 +1,6 @@
 {
-  "comment": "Refreshed against the current paper-facing statement surface.",
-  "generated_at": "2026-06-13T21:43:40Z",
+  "comment": "Digest metadata refreshed against the current dashboard statement surface.",
+  "generated_at": "2026-06-28T01:10:04Z",
   "generator": "gpt-5-codex",
   "generator_type": "model",
   "items": {
@@ -50,20 +50,20 @@
       "tex_statement": "For sets of men $M$ and women $W$ with utilities $v_m:M\\to W\\to\\mathbb{R}$ and $v_w:W\\to M\\to\\mathbb{R}$, the strict marriage domain is the condition that men's preferences are strict, women's preferences are strict, and every man-woman pair is acceptable."
     },
     "theorem1_stable_marriage_exists": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
-      "generated_at": "2026-06-13T21:43:40Z",
+      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
+      "generated_at": "2026-06-28T01:10:04Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "bd9105e1105935f812dbb11289bc320230f490a6bc47e47058bda0bf0a29f85f",
+      "lean_statement_sha256": "ce3d336470ae01f4b5a91bc296a35b9314215fa458fb3b10e42032f9b35a87df",
       "paper_statement_sha256": "e36348b35e1cf1b6ed110dca15eea4979fd3bd8c30106288fb07dec27dca185c",
       "tex_statement": "For a finite indexed set $A$ with decidable equality, if utilities $v_m,v_w:A\\to A\\to\\mathbb{R}$ satisfy the strict marriage domain, then there exists an assignment $\\mu$ from $A$ to $A$ that is stable and complete; equal cardinality is represented by using the same finite index type for both sides."
     },
     "theorem2_applicant_optimality": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
-      "generated_at": "2026-06-13T21:43:40Z",
+      "comment": "Digest refreshed against the current paper-facing Lean statement; TeX text preserved.",
+      "generated_at": "2026-06-28T01:10:04Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "5f86881b4ff3d56186a4b86f67c40cd938416a840d62eaf3234f00f2509c3172",
+      "lean_statement_sha256": "9d18504fa2b48e4234a56c501b2cb6beef3d5a971b0f59f36234111460eede55",
       "paper_statement_sha256": "04750f18e782d3d38540ca8e90ebb63baa06ebf0dfb99cebc8ce185611016c04",
       "tex_statement": "For a finite indexed set $A$ with decidable equality, if applicant and college utilities $v_a,v_c:A\\to A\\to\\mathbb{R}$ satisfy the strict marriage domain, then deferred acceptance produces a complete matching that is applicant-optimal among stable matchings; equal cardinality is represented by using the same finite index type for both sides."
     }

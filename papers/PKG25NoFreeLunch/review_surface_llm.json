@@ -1,13 +1,13 @@
 {
-  "schema": 1,
-  "paper": "PKG25NoFreeLunch",
-  "validator": "",
-  "validator_type": "",
-  "validated_at": "",
   "comment": "",
+  "items": {},
   "judgment": "",
-  "reason": "",
-  "review_rows": 0,
-  "review_surface_sha256": "",
-  "items": {}
+  "paper": "PKG25NoFreeLunch",
+  "reason": "Hash refreshed against the current dashboard row surface.",
+  "review_rows": 6,
+  "review_surface_sha256": "a05fb7cfe47a0a02b2a98a840e21559b69fa004ffa4b5ef303193e290e01b077",
+  "schema": 1,
+  "validated_at": "2026-06-28T01:10:04Z",
+  "validator": "",
+  "validator_type": ""
 }

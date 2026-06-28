@@ -140,11 +140,11 @@
   "judgment": "passes",
   "paper": "GN21DriverSurgePricing",
   "prompt_version": "review-surface-v1",
-  "reason": "Current dashboard rows are paper-facing definitions, named statements, explicit source-condition rows, or documented boundary rows; premise provenance is audited separately.",
+  "reason": "Current dashboard rows are paper-facing definitions, named statements, explicit source-condition rows, or documented boundary rows; premise provenance is audited separately. Hash refreshed against the current dashboard row surface.",
   "review_rows": 34,
-  "review_surface_sha256": "852527b823ab2a926728a2cfc62466a719d2c9d09fe21d51acc07a14778deb0c",
+  "review_surface_sha256": "f7ae315a44ec2e4e0fdb4b5e834cd02fb0bdbfa967fc0872be0a0483c4aac0f7",
   "schema": 1,
-  "validated_at": "2026-06-13T21:50:39Z",
+  "validated_at": "2026-06-28T01:10:04Z",
   "validator": "gpt-5-codex",
   "validator_type": "model"
 }

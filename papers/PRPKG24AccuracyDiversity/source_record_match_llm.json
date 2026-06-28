@@ -1,0 +1,27 @@
+{
+  "comment": "Bernoulli model source-record fields are primitive source-model data, not proof shortcuts.",
+  "items": {
+    "BernoulliSatisfactionModel.likelihood": {
+      "classification": "validated_source_assumption",
+      "reason": "The Bernoulli satisfaction model takes the likelihood function as primitive source-model data used to state the paper distribution family.",
+      "source_record_audit_sha256": "932a086cf43d5779b03e1d041e2292027fc1295ec2f77e976b80cdc67a04ab22",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "BernoulliSatisfactionModel.successProb": {
+      "classification": "validated_source_assumption",
+      "reason": "The Bernoulli satisfaction model takes the success-probability function as primitive source-model data used to state the paper distribution family.",
+      "source_record_audit_sha256": "932a086cf43d5779b03e1d041e2292027fc1295ec2f77e976b80cdc67a04ab22",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    }
+  },
+  "paper": "PRPKG24AccuracyDiversity",
+  "schema": 1,
+  "source_record_audit_sha256": "932a086cf43d5779b03e1d041e2292027fc1295ec2f77e976b80cdc67a04ab22",
+  "validated_at": "2026-06-28T01:37:31Z",
+  "validator": "codex-source-record-audit",
+  "validator_type": "model"
+}

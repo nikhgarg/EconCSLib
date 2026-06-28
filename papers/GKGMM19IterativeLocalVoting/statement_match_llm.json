@@ -1,5 +1,5 @@
 {
-  "comment": "Statement judge sidecar after projected Theorem 3 closeout. The full-space Theorem 3 adapter is intentionally marked as a conditional boundary rather than a match to the general constrained paper theorem.",
+  "comment": "Statement-match digest metadata refreshed against the current dashboard statement surface.",
   "items": {
     "algorithm1_local_neighborhood_formula": {
       "judgment": "matches",
@@ -433,7 +433,6 @@
         "E.solutionSpace = Set.univ"
       ],
       "boundary_type": "source_semantics_and_full_space_boundary",
-      "comment": "Refreshed against the current public review surface; conditional-boundary classification remains unchanged.",
       "conditional_premises": [
         "FiniteCoordinateILVFullSampledProjectedSourceSemantics E",
         "E.solutionSpace = Set.univ"
@@ -441,12 +440,12 @@
       "judgment": "mismatch",
       "lean_statement_sha256": "4d277b95651acbfe45e75ab15120e6cb5d35f052056b5ee479913efe944a6950",
       "paper_statement_sha256": "e564621821cb3e301bd35cd190574c5501937e2256e9eda41bfc107cbcfdd175",
-      "reason": "The Lean row concludes the exact Theorem 3 statement, but only after adding two explicit conditions not present in the paper statement: a sampled projected finite-coordinate source-semantics package and the full-space condition E.solutionSpace = Set.univ. It intentionally does not claim the general constrained Theorem 3 endpoint.",
+      "reason": "The Lean row concludes the exact Theorem 3 statement, but only after adding two explicit conditions not present in the paper statement: a sampled projected finite-coordinate source-semantics package and the full-space condition E.solutionSpace = Set.univ. It intentionally does not claim the general constrained Theorem 3 endpoint. Refreshed against the current conditional-boundary source statement and Lean/TeX digest surface.",
       "resolution": "conditional_boundary",
       "resolution_reason": "Accepted as a conditional source-semantics/full-space boundary. The projected source package is recursively audited, and the full-space condition is the explicit hypothesis under which Lean proves the aggregate feasible-direction property rather than assuming it.",
       "source": "manual_llm_as_judge_refresh",
       "tex_statement_sha256": "b209f5582c37cc1451a3c0ac81ecad9bf2b2f32f46808b62b10eac18868ca486",
-      "validated_at": "2026-06-27T00:00:00Z",
+      "validated_at": "2026-06-28T01:49:47Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     }
@@ -459,7 +458,7 @@
   ],
   "prompt_version": "statement-match-v2-strict-full-statement-recursive-definitions",
   "schema": 1,
-  "validated_at": "2026-06-27T00:00:00Z",
+  "validated_at": "2026-06-28T01:49:47Z",
   "validator": "gpt-5-codex",
   "validator_type": "model"
 }

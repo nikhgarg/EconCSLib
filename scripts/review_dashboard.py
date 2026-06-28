@@ -48,7 +48,16 @@ REVIEW_SURFACE_WARN_THRESHOLD = 50
 PAPER_INTERFACE_CACHE_SCHEMA = 15
 REVIEW_SURFACE_SCHEMA = 1
 REVIEW_SOURCE_FILENAME = "PaperInterface.lean"
-REVIEW_DECL_KINDS = {"theorem", "lemma", "def", "abbrev", "axiom"}
+REVIEW_DECL_KINDS = {
+    "theorem",
+    "lemma",
+    "def",
+    "abbrev",
+    "axiom",
+    "structure",
+    "class",
+    "inductive",
+}
 ASSUMPTION_DECL_NAME_RE = re.compile(
     r"^(?:paper_)?assumption(?:_|$)|^source_assumption(?:_|$)|_assumption(?:_|$)"
 )
@@ -90,7 +99,8 @@ SOURCE_TEXT_ASSUMPTION_PREMISE_JUDGMENTS = {
 DECL_RE = re.compile(
     r"^(?P<indent>\s*)(?:(?:@[A-Za-z_][A-Za-z0-9_]*(?:\([^)]*\))?\s+)*)?"
     r"(?:(?:noncomputable|private|protected)\s+)*"
-    r"(?P<kind>theorem|lemma|def|abbrev|axiom)\s+(?P<name>[A-Za-z_][A-Za-z0-9_']*)\b"
+    r"(?P<kind>theorem|lemma|def|abbrev|axiom|structure|class|inductive)\s+"
+    r"(?P<name>[A-Za-z_][A-Za-z0-9_']*)\b"
 )
 EXPORT_OPEN_RE = re.compile(
     r"^\s*export\s+(?P<source>[A-Za-z_][A-Za-z0-9_']*(?:\.[A-Za-z_][A-Za-z0-9_']*)*)\s+\((?P<rest>.*)$"
@@ -2250,7 +2260,7 @@ def collect_review_decl_text(lines: list[str], start: int, kind: str) -> tuple[s
     while j < len(lines):
         sig_line = lines[j]
         sig_lines.append(sig_line)
-        if kind == "axiom" and (
+        if kind in {"axiom", "structure", "class", "inductive"} and (
             j + 1 >= len(lines) or _is_interface_decl_boundary(lines[j + 1])
         ):
             return "\n".join(sig_lines).strip(), j + 1

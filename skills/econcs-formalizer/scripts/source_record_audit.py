@@ -24,7 +24,8 @@ from typing import Any
 
 DECL_RE = re.compile(
     r"^\s*(?:private\s+|protected\s+|noncomputable\s+|unsafe\s+|partial\s+)*"
-    r"(theorem|lemma|def|abbrev|axiom)\s+([A-Za-z_][A-Za-z0-9_']*)\b"
+    r"(theorem|lemma|def|abbrev|axiom|structure|class|inductive)\s+"
+    r"([A-Za-z_][A-Za-z0-9_']*)\b"
 )
 STRUCTURE_RE = re.compile(
     r"^\s*(?:private\s+|protected\s+|noncomputable\s+)*"
@@ -39,11 +40,13 @@ FIELD_RE = re.compile(r"^\s{2,}([A-Za-z_][A-Za-z0-9_']*)\s*:\s*(.*)$")
 
 STRUCTURE_NAME_RE = re.compile(
     r"(Record|Certificate|Semantics|Source|Model|Bridge|Package|Consequences|"
-    r"Inputs|Carrier|Trace|Skeleton|Boundary|Witness|Data)$"
+    r"Inputs|Carrier|Trace|Skeleton|Boundary|Witness|Data|Law|Functions|Kernel|"
+    r"Process)$"
 )
 NON_SOURCE_RECORD_TYPE_NAMES = {
     # Enum/base carrier names that match STRUCTURE_NAME_RE by suffix but are not
     # source records with recursively auditable fields.
+    "HasLaw",
     "VoterResponseModel",
 }
 RISK_TERMS = {
@@ -323,7 +326,7 @@ def recursively_collect_fields(
                     kind="missing_structure",
                     structure=structure_name,
                     path=" -> ".join(prefix),
-                    message="source-shaped nested structure was mentioned but not parsed from paper-local Lean files",
+                    message="source-shaped nested structure was mentioned but not parsed from paper-local or selected library Lean files",
                 )
             )
             return
@@ -352,7 +355,7 @@ def recursively_collect_fields(
                         kind="missing_nested_source_type",
                         structure=missing,
                         path=" -> ".join(prefix + [raw_field.path]),
-                        message="field type mentions a source-shaped type that is not available as a parsed paper-local structure",
+                        message="field type mentions a source-shaped type that is not available as a parsed paper-local or selected library structure",
                     )
                 )
             field = FieldInfo(
@@ -393,6 +396,7 @@ def lean_check(
     paper_id: str,
     row_namespace: str,
     row_names: list[str],
+    assumption_row_names: set[str],
     fields: list[FieldInfo],
     max_output_chars: int,
 ) -> dict[str, Any]:
@@ -432,6 +436,8 @@ def lean_check(
         lines.append("")
 
     def row_ref(name: str) -> str:
+        if name in assumption_row_names:
+            return name
         return f"{row_namespace}.{name}" if row_namespace else name
 
     for name in row_names:
@@ -516,14 +522,32 @@ def main() -> int:
     if not interface_path.exists():
         raise SystemExit(f"missing PaperInterface.lean at {interface_path}")
 
-    declarations = parse_declarations(interface_path)
     row_namespace = first_declaration_namespace(interface_path)
     configured_rows = parse_status_rows(status_path)
+    configured_row_set = set(configured_rows)
+    declarations = parse_declarations(interface_path)
+    assumptions_path = paper_dir / "Assumptions.lean"
+    if assumptions_path.exists():
+        for name, declaration in parse_declarations(assumptions_path).items():
+            if name in configured_row_set or name.startswith(("assumption", "source_assumption")):
+                declarations[name] = declaration
     configured_present = [name for name in configured_rows if name in declarations]
     configured_set = set(configured_present)
     row_names = configured_present + [name for name in sorted(declarations) if name not in configured_set]
+    assumption_row_names: set[str] = set()
+    if assumptions_path.exists():
+        assumption_declarations = parse_declarations(assumptions_path)
+        assumption_row_names = {
+            name
+            for name in row_names
+            if name in assumption_declarations
+        }
 
-    structures = parse_structures(root, sorted(paper_dir.glob("*.lean")))
+    lean_files = list(paper_dir.glob("*.lean"))
+    poisson_library = root / "EconCSLib" / "Foundations" / "Probability" / "PoissonProcess.lean"
+    if poisson_library.exists():
+        lean_files.append(poisson_library)
+    structures = parse_structures(root, sorted(set(lean_files)))
     candidate_structures = source_model_structures(structures)
     row_records: dict[str, list[str]] = {
         row: mentioned_structures(declarations[row], candidate_structures) for row in row_names
@@ -601,6 +625,7 @@ def main() -> int:
             paper_id=args.paper,
             row_namespace=row_namespace,
             row_names=list(row_records),
+            assumption_row_names=assumption_row_names,
             fields=recursive_fields,
             max_output_chars=args.max_lean_output_chars,
         )

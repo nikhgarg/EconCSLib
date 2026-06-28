@@ -309,6 +309,7 @@ def llm_translation_label_from_counts(
     total: int,
     matches: int,
     mismatch: int = 0,
+    additional_assumption: int = 0,
     uncertain: int = 0,
     unknown: int = 0,
     missing: int = 0,
@@ -316,11 +317,14 @@ def llm_translation_label_from_counts(
 ) -> str:
     if total <= 0:
         return "not run"
-    if not any([matches, mismatch, uncertain, unknown, stale]) and missing >= total:
+    if not any([matches, mismatch, additional_assumption, uncertain, unknown, stale]) and missing >= total:
         return "not run"
     parts = [f"{matches}/{total} match"]
     if mismatch:
         parts.append(f"{mismatch} mismatch")
+    if additional_assumption:
+        label = "additional assumption" if additional_assumption == 1 else "additional assumptions"
+        parts.append(f"{additional_assumption} {label}")
     if uncertain:
         parts.append(f"{uncertain} uncertain")
     if unknown:
@@ -335,18 +339,23 @@ def llm_translation_label_from_counts(
 def llm_translation_label(folder: Path, payload: dict[str, Any]) -> str:
     if review_dashboard is not None:
         try:
-            cached = review_dashboard.load_cached_review_rows(folder)
-            if cached is not None:
-                summary = review_dashboard.statement_translation_audit_summary(folder, cached)
-                return llm_translation_label_from_counts(
-                    total=int(summary.get("row_count", 0)),
-                    matches=int(summary.get("matches", 0)),
-                    mismatch=int(summary.get("mismatch_count", 0)),
-                    uncertain=int(summary.get("uncertain_count", 0)),
-                    unknown=int(summary.get("unknown_count", 0)),
-                    missing=int(summary.get("missing_judgment_count", 0)),
-                    stale=int(summary.get("stale_judgment_count", 0)),
-                )
+            items = review_dashboard.review_items_for_paper(folder, use_cache=True)
+            summary = review_dashboard.statement_translation_audit_summary(folder, items)
+            return llm_translation_label_from_counts(
+                total=int(summary.get("row_count", 0)),
+                matches=int(summary.get("matches", 0)),
+                mismatch=int(
+                    summary.get(
+                        "unresolved_mismatch_count",
+                        summary.get("mismatch_count", 0),
+                    )
+                ),
+                additional_assumption=int(summary.get("conditional_boundary_count", 0)),
+                uncertain=int(summary.get("uncertain_count", 0)),
+                unknown=int(summary.get("unknown_count", 0)),
+                missing=int(summary.get("missing_judgment_count", 0)),
+                stale=int(summary.get("stale_judgment_count", 0)),
+            )
         except Exception:
             pass
 
@@ -362,7 +371,7 @@ def llm_translation_label(folder: Path, payload: dict[str, Any]) -> str:
     if not judgments:
         return "not run"
 
-    matches = mismatch = uncertain = unknown = missing = 0
+    matches = mismatch = additional_assumption = uncertain = unknown = missing = 0
     for name in names:
         judgment = judgments.get(name)
         if judgment is None:
@@ -372,7 +381,10 @@ def llm_translation_label(folder: Path, payload: dict[str, Any]) -> str:
         if value == "matches":
             matches += 1
         elif value == "mismatch":
-            mismatch += 1
+            if judgment.get("resolution") == "conditional_boundary":
+                additional_assumption += 1
+            else:
+                mismatch += 1
         elif value == "uncertain":
             uncertain += 1
         else:
@@ -382,6 +394,7 @@ def llm_translation_label(folder: Path, payload: dict[str, Any]) -> str:
         total=total,
         matches=matches,
         mismatch=mismatch,
+        additional_assumption=additional_assumption,
         uncertain=uncertain,
         unknown=unknown,
         missing=missing,

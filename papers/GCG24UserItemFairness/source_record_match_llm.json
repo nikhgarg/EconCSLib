@@ -1,0 +1,107 @@
+{
+  "comment": "Digest refreshed after source-record helper namespace update; field classifications preserved.",
+  "items": {
+    "EstimatedRecommendationModel.estimatedUtility": {
+      "classification": "validated_source_assumption",
+      "reason": "Primitive estimated utility matrix in the paper-facing estimated recommendation model.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "EstimatedRecommendationModel.trueModel": {
+      "classification": "container_recursively_audited",
+      "reason": "Container pointer to the underlying recommendation model; the nested RecommendationModel.utility field is audited separately as the primitive source utility matrix.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RecommendationModel.utility": {
+      "classification": "validated_source_assumption",
+      "reason": "Primitive source utility matrix for users and items.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "ReductionWitness.data": {
+      "classification": "container_recursively_audited",
+      "reason": "Container pointer to the symmetric source data; the nested model, type assignment, and within-type agreement fields are audited separately.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "ReductionWitness.reduced": {
+      "classification": "container_recursively_audited",
+      "reason": "Container pointer to the reduced type-weighted model; its utility and weight fields are audited separately and are not treated as independent hidden source assumptions.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "ReductionWitness.utility_agrees": {
+      "classification": "derived_consequence_record",
+      "reason": "Definition-level reduction equality connecting the source utility matrix to the reduced type utility; it is a derivation/bridge condition, not a standalone source assumption.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "ReductionWitness.weight_eq_typeWeight": {
+      "classification": "derived_consequence_record",
+      "reason": "Definition-level reduction equality identifying reduced weights with source type counts; it is a derivation/bridge condition, not a standalone source assumption.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "SymmetricData.agreeWithinTypes": {
+      "classification": "validated_source_assumption",
+      "reason": "Paper-facing symmetry condition: users in the same type have the same utility vector.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "SymmetricData.model": {
+      "classification": "container_recursively_audited",
+      "reason": "Container pointer to the source recommendation model; RecommendationModel.utility is audited separately as the primitive source utility matrix.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "SymmetricData.types": {
+      "classification": "validated_source_assumption",
+      "reason": "Primitive type assignment used to state the paper's type-symmetry reduction.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "TypeWeightedRecommendationModel.utility": {
+      "classification": "derived_consequence_record",
+      "reason": "Reduced type utility obtained from the source utility matrix and type assignment; the audit treats it as a derived bridge field rather than an independent paper assumption.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "TypeWeightedRecommendationModel.weight": {
+      "classification": "derived_consequence_record",
+      "reason": "Reduced type weight obtained from source type counts; the audit treats it as a derived bridge field rather than an independent paper assumption.",
+      "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    }
+  },
+  "paper": "GCG24UserItemFairness",
+  "schema": 1,
+  "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+  "validated_at": "2026-06-28T01:37:31Z",
+  "validator": "codex-source-record-audit",
+  "validator_type": "model"
+}

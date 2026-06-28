@@ -11,7 +11,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "cfe94d2578535715e5d2f82f53c05496103d1ad8f7167dba33189155a206a43c",
       "paper_statement_sha256": "b7952f32945fc034d2566408f82bf9631655d7d5b47107fb20653036bbb98651",
-      "tex_statement": "\u211d \\to \u211d \\to \u211d \\to \u211d \\to \u211d \\to \u211d \\to Prop"
+      "tex_statement": "ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to ℝ \\to Prop"
     },
     "assumption_alpha_marginal_value_bound": {
       "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
@@ -20,7 +20,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "120e9c5e2f7d65de3feefafa4bc10e1f2f7e62fcce250a22471c6adc24305c21",
       "paper_statement_sha256": "fee9fb0653320f99266db6769a692e2f27cf2ce0d536cd01faad8cf4fdec3dcd",
-      "tex_statement": "{Agent : Type u_1} \\to {Item : Type u_2} \\to [DecidableEq Item] \\to Valuation Agent Item \\to \u211d \\to Prop"
+      "tex_statement": "{Agent : Type u_1} \\to {Item : Type u_2} \\to [DecidableEq Item] \\to Valuation Agent Item \\to ℝ \\to Prop"
     },
     "assumption_base_load_at_most_rounded_average": {
       "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
@@ -29,7 +29,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "79f545469c11a0223be32a02b43eae82846c29f8f09ea01ebf7179a9831dd61f",
       "paper_statement_sha256": "deed71d28779d899b14fcc5a9f50006bfd1eb18bd75c5b4a3341d45247222781",
-      "tex_statement": "\u211d \\to \u211d \\to Prop"
+      "tex_statement": "ℝ \\to ℝ \\to Prop"
     },
     "assumption_claim34_positive_small_goods_domain": {
       "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
@@ -38,7 +38,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "d375505c4d7f6601b3d26bb3f1a972840a668120cfb4da7eaca32dcb8adf2c99",
       "paper_statement_sha256": "5d158e2db886593209738c8bdd489501409b997897767c76b91931a57b529288",
-      "tex_statement": "{SourceItem : Type u_1} \\to {SourceAgent : Type u_2} \\to {Alloc : Type u_3} \\to [DecidableEq SourceItem] \\to Finset SourceItem \\to (SourceItem \\to \u211d) \\to (SourceItem \\to \u211d) \\to (Alloc \\to SourceAgent \\to Finset SourceItem) \\to \u211d \\to Prop"
+      "tex_statement": "{SourceItem : Type u_1} \\to {SourceAgent : Type u_2} \\to {Alloc : Type u_3} \\to [DecidableEq SourceItem] \\to Finset SourceItem \\to (SourceItem \\to ℝ) \\to (SourceItem \\to ℝ) \\to (Alloc \\to SourceAgent \\to Finset SourceItem) \\to ℝ \\to Prop"
     },
     "assumption_claim34_rounded_type_window_condition": {
       "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
@@ -83,7 +83,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "60f0c131fd701dc2b5bfd33b528abf847d603142d73fc0be86c1ab3f4488d542",
       "paper_statement_sha256": "313f695940c8e350d1e3fe5d75269069813bc0258da5e37fafdeb2d0a949a089",
-      "tex_statement": "\u211d \\to Prop"
+      "tex_statement": "ℝ \\to Prop"
     },
     "assumption_positive_atom_bound": {
       "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
@@ -92,7 +92,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "889219d452add8f9dc8561bc8fc68f4ff015a00c65ed353987b152df8b3d7aba",
       "paper_statement_sha256": "38f335d07c806e16058174774873f52c04cdf42d558286423ddc5353527be0aa",
-      "tex_statement": "\u211d \\to Prop"
+      "tex_statement": "ℝ \\to Prop"
     },
     "assumption_positive_rounding_and_load_parameters": {
       "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
@@ -101,7 +101,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "bdfce0b8f8ae52129081637393f37e4d1ebb309f815dae62754556708274d95d",
       "paper_statement_sha256": "a071d6b4faeef5ad69adc21814088aac4e980b64483c230db0b5838447b25701",
-      "tex_statement": "\u211d \\to \u211d \\to \u211d \\to Prop"
+      "tex_statement": "ℝ \\to ℝ \\to ℝ \\to Prop"
     },
     "assumption_ptas_error_parameter_range": {
       "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
@@ -110,7 +110,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "7bf6c6c9be9ccac5621a668916a61d28fbc68a158b06d59d4b1b389ec9a5ffbf",
       "paper_statement_sha256": "fb93d494ada24b20d18efb0a67f9daa950daffb9e971a3cebfa4062294015d6e",
-      "tex_statement": "\u211d \\to Prop"
+      "tex_statement": "ℝ \\to Prop"
     },
     "assumption_uniform_random_weight_normalization": {
       "comment": "Context-free Lean-to-TeX draft refreshed from the current paper-facing statement surface.",
@@ -119,7 +119,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "58fc1eb46f42b6c852de96eda018a24c67c9edbebf4d1c26b9ef1e258cc2b899",
       "paper_statement_sha256": "8257297287b7b9654505e9a193384bbaf141ace14ad0999ab012e62d2bc0c206",
-      "tex_statement": "{Agent : Type u_1} \\to {Item : Type u_2} \\to [Fintype Item] \\to (Agent \\to Item \\to \u211d) \\to \u211d \\to \u211d \\to Prop"
+      "tex_statement": "{Agent : Type u_1} \\to {Item : Type u_2} \\to [Fintype Item] \\to (Agent \\to Item \\to ℝ) \\to ℝ \\to ℝ \\to Prop"
     },
     "claim3_4_bounded_optimal_of_exact_allocations_with_nonempty_positive_goods": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -128,16 +128,16 @@
       "generator_type": "model",
       "lean_statement_sha256": "9a8a397990eb3963dc543c16147b49ca89de7d2f512cf61b09e63ee6d0f1268e",
       "paper_statement_sha256": "3d8ae0ec300efc69fadf9af78656fdf8d34034bb55241a5dfc7d76cffa8b868e",
-      "tex_statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} [inst : Fintype SourceAgent] [Fintype SourceItem] [inst_2 : Nonempty SourceAgent] [DecidableEq SourceAgent] [inst_4 : DecidableEq SourceItem] {goods : Finset SourceItem} {v : SourceItem \\to \u211d} {L : \u211d} (A\u2080 : Allocation SourceAgent SourceItem), IsOptimalRatio (fun A  =>  loadRatio (minCommonLoad v A) (maxCommonLoad v A)) A\u2080 \\to (\\forall (A : Allocation SourceAgent SourceItem), IsOptimalRatio (fun C  =>  loadRatio (minCommonLoad v C) (maxCommonLoad v C)) A \\to IsAllocationOf A goods) \\to 0 < L \\to commonLoad v goods = \u2191(card SourceAgent) * L \\to (\\forall (A : Allocation SourceAgent SourceItem), IsOptimalRatio (fun C  =>  loadRatio (minCommonLoad v C) (maxCommonLoad v C)) A \\to (\\lnot\\forall (i : SourceAgent), boundedAroundAverage L (commonLoad v (A i))) \\to \\forall (i : SourceAgent), \\exists g, g \\in A i) \\to (\\forall g \\in goods, 0 < v g) \\to (\\forall g \\in goods, v g < L) \\to \\exists B, IsAllocationOf B goods \\land Claim34Certificate v L (fun A  =>  loadRatio (minCommonLoad v A) (maxCommonLoad v A)) (fun A i  =>  A i) B"
+      "tex_statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} [inst : Fintype SourceAgent] [Fintype SourceItem] [inst_2 : Nonempty SourceAgent] [DecidableEq SourceAgent] [inst_4 : DecidableEq SourceItem] {goods : Finset SourceItem} {v : SourceItem \\to ℝ} {L : ℝ} (A₀ : Allocation SourceAgent SourceItem), IsOptimalRatio (fun A  =>  loadRatio (minCommonLoad v A) (maxCommonLoad v A)) A₀ \\to (\\forall (A : Allocation SourceAgent SourceItem), IsOptimalRatio (fun C  =>  loadRatio (minCommonLoad v C) (maxCommonLoad v C)) A \\to IsAllocationOf A goods) \\to 0 < L \\to commonLoad v goods = ↑(card SourceAgent) * L \\to (\\forall (A : Allocation SourceAgent SourceItem), IsOptimalRatio (fun C  =>  loadRatio (minCommonLoad v C) (maxCommonLoad v C)) A \\to (\\lnot\\forall (i : SourceAgent), boundedAroundAverage L (commonLoad v (A i))) \\to \\forall (i : SourceAgent), \\exists g, g \\in A i) \\to (\\forall g \\in goods, 0 < v g) \\to (\\forall g \\in goods, v g < L) \\to \\exists B, IsAllocationOf B goods \\land Claim34Certificate v L (fun A  =>  loadRatio (minCommonLoad v A) (maxCommonLoad v A)) (fun A i  =>  A i) B"
     },
     "claim3_4_identical_utilities_bounded_optimum_bound": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
-      "generated_at": "2026-06-13T21:43:40Z",
+      "comment": "Lean digest refreshed after paper-facing declaration drift; paper statement and generated TeX text were unchanged.",
+      "generated_at": "2026-06-28T00:20:22Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "eecbb170e652dd65bd494d31129fdbb840b9895f590631012dea3c7e0f12bb10",
+      "lean_statement_sha256": "d5f6e5001d02f0824247c58544b6df7324cc0b93623601834c98e20b13194946",
       "paper_statement_sha256": "8f5d8d3a7876e557464a97889aec1a5c214bb40fefffda3fcc24dd0de014d9d7",
-      "tex_statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [Fintype Alloc] [inst_2 : Nonempty SourceAgent] [inst_3 : DecidableEq SourceAgent] [inst_4 : DecidableEq SourceItem] (M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc) {L : \u211d} (moveAlloc : Alloc \\to SourceAgent \\to SourceAgent \\to SourceItem \\to Alloc) (A\u2080 : Alloc), IsOptimalRatio (allocationLoadRatio M) A\u2080 \\to 0 < L \\to (\\forall (A : Alloc), IsOptimalRatio (allocationLoadRatio M) A \\to \\sum i, commonLoad commonValue (bundleOf A i) = \u2191(card SourceAgent) * L) \\to (\\forall (A : Alloc), IsOptimalRatio (allocationLoadRatio M) A \\to (\\lnot\\forall (i : SourceAgent), boundedAroundAverage L (commonLoad commonValue (bundleOf A i))) \\to 0 < minAllocationLoad M A) \\to (\\forall (A : Alloc) (i : SourceAgent), \\forall g \\in bundleOf A i, 0 \\le commonValue g) \\to (\\forall (A : Alloc) (i : SourceAgent), \\forall g \\in bundleOf A i, commonValue g < L) \\to (\\forall (A : Alloc) {i j : SourceAgent} {g : SourceItem}, g \\in bundleOf A i \\to g \\in bundleOf A j \\to i = j) \\to (\\forall (A : Alloc) (source target : SourceAgent) (g : SourceItem), bundleOf (moveAlloc A source target g) = moveBundle (bundleOf A) source target g) \\to \\exists B, Claim34Certificate commonValue L (allocationLoadRatio M) bundleOf B"
+      "tex_statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [Fintype Alloc] [inst_2 : Nonempty SourceAgent] [inst_3 : DecidableEq SourceAgent] [inst_4 : DecidableEq SourceItem] (M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc) {L : ℝ} (moveAlloc : Alloc \\to SourceAgent \\to SourceAgent \\to SourceItem \\to Alloc) (A₀ : Alloc), IsOptimalRatio (allocationLoadRatio M) A₀ \\to 0 < L \\to (\\forall (A : Alloc), IsOptimalRatio (allocationLoadRatio M) A \\to \\sum i, commonLoad commonValue (bundleOf A i) = ↑(card SourceAgent) * L) \\to (\\forall (A : Alloc), IsOptimalRatio (allocationLoadRatio M) A \\to (\\lnot\\forall (i : SourceAgent), boundedAroundAverage L (commonLoad commonValue (bundleOf A i))) \\to 0 < minAllocationLoad M A) \\to (\\forall (A : Alloc) (i : SourceAgent), \\forall g \\in bundleOf A i, 0 \\le commonValue g) \\to (\\forall (A : Alloc) (i : SourceAgent), \\forall g \\in bundleOf A i, commonValue g < L) \\to (\\forall (A : Alloc) {i j : SourceAgent} {g : SourceItem}, g \\in bundleOf A i \\to g \\in bundleOf A j \\to i = j) \\to (\\forall (A : Alloc) (source target : SourceAgent) (g : SourceItem), bundleOf (moveAlloc A source target g) = moveBundle (bundleOf A) source target g) \\to \\exists B, Claim34Certificate commonValue L (allocationLoadRatio M) bundleOf B"
     },
     "directMechanism_fields": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -164,7 +164,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "bdc36949647d5384216b6dd890ced728afa178fe7cab2b7921ebb8504f2344a8",
       "paper_statement_sha256": "df9ae1a2eef41feaacd74d5596a04c0f4df779331e0d6fcf3472eb30e537a000",
-      "tex_statement": "(v : Valuation Agent Item) (A : Allocation Agent Item) (alpha : \u211d) = \\forall i j, envy v A i j \\le alpha"
+      "tex_statement": "(v : Valuation Agent Item) (A : Allocation Agent Item) (alpha : ℝ) = \\forall i j, envy v A i j \\le alpha"
     },
     "envyFree": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -191,16 +191,16 @@
       "generator_type": "model",
       "lean_statement_sha256": "efecbeb75c8abc0b50a5027b1c87bfba9c5565d055a87adabac53a5562a86d56",
       "paper_statement_sha256": "c485cf28a8cc7a256f403b60b992dab7239cc474fff6234daa6f74db9992bf6b",
-      "tex_statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [Fintype Agent] [Fintype Item] [DecidableEq Agent] [inst : DecidableEq Item] [Nonempty Agent] [Nonempty Item] (v : Valuation Agent Item) {alpha : \u211d} (goods : Finset Item) (A : Allocation Agent Item), isAllocationOf A goods \\to envyBoundedBy v A alpha \\to \\exists B, isAllocationOf B goods \\land envyBoundedBy v B alpha \\land AcyclicEnvyGraph v B"
+      "tex_statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [Fintype Agent] [Fintype Item] [DecidableEq Agent] [inst : DecidableEq Item] [Nonempty Agent] [Nonempty Item] (v : Valuation Agent Item) {alpha : ℝ} (goods : Finset Item) (A : Allocation Agent Item), isAllocationOf A goods \\to envyBoundedBy v A alpha \\to \\exists B, isAllocationOf B goods \\land envyBoundedBy v B alpha \\land AcyclicEnvyGraph v B"
     },
     "lemma3_5_additive_transfer_epsilon_bound": {
-      "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
-      "generated_at": "2026-06-13T21:43:40Z",
+      "comment": "Lean digest refreshed after paper-facing declaration drift; paper statement and generated TeX text were unchanged.",
+      "generated_at": "2026-06-28T00:20:22Z",
       "generator": "gpt-5-codex",
       "generator_type": "model",
-      "lean_statement_sha256": "d6ccf509de5a68ab7cf311ab61666c7d0cd2b39dd000a58e43e4a53c48601895",
+      "lean_statement_sha256": "fe0f8c4e631a590fe0dda654511c472467c5f0481486345936d44045e3f8e9cb",
       "paper_statement_sha256": "ed5b13f4c837559d6b4ba1dbae58bcd2b1ee4ef056d9997c493a9d3381ba10f7",
-      "tex_statement": "\\forall {epsilon L optMin optMax roundedMin roundedMax outMin outMax : \u211d}, 0 < epsilon \\to epsilon \\le 1 \\to 0 < outMin \\to 0 < roundedMin \\to 0 < optMin \\to 0 \\le optMax \\to 0 \\le roundedMax \\to L \\le 2 * roundedMin \\to L \\le 2 * roundedMax \\to L \\le 2 * optMin \\to L \\le 2 * optMax \\to outMax \\le roundedMax + L / (56 / epsilon) \\to 56 / epsilon / (56 / epsilon + 1) * roundedMin - 2 / (56 / epsilon) * L \\le outMin \\to roundedMax \\le (56 / epsilon + 1) / (56 / epsilon) * optMax + L / (56 / epsilon) \\to optMin - L / (56 / epsilon) \\le roundedMin \\to ratio outMin outMax \\le ratio optMin optMax * (1 + epsilon)"
+      "tex_statement": "\\forall {epsilon L optMin optMax roundedMin roundedMax outMin outMax : ℝ}, 0 < epsilon \\to epsilon \\le 1 \\to 0 < outMin \\to 0 < roundedMin \\to 0 < optMin \\to 0 \\le optMax \\to 0 \\le roundedMax \\to L \\le 2 * roundedMin \\to L \\le 2 * roundedMax \\to L \\le 2 * optMin \\to L \\le 2 * optMax \\to outMax \\le roundedMax + L / (56 / epsilon) \\to 56 / epsilon / (56 / epsilon + 1) * roundedMin - 2 / (56 / epsilon) * L \\le outMin \\to roundedMax \\le (56 / epsilon + 1) / (56 / epsilon) * optMax + L / (56 / epsilon) \\to optMin - L / (56 / epsilon) \\le roundedMin \\to ratio outMin outMax \\le ratio optMin optMax * (1 + epsilon)"
     },
     "maxMarginal": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -236,7 +236,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "32d92b88b05b3f0ed34b911f0a69bcff4ce7ad51238b9c9aa700a4e264cde417",
       "paper_statement_sha256": "81470a306ac09cbe0500cd38fa2ebf6bba257585fd0dc22407be4399efce23c7",
-      "tex_statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [inst : Fintype Agent] [inst_1 : Fintype Item] [inst_2 : DecidableEq Agent] [inst_3 : DecidableEq Item] [inst_4 : Nonempty Agent] [Nonempty Item] (v : Valuation Agent Item) {alpha : \u211d} (halpha_nonneg : 0 \\le alpha) (hbound : MarginalBound v alpha) (goodsList : List Item), Nodup \\to isAllocationOf (paper_lmms_algorithm v halpha_nonneg hbound goodsList) toFinset \\land envyBoundedBy v (paper_lmms_algorithm v halpha_nonneg hbound goodsList) alpha"
+      "tex_statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [inst : Fintype Agent] [inst_1 : Fintype Item] [inst_2 : DecidableEq Agent] [inst_3 : DecidableEq Item] [inst_4 : Nonempty Agent] [Nonempty Item] (v : Valuation Agent Item) {alpha : ℝ} (halpha_nonneg : 0 \\le alpha) (hbound : MarginalBound v alpha) (goodsList : List Item), Nodup \\to isAllocationOf (paper_lmms_algorithm v halpha_nonneg hbound goodsList) toFinset \\land envyBoundedBy v (paper_lmms_algorithm v halpha_nonneg hbound goodsList) alpha"
     },
     "theorem2_1_alpha_bounded_allocation_exists": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -245,7 +245,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "80e46c83915d42bb75447cd36045e8d159b7607f960b99167752734a81bf0b0b",
       "paper_statement_sha256": "9b23565f10b32d65fe805024e64143849621416b4408bd9b3e130980887d7542",
-      "tex_statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [Fintype Agent] [Fintype Item] [DecidableEq Agent] [inst : DecidableEq Item] [Nonempty Agent] [Nonempty Item] (v : Valuation Agent Item) {alpha : \u211d}, 0 \\le alpha \\to MarginalBound v alpha \\to \\forall (goods : Finset Item), \\exists A, isAllocationOf A goods \\land envyBoundedBy v A alpha"
+      "tex_statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [Fintype Agent] [Fintype Item] [DecidableEq Agent] [inst : DecidableEq Item] [Nonempty Agent] [Nonempty Item] (v : Valuation Agent Item) {alpha : ℝ}, 0 \\le alpha \\to MarginalBound v alpha \\to \\forall (goods : Finset Item), \\exists A, isAllocationOf A goods \\land envyBoundedBy v A alpha"
     },
     "theorem2_1_bounded_envy_allocation_exists": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -263,7 +263,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "35ac3105a954e5695e92644ef8ccf44b2b2fe2c6f8c36b590ac74452dbdbd61d",
       "paper_statement_sha256": "5ae6be28b1cee69ed4f0c5a9b3d29a0263bad9c405126ee3f7002c5ed1ffd989",
-      "tex_statement": "\\forall {Agent : Type u_1} [inst : Fintype Agent] [DecidableEq Agent] [Nonempty Agent] {mu : Agent \\to Measure \u211d} [inst_3 : \\forall (agent : Agent), IsFiniteMeasure (mu agent)] {alpha a b : \u211d} (halpha_pos : 0 < alpha) (hatoms : \\forall (agent : Agent), PaperAtomsBoundedBy (mu agent) alpha) (haggregate_support : (aggregateMeasure mu).real (Ioc a b)\u1d9c = 0), \\exists H P A, IsAllocationOf A univ \\land EnvyBoundedBy (measurePartitionCertificateOfFiniteSingletonsAndResidualAggregate mu H (realIntervalResidualSet H P) \u22ef \u22ef \u22ef \u22ef \u22ef).valuation A alpha"
+      "tex_statement": "\\forall {Agent : Type u_1} [inst : Fintype Agent] [DecidableEq Agent] [Nonempty Agent] {mu : Agent \\to Measure ℝ} [inst_3 : \\forall (agent : Agent), IsFiniteMeasure (mu agent)] {alpha a b : ℝ} (halpha_pos : 0 < alpha) (hatoms : \\forall (agent : Agent), PaperAtomsBoundedBy (mu agent) alpha) (haggregate_support : (aggregateMeasure mu).real (Ioc a b)ᶜ = 0), \\exists H P A, IsAllocationOf A univ \\land EnvyBoundedBy (measurePartitionCertificateOfFiniteSingletonsAndResidualAggregate mu H (realIntervalResidualSet H P) ⋯ ⋯ ⋯ ⋯ ⋯).valuation A alpha"
     },
     "theorem3_1_eventually_minimum_envy_lower_bound_from_twoBit_adaptive_queries": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -272,7 +272,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "e02995ee060ba9dd314918551db77a58d61c4e56d7824689925cc1a276fa51b1",
       "paper_statement_sha256": "f225e61343812ad8f8e362d6093b2581936255de30938456a8a428e07000995c",
-      "tex_statement": "\\forall {SourceItem : \u2115 \\to Type u_1} [inst : (n : \u2115) \\to Fintype (SourceItem n)] [inst_1 : (n : \u2115) \\to DecidableEq (SourceItem n)] {k q : \u2115 \\to \u2115} (C : (n : \u2115) \\to LMMS31MiddleComplementPairs (SourceItem n) (k n)), (\\forall (n : \u2115), card (SourceItem n) = 2 * k n) \\to \\forall (strategy : (n : \u2115) \\to AdaptiveQueryStrategy (Finset (SourceItem n)) (Bool \u00d7 Bool)) (output : (n : \u2115) \\to QueryTranscript (Bool \u00d7 Bool) (q n) \\to Allocation LMMS31Agent (SourceItem n)), (TendsToZero fun n  =>  \u2191(2 * q n) / \u2191(card (C n).Pair)) \\to (\\forall\u1da0 (n : \u2115) in atTop, 0 < card (C n).Pair) \\to \\forall\u1da0 (n : \u2115) in atTop, \\lnot\\forall (choice\u2081 choice\u2082 : (C n).Pair \\to Bool), MinimumReportEnvyAllocation (lmms31CrossReport ((C n).hardFunctionOfMiddleChoice choice\u2081) ((C n).hardFunctionOfMiddleChoice choice\u2082)) univ (output n (twoPlayerHardFunctionAdaptiveTranscript (strategy n) ((C n).hardFunctionOfMiddleChoice choice\u2081) ((C n).hardFunctionOfMiddleChoice choice\u2082)))"
+      "tex_statement": "\\forall {SourceItem : ℕ \\to Type u_1} [inst : (n : ℕ) \\to Fintype (SourceItem n)] [inst_1 : (n : ℕ) \\to DecidableEq (SourceItem n)] {k q : ℕ \\to ℕ} (C : (n : ℕ) \\to LMMS31MiddleComplementPairs (SourceItem n) (k n)), (\\forall (n : ℕ), card (SourceItem n) = 2 * k n) \\to \\forall (strategy : (n : ℕ) \\to AdaptiveQueryStrategy (Finset (SourceItem n)) (Bool × Bool)) (output : (n : ℕ) \\to QueryTranscript (Bool × Bool) (q n) \\to Allocation LMMS31Agent (SourceItem n)), (TendsToZero fun n  =>  ↑(2 * q n) / ↑(card (C n).Pair)) \\to (\\forallᶠ (n : ℕ) in atTop, 0 < card (C n).Pair) \\to \\forallᶠ (n : ℕ) in atTop, \\lnot\\forall (choice₁ choice₂ : (C n).Pair \\to Bool), MinimumReportEnvyAllocation (lmms31CrossReport ((C n).hardFunctionOfMiddleChoice choice₁) ((C n).hardFunctionOfMiddleChoice choice₂)) univ (output n (twoPlayerHardFunctionAdaptiveTranscript (strategy n) ((C n).hardFunctionOfMiddleChoice choice₁) ((C n).hardFunctionOfMiddleChoice choice₂)))"
     },
     "theorem3_1_eventually_minimum_envy_ratio_lower_bound_from_twoBit_adaptive_queries": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -281,7 +281,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "bdc87f45847406586ca2996a07831946dc00017d51c6d086535ddece6b963715",
       "paper_statement_sha256": "100706f0e8afcc2cd723cde939682d3ac8271b4f21489123935cdf757b75ae02",
-      "tex_statement": "\\forall {SourceItem : \u2115 \\to Type u_1} [inst : (n : \u2115) \\to Fintype (SourceItem n)] [inst_1 : (n : \u2115) \\to DecidableEq (SourceItem n)] {k q : \u2115 \\to \u2115} (C : (n : \u2115) \\to LMMS31MiddleComplementPairs (SourceItem n) (k n)), (\\forall (n : \u2115), card (SourceItem n) = 2 * k n) \\to \\forall (strategy : (n : \u2115) \\to AdaptiveQueryStrategy (Finset (SourceItem n)) (Bool \u00d7 Bool)) (output : (n : \u2115) \\to QueryTranscript (Bool \u00d7 Bool) (q n) \\to Allocation LMMS31Agent (SourceItem n)), (TendsToZero fun n  =>  \u2191(2 * q n) / \u2191(card (C n).Pair)) \\to (\\forall\u1da0 (n : \u2115) in atTop, 0 < card (C n).Pair) \\to \\forall\u1da0 (n : \u2115) in atTop, \\lnot\\forall (choice\u2081 choice\u2082 : (C n).Pair \\to Bool), MinimumReportEnvyRatioAllocation (lmms31CrossReport ((C n).hardFunctionOfMiddleChoice choice\u2081) ((C n).hardFunctionOfMiddleChoice choice\u2082)) univ (output n (twoPlayerHardFunctionAdaptiveTranscript (strategy n) ((C n).hardFunctionOfMiddleChoice choice\u2081) ((C n).hardFunctionOfMiddleChoice choice\u2082)))"
+      "tex_statement": "\\forall {SourceItem : ℕ \\to Type u_1} [inst : (n : ℕ) \\to Fintype (SourceItem n)] [inst_1 : (n : ℕ) \\to DecidableEq (SourceItem n)] {k q : ℕ \\to ℕ} (C : (n : ℕ) \\to LMMS31MiddleComplementPairs (SourceItem n) (k n)), (\\forall (n : ℕ), card (SourceItem n) = 2 * k n) \\to \\forall (strategy : (n : ℕ) \\to AdaptiveQueryStrategy (Finset (SourceItem n)) (Bool × Bool)) (output : (n : ℕ) \\to QueryTranscript (Bool × Bool) (q n) \\to Allocation LMMS31Agent (SourceItem n)), (TendsToZero fun n  =>  ↑(2 * q n) / ↑(card (C n).Pair)) \\to (\\forallᶠ (n : ℕ) in atTop, 0 < card (C n).Pair) \\to \\forallᶠ (n : ℕ) in atTop, \\lnot\\forall (choice₁ choice₂ : (C n).Pair \\to Bool), MinimumReportEnvyRatioAllocation (lmms31CrossReport ((C n).hardFunctionOfMiddleChoice choice₁) ((C n).hardFunctionOfMiddleChoice choice₂)) univ (output n (twoPlayerHardFunctionAdaptiveTranscript (strategy n) ((C n).hardFunctionOfMiddleChoice choice₁) ((C n).hardFunctionOfMiddleChoice choice₂)))"
     },
     "theorem3_2_graham_certificate_to_envy_ratio_bound": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -290,7 +290,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "e9e6fdd899f298abc0ce2f63193120796d16266adb8d7dbbd90eddf8f3951191",
       "paper_statement_sha256": "4023d26ec5a1a3e927b993134582ecef0a3285113f84c8667560c8eba3470659",
-      "tex_statement": "\\forall {SourceAgent : Type u_1} {load : SourceAgent \\to \u211d} {optimalRatio : \u211d} (C : Graham14SchedulingApproximationCertificate load optimalRatio), IdenticalUtilitiesEnvyRatioBound load (grahamApproximationFactor * optimalRatio)"
+      "tex_statement": "\\forall {SourceAgent : Type u_1} {load : SourceAgent \\to ℝ} {optimalRatio : ℝ} (C : Graham14SchedulingApproximationCertificate load optimalRatio), IdenticalUtilitiesEnvyRatioBound load (grahamApproximationFactor * optimalRatio)"
     },
     "theorem3_2_graham_factor_eq_seven_fifths": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -308,7 +308,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "e173cd729fef98bb044cc5147c397c50f5e08f4c5ec3c25cd2b0cefe61ab9085",
       "paper_statement_sha256": "880f66b4fd9b5e1c351fe20e50e21b66c0f3941645577411899cc068ca75cafd",
-      "tex_statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] [DecidableEq SourceAgent] {M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc} {L LR epsilon : \u211d} {lambda maxCount : \u2115} {optimal : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (cert : RoundedInstanceSearchCertificate M L epsilon lambda optimal) (supply : RoundedValueIndex lambda \\to \u2115), \\sum k, \u2191(supply k) * roundedValue L lambda k = \u2191(card SourceAgent) * LR \\to L \\le LR \\to supply (paper_lmms_theorem_3_3_topRoundedValueIndex lambda) = 0 \\to 2 * LR \\le (\u2191maxCount + 1) * (L / \u2191lambda) \\to 0 < lambda \\to 0 < L \\to 0 < LR \\to allocationLoadRatio M output \\le allocationLoadRatio M optimal * (1 + epsilon) \\land \\exists p typeOf, p \\in roundedAdmissibleValuePairSetWithCap L LR lambda maxCount \\land (\\forall (i : SourceAgent), typeOf i \\in roundedTypesInValueWindowWithCap L LR lambda maxCount p.1 p.2) \\land (\\forall (k : RoundedValueIndex lambda), \\sum i, (typeOf i).count k = supply k) \\land \\exists search, roundedValuePairRatio chosenPair \\le roundedValuePairRatio p"
+      "tex_statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] [DecidableEq SourceAgent] {M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc} {L LR epsilon : ℝ} {lambda maxCount : ℕ} {optimal : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (cert : RoundedInstanceSearchCertificate M L epsilon lambda optimal) (supply : RoundedValueIndex lambda \\to ℕ), \\sum k, ↑(supply k) * roundedValue L lambda k = ↑(card SourceAgent) * LR \\to L \\le LR \\to supply (paper_lmms_theorem_3_3_topRoundedValueIndex lambda) = 0 \\to 2 * LR \\le (↑maxCount + 1) * (L / ↑lambda) \\to 0 < lambda \\to 0 < L \\to 0 < LR \\to allocationLoadRatio M output \\le allocationLoadRatio M optimal * (1 + epsilon) \\land \\exists p typeOf, p \\in roundedAdmissibleValuePairSetWithCap L LR lambda maxCount \\land (\\forall (i : SourceAgent), typeOf i \\in roundedTypesInValueWindowWithCap L LR lambda maxCount p.1 p.2) \\land (\\forall (k : RoundedValueIndex lambda), \\sum i, (typeOf i).count k = supply k) \\land \\exists search, roundedValuePairRatio chosenPair \\le roundedValuePairRatio p"
     },
     "theorem3_3_claim34_fixed_rounding_ratio_endpoint": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -317,7 +317,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "4f423f3b28271407112cb4ac67d314ec0772786b594dbfc862f0f0d7e98ff6e4",
       "paper_statement_sha256": "7ad82cb7a239fe169fef784b7346920d7e04486130c4b90436c1581f83a0413a",
-      "tex_statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] [DecidableEq SourceAgent] [DecidableEq SourceItem] {M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc} {L epsilon : \u211d} {lambda : \u2115} {optimal : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (cert : RoundedInstanceSearchCertificate M L epsilon lambda optimal) (highGoods lowGoods : Finset SourceItem) (v : SourceItem \\to \u211d) (indexOf : SourceItem \\to RoundedValueIndex lambda) (combinedSupply : RoundedValueIndex lambda \\to \u2115), 1 < lambda \\to 0 < L \\to (\\forall g \\in highGoods, v g \\le roundedValue L lambda (indexOf g) \\land roundedValue L lambda (indexOf g) < v g + L / \u2191lambda ^ 2) \\to (\\forall (k : RoundedValueIndex lambda), combinedSupply k = paper_lmms_theorem_3_3_roundedGoodsSupplyOfGoods indexOf highGoods k + lowGoodsAggregatedSupply L lambda (sum v) k) \\to (\\forall g \\in highGoods, v g + L / \u2191lambda ^ 2 \\le L) \\to \\sum k, \u2191(combinedSupply k) * roundedValue L lambda k = \u2191(card SourceAgent) * L \\to allocationLoadRatio M output \\le allocationLoadRatio M optimal * (1 + epsilon) \\land combinedSupply (paper_lmms_theorem_3_3_topRoundedValueIndex lambda) = 0 \\land \\exists p typeOf, p \\in roundedAdmissibleValuePairSet L lambda \\land (\\forall (i : SourceAgent), typeOf i \\in roundedTypesInValueWindow L lambda p.1 p.2) \\land (\\forall (k : RoundedValueIndex lambda), \\sum i, (typeOf i).count k = combinedSupply k) \\land \\exists search, roundedValuePairRatio chosenPair \\le roundedValuePairRatio p"
+      "tex_statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] [DecidableEq SourceAgent] [DecidableEq SourceItem] {M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc} {L epsilon : ℝ} {lambda : ℕ} {optimal : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (cert : RoundedInstanceSearchCertificate M L epsilon lambda optimal) (highGoods lowGoods : Finset SourceItem) (v : SourceItem \\to ℝ) (indexOf : SourceItem \\to RoundedValueIndex lambda) (combinedSupply : RoundedValueIndex lambda \\to ℕ), 1 < lambda \\to 0 < L \\to (\\forall g \\in highGoods, v g \\le roundedValue L lambda (indexOf g) \\land roundedValue L lambda (indexOf g) < v g + L / ↑lambda ^ 2) \\to (\\forall (k : RoundedValueIndex lambda), combinedSupply k = paper_lmms_theorem_3_3_roundedGoodsSupplyOfGoods indexOf highGoods k + lowGoodsAggregatedSupply L lambda (sum v) k) \\to (\\forall g \\in highGoods, v g + L / ↑lambda ^ 2 \\le L) \\to \\sum k, ↑(combinedSupply k) * roundedValue L lambda k = ↑(card SourceAgent) * L \\to allocationLoadRatio M output \\le allocationLoadRatio M optimal * (1 + epsilon) \\land combinedSupply (paper_lmms_theorem_3_3_topRoundedValueIndex lambda) = 0 \\land \\exists p typeOf, p \\in roundedAdmissibleValuePairSet L lambda \\land (\\forall (i : SourceAgent), typeOf i \\in roundedTypesInValueWindow L lambda p.1 p.2) \\land (\\forall (k : RoundedValueIndex lambda), \\sum i, (typeOf i).count k = combinedSupply k) \\land \\exists search, roundedValuePairRatio chosenPair \\le roundedValuePairRatio p"
     },
     "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -326,7 +326,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "a801c6fbd70aeca37a0026ca5bc646dd0498ab19eb90a764b87f44cdff2fad7f",
       "paper_statement_sha256": "111806c7d8e7d2399dea9833ba0b0bd84b975540523894b46d6fadbc2e6c6f6d",
-      "tex_statement": "\\forall {SourceAgent : Type u_1} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] {epsilon L : \u211d} {optLoad roundedLoad outLoad : SourceAgent \\to \u211d}, 0 < epsilon \\to epsilon \\le 1 \\to 0 < inf' \u22ef outLoad \\to 0 < inf' \u22ef roundedLoad \\to 0 < inf' \u22ef optLoad \\to 0 \\le sup' \u22ef optLoad \\to 0 \\le sup' \u22ef roundedLoad \\to L \\le 2 * inf' \u22ef roundedLoad \\to L \\le 2 * sup' \u22ef roundedLoad \\to L \\le 2 * inf' \u22ef optLoad \\to L \\le 2 * sup' \u22ef optLoad \\to (\\forall (i : SourceAgent), outLoad i \\le roundedLoad i + L / (56 / epsilon)) \\to (\\forall (i : SourceAgent), 56 / epsilon / (56 / epsilon + 1) * roundedLoad i - 2 / (56 / epsilon) * L \\le outLoad i) \\to (\\forall (i : SourceAgent), roundedLoad i \\le (56 / epsilon + 1) / (56 / epsilon) * optLoad i + L / (56 / epsilon)) \\to (\\forall (i : SourceAgent), optLoad i - L / (56 / epsilon) \\le roundedLoad i) \\to ratio (inf' \u22ef outLoad) (sup' \u22ef outLoad) \\le ratio (inf' \u22ef optLoad) (sup' \u22ef optLoad) * (1 + epsilon)"
+      "tex_statement": "\\forall {SourceAgent : Type u_1} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] {epsilon L : ℝ} {optLoad roundedLoad outLoad : SourceAgent \\to ℝ}, 0 < epsilon \\to epsilon \\le 1 \\to 0 < inf' ⋯ outLoad \\to 0 < inf' ⋯ roundedLoad \\to 0 < inf' ⋯ optLoad \\to 0 \\le sup' ⋯ optLoad \\to 0 \\le sup' ⋯ roundedLoad \\to L \\le 2 * inf' ⋯ roundedLoad \\to L \\le 2 * sup' ⋯ roundedLoad \\to L \\le 2 * inf' ⋯ optLoad \\to L \\le 2 * sup' ⋯ optLoad \\to (\\forall (i : SourceAgent), outLoad i \\le roundedLoad i + L / (56 / epsilon)) \\to (\\forall (i : SourceAgent), 56 / epsilon / (56 / epsilon + 1) * roundedLoad i - 2 / (56 / epsilon) * L \\le outLoad i) \\to (\\forall (i : SourceAgent), roundedLoad i \\le (56 / epsilon + 1) / (56 / epsilon) * optLoad i + L / (56 / epsilon)) \\to (\\forall (i : SourceAgent), optLoad i - L / (56 / epsilon) \\le roundedLoad i) \\to ratio (inf' ⋯ outLoad) (sup' ⋯ outLoad) \\le ratio (inf' ⋯ optLoad) (sup' ⋯ optLoad) * (1 + epsilon)"
     },
     "theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -335,7 +335,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "267ed8c1416a0fc8508dac80190cd7a823b20a7dc37acf8f6281c028c77c50c9",
       "paper_statement_sha256": "82b3f10378b5db822cf42689a22762fc75a65e9d66c84617a599cf4550fd4be1",
-      "tex_statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] [DecidableEq SourceItem] {M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc} {L LR epsilon : \u211d} {lambda : \u2115} {optimal : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (cert : RoundedInstanceSearchCertificate M L epsilon lambda optimal) (highGoods lowGoods : Finset SourceItem) (v : SourceItem \\to \u211d), 1 < lambda \\to 0 < L \\to (\\forall g \\in highGoods, L / \u2191lambda < v g \\land v g < L) \\to (\\forall g \\in lowGoods, 0 \\le v g \\land v g < L / \u2191lambda) \\to (\\forall g \\in highGoods, v g + L / \u2191lambda ^ 2 \\le L) \\to (\\forall (indexOf : SourceItem \\to RoundedValueIndex lambda) (combinedSupply : RoundedValueIndex lambda \\to \u2115), (\\forall g \\in highGoods, v g \\le roundedValue L lambda (indexOf g) \\land roundedValue L lambda (indexOf g) < v g + L / \u2191lambda ^ 2) \\to (\\forall (k : RoundedValueIndex lambda), combinedSupply k = paper_lmms_theorem_3_3_roundedGoodsSupplyOfGoods indexOf highGoods k + lowGoodsAggregatedSupply L lambda (sum v) k) \\to \\sum k, \u2191(combinedSupply k) * roundedValue L lambda k = \u2191(card SourceAgent) * LR) \\to (\\forall (indexOf : SourceItem \\to RoundedValueIndex lambda) (combinedSupply : RoundedValueIndex lambda \\to \u2115), (\\forall g \\in highGoods, v g \\le roundedValue L lambda (indexOf g) \\land roundedValue L lambda (indexOf g) < v g + L / \u2191lambda ^ 2) \\to (\\forall (k : RoundedValueIndex lambda), combinedSupply k = paper_lmms_theorem_3_3_roundedGoodsSupplyOfGoods indexOf highGoods k + lowGoodsAggregatedSupply L lambda (sum v) k) \\to combinedSupply (paper_lmms_theorem_3_3_topRoundedValueIndex lambda) = 0 \\to \\sum k, \u2191(combinedSupply k) * roundedValue L lambda k = \u2191(card SourceAgent) * LR \\to \\exists p, Nonempty (RoundedConcrete"
+      "tex_statement": "\\forall {SourceAgent : Type u_1} {SourceItem : Type u_2} {Alloc : Type u_3} [inst : Fintype SourceAgent] [inst_1 : Nonempty SourceAgent] [DecidableEq SourceItem] {M : IdenticalUtilitiesModel SourceAgent SourceItem Alloc} {L LR epsilon : ℝ} {lambda : ℕ} {optimal : Alloc}, 0 < epsilon \\to epsilon \\le 1 \\to \\forall (cert : RoundedInstanceSearchCertificate M L epsilon lambda optimal) (highGoods lowGoods : Finset SourceItem) (v : SourceItem \\to ℝ), 1 < lambda \\to 0 < L \\to (\\forall g \\in highGoods, L / ↑lambda < v g \\land v g < L) \\to (\\forall g \\in lowGoods, 0 \\le v g \\land v g < L / ↑lambda) \\to (\\forall g \\in highGoods, v g + L / ↑lambda ^ 2 \\le L) \\to (\\forall (indexOf : SourceItem \\to RoundedValueIndex lambda) (combinedSupply : RoundedValueIndex lambda \\to ℕ), (\\forall g \\in highGoods, v g \\le roundedValue L lambda (indexOf g) \\land roundedValue L lambda (indexOf g) < v g + L / ↑lambda ^ 2) \\to (\\forall (k : RoundedValueIndex lambda), combinedSupply k = paper_lmms_theorem_3_3_roundedGoodsSupplyOfGoods indexOf highGoods k + lowGoodsAggregatedSupply L lambda (sum v) k) \\to \\sum k, ↑(combinedSupply k) * roundedValue L lambda k = ↑(card SourceAgent) * LR) \\to (\\forall (indexOf : SourceItem \\to RoundedValueIndex lambda) (combinedSupply : RoundedValueIndex lambda \\to ℕ), (\\forall g \\in highGoods, v g \\le roundedValue L lambda (indexOf g) \\land roundedValue L lambda (indexOf g) < v g + L / ↑lambda ^ 2) \\to (\\forall (k : RoundedValueIndex lambda), combinedSupply k = paper_lmms_theorem_3_3_roundedGoodsSupplyOfGoods indexOf highGoods k + lowGoodsAggregatedSupply L lambda (sum v) k) \\to combinedSupply (paper_lmms_theorem_3_3_topRoundedValueIndex lambda) = 0 \\to \\sum k, ↑(combinedSupply k) * roundedValue L lambda k = ↑(card SourceAgent) * LR \\to \\exists p, Nonempty (RoundedConcrete"
     },
     "theorem4_1_source_goods_content": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -380,7 +380,7 @@
       "generator_type": "model",
       "lean_statement_sha256": "52ebb593788d9f158b4c106544cb85feb33a4b50dc9c358a7814833df3b124e9",
       "paper_statement_sha256": "77ebb8591753ef5daf8bf4a483b558e626e736e3d008530b18e08b246ea3217f",
-      "tex_statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [inst : Fintype Agent] [inst_1 : Fintype Item] [inst_2 : DecidableEq Agent] [inst_3 : DecidableEq Item] [inst_4 : Nonempty Agent] [Nonempty Item] (w : LMMS42ItemWeights Agent Item) {alpha t : \u211d}, 0 \\le alpha \\to 0 < t \\to (\\forall (p : Agent) (g : Item), 0 \\le w p g) \\to (\\forall (p : Agent), \\sum g, w p g = 1) \\to (\\forall (p : Agent) (g : Item), w p g \\le alpha) \\to 1 - 2 * alpha * \u2191(card Agent) / t ^ 2 \\le pmfProb (lmms42UniformAssignmentLaw Agent Item) fun assign  =>  maxReportEnvy (lmms42AdditiveReport w) (lmms42AllocationOfAssignment assign) \\le t"
+      "tex_statement": "\\forall {Agent : Type u_1} {Item : Type u_2} [inst : Fintype Agent] [inst_1 : Fintype Item] [inst_2 : DecidableEq Agent] [inst_3 : DecidableEq Item] [inst_4 : Nonempty Agent] [Nonempty Item] (w : LMMS42ItemWeights Agent Item) {alpha t : ℝ}, 0 \\le alpha \\to 0 < t \\to (\\forall (p : Agent) (g : Item), 0 \\le w p g) \\to (\\forall (p : Agent), \\sum g, w p g = 1) \\to (\\forall (p : Agent) (g : Item), w p g \\le alpha) \\to 1 - 2 * alpha * ↑(card Agent) / t ^ 2 \\le pmfProb (lmms42UniformAssignmentLaw Agent Item) fun assign  =>  maxReportEnvy (lmms42AdditiveReport w) (lmms42AllocationOfAssignment assign) \\le t"
     },
     "theorem4_2_uniform_random_mechanism_truthful": {
       "comment": "Context-free Lean-to-TeX translation for the current PaperInterface row.",
@@ -399,6 +399,42 @@
       "lean_statement_sha256": "26a0847f643afe171962c1091d49a63673e16ce594555602ab569275f64b6905",
       "paper_statement_sha256": "49b0358f5608cb390ae89c86d0f0fdb5aeb8c345d5f0c4220f079e33d9283059",
       "tex_statement": "[DecidableEq Agent] (M : directMechanism Agent Item) = LMMS04FairDivision.paper_fair_division_truthful M"
+    },
+    "theorem3_3_external_solver_selected_pair_full_summary_source_output_package": {
+      "comment": "Context-free Lean-to-TeX draft for an explicit external-solver boundary row.",
+      "generated_at": "2026-06-28T00:22:48Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "980cf9ed17adda2d03d9d60ee9842553322eaf6fc7750bc2823faf8e0fcb69b2",
+      "paper_statement_sha256": "80da952c3e3fa3b53e32d1e93fc4aa24c1e5ebab3ae1b02bee5029673c9853e7",
+      "tex_statement": "= @LMMS04FairDivision.ProofInterface.theorem3_3_external_solver_selected_pair_full_summary_source_output_package"
+    },
+    "theorem3_3_external_solver_selected_pair_full_summary_source_output_payload": {
+      "comment": "Context-free Lean-to-TeX draft for an explicit external-solver boundary row.",
+      "generated_at": "2026-06-28T00:22:48Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "974052e04e04eaf713e0632795b46910e1ed62ece1d46fd2f2e5864b2841a7cd",
+      "paper_statement_sha256": "c6c3f9276a3b0951c8264a2252408069c950854075a894d1fe95ccbb81a134e9",
+      "tex_statement": "= @LMMS04FairDivision.ProofInterface.theorem3_3_external_solver_selected_pair_full_summary_source_output_payload"
+    },
+    "theorem3_3_external_solver_selected_pair_full_summary_source_output_consequence": {
+      "comment": "Context-free Lean-to-TeX draft for an explicit external-solver boundary row.",
+      "generated_at": "2026-06-28T00:22:48Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "56179426c0b0a89f947fe2f4776d16b67d0d756466439ef23935d8ecd276476b",
+      "paper_statement_sha256": "23e09f60c3462d22db35aacfa2c8a7ff3af094e8d70ebe5fb37669d860cb1292",
+      "tex_statement": "= @LMMS04FairDivision.ProofInterface.theorem3_3_external_solver_selected_pair_full_summary_source_output_consequence"
+    },
+    "theorem3_3_external_solver_consequence_and_selected_pair_full_summary_source_output_of_claim_3_4_source_average_forward_additive_no_top_of_margin": {
+      "comment": "Context-free Lean-to-TeX draft for an explicit external-solver boundary row.",
+      "generated_at": "2026-06-28T00:22:48Z",
+      "generator": "gpt-5-codex",
+      "generator_type": "model",
+      "lean_statement_sha256": "4f544bada6d2705d2a5cb19172435f5b6239ad57384b3e5e4d6da76c755e9efb",
+      "paper_statement_sha256": "a63a500afd79eb8bd0df4451f3ce2227bf6b3ceace9720217381ab52372bd381",
+      "tex_statement": "= @LMMS04FairDivision.ProofInterface.theorem3_3_external_solver_consequence_and_selected_pair_full_summary_source_output_of_claim_3_4_source_average_forward_additive_no_top_of_margin"
     }
   },
   "paper": "LMMS04FairDivision",

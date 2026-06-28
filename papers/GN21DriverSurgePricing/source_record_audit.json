@@ -1,0 +1,230 @@
+{
+  "configured_review_row_count": 24,
+  "expected_field_judgment_keys": [
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.R1_nonneg",
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.bounds",
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.current_mass_pos",
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.fixed_reward_rate",
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.m_sub_R1_pos",
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.z_eq",
+    "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy",
+    "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_ae",
+    "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_form",
+    "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_measurable",
+    "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_subset",
+    "Theorem4AllMeasurableFeasibleAEPolicyFormData.exists_optimal",
+    "Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge",
+    "Theorem4AllMeasurableFeasibleAEPolicyFormData.surge"
+  ],
+  "import_module": "GN21DriverSurgePricing.PaperInterface",
+  "lean_check": {
+    "command": "lake build GN21DriverSurgePricing.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "GN21DriverSurgePricing.PaperInterface.review_theorem2_multiplicative_policy_shape_ae\n  (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (R : DynamicReward)\n  (forms : Theorem4AllMeasurableFeasibleAEPolicyFormData mu R)\n  (hnonsurge :\n    \u2200 (rho : Fin 2 \u2192 TripPolicy) (hrho : dynamicMeasurableOptimal R rho),\n      have D := forms.nonsurge rho hrho;\n      \u2191D.fst = Lemma5DerivativeShape.positive \u2228 \u2191D.fst = Lemma5DerivativeShape.strictlyDecreasing)\n  (hsurge :\n    \u2200 (rho : Fin 2 \u2192 TripPolicy) (hrho : dynamicMeasurableOptimal R rho),\n      have D := forms.surge rho hrho;\n      \u2191D.fst = Lemma5DerivativeShape.positive \u2228 \u2191D.fst = Lemma5DerivativeShape.strictlyIncreasing) :\n  (\u2203 rho,\n      dynamicMeasurableOptimal R rho \u2227\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)) \u2227\n    \u2200 (rho : Fin 2 \u2192 TripPolicy),\n      dynamicMeasurableOptimal R rho \u2192\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)\n'GN21DriverSurgePricing.PaperInterface.review_theorem2_multiplicative_policy_shape_ae' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGN21DriverSurgePricing.PaperInterface.review_theorem3_defined_reward_source_statement\n  (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (arrival : Fin 2 \u2192 \u211d) (rho R1 R2 switch12 switch21 : \u211d)\n  (hR1_eq : R1 = rho * R2) (hR1_pos : 0 < R1) (hR1_lt_R2 : R1 < R2) (hR2_pos : 0 < R2)\n  (hC_lt_rho :\n    theorem3FeasibilityThresholdC (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))\n        (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))\n        (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)\n        (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12) switch12 <\n      rho)\n  (hrho_lt_one : rho < 1) (harrival1_pos : 0 < arrival 0) (harrival2_pos : 0 < arrival 1) (hswitch12_pos : 0 < switch12)\n  (hswitch21_pos : 0 < switch21) (htime1_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => \u03c4) acceptAllPolicy (mu 0))\n  (htime2_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => \u03c4) acceptAllPolicy (mu 1))\n  (hq1_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => gn21SwitchProb switch12 switch21 \u03c4) acceptAllPolicy (mu 0))\n  (hq2_integrable : MeasureTheory.IntegrableOn (fun \u03c4 => gn21SwitchProb switch21 switch12 \u03c4) acceptAllPolicy (mu 1))\n  (hmass1_pos : 0 < singleStateTripMass (mu 0) acceptAllPolicy)\n  (hmass2_pos : 0 < singleStateTripMass (mu 1) acceptAllPolicy)\n  (surge_reward_rate_data :\n    \u2200 (m z : Fin 2 \u2192 \u211d),\n      0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1 \u2192\n        theorem3AcceptAllStructuredParameterEvidence mu arrival R1 R2 switch12 switch21 m z \u2192\n          \u2200 (\u03c1 : Fin 2 \u2192 TripPolicy),\n            dynamicFeasibleMeasurablePositiveMassPolicy mu \u03c1 \u2192\n              \u2203 R1_current ratio,\n                GN21SurgeLemma9AcceptAllAggregateRewardRateData (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21\n                  (m 1) R1_current (z 1) ratio (m 0) (z 0) (\u03c1 0) (\u03c1 1)) :\n  \u2203 m z,\n    (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2227\n      dynamicDefinedMeasurableIncentiveCompatible\n          (DynamicDefinedReward.of_total mu\n            (gn21MeasuredCTMCStructuredDynamicReward mu arrival switch12 switch21 m z)) \u2227\n        (\u2200 (\u03c1 : Fin 2 \u2192 TripPolicy),\n            dynamicDefinedMeasurableOptimal\n                (DynamicDefinedReward.of_total mu\n                  (gn21MeasuredCTMCStructuredDynamicReward mu arrival switch12 switch21 m z))\n                \u03c1 \u2192\n              dynamicAcceptAllAlmostEverywhere mu \u03c1) \u2227\n          (\u2203 q,\n              \u2200 (i : Fin 2) (\u03c4 : TripLength),\n                ctmcStructuredDynamicSurgePrice m z switch12 switch21 i \u03c4 = structuredSurgePrice (m i) (z i) (q i) \u03c4) \u2227\n            theorem3AcceptAllStructuredParameterEvidence mu arrival R1 R2 switch12 switch21 m z\n'GN21DriverSurgePricing.PaperInterface.review_theorem3_defined_reward_source_statement' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "returncode": 0,
+    "truncated": false
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: GN21DriverSurgePricing\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Classify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/source-model field that states convexity, response semantics, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"field\": \"exists_optimal\",\n    \"judgment_key\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData.exists_optimal\",\n    \"line\": 47368,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.exists_optimal\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [\n      \"optimal\"\n    ],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData\",\n    \"type\": \"\\u2203 \\u03c1 : Fin 2 \\u2192 TripPolicy, dynamicMeasurableOptimal R \\u03c1\"\n  },\n  {\n    \"field\": \"nonsurge\",\n    \"judgment_key\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge\",\n    \"line\": 47370,\n    \"nested_structures\": [\n      \"Lemma5FeasiblePolicyFormAlmostEverywhereData\"\n    ],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData\",\n    \"type\": \"\\u2200 \\u03c1 : Fin 2 \\u2192 TripPolicy, dynamicMeasurableOptimal R \\u03c1 \\u2192 \\u03a3 shape : {shape : Lemma5DerivativeShape // theorem4NonsurgeAllowedLemma5Shape shape}, Lemma5FeasiblePolicyFormAlmostEverywhereData (\\u03bc 0) shape.1 (\\u03c1 0)\"\n  },\n  {\n    \"field\": \"policy\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy\",\n    \"line\": 16691,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"TripPolicy\"\n  },\n  {\n    \"field\": \"policy_subset\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_subset\",\n    \"line\": 16692,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_subset\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"policy \\u2286 acceptAllPolicy\"\n  },\n  {\n    \"field\": \"policy_measurable\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_measurable\",\n    \"line\": 16693,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_measurable\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"MeasurableSet policy\"\n  },\n  {\n    \"field\": \"policy_form\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_form\",\n    \"line\": 16694,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_form\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"lemma5PolicyForm shape policy\"\n  },\n  {\n    \"field\": \"policy_ae\",\n    \"judgment_key\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_ae\",\n    \"line\": 16695,\n    \"nested_structures\": [],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_ae\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Lemma5FeasiblePolicyFormAlmostEverywhereData\",\n    \"type\": \"policyAlmostEverywhereEq \\u03bc \\u03c3 policy\"\n  },\n  {\n    \"field\": \"surge\",\n    \"judgment_key\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData.surge\",\n    \"line\": 47377,\n    \"nested_structures\": [\n      \"Lemma5FeasiblePolicyFormAlmostEverywhereData\"\n    ],\n    \"path\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.surge\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"Theorem4AllMeasurableFeasibleAEPolicyFormData\",\n    \"type\": \"\\u2200 \\u03c1 : Fin 2 \\u2192 TripPolicy, dynamicMeasurableOptimal R \\u03c1 \\u2192 \\u03a3 shape : {shape : Lemma5DerivativeShape // theorem4SurgeAllowedLemma5Shape shape}, Lemma5FeasiblePolicyFormAlmostEverywhereData (\\u03bc 1) shape.1 (\\u03c1 1)\"\n  },\n  {\n    \"field\": \"current_mass_pos\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.current_mass_pos\",\n    \"line\": 42295,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.current_mass_pos\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"0 < singleStateTripMass \\u03bcJ \\u03c3J\"\n  },\n  {\n    \"field\": \"bounds\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.bounds\",\n    \"line\": 42296,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.bounds\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"lemma9StructuredBounds ratio (gn21ScaledStateTime \\u03bcI arrivalI \\u03c3I) (gn21ExitWeightIntegral \\u03bcI arrivalI switch12 switch21 \\u03c3I) (gn21ScaledStateTime \\u03bcJ arrivalJ \\u03c3J) (gn21ExitWeightIntegral \\u03bcJ arrivalJ switch21 switch12 \\u03c3J) switch21\"\n  },\n  {\n    \"field\": \"z_eq\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.z_eq\",\n    \"line\": 42303,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.z_eq\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"z = ratio * (m - R1)\"\n  },\n  {\n    \"field\": \"m_sub_R1_pos\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.m_sub_R1_pos\",\n    \"line\": 42304,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.m_sub_R1_pos\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"0 < m - R1\"\n  },\n  {\n    \"field\": \"R1_nonneg\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.R1_nonneg\",\n    \"line\": 42305,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.R1_nonneg\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"0 \\u2264 R1\"\n  },\n  {\n    \"field\": \"fixed_reward_rate\",\n    \"judgment_key\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData.fixed_reward_rate\",\n    \"line\": 42306,\n    \"nested_structures\": [],\n    \"path\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.fixed_reward_rate\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GN21DriverSurgePricing/MainTheorems.lean\",\n    \"structure\": \"GN21SurgeLemma9AcceptAllAggregateRewardRateData\",\n    \"type\": \"gn21MeasuredStateRewardRate \\u03bcI arrivalI (ctmcStructuredSurgePrice mI zI switch12 switch21) \\u03c3I = R1\"\n  }\n]",
+  "paper": "GN21DriverSurgePricing",
+  "paper_dir": "/home/nkgarg/src/EconCSLib-meta/EconCSLib-private/papers/GN21DriverSurgePricing",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 14,
+  "recursive_field_items": [
+    {
+      "field": "exists_optimal",
+      "judgment_key": "Theorem4AllMeasurableFeasibleAEPolicyFormData.exists_optimal",
+      "line": 47368,
+      "nested_structures": [],
+      "path": "Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.exists_optimal",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [
+        "optimal"
+      ],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "Theorem4AllMeasurableFeasibleAEPolicyFormData",
+      "type": "\u2203 \u03c1 : Fin 2 \u2192 TripPolicy, dynamicMeasurableOptimal R \u03c1"
+    },
+    {
+      "field": "nonsurge",
+      "judgment_key": "Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge",
+      "line": 47370,
+      "nested_structures": [
+        "Lemma5FeasiblePolicyFormAlmostEverywhereData"
+      ],
+      "path": "Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "Theorem4AllMeasurableFeasibleAEPolicyFormData",
+      "type": "\u2200 \u03c1 : Fin 2 \u2192 TripPolicy, dynamicMeasurableOptimal R \u03c1 \u2192 \u03a3 shape : {shape : Lemma5DerivativeShape // theorem4NonsurgeAllowedLemma5Shape shape}, Lemma5FeasiblePolicyFormAlmostEverywhereData (\u03bc 0) shape.1 (\u03c1 0)"
+    },
+    {
+      "field": "policy",
+      "judgment_key": "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy",
+      "line": 16691,
+      "nested_structures": [],
+      "path": "Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "Lemma5FeasiblePolicyFormAlmostEverywhereData",
+      "type": "TripPolicy"
+    },
+    {
+      "field": "policy_subset",
+      "judgment_key": "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_subset",
+      "line": 16692,
+      "nested_structures": [],
+      "path": "Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_subset",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "Lemma5FeasiblePolicyFormAlmostEverywhereData",
+      "type": "policy \u2286 acceptAllPolicy"
+    },
+    {
+      "field": "policy_measurable",
+      "judgment_key": "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_measurable",
+      "line": 16693,
+      "nested_structures": [],
+      "path": "Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_measurable",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "Lemma5FeasiblePolicyFormAlmostEverywhereData",
+      "type": "MeasurableSet policy"
+    },
+    {
+      "field": "policy_form",
+      "judgment_key": "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_form",
+      "line": 16694,
+      "nested_structures": [],
+      "path": "Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_form",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "Lemma5FeasiblePolicyFormAlmostEverywhereData",
+      "type": "lemma5PolicyForm shape policy"
+    },
+    {
+      "field": "policy_ae",
+      "judgment_key": "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_ae",
+      "line": 16695,
+      "nested_structures": [],
+      "path": "Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge -> Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_ae",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "Lemma5FeasiblePolicyFormAlmostEverywhereData",
+      "type": "policyAlmostEverywhereEq \u03bc \u03c3 policy"
+    },
+    {
+      "field": "surge",
+      "judgment_key": "Theorem4AllMeasurableFeasibleAEPolicyFormData.surge",
+      "line": 47377,
+      "nested_structures": [
+        "Lemma5FeasiblePolicyFormAlmostEverywhereData"
+      ],
+      "path": "Theorem4AllMeasurableFeasibleAEPolicyFormData -> Theorem4AllMeasurableFeasibleAEPolicyFormData.surge",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "Theorem4AllMeasurableFeasibleAEPolicyFormData",
+      "type": "\u2200 \u03c1 : Fin 2 \u2192 TripPolicy, dynamicMeasurableOptimal R \u03c1 \u2192 \u03a3 shape : {shape : Lemma5DerivativeShape // theorem4SurgeAllowedLemma5Shape shape}, Lemma5FeasiblePolicyFormAlmostEverywhereData (\u03bc 1) shape.1 (\u03c1 1)"
+    },
+    {
+      "field": "current_mass_pos",
+      "judgment_key": "GN21SurgeLemma9AcceptAllAggregateRewardRateData.current_mass_pos",
+      "line": 42295,
+      "nested_structures": [],
+      "path": "GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.current_mass_pos",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "GN21SurgeLemma9AcceptAllAggregateRewardRateData",
+      "type": "0 < singleStateTripMass \u03bcJ \u03c3J"
+    },
+    {
+      "field": "bounds",
+      "judgment_key": "GN21SurgeLemma9AcceptAllAggregateRewardRateData.bounds",
+      "line": 42296,
+      "nested_structures": [],
+      "path": "GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.bounds",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "GN21SurgeLemma9AcceptAllAggregateRewardRateData",
+      "type": "lemma9StructuredBounds ratio (gn21ScaledStateTime \u03bcI arrivalI \u03c3I) (gn21ExitWeightIntegral \u03bcI arrivalI switch12 switch21 \u03c3I) (gn21ScaledStateTime \u03bcJ arrivalJ \u03c3J) (gn21ExitWeightIntegral \u03bcJ arrivalJ switch21 switch12 \u03c3J) switch21"
+    },
+    {
+      "field": "z_eq",
+      "judgment_key": "GN21SurgeLemma9AcceptAllAggregateRewardRateData.z_eq",
+      "line": 42303,
+      "nested_structures": [],
+      "path": "GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.z_eq",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "GN21SurgeLemma9AcceptAllAggregateRewardRateData",
+      "type": "z = ratio * (m - R1)"
+    },
+    {
+      "field": "m_sub_R1_pos",
+      "judgment_key": "GN21SurgeLemma9AcceptAllAggregateRewardRateData.m_sub_R1_pos",
+      "line": 42304,
+      "nested_structures": [],
+      "path": "GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.m_sub_R1_pos",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "GN21SurgeLemma9AcceptAllAggregateRewardRateData",
+      "type": "0 < m - R1"
+    },
+    {
+      "field": "R1_nonneg",
+      "judgment_key": "GN21SurgeLemma9AcceptAllAggregateRewardRateData.R1_nonneg",
+      "line": 42305,
+      "nested_structures": [],
+      "path": "GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.R1_nonneg",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "GN21SurgeLemma9AcceptAllAggregateRewardRateData",
+      "type": "0 \u2264 R1"
+    },
+    {
+      "field": "fixed_reward_rate",
+      "judgment_key": "GN21SurgeLemma9AcceptAllAggregateRewardRateData.fixed_reward_rate",
+      "line": 42306,
+      "nested_structures": [],
+      "path": "GN21SurgeLemma9AcceptAllAggregateRewardRateData -> GN21SurgeLemma9AcceptAllAggregateRewardRateData.fixed_reward_rate",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GN21DriverSurgePricing/MainTheorems.lean",
+      "structure": "GN21SurgeLemma9AcceptAllAggregateRewardRateData",
+      "type": "gn21MeasuredStateRewardRate \u03bcI arrivalI (ctmcStructuredSurgePrice mI zI switch12 switch21) \u03c3I = R1"
+    }
+  ],
+  "review_row_count": 24,
+  "rows_with_record_premises": [
+    {
+      "lean_source_declaration": "theorem review_theorem2_multiplicative_policy_shape_ae\n    (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (R : DynamicReward)\n    (forms : Theorem4AllMeasurableFeasibleAEPolicyFormData mu R)\n    (hnonsurge :\n      \u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192\n        let D := forms.nonsurge rho hrho\n        D.1.1 = .positive \u2228 D.1.1 = .strictlyDecreasing)\n    (hsurge :\n      \u2200 rho : Fin 2 \u2192 TripPolicy, (hrho : dynamicMeasurableOptimal R rho) \u2192\n        let D := forms.surge rho hrho\n        D.1.1 = .positive \u2228 D.1.1 = .strictlyIncreasing) :\n    (\u2203 rho : Fin 2 \u2192 TripPolicy,\n      dynamicMeasurableOptimal R rho \u2227\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n        rejectsShortTripsAlmostEverywhere (mu 1) (rho 1)) \u2227\n      \u2200 rho : Fin 2 \u2192 TripPolicy, dynamicMeasurableOptimal R rho \u2192\n        rejectsLongTripsFiniteOrInfiniteCutoffAlmostEverywhere (mu 0) (rho 0) \u2227\n          rejectsShortTripsAlmostEverywhere (mu 1) (rho 1) :=\n    theorem2_multiplicative_policy_shape_ae_of_feasible_ae_policy_forms\n      mu R forms hnonsurge hsurge",
+      "record_premises": [
+        "Theorem4AllMeasurableFeasibleAEPolicyFormData"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "review_theorem2_multiplicative_policy_shape_ae"
+    },
+    {
+      "lean_source_declaration": "theorem review_theorem3_defined_reward_source_statement\n    (mu : Fin 2 \u2192 MeasureTheory.Measure TripLength) (arrival : Fin 2 \u2192 \u211d)\n    (rho R1 R2 switch12 switch21 : \u211d)\n    (hR1_eq : R1 = rho * R2)\n    (hR1_pos : 0 < R1)\n    (hR1_lt_R2 : R1 < R2)\n    (hR2_pos : 0 < R2)\n    (hC_lt_rho :\n      theorem3FeasibilityThresholdC\n          (gn21AcceptAllScaledStateTime (mu 0) (arrival 0))\n          (gn21AcceptAllScaledStateTime (mu 1) (arrival 1))\n          (gn21AcceptAllExitWeightIntegral (mu 0) (arrival 0) switch12 switch21)\n          (gn21AcceptAllExitWeightIntegral (mu 1) (arrival 1) switch21 switch12)\n          switch12 < rho)\n    (hrho_lt_one : rho < 1)\n    (harrival1_pos : 0 < arrival 0)\n    (harrival2_pos : 0 < arrival 1)\n    (hswitch12_pos : 0 < switch12)\n    (hswitch21_pos : 0 < switch21)\n    (htime1_integrable :\n      IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 0))\n    (htime2_integrable :\n      IntegrableOn (fun \u03c4 : TripLength => \u03c4) acceptAllPolicy (mu 1))\n    (hq1_integrable :\n      IntegrableOn\n        (fun \u03c4 : TripLength => gn21SwitchProb switch12 switch21 \u03c4)\n        acceptAllPolicy (mu 0))\n    (hq2_integrable :\n      IntegrableOn\n        (fun \u03c4 : TripLength => gn21SwitchProb switch21 switch12 \u03c4)\n        acceptAllPolicy (mu 1))\n    (hmass1_pos : 0 < singleStateTripMass (mu 0) acceptAllPolicy)\n    (hmass2_pos : 0 < singleStateTripMass (mu 1) acceptAllPolicy)\n    (surge_reward_rate_data :\n      \u2200 m z : Fin 2 \u2192 \u211d,\n        (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2192\n          theorem3AcceptAllStructuredParameterEvidence\n            mu arrival R1 R2 switch12 switch21 m z \u2192\n          \u2200 \u03c1 : Fin 2 \u2192 TripPolicy,\n            dynamicFeasibleMeasurablePositiveMassPolicy mu \u03c1 \u2192\n              \u2203 R1_current ratio : \u211d,\n                GN21SurgeLemma9AcceptAllAggregateRewardRateData\n                  (mu 0) (mu 1) (arrival 0) (arrival 1) switch12 switch21\n                  (m 1) R1_current (z 1) ratio (m 0) (z 0)\n                  (\u03c1 0) (\u03c1 1)) :\n    \u2203 m z : Fin 2 \u2192 \u211d,\n      (0 \u2264 m 0 \u2227 0 \u2264 m 1 \u2227 0 \u2264 z 1) \u2227\n        dynamicDefinedMeasurableIncentiveCompatible\n          (DynamicDefinedReward.of_total mu\n            (gn21MeasuredCTMCStructuredDynamicReward\n              mu arrival switch12 switch21 m z)) \u2227\n        (\u2200 \u03c1 : Fin 2 \u2192 TripPolicy,\n          dynamicDefinedMeasurableOptimal\n            (DynamicDefinedReward.of_total mu\n              (gn21MeasuredCTMCStructuredDynamicReward\n                mu arrival switch12 switch21 m z)) \u03c1 \u2192\n            dynamicAcceptAllAlmostEverywhere mu \u03c1) \u2227\n        (\u2203 q : Fin 2 \u2192 TripLength \u2192 \u211d,\n          \u2200 i \u03c4,\n            ctmcStructuredDynamicSurgePrice m z switch12 switch21 i \u03c4 =\n              structuredSurgePrice (m i) (z i) (q i) \u03c4) \u2227\n        theorem3AcceptAllStructuredParameterEvidence\n          mu arrival R1 R2 switch12 switch21 m z := by\n  let A :\n      Theorem3AcceptAllStructuredPositiveMassFeasibleSequentialSurgeRewardRateDataAssumptions\n        mu arrival rho R1 R2 switch12 switch21 :=\n    { hR1_eq := hR1_eq\n      hR1_pos := hR1_pos\n      hR1_lt_R2 := hR1_lt_R2\n      hR2_pos := hR2_pos\n      hC_lt_rho := hC_lt_rho\n      hrho_lt_one := hrho_lt_one\n      harrival1_pos := harrival1_pos\n      harrival2_pos := harrival2_pos\n      hswitch12_pos := hswitch12_pos\n      hswitch21_pos := hswitch21_pos\n      htime1_integrable := htime1_integrable\n      htime2_integrable := htime2_integrable\n      hq1_integrable := hq1_integrable\n      hq2_integrable := hq2_integrable\n      hmass1_pos := hmass1_pos\n      hmass2_pos := hmass2_pos\n      surge_reward_rate_data := surge_reward_rate_data }\n  simpa [theorem3MeasuredStructuredDefinedMeasurableICAEUniqueConclusion] using\n    theorem3_defined_reward_source\n      mu arrival rho R1 R2 switch12 switch21 A",
+      "record_premises": [
+        "GN21SurgeLemma9AcceptAllAggregateRewardRateData"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "review_theorem3_defined_reward_source_statement"
+    }
+  ],
+  "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": []
+}

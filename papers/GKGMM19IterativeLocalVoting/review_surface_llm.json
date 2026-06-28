@@ -174,9 +174,9 @@
   "paper": "GKGMM19IterativeLocalVoting",
   "reason": "The 42-row surface is above the LLM threshold but below the oversize threshold. Rows are source-facing formulas, named conditional endpoints, paper assumptions, or the approved SSGM proof-boundary row. Theorem 3 is included only as an explicit full-space conditional endpoint; the general constrained alternative remains auxiliary documentation.",
   "review_rows": 42,
-  "review_surface_sha256": "a4f6d6cdd0c9a045b981ea156fce47d8ac868a5688345a2e210035fd9b924e67",
+  "review_surface_sha256": "689b71e6dd74970555d5e33c4c5c0f4a9bab47978e9c1e1d52387e2d7b50488a",
   "schema": 1,
-  "validated_at": "2026-06-27T00:00:00Z",
+  "validated_at": "2026-06-26T00:00:00Z",
   "validator": "gpt-5-codex",
   "validator_type": "agent"
 }

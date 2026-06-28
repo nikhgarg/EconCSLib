@@ -56,18 +56,19 @@ def applicantOptimalStableMarriage {M W : Type*}
 /--
 Theorem 1: on the strict equal-cardinality marriage domain, a stable complete
 marriage exists.
+Source status: direct paper statement
+Source note: Equal cardinality is derived from the same-index finite marriage representation.
 -/
 theorem theorem1_stable_marriage_exists
-    {M W : Type*} [Fintype M] [Fintype W] [DecidableEq M] [DecidableEq W]
-    (val_m : M → W → ℝ) (val_w : W → M → ℝ)
-    (hcard : Fintype.card M = Fintype.card W)
+    {A : Type*} [Fintype A] [DecidableEq A]
+    (val_m : A → A → ℝ) (val_w : A → A → ℝ)
     (hdomain : strictMarriageDomain val_m val_w) :
-    ∃ mu : Assignment M W,
+    ∃ mu : Assignment A A,
       stableMarriage val_m val_w mu ∧ completeMarriage mu := by
   simpa [strictMarriageDomain, stableMarriage, completeMarriage, IsStable,
     gs_strict_marriage_domain, gs_stable_marriage, gs_complete_marriage] using
     paper_gs62_theorem1_stable_marriage_exists
-      val_m val_w hcard hdomain
+      val_m val_w rfl hdomain
 
 /--
 College-admissions theorem: finite applicants and colleges with arbitrary
@@ -89,14 +90,13 @@ theorem college_admissions_stable_assignment_exists
 Theorem 2: on the finite equal-cardinality strict marriage domain, the
 applicant-proposing deferred-acceptance assignment is complete and
 applicant-optimal among stable assignments.
+Source status: direct paper statement
+Source note: Equal cardinality is derived from the same-index finite quota-one representation.
 -/
 theorem theorem2_applicant_optimality
-    {Applicants Colleges : Type*}
-    [Fintype Applicants] [Fintype Colleges]
-    [DecidableEq Applicants] [DecidableEq Colleges]
-    (val_applicant : Applicants → Colleges → ℝ)
-    (val_college : Colleges → Applicants → ℝ)
-    (hcard : Fintype.card Applicants = Fintype.card Colleges)
+    {A : Type*} [Fintype A] [DecidableEq A]
+    (val_applicant : A → A → ℝ)
+    (val_college : A → A → ℝ)
     (hdomain : strictMarriageDomain val_applicant val_college) :
     completeMarriage (deferredAcceptance val_applicant val_college) ∧
       applicantOptimalStableMarriage val_applicant val_college
@@ -105,7 +105,7 @@ theorem theorem2_applicant_optimality
   · simpa [strictMarriageDomain, completeMarriage,
       gs_strict_marriage_domain, gs_complete_marriage] using
       gs_deferredAcceptance_complete_on_strict_marriage_domain
-        val_applicant val_college hcard hdomain
+        val_applicant val_college rfl hdomain
   · simpa [strictMarriageDomain, stableMarriage, IsStable,
       applicantOptimalStableMarriage, gs_strict_marriage_domain,
       gs_stable_marriage, gs_applicant_optimal_stable_marriage] using

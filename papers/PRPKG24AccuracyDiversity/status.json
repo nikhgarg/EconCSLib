@@ -7,7 +7,7 @@
   "build_target": "lake build PRPKG24AccuracyDiversity",
   "status": "formalized",
   "main_caveat": "",
-  "human_summary": "Lean formalizes the paper-facing results, including the concrete Proposition 4 sphere endpoint. Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. The validation report notes the continuity/Laplace regularity used by the Proposition 4 wrapper.",
+  "human_summary": "Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result.",
   "human_summary_review": {
     "status": "human_approved",
     "note": "Do not rewrite this summary without explicit human instruction."

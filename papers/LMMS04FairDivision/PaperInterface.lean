@@ -110,6 +110,42 @@ abbrev theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee :=
   @LMMS04FairDivision.ProofInterface.theorem3_3_solver_auto_cap_full_ip_summary_with_ratio_guarantee
 
 /--
+Theorem 3.3 compact external-solver package.
+Source status: partial boundary
+Source note: Lean supplies the selected-pair/full-IP source-output payload; the
+runtime/FPTAS conclusion is exactly the supplied external solver consequence.
+-/
+abbrev theorem3_3_external_solver_selected_pair_full_summary_source_output_package :=
+  @LMMS04FairDivision.ProofInterface.theorem3_3_external_solver_selected_pair_full_summary_source_output_package
+
+/--
+Theorem 3.3 compact external-solver payload projection.
+Source status: partial boundary
+Source note: This projects the verified selected-pair/full-IP source-output
+payload from the conditional external-solver package.
+-/
+abbrev theorem3_3_external_solver_selected_pair_full_summary_source_output_payload :=
+  @LMMS04FairDivision.ProofInterface.theorem3_3_external_solver_selected_pair_full_summary_source_output_payload
+
+/--
+Theorem 3.3 compact external-solver consequence projection.
+Source status: partial boundary
+Source note: This projection records that the final runtime/FPTAS conclusion is
+the external solver consequence, pending the reusable fixed-dimension IP theorem.
+-/
+abbrev theorem3_3_external_solver_selected_pair_full_summary_source_output_consequence :=
+  @LMMS04FairDivision.ProofInterface.theorem3_3_external_solver_selected_pair_full_summary_source_output_consequence
+
+/--
+Theorem 3.3 strongest Claim-3.4 additive external-solver endpoint.
+Source status: partial boundary
+Source note: Under the source-average Claim 3.4 hypotheses and additive
+selected-pair estimates, this returns the compact external-solver package.
+-/
+abbrev theorem3_3_external_solver_consequence_and_selected_pair_full_summary_source_output_of_claim_3_4_source_average_forward_additive_no_top_of_margin :=
+  @LMMS04FairDivision.ProofInterface.theorem3_3_external_solver_consequence_and_selected_pair_full_summary_source_output_of_claim_3_4_source_average_forward_additive_no_top_of_margin
+
+/--
 Claim 3.4 fixed-rounding ratio endpoint.
 Source status: partial boundary
 Source note: Section 3 rounded-search helpers still expose selected-certificate premises.

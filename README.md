@@ -69,14 +69,14 @@ published citation title and year.
 | [GGSG19 Top Three](papers/GGSG19TopThree) | Formalized | 0/10 | OK: 317 lines |  |
 | [GJ18 Informative Rating Systems](papers/GJ18InformativeRatingSystems) | Formalized | 0/7 | OK: 2940 lines |  |
 | [LG21 Test Optional Policies](papers/LG21TestOptionalPolicies) | Formalized | 0/16 | OK: 77 lines |  |
-| [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/24 | OK: 379 lines |  |
-| [PRPKG24 Accuracy Diversity](papers/PRPKG24AccuracyDiversity) | Formalized | 0/42 | OK: 287 lines | Lean formalizes the paper-facing results, including the concrete Proposition 4 sphere endpoint. Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. The validation report notes the continuity/Laplace regularity used by the Proposition 4 wrapper. |
+| [GN21 Driver Surge Pricing](papers/GN21DriverSurgePricing) | Formalized | 0/34 | OK: 379 lines |  |
+| [PRPKG24 Accuracy Diversity](papers/PRPKG24AccuracyDiversity) | Formalized | 0/42 | OK: 287 lines | Proposition 2's printed finite bound appears to miss a factor of 2; Lean proves the corrected finite bound, which is sufficient for the asymptotic 1/2-homogeneity result. |
 | [GCG24 User Item Fairness](papers/GCG24UserItemFairness) | Formalized | 0/18 | OK: 286 lines |  |
 | [PKG25 No Free Lunch](papers/PKG25NoFreeLunch) | Formalized | 0/6 | OK: 71 lines |  |
 | [DSWG24 Discretization Bias](papers/DSWG24DiscretizationBias) | Formalized | 0/32 | OK: 456 lines |  |
-| [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized | 10/17 | OK: 332 lines | Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement. |
+| [MBJG25 Producer Fairness](papers/MBJG25ProducerFairness) | Formalized | 10/27 | OK: 332 lines | Formalization required an interior-quality assumption (0 < q_v < 1) for the strict variance-decrease statement. |
 | [LOS02 Combinatorial Auctions](papers/LOS02CombinatorialAuctions) | Partially formalized | 0/30 | OK: 371 lines | Greedy approximation, truthfulness, and Theorem 6.1 reductions are formalized. Full formalization requires computational complexity results that are out of scope. |
-| [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/31 | OK: 267 lines | Sections 2 and 4 are fully formalized. Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure. |
+| [LMMS04 Fair Division](papers/LMMS04FairDivision) | Partially formalized | 0/35 | OK: 303 lines | Sections 2 and 4 are fully formalized. Section 3 has query/descent/rounded-search support. The PTAS/FPTAS runtime layer needs reusable fixed-dimension IP complexity infrastructure. |
 | [GKGMM19 Iterative Local Voting](papers/GKGMM19IterativeLocalVoting) | Conditional | 0/42 | OK: 2723 lines | Conditional formalization: source-facing formulas and bridge theorems compile, with the remaining intentional boundary isolated to the SSGM convergence theorem. Theorem 3 is proved as a constrained alternative in general and as the original statement under the explicit full-space condition. |
 <!-- END GENERATED PAPER STATUS TABLE -->
 

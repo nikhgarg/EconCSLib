@@ -11,7 +11,7 @@
   "review_entrypoint": "papers/MBJG25ProducerFairness/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 10,
-    "total_rows": 17,
+    "total_rows": 27,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "uncertain_rows": 2,
@@ -21,7 +21,7 @@
     "path": "papers/MBJG25ProducerFairness/PaperInterface.lean",
     "line_count": 332,
     "declaration_rows": 17,
-    "review_rows": 17,
+    "review_rows": 27,
     "oversized": false,
     "maintainability_issue": null,
     "proof_interface_path": "papers/MBJG25ProducerFairness/ProofInterface.lean",

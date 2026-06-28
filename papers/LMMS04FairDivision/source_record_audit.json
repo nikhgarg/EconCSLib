@@ -1,0 +1,447 @@
+{
+  "configured_review_row_count": 48,
+  "expected_field_judgment_keys": [
+    "Graham14SchedulingApproximationCertificate.approximation",
+    "Graham14SchedulingApproximationCertificate.extrema",
+    "RoundedInstanceSearchCertificate.optimalMax_nonneg",
+    "RoundedInstanceSearchCertificate.optimalMin_pos",
+    "RoundedInstanceSearchCertificate.outputAllocation",
+    "RoundedInstanceSearchCertificate.pairSearch",
+    "RoundedInstanceSearchCertificate.roundedAllocation",
+    "RoundedInstanceSearchCertificate.roundedToSourceTransfer",
+    "RoundedInstanceSearchCertificate.sourceToRoundedOptimal",
+    "RoundedTypeIPCertificate.admissibleTypes",
+    "RoundedTypeIPCertificate.allPlayersAssigned",
+    "RoundedTypeIPCertificate.allUsedTypesEnumerated",
+    "RoundedTypeIPCertificate.goodsFeasible",
+    "RoundedTypeIPCertificate.goodsFeasible_proof",
+    "RoundedTypeIPCertificate.intervalFeasible",
+    "RoundedTypeIPCertificate.intervalFeasible_proof",
+    "RoundedTypeIPCertificate.typeMultiplicity",
+    "RoundedValuePairIPCertificate.admissibleTypes_eq",
+    "RoundedValuePairIPCertificate.ip",
+    "RoundedValuePairIPCertificate.pair_mem",
+    "RoundedValuePairSearchCertificate.chosenIP",
+    "RoundedValuePairSearchCertificate.chosenPair",
+    "RoundedValuePairSearchCertificate.optimalAmongFeasible",
+    "SchedulingExtremaCertificate.load_lower",
+    "SchedulingExtremaCertificate.load_upper",
+    "SchedulingExtremaCertificate.maxLoad",
+    "SchedulingExtremaCertificate.maxLoad_nonneg",
+    "SchedulingExtremaCertificate.minLoad",
+    "SchedulingExtremaCertificate.minLoad_pos"
+  ],
+  "import_module": "LMMS04FairDivision.PaperInterface",
+  "lean_check": {
+    "command": "lake build LMMS04FairDivision.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "LMMS04FairDivision.assumption_ptas_error_parameter_range (epsilon : \u211d) : Prop\n'LMMS04FairDivision.assumption_ptas_error_parameter_range' depends on axioms: [propext, Classical.choice, Quot.sound]\nLMMS04FairDivision.assumption_external_graham_scheduling_boundary : Prop\n'LMMS04FairDivision.assumption_external_graham_scheduling_boundary' does not depend on any axioms\n",
+    "returncode": 0,
+    "truncated": false
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: LMMS04FairDivision\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Classify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/source-model field that states convexity, response semantics, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"field\": \"extrema\",\n    \"judgment_key\": \"Graham14SchedulingApproximationCertificate.extrema\",\n    \"line\": 103,\n    \"nested_structures\": [\n      \"SchedulingExtremaCertificate\"\n    ],\n    \"path\": \"Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem32Graham.lean\",\n    \"structure\": \"Graham14SchedulingApproximationCertificate\",\n    \"type\": \"SchedulingExtremaCertificate load\"\n  },\n  {\n    \"field\": \"minLoad\",\n    \"judgment_key\": \"SchedulingExtremaCertificate.minLoad\",\n    \"line\": 46,\n    \"nested_structures\": [],\n    \"path\": \"Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.minLoad\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem32Graham.lean\",\n    \"structure\": \"SchedulingExtremaCertificate\",\n    \"type\": \"\\u211d\"\n  },\n  {\n    \"field\": \"maxLoad\",\n    \"judgment_key\": \"SchedulingExtremaCertificate.maxLoad\",\n    \"line\": 47,\n    \"nested_structures\": [],\n    \"path\": \"Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.maxLoad\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem32Graham.lean\",\n    \"structure\": \"SchedulingExtremaCertificate\",\n    \"type\": \"\\u211d\"\n  },\n  {\n    \"field\": \"minLoad_pos\",\n    \"judgment_key\": \"SchedulingExtremaCertificate.minLoad_pos\",\n    \"line\": 48,\n    \"nested_structures\": [],\n    \"path\": \"Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.minLoad_pos\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem32Graham.lean\",\n    \"structure\": \"SchedulingExtremaCertificate\",\n    \"type\": \"0 < minLoad\"\n  },\n  {\n    \"field\": \"maxLoad_nonneg\",\n    \"judgment_key\": \"SchedulingExtremaCertificate.maxLoad_nonneg\",\n    \"line\": 49,\n    \"nested_structures\": [],\n    \"path\": \"Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.maxLoad_nonneg\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem32Graham.lean\",\n    \"structure\": \"SchedulingExtremaCertificate\",\n    \"type\": \"0 \\u2264 maxLoad\"\n  },\n  {\n    \"field\": \"load_lower\",\n    \"judgment_key\": \"SchedulingExtremaCertificate.load_lower\",\n    \"line\": 50,\n    \"nested_structures\": [],\n    \"path\": \"Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.load_lower\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem32Graham.lean\",\n    \"structure\": \"SchedulingExtremaCertificate\",\n    \"type\": \"\\u2200 i : Agent, minLoad \\u2264 load i\"\n  },\n  {\n    \"field\": \"load_upper\",\n    \"judgment_key\": \"SchedulingExtremaCertificate.load_upper\",\n    \"line\": 51,\n    \"nested_structures\": [],\n    \"path\": \"Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.load_upper\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem32Graham.lean\",\n    \"structure\": \"SchedulingExtremaCertificate\",\n    \"type\": \"\\u2200 i : Agent, load i \\u2264 maxLoad\"\n  },\n  {\n    \"field\": \"approximation\",\n    \"judgment_key\": \"Graham14SchedulingApproximationCertificate.approximation\",\n    \"line\": 104,\n    \"nested_structures\": [],\n    \"path\": \"Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.approximation\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [\n      \"optimal\"\n    ],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem32Graham.lean\",\n    \"structure\": \"Graham14SchedulingApproximationCertificate\",\n    \"type\": \"loadRatio extrema.minLoad extrema.maxLoad \\u2264 grahamApproximationFactor * optimalRatio\"\n  },\n  {\n    \"field\": \"roundedAllocation\",\n    \"judgment_key\": \"RoundedInstanceSearchCertificate.roundedAllocation\",\n    \"line\": 1969,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.roundedAllocation\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedInstanceSearchCertificate\",\n    \"type\": \"Alloc\"\n  },\n  {\n    \"field\": \"outputAllocation\",\n    \"judgment_key\": \"RoundedInstanceSearchCertificate.outputAllocation\",\n    \"line\": 1970,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.outputAllocation\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedInstanceSearchCertificate\",\n    \"type\": \"Alloc\"\n  },\n  {\n    \"field\": \"pairSearch\",\n    \"judgment_key\": \"RoundedInstanceSearchCertificate.pairSearch\",\n    \"line\": 1971,\n    \"nested_structures\": [\n      \"RoundedValuePairSearchCertificate\"\n    ],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedInstanceSearchCertificate\",\n    \"type\": \"RoundedValuePairSearchCertificate L lambda Agent\"\n  },\n  {\n    \"field\": \"chosenPair\",\n    \"judgment_key\": \"RoundedValuePairSearchCertificate.chosenPair\",\n    \"line\": 1210,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenPair\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedValuePairSearchCertificate\",\n    \"type\": \"\\u211d \\u00d7 \\u211d\"\n  },\n  {\n    \"field\": \"chosenIP\",\n    \"judgment_key\": \"RoundedValuePairSearchCertificate.chosenIP\",\n    \"line\": 1211,\n    \"nested_structures\": [\n      \"RoundedValuePairIPCertificate\"\n    ],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedValuePairSearchCertificate\",\n    \"type\": \"RoundedValuePairIPCertificate L lambda Agent chosenPair\"\n  },\n  {\n    \"field\": \"pair_mem\",\n    \"judgment_key\": \"RoundedValuePairIPCertificate.pair_mem\",\n    \"line\": 910,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.pair_mem\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedValuePairIPCertificate\",\n    \"type\": \"p \\u2208 roundedAdmissibleValuePairSet L lambda\"\n  },\n  {\n    \"field\": \"ip\",\n    \"judgment_key\": \"RoundedValuePairIPCertificate.ip\",\n    \"line\": 911,\n    \"nested_structures\": [\n      \"RoundedTypeIPCertificate\"\n    ],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedValuePairIPCertificate\",\n    \"type\": \"RoundedTypeIPCertificate lambda Agent\"\n  },\n  {\n    \"field\": \"admissibleTypes\",\n    \"judgment_key\": \"RoundedTypeIPCertificate.admissibleTypes\",\n    \"line\": 889,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.admissibleTypes\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedTypeIPCertificate\",\n    \"type\": \"Finset (RoundedBundleType lambda)\"\n  },\n  {\n    \"field\": \"typeMultiplicity\",\n    \"judgment_key\": \"RoundedTypeIPCertificate.typeMultiplicity\",\n    \"line\": 890,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.typeMultiplicity\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedTypeIPCertificate\",\n    \"type\": \"RoundedBundleType lambda \\u2192 \\u2115\"\n  },\n  {\n    \"field\": \"allUsedTypesEnumerated\",\n    \"judgment_key\": \"RoundedTypeIPCertificate.allUsedTypesEnumerated\",\n    \"line\": 891,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.allUsedTypesEnumerated\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedTypeIPCertificate\",\n    \"type\": \"\\u2200 t : RoundedBundleType lambda, 0 < typeMultiplicity t \\u2192 t \\u2208 admissibleTypes\"\n  },\n  {\n    \"field\": \"allPlayersAssigned\",\n    \"judgment_key\": \"RoundedTypeIPCertificate.allPlayersAssigned\",\n    \"line\": 893,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.allPlayersAssigned\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedTypeIPCertificate\",\n    \"type\": \"admissibleTypes.sum typeMultiplicity = Fintype.card Agent\"\n  },\n  {\n    \"field\": \"goodsFeasible\",\n    \"judgment_key\": \"RoundedTypeIPCertificate.goodsFeasible\",\n    \"line\": 895,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.goodsFeasible\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedTypeIPCertificate\",\n    \"type\": \"Prop\"\n  },\n  {\n    \"field\": \"goodsFeasible_proof\",\n    \"judgment_key\": \"RoundedTypeIPCertificate.goodsFeasible_proof\",\n    \"line\": 896,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.goodsFeasible_proof\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedTypeIPCertificate\",\n    \"type\": \"goodsFeasible\"\n  },\n  {\n    \"field\": \"intervalFeasible\",\n    \"judgment_key\": \"RoundedTypeIPCertificate.intervalFeasible\",\n    \"line\": 897,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.intervalFeasible\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedTypeIPCertificate\",\n    \"type\": \"Prop\"\n  },\n  {\n    \"field\": \"intervalFeasible_proof\",\n    \"judgment_key\": \"RoundedTypeIPCertificate.intervalFeasible_proof\",\n    \"line\": 898,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.intervalFeasible_proof\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedTypeIPCertificate\",\n    \"type\": \"intervalFeasible\"\n  },\n  {\n    \"field\": \"admissibleTypes_eq\",\n    \"judgment_key\": \"RoundedValuePairIPCertificate.admissibleTypes_eq\",\n    \"line\": 912,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.admissibleTypes_eq\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedValuePairIPCertificate\",\n    \"type\": \"ip.admissibleTypes = roundedTypesInValueWindow L lambda p.1 p.2\"\n  },\n  {\n    \"field\": \"optimalAmongFeasible\",\n    \"judgment_key\": \"RoundedValuePairSearchCertificate.optimalAmongFeasible\",\n    \"line\": 1212,\n    \"nested_structures\": [\n      \"RoundedValuePairIPCertificate\"\n    ],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.optimalAmongFeasible\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [\n      \"optimal\"\n    ],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedValuePairSearchCertificate\",\n    \"type\": \"\\u2200 p : \\u211d \\u00d7 \\u211d, RoundedValuePairIPCertificate L lambda Agent p \\u2192 roundedValuePairRatio chosenPair \\u2264 roundedValuePairRatio p\"\n  },\n  {\n    \"field\": \"optimalMin_pos\",\n    \"judgment_key\": \"RoundedInstanceSearchCertificate.optimalMin_pos\",\n    \"line\": 1972,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.optimalMin_pos\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [\n      \"optimal\"\n    ],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedInstanceSearchCertificate\",\n    \"type\": \"0 < minAllocationLoad M optimal\"\n  },\n  {\n    \"field\": \"optimalMax_nonneg\",\n    \"judgment_key\": \"RoundedInstanceSearchCertificate.optimalMax_nonneg\",\n    \"line\": 1973,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.optimalMax_nonneg\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [\n      \"optimal\"\n    ],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedInstanceSearchCertificate\",\n    \"type\": \"0 \\u2264 maxAllocationLoad M optimal\"\n  },\n  {\n    \"field\": \"roundedToSourceTransfer\",\n    \"judgment_key\": \"RoundedInstanceSearchCertificate.roundedToSourceTransfer\",\n    \"line\": 1974,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.roundedToSourceTransfer\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedInstanceSearchCertificate\",\n    \"type\": \"allocationLoadRatio M outputAllocation \\u2264 allocationLoadRatio M roundedAllocation * Theorem35.backwardTransferFactor (56 / epsilon)\"\n  },\n  {\n    \"field\": \"sourceToRoundedOptimal\",\n    \"judgment_key\": \"RoundedInstanceSearchCertificate.sourceToRoundedOptimal\",\n    \"line\": 1978,\n    \"nested_structures\": [],\n    \"path\": \"RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.sourceToRoundedOptimal\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [\n      \"optimal\",\n      \"source\"\n    ],\n    \"source_file\": \"papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean\",\n    \"structure\": \"RoundedInstanceSearchCertificate\",\n    \"type\": \"allocationLoadRatio M roundedAllocation \\u2264 allocationLoadRatio M optimal * Theorem35.forwardTransferFactor (56 / epsilon)\"\n  }\n]",
+  "paper": "LMMS04FairDivision",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/LMMS04FairDivision",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 29,
+  "recursive_field_items": [
+    {
+      "field": "extrema",
+      "judgment_key": "Graham14SchedulingApproximationCertificate.extrema",
+      "line": 103,
+      "nested_structures": [
+        "SchedulingExtremaCertificate"
+      ],
+      "path": "Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem32Graham.lean",
+      "structure": "Graham14SchedulingApproximationCertificate",
+      "type": "SchedulingExtremaCertificate load"
+    },
+    {
+      "field": "minLoad",
+      "judgment_key": "SchedulingExtremaCertificate.minLoad",
+      "line": 46,
+      "nested_structures": [],
+      "path": "Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.minLoad",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem32Graham.lean",
+      "structure": "SchedulingExtremaCertificate",
+      "type": "\u211d"
+    },
+    {
+      "field": "maxLoad",
+      "judgment_key": "SchedulingExtremaCertificate.maxLoad",
+      "line": 47,
+      "nested_structures": [],
+      "path": "Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.maxLoad",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem32Graham.lean",
+      "structure": "SchedulingExtremaCertificate",
+      "type": "\u211d"
+    },
+    {
+      "field": "minLoad_pos",
+      "judgment_key": "SchedulingExtremaCertificate.minLoad_pos",
+      "line": 48,
+      "nested_structures": [],
+      "path": "Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.minLoad_pos",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem32Graham.lean",
+      "structure": "SchedulingExtremaCertificate",
+      "type": "0 < minLoad"
+    },
+    {
+      "field": "maxLoad_nonneg",
+      "judgment_key": "SchedulingExtremaCertificate.maxLoad_nonneg",
+      "line": 49,
+      "nested_structures": [],
+      "path": "Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.maxLoad_nonneg",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem32Graham.lean",
+      "structure": "SchedulingExtremaCertificate",
+      "type": "0 \u2264 maxLoad"
+    },
+    {
+      "field": "load_lower",
+      "judgment_key": "SchedulingExtremaCertificate.load_lower",
+      "line": 50,
+      "nested_structures": [],
+      "path": "Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.load_lower",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem32Graham.lean",
+      "structure": "SchedulingExtremaCertificate",
+      "type": "\u2200 i : Agent, minLoad \u2264 load i"
+    },
+    {
+      "field": "load_upper",
+      "judgment_key": "SchedulingExtremaCertificate.load_upper",
+      "line": 51,
+      "nested_structures": [],
+      "path": "Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.extrema -> SchedulingExtremaCertificate.load_upper",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem32Graham.lean",
+      "structure": "SchedulingExtremaCertificate",
+      "type": "\u2200 i : Agent, load i \u2264 maxLoad"
+    },
+    {
+      "field": "approximation",
+      "judgment_key": "Graham14SchedulingApproximationCertificate.approximation",
+      "line": 104,
+      "nested_structures": [],
+      "path": "Graham14SchedulingApproximationCertificate -> Graham14SchedulingApproximationCertificate.approximation",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [
+        "optimal"
+      ],
+      "source_file": "papers/LMMS04FairDivision/Theorem32Graham.lean",
+      "structure": "Graham14SchedulingApproximationCertificate",
+      "type": "loadRatio extrema.minLoad extrema.maxLoad \u2264 grahamApproximationFactor * optimalRatio"
+    },
+    {
+      "field": "roundedAllocation",
+      "judgment_key": "RoundedInstanceSearchCertificate.roundedAllocation",
+      "line": 1969,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.roundedAllocation",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedInstanceSearchCertificate",
+      "type": "Alloc"
+    },
+    {
+      "field": "outputAllocation",
+      "judgment_key": "RoundedInstanceSearchCertificate.outputAllocation",
+      "line": 1970,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.outputAllocation",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedInstanceSearchCertificate",
+      "type": "Alloc"
+    },
+    {
+      "field": "pairSearch",
+      "judgment_key": "RoundedInstanceSearchCertificate.pairSearch",
+      "line": 1971,
+      "nested_structures": [
+        "RoundedValuePairSearchCertificate"
+      ],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedInstanceSearchCertificate",
+      "type": "RoundedValuePairSearchCertificate L lambda Agent"
+    },
+    {
+      "field": "chosenPair",
+      "judgment_key": "RoundedValuePairSearchCertificate.chosenPair",
+      "line": 1210,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenPair",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedValuePairSearchCertificate",
+      "type": "\u211d \u00d7 \u211d"
+    },
+    {
+      "field": "chosenIP",
+      "judgment_key": "RoundedValuePairSearchCertificate.chosenIP",
+      "line": 1211,
+      "nested_structures": [
+        "RoundedValuePairIPCertificate"
+      ],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedValuePairSearchCertificate",
+      "type": "RoundedValuePairIPCertificate L lambda Agent chosenPair"
+    },
+    {
+      "field": "pair_mem",
+      "judgment_key": "RoundedValuePairIPCertificate.pair_mem",
+      "line": 910,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.pair_mem",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedValuePairIPCertificate",
+      "type": "p \u2208 roundedAdmissibleValuePairSet L lambda"
+    },
+    {
+      "field": "ip",
+      "judgment_key": "RoundedValuePairIPCertificate.ip",
+      "line": 911,
+      "nested_structures": [
+        "RoundedTypeIPCertificate"
+      ],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedValuePairIPCertificate",
+      "type": "RoundedTypeIPCertificate lambda Agent"
+    },
+    {
+      "field": "admissibleTypes",
+      "judgment_key": "RoundedTypeIPCertificate.admissibleTypes",
+      "line": 889,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.admissibleTypes",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedTypeIPCertificate",
+      "type": "Finset (RoundedBundleType lambda)"
+    },
+    {
+      "field": "typeMultiplicity",
+      "judgment_key": "RoundedTypeIPCertificate.typeMultiplicity",
+      "line": 890,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.typeMultiplicity",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedTypeIPCertificate",
+      "type": "RoundedBundleType lambda \u2192 \u2115"
+    },
+    {
+      "field": "allUsedTypesEnumerated",
+      "judgment_key": "RoundedTypeIPCertificate.allUsedTypesEnumerated",
+      "line": 891,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.allUsedTypesEnumerated",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedTypeIPCertificate",
+      "type": "\u2200 t : RoundedBundleType lambda, 0 < typeMultiplicity t \u2192 t \u2208 admissibleTypes"
+    },
+    {
+      "field": "allPlayersAssigned",
+      "judgment_key": "RoundedTypeIPCertificate.allPlayersAssigned",
+      "line": 893,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.allPlayersAssigned",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedTypeIPCertificate",
+      "type": "admissibleTypes.sum typeMultiplicity = Fintype.card Agent"
+    },
+    {
+      "field": "goodsFeasible",
+      "judgment_key": "RoundedTypeIPCertificate.goodsFeasible",
+      "line": 895,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.goodsFeasible",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedTypeIPCertificate",
+      "type": "Prop"
+    },
+    {
+      "field": "goodsFeasible_proof",
+      "judgment_key": "RoundedTypeIPCertificate.goodsFeasible_proof",
+      "line": 896,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.goodsFeasible_proof",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedTypeIPCertificate",
+      "type": "goodsFeasible"
+    },
+    {
+      "field": "intervalFeasible",
+      "judgment_key": "RoundedTypeIPCertificate.intervalFeasible",
+      "line": 897,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.intervalFeasible",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedTypeIPCertificate",
+      "type": "Prop"
+    },
+    {
+      "field": "intervalFeasible_proof",
+      "judgment_key": "RoundedTypeIPCertificate.intervalFeasible_proof",
+      "line": 898,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.ip -> RoundedTypeIPCertificate.intervalFeasible_proof",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedTypeIPCertificate",
+      "type": "intervalFeasible"
+    },
+    {
+      "field": "admissibleTypes_eq",
+      "judgment_key": "RoundedValuePairIPCertificate.admissibleTypes_eq",
+      "line": 912,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.chosenIP -> RoundedValuePairIPCertificate.admissibleTypes_eq",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedValuePairIPCertificate",
+      "type": "ip.admissibleTypes = roundedTypesInValueWindow L lambda p.1 p.2"
+    },
+    {
+      "field": "optimalAmongFeasible",
+      "judgment_key": "RoundedValuePairSearchCertificate.optimalAmongFeasible",
+      "line": 1212,
+      "nested_structures": [
+        "RoundedValuePairIPCertificate"
+      ],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.pairSearch -> RoundedValuePairSearchCertificate.optimalAmongFeasible",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [
+        "optimal"
+      ],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedValuePairSearchCertificate",
+      "type": "\u2200 p : \u211d \u00d7 \u211d, RoundedValuePairIPCertificate L lambda Agent p \u2192 roundedValuePairRatio chosenPair \u2264 roundedValuePairRatio p"
+    },
+    {
+      "field": "optimalMin_pos",
+      "judgment_key": "RoundedInstanceSearchCertificate.optimalMin_pos",
+      "line": 1972,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.optimalMin_pos",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [
+        "optimal"
+      ],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedInstanceSearchCertificate",
+      "type": "0 < minAllocationLoad M optimal"
+    },
+    {
+      "field": "optimalMax_nonneg",
+      "judgment_key": "RoundedInstanceSearchCertificate.optimalMax_nonneg",
+      "line": 1973,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.optimalMax_nonneg",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [
+        "optimal"
+      ],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedInstanceSearchCertificate",
+      "type": "0 \u2264 maxAllocationLoad M optimal"
+    },
+    {
+      "field": "roundedToSourceTransfer",
+      "judgment_key": "RoundedInstanceSearchCertificate.roundedToSourceTransfer",
+      "line": 1974,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.roundedToSourceTransfer",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedInstanceSearchCertificate",
+      "type": "allocationLoadRatio M outputAllocation \u2264 allocationLoadRatio M roundedAllocation * Theorem35.backwardTransferFactor (56 / epsilon)"
+    },
+    {
+      "field": "sourceToRoundedOptimal",
+      "judgment_key": "RoundedInstanceSearchCertificate.sourceToRoundedOptimal",
+      "line": 1978,
+      "nested_structures": [],
+      "path": "RoundedInstanceSearchCertificate -> RoundedInstanceSearchCertificate.sourceToRoundedOptimal",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [
+        "optimal",
+        "source"
+      ],
+      "source_file": "papers/LMMS04FairDivision/Theorem33RoundedConstruction.lean",
+      "structure": "RoundedInstanceSearchCertificate",
+      "type": "allocationLoadRatio M roundedAllocation \u2264 allocationLoadRatio M optimal * Theorem35.forwardTransferFactor (56 / epsilon)"
+    }
+  ],
+  "review_row_count": 54,
+  "rows_with_record_premises": [
+    {
+      "lean_source_declaration": "abbrev assumption_ptas_error_parameter_range (epsilon : \u211d) : Prop :=\n  0 < epsilon \u2227 epsilon \u2264 1\n\n   \n                                                                        \n                                                                          \n  \n-- audit-premise: C : Theorem32.Graham14SchedulingApproximationCertificate load optimalRatio",
+      "record_premises": [
+        "Graham14SchedulingApproximationCertificate"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_ptas_error_parameter_range"
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_external_graham_scheduling_boundary : Prop := True\n\n   \n                                                                  \n                                                          \n  \n-- audit-premise: cert : Theorem33.RoundedInstanceSearchCertificate M L epsilon lambda optimal",
+      "record_premises": [
+        "RoundedInstanceSearchCertificate"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_external_graham_scheduling_boundary"
+    }
+  ],
+  "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": [
+    "claim3_4_bounded_optimal_of_identical_utilities_model",
+    "directMechanism",
+    "lemma3_5_additive_transfer_certificate_epsilon_of_opt_loads",
+    "randomizedDirectMechanism",
+    "theorem4_1_source_goods",
+    "theorem4_1_true_report"
+  ]
+}

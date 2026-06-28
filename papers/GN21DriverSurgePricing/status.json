@@ -10,7 +10,7 @@
   "review_entrypoint": "papers/GN21DriverSurgePricing/FINAL_VALIDATION_REPORT.md",
   "human_review": {
     "reviewed_rows": 0,
-    "total_rows": 24,
+    "total_rows": 34,
     "stale_rows": 0,
     "mismatch_rows": 0,
     "source": "paper-local status.json review_surface; human entries come from dashboard logs"
@@ -19,7 +19,7 @@
     "path": "papers/GN21DriverSurgePricing/PaperInterface.lean",
     "line_count": 379,
     "declaration_rows": 24,
-    "review_rows": 24,
+    "review_rows": 34,
     "oversized": false,
     "maintainability_issue": null,
     "proof_interface_path": "papers/GN21DriverSurgePricing/ProofInterface.lean",

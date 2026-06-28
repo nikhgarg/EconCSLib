@@ -1,0 +1,243 @@
+{
+  "comment": "Source-record fields are accepted only as the explicit external certificate boundary documented for the LMMS partial formalization.",
+  "items": {
+    "Graham14SchedulingApproximationCertificate.approximation": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "Graham14SchedulingApproximationCertificate.extrema": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedInstanceSearchCertificate.optimalMax_nonneg": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedInstanceSearchCertificate.optimalMin_pos": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedInstanceSearchCertificate.outputAllocation": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedInstanceSearchCertificate.pairSearch": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedInstanceSearchCertificate.roundedAllocation": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedInstanceSearchCertificate.roundedToSourceTransfer": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedInstanceSearchCertificate.sourceToRoundedOptimal": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedTypeIPCertificate.admissibleTypes": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedTypeIPCertificate.allPlayersAssigned": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedTypeIPCertificate.allUsedTypesEnumerated": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedTypeIPCertificate.goodsFeasible": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedTypeIPCertificate.goodsFeasible_proof": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedTypeIPCertificate.intervalFeasible": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedTypeIPCertificate.intervalFeasible_proof": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedTypeIPCertificate.typeMultiplicity": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedValuePairIPCertificate.admissibleTypes_eq": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedValuePairIPCertificate.ip": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedValuePairIPCertificate.pair_mem": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedValuePairSearchCertificate.chosenIP": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedValuePairSearchCertificate.chosenPair": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "RoundedValuePairSearchCertificate.optimalAmongFeasible": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "SchedulingExtremaCertificate.load_lower": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "SchedulingExtremaCertificate.load_upper": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "SchedulingExtremaCertificate.maxLoad": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "SchedulingExtremaCertificate.maxLoad_nonneg": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "SchedulingExtremaCertificate.minLoad": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "SchedulingExtremaCertificate.minLoad_pos": {
+      "classification": "approved_external_boundary",
+      "reason": "This field is part of the documented external scheduling/IP certificate boundary for the LMMS partial formalization; the reusable theorem checks consequences conditional on this certificate rather than deriving the external complexity result.",
+      "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+      "validated_at": "2026-06-28T01:37:31Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    }
+  },
+  "paper": "LMMS04FairDivision",
+  "schema": 1,
+  "source_record_audit_sha256": "843f7a6983ec545cf3343943008b1cd609e61a0ec51619b8de32c5b1ee7c81d0",
+  "validated_at": "2026-06-28T01:37:31Z",
+  "validator": "codex-source-record-audit",
+  "validator_type": "model"
+}

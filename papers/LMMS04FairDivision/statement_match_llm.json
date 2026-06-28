@@ -158,11 +158,11 @@
     "claim3_4_identical_utilities_bounded_optimum_bound": {
       "comment": "",
       "judgment": "matches",
-      "lean_statement_sha256": "eecbb170e652dd65bd494d31129fdbb840b9895f590631012dea3c7e0f12bb10",
+      "lean_statement_sha256": "d5f6e5001d02f0824247c58544b6df7324cc0b93623601834c98e20b13194946",
       "paper_statement_sha256": "8f5d8d3a7876e557464a97889aec1a5c214bb40fefffda3fcc24dd0de014d9d7",
-      "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
+      "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. Refreshed Lean digest only; paper statement and Lean-to-TeX text are unchanged from the previous judgment.",
       "tex_statement_sha256": "0c4be12fb36c2fc994b6eb8ef08b43f7010c0a91bbb2523667a0f93efba6d712",
-      "validated_at": "2026-06-13T21:43:40Z",
+      "validated_at": "2026-06-28T00:20:22Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -235,11 +235,11 @@
     "lemma3_5_additive_transfer_epsilon_bound": {
       "comment": "",
       "judgment": "matches",
-      "lean_statement_sha256": "d6ccf509de5a68ab7cf311ab61666c7d0cd2b39dd000a58e43e4a53c48601895",
+      "lean_statement_sha256": "fe0f8c4e631a590fe0dda654511c472467c5f0481486345936d44045e3f8e9cb",
       "paper_statement_sha256": "ed5b13f4c837559d6b4ba1dbae58bcd2b1ee4ef056d9997c493a9d3381ba10f7",
-      "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity.",
+      "reason": "The paper statement and Lean-to-TeX draft state the same paper-facing definition or result at comparable granularity. Refreshed Lean digest only; paper statement and Lean-to-TeX text are unchanged from the previous judgment.",
       "tex_statement_sha256": "70b9013b89fe7b2843d43386bd2ccf1e984765b2c1c7cafd2b8b0cd230f0c90c",
-      "validated_at": "2026-06-13T21:43:40Z",
+      "validated_at": "2026-06-28T00:20:22Z",
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
@@ -386,6 +386,106 @@
       "validator": "gpt-5-codex",
       "validator_type": "model"
     },
+    "theorem3_3_external_solver_consequence_and_selected_pair_full_summary_source_output_of_claim_3_4_source_average_forward_additive_no_top_of_margin": {
+      "boundary_names": [
+        "fixed-dimension IP runtime theorem",
+        "selected-pair external-solver package"
+      ],
+      "boundary_type": "fixed_dimension_ip_external_solver_boundary",
+      "conditional_premises": [
+        "LMMS Theorem 3.3 external-solver consequence",
+        "reusable fixed-dimension IP complexity infrastructure",
+        "RoundedInstanceSearchCertificate",
+        "theorem33ExternalSolverSelectedPairFullSummarySourceOutputPackage",
+        "theorem33SolverAutoCapSelectedPairFullSummarySourceOutputPackage",
+        "Claim34Certificate"
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "4f544bada6d2705d2a5cb19172435f5b6239ad57384b3e5e4d6da76c755e9efb",
+      "paper_statement_sha256": "a63a500afd79eb8bd0df4451f3ce2227bf6b3ceace9720217381ab52372bd381",
+      "reason": "The Lean row packages the Claim 3.4 additive endpoint into the selected-pair external-solver package. It records the fixed-dimension IP/runtime boundary rather than closing the full source theorem unconditionally.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "Accepted conditional boundary: LMMS Section 3 exposes the exact external-solver/runtime seam needed to finish Theorem 3.3 once reusable fixed-dimension IP complexity infrastructure is formalized. Hidden certificate-premise strings are explicitly accepted as the same external solver boundary.",
+      "tex_statement_sha256": "e729444b18d7b237482e714330dee47d3757355f1e22fb0f76299bf70b0e89fe",
+      "validated_at": "2026-06-28T01:41:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem3_3_external_solver_selected_pair_full_summary_source_output_consequence": {
+      "boundary_names": [
+        "fixed-dimension IP runtime theorem",
+        "selected-pair external-solver package"
+      ],
+      "boundary_type": "fixed_dimension_ip_external_solver_boundary",
+      "conditional_premises": [
+        "LMMS Theorem 3.3 external-solver consequence",
+        "reusable fixed-dimension IP complexity infrastructure",
+        "RoundedInstanceSearchCertificate",
+        "theorem33ExternalSolverSelectedPairFullSummarySourceOutputPackage",
+        "theorem33SolverAutoCapSelectedPairFullSummarySourceOutputPackage",
+        "Claim34Certificate"
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "56179426c0b0a89f947fe2f4776d16b67d0d756466439ef23935d8ecd276476b",
+      "paper_statement_sha256": "23e09f60c3462d22db35aacfa2c8a7ff3af094e8d70ebe5fb37669d860cb1292",
+      "reason": "The Lean row exposes the external-solver consequence projection pending the reusable fixed-dimension IP theorem. It is a conditional boundary rather than an ordinary statement match.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "Accepted conditional boundary: LMMS Section 3 exposes the exact external-solver/runtime seam needed to finish Theorem 3.3 once reusable fixed-dimension IP complexity infrastructure is formalized. Hidden certificate-premise strings are explicitly accepted as the same external solver boundary.",
+      "tex_statement_sha256": "e7e45a98a4400b6939b7bde4d114be9e60be25ee46daf15654eab79933e02864",
+      "validated_at": "2026-06-28T01:41:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem3_3_external_solver_selected_pair_full_summary_source_output_package": {
+      "boundary_names": [
+        "fixed-dimension IP runtime theorem",
+        "selected-pair external-solver package"
+      ],
+      "boundary_type": "fixed_dimension_ip_external_solver_boundary",
+      "conditional_premises": [
+        "LMMS Theorem 3.3 external-solver consequence",
+        "reusable fixed-dimension IP complexity infrastructure",
+        "RoundedInstanceSearchCertificate",
+        "theorem33ExternalSolverSelectedPairFullSummarySourceOutputPackage",
+        "theorem33SolverAutoCapSelectedPairFullSummarySourceOutputPackage",
+        "Claim34Certificate"
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "980cf9ed17adda2d03d9d60ee9842553322eaf6fc7750bc2823faf8e0fcb69b2",
+      "paper_statement_sha256": "80da952c3e3fa3b53e32d1e93fc4aa24c1e5ebab3ae1b02bee5029673c9853e7",
+      "reason": "The Lean row exposes the compact external-solver package used for LMMS Theorem 3.3, not an unconditional proof of the paper theorem. This is an explicit fixed-dimension IP/runtime boundary.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "Accepted conditional boundary: LMMS Section 3 exposes the exact external-solver/runtime seam needed to finish Theorem 3.3 once reusable fixed-dimension IP complexity infrastructure is formalized. Hidden certificate-premise strings are explicitly accepted as the same external solver boundary.",
+      "tex_statement_sha256": "5c88803ab8935379418918253454cb787293a42d5023c208f3c0f67dbebf189e",
+      "validated_at": "2026-06-28T01:41:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem3_3_external_solver_selected_pair_full_summary_source_output_payload": {
+      "boundary_names": [
+        "fixed-dimension IP runtime theorem",
+        "selected-pair external-solver package"
+      ],
+      "boundary_type": "fixed_dimension_ip_external_solver_boundary",
+      "conditional_premises": [
+        "LMMS Theorem 3.3 external-solver consequence",
+        "reusable fixed-dimension IP complexity infrastructure",
+        "RoundedInstanceSearchCertificate",
+        "theorem33ExternalSolverSelectedPairFullSummarySourceOutputPackage",
+        "theorem33SolverAutoCapSelectedPairFullSummarySourceOutputPackage",
+        "Claim34Certificate"
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "974052e04e04eaf713e0632795b46910e1ed62ece1d46fd2f2e5864b2841a7cd",
+      "paper_statement_sha256": "c6c3f9276a3b0951c8264a2252408069c950854075a894d1fe95ccbb81a134e9",
+      "reason": "The Lean row exposes the payload projection from the conditional external-solver package. It is a boundary artifact, not a standalone paper theorem statement.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "Accepted conditional boundary: LMMS Section 3 exposes the exact external-solver/runtime seam needed to finish Theorem 3.3 once reusable fixed-dimension IP complexity infrastructure is formalized. Hidden certificate-premise strings are explicitly accepted as the same external solver boundary.",
+      "tex_statement_sha256": "dcac6ee858af968d57146d63fdef2e826fdadc00101ef4953a7cf9901f0713a6",
+      "validated_at": "2026-06-28T01:41:44Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
     "theorem3_3_ratio_transfer_certificate_epsilon_of_agentwise_additive_loads": {
       "comment": "",
       "judgment": "matches",
@@ -492,7 +592,7 @@
   ],
   "prompt_version": "statement-match-v2-strict-full-statement",
   "schema": 1,
-  "validated_at": "2026-06-13T21:43:40Z",
+  "validated_at": "2026-06-28T01:41:44Z",
   "validator": "gpt-5-codex",
   "validator_type": "model"
 }

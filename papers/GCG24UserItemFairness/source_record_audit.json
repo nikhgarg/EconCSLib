@@ -1,0 +1,375 @@
+{
+  "configured_review_row_count": 28,
+  "expected_field_judgment_keys": [
+    "EstimatedRecommendationModel.estimatedUtility",
+    "EstimatedRecommendationModel.trueModel",
+    "RecommendationModel.utility",
+    "ReductionWitness.data",
+    "ReductionWitness.reduced",
+    "ReductionWitness.utility_agrees",
+    "ReductionWitness.weight_eq_typeWeight",
+    "SymmetricData.agreeWithinTypes",
+    "SymmetricData.model",
+    "SymmetricData.types",
+    "TypeWeightedRecommendationModel.utility",
+    "TypeWeightedRecommendationModel.weight"
+  ],
+  "import_module": "GCG24UserItemFairness.PaperInterface",
+  "lean_check": {
+    "command": "lake build GCG24UserItemFairness.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "GCG24UserItemFairness.PaperInterface.recommendationUtility {m n : \u2115} (W : RecommendationModel m n) (u : User m)\n  (j : Item n) : \u211d\n'GCG24UserItemFairness.PaperInterface.recommendationUtility' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.rawUserUtility {m n : \u2115} (W : RecommendationModel m n) (\u03c1 : Policy m n)\n  (u : User m) : \u211d\n'GCG24UserItemFairness.PaperInterface.rawUserUtility' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.normalizedUserUtility {m n : \u2115} [NeZero n] (W : RecommendationModel m n)\n  (\u03c1 : Policy m n) (u : User m) : \u211d\n'GCG24UserItemFairness.PaperInterface.normalizedUserUtility' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.userFairness {m n : \u2115} [NeZero m] [NeZero n] (W : RecommendationModel m n)\n  (\u03c1 : Policy m n) : \u211d\n'GCG24UserItemFairness.PaperInterface.userFairness' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.rawItemUtility {m n : \u2115} (W : RecommendationModel m n) (\u03c1 : Policy m n)\n  (j : Item n) : \u211d\n'GCG24UserItemFairness.PaperInterface.rawItemUtility' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.itemNormalizer {m n : \u2115} (W : RecommendationModel m n) (j : Item n) : \u211d\n'GCG24UserItemFairness.PaperInterface.itemNormalizer' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.normalizedItemUtility {m n : \u2115} (W : RecommendationModel m n) (\u03c1 : Policy m n)\n  (j : Item n) : \u211d\n'GCG24UserItemFairness.PaperInterface.normalizedItemUtility' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.itemFairness {m n : \u2115} [NeZero n] (W : RecommendationModel m n) (\u03c1 : Policy m n) :\n  \u211d\n'GCG24UserItemFairness.PaperInterface.itemFairness' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.solvesProblemOne {m n : \u2115} [NeZero m] [NeZero n] (W : RecommendationModel m n)\n  (\u03b3 : \u211d) (\u03c1 : Policy m n) : Prop\n'GCG24UserItemFairness.PaperInterface.solvesProblemOne' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.priceOfFairnessAt {m n : \u2115} [NeZero m] [NeZero n] (W : RecommendationModel m n)\n  (\u03b3 : \u211d) : \u211d\n'GCG24UserItemFairness.PaperInterface.priceOfFairnessAt' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.priceOfFairness {m n : \u2115} [NeZero m] [NeZero n] (W : RecommendationModel m n) : \u211d\n'GCG24UserItemFairness.PaperInterface.priceOfFairness' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.priceOfMisestimation {m n : \u2115} [NeZero m] [NeZero n]\n  (E : EstimatedRecommendationModel m n) (\u03b3 : \u211d) (\u03c1hat : Policy m n) : \u211d\n'GCG24UserItemFairness.PaperInterface.priceOfMisestimation' depends on axioms: [propext, Classical.choice, Quot.sound]\nGCG24UserItemFairness.PaperInterface.proposition1_symmetric_lp_reduction {m n K : \u2115} [NeZero m] [NeZero n] [NeZero K]\n  (R : ReductionWitness m n K) (reps : UserTypeAssignment.TypeRepresentatives R.data.types) (\u03b3 : \u211d) :\n  LPReductionTarget R \u03b3\n'GCG24UserItemFairness.PaperInterface.proposition1_symmetric_lp_reduction' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGCG24UserItemFairness.PaperInterface.proposition2_symmetric_optimum_exists {m n K : \u2115} [NeZero m] [NeZero n] [NeZero K]\n  (S : RecommendationModel.SymmetricData m n K) (reps : UserTypeAssignment.TypeRepresentatives S.types)\n  (hPos : assumption_positive_recommendation_utilities S.model) :\n  \u2203 \u03c1sym, UserTypeAssignment.IsTypeSymmetric S.types \u03c1sym \u2227 S.model.IsOptimalAtLevel 1 \u03c1sym\n'GCG24UserItemFairness.PaperInterface.proposition2_symmetric_optimum_exists' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGCG24UserItemFairness.PaperInterface.theorem3_price_decreases_first_half {m n : \u2115} [NeZero m] [NeZero n]\n  (R R' : ReductionWitness m n 2) (reps : UserTypeAssignment.TypeRepresentatives R.data.types)\n  (reps' : UserTypeAssignment.TypeRepresentatives R'.data.types) {alpha alpha' : \u211d} {v : Item n \u2192 \u211d}\n  (hred : R.reduced = OpposingTypes.twoTypeReducedModel alpha v)\n  (hred' : R'.reduced = OpposingTypes.twoTypeReducedModel alpha' v) (hn : assumption_theorem4_at_least_three_items n)\n  (halpha0 : 0 < alpha) (halpha1 : alpha < 1) (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)\n  (halpha_le : alpha \u2264 alpha') (halpha_half : alpha \u2264 1 / 2) (halpha_half' : alpha' \u2264 1 / 2)\n  (hpos : \u2200 (j : Item n), 0 < v j) (hdec : OpposingTypes.StrictlyDecreasingByIndex v)\n  (hPos : assumption_positive_recommendation_utilities R.data.model)\n  (hPos' : assumption_positive_recommendation_utilities R'.data.model) :\n  R'.data.model.priceOfFairness \u2264 R.data.model.priceOfFairness\n'GCG24UserItemFairness.PaperInterface.theorem3_price_decreases_first_half' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nGCG24UserItemFairness.PaperInterface.theorem3_price_increases_second_half {m n : \u2115} [NeZero m] [NeZero n]\n  (R R' : ReductionWitness m n 2) (reps : UserTypeAssignment.TypeRepresentatives R.data.types)\n  (reps' : UserTypeAssignment.TypeRepresentatives R'.data.types) {alpha alpha' : \u211d} {v : Item n \u2192 \u211d}\n  (hred : R.reduced = OpposingTypes.twoTypeReducedModel alpha v)\n  (hred' : R'.reduced = OpposingTypes.twoTypeReducedModel alpha' v) (hn : assumption_theorem4_at_least_three_items n)\n  (halpha0 : 0 < alpha) (halpha1 : alpha < 1) (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)\n  (halpha_le : alpha \u2264 alpha') (halpha_half : 1 / 2 \u2264 alpha) (halpha_half' : 1 / 2 \u2264 alpha')\n  (hpos : \u2200 (j : Item n), 0 < v j) (hdec : OpposingTypes.StrictlyDecreasingByIndex v)\n  (hPos : assumption_positive_recommendation_utilities R.data.model)\n  (hPos' : assumption_positive_recommendation_utilities R'.data.model) :\n  R.data.model.priceOfFairness \u2264 R'.data.model.priceOfFairness\n'GCG24UserItemFairness.PaperInterface.theorem3_price_in\n[truncated]\n",
+    "returncode": 0,
+    "truncated": true
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: GCG24UserItemFairness\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Classify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/source-model field that states convexity, response semantics, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"field\": \"utility\",\n    \"judgment_key\": \"RecommendationModel.utility\",\n    \"line\": 38,\n    \"nested_structures\": [],\n    \"path\": \"RecommendationModel -> RecommendationModel.utility\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GCG24UserItemFairness/Basic.lean\",\n    \"structure\": \"RecommendationModel\",\n    \"type\": \"User m \\u2192 Item n \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"trueModel\",\n    \"judgment_key\": \"EstimatedRecommendationModel.trueModel\",\n    \"line\": 11,\n    \"nested_structures\": [\n      \"RecommendationModel\"\n    ],\n    \"path\": \"EstimatedRecommendationModel -> EstimatedRecommendationModel.trueModel\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GCG24UserItemFairness/Optimization.lean\",\n    \"structure\": \"EstimatedRecommendationModel\",\n    \"type\": \"RecommendationModel m n\"\n  },\n  {\n    \"field\": \"estimatedUtility\",\n    \"judgment_key\": \"EstimatedRecommendationModel.estimatedUtility\",\n    \"line\": 12,\n    \"nested_structures\": [],\n    \"path\": \"EstimatedRecommendationModel -> EstimatedRecommendationModel.estimatedUtility\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GCG24UserItemFairness/Optimization.lean\",\n    \"structure\": \"EstimatedRecommendationModel\",\n    \"type\": \"User m \\u2192 Item n \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"data\",\n    \"judgment_key\": \"ReductionWitness.data\",\n    \"line\": 991,\n    \"nested_structures\": [\n      \"RecommendationModel\",\n      \"SymmetricData\"\n    ],\n    \"path\": \"ReductionWitness -> ReductionWitness.data\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GCG24UserItemFairness/LPReduction.lean\",\n    \"structure\": \"ReductionWitness\",\n    \"type\": \"RecommendationModel.SymmetricData m n K\"\n  },\n  {\n    \"field\": \"model\",\n    \"judgment_key\": \"SymmetricData.model\",\n    \"line\": 18,\n    \"nested_structures\": [\n      \"RecommendationModel\"\n    ],\n    \"path\": \"ReductionWitness -> ReductionWitness.data -> SymmetricData.model\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [\n      \"model\"\n    ],\n    \"source_file\": \"papers/GCG24UserItemFairness/Symmetry.lean\",\n    \"structure\": \"SymmetricData\",\n    \"type\": \"RecommendationModel m n\"\n  },\n  {\n    \"field\": \"types\",\n    \"judgment_key\": \"SymmetricData.types\",\n    \"line\": 19,\n    \"nested_structures\": [],\n    \"path\": \"ReductionWitness -> ReductionWitness.data -> SymmetricData.types\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GCG24UserItemFairness/Symmetry.lean\",\n    \"structure\": \"SymmetricData\",\n    \"type\": \"UserTypeAssignment m K\"\n  },\n  {\n    \"field\": \"agreeWithinTypes\",\n    \"judgment_key\": \"SymmetricData.agreeWithinTypes\",\n    \"line\": 20,\n    \"nested_structures\": [],\n    \"path\": \"ReductionWitness -> ReductionWitness.data -> SymmetricData.agreeWithinTypes\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [\n      \"model\"\n    ],\n    \"source_file\": \"papers/GCG24UserItemFairness/Symmetry.lean\",\n    \"structure\": \"SymmetricData\",\n    \"type\": \"UtilitiesAgreeWithinTypes model types\"\n  },\n  {\n    \"field\": \"reduced\",\n    \"judgment_key\": \"ReductionWitness.reduced\",\n    \"line\": 992,\n    \"nested_structures\": [\n      \"TypeWeightedRecommendationModel\"\n    ],\n    \"path\": \"ReductionWitness -> ReductionWitness.reduced\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GCG24UserItemFairness/LPReduction.lean\",\n    \"structure\": \"ReductionWitness\",\n    \"type\": \"TypeWeightedRecommendationModel K n\"\n  },\n  {\n    \"field\": \"utility\",\n    \"judgment_key\": \"TypeWeightedRecommendationModel.utility\",\n    \"line\": 67,\n    \"nested_structures\": [],\n    \"path\": \"ReductionWitness -> ReductionWitness.reduced -> TypeWeightedRecommendationModel.utility\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GCG24UserItemFairness/LPReduction.lean\",\n    \"structure\": \"TypeWeightedRecommendationModel\",\n    \"type\": \"UserType K \\u2192 Item n \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"weight\",\n    \"judgment_key\": \"TypeWeightedRecommendationModel.weight\",\n    \"line\": 68,\n    \"nested_structures\": [],\n    \"path\": \"ReductionWitness -> ReductionWitness.reduced -> TypeWeightedRecommendationModel.weight\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GCG24UserItemFairness/LPReduction.lean\",\n    \"structure\": \"TypeWeightedRecommendationModel\",\n    \"type\": \"UserType K \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"utility_agrees\",\n    \"judgment_key\": \"ReductionWitness.utility_agrees\",\n    \"line\": 993,\n    \"nested_structures\": [],\n    \"path\": \"ReductionWitness -> ReductionWitness.utility_agrees\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [\n      \"model\"\n    ],\n    \"source_file\": \"papers/GCG24UserItemFairness/LPReduction.lean\",\n    \"structure\": \"ReductionWitness\",\n    \"type\": \"\\u2200 u j, data.model.utility u j = reduced.utility (data.types.toType u) j\"\n  },\n  {\n    \"field\": \"weight_eq_typeWeight\",\n    \"judgment_key\": \"ReductionWitness.weight_eq_typeWeight\",\n    \"line\": 995,\n    \"nested_structures\": [\n      \"RecommendationModel\"\n    ],\n    \"path\": \"ReductionWitness -> ReductionWitness.weight_eq_typeWeight\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/GCG24UserItemFairness/LPReduction.lean\",\n    \"structure\": \"ReductionWitness\",\n    \"type\": \"\\u2200 k, reduced.weight k = RecommendationModel.UserTypeAssignment.typeWeight data.types k\"\n  }\n]",
+  "paper": "GCG24UserItemFairness",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/GCG24UserItemFairness",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 12,
+  "recursive_field_items": [
+    {
+      "field": "utility",
+      "judgment_key": "RecommendationModel.utility",
+      "line": 38,
+      "nested_structures": [],
+      "path": "RecommendationModel -> RecommendationModel.utility",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GCG24UserItemFairness/Basic.lean",
+      "structure": "RecommendationModel",
+      "type": "User m \u2192 Item n \u2192 \u211d"
+    },
+    {
+      "field": "trueModel",
+      "judgment_key": "EstimatedRecommendationModel.trueModel",
+      "line": 11,
+      "nested_structures": [
+        "RecommendationModel"
+      ],
+      "path": "EstimatedRecommendationModel -> EstimatedRecommendationModel.trueModel",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GCG24UserItemFairness/Optimization.lean",
+      "structure": "EstimatedRecommendationModel",
+      "type": "RecommendationModel m n"
+    },
+    {
+      "field": "estimatedUtility",
+      "judgment_key": "EstimatedRecommendationModel.estimatedUtility",
+      "line": 12,
+      "nested_structures": [],
+      "path": "EstimatedRecommendationModel -> EstimatedRecommendationModel.estimatedUtility",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GCG24UserItemFairness/Optimization.lean",
+      "structure": "EstimatedRecommendationModel",
+      "type": "User m \u2192 Item n \u2192 \u211d"
+    },
+    {
+      "field": "data",
+      "judgment_key": "ReductionWitness.data",
+      "line": 991,
+      "nested_structures": [
+        "RecommendationModel",
+        "SymmetricData"
+      ],
+      "path": "ReductionWitness -> ReductionWitness.data",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GCG24UserItemFairness/LPReduction.lean",
+      "structure": "ReductionWitness",
+      "type": "RecommendationModel.SymmetricData m n K"
+    },
+    {
+      "field": "model",
+      "judgment_key": "SymmetricData.model",
+      "line": 18,
+      "nested_structures": [
+        "RecommendationModel"
+      ],
+      "path": "ReductionWitness -> ReductionWitness.data -> SymmetricData.model",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [
+        "model"
+      ],
+      "source_file": "papers/GCG24UserItemFairness/Symmetry.lean",
+      "structure": "SymmetricData",
+      "type": "RecommendationModel m n"
+    },
+    {
+      "field": "types",
+      "judgment_key": "SymmetricData.types",
+      "line": 19,
+      "nested_structures": [],
+      "path": "ReductionWitness -> ReductionWitness.data -> SymmetricData.types",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GCG24UserItemFairness/Symmetry.lean",
+      "structure": "SymmetricData",
+      "type": "UserTypeAssignment m K"
+    },
+    {
+      "field": "agreeWithinTypes",
+      "judgment_key": "SymmetricData.agreeWithinTypes",
+      "line": 20,
+      "nested_structures": [],
+      "path": "ReductionWitness -> ReductionWitness.data -> SymmetricData.agreeWithinTypes",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [
+        "model"
+      ],
+      "source_file": "papers/GCG24UserItemFairness/Symmetry.lean",
+      "structure": "SymmetricData",
+      "type": "UtilitiesAgreeWithinTypes model types"
+    },
+    {
+      "field": "reduced",
+      "judgment_key": "ReductionWitness.reduced",
+      "line": 992,
+      "nested_structures": [
+        "TypeWeightedRecommendationModel"
+      ],
+      "path": "ReductionWitness -> ReductionWitness.reduced",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GCG24UserItemFairness/LPReduction.lean",
+      "structure": "ReductionWitness",
+      "type": "TypeWeightedRecommendationModel K n"
+    },
+    {
+      "field": "utility",
+      "judgment_key": "TypeWeightedRecommendationModel.utility",
+      "line": 67,
+      "nested_structures": [],
+      "path": "ReductionWitness -> ReductionWitness.reduced -> TypeWeightedRecommendationModel.utility",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GCG24UserItemFairness/LPReduction.lean",
+      "structure": "TypeWeightedRecommendationModel",
+      "type": "UserType K \u2192 Item n \u2192 \u211d"
+    },
+    {
+      "field": "weight",
+      "judgment_key": "TypeWeightedRecommendationModel.weight",
+      "line": 68,
+      "nested_structures": [],
+      "path": "ReductionWitness -> ReductionWitness.reduced -> TypeWeightedRecommendationModel.weight",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GCG24UserItemFairness/LPReduction.lean",
+      "structure": "TypeWeightedRecommendationModel",
+      "type": "UserType K \u2192 \u211d"
+    },
+    {
+      "field": "utility_agrees",
+      "judgment_key": "ReductionWitness.utility_agrees",
+      "line": 993,
+      "nested_structures": [],
+      "path": "ReductionWitness -> ReductionWitness.utility_agrees",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [
+        "model"
+      ],
+      "source_file": "papers/GCG24UserItemFairness/LPReduction.lean",
+      "structure": "ReductionWitness",
+      "type": "\u2200 u j, data.model.utility u j = reduced.utility (data.types.toType u) j"
+    },
+    {
+      "field": "weight_eq_typeWeight",
+      "judgment_key": "ReductionWitness.weight_eq_typeWeight",
+      "line": 995,
+      "nested_structures": [
+        "RecommendationModel"
+      ],
+      "path": "ReductionWitness -> ReductionWitness.weight_eq_typeWeight",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/GCG24UserItemFairness/LPReduction.lean",
+      "structure": "ReductionWitness",
+      "type": "\u2200 k, reduced.weight k = RecommendationModel.UserTypeAssignment.typeWeight data.types k"
+    }
+  ],
+  "review_row_count": 28,
+  "rows_with_record_premises": [
+    {
+      "lean_source_declaration": "def recommendationUtility {m n : \u2115} (W : RecommendationModel m n)\n    (u : User m) (j : Item n) : \u211d :=\n  W.utility u j",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "recommendationUtility"
+    },
+    {
+      "lean_source_declaration": "def rawUserUtility {m n : \u2115}\n    (W : RecommendationModel m n) (\u03c1 : Policy m n) (u : User m) : \u211d :=\n  EconCSLib.Policy.agentScore \u03c1 W.utility u",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "rawUserUtility"
+    },
+    {
+      "lean_source_declaration": "def normalizedUserUtility {m n : \u2115} [NeZero n]\n    (W : RecommendationModel m n) (\u03c1 : Policy m n) (u : User m) : \u211d :=\n  rawUserUtility W \u03c1 u / RecommendationModel.bestItemUtility W u",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "normalizedUserUtility"
+    },
+    {
+      "lean_source_declaration": "def userFairness {m n : \u2115} [NeZero m] [NeZero n]\n    (W : RecommendationModel m n) (\u03c1 : Policy m n) : \u211d :=\n  EconCSLib.finiteMin (normalizedUserUtility W \u03c1)",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "userFairness"
+    },
+    {
+      "lean_source_declaration": "def rawItemUtility {m n : \u2115}\n    (W : RecommendationModel m n) (\u03c1 : Policy m n) (j : Item n) : \u211d :=\n  \u2211 u, W.utility u j * (\u03c1 u j).toReal",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "rawItemUtility"
+    },
+    {
+      "lean_source_declaration": "def itemNormalizer {m n : \u2115}\n    (W : RecommendationModel m n) (j : Item n) : \u211d :=\n  \u2211 u, W.utility u j",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "itemNormalizer"
+    },
+    {
+      "lean_source_declaration": "def normalizedItemUtility {m n : \u2115}\n    (W : RecommendationModel m n) (\u03c1 : Policy m n) (j : Item n) : \u211d :=\n  let denom := itemNormalizer W j\n  if denom = 0 then 0 else rawItemUtility W \u03c1 j / denom",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "normalizedItemUtility"
+    },
+    {
+      "lean_source_declaration": "def itemFairness {m n : \u2115} [NeZero n]\n    (W : RecommendationModel m n) (\u03c1 : Policy m n) : \u211d :=\n  EconCSLib.finiteMin (normalizedItemUtility W \u03c1)",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "itemFairness"
+    },
+    {
+      "lean_source_declaration": "def solvesProblemOne {m n : \u2115} [NeZero m] [NeZero n]\n    (W : RecommendationModel m n) (\u03b3 : \u211d) (\u03c1 : Policy m n) : Prop :=\n  RecommendationModel.IsOptimalAtLevel W \u03b3 \u03c1",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "solvesProblemOne"
+    },
+    {
+      "lean_source_declaration": "def priceOfFairnessAt {m n : \u2115} [NeZero m] [NeZero n]\n    (W : RecommendationModel m n) (\u03b3 : \u211d) : \u211d :=\n  let base := RecommendationModel.optimalUserFairnessAtLevel W 0\n  if base = 0 then 0 else\n    (base - RecommendationModel.optimalUserFairnessAtLevel W \u03b3) / base",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "priceOfFairnessAt"
+    },
+    {
+      "lean_source_declaration": "def priceOfFairness {m n : \u2115} [NeZero m] [NeZero n]\n    (W : RecommendationModel m n) : \u211d :=\n  priceOfFairnessAt W 1",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "priceOfFairness"
+    },
+    {
+      "lean_source_declaration": "def priceOfMisestimation {m n : \u2115} [NeZero m] [NeZero n]\n    (E : EstimatedRecommendationModel m n) (\u03b3 : \u211d) (\u03c1hat : Policy m n) : \u211d :=\n  let base := RecommendationModel.optimalUserFairnessAtLevel E.trueModel \u03b3\n  if base = 0 then 0 else\n    (base - RecommendationModel.userFairness E.trueModel \u03c1hat) / base",
+      "record_premises": [
+        "EstimatedRecommendationModel",
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "priceOfMisestimation"
+    },
+    {
+      "lean_source_declaration": "theorem proposition1_symmetric_lp_reduction\n    {m n K : \u2115} [NeZero m] [NeZero n] [NeZero K]\n    (R : ReductionWitness m n K)\n    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)\n    (\u03b3 : \u211d) :\n    LPReductionTarget R \u03b3 := by\n  exact ReductionWitness.paper_proposition1_symmetric_lp_reduction_target\n    R reps \u03b3",
+      "record_premises": [
+        "ReductionWitness"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "proposition1_symmetric_lp_reduction"
+    },
+    {
+      "lean_source_declaration": "theorem proposition2_symmetric_optimum_exists\n    {m n K : \u2115} [NeZero m] [NeZero n] [NeZero K]\n    (S : RecommendationModel.SymmetricData m n K)\n    (reps : UserTypeAssignment.TypeRepresentatives S.types)\n    (hPos : assumption_positive_recommendation_utilities S.model) :\n    \u2203 \u03c1sym : Policy m n,\n      UserTypeAssignment.IsTypeSymmetric S.types \u03c1sym \u2227\n        RecommendationModel.IsOptimalAtLevel S.model 1 \u03c1sym := by\n  exact RecommendationModel.SymmetricData.paper_proposition2_symmetric_optimum_exists_of_positive\n    S reps hPos",
+      "record_premises": [
+        "RecommendationModel",
+        "SymmetricData"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "proposition2_symmetric_optimum_exists"
+    },
+    {
+      "lean_source_declaration": "theorem theorem3_price_decreases_first_half\n    {m n : \u2115} [NeZero m] [NeZero n]\n    (R R' : ReductionWitness m n 2)\n    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)\n    (reps' : UserTypeAssignment.TypeRepresentatives R'.data.types)\n    {alpha alpha' : \u211d} {v : Item n \u2192 \u211d}\n    (hred : R.reduced = OpposingTypes.twoTypeReducedModel alpha v)\n    (hred' : R'.reduced = OpposingTypes.twoTypeReducedModel alpha' v)\n    (hn : assumption_theorem4_at_least_three_items n)\n    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)\n    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)\n    (halpha_le : alpha \u2264 alpha')\n    (halpha_half : alpha \u2264 1 / 2)\n    (halpha_half' : alpha' \u2264 1 / 2)\n    (hpos : \u2200 j : Item n, 0 < v j)\n    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)\n    (hPos : assumption_positive_recommendation_utilities R.data.model)\n    (hPos' : assumption_positive_recommendation_utilities R'.data.model) :\n    RecommendationModel.priceOfFairness R'.data.model \u2264\n      RecommendationModel.priceOfFairness R.data.model := by\n  have hNonneg : R.data.model.Nonnegative :=\n    RecommendationModel.nonnegative_of_positive R.data.model hPos\n  have hRow : R.data.model.RowHasPositiveItem :=\n    RecommendationModel.rowHasPositiveItem_of_positive R.data.model hPos\n  have hNonneg' : R'.data.model.Nonnegative :=\n    RecommendationModel.nonnegative_of_positive R'.data.model hPos'\n  have hRow' : R'.data.model.RowHasPositiveItem :=\n    RecommendationModel.rowHasPositiveItem_of_positive R'.data.model hPos'\n  exact OpposingTypes.paper_theorem3_price_decreases_firstHalf_of_reduction\n    R R' reps reps' hred hred' hn halpha0 halpha1 halpha0' halpha1'\n    halpha_le halpha_half halpha_half' hpos hdec hNonneg hRow hNonneg' hRow'",
+      "record_premises": [
+        "RecommendationModel",
+        "ReductionWitness"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem3_price_decreases_first_half"
+    },
+    {
+      "lean_source_declaration": "theorem theorem3_price_increases_second_half\n    {m n : \u2115} [NeZero m] [NeZero n]\n    (R R' : ReductionWitness m n 2)\n    (reps : UserTypeAssignment.TypeRepresentatives R.data.types)\n    (reps' : UserTypeAssignment.TypeRepresentatives R'.data.types)\n    {alpha alpha' : \u211d} {v : Item n \u2192 \u211d}\n    (hred : R.reduced = OpposingTypes.twoTypeReducedModel alpha v)\n    (hred' : R'.reduced = OpposingTypes.twoTypeReducedModel alpha' v)\n    (hn : assumption_theorem4_at_least_three_items n)\n    (halpha0 : 0 < alpha) (halpha1 : alpha < 1)\n    (halpha0' : 0 < alpha') (halpha1' : alpha' < 1)\n    (halpha_le : alpha \u2264 alpha')\n    (halpha_half : 1 / 2 \u2264 alpha)\n    (halpha_half' : 1 / 2 \u2264 alpha')\n    (hpos : \u2200 j : Item n, 0 < v j)\n    (hdec : OpposingTypes.StrictlyDecreasingByIndex v)\n    (hPos : assumption_positive_recommendation_utilities R.data.model)\n    (hPos' : assumption_positive_recommendation_utilities R'.data.model) :\n    RecommendationModel.priceOfFairness R.data.model \u2264\n      RecommendationModel.priceOfFairness R'.data.model := by\n  have hNonneg : R.data.model.Nonnegative :=\n    RecommendationModel.nonnegative_of_positive R.data.model hPos\n  have hRow : R.data.model.RowHasPositiveItem :=\n    RecommendationModel.rowHasPositiveItem_of_positive R.data.model hPos\n  have hNonneg' : R'.data.model.Nonnegative :=\n    RecommendationModel.nonnegative_of_positive R'.data.model hPos'\n  have hRow' : R'.data.model.RowHasPositiveItem :=\n    RecommendationModel.rowHasPositiveItem_of_positive R'.data.model hPos'\n  exact OpposingTypes.paper_theorem3_price_increases_secondHalf_of_reduction\n    R R' reps reps' hred hred' hn halpha0 halpha1 halpha0' halpha1'\n    halpha_le halpha_half halpha_half' hpos hdec hNonneg hRow hNonneg' hRow'",
+      "record_premises": [
+        "RecommendationModel",
+        "ReductionWitness"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem3_price_increases_second_half"
+    },
+    {
+      "lean_source_declaration": "theorem theorem4_misestimation_tradeoff_typeZero\n    {m n : \u2115} [NeZero m] [NeZero n]\n    (E : EstimatedRecommendationModel m n)\n    (Rtrue : ReductionWitness m n 2)\n    (Rest : ReductionWitness m n 3)\n    (repsTrue : UserTypeAssignment.TypeRepresentatives Rtrue.data.types)\n    (repsEst : UserTypeAssignment.TypeRepresentatives Rest.data.types)\n    {beta eps : \u211d}\n    (u : User m)\n    (hn : assumption_theorem4_at_least_three_items n)\n    (htrue : assumption_theorem4_true_model_reduction E Rtrue)\n    (hestimated : assumption_theorem4_estimated_model_reduction E Rest)\n    (hredTrue :\n      Rtrue.reduced = OpposingTypes.twoTypeReducedModel (1 / 2 : \u211d)\n        (OpposingTypes.theorem4SmallValueVector (n := n) eps))\n    (hredEst :\n      Rest.reduced = OpposingTypes.theorem4EstimatedReducedModel beta\n        (OpposingTypes.theorem4SmallValueVector (n := n) eps))\n    (hknown0 :\n      \u2200 u : User m, Rest.data.types.toType u = 0 \u2192\n        Rtrue.data.types.toType u = 0)\n    (hknown1 :\n      \u2200 u : User m, Rest.data.types.toType u = 1 \u2192\n        Rtrue.data.types.toType u = 1)\n    (htrueType : Rtrue.data.types.toType u = 0)\n    (hestimatedType : Rest.data.types.toType u = 2)\n    (heps : 0 < eps)\n    (hbeta : (n : \u211d)\u207b\u00b9 < beta)\n    (hbeta_half : beta < 1 / 2) :\n    (let \u03c10 : TypePolicy 3 n :=\n        OpposingTypes.theorem4NoFairnessPolicyCollapsed\n          (OpposingTypes.theorem4SmallValueVector (n := n) eps);\n      E.SolvesEstimatedProblem 0 (Rest.liftedPolicy \u03c10) \u2227\n        E.priceOfMisestimation 0 (Rest.liftedPolicy \u03c10) \u2264 (1 / 2 : \u211d)) \u2227\n      \u2203 \u03c11 : TypePolicy 3 n,\n        E.SolvesEstimatedProblem 1 (Rest.liftedPolicy \u03c11) \u2227\n          1 - eps < E.priceOfMisestimation 1 (Rest.liftedPolicy \u03c11) := by\n  exact EstimatedRecommendationModel.paper_theorem4_misestimation_tradeoff_trueHalf_collapsed_typeZero\n    E Rtrue Rest repsTrue repsEst u hn htrue hestimated hredTrue hredEst\n    hknown0 hknown1 htrueType hestimatedType heps hbeta hbeta_half",
+      "record_premises": [
+        "EstimatedRecommendationModel",
+        "ReductionWitness"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem4_misestimation_tradeoff_typeZero"
+    },
+    {
+      "lean_source_declaration": "theorem theorem4_misestimation_tradeoff_typeOne\n    {m n : \u2115} [NeZero m] [NeZero n]\n    (E : EstimatedRecommendationModel m n)\n    (Rtrue : ReductionWitness m n 2)\n    (Rest : ReductionWitness m n 3)\n    (repsTrue : UserTypeAssignment.TypeRepresentatives Rtrue.data.types)\n    (repsEst : UserTypeAssignment.TypeRepresentatives Rest.data.types)\n    {beta eps : \u211d}\n    (u : User m)\n    (hn : assumption_theorem4_at_least_three_items n)\n    (htrue : assumption_theorem4_true_model_reduction E Rtrue)\n    (hestimated : assumption_theorem4_estimated_model_reduction E Rest)\n    (hredTrue :\n      Rtrue.reduced = OpposingTypes.twoTypeReducedModel (1 / 2 : \u211d)\n        (OpposingTypes.theorem4SmallValueVector (n := n) eps))\n    (hredEst :\n      Rest.reduced = OpposingTypes.theorem4EstimatedReducedModel beta\n        (OpposingTypes.theorem4SmallValueVector (n := n) eps))\n    (hknown0 :\n      \u2200 u : User m, Rest.data.types.toType u = 0 \u2192\n        Rtrue.data.types.toType u = 0)\n    (hknown1 :\n      \u2200 u : User m, Rest.data.types.toType u = 1 \u2192\n        Rtrue.data.types.toType u = 1)\n    (htrueType : Rtrue.data.types.toType u = 1)\n    (hestimatedType : Rest.data.types.toType u = 2)\n    (heps : 0 < eps)\n    (hbeta : (n : \u211d)\u207b\u00b9 < beta)\n    (hbeta_half : beta < 1 / 2) :\n    (let \u03c10 : TypePolicy 3 n :=\n        OpposingTypes.theorem4NoFairnessPolicyCollapsed\n          (OpposingTypes.theorem4SmallValueVector (n := n) eps);\n      E.SolvesEstimatedProblem 0 (Rest.liftedPolicy \u03c10) \u2227\n        E.priceOfMisestimation 0 (Rest.liftedPolicy \u03c10) \u2264 (1 / 2 : \u211d)) \u2227\n      \u2203 \u03c11 : TypePolicy 3 n,\n        E.SolvesEstimatedProblem 1 (Rest.liftedPolicy \u03c11) \u2227\n          1 - eps < E.priceOfMisestimation 1 (Rest.liftedPolicy \u03c11) := by\n  exact EstimatedRecommendationModel.paper_theorem4_misestimation_tradeoff_trueHalf_collapsed_typeOne\n    E Rtrue Rest repsTrue repsEst u hn htrue hestimated hredTrue hredEst\n    hknown0 hknown1 htrueType hestimatedType heps hbeta hbeta_half",
+      "record_premises": [
+        "EstimatedRecommendationModel",
+        "ReductionWitness"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "theorem4_misestimation_tradeoff_typeOne"
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_positive_recommendation_utilities {m n : \u2115}\n    (W : RecommendationModel m n) : Prop :=\n  W.Positive\n\n   \n                                                                           \n                                                    \n  \n-- audit-premise: hred : R.reduced = OpposingTypes.twoTypeReducedModel alpha v\n-- audit-premise: hred' : R'.reduced = OpposingTypes.twoTypeReducedModel alpha' v\n-- audit-premise: hpos : \u2200 j : Item n, 0 < v j\n-- audit-premise: hdec : OpposingTypes.StrictlyDecreasingByIndex v",
+      "record_premises": [
+        "RecommendationModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_positive_recommendation_utilities"
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_theorem4_true_model_reduction {m n : \u2115}\n    (E : EstimatedRecommendationModel m n) (Rtrue : ReductionWitness m n 2) : Prop :=\n  E.trueModel = Rtrue.data.model\n\n   \n                                                                        \n        \n  \n-- audit-premise: hestimated : E.estimatedModel = Rest.data.model",
+      "record_premises": [
+        "EstimatedRecommendationModel",
+        "ReductionWitness"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_theorem4_true_model_reduction"
+    },
+    {
+      "lean_source_declaration": "abbrev assumption_theorem4_estimated_model_reduction {m n : \u2115}\n    (E : EstimatedRecommendationModel m n) (Rest : ReductionWitness m n 3) : Prop :=\n  E.estimatedModel = Rest.data.model\n\n   \n                                                                          \n                                       \n  \n-- audit-premise: hredTrue : Rtrue.reduced = OpposingTypes.twoTypeReducedModel (1 / 2 : \u211d) (OpposingTypes.theorem4SmallValueVector (n := n) eps)\n-- audit-premise: hredEst : Rest.reduced = OpposingTypes.theorem4EstimatedReducedModel beta (OpposingTypes.theorem4SmallValueVector (n := n) eps)",
+      "record_premises": [
+        "EstimatedRecommendationModel",
+        "ReductionWitness"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_theorem4_estimated_model_reduction"
+    }
+  ],
+  "source_record_audit_sha256": "00f07aaa18b75e43ce0e4b30a9e95c1bcfd861c19cb246d3ba175a10e6b9740b",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": []
+}

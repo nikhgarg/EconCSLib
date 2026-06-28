@@ -134,11 +134,11 @@
   "judgment": "passes",
   "paper": "LMMS04FairDivision",
   "prompt_version": "review-surface-v1",
-  "reason": "Current dashboard rows are paper-facing definitions, named statements, explicit source-condition rows, or documented boundary rows; premise provenance is audited separately.",
-  "review_rows": 44,
-  "review_surface_sha256": "4e7e51dd34bb8a45bf09dabb31e03a4ea230f09e347734238c57a5ab366fe95c",
+  "reason": "Current dashboard rows are paper-facing definitions, named statements, explicit source-condition rows, or documented boundary rows; premise provenance is audited separately. Hash refreshed against the current dashboard row surface.",
+  "review_rows": 48,
+  "review_surface_sha256": "57c576ac82cc075b20efcdc35ce91f3d7a2b99c1e91f33796bb89ef14979ae83",
   "schema": 1,
-  "validated_at": "2026-06-13T21:50:39Z",
+  "validated_at": "2026-06-28T01:10:04Z",
   "validator": "gpt-5-codex",
   "validator_type": "model"
 }

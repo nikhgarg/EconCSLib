@@ -156,13 +156,15 @@ LEAN_DECL_RE = re.compile(r"^\s*(?:theorem|lemma|def|abbrev|structure|class|indu
 REVIEW_DECL_RE = re.compile(
     r"^\s*(?:(?:@[A-Za-z_][A-Za-z0-9_]*(?:\([^)]*\))?\s+)*)?"
     r"(?:(?:noncomputable|private|protected)\s+)*"
-    r"(?:theorem|lemma|def|abbrev|axiom)\s+([A-Za-z_][A-Za-z0-9_']*)\b",
+    r"(?:theorem|lemma|def|abbrev|axiom|structure|class|inductive)\s+"
+    r"([A-Za-z_][A-Za-z0-9_']*)\b",
     re.M,
 )
 REVIEW_DECL_KIND_RE = re.compile(
     r"^\s*(?:(?:@[A-Za-z_][A-Za-z0-9_]*(?:\([^)]*\))?\s+)*)?"
     r"(?:(?:noncomputable|private|protected)\s+)*"
-    r"(theorem|lemma|def|abbrev|axiom)\s+([A-Za-z_][A-Za-z0-9_']*)\b",
+    r"(theorem|lemma|def|abbrev|axiom|structure|class|inductive)\s+"
+    r"([A-Za-z_][A-Za-z0-9_']*)\b",
     re.M,
 )
 LIBRARY_DECL_KIND_RE = re.compile(
@@ -1243,10 +1245,11 @@ def lean_declaration_blocks(
 
 
 def review_declaration_blocks(interface_text: str) -> dict[str, tuple[int, str, str]]:
-    """Return paper-interface theorem/lemma/def/abbrev declarations keyed by name.
+    """Return review-surface declarations keyed by name.
 
-    This deliberately excludes structures/classes/inductives so dashboard row
-    counts stay focused on paper-facing statements and definitions.
+    Structures/classes/inductives are included so paper-local source
+    assumptions declared in `Assumptions.lean` can be audited through the same
+    provenance ledger as theorem-like assumptions.
     """
 
     return lean_declaration_blocks(interface_text, REVIEW_DECL_KIND_RE)
@@ -3310,7 +3313,7 @@ def check_review_launcher_readiness(include_active: bool) -> list[Finding]:
         if not cache.exists():
             findings.append(
                 Finding(
-                    "INFO",
+                    "WARN",
                     folder,
                     "review dashboard cache is absent; run `python3 scripts/review_dashboard.py --paper "
                     f"{folder.name} --refresh-cache` before a review session",
@@ -4029,14 +4032,9 @@ def check_machine_paper_status(
                             )
                             continue
                         if premise_judgment == "partial_boundary":
-                            boundary_severity = (
-                                "ERROR"
-                                if status in {"formalized", "formalized with caveat"}
-                                else "INFO"
-                            )
                             findings.append(
                                 Finding(
-                                    boundary_severity,
+                                    "ERROR" if status in {"formalized", "formalized with caveat"} else "WARN",
                                     assumption_judge_file,
                                     f"`{paper_id}` assumption `{assumption_name}` premise `{premise}` "
                                     "is a visible partial-formalization boundary, not a source-text assumption",

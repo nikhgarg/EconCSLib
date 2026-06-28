@@ -2,11 +2,11 @@
   "judgment": "passes",
   "paper": "PRPKG24AccuracyDiversity",
   "prompt_version": "review-surface-v1",
-  "reason": "Current dashboard rows are paper-facing definitions, named statements, explicit source-condition rows, or validation-note rows; premise provenance is audited separately.",
+  "reason": "Current dashboard rows are paper-facing definitions, named statements, explicit source-condition rows, or validation-note rows; premise provenance is audited separately. Hash refreshed against the current dashboard row surface.",
   "review_rows": 42,
-    "review_surface_sha256": "a9b17f6dcf3e7f6eca59164b73906b1bbc885703dbf297cad66a6f580d1319d3",
+  "review_surface_sha256": "88fb801dd94cf08da0749a8b98291dea5f3e97869a489fd91fd3dd5f5caf9b1e",
   "schema": 1,
-  "validated_at": "2026-06-26T00:00:00Z",
+  "validated_at": "2026-06-28T01:10:04Z",
   "validator": "gpt-5-codex",
   "validator_type": "model"
 }

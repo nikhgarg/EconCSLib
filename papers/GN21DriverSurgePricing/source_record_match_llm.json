@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "paper": "GN21DriverSurgePricing",
+  "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+  "validated_at": "2026-06-26T20:28:54Z",
+  "validator": "codex-source-record-audit",
+  "validator_type": "model",
+  "items": {
+    "Theorem4AllMeasurableFeasibleAEPolicyFormData.exists_optimal": {
+      "classification": "derived_consequence_record",
+      "reason": "The existence of an optimal measurable policy is part of the theorem-output package used by the policy-shape bridge, not a primitive source assumption.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "Theorem4AllMeasurableFeasibleAEPolicyFormData.nonsurge": {
+      "classification": "derived_consequence_record",
+      "reason": "The non-surge feasible a.e. policy-form map is a derived bridge from the Lemma 5 policy-form analysis; its nested Lemma5 data fields are audited separately.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy": {
+      "classification": "derived_consequence_record",
+      "reason": "Representative policy produced by the Lemma 5 a.e. policy-form conclusion, not a source primitive.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_subset": {
+      "classification": "derived_consequence_record",
+      "reason": "Feasibility property of the representative policy derived in the Lemma 5 policy-form route.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_measurable": {
+      "classification": "derived_consequence_record",
+      "reason": "Measurability property of the representative policy derived in the Lemma 5 policy-form route.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_form": {
+      "classification": "derived_consequence_record",
+      "reason": "Exact policy-form fact derived by Lemma 5 for the representative policy.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "Lemma5FeasiblePolicyFormAlmostEverywhereData.policy_ae": {
+      "classification": "derived_consequence_record",
+      "reason": "Almost-everywhere equivalence between the original policy and the derived representative policy.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "Theorem4AllMeasurableFeasibleAEPolicyFormData.surge": {
+      "classification": "derived_consequence_record",
+      "reason": "The surge feasible a.e. policy-form map is a derived bridge from the Lemma 5 policy-form analysis; its nested Lemma5 data fields are audited separately.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.current_mass_pos": {
+      "classification": "derived_consequence_record",
+      "reason": "Positive moving-state mass is carried by the Lemma 9 structured reward-rate data produced from the source-shaped bounds and transfer lemmas.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.bounds": {
+      "classification": "derived_consequence_record",
+      "reason": "Structured Lemma 9 bounds derived by the accept-all tightening and fixed-state transfer route.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.z_eq": {
+      "classification": "derived_consequence_record",
+      "reason": "Price-shift identity in the structured Lemma 9 reward-rate package, derived from the source-shaped parameterization.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.m_sub_R1_pos": {
+      "classification": "derived_consequence_record",
+      "reason": "Slack positivity carried through the structured Lemma 9 reward-rate construction.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.R1_nonneg": {
+      "classification": "derived_consequence_record",
+      "reason": "Current reward-rate nonnegativity carried through the structured Lemma 9 reward-rate construction.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    },
+    "GN21SurgeLemma9AcceptAllAggregateRewardRateData.fixed_reward_rate": {
+      "classification": "derived_consequence_record",
+      "reason": "Fixed-state reward-rate identity derived from the scaled-earning formulation by the reward-rate conversion theorem.",
+      "source_record_audit_sha256": "0c6f57a3b43714511ece832abebe96688242d91dbb3c00151bdc9c26e296a8d1",
+      "validated_at": "2026-06-26T20:28:54Z",
+      "validator": "codex-source-record-audit",
+      "validator_type": "model"
+    }
+  }
+}

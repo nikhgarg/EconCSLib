@@ -1,0 +1,76 @@
+{
+  "configured_review_row_count": 42,
+  "expected_field_judgment_keys": [
+    "BernoulliSatisfactionModel.likelihood",
+    "BernoulliSatisfactionModel.successProb"
+  ],
+  "import_module": "PRPKG24AccuracyDiversity.PaperInterface",
+  "lean_check": {
+    "command": "lake build PRPKG24AccuracyDiversity.PaperInterface && lake env lean <generated-source-record-audit-script>",
+    "output": "PRPKG24AccuracyDiversity.assumption_varying_bernoulli_probability_domain {T : \u2115} (B : BernoulliSatisfactionModel T) :\n  Prop\n'PRPKG24AccuracyDiversity.assumption_varying_bernoulli_probability_domain' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n",
+    "returncode": 0,
+    "truncated": false
+  },
+  "llm_judge_prompt": "You are auditing Lean formalization provenance, not just theorem text.\nPaper: PRPKG24AccuracyDiversity\n\nFor each item below, compare the original paper source statement/proof text with the Lean-checked statement and the dependency path. Classify the item as one of: proved_from_primitives, validated_source_assumption, approved_external_boundary, container_recursively_audited, derived_consequence_record, nonpropositional_witness_data, or unresolved_assumed_math. Use container_recursively_audited only for a field whose type is another audited record/source/certificate and whose nested fields are separately judged; do not use it for a field whose type is a mathematical proposition or formula. Use derived_consequence_record only for fields of a theorem-output/consequence record whose constructor proof is separately checked and whose premise records are separately audited. Use nonpropositional_witness_data only for bare data witnesses (for example a chosen stream, cost function, gradient/noise/bias function, or projection function) whose type is not proposition-valued and does not itself state an equality, recurrence, optimality, measurability, convergence, continuity, or response/trajectory semantics. The proposition-valued fields that constrain that witness must still be classified separately. Mark unresolved_assumed_math if the Lean row merely takes a record/certificate/source-model field that states convexity, response semantics, trajectory generation, continuity, convergence, equilibrium, or a displayed formula that should be derived. Do not mark a field as proved just because Lean typechecks a projection from a structure premise.\n\n[\n  {\n    \"field\": \"likelihood\",\n    \"judgment_key\": \"BernoulliSatisfactionModel.likelihood\",\n    \"line\": 58,\n    \"nested_structures\": [],\n    \"path\": \"BernoulliSatisfactionModel -> BernoulliSatisfactionModel.likelihood\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/PRPKG24AccuracyDiversity/Bernoulli.lean\",\n    \"structure\": \"BernoulliSatisfactionModel\",\n    \"type\": \"ItemType T \\u2192 \\u211d\"\n  },\n  {\n    \"field\": \"successProb\",\n    \"judgment_key\": \"BernoulliSatisfactionModel.successProb\",\n    \"line\": 59,\n    \"nested_structures\": [],\n    \"path\": \"BernoulliSatisfactionModel -> BernoulliSatisfactionModel.successProb\",\n    \"required_check\": \"Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.\",\n    \"risk_terms\": [],\n    \"source_file\": \"papers/PRPKG24AccuracyDiversity/Bernoulli.lean\",\n    \"structure\": \"BernoulliSatisfactionModel\",\n    \"type\": \"ItemType T \\u2192 \\u211d\"\n  }\n]",
+  "paper": "PRPKG24AccuracyDiversity",
+  "paper_dir": "/home/nkgarg/src_wsl/EconCSLib-meta/EconCSLib-private/papers/PRPKG24AccuracyDiversity",
+  "recursion_failure_count": 0,
+  "recursion_failures": [],
+  "recursive_field_count": 2,
+  "recursive_field_items": [
+    {
+      "field": "likelihood",
+      "judgment_key": "BernoulliSatisfactionModel.likelihood",
+      "line": 58,
+      "nested_structures": [],
+      "path": "BernoulliSatisfactionModel -> BernoulliSatisfactionModel.likelihood",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/PRPKG24AccuracyDiversity/Bernoulli.lean",
+      "structure": "BernoulliSatisfactionModel",
+      "type": "ItemType T \u2192 \u211d"
+    },
+    {
+      "field": "successProb",
+      "judgment_key": "BernoulliSatisfactionModel.successProb",
+      "line": 59,
+      "nested_structures": [],
+      "path": "BernoulliSatisfactionModel -> BernoulliSatisfactionModel.successProb",
+      "required_check": "Judge whether this field is proved from more primitive Lean facts or is an assumed source-model statement. If it carries paper math rather than a derived theorem, it is not a completed formalization item. If this field points to another record/source container, classify it as container_recursively_audited only after every nested field has its own approved judgment.",
+      "risk_terms": [],
+      "source_file": "papers/PRPKG24AccuracyDiversity/Bernoulli.lean",
+      "structure": "BernoulliSatisfactionModel",
+      "type": "ItemType T \u2192 \u211d"
+    }
+  ],
+  "review_row_count": 57,
+  "rows_with_record_premises": [
+    {
+      "lean_source_declaration": "abbrev assumption_varying_bernoulli_probability_domain {T : \u2115}\n    (B : BernoulliSatisfactionModel T) : Prop :=\n  (\u2200 t, 0 < B.successProb t) \u2227\n    (\u2200 t, B.successProb t < 1) \u2227\n      (\u2200 i j : ItemType T, B.successProb i = B.successProb j)\n\n                                                                                               \n-- audit-premise: hkpos : \u2200 N, 0 < N \u2192 0 < kseq N",
+      "record_premises": [
+        "BernoulliSatisfactionModel"
+      ],
+      "required_check": "Every record premise below must be recursively proved from primitives, validated as an explicit paper source assumption, approved as an external boundary, or marked unresolved proof debt.",
+      "row": "assumption_varying_bernoulli_probability_domain"
+    }
+  ],
+  "source_record_audit_sha256": "932a086cf43d5779b03e1d041e2292027fc1295ec2f77e976b80cdc67a04ab22",
+  "source_record_judgment_file": "source_record_match_llm.json",
+  "unconfigured_paper_interface_rows": [
+    "definition3",
+    "lemma1",
+    "lemmaD2",
+    "lemmaD3",
+    "lemmaD4",
+    "proposition5",
+    "theorem1_i",
+    "theorem1_ii",
+    "theorem1_iii",
+    "theorem1_iv",
+    "theorem2_i",
+    "theorem2_ii",
+    "theorem2_iii",
+    "theorem2_iv_alpha_zero",
+    "theorem3"
+  ]
+}
