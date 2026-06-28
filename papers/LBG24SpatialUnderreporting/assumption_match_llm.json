@@ -1,0 +1,139 @@
+{
+  "assumption_surface_sha256": "9024e6fd3615c757b01abd2a35bd873accd9a990fba42d66e732dc584178e491",
+  "comment": "Validates the three configured LBG24 assumption/proof-boundary rows for the public partial checkpoint.",
+  "items": {
+    "Theorem2PrimitiveSourceModel": {
+      "judgment": "partial_boundary",
+      "lean_statement_sha256": "115c3ec044860ee35a8f0f98ff5855db2c4573cdce6ca52d41ff83222a7d0e0f",
+      "paper_statement_sha256": "a1deb8e3a458b49ae53bb3143b4b7089e37419dfeafb52febdf1bd14ee45ad19",
+      "premise_judgments": {},
+      "reason": "Compact source-model wrapper approved for this public partial checkpoint: it packages the homogeneous count law and fixed Condition 1/2 kernels rather than deriving them from the concrete process.",
+      "source_location": "Liu-Bhandaram-Garg 2024, Theorem 2 and Conditions 1/2",
+      "source_metadata_sha256": "",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "assumption_theorem2_poisson_process_and_conditions": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "e8fc6ab1ed99516c19005851020af37210cf5bad2fb2ecb10499cd510cb84358",
+      "paper_statement_sha256": "0e31218555b2027629340a0465c0d4c607f1d28b9af6beeeb7147a457f8d0e93",
+      "premise_judgments": {
+        "A : assumption_theorem2_poisson_process_and_conditions Ω P": {
+          "judgment": "source_text_model_primitive",
+          "reason": "This premise is an explicit source-model/window/kernel primitive used to state the paper-facing partial route, not a hidden theorem conclusion.",
+          "source_location": "Liu-Bhandaram-Garg 2024, Appendix B.2 / Theorem 2 source model and Eq. (33)/(34) preprocessing definitions"
+        },
+        "Cert : DurationCensoredFirstCountObservationCertificate 𝓕": {
+          "judgment": "documented_caveat",
+          "reason": "Concrete continuous-time stopping-certificate construction is the documented remaining library caveat for this public partial checkpoint; this premise is explicit and not hidden.",
+          "source_location": "LBG24 FINAL_VALIDATION_REPORT.md, remaining boundary on homogeneous Poisson process and stopping-certificate bundle"
+        },
+        "Cert : EconCSLib.Probability.PoissonProcess.DurationCensoredFirstCountObservationCertificate 𝓕": {
+          "judgment": "documented_caveat",
+          "reason": "Concrete continuous-time stopping-certificate construction is the documented remaining library caveat for this public partial checkpoint; this premise is explicit and not hidden.",
+          "source_location": "LBG24 FINAL_VALIDATION_REPORT.md, remaining boundary on homogeneous Poisson process and stopping-certificate bundle"
+        },
+        "M : LBG24SpatialUnderreporting.Theorem2FixedConditionDensitySourceModel": {
+          "judgment": "source_text_model_primitive",
+          "reason": "This premise is an explicit source-model/window/kernel primitive used to state the paper-facing partial route, not a hidden theorem conclusion.",
+          "source_location": "Liu-Bhandaram-Garg 2024, Appendix B.2 / Theorem 2 source model and Eq. (33)/(34) preprocessing definitions"
+        },
+        "M : Theorem2FixedConditionDensitySourceModel": {
+          "judgment": "source_text_model_primitive",
+          "reason": "This premise is an explicit source-model/window/kernel primitive used to state the paper-facing partial route, not a hidden theorem conclusion.",
+          "source_location": "Liu-Bhandaram-Garg 2024, Appendix B.2 / Theorem 2 source model and Eq. (33)/(34) preprocessing definitions"
+        },
+        "T : EconCSLib.Probability.PoissonProcess.OrderedOneJumpWindow": {
+          "judgment": "source_text_model_primitive",
+          "reason": "This premise is an explicit source-model/window/kernel primitive used to state the paper-facing partial route, not a hidden theorem conclusion.",
+          "source_location": "Liu-Bhandaram-Garg 2024, Appendix B.2 / Theorem 2 source model and Eq. (33)/(34) preprocessing definitions"
+        },
+        "T : OrderedOneJumpWindow": {
+          "judgment": "source_text_model_primitive",
+          "reason": "This premise is an explicit source-model/window/kernel primitive used to state the paper-facing partial route, not a hidden theorem conclusion.",
+          "source_location": "Liu-Bhandaram-Garg 2024, Appendix B.2 / Theorem 2 source model and Eq. (33)/(34) preprocessing definitions"
+        },
+        "W : EconCSLib.Probability.PoissonProcess.ObservationWindow": {
+          "judgment": "source_text_model_primitive",
+          "reason": "This premise is an explicit source-model/window/kernel primitive used to state the paper-facing partial route, not a hidden theorem conclusion.",
+          "source_location": "Liu-Bhandaram-Garg 2024, Appendix B.2 / Theorem 2 source model and Eq. (33)/(34) preprocessing definitions"
+        },
+        "W : EconCSLib.Probability.PoissonProcess.StoppingObservationWindow 𝓕": {
+          "judgment": "source_text_model_primitive",
+          "reason": "This premise is an explicit source-model/window/kernel primitive used to state the paper-facing partial route, not a hidden theorem conclusion.",
+          "source_location": "Liu-Bhandaram-Garg 2024, Appendix B.2 / Theorem 2 source model and Eq. (33)/(34) preprocessing definitions"
+        },
+        "W : ObservationWindow": {
+          "judgment": "source_text_model_primitive",
+          "reason": "This premise is an explicit source-model/window/kernel primitive used to state the paper-facing partial route, not a hidden theorem conclusion.",
+          "source_location": "Liu-Bhandaram-Garg 2024, Appendix B.2 / Theorem 2 source model and Eq. (33)/(34) preprocessing definitions"
+        },
+        "W : StoppingObservationWindow 𝓕": {
+          "judgment": "source_text_model_primitive",
+          "reason": "This premise is an explicit source-model/window/kernel primitive used to state the paper-facing partial route, not a hidden theorem conclusion.",
+          "source_location": "Liu-Bhandaram-Garg 2024, Appendix B.2 / Theorem 2 source model and Eq. (33)/(34) preprocessing definitions"
+        },
+        "anonymous : EconCSLib.Probability.PoissonProcess.FirstCountArrivalCertificate 𝓕 reportCount firstReportTime": {
+          "judgment": "documented_caveat",
+          "reason": "Concrete continuous-time stopping-certificate construction is the documented remaining library caveat for this public partial checkpoint; this premise is explicit and not hidden.",
+          "source_location": "LBG24 FINAL_VALIDATION_REPORT.md, remaining boundary on homogeneous Poisson process and stopping-certificate bundle"
+        },
+        "anonymous : EconCSLib.Probability.PoissonProcess.FirstCountArrivalCertificate 𝓕 reportCount startTime": {
+          "judgment": "documented_caveat",
+          "reason": "Concrete continuous-time stopping-certificate construction is the documented remaining library caveat for this public partial checkpoint; this premise is explicit and not hidden.",
+          "source_location": "LBG24 FINAL_VALIDATION_REPORT.md, remaining boundary on homogeneous Poisson process and stopping-certificate bundle"
+        },
+        "anonymous : FirstCountArrivalCertificate 𝓕 reportCount firstReportTime": {
+          "judgment": "documented_caveat",
+          "reason": "Concrete continuous-time stopping-certificate construction is the documented remaining library caveat for this public partial checkpoint; this premise is explicit and not hidden.",
+          "source_location": "LBG24 FINAL_VALIDATION_REPORT.md, remaining boundary on homogeneous Poisson process and stopping-certificate bundle"
+        },
+        "anonymous : FirstCountArrivalCertificate 𝓕 reportCount startTime": {
+          "judgment": "documented_caveat",
+          "reason": "Concrete continuous-time stopping-certificate construction is the documented remaining library caveat for this public partial checkpoint; this premise is explicit and not hidden.",
+          "source_location": "LBG24 FINAL_VALIDATION_REPORT.md, remaining boundary on homogeneous Poisson process and stopping-certificate bundle"
+        },
+        "caseFromWindow : EconCSLib.Probability.PoissonProcess.ObservationWindow → LBG24SpatialUnderreporting.Theorem2ObservedWindowCase": {
+          "judgment": "source_text_model_primitive",
+          "reason": "This premise is an explicit source-model/window/kernel primitive used to state the paper-facing partial route, not a hidden theorem conclusion.",
+          "source_location": "Liu-Bhandaram-Garg 2024, Appendix B.2 / Theorem 2 source model and Eq. (33)/(34) preprocessing definitions"
+        },
+        "caseFromWindow : ObservationWindow → Theorem2ObservedWindowCase": {
+          "judgment": "source_text_model_primitive",
+          "reason": "This premise is an explicit source-model/window/kernel primitive used to state the paper-facing partial route, not a hidden theorem conclusion.",
+          "source_location": "Liu-Bhandaram-Garg 2024, Appendix B.2 / Theorem 2 source model and Eq. (33)/(34) preprocessing definitions"
+        }
+      },
+      "reason": "This row packages the paper's Theorem 2 Poisson-process and Condition 1/2 source semantics as an explicit assumption/provenance object.",
+      "source_location": "Liu-Bhandaram-Garg 2024, Theorem 2 and Conditions 1/2",
+      "source_metadata_sha256": "",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_poisson_process_and_condition_semantics": {
+      "judgment": "paper_condition",
+      "lean_statement_sha256": "607712df86cf8bc1ef47f258bc5cc8c422e13279c6bacac11fe9fe0a43114461",
+      "paper_statement_sha256": "33c95229f4b9eac8850d2cc3ba602a8ff9227a8d674cf090901c0aef0eb3435c",
+      "premise_judgments": {},
+      "reason": "This row packages the paper's Theorem 2 Poisson-process and Condition 1/2 source semantics as an explicit assumption/provenance object.",
+      "source_location": "Liu-Bhandaram-Garg 2024, Theorem 2 and Conditions 1/2",
+      "source_metadata_sha256": "",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    }
+  },
+  "paper": "LBG24SpatialUnderreporting",
+  "prompt_summary": [
+    "Classify source/model assumptions separately from documented partial-checkpoint caveats.",
+    "Theorem2PrimitiveSourceModel is the compact public partial boundary; auxiliary window/source-model premise shapes are explicit source-model primitives when they only name paper data.",
+    "Concrete first-arrival and duration-censored stopping certificates are documented caveat premise shapes pending reusable continuous-time process library work."
+  ],
+  "prompt_version": "assumption-provenance-v2-exact-premise-source-recursive-boundary",
+  "schema": 1,
+  "validated_at": "2026-06-28T12:00:00Z",
+  "validator": "gpt-5-codex",
+  "validator_type": "model"
+}

@@ -44,7 +44,7 @@ DEFAULT_LLM_ASSUMPTION_JUDGE_FILE = "assumption_match_llm.json"
 DEFAULT_ASSUMPTION_SOURCE_FILE = "Assumptions.lean"
 PAPER_STATEMENT_MAP_FILE = "paper_statement_map.json"
 REVIEW_SURFACE_LLM_AUDIT_THRESHOLD = 30
-REVIEW_SURFACE_WARN_THRESHOLD = 50
+REVIEW_SURFACE_WARN_THRESHOLD = 120
 PAPER_INTERFACE_CACHE_SCHEMA = 15
 REVIEW_SURFACE_SCHEMA = 1
 REVIEW_SOURCE_FILENAME = "PaperInterface.lean"
@@ -925,8 +925,8 @@ def parse_paper_text_statements(folder: Path) -> dict[str, str]:
     return statements
 
 
-def _paper_statement_map_raw_items(folder: Path) -> dict[str, Any]:
-    """Load raw paper-statement-map items, returning an empty map on errors."""
+def parse_paper_statement_map(folder: Path) -> dict[str, str]:
+    """Load explicit paper-source line ranges for dashboard statements."""
 
     map_path = folder / PAPER_STATEMENT_MAP_FILE
     if not map_path.exists() or not map_path.is_file():
@@ -939,15 +939,6 @@ def _paper_statement_map_raw_items(folder: Path) -> dict[str, Any]:
 
     raw_items = payload.get("items", payload) if isinstance(payload, dict) else {}
     if not isinstance(raw_items, dict):
-        return {}
-    return raw_items
-
-
-def parse_paper_statement_map(folder: Path) -> dict[str, str]:
-    """Load explicit paper-source line ranges for dashboard statements."""
-
-    raw_items = _paper_statement_map_raw_items(folder)
-    if not raw_items:
         return {}
 
     statements: dict[str, str] = {}
@@ -995,50 +986,6 @@ def parse_paper_statement_map(folder: Path) -> dict[str, str]:
             if isinstance(alias, str) and alias.strip():
                 _add_statement_variant(statements, alias.strip(), text)
     return statements
-
-
-def _add_statement_metadata_variant(
-    mapping: dict[str, tuple[str, str]], key: str, status: str, note: str
-) -> None:
-    """Add source-status metadata under the same tolerant keys as statements."""
-
-    if not key.strip():
-        return
-    variants: set[str] = {key}
-    normalized = _normalize_name_key(key)
-    if normalized:
-        variants.add(normalized)
-    lowered = key.lower()
-    if lowered:
-        variants.add(lowered)
-    lowered_normalized = normalized.lower()
-    if lowered_normalized:
-        variants.add(lowered_normalized)
-    for variant in variants:
-        if variant:
-            mapping[variant] = (status, note)
-
-
-def parse_paper_statement_map_source_metadata(folder: Path) -> dict[str, tuple[str, str]]:
-    """Load optional source-status metadata from `paper_statement_map.json`."""
-
-    raw_items = _paper_statement_map_raw_items(folder)
-    if not raw_items:
-        return {}
-
-    metadata: dict[str, tuple[str, str]] = {}
-    for key, raw_item in raw_items.items():
-        if not isinstance(key, str) or not key.strip() or not isinstance(raw_item, dict):
-            continue
-        if "source_status" not in raw_item and "source_note" not in raw_item:
-            continue
-        status = str(raw_item.get("source_status") or "").strip()
-        note = str(raw_item.get("source_note") or "").strip()
-        _add_statement_metadata_variant(metadata, key.strip(), status, note)
-        for alias in raw_item.get("aliases", []) or []:
-            if isinstance(alias, str) and alias.strip():
-                _add_statement_metadata_variant(metadata, alias.strip(), status, note)
-    return metadata
 
 
 def parse_paper_text_statement_locations(folder: Path) -> list[dict[str, Any]]:
@@ -2387,7 +2334,6 @@ def parse_interface_items(
         source_statements = parse_paper_text_statements(paper_folder)
     paper_statements.update(source_statements)
     paper_statements.update(parse_paper_statement_map(paper_folder))
-    paper_statement_source_metadata = parse_paper_statement_map_source_metadata(paper_folder)
     llm_tex_drafts = load_llm_lean_to_tex_drafts(paper_folder)
     llm_judgments = load_llm_statement_judgments(paper_folder)
     assumption_names = review_assumption_names(paper_folder)
@@ -2424,20 +2370,14 @@ def parse_interface_items(
         )
         candidates = paper_statement_candidate_keys(name, full_name)
         paper_text = ""
-        paper_statement_key = ""
         for candidate in candidates:
             if candidate and candidate in paper_statements:
                 paper_text = paper_statements[candidate]
-                paper_statement_key = candidate
                 break
         comment_text, source_status, source_note = split_source_metadata(doc_comment or "")
         if paper_text:
             displayed_paper_statement = paper_text
-            map_metadata = paper_statement_source_metadata.get(paper_statement_key)
-            if map_metadata is not None:
-                source_status, source_note = map_metadata
-            else:
-                source_status = source_status or "direct source text"
+            source_status = source_status or "direct source text"
         else:
             displayed_paper_statement = comment_text
         agent_statement = (
@@ -6271,19 +6211,9 @@ def print_assumption_audit_status(paper: str | None, slice_filter: str | None = 
     if has_attention:
         return True
     total_rows = sum(int(row.get("row_count") or 0) for row in rows)
-    total_partial_boundaries = sum(int(row.get("partial_boundary_count") or 0) for row in rows)
-    total_partial_boundary_premises = sum(
-        int(row.get("partial_boundary_premise_count") or 0) for row in rows
-    )
-    boundary_note = (
-        f", {total_partial_boundaries} approved partial-boundary declaration(s)"
-        f" and {total_partial_boundary_premises} premise-level boundary finding(s)"
-        if total_partial_boundaries or total_partial_boundary_premises
-        else ", no missing/stale/flagged items"
-    )
     print(
         f"Assumption-provenance audits for {label} are current: "
-        f"{total_rows} assumption declaration(s){boundary_note}."
+        f"{total_rows} assumption declaration(s), no missing/stale/flagged items."
     )
     return False
 

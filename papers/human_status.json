@@ -446,6 +446,37 @@
       }
     },
     {
+      "id": "LBG24SpatialUnderreporting",
+      "title": "Quantifying Spatial Under-reporting Disparities in Resident Crowdsourcing",
+      "authors": "Zhi Liu, Uma Bhandaram, Nikhil Garg",
+      "publication": "Nature Computational Science 4, 57-65 (2024); version of record published 2023-12-05; DOI 10.1038/s43588-023-00572-6",
+      "publication_year": 9999,
+      "source_url": "",
+      "paper_info": "Quantifying Spatial Under-reporting Disparities in Resident Crowdsourcing by Zhi Liu, Uma Bhandaram, Nikhil Garg; Nature Computational Science 4, 57-65 (2024); version of record published 2023-12-05; DOI 10.1038/s43588-023-00572-6.",
+      "status": "Partially formalized",
+      "human_review": "0/87",
+      "human_translation": "0/87 reviewed",
+      "llm_as_judge_translation": "28/84 match; 56 additional assumptions",
+      "lean_loc": 18540,
+      "main_note": "Poisson likelihood algebra, Lemma 1/2 consequences, MLE/regression/zero-inflation rows, and the Eq. (33)/(34) stopping-window bridge compile; full formalization requires a compact homogeneous Poisson process, stopping-certificate, and fixed-kernel certificate bundle.",
+      "main_note_citation": null,
+      "main_note_review": {
+        "status": "draft",
+        "note": "Set to human_approved only after a human has written or explicitly approved this summary; do not rewrite a human_approved summary without explicit human instruction."
+      },
+      "paper_folder": "papers/LBG24SpatialUnderreporting",
+      "review_entrypoint": "papers/LBG24SpatialUnderreporting/FINAL_VALIDATION_REPORT.md",
+      "artifacts": {
+        "readme": "papers/LBG24SpatialUnderreporting/README.md",
+        "paper_interface": "papers/LBG24SpatialUnderreporting/PaperInterface.lean",
+        "assumptions": "papers/LBG24SpatialUnderreporting/Assumptions.lean",
+        "final_validation_report": "papers/LBG24SpatialUnderreporting/FINAL_VALIDATION_REPORT.md",
+        "dependency_dag_tex": "papers/LBG24SpatialUnderreporting/DependencyDAG.tex",
+        "dependency_dag_pdf": "papers/LBG24SpatialUnderreporting/DependencyDAG.pdf",
+        "source_record_audit": "papers/LBG24SpatialUnderreporting/source_record_audit.json"
+      }
+    },
+    {
       "id": "GKGMM19IterativeLocalVoting",
       "title": "Iterative Local Voting for Collective Decision-making in Continuous Spaces",
       "authors": "Nikhil Garg; Vijay Kamble; Ashish Goel; David Marn; Kamesh Munagala",

@@ -10,11 +10,6 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-try:
-    import review_dashboard
-except Exception:  # pragma: no cover - status sync should still work without dashboard helpers.
-    review_dashboard = None  # type: ignore[assignment]
-
 
 ROOT = Path(__file__).resolve().parents[1]
 PAPERS = ROOT / "papers"
@@ -336,9 +331,16 @@ def llm_translation_label_from_counts(
     return "; ".join(parts)
 
 
-def llm_translation_label(folder: Path, payload: dict[str, Any]) -> str:
-    if review_dashboard is not None:
+def llm_translation_label(
+    folder: Path,
+    payload: dict[str, Any],
+    *,
+    use_dashboard_audit: bool = False,
+) -> str:
+    if use_dashboard_audit:
         try:
+            import review_dashboard
+
             items = review_dashboard.review_items_for_paper(folder, use_cache=True)
             summary = review_dashboard.statement_translation_audit_summary(folder, items)
             return llm_translation_label_from_counts(
@@ -449,7 +451,11 @@ def human_summary_review(payload: dict[str, Any]) -> dict[str, str] | None:
     return review
 
 
-def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[str, Any]]:
+def human_status_rows(
+    records: list[tuple[Path, dict[str, Any]]],
+    *,
+    use_dashboard_audit: bool = False,
+) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for folder, payload in records:
         publication, year = publication_for(payload)
@@ -464,7 +470,11 @@ def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[s
             "status": status_label(str(payload["status"])),
             "human_review": human_review_label(payload),
             "human_translation": human_translation_label(payload),
-            "llm_as_judge_translation": llm_translation_label(folder, payload),
+            "llm_as_judge_translation": llm_translation_label(
+                folder,
+                payload,
+                use_dashboard_audit=use_dashboard_audit,
+            ),
             "lean_loc": lean_loc(folder),
             "main_note": human_note(payload),
             "main_note_citation": note_citation(payload),
@@ -485,7 +495,11 @@ def human_status_rows(records: list[tuple[Path, dict[str, Any]]]) -> list[dict[s
     return rows
 
 
-def human_payload(records: list[tuple[Path, dict[str, Any]]]) -> dict[str, Any]:
+def human_payload(
+    records: list[tuple[Path, dict[str, Any]]],
+    *,
+    use_dashboard_audit: bool = False,
+) -> dict[str, Any]:
     return {
         "schema": 1,
         "description": (
@@ -520,7 +534,7 @@ def human_payload(records: list[tuple[Path, dict[str, Any]]]) -> dict[str, Any]:
             "conference, or original working-paper year. Publication fields use the published "
             "citation title and year."
         ),
-        "papers": human_status_rows(records),
+        "papers": human_status_rows(records, use_dashboard_audit=use_dashboard_audit),
     }
 
 
@@ -804,11 +818,19 @@ def main() -> int:
         action="store_true",
         help="also include untracked draft paper folders with status.json",
     )
+    parser.add_argument(
+        "--dashboard-audit",
+        action="store_true",
+        help=(
+            "derive LLM statement-review counts through review_dashboard.py. "
+            "This is slower; the default status sync reads tracked sidecars only."
+        ),
+    )
     args = parser.parse_args()
 
     records = paper_records(include_untracked=args.include_untracked)
     aggregate = aggregate_payload(records)
-    human = human_payload(records)
+    human = human_payload(records, use_dashboard_audit=args.dashboard_audit)
     outputs = {
         AGGREGATE_STATUS: json.dumps(aggregate, indent=2, ensure_ascii=False) + "\n",
         HUMAN_STATUS: json.dumps(human, indent=2, ensure_ascii=False) + "\n",

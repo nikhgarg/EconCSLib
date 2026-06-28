@@ -1,0 +1,1682 @@
+{
+  "comment": "Strict row-local paper-vs-Lean-to-TeX check. Rows with explicit source-model, process-law, observation-window, or stopping-certificate premises are strict conditional-boundary mismatches for the LBG24 public partial checkpoint.",
+  "items": {
+    "equation2_poisson_count_pmf_formula": {
+      "judgment": "matches",
+      "lean_statement_sha256": "46edb1d2ec791f7ddccea4d6ab61c702e7fccc931dd9ebd80a5a745aff876651",
+      "paper_statement_sha256": "07b9c3b8350d3d8da0a628383bc4edfd653463c3339750d1cf886b3554fcc0b5",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "08e644d204ddbc302b672ff8a79ce6f86a65053a00249251496a1c8d6ff33408",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation33_nyc_multi_report_factorization_from_local_count_process_at_sample": {
+      "boundary_names": [
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "4283311616452182be4193c8822bba56b87b4c1094cb314f7560631e9da4c245",
+      "paper_statement_sha256": "efe824dc87e64437d10d511024e73d25cfaa25647a9e396bbb796df6c7782095",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "759f957f346fb9d62001a7cac7d6c34078ba3beeef15037f372f11a0c75fe857",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation33_nyc_one_report_factorization_from_local_count_process_at_sample": {
+      "boundary_names": [
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "b6de67e82c7daa19e107085060567fefc16abb042431be3aedd24785a08c3a6f",
+      "paper_statement_sha256": "3419172e3dd07e891159e8fe33e70bf4dbc8361b8a999825f7592bbdf9486faa",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "4baf91e39d54b3991d72724a9dddb8b1c624dcd7f3f25aff3be8beb862780935",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation33_nyc_preprocessing_observation_window_of_local_count_process_at_sample": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "b7847cfb6be3c0bcb09fe1958a3a54fb956831b8734d297b44e712cc2f8a0311",
+      "paper_statement_sha256": "6ca508cbd757758e6a4a7605aef6b8fab4ed42a2f96293e2f7e12c3e1c0c8166",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "b0ecb35a75943199ac5bf0a54912f7dea077d433d3d520fc5f47f1496d5bead1",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "48b803784112fa1332d3dea4d10210f1e585b6d5c3c8426cc408bd6d2af3251e",
+      "paper_statement_sha256": "c8934ee0a0924cb8d70def56acb0a2962a4b107d74ca5651c390390085727c17",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "9989096a2e36e60cb462197d002c652f674adcc803f162e1cfb82f7497aee037",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_deterministic_endpoints": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "b1d632bf1c9c6712e46c3a0cc01027f4d4fb3cb24bb179c51f9b874b74ac16ae",
+      "paper_statement_sha256": "630b65beec55a439cd65bb3cec557d4c4a8148c23683045626473cd3a798a898",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "a68537326ca33505daea4e85df85ac97f7149aea08e93c23b040a2e64d210cd8",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_first_count_arrival": {
+      "boundary_names": [
+        "FirstCountArrivalCertificate",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "FirstCountArrivalCertificate",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "749a8d7934b82d9f6023aa86ba9b36117692e7095cd23265b539a8fef472a771",
+      "paper_statement_sha256": "08936d9ebbb5a07944d162afabc3622e45071477e187ebae12323ff03bf911de",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "f161d092df71c9d9278467a5a896dd936885909f81d63a02019f4ff85e6a88f0",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_local_count_process": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "f24782f8ea137c16d24ef68343ce130b21d8773b062a74654880503b4051bd66",
+      "paper_statement_sha256": "4ac401dbcb4212e4bcedf51ca4ef90dc381beab7a42abb9794b73cbe53b3f803",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "f6f20e65312374e81374d31b71b03db92c85beb636ba553cbfc3644551a81085",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_local_count_process_stopping_endpoints": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "bed251cf52497d2495755726719f60f49857ad5a62ec07e656acd8b4d1a9d538",
+      "paper_statement_sha256": "76ed1614644deba189a17b921a4e8f22720df469317c5670f0e7dc1c0ab0aca5",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "9e6cbc08e624bd24af6a51da2eb3f864aa2d4917bec2047042e312d5b4a10d8d",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation33_nyc_zero_report_factorization_from_local_count_process_at_sample": {
+      "boundary_names": [
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "1eed133c1e3665692cf0cb2f9a4391967befde0d1f48de7585cfe54016c5046c",
+      "paper_statement_sha256": "06ef379a48c3e0c88846c54a3f049f1a4c78595a39db1df2736dd05450008eaa",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "7d0baf99914594f5f00124cb3a37ed5180a29f7115d5a4bf1287982ce67455cd",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation34_chicago_multi_report_factorization_from_local_count_process_at_sample": {
+      "boundary_names": [
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "0137381afc171aa86aa70e77fabadf6cbeb72c0300b428c4526730944a343c44",
+      "paper_statement_sha256": "facc9c6e00a87e988631deab81a737078afa5a2d075b24d032ab18306bbde251",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "00d6deb2dcd5a242df676727b317fba7cde228c02cbe683f01d89e8feb7a4512",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation34_chicago_one_report_factorization_from_local_count_process_at_sample": {
+      "boundary_names": [
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "c6eb847e2dbf68cd1887605e710200906aeb1d9494c039499121efd00fdd28f1",
+      "paper_statement_sha256": "3166b6cf737a1f1802d5c475655a1a45631b439bcafbaab82e5a7e48a5328b02",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "7c6f6ffd6bb3f70b30cd39f883f0110c426b87de84a7e43b8199c3249379b69b",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation34_chicago_preprocessing_observation_window_of_local_count_process_at_sample": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "721bd6c154b4d9896d603b5a7011c9da7d1a5e64f5fc7f8668c060e2e73a068f",
+      "paper_statement_sha256": "dec33c4c1800893848405f56df06f6c39cc00efeaea4997fa04f339088d0a938",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "a047b29d61881490840b564a2a13829a783c17cbd971d1a2717a728653b86283",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "26efbabd368051c0520902c6794625b2d242fc6a05175c648cdb92aa6a8c9ccd",
+      "paper_statement_sha256": "b323ee7544cd39dd84014819bc0ce06626180a31d5c328c795bd66d4548469b7",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "034b34bed3e9f9a39496ed447a977637eca800b7c821dc83905e7bf594dbe8f3",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_deterministic_endpoints": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "18146589c583f85d128c34f3565e8e85333a98faa1664d7a0b8092d1d1168377",
+      "paper_statement_sha256": "2c605de65cac22fe08aca8ebee91502004ad4d6fe8bd8ac144793bc4b4ed88a8",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "4e13496c4fbff93bfb6059ae3e9fb2413e67458c6ec12a04ac3d75ec1b5379c4",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_first_count_arrival": {
+      "boundary_names": [
+        "FirstCountArrivalCertificate",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "FirstCountArrivalCertificate",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "afab5712fd54310062223292e43688881f735cf1902847a5f0e745cbda454542",
+      "paper_statement_sha256": "8b5990b06b77b968a0898a13cf9aec38473a2b4fdb9d69b10bd28907c0cb46f0",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "3b25347f189fce4926505112856ea54fef205beaac0f1c1fa9f5550ccf83381b",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_local_count_process": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "4c9a3366e3f33fd44a7b223acd28da01f2c869efa230c527ad39cf5ed8962892",
+      "paper_statement_sha256": "99e44055099d635078dd7f63bf116d632b6139e332af872ea58e0e144e400945",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "bd98869e09313cfe0ce82013b6321ba36a8bbf861d12e4b09170c8d241c424d0",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_local_count_process_stopping_endpoints": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "75af46a59217326579528ff06d89bb38e5de096d6c614ca3cdc7d632360a847d",
+      "paper_statement_sha256": "703e0629d693ff5aae42121d3e44930cd4554f5f12ce202cf59cff6809791f3c",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "df3839afcd437760c9d9177a7f249ecaa23106e88230dfd34d7e927799be4d7c",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation34_chicago_zero_report_factorization_from_local_count_process_at_sample": {
+      "boundary_names": [
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "d11d50262443163e8966e86bc1111def523eb3a05e133a4d7de503c191a97dfc",
+      "paper_statement_sha256": "ec3cef70ba20b3d80249d0a2229aca26cf458b2aa171f0c34ecddaf71323688c",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "eb08cf5690433179b8ac077c7889a9148a6457b0bfef10b3a5959774665137b6",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation3_mle_global_logLikelihood_max": {
+      "judgment": "matches",
+      "lean_statement_sha256": "2bb465afc04d9dc7d19f8a29ca911cd43f86c49f32cf3c3a2dfc8ab586d03ce0",
+      "paper_statement_sha256": "d00efad5cde1dd0ab813190f16eae380f4a5b980383ac9fc04bc972d71908a99",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "d209e18d389c27bc4f0bb7b1d4f33cd7ed15086dcd38a76d9c6e779639eb2ec1",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation3_mle_score_equation": {
+      "judgment": "matches",
+      "lean_statement_sha256": "014fa7892ce41f60437c57999c3c76530d64ab3113f7f3340e384641273ab0df",
+      "paper_statement_sha256": "381a2ee60af037e2d4d6b42dc611966d3e24410cc187307b52a62b9f28d11e7e",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "e9a509dffbaee829bc1625d34534d662bd45f2c818daabd6d702b90d5288020f",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation3_product_likelihood_raw_shape": {
+      "judgment": "matches",
+      "lean_statement_sha256": "618bb0225e74f5daf42819d609be5192fe9d649c960ad0f39cf9ec16ae2325d5",
+      "paper_statement_sha256": "208394395382eeb1489ef78a2a73b74e6b8310326ef205581c4de0bc10bea689",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "7d82aacebad73930b872ac9eb160164e07597a842e6fc07913a07976a589521a",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation3_product_likelihood_total_pmf": {
+      "judgment": "matches",
+      "lean_statement_sha256": "beab5e301d1eaac127effbe283b12eb6cdb71f7347402b9ef79e3d0503094340",
+      "paper_statement_sha256": "692e6efa20f986be564bb5645db95d70dec7d0455e92f5a09c70160b3767ba18",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "42061aff690e9ba36fb7f0f924020cc91f95eb124caf1f5f80977973f9571b6a",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation5_poisson_regression_rate_formula": {
+      "judgment": "matches",
+      "lean_statement_sha256": "254bf801058382b79fa643a0da3f88caaeeadcfd224786502b2df2afd4f7acf4",
+      "paper_statement_sha256": "91fb76fd13c733d3c0380b58f6f5db1b1204d0954e8f152335a67f7f8e552028",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "c9087947a3c58003bbde51fad6b586a8b2a9a7affc131c0d5a2dceb6b51d76c9",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation6_poisson_regression_likelihood_formula": {
+      "judgment": "matches",
+      "lean_statement_sha256": "1c2b69a6298830c70be3af89f52eaa172f32d71033acee1c5faa06e5503685a9",
+      "paper_statement_sha256": "8976887a111a6ec1c3b0d0f0db3454826c6f9b8d0a6c8f5d903e612b4306f42c",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "c5b0b38ee3a719656c4c6df4faddd40b94ba39168360100e3772b38eda5f95f2",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation7_zero_inflated_likelihood_nonnegative": {
+      "judgment": "matches",
+      "lean_statement_sha256": "e98808b8fa64d62325f739775de3c40eeac2363fda9c9d114aef47a523a50a52",
+      "paper_statement_sha256": "e1d3f4eee0ed358999d005728d9bb61b50d354bdf7900df52411be6c735b3845",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "cfbfa306ff11a39dc257fa8c4217f3a61aef7542dacd355ba0798e1dfe6e52e9",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation7_zero_inflated_likelihood_positive_count": {
+      "judgment": "matches",
+      "lean_statement_sha256": "ad4379fdad759a08bc01cb4df90f5557a9afe5e3b1364ebdbafa46e10c83964c",
+      "paper_statement_sha256": "2bea74ab9bc74737136e2d109297ecba843c48b505e9df413843de00ea0c8462",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "0870ee82b07bba30ac0c45405c33ffb4475a5e82902c28037994c35b3377355b",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation7_zero_inflated_likelihood_zero": {
+      "judgment": "matches",
+      "lean_statement_sha256": "524cbaa597260f8862a078b423634b6c17b6a9fc9dff1f8556752eea7859094f",
+      "paper_statement_sha256": "6278c74e2b67f54568acd3fea84bd8a7f416c51c9421e305ec2d3fd7aac6c67e",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "8da508f47ff7bdcff23c5830bd97d26fedcf2c3383f5c793138817de277ddbe7",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation7_zero_inflated_regression_likelihood_positive_count": {
+      "judgment": "matches",
+      "lean_statement_sha256": "e7c00112dd47848c765bbc62f10cc5436dcf8c6783d63d47a84e391e2f1d2317",
+      "paper_statement_sha256": "007998d72a76b8ea6fc0e5bc1ba43773c7f1be2ef13866b02a589b0c43572178",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "6bbfb90e798548a43ed6ac48d082bec6573b1404c3b05ce856b495975645c692",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "equation7_zero_inflated_regression_likelihood_zero": {
+      "judgment": "matches",
+      "lean_statement_sha256": "249b8a056678c134c870245195e49a206784d88d3e3bb9c73161a883d1304f9f",
+      "paper_statement_sha256": "c84bb8d3b8111bb084ba1158d7b8ec1ae1ba094082d0f0b6f13e85b6a5f053cf",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "a29ee1ed38e7044b6006d0899b59176fd3a4b17ef524b4c650e67b56b4f7af39",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "first_report_probability_formula": {
+      "judgment": "matches",
+      "lean_statement_sha256": "f065d372e34d4f10c7e35404ae046f89a9d7b87312b5bd6fe5e58b3e362141c0",
+      "paper_statement_sha256": "b58836b375fd271e77a397dc0b4eaef67076a7939eca6e8a610d3d762f99e364",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "9a150d1772910831c0fa232cb874dad58803710ed8ad7b1001d8080c8b3346e8",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "homogeneous_reporting_delay_mean_formula": {
+      "judgment": "matches",
+      "lean_statement_sha256": "55e134a6daa7de066e6435988e12ff226da6cd1df50a65270140f82be45e3003",
+      "paper_statement_sha256": "7038fb54e38b03b6fa0798ce7e5f7182f3bb738b4ec15e4ebe06df323be65a8c",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "bd5d24e1efebd2f99ee6803ca37445a592a206e7920595e71de95b29d64485ee",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma1_continuous_duration_first_report_probability_integral": {
+      "judgment": "matches",
+      "lean_statement_sha256": "f1d79b4f2463311252a53391f01251cd3b3dedba3135fae821989774587e862d",
+      "paper_statement_sha256": "983bcdcbf4ac1c60a8395c1d402ec3330e22d7bc6635ccc7d3c892211ebbc6e4",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "e1927496463fc3ecac70e67ed6f0a2cabd13a9f9cc808a91b895d72113987f72",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma1_continuous_duration_first_report_probability_le_one": {
+      "judgment": "matches",
+      "lean_statement_sha256": "ae1ec7dd975d1db5720ed943d2098e5d0a55879f111bd1ed4a531ae86c5ff22c",
+      "paper_statement_sha256": "c7d062a62a160c4feefb2ebda45f11275ca9529a03456dc1231c83df9fd66929",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "dea67ef30e84f0c802e8deac19dc6cc145a47d998b08f4d00b0b83f2addd5bc4",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma1_continuous_duration_first_report_probability_nonnegative": {
+      "judgment": "matches",
+      "lean_statement_sha256": "b7a038b055118462eb30965e7abb9ef45f98fe127ee0b9e0622984340ecd6872",
+      "paper_statement_sha256": "87c8f13fc3e8a44a5143becb4185c68154e2763713eb7468354886866c898d4d",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "bfd05a49fa9c6738898783045aa80d3b4b5187ca69ad1ef564dfff9b031c71d0",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma1_continuous_duration_observed_rate_integral": {
+      "judgment": "matches",
+      "lean_statement_sha256": "36456e47fc34641f458dcfe4f86599a9dd43062937434b530341a9096ce9eb86",
+      "paper_statement_sha256": "e1c7b542904fab287eadddda6a5ad50d2655ebcb05ed1067d338d394f0a33172",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "e6d0594dd50e7577654b2cddce8ed636f87e2411539648fb57aa59c5a6147396",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma1_continuous_duration_poisson_thinning_count_law": {
+      "judgment": "matches",
+      "lean_statement_sha256": "12b90ca480f0e3473b1a499c3bb00eddd381e175d3b2010c915d3b6ba15afb90",
+      "paper_statement_sha256": "51167c9f6bf7f4e7635aeb3baf8277b2632e38f41428b2b9f389cc0a58e0be2d",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "4092617160968601789cada688d775f2e6e58d28d6d1166ce0a9a025ddba79a9",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma1_finite_duration_first_report_weighted_average": {
+      "judgment": "matches",
+      "lean_statement_sha256": "2fe2ff50534aacf7d009a6f3c866aaa8cdde06940f792c98fca27a0d4a398a4f",
+      "paper_statement_sha256": "3e34b6acace0c0a1c60bad52902ec871f6ba516ecf32faaf2782e33bd4940054",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "388186a15592ea0b65aa6e07ee9cee59a8a0d354ad801303c4b6d1fee109c4e4",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma1_unit_interval_observed_counts_lln": {
+      "judgment": "matches",
+      "lean_statement_sha256": "63bab1394573db5d218931d24c35c74d3da6238643513c6730fbfdae5c21565b",
+      "paper_statement_sha256": "a27dd9160183128afa0febae34f9e2d51beb7e63914f4270e6f39311e8a1c9a7",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "ffb1c52502c5ff847f71d450bfd5e352a9c46752e1ece20da6d9714e54ab390e",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma1_unit_interval_observed_counts_lln_to_continuous_duration_rate": {
+      "judgment": "matches",
+      "lean_statement_sha256": "4ffbc5e69f042e4bbeac514c4d6de2cf189e76ba748be1f5112cbe4199a70dd7",
+      "paper_statement_sha256": "6eca35927834fcf7a55cf727b9558465208fa53719b143bc6d2877de375c83ac",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "64fbafc5a5ba53da371b3937839e658c81c23da5ffd5a628e3d7bcf9b3ecba14",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma2_exponential_waiting_tail": {
+      "judgment": "matches",
+      "lean_statement_sha256": "43db7004f7de148cecfb930268f2fff48a4c649cb6c0d08a5094ed8d5f2b5bcd",
+      "paper_statement_sha256": "8f35156214ec8faf29a0cf33d7e567f799706f33a82cc9ba1029d59441cfa711",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "15f9d261aef63be071e45d8e8c95a4c0f73c65d1ad70398916032ed856cb65c3",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma2_exponential_waiting_tail_memoryless_ratio": {
+      "judgment": "matches",
+      "lean_statement_sha256": "638e1dd814cb6a5eba050a3c3a3ed61b7e7a696c55bef2d369a38bfd85a283e3",
+      "paper_statement_sha256": "b05db62dcca27d98645e1a7f6e027230bd222004d75e9fba890314dcce871d34",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "e2365b16f424c4dd7795f8512d3b2015c8dd1b45582979ffc276ed5c768f3a65",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma2_finite_jump_density_normalizes_to_count_probability": {
+      "boundary_names": [
+        "HomogeneousPoissonProcessLaw",
+        "OrderedFiniteJumpTimeline"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "HomogeneousPoissonProcessLaw",
+        "OrderedFiniteJumpTimeline",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "f6c9dc129a77e081770d62c71d59ac41220324ec39cf36549982206940aa76f4",
+      "paper_statement_sha256": "0442020f03ef84e32dc238a82afa7814a04da7fb740ffd06b0b9dc8d3217ff34",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "b1a932119dc8c777e84cf0c68f6114c98459e0e25c672526e79c603f658f9c5a",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "lemma2_one_jump_density_normalizes_to_count_probability": {
+      "boundary_names": [
+        "HomogeneousPoissonProcessLaw",
+        "OrderedOneJumpWindow"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "HomogeneousPoissonProcessLaw",
+        "OrderedOneJumpWindow",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "5fe32cadddd06543c100d75b47e3e0158aaa9d2efeb6b110dda46cb1a9c733e2",
+      "paper_statement_sha256": "dfaafdb2f730cd6124accb2050449d8580a7649b7dad7c8d1fb7bb1289c667ec",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "4a9b792caecbe323c66c2251162d6ce538dc222c6aef803457eb7a27d3fd2c65",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "proposition1_continuous_duration_nonidentifiability": {
+      "judgment": "matches",
+      "lean_statement_sha256": "bf1500c6ca8c1dfbb18450294a2b7c5c0eee60a570c28f3552b61da8d3994548",
+      "paper_statement_sha256": "0ff39e3d99fc55e7de668e490f0ee025c561089ffa0b9129a99dde0ce7f4262c",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "903264f273816a23cde37ed090073e642e0b8b93dee3987c36a016ee793f1653",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "proposition1_finite_duration_nonidentifiability_positive": {
+      "judgment": "matches",
+      "lean_statement_sha256": "c1fdb8700e888bab1fa829a71ad9c998e11e0e3d61d8267c536e584861ed3797",
+      "paper_statement_sha256": "9f71f94c4931fd84c5f24588cb1d4a96e675b64c0ea541e929c6276a55524cb3",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "03e3331f7fb158391459f1dae1ced0ed47a83eee51b8592c4341dca4cf5cd07a",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "proposition1_homogeneous_nonidentifiability": {
+      "judgment": "matches",
+      "lean_statement_sha256": "a8ba125407b3588a0638f5de23d35e24f0c7063cdeb1e08051f35ce0d27f3ea6",
+      "paper_statement_sha256": "1a5cb86a6a90dc4e3bff074428a0958873cb55ec03692f2e3d1eabcf9307a0fa",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "f8e835efaa67f78f84656f8ad94fe781d6d633a5a2567cdc882acc28c940f0e1",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "proposition1_homogeneous_nonidentifiability_positive": {
+      "judgment": "matches",
+      "lean_statement_sha256": "43f98198166b889c6cc2814bb3ce543710411a2439e17a71de37d51dfe9d629d",
+      "paper_statement_sha256": "baba50e9e301202086d7618ee28633659b0a2503bc65c4846600b4073d4ea522",
+      "reason": "The Lean-to-TeX draft preserves the selected paper formula, lemma subclaim, or displayed equation with its visible hypotheses and conclusion.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "09a43cc52e9e5a2db375ac16b7e3270f4071a2d43b76500c672c59e8b307cdc0",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_decomposition": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "81a91603945465606038e9695ea22eaa7e863b33a381df426af602bbb71a2ca4",
+      "paper_statement_sha256": "823edc78418bd5b0392fa515891dbcd037b6df5456a71cf64bec1a9d683b10a2",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "78ea4b31d0a557acd128c4d0b10da3a6ab4ccefd34c1d5cda1f2be1a64ad58aa",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_decomposition_from_poisson_increment_laws": {
+      "boundary_names": [
+        "HomogeneousPoissonCountingProcess",
+        "HomogeneousPoissonCountingProcessByLaw",
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "HomogeneousPoissonCountingProcess",
+        "HomogeneousPoissonCountingProcessByLaw",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "bdaedc20009f63233d74f29d35c3396d878f75b58b284792e8fb3786b85f7025",
+      "paper_statement_sha256": "71251518da4f8b7e8e10ae8d16955377c7b771198bb5faf0204f04e9828c4331",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "25f59f6f6179c9298797ca0f9bb78d2c869e356ee526cdd369df8bad510fb464",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_decomposition_from_poisson_increment_laws_and_fixed_condition_density_source_model": {
+      "boundary_names": [
+        "HomogeneousPoissonCountingProcess",
+        "HomogeneousPoissonCountingProcessByLaw",
+        "Theorem2FixedConditionDensitySourceModel",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "HomogeneousPoissonCountingProcess",
+        "HomogeneousPoissonCountingProcessByLaw",
+        "Theorem2FixedConditionDensitySourceModel",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "ceefed6c5980072abf494a92e9901bd94d9779f4cef94278d6e0c73382efac74",
+      "paper_statement_sha256": "16daf48ac0e757ab99f1ff8676d83c048f8092e5c9dc89fd363ae32766e815b3",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "f6b838d108edc5f8bca8b7efadd8774a19f9934d1e93ddde76e15737a2d0216c",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_decomposition_from_primitive_poisson_process": {
+      "boundary_names": [
+        "HomogeneousPoissonCountingProcess",
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "HomogeneousPoissonCountingProcess",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "67ae07386167b98d0a32a044de1e5b406ed153557929824ee545351465e4868b",
+      "paper_statement_sha256": "87901e6e6f0de5a2833e0856f709a4dbbbe97043df47c8c994e2cb816447bb9d",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "989d208c04549f15cd15307ab6a7b386ee5d883c5710e588a6e53877bdf2f262",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_decomposition_from_process_source_data": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "9abd544fdbca0ecc226b7a1993fd6db5116d035ba35da26a375b0881e5e673a8",
+      "paper_statement_sha256": "04eba67ea15dc9c24fe4cd1393df0b182148cf1abe24a8407419fbd973ed3c11",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "d6b38281b276b02bc97762e4942567ba2a83ae4f72dcbcd022f675e21a03530b",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_decomposition_from_source_semantics": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "8d239c891e38034edecd0711ce48a6537932bc1ca8e20421b6b49fe24de7829f",
+      "paper_statement_sha256": "7750a85c2d589b6d7e595f3fd31490681d29ed05439520a7e946ad7668df5d55",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "79d7b1ddf75033416e1b7c3155945e31ecf3279eefcda8692e6fb1cccd6ef948",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_product_decomposition_from_poisson_increment_laws": {
+      "boundary_names": [
+        "HomogeneousPoissonCountingProcess",
+        "HomogeneousPoissonCountingProcessByLaw",
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "HomogeneousPoissonCountingProcess",
+        "HomogeneousPoissonCountingProcessByLaw",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "9c364ad8c0ee38dcb64787d925d513f8cd97d624b70c5d37b56eb8c4eb27acbc",
+      "paper_statement_sha256": "9fc352e6727577e50dc5a279044a6b437c8d2c792f22bede2a78842f96eed5be",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "0c515cd4535da877d5f5d58b0af70ec09760bb2c1091df71b2f8e92f97fa0075",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_product_decomposition_from_poisson_increment_laws_of_exists_pos_exposure": {
+      "boundary_names": [
+        "HomogeneousPoissonCountingProcess",
+        "HomogeneousPoissonCountingProcessByLaw",
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "HomogeneousPoissonCountingProcess",
+        "HomogeneousPoissonCountingProcessByLaw",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "5bae60c938d0e5dbee168554e9e674e4758281325131b3830bb8d02b7ebee588",
+      "paper_statement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "",
+      "tex_statement_sha256": "c2ab9dc0dcde7635649d88e59b01ee0d211c893cffd87f239eb6cfd8674ceb22",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_product_decomposition_from_primitive_poisson_process": {
+      "boundary_names": [
+        "HomogeneousPoissonCountingProcess",
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "HomogeneousPoissonCountingProcess",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "3c9d28bf15a9c3fe84f4392a6832c9dddedbd7d893c4ade1daeeea2f660bd1c4",
+      "paper_statement_sha256": "e1966d529c96709b645f1c004fd772271295558746e6d0e00b435d3e3df07596",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "89f19b8c9eced03ccdba2e31398df1e1ded756cbd02da76b7227941c9fc1402f",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_product_decomposition_from_primitive_poisson_process_of_exists_pos_exposure": {
+      "boundary_names": [
+        "HomogeneousPoissonCountingProcess",
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "HomogeneousPoissonCountingProcess",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "010598d70a8d1955abafcacb1f4a04bc25a170258aff8398341d0d4c16688eb2",
+      "paper_statement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "",
+      "tex_statement_sha256": "c273636aa6ad08ea795c68c7d5e42a0394f3d6bf609f8c6985c4f147c5f270a1",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_product_decomposition_from_process_law_cases": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "2a36f52423fb85102ad4863205844d238b6d0d9394936a66719f87bd025d4115",
+      "paper_statement_sha256": "f7edde89cf806c87037e2f56109ee5f368b9efd28be20f793da09eea4038b220",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "26764ba3081182f1e7eb8e03f84917b052debf4371db6664a8df7e6372d018b1",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_product_decomposition_from_process_law_cases_of_exists_pos_exposure": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "cba9fd4ea588c6f3f64c91dc512e47aab430841d746945004786e279cf421600",
+      "paper_statement_sha256": "8b708b6a430f1f3d5213cd8b22a233dce59d93f707ab140a4d77c637eaa0c7b9",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "7cab39753088b3016ac7fc674f8bee3ee95945342bdb3109cf52ccc70a852001",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_product_decomposition_from_process_source_data": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "7da355613e7a0977c2c48e94d5cf627c4aef547b4b9620700ef04ae9082ad542",
+      "paper_statement_sha256": "2a23d4ce04163249d0fa7f4da039f3dcf2e8f604cafce64d8cdd605475ad944b",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "7f429f55afe9748180ec7c9e382cd64478ee1ec7999b8398f28702998c6f07cc",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_product_decomposition_from_source_semantics": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "beba73b1bbf9726d7dea75ef6ad2c01e355ead518eea196450d854e5283f422a",
+      "paper_statement_sha256": "197b75ec77863c3f22491041b921fc8cf88a4485edef356eb82a532fc3588195",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "a7e34db5c46c2144ef5f50ec04016c6415297630baf6c43bab14406e88bd2cdf",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_likelihood_product_decomposition_from_source_semantics_of_exists_pos_exposure": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "2db0414ce127ab93482957e65545e567e56a33339f210aad9205282ed29c3b44",
+      "paper_statement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "",
+      "tex_statement_sha256": "1d9e8a7b3d4c987cb9ce50dee9b364d0ae0825c5130a66c242c42dbe5b1cc578",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_rate_likelihood_product_decomposition_with_fixed_condition_density_source_model": {
+      "boundary_names": [
+        "Theorem2FixedConditionDensitySourceModel",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2FixedConditionDensitySourceModel",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "7a04a6e787c0208edb5310ac9a423eb1a78027e72977591da8a7872636d6b96f",
+      "paper_statement_sha256": "7662e460305571fb28d136a5de34e4e6f70eb6c82bf91b3c729c98fbe15a4457",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "82741e01e76bab85334369454f292fd4a96d0dcbe3c4b064bbd501f677df318b",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem1_rate_likelihood_product_decomposition_with_fixed_condition_density_source_model_of_exists_pos_exposure": {
+      "boundary_names": [
+        "Theorem2FixedConditionDensitySourceModel",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2FixedConditionDensitySourceModel",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "91551ee3c5d7be9e1475da00fdd4b1c52bf145249cd83a6b82d8536809cecebd",
+      "paper_statement_sha256": "9dbace65cb384ac18a5e091dd1fb1cd978a5ff258712638cbac371ac71a3544c",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "7097230d1e1d745c028ad394e75a08d60139dee204e389d6b9c9a3758c68dd3c",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_corrected_case_factorization": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "a26a42fbdbdde3c1ee5c34c79b40edaa5429cd949b3c7e993df6717114540480",
+      "paper_statement_sha256": "34bb853e747cbe931db3924f0f9342fab4999ba2d96c24989a4ab34f369b1e52",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "e4d32997db9a98a1b5252ad776414ea8e57bcd69730f462291c491fea1305040",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_interarrival_kernel_collection": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "5d78b9197fa5767a5a2714d5072cdee99397b12f3f95462f244c252ba2fd631c",
+      "paper_statement_sha256": "83ca12fd53a30573b712076b0fea9b568fec47672034993d99d84bc1bf923cd6",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "8086111c64d28128f2eee8fa7a17e740ceeee95cb4de86e7cba51ff444d39557",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_multi_report_condition_functions_factorization": {
+      "boundary_names": [
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "86eb388773894bcd5f4965cb0862180050f1b595bc72b01da522fcc197b538a7",
+      "paper_statement_sha256": "05a28312d567af52d84e9122519bf7f6e3a68795d7b0f719db72d95b2979fee0",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "aaef127df308c2ab39a0f254cf754073c54f292f114d6678b8a8b05a9b5ffbc8",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_multi_report_jump_times_factorization": {
+      "boundary_names": [
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "6f41fdef73f2bbcd0a2c564ef9de459572826a0c22b01eca58777a8ffbeb28dc",
+      "paper_statement_sha256": "94dfeca4b8fa756e6a078d63c6439abfc94ea0689bd73441b9e097e4f2fe08d2",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "5358ff8904cd3e10cddecc95c32316573219f59dbd3cceaea076d1fd1fe242c2",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_multi_report_kernel_collection": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "f2b463c755ab5c3b064f4635dda171aacdfd550435bbae28a1e8f67bdc13ce74",
+      "paper_statement_sha256": "c1d51508ea8be50364ff2ab9c711bfd8781fa051811f06ecf8a30068b3ae5faa",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "ef2b087e562cab23165f019b174441109592976fedd1692aab670e2e60a1cd71",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_multi_report_ordered_region_volume_normalization": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "62c0f7a733c8b94035264d984affeef60c70898e288c1ea594b7772646b67b27",
+      "paper_statement_sha256": "269f13069818ce0f45997765db4a75bf1ed17496454ab5341478b0cb7c7c259b",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "51d420a76267b32643b3d10856e97c8fd79655c56fce8d2e08f1aee0793dc22a",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_multi_report_process_kernel_source_case": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "ed8110752ec4e2b97b596c8aa9564ea54735259710574cb9740a3e51c354652b",
+      "paper_statement_sha256": "ee2c7f3d38403feefac61f5a6e0d29239be81c4a010f6849123908d3bb7b515d",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "6faaa828a70b797f6a4e0bd5cb370b3cc3dc9444ef4855ae7a544c17bbfe7362",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_multi_report_source_case": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "7b5b50f90542d115e10e6349bf762dba8f610a9c1272bc5cc283a428e018f975",
+      "paper_statement_sha256": "07432e4a1f0171d63ced7d991ff66040386ca2098388232ddb4b26642739e918",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "66dd5f376408f86c16040b7160a55d0a344914ab3769c55851f6059c2945a230",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_one_report_condition_functions_factorization": {
+      "boundary_names": [
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "c6abda8bd373e52280aad74ff98c61813f6cf708ade1d6674300837efb9fffba",
+      "paper_statement_sha256": "76d15cf18ddcc61d7f4e5e6531ef851debb1d20ce75db23873c04b22ae15de36",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "4441171e25b1a0d4dd5158607cfba9d5d8de87aab303c1b62f17207dc51cd4ee",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_one_report_jump_time_factorization": {
+      "boundary_names": [
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "b766ec361f2989c2cb53279beaa9fca1c43568f2ee51697d3398cfabbd1ca415",
+      "paper_statement_sha256": "ecf86fd6e34af9546f38cbc7164207c4820f258de11152fee7dd9ef11d880b87",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "e9ae9423ee694fe2f504cf3fcac1d172ac17c6bcdfcec43c483c19f04b34cffb",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_one_report_kernel_collection": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "34001339688eaa4ee442f88bf41b5bec6930772a9befdd60a5e9e5968627b23d",
+      "paper_statement_sha256": "5340bfa7bb54fa0baa64fab1624d2bfa883c003b15a3c8a1be10eddfd3fea25b",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "cc7a6be4bdb17af5fc527399339cfd48850fa1388e09d28abe55b8b9061cdce3",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_one_report_ordered_region_volume_normalization": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "65696e0aec3844d85f0437630c06f0ae3d49b34c3cd526809a959cb1251d00bf",
+      "paper_statement_sha256": "072db0303a5e3f702fdaf488a0c2cb94527cab798008f1055ae57b00764432c7",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "c67fb65a0fa6b00849258a010789819a420013117cc5613d982b2949810b4dd1",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_one_report_ordered_volume_normalization": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "2d8158e085db1bee55858b0caa307e44bbc383b9aefc2adab4a1fba8fabf8753",
+      "paper_statement_sha256": "a023f18e84f25e2d0cadc39a1a349ee3f13804e6aa8ec6601a15a11eba72c207",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "278069acf08d18c7c93763af117ec419b773865afe67aa7335dd010ffa61be80",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_one_report_process_kernel_source_case": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "551b407d86e471f3b3413e13168aff6d4bf2ad94ce58f2477a739941a0ba5ec0",
+      "paper_statement_sha256": "c597ee4c4d297c42a0484410e5c2e0b0b39b5c23b3c8376480d01d8ef5d51215",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "1837b034ae7fa057bc19c1d891fa48e0080cf2bbd382865a5806f205c456a44c",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_one_report_source_case": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "7333e09887eeb26498557d264d47c6a12c9462de446e4df1e85f99f1e17f5368",
+      "paper_statement_sha256": "093e855aee294a6bb919a94f0c24dd0bc7e731912999b985df3079155e2373e3",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "c24d895bcde738462c2de3c23f556ef5a458e5f6c7dd55f72f15a414857f7899",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_two_report_ordered_region_volume_normalization": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "98549ceda6aa6643f091e847d97c913bdf014af4c224e2eb5bc27f8e6bbdff1b",
+      "paper_statement_sha256": "fffe2fba324647833f5571c7060540999b30bb8b736bf19efef5a24fdadaec26",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "4b2ffe48a5bf35e3faf622f1165d14de89d5650c6bf3aed67641337b007fd531",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_zero_report_condition_functions_factorization": {
+      "boundary_names": [
+        "ObservationWindow",
+        "Theorem2ConditionFunctions",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels",
+        "homogeneous Poisson counting-process law"
+      ],
+      "boundary_type": "explicit_source_model_or_certificate_boundary",
+      "conditional_premises": [
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints.",
+        "ObservationWindow",
+        "Theorem2ConditionFunctions",
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "118c9f596341d431f3856607752d12ae284a0b814b05136c5a8880840710c132",
+      "paper_statement_sha256": "ba1ab14c6ab6de622a515f6bf821025af723c6b962f1e2f2310816703ce225c3",
+      "reason": "Strict source comparison is conditional because the visible Lean statement contains an explicit source-model/certificate/process-law/window premise.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The row exposes a paper-facing consequence conditional on an explicit source-model, process-law, observation-window, or stopping-certificate object. This is accepted for the public partial checkpoint and is not an unconditional full-process construction claim.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "e36eac29ae492d51e94c039c46a5e036dbeac80210f6f7d5c24b5f7d3d5c5bf8",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_zero_report_process_kernel_source_case": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "c79602d869ea900654f347d0b5d3f23ba993076d4d408d1b2c573bd1baa79777",
+      "paper_statement_sha256": "1c5dda8bee2b33820d671b44ac3731d9dfde72397258dbdd8a3b0c013e0d3f8e",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "3376ebca397a3236f4f63147b0f5bb3681ecf4c44c89b68ae313b35faee6f207",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    },
+    "theorem2_zero_report_source_case": {
+      "boundary_names": [
+        "homogeneous Poisson counting-process law",
+        "duration-censored stopping certificate",
+        "fixed Condition 1/2 kernels"
+      ],
+      "boundary_type": "compact_process_stopping_kernel_certificate",
+      "conditional_premises": [
+        "Theorem2PrimitiveSourceModel supplies the homogeneous count law and fixed g(s), h_m(e) kernels.",
+        "DurationCensoredFirstCountObservationCertificate supplies the stopping-window fields for concrete endpoints."
+      ],
+      "judgment": "mismatch",
+      "lean_statement_sha256": "ded8d60f17141746be8cddce246acda7e64639fa017e734e3ece8965348cc6e7",
+      "paper_statement_sha256": "470318756adbd960cf37e82f645cf09a697fb3c22f857a5eee9cb712a8d4e7bc",
+      "reason": "Strict source comparison is conditional rather than unconditional because the concrete continuous-time Poisson/stopping construction is not yet derived in Lean.",
+      "resolution": "conditional_boundary",
+      "resolution_reason": "The Lean row is a checked consequence of the explicit compact process/stopping/kernel certificate boundary; the paper states the corresponding theorem from a concrete Poisson process model. This is the intentional public partial-formalization boundary.",
+      "source_metadata_sha256": "4d1ff10ba0c968f2b17bc386227f35b7bd07b31dab9635416933cfe735ab14ae",
+      "tex_statement_sha256": "6ea19425b7a3449e230646233e087db2b44aaeb2b2af7d07aff7f3cf861d4fdd",
+      "validated_at": "2026-06-28T12:00:00Z",
+      "validator": "gpt-5-codex",
+      "validator_type": "model"
+    }
+  },
+  "paper": "LBG24SpatialUnderreporting",
+  "prompt_summary": [
+    "A matches verdict requires the same visible hypotheses, quantifiers, domains, constants, normalizations, signs, inequality directions, and conclusions.",
+    "Conditional theorem rows remain strict mismatches with resolution conditional_boundary rather than unconditional matches.",
+    "Formula-bearing non-boundary rows were checked against the selected source formula/subclaim in the dashboard cache."
+  ],
+  "prompt_version": "statement-match-v2-strict-full-statement-recursive-definitions",
+  "schema": 1,
+  "validated_at": "2026-06-28T12:00:00Z",
+  "validator": "gpt-5-codex",
+  "validator_type": "model"
+}

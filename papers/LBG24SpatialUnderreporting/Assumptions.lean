@@ -1,0 +1,2956 @@
+import LBG24SpatialUnderreporting.MainTheorems
+
+/-!
+# Paper Assumptions: Quantifying Spatial Under-reporting Disparities
+
+This file declares the current paper-local source assumption for Appendix
+Theorem 2 / Theorem 1:
+`assumption_theorem2_poisson_process_and_conditions`.
+
+The assumption is source-shaped rather than arbitrary.  It bundles primitive
+homogeneous Poisson counting-process semantics, via
+`HomogeneousPoissonCountingProcessByLaw`, together with the paper's Condition
+1/2 functions `g`, `h_m`, and survival-integral terms, via
+`Theorem2ConditionFunctions`.  The interval-count law and ordered
+one/multi-report interarrival-density law are no longer assumed fields here:
+the reusable library derives the interval-count PMF from mathlib Poisson
+increment laws and constructs the canonical exponential interarrival density
+law from the same homogeneous count rate.  `ArrivalKernelCase`/
+`ObservedArrivalCase` expose the generic no/one/finite arrival-kernel algebra
+underneath both source-data and process-law cases.
+
+For finite observed-window likelihoods, theorem-facing rows can now avoid this
+continuous-time bundle by using `FinitePoissonCountFamily`, which is
+constructed in the reusable Poisson library.  The remaining reusable-library
+target is the stronger all-times stopping-window semantics that derives this
+source assumption bundle from primitive continuous-time Poisson-process
+semantics and the paper's Conditions 1/2.
+-/
+
+namespace LBG24SpatialUnderreporting
+
+open MeasureTheory
+open EconCSLib.Probability.PoissonProcess
+
+noncomputable section
+
+/--
+Primitive source semantics for Appendix Theorem 2 / Theorem 1 before the
+theorem-specific assumption bundle is formed.
+
+The process component is paper-neutral homogeneous Poisson counting-process
+semantics, expressed through mathlib Poisson increment laws.  The condition
+component stores the paper's rate-indexed Condition 1/2 source terms together
+with explicit proofs that those terms are independent of the Poisson rate.
+-/
+-- audit-premise: S : theorem2_poisson_process_and_condition_semantics Ω P
+structure theorem2_poisson_process_and_condition_semantics
+    (Ω : Type*) [MeasurableSpace Ω] (P : Measure Ω) where
+  countProcess : HomogeneousPoissonCountingProcessByLaw Ω P
+  conditionSemantics : Theorem2ConditionFunctionSemantics
+
+namespace theorem2_poisson_process_and_condition_semantics
+
+variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+
+/-- Constant condition functions derived from rate-indexed source semantics. -/
+def conditionFunctions
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    Theorem2ConditionFunctions :=
+  S.conditionSemantics.toConditionFunctions
+
+/--
+Canonical primitive source semantics from the paper-neutral homogeneous
+Poisson increment-law model and already rate-independent Condition 1/2
+functions.
+-/
+def fromPoissonIncrementLawsAndConditionFunctions
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (K : Theorem2ConditionFunctions) :
+    theorem2_poisson_process_and_condition_semantics Ω P where
+  countProcess := H
+  conditionSemantics := K.toConditionFunctionSemantics
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionFunctions_countProcess
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (K : Theorem2ConditionFunctions) :
+    (fromPoissonIncrementLawsAndConditionFunctions H K).countProcess = H := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionFunctions_conditionFunctions
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (K : Theorem2ConditionFunctions) :
+    (fromPoissonIncrementLawsAndConditionFunctions H K).conditionFunctions =
+      K := by
+  simp [fromPoissonIncrementLawsAndConditionFunctions, conditionFunctions,
+    Theorem2ConditionFunctions.toConditionFunctionSemantics_toConditionFunctions]
+
+/--
+Canonical primitive source semantics from the paper-neutral homogeneous
+Poisson increment-law model and rate-indexed Condition 1/2 source semantics.
+-/
+def fromPoissonIncrementLawsAndConditionSemantics
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics) :
+    theorem2_poisson_process_and_condition_semantics Ω P where
+  countProcess := H
+  conditionSemantics := G
+
+/--
+Canonical primitive source semantics from the paper-neutral homogeneous
+Poisson increment-law model and the source-vocabulary Condition 1/2 model.
+-/
+def fromPoissonIncrementLawsAndConditionSourceModel
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionSourceModel) :
+    theorem2_poisson_process_and_condition_semantics Ω P :=
+  fromPoissonIncrementLawsAndConditionSemantics
+    H C.toConditionFunctionSemantics
+
+/--
+Canonical primitive source semantics from the homogeneous Poisson
+increment-law model and the density-kernel Condition 1/2 source model.
+-/
+noncomputable def fromPoissonIncrementLawsAndConditionDensitySourceModel
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionDensitySourceModel) :
+    theorem2_poisson_process_and_condition_semantics Ω P :=
+  fromPoissonIncrementLawsAndConditionSemantics
+    H C.toConditionFunctionSemantics
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionSemantics_countProcess
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics) :
+    (fromPoissonIncrementLawsAndConditionSemantics H G).countProcess = H := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionSemantics_conditionSemantics
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics) :
+    (fromPoissonIncrementLawsAndConditionSemantics H G).conditionSemantics =
+      G := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionSemantics_conditionFunctions
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics) :
+    (fromPoissonIncrementLawsAndConditionSemantics H G).conditionFunctions =
+      G.toConditionFunctions := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionSourceModel_countProcess
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionSourceModel) :
+    (fromPoissonIncrementLawsAndConditionSourceModel H C).countProcess = H := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionSourceModel_conditionSemantics
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionSourceModel) :
+    (fromPoissonIncrementLawsAndConditionSourceModel H C).conditionSemantics =
+      C.toConditionFunctionSemantics := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionSourceModel_conditionFunctions
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionSourceModel) :
+    (fromPoissonIncrementLawsAndConditionSourceModel H C).conditionFunctions =
+      C.toConditionFunctionSemantics.toConditionFunctions := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionDensitySourceModel_countProcess
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionDensitySourceModel) :
+    (fromPoissonIncrementLawsAndConditionDensitySourceModel H C).countProcess =
+      H := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionDensitySourceModel_conditionSemantics
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionDensitySourceModel) :
+    (fromPoissonIncrementLawsAndConditionDensitySourceModel H C).conditionSemantics =
+      C.toConditionFunctionSemantics := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionDensitySourceModel_conditionFunctions
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionDensitySourceModel) :
+    (fromPoissonIncrementLawsAndConditionDensitySourceModel H C).conditionFunctions =
+      C.toConditionFunctionSemantics.toConditionFunctions := rfl
+
+def rate
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) : ℝ :=
+  S.countProcess.rate
+
+theorem rate_pos
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    0 < S.rate :=
+  S.countProcess.rate_pos
+
+/-- Count paths are almost surely monotone under the primitive source semantics. -/
+theorem count_mono
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    ∀ᵐ ω ∂P, Monotone fun t => S.countProcess.count t ω :=
+  S.countProcess.count_mono
+
+/-- Interval counts add back to endpoint counts under the primitive source semantics. -/
+theorem count_add_intervalCount_eq_ae
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    {s t : ℝ} (hst : s ≤ t) :
+    ∀ᵐ ω ∂P,
+      S.countProcess.count s ω +
+          S.countProcess.intervalCount s t ω =
+        S.countProcess.count t ω :=
+  S.countProcess.count_add_intervalCount_eq_ae hst
+
+/--
+Adjacent interval counts add to the combined interval count under the primitive
+source semantics.
+-/
+theorem intervalCount_add_adjacent_ae
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    {r s t : ℝ} (hrs : r ≤ s) (hst : s ≤ t) :
+    ∀ᵐ ω ∂P,
+      S.countProcess.intervalCount r s ω +
+          S.countProcess.intervalCount s t ω =
+        S.countProcess.intervalCount r t ω :=
+  S.countProcess.intervalCount_add_adjacent_ae hrs hst
+
+/-- Window-count probability induced directly by the primitive source semantics. -/
+theorem windowCount_prob
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (W : ObservationWindow) (n : ℕ) :
+    P.real {ω : Ω |
+        S.countProcess.intervalCount W.startTime W.endTime ω = n} =
+      countLikelihood S.rate W.exposure n := by
+  simpa [rate] using S.countProcess.windowCount_prob W n
+
+/-- Window-count distribution law induced directly by the primitive source semantics. -/
+theorem windowCount_hasLaw
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (W : ObservationWindow) :
+    ProbabilityTheory.HasLaw
+      (fun ω : Ω =>
+        S.countProcess.intervalCount W.startTime W.endTime ω)
+      (ProbabilityTheory.poissonMeasure
+        (rateExposureParam S.rate W.exposure
+          (mul_nonneg (le_of_lt S.rate_pos) W.exposure_nonneg))) P := by
+  simpa [rate] using S.countProcess.windowCount_hasLaw W
+
+/-- No-arrival window-count probability from the primitive source semantics. -/
+theorem windowCount_zero_prob
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (W : ObservationWindow) :
+    P.real {ω : Ω |
+        S.countProcess.intervalCount W.startTime W.endTime ω = 0} =
+      noArrivalProb S.rate W.exposure := by
+  simpa [rate] using S.countProcess.windowCount_zero_prob W
+
+/--
+No-arrival window-count probability from the primitive source semantics,
+written as the exponential waiting-time tail.
+-/
+theorem windowCount_zero_prob_eq_exponential_tail
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (W : ObservationWindow) :
+    P.real {ω : Ω |
+        S.countProcess.intervalCount W.startTime W.endTime ω = 0} =
+      ((EconCSLib.Probability.Exponential.Model.mk S.rate S.rate_pos).measure
+        (Set.Ioi W.exposure)).toReal := by
+  simpa [rate] using S.countProcess.windowCount_zero_prob_eq_exponential_tail W
+
+/-- Count-law consequences induced directly by the primitive source semantics. -/
+def countLaw
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    HomogeneousCountProcessLaw Ω P :=
+  S.countProcess.toHomogeneousCountProcessLaw
+
+/--
+Combined count/ordered-arrival process law induced directly by the primitive
+source semantics.
+-/
+def processLaw
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    HomogeneousPoissonProcessLaw Ω P :=
+  S.countProcess.toHomogeneousPoissonProcessLaw
+
+@[simp] theorem countLaw_rate
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    S.countLaw.rate = S.rate := rfl
+
+@[simp] theorem processLaw_rate
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    S.processLaw.rate = S.rate := rfl
+
+@[simp] theorem processLaw_countLaw
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    S.processLaw.countLaw = S.countLaw := rfl
+
+@[simp] theorem countLaw_intervalCount
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    S.countLaw.intervalCount = S.countProcess.intervalCount := rfl
+
+theorem startDensityOfRate_eq
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (rate : ℝ) :
+    S.conditionSemantics.startDensityOfRate rate =
+      S.conditionFunctions.startDensity :=
+  S.conditionSemantics.startDensityOfRate_eq rate
+
+theorem endDensityOfRate_eq
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (baseCount : ℕ) (rate : ℝ) :
+    S.conditionSemantics.endDensityOfRate baseCount rate =
+      S.conditionFunctions.endDensity baseCount :=
+  S.conditionSemantics.endDensityOfRate_eq baseCount rate
+
+theorem survivalIntegralOfRate_eq
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (baseCount : ℕ) (rate : ℝ) :
+    S.conditionSemantics.survivalIntegralOfRate baseCount rate =
+      S.conditionFunctions.survivalIntegral baseCount :=
+  S.conditionSemantics.survivalIntegralOfRate_eq baseCount rate
+
+/--
+One-report ordered-density normalization induced directly by the primitive
+source semantics.
+-/
+theorem one_jump_density_ordered_region_volume_eq_count_prob
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (T : OrderedOneJumpWindow) (h_exposure : T.window.exposure ≠ 0) :
+    S.processLaw.arrivalLaw.oneJumpDensity T *
+        (volume (orderedJumpRegion 1 T.window.exposure)).toReal =
+      P.real {ω : Ω |
+        S.countProcess.intervalCount T.window.startTime T.window.endTime ω =
+          1} := by
+  simpa [processLaw, countLaw] using
+    S.processLaw.oneJumpDensity_mul_orderedJumpRegionVolume_eq_windowCount_prob
+      T h_exposure
+
+/--
+One-report ordered-density normalization induced directly by the primitive
+source semantics, with nonzero exposure derived from positive window exposure.
+-/
+theorem one_jump_density_ordered_region_volume_eq_count_prob_of_pos_exposure
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (T : OrderedOneJumpWindow) (h_exposure_pos : 0 < T.window.exposure) :
+    S.processLaw.arrivalLaw.oneJumpDensity T *
+        (volume (orderedJumpRegion 1 T.window.exposure)).toReal =
+      P.real {ω : Ω |
+        S.countProcess.intervalCount T.window.startTime T.window.endTime ω =
+          1} := by
+  exact one_jump_density_ordered_region_volume_eq_count_prob
+    S T (ne_of_gt h_exposure_pos)
+
+/--
+One-jump ordered density from primitive source semantics, written as the
+one-count Poisson PMF divided by ordered-region volume.
+-/
+theorem one_jump_density_eq_sourcePoissonPMF_div_ordered_region_volume
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (T : OrderedOneJumpWindow)
+    (h_exposure_pos : 0 < T.window.exposure) :
+    S.processLaw.arrivalLaw.oneJumpDensity T =
+      sourcePoissonPMF S.rate T.window.exposure 1 /
+        (volume (orderedJumpRegion 1 T.window.exposure)).toReal := by
+  simpa [processLaw, sourcePoissonPMF, rate] using
+    (S.processLaw.arrivalLaw.oneJumpDensity_eq_countLikelihood_div_orderedJumpRegionVolume
+        T h_exposure_pos)
+
+/--
+Finite-report ordered-density normalization induced directly by the primitive
+source semantics.
+-/
+theorem finite_jump_density_ordered_region_volume_eq_count_prob
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (T : OrderedFiniteJumpTimeline) (h_exposure : T.window.exposure ≠ 0) :
+    S.processLaw.arrivalLaw.finiteJumpDensity T *
+        (volume (orderedJumpRegion T.count T.window.exposure)).toReal =
+      P.real {ω : Ω |
+        S.countProcess.intervalCount T.window.startTime T.window.endTime ω =
+          T.count} := by
+  simpa [processLaw, countLaw] using
+    S.processLaw.finiteJumpDensity_mul_orderedJumpRegionVolume_eq_windowCount_prob
+      T h_exposure
+
+/--
+Finite-report ordered-density normalization induced directly by the primitive
+source semantics, with nonzero exposure derived from positive window exposure.
+-/
+theorem finite_jump_density_ordered_region_volume_eq_count_prob_of_pos_exposure
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (T : OrderedFiniteJumpTimeline) (h_exposure_pos : 0 < T.window.exposure) :
+    S.processLaw.arrivalLaw.finiteJumpDensity T *
+        (volume (orderedJumpRegion T.count T.window.exposure)).toReal =
+      P.real {ω : Ω |
+        S.countProcess.intervalCount T.window.startTime T.window.endTime ω =
+          T.count} := by
+  exact finite_jump_density_ordered_region_volume_eq_count_prob
+    S T (ne_of_gt h_exposure_pos)
+
+/--
+Finite-jump ordered density from primitive source semantics, written as the
+matching Poisson PMF divided by ordered-region volume.
+-/
+theorem finite_jump_density_eq_sourcePoissonPMF_div_ordered_region_volume
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (T : OrderedFiniteJumpTimeline)
+    (h_exposure_pos : 0 < T.window.exposure) :
+    S.processLaw.arrivalLaw.finiteJumpDensity T =
+      sourcePoissonPMF S.rate T.window.exposure T.count /
+        (volume (orderedJumpRegion T.count T.window.exposure)).toReal := by
+  simpa [processLaw, sourcePoissonPMF, rate] using
+    (S.processLaw.arrivalLaw.finiteJumpDensity_eq_countLikelihood_div_orderedJumpRegionVolume
+        T h_exposure_pos)
+
+/--
+Finite-dimensional adjacent interval-count law induced directly by the
+primitive source semantics.
+-/
+theorem intervalCount_joint_real_eq_countLikelihoodProduct_fin
+    [IsFiniteMeasure P]
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          S.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      countLikelihoodProduct (Finset.univ : Finset (Fin n)) S.rate
+        (fun i => t i.succ - t i.castSucc) k := by
+  simpa [rate] using
+    S.countProcess.intervalCount_joint_real_eq_countLikelihoodProduct_fin
+      ht k
+
+/--
+Finite-dimensional adjacent interval-count law collapsed to one total-count
+Poisson likelihood, induced directly by the primitive source semantics.
+-/
+theorem intervalCount_joint_real_eq_residual_countLikelihood_total_fin
+    [IsFiniteMeasure P]
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_totalExposure :
+      totalExposure (Finset.univ : Finset (Fin n))
+        (fun i => t i.succ - t i.castSucc) ≠ 0) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          S.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (totalExposure (Finset.univ : Finset (Fin n))
+              (fun i => t i.succ - t i.castSucc)) ^
+                totalCount (Finset.univ : Finset (Fin n)) k) *
+        countLikelihood S.rate
+          (totalExposure (Finset.univ : Finset (Fin n))
+            (fun i => t i.succ - t i.castSucc))
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [rate] using
+    S.countProcess.intervalCount_joint_real_eq_residual_countLikelihood_total_fin
+      ht k h_totalExposure
+
+/--
+Finite-dimensional adjacent interval-count law induced directly by the
+primitive source semantics, with the nonzero total exposure derived from one
+strictly positive adjacent window.
+-/
+theorem intervalCount_joint_real_eq_residual_countLikelihood_total_fin_of_exists_pos_exposure
+    [IsFiniteMeasure P]
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_exists :
+      ∃ i ∈ (Finset.univ : Finset (Fin n)),
+        0 < t i.succ - t i.castSucc) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          S.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (totalExposure (Finset.univ : Finset (Fin n))
+              (fun i => t i.succ - t i.castSucc)) ^
+                totalCount (Finset.univ : Finset (Fin n)) k) *
+        countLikelihood S.rate
+          (totalExposure (Finset.univ : Finset (Fin n))
+            (fun i => t i.succ - t i.castSucc))
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [rate] using
+    S.countProcess.intervalCount_joint_real_eq_residual_countLikelihood_total_fin_of_exists_pos_exposure
+      ht k h_exists
+
+/--
+Paper-vocabulary total-exposure form of the finite-dimensional adjacent
+interval-count law induced directly by the primitive source semantics.
+-/
+theorem intervalCount_joint_real_eq_residual_sourcePoissonPMF_total_fin
+    [IsFiniteMeasure P]
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_totalExposure :
+      totalExposure (Finset.univ : Finset (Fin n))
+        (fun i => t i.succ - t i.castSucc) ≠ 0) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          S.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (totalExposure (Finset.univ : Finset (Fin n))
+              (fun i => t i.succ - t i.castSucc)) ^
+                totalCount (Finset.univ : Finset (Fin n)) k) *
+        sourcePoissonPMF S.rate
+          (totalExposure (Finset.univ : Finset (Fin n))
+            (fun i => t i.succ - t i.castSucc))
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [sourcePoissonPMF] using
+    intervalCount_joint_real_eq_residual_countLikelihood_total_fin
+      S ht k h_totalExposure
+
+/--
+Paper-vocabulary total-exposure form induced directly by the primitive source
+semantics, deriving nonzero exposure from one strictly positive adjacent
+window.
+-/
+theorem intervalCount_joint_real_eq_residual_sourcePoissonPMF_total_fin_of_exists_pos_exposure
+    [IsFiniteMeasure P]
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_exists :
+      ∃ i ∈ (Finset.univ : Finset (Fin n)),
+        0 < t i.succ - t i.castSucc) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          S.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (totalExposure (Finset.univ : Finset (Fin n))
+              (fun i => t i.succ - t i.castSucc)) ^
+                totalCount (Finset.univ : Finset (Fin n)) k) *
+        sourcePoissonPMF S.rate
+          (totalExposure (Finset.univ : Finset (Fin n))
+            (fun i => t i.succ - t i.castSucc))
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [sourcePoissonPMF] using
+    intervalCount_joint_real_eq_residual_countLikelihood_total_fin_of_exists_pos_exposure
+      S ht k h_exists
+
+/--
+Endpoint-exposure form of the finite-dimensional adjacent interval-count law
+induced directly by the primitive source semantics.
+-/
+theorem intervalCount_joint_real_eq_residual_countLikelihood_endpoint_fin
+    [IsFiniteMeasure P]
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_endpoint : t 0 < t (Fin.last n)) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          S.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (t (Fin.last n) - t 0) ^
+              totalCount (Finset.univ : Finset (Fin n)) k) *
+        countLikelihood S.rate
+          (t (Fin.last n) - t 0)
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [rate] using
+    S.countProcess.intervalCount_joint_real_eq_residual_countLikelihood_endpoint_fin
+      ht k h_endpoint
+
+/--
+Paper-vocabulary endpoint-exposure form of the finite-dimensional adjacent
+interval-count law induced directly by the primitive source semantics.
+-/
+theorem intervalCount_joint_real_eq_residual_sourcePoissonPMF_endpoint_fin
+    [IsFiniteMeasure P]
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_endpoint : t 0 < t (Fin.last n)) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          S.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (t (Fin.last n) - t 0) ^
+              totalCount (Finset.univ : Finset (Fin n)) k) *
+        sourcePoissonPMF S.rate
+          (t (Fin.last n) - t 0)
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [sourcePoissonPMF] using
+    intervalCount_joint_real_eq_residual_countLikelihood_endpoint_fin
+      S ht k h_endpoint
+
+end theorem2_poisson_process_and_condition_semantics
+
+/--
+Paper-local primitive source model for the public partial formalization.
+
+This is the narrow boundary that remains after the current cleanup: a
+homogeneous Poisson counting-process law, plus fixed paper Condition 1/2 data
+`g(s)` and `h_m(e)` with observed/integration endpoints.  All rate-indexed
+Condition 1/2 semantics, finite observed-window source records, and likelihood
+factorizations are derived from this record.
+-/
+-- audit-premise: M : Theorem2PrimitiveSourceModel Ω P
+structure Theorem2PrimitiveSourceModel
+    (Ω : Type*) [MeasurableSpace Ω] (P : Measure Ω) where
+  countProcess : HomogeneousPoissonCountingProcessByLaw Ω P
+  fixedConditionModel : Theorem2FixedConditionDensitySourceModel
+
+namespace Theorem2PrimitiveSourceModel
+
+variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+
+/--
+Construct the public-partial primitive source model from the paper-facing
+primitive inputs: a homogeneous Poisson count-process law, a fixed `g(s)`
+value, and fixed Condition 2 `h_m(e)` kernels with observed/survival endpoints.
+
+The constructor intentionally leaves the count-process law as an input; proving
+that law from a concrete path-space construction is the remaining reusable
+library task.
+-/
+def ofPaperModel
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (startDensity : ℝ)
+    (endDensityKernel : ℕ → ℝ → ℝ)
+    (observedEndTime : ℕ → ℝ)
+    (survivalLower : ℕ → ℝ)
+    (survivalUpper : ℝ) :
+    Theorem2PrimitiveSourceModel Ω P where
+  countProcess := H
+  fixedConditionModel :=
+    { condition1 := { startDensity := startDensity }
+      condition2 :=
+        { endDensityKernel := endDensityKernel
+          observedEndTime := observedEndTime
+          survivalLower := survivalLower
+          survivalUpper := survivalUpper } }
+
+@[simp] theorem ofPaperModel_countProcess
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (startDensity : ℝ)
+    (endDensityKernel : ℕ → ℝ → ℝ)
+    (observedEndTime : ℕ → ℝ)
+    (survivalLower : ℕ → ℝ)
+    (survivalUpper : ℝ) :
+    (ofPaperModel H startDensity endDensityKernel observedEndTime
+      survivalLower survivalUpper).countProcess = H := rfl
+
+@[simp] theorem ofPaperModel_fixedConditionModel_condition1_startDensity
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (startDensity : ℝ)
+    (endDensityKernel : ℕ → ℝ → ℝ)
+    (observedEndTime : ℕ → ℝ)
+    (survivalLower : ℕ → ℝ)
+    (survivalUpper : ℝ) :
+    (ofPaperModel H startDensity endDensityKernel observedEndTime
+      survivalLower survivalUpper).fixedConditionModel.condition1.startDensity =
+      startDensity := rfl
+
+@[simp] theorem ofPaperModel_fixedConditionModel_condition2_endDensityKernel
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (startDensity : ℝ)
+    (endDensityKernel : ℕ → ℝ → ℝ)
+    (observedEndTime : ℕ → ℝ)
+    (survivalLower : ℕ → ℝ)
+    (survivalUpper : ℝ) :
+    (ofPaperModel H startDensity endDensityKernel observedEndTime
+      survivalLower survivalUpper).fixedConditionModel.condition2.endDensityKernel =
+      endDensityKernel := rfl
+
+/-- The density-kernel source model induced by the primitive source model. -/
+noncomputable def toConditionDensitySourceModel
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    Theorem2ConditionDensitySourceModel :=
+  M.fixedConditionModel.toConditionDensitySourceModel
+
+/-- The rate-indexed Condition 1/2 source semantics induced by the primitive source model. -/
+noncomputable def toConditionFunctionSemantics
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    Theorem2ConditionFunctionSemantics :=
+  M.fixedConditionModel.toConditionFunctionSemantics
+
+/-- Constant condition functions induced by the primitive source model. -/
+noncomputable def conditionFunctions
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    Theorem2ConditionFunctions :=
+  M.toConditionFunctionSemantics.toConditionFunctions
+
+/-- Source semantics induced by primitive process laws and fixed Condition 1/2 data. -/
+noncomputable def toSourceSemantics
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    theorem2_poisson_process_and_condition_semantics Ω P :=
+  theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionDensitySourceModel
+    M.countProcess M.toConditionDensitySourceModel
+
+@[simp] theorem toConditionDensitySourceModel_eq
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    M.toConditionDensitySourceModel =
+      M.fixedConditionModel.toConditionDensitySourceModel := rfl
+
+@[simp] theorem toConditionFunctionSemantics_eq
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    M.toConditionFunctionSemantics =
+      M.fixedConditionModel.toConditionFunctionSemantics := rfl
+
+@[simp] theorem conditionFunctions_eq
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    M.conditionFunctions =
+      M.fixedConditionModel.toConditionFunctionSemantics.toConditionFunctions := rfl
+
+@[simp] theorem toSourceSemantics_countProcess
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    M.toSourceSemantics.countProcess = M.countProcess := rfl
+
+@[simp] theorem toSourceSemantics_conditionSemantics
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    M.toSourceSemantics.conditionSemantics =
+      M.toConditionFunctionSemantics := rfl
+
+@[simp] theorem toSourceSemantics_conditionFunctions
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    M.toSourceSemantics.conditionFunctions = M.conditionFunctions := rfl
+
+def rate
+    (M : Theorem2PrimitiveSourceModel Ω P) : ℝ :=
+  M.countProcess.rate
+
+theorem rate_pos
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    0 < M.rate :=
+  M.countProcess.rate_pos
+
+@[simp] theorem rate_eq_countProcess_rate
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    M.rate = M.countProcess.rate := rfl
+
+end Theorem2PrimitiveSourceModel
+
+/--
+Source assumption bundle for Appendix Theorem 2 / Theorem 1.
+
+The paper assumes a homogeneous Poisson process with rate `lambda` and
+Condition 1/2 functions `g`, `h_m`, and survival-integral terms that are
+independent of `lambda`.  The reusable
+`HomogeneousPoissonCountingProcessByLaw` records the count path, zero-start,
+monotone-path property, mathlib independent-increment property, and stationary
+Poisson increment laws.  `HomogeneousPoissonCountingProcess`,
+`HomogeneousCountProcessLaw`, and the ordered-arrival-density consequences are
+derived from this primitive process object.
+`Theorem2ConditionFunctions` records the paper's rate-independent `g`, `h_m`,
+and survival-integral factors.
+-/
+-- audit-premise: A : assumption_theorem2_poisson_process_and_conditions Ω P
+-- audit-premise: T : OrderedOneJumpWindow
+-- audit-premise: T : EconCSLib.Probability.PoissonProcess.OrderedOneJumpWindow
+-- audit-premise: W : ObservationWindow
+-- audit-premise: W : EconCSLib.Probability.PoissonProcess.ObservationWindow
+-- audit-premise: W : StoppingObservationWindow 𝓕
+-- audit-premise: W : EconCSLib.Probability.PoissonProcess.StoppingObservationWindow 𝓕
+-- audit-premise: M : Theorem2FixedConditionDensitySourceModel
+-- audit-premise: M : LBG24SpatialUnderreporting.Theorem2FixedConditionDensitySourceModel
+-- audit-premise: Cert : DurationCensoredFirstCountObservationCertificate 𝓕
+-- audit-premise: Cert : EconCSLib.Probability.PoissonProcess.DurationCensoredFirstCountObservationCertificate 𝓕
+-- audit-premise: caseFromWindow : ObservationWindow → Theorem2ObservedWindowCase
+-- audit-premise: caseFromWindow : EconCSLib.Probability.PoissonProcess.ObservationWindow → LBG24SpatialUnderreporting.Theorem2ObservedWindowCase
+-- audit-premise: anonymous : FirstCountArrivalCertificate 𝓕 reportCount startTime
+-- audit-premise: anonymous : EconCSLib.Probability.PoissonProcess.FirstCountArrivalCertificate 𝓕 reportCount startTime
+-- audit-premise: anonymous : FirstCountArrivalCertificate 𝓕 reportCount firstReportTime
+-- audit-premise: anonymous : EconCSLib.Probability.PoissonProcess.FirstCountArrivalCertificate 𝓕 reportCount firstReportTime
+structure assumption_theorem2_poisson_process_and_conditions
+    (Ω : Type*) [MeasurableSpace Ω] (P : Measure Ω) where
+  countProcess : HomogeneousPoissonCountingProcessByLaw Ω P
+  conditionFunctions : Theorem2ConditionFunctions
+
+namespace assumption_theorem2_poisson_process_and_conditions
+
+variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+
+/-- Build the theorem-facing assumption bundle from primitive source semantics. -/
+def fromSourceSemantics
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    assumption_theorem2_poisson_process_and_conditions Ω P :=
+  { countProcess := S.countProcess
+    conditionFunctions := S.conditionFunctions }
+
+/--
+Canonical source semantics induced by the theorem-facing assumption bundle.
+This uses the same homogeneous Poisson increment-law object and views the
+stored rate-independent Condition 1/2 functions as rate-indexed source terms.
+-/
+def toSourceSemantics
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    theorem2_poisson_process_and_condition_semantics Ω P :=
+  theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions
+    A.countProcess A.conditionFunctions
+
+/--
+Build the theorem-facing assumption bundle directly from Poisson increment
+laws and rate-indexed Condition 1/2 source semantics.
+-/
+def fromPoissonIncrementLawsAndConditionSemantics
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics) :
+    assumption_theorem2_poisson_process_and_conditions Ω P :=
+  fromSourceSemantics
+    (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+      H G)
+
+/--
+Build the theorem-facing assumption bundle directly from Poisson increment
+laws and the source-vocabulary Condition 1/2 model.
+-/
+def fromPoissonIncrementLawsAndConditionSourceModel
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionSourceModel) :
+    assumption_theorem2_poisson_process_and_conditions Ω P :=
+  fromPoissonIncrementLawsAndConditionSemantics
+    H C.toConditionFunctionSemantics
+
+/--
+Build the theorem-facing assumption bundle directly from Poisson increment
+laws and the density-kernel Condition 1/2 source model.
+-/
+noncomputable def fromPoissonIncrementLawsAndConditionDensitySourceModel
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionDensitySourceModel) :
+    assumption_theorem2_poisson_process_and_conditions Ω P :=
+  fromPoissonIncrementLawsAndConditionSemantics
+    H C.toConditionFunctionSemantics
+
+@[simp] theorem fromSourceSemantics_countProcess
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    (fromSourceSemantics S).countProcess = S.countProcess := rfl
+
+@[simp] theorem fromSourceSemantics_conditionFunctions
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    (fromSourceSemantics S).conditionFunctions = S.conditionFunctions := rfl
+
+@[simp] theorem toSourceSemantics_countProcess
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    A.toSourceSemantics.countProcess = A.countProcess := rfl
+
+@[simp] theorem toSourceSemantics_conditionFunctions
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    A.toSourceSemantics.conditionFunctions = A.conditionFunctions := by
+  simp [toSourceSemantics]
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionSemantics_countProcess
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics) :
+    (fromPoissonIncrementLawsAndConditionSemantics H G).countProcess = H := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionSemantics_conditionFunctions
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics) :
+    (fromPoissonIncrementLawsAndConditionSemantics H G).conditionFunctions =
+      G.toConditionFunctions := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionSourceModel_countProcess
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionSourceModel) :
+    (fromPoissonIncrementLawsAndConditionSourceModel H C).countProcess = H := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionSourceModel_conditionFunctions
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionSourceModel) :
+    (fromPoissonIncrementLawsAndConditionSourceModel H C).conditionFunctions =
+      C.toConditionFunctionSemantics.toConditionFunctions := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionDensitySourceModel_countProcess
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionDensitySourceModel) :
+    (fromPoissonIncrementLawsAndConditionDensitySourceModel H C).countProcess =
+      H := rfl
+
+@[simp] theorem fromPoissonIncrementLawsAndConditionDensitySourceModel_conditionFunctions
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ConditionDensitySourceModel) :
+    (fromPoissonIncrementLawsAndConditionDensitySourceModel H C).conditionFunctions =
+      C.toConditionFunctionSemantics.toConditionFunctions := rfl
+
+theorem fromSourceSemantics_toSourceSemantics
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    fromSourceSemantics A.toSourceSemantics = A := by
+  cases A
+  simp [fromSourceSemantics, toSourceSemantics]
+
+/-- Formula-facing counting-process consequences induced by Poisson increment laws. -/
+def primitiveCountProcess
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    HomogeneousPoissonCountingProcess Ω P :=
+  A.countProcess.toHomogeneousPoissonCountingProcess
+
+/-- The interval-count law induced by the primitive counting process. -/
+def countLaw
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    HomogeneousCountProcessLaw Ω P :=
+  A.countProcess.toHomogeneousCountProcessLaw
+
+/--
+The combined process law induced by the assumed homogeneous count law and the
+canonical exponential ordered-arrival-density law at the same rate.
+-/
+def processLaw
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    HomogeneousPoissonProcessLaw Ω P :=
+  A.countProcess.toHomogeneousPoissonProcessLaw
+
+def rate
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) : ℝ :=
+  A.countProcess.rate
+
+@[simp] theorem fromSourceSemantics_rate
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    (fromSourceSemantics S).rate = S.rate := rfl
+
+theorem rate_pos
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    0 < A.rate :=
+  A.countProcess.rate_pos
+
+@[simp] theorem countLaw_rate
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    A.countLaw.rate = A.rate := rfl
+
+@[simp] theorem processLaw_rate
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    A.processLaw.rate = A.rate := rfl
+
+@[simp] theorem processLaw_countLaw
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    A.processLaw.countLaw = A.countLaw := rfl
+
+@[simp] theorem countLaw_intervalCount
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    A.countLaw.intervalCount = A.countProcess.intervalCount := rfl
+
+/--
+One-report ordered-density normalization induced by the primitive source
+assumption's homogeneous Poisson process.
+-/
+theorem one_jump_density_ordered_region_volume_eq_count_prob
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (T : OrderedOneJumpWindow) (h_exposure : T.window.exposure ≠ 0) :
+    A.processLaw.arrivalLaw.oneJumpDensity T *
+        (volume (orderedJumpRegion 1 T.window.exposure)).toReal =
+      P.real {ω : Ω |
+        A.countProcess.intervalCount T.window.startTime T.window.endTime ω =
+          1} := by
+  simpa [processLaw, countLaw] using
+    A.processLaw.oneJumpDensity_mul_orderedJumpRegionVolume_eq_windowCount_prob
+      T h_exposure
+
+/--
+One-report ordered-density normalization induced by the source assumption's
+homogeneous Poisson process, with nonzero exposure derived from positive
+window exposure.
+-/
+theorem one_jump_density_ordered_region_volume_eq_count_prob_of_pos_exposure
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (T : OrderedOneJumpWindow) (h_exposure_pos : 0 < T.window.exposure) :
+    A.processLaw.arrivalLaw.oneJumpDensity T *
+        (volume (orderedJumpRegion 1 T.window.exposure)).toReal =
+      P.real {ω : Ω |
+        A.countProcess.intervalCount T.window.startTime T.window.endTime ω =
+          1} := by
+  exact one_jump_density_ordered_region_volume_eq_count_prob
+    A T (ne_of_gt h_exposure_pos)
+
+/--
+One-jump ordered density from the theorem-facing source assumption bundle,
+written as the one-count Poisson PMF divided by ordered-region volume.
+-/
+theorem one_jump_density_eq_sourcePoissonPMF_div_ordered_region_volume
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (T : OrderedOneJumpWindow)
+    (h_exposure_pos : 0 < T.window.exposure) :
+    A.processLaw.arrivalLaw.oneJumpDensity T =
+      sourcePoissonPMF A.rate T.window.exposure 1 /
+        (volume (orderedJumpRegion 1 T.window.exposure)).toReal := by
+  simpa [processLaw, sourcePoissonPMF, rate] using
+    (A.processLaw.arrivalLaw.oneJumpDensity_eq_countLikelihood_div_orderedJumpRegionVolume
+      T h_exposure_pos)
+
+/--
+Finite-report ordered-density normalization induced by the primitive source
+assumption's homogeneous Poisson process.
+-/
+theorem finite_jump_density_ordered_region_volume_eq_count_prob
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (T : OrderedFiniteJumpTimeline) (h_exposure : T.window.exposure ≠ 0) :
+    A.processLaw.arrivalLaw.finiteJumpDensity T *
+        (volume (orderedJumpRegion T.count T.window.exposure)).toReal =
+      P.real {ω : Ω |
+        A.countProcess.intervalCount T.window.startTime T.window.endTime ω =
+          T.count} := by
+  simpa [processLaw, countLaw] using
+    A.processLaw.finiteJumpDensity_mul_orderedJumpRegionVolume_eq_windowCount_prob
+      T h_exposure
+
+/--
+Finite-report ordered-density normalization induced by the source assumption's
+homogeneous Poisson process, with nonzero exposure derived from positive
+window exposure.
+-/
+theorem finite_jump_density_ordered_region_volume_eq_count_prob_of_pos_exposure
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (T : OrderedFiniteJumpTimeline) (h_exposure_pos : 0 < T.window.exposure) :
+    A.processLaw.arrivalLaw.finiteJumpDensity T *
+        (volume (orderedJumpRegion T.count T.window.exposure)).toReal =
+      P.real {ω : Ω |
+        A.countProcess.intervalCount T.window.startTime T.window.endTime ω =
+          T.count} := by
+  exact finite_jump_density_ordered_region_volume_eq_count_prob
+    A T (ne_of_gt h_exposure_pos)
+
+/--
+Finite-jump ordered density from the theorem-facing source assumption bundle,
+written as the matching Poisson PMF divided by ordered-region volume.
+-/
+theorem finite_jump_density_eq_sourcePoissonPMF_div_ordered_region_volume
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (T : OrderedFiniteJumpTimeline)
+    (h_exposure_pos : 0 < T.window.exposure) :
+    A.processLaw.arrivalLaw.finiteJumpDensity T =
+      sourcePoissonPMF A.rate T.window.exposure T.count /
+        (volume (orderedJumpRegion T.count T.window.exposure)).toReal := by
+  simpa [processLaw, sourcePoissonPMF, rate] using
+    (A.processLaw.arrivalLaw.finiteJumpDensity_eq_countLikelihood_div_orderedJumpRegionVolume
+      T h_exposure_pos)
+
+/--
+Finite-dimensional adjacent interval-count law induced by the primitive
+homogeneous Poisson counting process in the source assumption.
+-/
+theorem intervalCount_joint_real_eq_countLikelihoodProduct_fin
+    [IsFiniteMeasure P]
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          A.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      countLikelihoodProduct (Finset.univ : Finset (Fin n)) A.rate
+        (fun i => t i.succ - t i.castSucc) k := by
+  simpa [rate] using
+    A.countProcess.intervalCount_joint_real_eq_countLikelihoodProduct_fin
+      ht k
+
+/--
+Finite-dimensional adjacent interval-count law collapsed to one total-count
+Poisson likelihood, using the primitive homogeneous Poisson counting process in
+the source assumption.
+-/
+theorem intervalCount_joint_real_eq_residual_countLikelihood_total_fin
+    [IsFiniteMeasure P]
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_totalExposure :
+      totalExposure (Finset.univ : Finset (Fin n))
+        (fun i => t i.succ - t i.castSucc) ≠ 0) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          A.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (totalExposure (Finset.univ : Finset (Fin n))
+              (fun i => t i.succ - t i.castSucc)) ^
+                totalCount (Finset.univ : Finset (Fin n)) k) *
+        countLikelihood A.rate
+          (totalExposure (Finset.univ : Finset (Fin n))
+            (fun i => t i.succ - t i.castSucc))
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [rate] using
+    A.countProcess.intervalCount_joint_real_eq_residual_countLikelihood_total_fin
+      ht k h_totalExposure
+
+/--
+Finite-dimensional adjacent interval-count law collapsed to one total-count
+Poisson likelihood, deriving the nonzero total exposure from one strictly
+positive adjacent source window.
+-/
+theorem intervalCount_joint_real_eq_residual_countLikelihood_total_fin_of_exists_pos_exposure
+    [IsFiniteMeasure P]
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_exists :
+      ∃ i ∈ (Finset.univ : Finset (Fin n)),
+        0 < t i.succ - t i.castSucc) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          A.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (totalExposure (Finset.univ : Finset (Fin n))
+              (fun i => t i.succ - t i.castSucc)) ^
+                totalCount (Finset.univ : Finset (Fin n)) k) *
+        countLikelihood A.rate
+          (totalExposure (Finset.univ : Finset (Fin n))
+            (fun i => t i.succ - t i.castSucc))
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [rate] using
+    A.countProcess.intervalCount_joint_real_eq_residual_countLikelihood_total_fin_of_exists_pos_exposure
+      ht k h_exists
+
+/--
+Paper-vocabulary form of the finite-dimensional adjacent interval-count law:
+the collapsed total-count factor is the source Poisson PMF.
+-/
+theorem intervalCount_joint_real_eq_residual_sourcePoissonPMF_total_fin
+    [IsFiniteMeasure P]
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_totalExposure :
+      totalExposure (Finset.univ : Finset (Fin n))
+        (fun i => t i.succ - t i.castSucc) ≠ 0) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          A.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (totalExposure (Finset.univ : Finset (Fin n))
+              (fun i => t i.succ - t i.castSucc)) ^
+                totalCount (Finset.univ : Finset (Fin n)) k) *
+        sourcePoissonPMF A.rate
+          (totalExposure (Finset.univ : Finset (Fin n))
+            (fun i => t i.succ - t i.castSucc))
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [sourcePoissonPMF] using
+    intervalCount_joint_real_eq_residual_countLikelihood_total_fin
+      A ht k h_totalExposure
+
+/--
+Paper-vocabulary form of the finite-dimensional adjacent interval-count law,
+with nonzero total exposure derived from one strictly positive adjacent source
+window.
+-/
+theorem intervalCount_joint_real_eq_residual_sourcePoissonPMF_total_fin_of_exists_pos_exposure
+    [IsFiniteMeasure P]
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_exists :
+      ∃ i ∈ (Finset.univ : Finset (Fin n)),
+        0 < t i.succ - t i.castSucc) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          A.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (totalExposure (Finset.univ : Finset (Fin n))
+              (fun i => t i.succ - t i.castSucc)) ^
+                totalCount (Finset.univ : Finset (Fin n)) k) *
+        sourcePoissonPMF A.rate
+          (totalExposure (Finset.univ : Finset (Fin n))
+            (fun i => t i.succ - t i.castSucc))
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [sourcePoissonPMF] using
+    intervalCount_joint_real_eq_residual_countLikelihood_total_fin_of_exists_pos_exposure
+      A ht k h_exists
+
+/--
+Endpoint-exposure form of the finite-dimensional adjacent interval-count law
+from the primitive source assumption.
+-/
+theorem intervalCount_joint_real_eq_residual_countLikelihood_endpoint_fin
+    [IsFiniteMeasure P]
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_endpoint : t 0 < t (Fin.last n)) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          A.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (t (Fin.last n) - t 0) ^
+              totalCount (Finset.univ : Finset (Fin n)) k) *
+        countLikelihood A.rate
+          (t (Fin.last n) - t 0)
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [rate] using
+    A.countProcess.intervalCount_joint_real_eq_residual_countLikelihood_endpoint_fin
+      ht k h_endpoint
+
+/--
+Endpoint-exposure paper-vocabulary form of the finite-dimensional adjacent
+interval-count law from the primitive source assumption.
+-/
+theorem intervalCount_joint_real_eq_residual_sourcePoissonPMF_endpoint_fin
+    [IsFiniteMeasure P]
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    {n : ℕ} {t : Fin (n + 1) → ℝ} (ht : Monotone t)
+    (k : Fin n → ℕ)
+    (h_endpoint : t 0 < t (Fin.last n)) :
+    P.real (⋂ i ∈ (Finset.univ : Finset (Fin n)),
+        {ω : Ω |
+          A.countProcess.intervalCount (t i.castSucc) (t i.succ) ω =
+            k i}) =
+      (countLikelihoodProductResidual (Finset.univ : Finset (Fin n))
+          (fun i => t i.succ - t i.castSucc) k *
+          ((totalCount (Finset.univ : Finset (Fin n)) k).factorial : ℝ) /
+            (t (Fin.last n) - t 0) ^
+              totalCount (Finset.univ : Finset (Fin n)) k) *
+        sourcePoissonPMF A.rate
+          (t (Fin.last n) - t 0)
+          (totalCount (Finset.univ : Finset (Fin n)) k) := by
+  simpa [sourcePoissonPMF] using
+    intervalCount_joint_real_eq_residual_countLikelihood_endpoint_fin
+      A ht k h_endpoint
+
+end assumption_theorem2_poisson_process_and_conditions
+
+namespace Theorem2PrimitiveSourceModel
+
+variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+
+/--
+Legacy theorem-facing assumption bundle induced by the primitive source model.
+This is an audit bridge only: the preferred theorem rows consume
+`Theorem2PrimitiveSourceModel` directly.
+-/
+noncomputable def toAssumptionBundle
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    assumption_theorem2_poisson_process_and_conditions Ω P :=
+  assumption_theorem2_poisson_process_and_conditions.fromPoissonIncrementLawsAndConditionDensitySourceModel
+    M.countProcess M.toConditionDensitySourceModel
+
+@[simp] theorem toAssumptionBundle_countProcess
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    M.toAssumptionBundle.countProcess = M.countProcess := rfl
+
+@[simp] theorem toAssumptionBundle_conditionFunctions
+    (M : Theorem2PrimitiveSourceModel Ω P) :
+    M.toAssumptionBundle.conditionFunctions = M.conditionFunctions := rfl
+
+end Theorem2PrimitiveSourceModel
+
+/--
+Observed zero/one/multi-report window data from Appendix Theorem 2, before the
+Condition 1/2 functions are attached.
+-/
+inductive Theorem2ObservedWindowCase where
+  | zero (baseCount : ℕ) (W : ObservationWindow)
+  | one
+      (baseCount : ℕ) (T : OrderedOneJumpWindow)
+      (exposure_ne_zero : T.window.exposure ≠ 0)
+  | multi
+      (baseCount : ℕ) (T : OrderedFiniteJumpTimeline)
+      (count_gt_one : 1 < T.count)
+      (exposure_ne_zero : T.window.exposure ≠ 0)
+
+namespace Theorem2ObservedWindowCase
+
+variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+
+/-- One-report observed-window case built from positive window exposure. -/
+def oneOfPos
+    (baseCount : ℕ) (T : OrderedOneJumpWindow)
+    (h_exposure_pos : 0 < T.window.exposure) :
+    Theorem2ObservedWindowCase :=
+  one baseCount T (ne_of_gt h_exposure_pos)
+
+/-- Multi-report observed-window case built from positive window exposure. -/
+def multiOfPos
+    (baseCount : ℕ) (T : OrderedFiniteJumpTimeline)
+    (hcount : 1 < T.count) (h_exposure_pos : 0 < T.window.exposure) :
+    Theorem2ObservedWindowCase :=
+  multi baseCount T hcount (ne_of_gt h_exposure_pos)
+
+/-- Attach paper Condition 1/2 functions to an observed window case. -/
+def toProcessLawCaseWith
+    (K : Theorem2ConditionFunctions) :
+    Theorem2ObservedWindowCase → Theorem2ProcessLawCase
+  | zero baseCount W =>
+      Theorem2ProcessLawCase.zero K baseCount W
+  | one baseCount T h_exposure =>
+      Theorem2ProcessLawCase.one K baseCount T h_exposure
+  | multi baseCount T hcount h_exposure =>
+      Theorem2ProcessLawCase.multi K baseCount T hcount h_exposure
+
+/--
+Attach rate-indexed Condition 1/2 source semantics to an observed window case
+at the source process rate, producing the source-data object used by the
+Appendix B.2 likelihood algebra.
+-/
+def toProcessSourceDataAtRate
+    (S : theorem2_poisson_process_and_condition_semantics Ω P) :
+    Theorem2ObservedWindowCase → Theorem2ProcessSourceData
+  | zero baseCount W =>
+      S.conditionSemantics.zeroReportSourceDataFromWindowAtRate
+        baseCount W S.rate
+  | one baseCount T h_exposure =>
+      S.conditionSemantics.oneReportSourceDataAtRate
+        baseCount T.gap T.tail T.window.exposure
+        T.exposure_eq h_exposure S.rate
+  | multi baseCount T hcount h_exposure =>
+      S.conditionSemantics.multiReportSourceDataAtRate
+        baseCount T.count hcount T.gap T.tail T.window.exposure
+        T.exposure_eq h_exposure S.rate
+
+def toProcessLawCase
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P) :
+    Theorem2ObservedWindowCase → Theorem2ProcessLawCase
+  | C => C.toProcessLawCaseWith A.conditionFunctions
+
+def likelihoodWith
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonProcessLaw Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessLawCaseWith K).likelihood H
+
+/--
+Rate-parametric observed-window likelihood after attaching Condition 1/2
+functions, without requiring a continuous-time process-law object.
+-/
+def rateLikelihoodWith
+    (K : Theorem2ConditionFunctions) (rate : ℝ)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessLawCaseWith K).rateLikelihood rate
+
+def residualWith
+    (K : Theorem2ConditionFunctions)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessLawCaseWith K).residual
+
+def exposureWith
+    (K : Theorem2ConditionFunctions)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessLawCaseWith K).exposure
+
+def countWith
+    (K : Theorem2ConditionFunctions)
+    (C : Theorem2ObservedWindowCase) : ℕ :=
+  (C.toProcessLawCaseWith K).count
+
+/-- The positive one-report constructor preserves the ordered window exposure. -/
+@[simp] theorem oneOfPos_exposureWith
+    (K : Theorem2ConditionFunctions)
+    (baseCount : ℕ) (T : OrderedOneJumpWindow)
+    (h_exposure_pos : 0 < T.window.exposure) :
+    (oneOfPos baseCount T h_exposure_pos).exposureWith K =
+      T.window.exposure := by
+  simp [oneOfPos, exposureWith, toProcessLawCaseWith,
+    Theorem2ProcessLawCase.exposure, Theorem2ProcessLawCase.sourceData,
+    Theorem2ConditionFunctions.oneReportSourceDataFromOrderedJumpWindow,
+    Theorem2ConditionFunctions.oneReportProcessDataFromOrderedJumpWindow,
+    Theorem2ProcessSourceData.exposure,
+    Theorem2ProcessSourceData.toProcessKernelCase,
+    Theorem2OneReportProcessData.toProcessKernelCase,
+    Theorem2OneReportProcessData.exposure,
+    Theorem2ProcessKernelCase.exposure,
+    OneInterarrivalTailKernel.fromOrderedWindow]
+
+/-- The positive one-report constructor carries count one. -/
+@[simp] theorem oneOfPos_countWith
+    (K : Theorem2ConditionFunctions)
+    (baseCount : ℕ) (T : OrderedOneJumpWindow)
+    (h_exposure_pos : 0 < T.window.exposure) :
+    (oneOfPos baseCount T h_exposure_pos).countWith K = 1 := by
+  simp [oneOfPos, countWith, toProcessLawCaseWith,
+    Theorem2ProcessLawCase.count, Theorem2ProcessLawCase.sourceData,
+    Theorem2ConditionFunctions.oneReportSourceDataFromOrderedJumpWindow,
+    Theorem2ConditionFunctions.oneReportProcessDataFromOrderedJumpWindow,
+    Theorem2ProcessSourceData.count,
+    Theorem2ProcessSourceData.toProcessKernelCase,
+    Theorem2OneReportProcessData.toProcessKernelCase,
+    Theorem2ProcessKernelCase.count]
+
+/-- The positive multi-report constructor preserves the ordered timeline exposure. -/
+@[simp] theorem multiOfPos_exposureWith
+    (K : Theorem2ConditionFunctions)
+    (baseCount : ℕ) (T : OrderedFiniteJumpTimeline)
+    (hcount : 1 < T.count) (h_exposure_pos : 0 < T.window.exposure) :
+    (multiOfPos baseCount T hcount h_exposure_pos).exposureWith K =
+      T.window.exposure := by
+  simp [multiOfPos, exposureWith, toProcessLawCaseWith,
+    Theorem2ProcessLawCase.exposure, Theorem2ProcessLawCase.sourceData,
+    Theorem2ConditionFunctions.multiReportSourceDataFromOrderedTimeline,
+    Theorem2ConditionFunctions.multiReportProcessDataFromOrderedTimeline,
+    Theorem2ProcessSourceData.exposure,
+    Theorem2ProcessSourceData.toProcessKernelCase,
+    Theorem2MultiReportProcessData.toProcessKernelCase,
+    Theorem2MultiReportProcessData.exposure,
+    Theorem2ProcessKernelCase.exposure,
+    FinInterarrivalTailKernel.fromOrderedTimeline]
+
+/-- The positive multi-report constructor carries the ordered timeline count. -/
+@[simp] theorem multiOfPos_countWith
+    (K : Theorem2ConditionFunctions)
+    (baseCount : ℕ) (T : OrderedFiniteJumpTimeline)
+    (hcount : 1 < T.count) (h_exposure_pos : 0 < T.window.exposure) :
+    (multiOfPos baseCount T hcount h_exposure_pos).countWith K =
+      T.count := by
+  simp [multiOfPos, countWith, toProcessLawCaseWith,
+    Theorem2ProcessLawCase.count, Theorem2ProcessLawCase.sourceData,
+    Theorem2ConditionFunctions.multiReportSourceDataFromOrderedTimeline,
+    Theorem2ConditionFunctions.multiReportProcessDataFromOrderedTimeline,
+    Theorem2ProcessSourceData.count,
+    Theorem2ProcessSourceData.toProcessKernelCase,
+    Theorem2MultiReportProcessData.toProcessKernelCase,
+    Theorem2ProcessKernelCase.count,
+    FinInterarrivalTailKernel.fromOrderedTimeline]
+
+/-- The positive one-report constructor exposes a positive attached exposure. -/
+theorem oneOfPos_exposureWith_pos
+    (K : Theorem2ConditionFunctions)
+    (baseCount : ℕ) (T : OrderedOneJumpWindow)
+    (h_exposure_pos : 0 < T.window.exposure) :
+    0 < (oneOfPos baseCount T h_exposure_pos).exposureWith K := by
+  simpa using h_exposure_pos
+
+/-- The positive multi-report constructor exposes a positive attached exposure. -/
+theorem multiOfPos_exposureWith_pos
+    (K : Theorem2ConditionFunctions)
+    (baseCount : ℕ) (T : OrderedFiniteJumpTimeline)
+    (hcount : 1 < T.count) (h_exposure_pos : 0 < T.window.exposure) :
+    0 < (multiOfPos baseCount T hcount h_exposure_pos).exposureWith K := by
+  simpa using h_exposure_pos
+
+theorem exposureWith_nonneg
+    (K : Theorem2ConditionFunctions)
+    (C : Theorem2ObservedWindowCase) :
+    0 ≤ C.exposureWith K :=
+  (C.toProcessLawCaseWith K).exposure_nonneg
+
+theorem factorizationWith
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonProcessLaw Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodWith K H =
+      C.residualWith K *
+        sourcePoissonPMF H.rate (C.exposureWith K) (C.countWith K) := by
+  exact (C.toProcessLawCaseWith K).factorization H
+
+/--
+Process-free factorization of the rate-parametric observed-window likelihood.
+-/
+theorem rateLikelihoodWith_factorization
+    (K : Theorem2ConditionFunctions) (rate : ℝ)
+    (C : Theorem2ObservedWindowCase) :
+    C.rateLikelihoodWith K rate =
+      C.residualWith K *
+        sourcePoissonPMF rate (C.exposureWith K) (C.countWith K) := by
+  simpa [rateLikelihoodWith, residualWith, exposureWith, countWith] using
+    (C.toProcessLawCaseWith K).rateLikelihood_factorization rate
+
+def sourceDataLikelihoodAtRate
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessSourceDataAtRate S).likelihood S.rate
+
+def sourceDataResidualAtRate
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessSourceDataAtRate S).residual
+
+def sourceDataExposureAtRate
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessSourceDataAtRate S).exposure
+
+def sourceDataCountAtRate
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) : ℕ :=
+  (C.toProcessSourceDataAtRate S).count
+
+/--
+Observed-window source data assembled from rate-indexed Condition 1/2
+semantics factors into its own residual and the source Poisson PMF.
+-/
+theorem sourceDataAtRate_factorization
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.sourceDataLikelihoodAtRate S =
+      C.sourceDataResidualAtRate S *
+        sourcePoissonPMF S.rate
+          (C.sourceDataExposureAtRate S) (C.sourceDataCountAtRate S) := by
+  exact theorem2_process_source_data_factorization
+    (C.toProcessSourceDataAtRate S) S.rate
+
+/--
+The at-rate source-data object built from primitive source semantics is the
+same source-data object carried by the derived process-law case.  The proof is
+where the rate-independence fields in `Theorem2ConditionFunctionSemantics`
+remove the apparent dependence of the Condition 1/2 terms on the process rate.
+-/
+theorem toProcessSourceDataAtRate_eq_processLawCase_sourceData
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.toProcessSourceDataAtRate S =
+      (C.toProcessLawCaseWith S.conditionFunctions).sourceData := by
+  cases C with
+  | zero baseCount W =>
+      simpa [toProcessSourceDataAtRate, toProcessLawCaseWith,
+        Theorem2ProcessLawCase.sourceData,
+        theorem2_poisson_process_and_condition_semantics.conditionFunctions,
+        theorem2_poisson_process_and_condition_semantics.rate] using
+          S.conditionSemantics.zeroReportSourceDataFromWindowAtRate_eq
+            baseCount W S.rate
+  | one baseCount T h_exposure =>
+      simpa [toProcessSourceDataAtRate, toProcessLawCaseWith,
+        Theorem2ProcessLawCase.sourceData,
+        Theorem2ConditionFunctions.oneReportSourceDataFromOrderedJumpWindow,
+        Theorem2ConditionFunctions.oneReportProcessDataFromOrderedJumpWindow,
+        OneInterarrivalTailKernel.fromOrderedWindow,
+        theorem2_poisson_process_and_condition_semantics.conditionFunctions,
+        theorem2_poisson_process_and_condition_semantics.rate] using
+          S.conditionSemantics.oneReportSourceDataAtRate_eq
+            baseCount T.gap T.tail T.window.exposure
+            T.exposure_eq h_exposure S.rate
+  | multi baseCount T hcount h_exposure =>
+      simpa [toProcessSourceDataAtRate, toProcessLawCaseWith,
+        Theorem2ProcessLawCase.sourceData,
+        Theorem2ConditionFunctions.multiReportSourceDataFromOrderedTimeline,
+        Theorem2ConditionFunctions.multiReportProcessDataFromOrderedTimeline,
+        FinInterarrivalTailKernel.fromOrderedTimeline,
+        theorem2_poisson_process_and_condition_semantics.conditionFunctions,
+        theorem2_poisson_process_and_condition_semantics.rate] using
+          S.conditionSemantics.multiReportSourceDataAtRate_eq
+            baseCount T.count hcount T.gap T.tail T.window.exposure
+            T.exposure_eq h_exposure S.rate
+
+theorem sourceDataLikelihoodAtRate_eq_processLawCase_sourceData_likelihood
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.sourceDataLikelihoodAtRate S =
+      (C.toProcessLawCaseWith S.conditionFunctions).sourceData.likelihood
+        S.rate := by
+  simp [sourceDataLikelihoodAtRate,
+    C.toProcessSourceDataAtRate_eq_processLawCase_sourceData S,
+    theorem2_poisson_process_and_condition_semantics.rate]
+
+def likelihoodFromCountingProcess
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcess Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessLawCaseWith K).conditionResidual *
+    H.observedArrivalCaseLikelihood
+      (C.toProcessLawCaseWith K).observedArrivalCase
+
+def likelihoodFromPoissonIncrementLaws
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessLawCaseWith K).conditionResidual *
+    H.observedArrivalCaseLikelihood
+      (C.toProcessLawCaseWith K).observedArrivalCase
+
+/--
+The direct primitive-counting-process likelihood agrees with the combined-law
+likelihood, but exposes the reusable observed-arrival API in its definition.
+-/
+theorem likelihoodFromCountingProcess_eq_likelihoodWith
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcess Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromCountingProcess K H =
+      C.likelihoodWith K H.toHomogeneousPoissonProcessLaw := by
+  simpa [likelihoodFromCountingProcess, likelihoodWith,
+    HomogeneousPoissonCountingProcess.observedArrivalCaseLikelihood] using
+      ((C.toProcessLawCaseWith K).likelihood_eq_conditionResidual_mul_processObservedArrivalCaseLikelihood
+        H.toHomogeneousPoissonProcessLaw).symm
+
+/--
+The direct Poisson-increment-law likelihood agrees with the combined-law
+likelihood, but exposes the reusable observed-arrival API in its definition.
+-/
+theorem likelihoodFromPoissonIncrementLaws_eq_likelihoodWith
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromPoissonIncrementLaws K H =
+      C.likelihoodWith K H.toHomogeneousPoissonProcessLaw := by
+  simpa [likelihoodFromPoissonIncrementLaws, likelihoodWith,
+    HomogeneousPoissonCountingProcessByLaw.observedArrivalCaseLikelihood] using
+      ((C.toProcessLawCaseWith K).likelihood_eq_conditionResidual_mul_processObservedArrivalCaseLikelihood
+        H.toHomogeneousPoissonProcessLaw).symm
+
+/--
+The direct Poisson-increment-law likelihood is the process-free
+condition-function likelihood kernel at the primitive process rate.
+-/
+theorem likelihoodFromPoissonIncrementLaws_eq_rateLikelihoodWith
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromPoissonIncrementLaws K H =
+      C.rateLikelihoodWith K H.rate := by
+  rw [C.likelihoodFromPoissonIncrementLaws_eq_likelihoodWith K H]
+  simpa [likelihoodWith, rateLikelihoodWith] using
+    (C.toProcessLawCaseWith K).likelihood_eq_rateLikelihood
+      H.toHomogeneousPoissonProcessLaw
+
+def likelihoodFromSourceSemantics
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  C.likelihoodFromPoissonIncrementLaws S.conditionFunctions S.countProcess
+
+def residualFromSourceSemantics
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  C.residualWith S.conditionFunctions
+
+def exposureFromSourceSemantics
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  C.exposureWith S.conditionFunctions
+
+def countFromSourceSemantics
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) : ℕ :=
+  C.countWith S.conditionFunctions
+
+theorem likelihoodFromConstructedSourceSemantics_eq_poissonIncrementLaws
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (K : Theorem2ConditionFunctions)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromSourceSemantics
+        (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions
+          H K) =
+      C.likelihoodFromPoissonIncrementLaws K H := by
+  unfold likelihoodFromSourceSemantics
+  rw [theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions_conditionFunctions]
+  rw [theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions_countProcess]
+
+theorem residualFromConstructedSourceSemantics_eq_residualWith
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (K : Theorem2ConditionFunctions)
+    (C : Theorem2ObservedWindowCase) :
+    C.residualFromSourceSemantics
+        (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions
+          H K) =
+      C.residualWith K := by
+  unfold residualFromSourceSemantics
+  rw [theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions_conditionFunctions]
+
+theorem exposureFromConstructedSourceSemantics_eq_exposureWith
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (K : Theorem2ConditionFunctions)
+    (C : Theorem2ObservedWindowCase) :
+    C.exposureFromSourceSemantics
+        (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions
+          H K) =
+      C.exposureWith K := by
+  unfold exposureFromSourceSemantics
+  rw [theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions_conditionFunctions]
+
+theorem countFromConstructedSourceSemantics_eq_countWith
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (K : Theorem2ConditionFunctions)
+    (C : Theorem2ObservedWindowCase) :
+    C.countFromSourceSemantics
+        (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions
+          H K) =
+      C.countWith K := by
+  unfold countFromSourceSemantics
+  rw [theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions_conditionFunctions]
+
+theorem sourceDataResidualAtRate_eq_residualFromSourceSemantics
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.sourceDataResidualAtRate S =
+      C.residualFromSourceSemantics S := by
+  simp [sourceDataResidualAtRate, residualFromSourceSemantics, residualWith,
+    Theorem2ProcessLawCase.residual,
+    C.toProcessSourceDataAtRate_eq_processLawCase_sourceData S]
+
+theorem sourceDataExposureAtRate_eq_exposureFromSourceSemantics
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.sourceDataExposureAtRate S =
+      C.exposureFromSourceSemantics S := by
+  simp [sourceDataExposureAtRate, exposureFromSourceSemantics, exposureWith,
+    Theorem2ProcessLawCase.exposure,
+    C.toProcessSourceDataAtRate_eq_processLawCase_sourceData S]
+
+theorem sourceDataExposureAtRate_nonneg
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    0 ≤ C.sourceDataExposureAtRate S := by
+  rw [C.sourceDataExposureAtRate_eq_exposureFromSourceSemantics S]
+  exact C.exposureWith_nonneg S.conditionFunctions
+
+theorem sourceDataCountAtRate_eq_countFromSourceSemantics
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.sourceDataCountAtRate S =
+      C.countFromSourceSemantics S := by
+  simp [sourceDataCountAtRate, countFromSourceSemantics, countWith,
+    Theorem2ProcessLawCase.count,
+    C.toProcessSourceDataAtRate_eq_processLawCase_sourceData S]
+
+/--
+The at-rate Appendix B.2 source-data likelihood is exactly the process-free
+rate likelihood obtained from the derived rate-independent Condition 1/2
+functions.  This keeps the source-semantics route visibly tied to the
+condition-function theorem route.
+-/
+theorem sourceDataLikelihoodAtRate_eq_rateLikelihoodWith
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.sourceDataLikelihoodAtRate S =
+      C.rateLikelihoodWith S.conditionFunctions S.rate := by
+  rw [C.sourceDataAtRate_factorization S]
+  rw [C.sourceDataResidualAtRate_eq_residualFromSourceSemantics S]
+  rw [C.sourceDataExposureAtRate_eq_exposureFromSourceSemantics S]
+  rw [C.sourceDataCountAtRate_eq_countFromSourceSemantics S]
+  rw [C.rateLikelihoodWith_factorization S.conditionFunctions S.rate]
+  simp [residualFromSourceSemantics, exposureFromSourceSemantics,
+    countFromSourceSemantics]
+
+theorem factorizationFromCountingProcess
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcess Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromCountingProcess K H =
+      C.residualWith K *
+        sourcePoissonPMF H.rate (C.exposureWith K) (C.countWith K) := by
+  rw [C.likelihoodFromCountingProcess_eq_likelihoodWith K H]
+  simpa using C.factorizationWith K H.toHomogeneousPoissonProcessLaw
+
+theorem factorizationFromPoissonIncrementLaws
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromPoissonIncrementLaws K H =
+      C.residualWith K *
+        sourcePoissonPMF H.rate (C.exposureWith K) (C.countWith K) := by
+  rw [C.likelihoodFromPoissonIncrementLaws_eq_likelihoodWith K H]
+  simpa using C.factorizationWith K H.toHomogeneousPoissonProcessLaw
+
+theorem factorizationFromSourceSemantics
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromSourceSemantics S =
+      C.residualFromSourceSemantics S *
+        sourcePoissonPMF S.rate
+          (C.exposureFromSourceSemantics S)
+          (C.countFromSourceSemantics S) := by
+  simpa [likelihoodFromSourceSemantics, residualFromSourceSemantics,
+    exposureFromSourceSemantics, countFromSourceSemantics,
+    theorem2_poisson_process_and_condition_semantics.rate] using
+      C.factorizationFromPoissonIncrementLaws
+        S.conditionFunctions S.countProcess
+
+theorem factorizationFromConstructedSourceSemantics
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (K : Theorem2ConditionFunctions)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromSourceSemantics
+        (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions
+          H K) =
+      C.residualWith K *
+        sourcePoissonPMF H.rate (C.exposureWith K) (C.countWith K) := by
+  rw [C.likelihoodFromConstructedSourceSemantics_eq_poissonIncrementLaws H K]
+  exact C.factorizationFromPoissonIncrementLaws K H
+
+theorem factorizationFromPoissonIncrementLawsAndConditionSemantics
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromSourceSemantics
+        (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+          H G) =
+      C.residualWith G.toConditionFunctions *
+        sourcePoissonPMF H.rate
+          (C.exposureWith G.toConditionFunctions)
+          (C.countWith G.toConditionFunctions) := by
+  simpa [residualFromSourceSemantics, exposureFromSourceSemantics,
+    countFromSourceSemantics, theorem2_poisson_process_and_condition_semantics.rate] using
+    C.factorizationFromSourceSemantics
+      (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+        H G)
+
+theorem sourceDataAtRate_factorizationFromPoissonIncrementLawsAndConditionSemantics
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics)
+    (C : Theorem2ObservedWindowCase) :
+    C.sourceDataLikelihoodAtRate
+        (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+          H G) =
+      C.residualWith G.toConditionFunctions *
+        sourcePoissonPMF H.rate
+          (C.exposureWith G.toConditionFunctions)
+          (C.countWith G.toConditionFunctions) := by
+  let S :=
+    theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+      H G
+  calc
+    C.sourceDataLikelihoodAtRate S =
+        C.rateLikelihoodWith G.toConditionFunctions H.rate := by
+          simpa [S, theorem2_poisson_process_and_condition_semantics.rate] using
+            C.sourceDataLikelihoodAtRate_eq_rateLikelihoodWith S
+    _ = C.residualWith G.toConditionFunctions *
+        sourcePoissonPMF H.rate
+          (C.exposureWith G.toConditionFunctions)
+          (C.countWith G.toConditionFunctions) := by
+          exact C.rateLikelihoodWith_factorization G.toConditionFunctions H.rate
+
+theorem likelihoodFromSourceSemantics_eq_sourceDataLikelihoodAtRate
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromSourceSemantics S =
+      C.sourceDataLikelihoodAtRate S := by
+  rw [likelihoodFromSourceSemantics]
+  rw [C.likelihoodFromPoissonIncrementLaws_eq_likelihoodWith
+    S.conditionFunctions S.countProcess]
+  rw [likelihoodWith]
+  rw [Theorem2ProcessLawCase.likelihood_eq_sourceData_likelihood]
+  rw [sourceDataLikelihoodAtRate_eq_processLawCase_sourceData_likelihood]
+  simp [theorem2_poisson_process_and_condition_semantics.rate]
+
+/--
+The source-semantics likelihood is the process-free rate-parametric
+condition-function likelihood at the source process rate.  This is the direct
+collapse of the rate-indexed Condition 1/2 source terms to the paper's
+rate-independent `g`, `h_m`, and survival-integral factors.
+-/
+theorem likelihoodFromSourceSemantics_eq_rateLikelihoodWith
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromSourceSemantics S =
+      C.rateLikelihoodWith S.conditionFunctions S.rate := by
+  rw [C.likelihoodFromSourceSemantics_eq_sourceDataLikelihoodAtRate S]
+  exact C.sourceDataLikelihoodAtRate_eq_rateLikelihoodWith S
+
+/--
+Source-semantics factorization written directly in terms of the derived
+rate-independent condition functions and the source process rate.
+-/
+theorem factorizationFromSourceSemantics_via_rateLikelihoodWith
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromSourceSemantics S =
+      C.residualWith S.conditionFunctions *
+        sourcePoissonPMF S.rate
+          (C.exposureWith S.conditionFunctions)
+          (C.countWith S.conditionFunctions) := by
+  rw [C.likelihoodFromSourceSemantics_eq_rateLikelihoodWith S]
+  exact C.rateLikelihoodWith_factorization S.conditionFunctions S.rate
+
+/--
+Source-semantics factorization routed through the at-rate source-data object.
+This is equivalent to `factorizationFromSourceSemantics`, but makes explicit
+that the process-law likelihood and the Appendix B.2 source-data likelihood
+are the same object after rate-independence is applied.
+-/
+theorem factorizationFromSourceSemantics_via_sourceDataAtRate
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihoodFromSourceSemantics S =
+      C.sourceDataResidualAtRate S *
+        sourcePoissonPMF S.rate
+          (C.sourceDataExposureAtRate S)
+          (C.sourceDataCountAtRate S) := by
+  rw [C.likelihoodFromSourceSemantics_eq_sourceDataLikelihoodAtRate S]
+  exact C.sourceDataAtRate_factorization S
+
+theorem residualWith_rateIndependent
+    (K : Theorem2ConditionFunctions)
+    (C : Theorem2ObservedWindowCase) :
+    RateIndependent (fun _rate : ℝ => C.residualWith K) := by
+  exact ⟨C.residualWith K, fun _ => rfl⟩
+
+def likelihood
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessLawCase A).likelihood A.processLaw
+
+def residual
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessLawCase A).residual
+
+def exposure
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) : ℝ :=
+  (C.toProcessLawCase A).exposure
+
+def count
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) : ℕ :=
+  (C.toProcessLawCase A).count
+
+theorem likelihood_eq_likelihoodFromSourceSemantics_toSourceSemantics
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihood A =
+      C.likelihoodFromSourceSemantics A.toSourceSemantics := by
+  rw [likelihoodFromSourceSemantics]
+  rw [C.likelihoodFromPoissonIncrementLaws_eq_likelihoodWith
+    A.toSourceSemantics.conditionFunctions A.toSourceSemantics.countProcess]
+  simp [likelihood, likelihoodWith, toProcessLawCase,
+    assumption_theorem2_poisson_process_and_conditions.toSourceSemantics,
+    assumption_theorem2_poisson_process_and_conditions.processLaw]
+
+theorem residual_eq_residualFromSourceSemantics_toSourceSemantics
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.residual A =
+      C.residualFromSourceSemantics A.toSourceSemantics := by
+  simp [residual, residualFromSourceSemantics, residualWith,
+    toProcessLawCase]
+
+theorem exposure_eq_exposureFromSourceSemantics_toSourceSemantics
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.exposure A =
+      C.exposureFromSourceSemantics A.toSourceSemantics := by
+  simp [exposure, exposureFromSourceSemantics, exposureWith,
+    toProcessLawCase]
+
+theorem count_eq_countFromSourceSemantics_toSourceSemantics
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.count A =
+      C.countFromSourceSemantics A.toSourceSemantics := by
+  simp [count, countFromSourceSemantics, countWith,
+    toProcessLawCase]
+
+theorem exposure_nonneg
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    0 ≤ C.exposure A :=
+  (C.toProcessLawCase A).exposure_nonneg
+
+theorem factorization
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihood A =
+      C.residual A *
+        sourcePoissonPMF A.rate (C.exposure A) (C.count A) := by
+  exact (C.toProcessLawCase A).factorization A.processLaw
+
+theorem factorization_via_toSourceSemantics
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    C.likelihood A =
+      C.residual A *
+        sourcePoissonPMF A.rate (C.exposure A) (C.count A) := by
+  rw [C.likelihood_eq_likelihoodFromSourceSemantics_toSourceSemantics A]
+  rw [C.factorizationFromSourceSemantics A.toSourceSemantics]
+  rw [← C.residual_eq_residualFromSourceSemantics_toSourceSemantics A]
+  rw [← C.exposure_eq_exposureFromSourceSemantics_toSourceSemantics A]
+  rw [← C.count_eq_countFromSourceSemantics_toSourceSemantics A]
+  rfl
+
+theorem residual_rateIndependent
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    RateIndependent (fun _rate : ℝ => C.residual A) := by
+  exact ⟨C.residual A, fun _ => rfl⟩
+
+theorem residualFromSourceSemantics_rateIndependent
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (C : Theorem2ObservedWindowCase) :
+    RateIndependent (fun _rate : ℝ => C.residualFromSourceSemantics S) := by
+  exact ⟨C.residualFromSourceSemantics S, fun _ => rfl⟩
+
+def productResidualWith {Incident : Type*}
+    (K : Theorem2ConditionFunctions)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) : ℝ :=
+  theorem2ProcessLawCaseProductResidual s
+    fun i => (C i).toProcessLawCaseWith K
+
+/--
+Product of the individual observed-window residuals before collapsing the
+Poisson count factors into one total-count PMF.
+-/
+def productIndividualResidualWith {Incident : Type*}
+    (K : Theorem2ConditionFunctions)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) : ℝ :=
+  ∏ i ∈ s, (C i).residualWith K
+
+def productResidualFromSourceSemantics {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) : ℝ :=
+  productResidualWith S.conditionFunctions s C
+
+theorem productResidualFromConstructedSourceSemantics_eq_productResidualWith
+    {Incident : Type*}
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (K : Theorem2ConditionFunctions)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) :
+    productResidualFromSourceSemantics
+        (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions
+          H K) s C =
+      productResidualWith K s C := by
+  unfold productResidualFromSourceSemantics
+  rw [theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions_conditionFunctions]
+
+def productSourceDataResidualAtRate {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) : ℝ :=
+  theorem2ProcessSourceDataProductResidual s
+    fun i => (C i).toProcessSourceDataAtRate S
+
+theorem productSourceDataResidualAtRate_eq_productResidualFromSourceSemantics
+    {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) :
+    productSourceDataResidualAtRate S s C =
+      productResidualFromSourceSemantics S s C := by
+  unfold productSourceDataResidualAtRate
+    productResidualFromSourceSemantics productResidualWith
+  rw [show
+      (fun i => (C i).toProcessSourceDataAtRate S) =
+        (fun i => ((C i).toProcessLawCaseWith
+          S.conditionFunctions).sourceData) by
+        funext i
+        exact (C i).toProcessSourceDataAtRate_eq_processLawCase_sourceData S]
+  exact
+    (theorem2ProcessLawCaseProductResidual_eq_sourceDataProductResidual
+      s (fun i => (C i).toProcessLawCaseWith S.conditionFunctions)).symm
+
+theorem productSourceDataAtRate_factorization {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).sourceDataExposureAtRate S) ≠ 0) :
+    (∏ i ∈ s, (C i).sourceDataLikelihoodAtRate S) =
+      productSourceDataResidualAtRate S s C *
+        sourcePoissonPMF S.rate
+          (totalExposure s fun i => (C i).sourceDataExposureAtRate S)
+          (totalCount s fun i => (C i).sourceDataCountAtRate S) := by
+  simpa [sourceDataLikelihoodAtRate, sourceDataExposureAtRate,
+    sourceDataCountAtRate, productSourceDataResidualAtRate,
+    theorem2_poisson_process_and_condition_semantics.rate] using
+      theorem1_process_source_data_likelihood_product_decomposition
+        s (fun i => (C i).toProcessSourceDataAtRate S) S.rate
+        h_totalExposure
+
+/--
+Finite products of Poisson-increment-law likelihoods are termwise the
+process-free condition-function rate likelihoods at the primitive process rate.
+-/
+theorem product_likelihoodFromPoissonIncrementLaws_eq_productRateLikelihoodWith
+    {Incident : Type*}
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) :
+    (∏ i ∈ s, (C i).likelihoodFromPoissonIncrementLaws K H) =
+      ∏ i ∈ s, (C i).rateLikelihoodWith K H.rate := by
+  classical
+  refine Finset.prod_congr rfl ?_
+  intro i _hi
+  exact (C i).likelihoodFromPoissonIncrementLaws_eq_rateLikelihoodWith K H
+
+theorem product_likelihoodFromSourceSemantics_eq_productSourceDataLikelihoodAtRate
+    {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      ∏ i ∈ s, (C i).sourceDataLikelihoodAtRate S := by
+  classical
+  refine Finset.prod_congr rfl ?_
+  intro i _hi
+  exact (C i).likelihoodFromSourceSemantics_eq_sourceDataLikelihoodAtRate S
+
+/--
+Finite products of source-semantics likelihoods are termwise the process-free
+condition-function rate likelihoods at the source process rate.
+-/
+theorem product_likelihoodFromSourceSemantics_eq_productRateLikelihoodWith
+    {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      ∏ i ∈ s, (C i).rateLikelihoodWith S.conditionFunctions S.rate := by
+  classical
+  refine Finset.prod_congr rfl ?_
+  intro i _hi
+  exact (C i).likelihoodFromSourceSemantics_eq_rateLikelihoodWith S
+
+/--
+Finite products of source-data likelihoods assembled from rate-indexed source
+semantics are termwise the process-free condition-function rate likelihoods.
+-/
+theorem product_sourceDataLikelihoodAtRate_eq_productRateLikelihoodWith
+    {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) :
+    (∏ i ∈ s, (C i).sourceDataLikelihoodAtRate S) =
+      ∏ i ∈ s, (C i).rateLikelihoodWith S.conditionFunctions S.rate := by
+  classical
+  refine Finset.prod_congr rfl ?_
+  intro i _hi
+  exact (C i).sourceDataLikelihoodAtRate_eq_rateLikelihoodWith S
+
+theorem product_factorizationFromSourceSemantics_via_sourceDataAtRate
+    {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).sourceDataExposureAtRate S) ≠ 0) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      productSourceDataResidualAtRate S s C *
+        sourcePoissonPMF S.rate
+          (totalExposure s fun i => (C i).sourceDataExposureAtRate S)
+          (totalCount s fun i => (C i).sourceDataCountAtRate S) := by
+  rw [product_likelihoodFromSourceSemantics_eq_productSourceDataLikelihoodAtRate]
+  exact productSourceDataAtRate_factorization S s C h_totalExposure
+
+/--
+Source-data product factorization with the same residual package as the main
+source-semantics product theorem.  This records that the at-rate source-data
+route and the process-law route are definitionally aligned up to the explicit
+source-data equality proof above.
+-/
+theorem product_factorizationFromSourceSemantics_via_sourceDataAtRate_sameResidual
+    {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).sourceDataExposureAtRate S) ≠ 0) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      productResidualFromSourceSemantics S s C *
+        sourcePoissonPMF S.rate
+          (totalExposure s fun i => (C i).sourceDataExposureAtRate S)
+          (totalCount s fun i => (C i).sourceDataCountAtRate S) := by
+  rw [product_factorizationFromSourceSemantics_via_sourceDataAtRate
+    S s C h_totalExposure]
+  rw [productSourceDataResidualAtRate_eq_productResidualFromSourceSemantics]
+
+theorem product_factorizationFromSourceSemantics_via_sourceDataAtRate_of_exists_pos_exposure
+    {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists : ∃ i ∈ s, 0 < (C i).sourceDataExposureAtRate S) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      productSourceDataResidualAtRate S s C *
+        sourcePoissonPMF S.rate
+          (totalExposure s fun i => (C i).sourceDataExposureAtRate S)
+          (totalCount s fun i => (C i).sourceDataCountAtRate S) := by
+  exact product_factorizationFromSourceSemantics_via_sourceDataAtRate
+    S s C
+    (ne_of_gt
+      (totalExposure_pos_of_exists_pos s
+        (fun i => (C i).sourceDataExposureAtRate S)
+        (fun i _hi => (C i).sourceDataExposureAtRate_nonneg S)
+        h_exists))
+
+theorem product_factorizationFromSourceSemantics_via_sourceDataAtRate_sameResidual_of_exists_pos_exposure
+    {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists : ∃ i ∈ s, 0 < (C i).sourceDataExposureAtRate S) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      productResidualFromSourceSemantics S s C *
+        sourcePoissonPMF S.rate
+          (totalExposure s fun i => (C i).sourceDataExposureAtRate S)
+          (totalCount s fun i => (C i).sourceDataCountAtRate S) := by
+  exact product_factorizationFromSourceSemantics_via_sourceDataAtRate_sameResidual
+    S s C
+    (ne_of_gt
+      (totalExposure_pos_of_exists_pos s
+        (fun i => (C i).sourceDataExposureAtRate S)
+        (fun i _hi => (C i).sourceDataExposureAtRate_nonneg S)
+        h_exists))
+
+/--
+Process-free finite-product form for observed-window cases after attaching
+Condition 1/2 functions: the product of rate-parametric likelihood kernels
+collapses to one total-count source Poisson PMF.
+-/
+theorem product_rateLikelihoodWith_factorization {Incident : Type*}
+    (K : Theorem2ConditionFunctions) (rate : ℝ)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith K) ≠ 0) :
+    (∏ i ∈ s, (C i).rateLikelihoodWith K rate) =
+      productResidualWith K s C *
+        sourcePoissonPMF rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+  simpa [rateLikelihoodWith, exposureWith, countWith, productResidualWith] using
+    theorem1_process_law_rateLikelihood_product_decomposition
+      s (fun i => (C i).toProcessLawCaseWith K) rate h_totalExposure
+
+/--
+Source-semantics finite-product factorization written directly through the
+derived rate-independent condition functions and the source process rate.
+-/
+theorem product_factorizationFromSourceSemantics_via_rateLikelihoodWith
+    {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith S.conditionFunctions) ≠
+        0) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      productResidualWith S.conditionFunctions s C *
+        sourcePoissonPMF S.rate
+          (totalExposure s fun i => (C i).exposureWith S.conditionFunctions)
+          (totalCount s fun i => (C i).countWith S.conditionFunctions) := by
+  rw [product_likelihoodFromSourceSemantics_eq_productRateLikelihoodWith]
+  exact product_rateLikelihoodWith_factorization
+    S.conditionFunctions S.rate s C h_totalExposure
+
+/--
+Source-semantics finite-product factorization through condition functions,
+deriving the nonzero total-exposure premise from one strictly positive
+observed-window exposure.
+-/
+theorem product_factorizationFromSourceSemantics_via_rateLikelihoodWith_of_exists_pos_exposure
+    {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists :
+      ∃ i ∈ s, 0 < (C i).exposureWith S.conditionFunctions) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      productResidualWith S.conditionFunctions s C *
+        sourcePoissonPMF S.rate
+          (totalExposure s fun i => (C i).exposureWith S.conditionFunctions)
+          (totalCount s fun i => (C i).countWith S.conditionFunctions) := by
+  exact product_factorizationFromSourceSemantics_via_rateLikelihoodWith
+    S s C
+    (ne_of_gt
+      (totalExposure_pos_of_exists_pos s
+        (fun i => (C i).exposureWith S.conditionFunctions)
+        (fun i _hi => exposureWith_nonneg S.conditionFunctions (C i))
+        h_exists))
+
+/--
+Process-free finite-product form, deriving the nonzero total-exposure premise
+from one strictly positive observed-window exposure.
+-/
+theorem product_rateLikelihoodWith_factorization_of_exists_pos_exposure
+    {Incident : Type*}
+    (K : Theorem2ConditionFunctions) (rate : ℝ)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists : ∃ i ∈ s, 0 < (C i).exposureWith K) :
+    (∏ i ∈ s, (C i).rateLikelihoodWith K rate) =
+      productResidualWith K s C *
+        sourcePoissonPMF rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+  exact product_rateLikelihoodWith_factorization K rate s C
+    (ne_of_gt
+      (totalExposure_pos_of_exists_pos s
+        (fun i => (C i).exposureWith K)
+        (fun i _hi => exposureWith_nonneg K (C i))
+        h_exists))
+
+/--
+Finite-count construction form for observed-window cases: if independent
+Poisson incident counts are constructed with exposures matching the observed
+window cases, then the product of rate-parametric likelihood kernels is the
+product of individual non-Poisson residuals times the joint count-event
+probability.
+-/
+theorem product_rateLikelihoodWith_eq_productIndividualResidual_mul_countEvent_prob
+    {Incident : Type*}
+    (K : Theorem2ConditionFunctions) {rate : ℝ}
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (H : FinitePoissonCountFamily Ω P Incident rate
+      (fun i => (C i).exposureWith K)) :
+    (∏ i ∈ s, (C i).rateLikelihoodWith K rate) =
+      productIndividualResidualWith K s C *
+        P.real (⋂ i ∈ s, {ω : Ω | H.count i ω = (C i).countWith K}) := by
+  classical
+  rw [H.joint_real_eq_countLikelihoodProduct
+    s (fun i => (C i).countWith K)]
+  calc
+    (∏ i ∈ s, (C i).rateLikelihoodWith K rate)
+        = ∏ i ∈ s,
+            ((C i).residualWith K *
+              countLikelihood rate ((C i).exposureWith K)
+                ((C i).countWith K)) := by
+            refine Finset.prod_congr rfl ?_
+            intro i _hi
+            simpa [sourcePoissonPMF] using
+              (C i).rateLikelihoodWith_factorization K rate
+    _ = (∏ i ∈ s, (C i).residualWith K) *
+          countLikelihoodProduct s rate
+            (fun i => (C i).exposureWith K)
+            (fun i => (C i).countWith K) := by
+            rw [Finset.prod_mul_distrib]
+            simp [countLikelihoodProduct]
+    _ = productIndividualResidualWith K s C *
+          countLikelihoodProduct s rate
+            (fun i => (C i).exposureWith K)
+            (fun i => (C i).countWith K) := by
+            simp [productIndividualResidualWith]
+
+/--
+Finite-count construction form after collapsing the independent Poisson count
+factors: if the finite incident Poisson count family is constructed with
+exposures matching the observed-window cases, then the product of
+rate-parametric likelihood kernels is the collapsed paper residual times the
+probability that the constructed family has the observed total count.
+-/
+theorem product_rateLikelihoodWith_eq_productResidual_mul_totalCountEvent_prob
+    {Incident : Type*} [DecidableEq Incident]
+    (K : Theorem2ConditionFunctions) {rate : ℝ}
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (H : FinitePoissonCountFamily Ω P Incident rate
+      (fun i => (C i).exposureWith K))
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith K) ≠ 0) :
+    (∏ i ∈ s, (C i).rateLikelihoodWith K rate) =
+      productResidualWith K s C *
+        P.real {ω : Ω |
+          (∑ i ∈ s, H.count i ω) =
+            totalCount s (fun i => (C i).countWith K)} := by
+  rw [product_rateLikelihoodWith_factorization K rate s C h_totalExposure]
+  rw [H.total_count_real_eq_countLikelihood_finset
+    s (totalCount s fun i => (C i).countWith K)]
+  rfl
+
+/--
+Finite-count total-count construction form, deriving the nonzero total
+exposure premise from one strictly positive observed-window exposure.
+-/
+theorem product_rateLikelihoodWith_eq_productResidual_mul_totalCountEvent_prob_of_exists_pos_exposure
+    {Incident : Type*} [DecidableEq Incident]
+    (K : Theorem2ConditionFunctions) {rate : ℝ}
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (H : FinitePoissonCountFamily Ω P Incident rate
+      (fun i => (C i).exposureWith K))
+    (h_exists : ∃ i ∈ s, 0 < (C i).exposureWith K) :
+    (∏ i ∈ s, (C i).rateLikelihoodWith K rate) =
+      productResidualWith K s C *
+        P.real {ω : Ω |
+          (∑ i ∈ s, H.count i ω) =
+            totalCount s (fun i => (C i).countWith K)} := by
+  exact product_rateLikelihoodWith_eq_productResidual_mul_totalCountEvent_prob
+    K s C H
+    (ne_of_gt
+      (totalExposure_pos_of_exists_pos s
+        (fun i => (C i).exposureWith K)
+        (fun i _hi => exposureWith_nonneg K (C i))
+        h_exists))
+
+theorem product_likelihoodFromSourceSemantics_eq_productResidual_mul_totalCountEvent_prob
+    {Ω' Incident : Type*} [MeasurableSpace Ω'] [DecidableEq Incident]
+    {P' : Measure Ω'}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (Hc : FinitePoissonCountFamily Ω' P' Incident S.rate
+      (fun i => (C i).exposureWith S.conditionFunctions))
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith S.conditionFunctions) ≠
+        0) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      productResidualWith S.conditionFunctions s C *
+        P'.real {ω : Ω' |
+          (∑ i ∈ s, Hc.count i ω) =
+            totalCount s (fun i => (C i).countWith S.conditionFunctions)} := by
+  rw [product_factorizationFromSourceSemantics_via_rateLikelihoodWith
+    S s C h_totalExposure]
+  rw [Hc.total_count_real_eq_countLikelihood_finset
+    s (totalCount s fun i => (C i).countWith S.conditionFunctions)]
+  rfl
+
+theorem product_likelihoodFromSourceSemantics_eq_productResidual_mul_totalCountEvent_prob_of_exists_pos_exposure
+    {Ω' Incident : Type*} [MeasurableSpace Ω'] [DecidableEq Incident]
+    {P' : Measure Ω'}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (Hc : FinitePoissonCountFamily Ω' P' Incident S.rate
+      (fun i => (C i).exposureWith S.conditionFunctions))
+    (h_exists :
+      ∃ i ∈ s, 0 < (C i).exposureWith S.conditionFunctions) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      productResidualWith S.conditionFunctions s C *
+        P'.real {ω : Ω' |
+          (∑ i ∈ s, Hc.count i ω) =
+            totalCount s (fun i => (C i).countWith S.conditionFunctions)} := by
+  exact
+    product_likelihoodFromSourceSemantics_eq_productResidual_mul_totalCountEvent_prob
+      S s C Hc
+      (ne_of_gt
+        (totalExposure_pos_of_exists_pos s
+          (fun i => (C i).exposureWith S.conditionFunctions)
+          (fun i _hi => exposureWith_nonneg S.conditionFunctions (C i))
+          h_exists))
+
+theorem product_sourceDataLikelihoodAtRate_eq_productResidual_mul_totalCountEvent_prob
+    {Ω' Incident : Type*} [MeasurableSpace Ω'] [DecidableEq Incident]
+    {P' : Measure Ω'}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (Hc : FinitePoissonCountFamily Ω' P' Incident S.rate
+      (fun i => (C i).exposureWith S.conditionFunctions))
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith S.conditionFunctions) ≠
+        0) :
+    (∏ i ∈ s, (C i).sourceDataLikelihoodAtRate S) =
+      productResidualWith S.conditionFunctions s C *
+        P'.real {ω : Ω' |
+          (∑ i ∈ s, Hc.count i ω) =
+            totalCount s (fun i => (C i).countWith S.conditionFunctions)} := by
+  rw [product_sourceDataLikelihoodAtRate_eq_productRateLikelihoodWith S s C]
+  exact product_rateLikelihoodWith_eq_productResidual_mul_totalCountEvent_prob
+    S.conditionFunctions s C Hc h_totalExposure
+
+theorem product_sourceDataLikelihoodAtRate_eq_productResidual_mul_totalCountEvent_prob_of_exists_pos_exposure
+    {Ω' Incident : Type*} [MeasurableSpace Ω'] [DecidableEq Incident]
+    {P' : Measure Ω'}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (Hc : FinitePoissonCountFamily Ω' P' Incident S.rate
+      (fun i => (C i).exposureWith S.conditionFunctions))
+    (h_exists :
+      ∃ i ∈ s, 0 < (C i).exposureWith S.conditionFunctions) :
+    (∏ i ∈ s, (C i).sourceDataLikelihoodAtRate S) =
+      productResidualWith S.conditionFunctions s C *
+        P'.real {ω : Ω' |
+          (∑ i ∈ s, Hc.count i ω) =
+            totalCount s (fun i => (C i).countWith S.conditionFunctions)} := by
+  exact
+    product_sourceDataLikelihoodAtRate_eq_productResidual_mul_totalCountEvent_prob
+      S s C Hc
+      (ne_of_gt
+        (totalExposure_pos_of_exists_pos s
+          (fun i => (C i).exposureWith S.conditionFunctions)
+          (fun i _hi => exposureWith_nonneg S.conditionFunctions (C i))
+          h_exists))
+
+theorem product_factorizationWith {Incident : Type*}
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonProcessLaw Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith K) ≠ 0) :
+    (∏ i ∈ s, (C i).likelihoodWith K H) =
+      productResidualWith K s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+  simpa [likelihoodWith, exposureWith, countWith, productResidualWith] using
+    theorem1_process_law_likelihood_product_decomposition
+      s (fun i => (C i).toProcessLawCaseWith K) H h_totalExposure
+
+/--
+Process-law product factorization, deriving the nonzero total exposure premise
+from one strictly positive observed-window exposure.
+-/
+theorem product_factorizationWith_of_exists_pos_exposure {Incident : Type*}
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonProcessLaw Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists : ∃ i ∈ s, 0 < (C i).exposureWith K) :
+    (∏ i ∈ s, (C i).likelihoodWith K H) =
+      productResidualWith K s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+  exact product_factorizationWith K H s C
+    (ne_of_gt
+      (totalExposure_pos_of_exists_pos s
+        (fun i => (C i).exposureWith K)
+        (fun i _hi => exposureWith_nonneg K (C i))
+        h_exists))
+
+theorem product_factorizationFromCountingProcess {Incident : Type*}
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcess Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith K) ≠ 0) :
+    (∏ i ∈ s, (C i).likelihoodFromCountingProcess K H) =
+      productResidualWith K s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+  calc
+    (∏ i ∈ s, (C i).likelihoodFromCountingProcess K H)
+        = ∏ i ∈ s,
+            (C i).likelihoodWith K H.toHomogeneousPoissonProcessLaw := by
+            refine Finset.prod_congr rfl ?_
+            intro i _hi
+            exact (C i).likelihoodFromCountingProcess_eq_likelihoodWith K H
+    _ = productResidualWith K s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+        exact product_factorizationWith K H.toHomogeneousPoissonProcessLaw
+          s C h_totalExposure
+
+theorem product_factorizationFromPoissonIncrementLaws {Incident : Type*}
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith K) ≠ 0) :
+    (∏ i ∈ s, (C i).likelihoodFromPoissonIncrementLaws K H) =
+      productResidualWith K s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+  calc
+    (∏ i ∈ s, (C i).likelihoodFromPoissonIncrementLaws K H)
+        = ∏ i ∈ s,
+            (C i).likelihoodWith K H.toHomogeneousPoissonProcessLaw := by
+            refine Finset.prod_congr rfl ?_
+            intro i _hi
+            exact (C i).likelihoodFromPoissonIncrementLaws_eq_likelihoodWith K H
+    _ = productResidualWith K s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+        exact product_factorizationWith K H.toHomogeneousPoissonProcessLaw
+          s C h_totalExposure
+
+theorem product_factorizationFromSourceSemantics {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureFromSourceSemantics S) ≠ 0) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      productResidualFromSourceSemantics S s C *
+        sourcePoissonPMF S.rate
+          (totalExposure s fun i => (C i).exposureFromSourceSemantics S)
+          (totalCount s fun i => (C i).countFromSourceSemantics S) := by
+  simpa [likelihoodFromSourceSemantics, exposureFromSourceSemantics,
+    countFromSourceSemantics, productResidualFromSourceSemantics,
+    theorem2_poisson_process_and_condition_semantics.rate] using
+      product_factorizationFromPoissonIncrementLaws
+        S.conditionFunctions S.countProcess s C h_totalExposure
+
+theorem product_factorizationFromConstructedSourceSemantics {Incident : Type*}
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (K : Theorem2ConditionFunctions)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith K) ≠ 0) :
+    (∏ i ∈ s,
+        (C i).likelihoodFromSourceSemantics
+          (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions
+            H K)) =
+      productResidualWith K s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+  classical
+  calc
+    (∏ i ∈ s,
+        (C i).likelihoodFromSourceSemantics
+          (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions
+            H K))
+        = ∏ i ∈ s, (C i).likelihoodFromPoissonIncrementLaws K H := by
+            refine Finset.prod_congr rfl ?_
+            intro i _hi
+            exact
+              (C i).likelihoodFromConstructedSourceSemantics_eq_poissonIncrementLaws
+                H K
+    _ = productResidualWith K s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+        exact product_factorizationFromPoissonIncrementLaws
+          K H s C h_totalExposure
+
+theorem product_factorizationFromConstructedSourceSemantics_of_exists_pos_exposure
+    {Incident : Type*}
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (K : Theorem2ConditionFunctions)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists : ∃ i ∈ s, 0 < (C i).exposureWith K) :
+    (∏ i ∈ s,
+        (C i).likelihoodFromSourceSemantics
+          (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionFunctions
+            H K)) =
+      productResidualWith K s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+  exact product_factorizationFromConstructedSourceSemantics H K s C
+    (ne_of_gt
+      (totalExposure_pos_of_exists_pos s
+        (fun i => (C i).exposureWith K)
+        (fun i _hi => exposureWith_nonneg K (C i))
+        h_exists))
+
+theorem product_factorizationFromPoissonIncrementLawsAndConditionSemantics
+    {Incident : Type*}
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith G.toConditionFunctions) ≠
+        0) :
+    (∏ i ∈ s,
+        (C i).likelihoodFromSourceSemantics
+          (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+            H G)) =
+      productResidualWith G.toConditionFunctions s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith G.toConditionFunctions)
+          (totalCount s fun i => (C i).countWith G.toConditionFunctions) := by
+  simpa [theorem2_poisson_process_and_condition_semantics.rate] using
+    product_factorizationFromSourceSemantics_via_rateLikelihoodWith
+      (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+        H G)
+      s C h_totalExposure
+
+theorem product_factorizationFromPoissonIncrementLawsAndConditionSemantics_of_exists_pos_exposure
+    {Incident : Type*}
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists :
+      ∃ i ∈ s, 0 < (C i).exposureWith G.toConditionFunctions) :
+    (∏ i ∈ s,
+        (C i).likelihoodFromSourceSemantics
+          (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+            H G)) =
+      productResidualWith G.toConditionFunctions s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith G.toConditionFunctions)
+          (totalCount s fun i => (C i).countWith G.toConditionFunctions) := by
+  simpa [theorem2_poisson_process_and_condition_semantics.rate] using
+    product_factorizationFromSourceSemantics_via_rateLikelihoodWith_of_exists_pos_exposure
+      (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+        H G)
+      s C h_exists
+
+theorem product_sourceDataLikelihoodAtRate_factorizationFromPoissonIncrementLawsAndConditionSemantics
+    {Incident : Type*}
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith G.toConditionFunctions) ≠
+        0) :
+    (∏ i ∈ s,
+        (C i).sourceDataLikelihoodAtRate
+          (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+            H G)) =
+      productResidualWith G.toConditionFunctions s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith G.toConditionFunctions)
+          (totalCount s fun i => (C i).countWith G.toConditionFunctions) := by
+  let S :=
+    theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+      H G
+  calc
+    (∏ i ∈ s, (C i).sourceDataLikelihoodAtRate S) =
+        ∏ i ∈ s, (C i).rateLikelihoodWith G.toConditionFunctions H.rate := by
+          simpa [S, theorem2_poisson_process_and_condition_semantics.rate] using
+            product_sourceDataLikelihoodAtRate_eq_productRateLikelihoodWith
+              S s C
+    _ = productResidualWith G.toConditionFunctions s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith G.toConditionFunctions)
+          (totalCount s fun i => (C i).countWith G.toConditionFunctions) := by
+          exact product_rateLikelihoodWith_factorization
+            G.toConditionFunctions H.rate s C h_totalExposure
+
+theorem product_sourceDataLikelihoodAtRate_factorizationFromPoissonIncrementLawsAndConditionSemantics_of_exists_pos_exposure
+    {Incident : Type*}
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists :
+      ∃ i ∈ s, 0 < (C i).exposureWith G.toConditionFunctions) :
+    (∏ i ∈ s,
+        (C i).sourceDataLikelihoodAtRate
+          (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+            H G)) =
+      productResidualWith G.toConditionFunctions s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith G.toConditionFunctions)
+          (totalCount s fun i => (C i).countWith G.toConditionFunctions) := by
+  let S :=
+    theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+      H G
+  calc
+    (∏ i ∈ s, (C i).sourceDataLikelihoodAtRate S) =
+        ∏ i ∈ s, (C i).rateLikelihoodWith G.toConditionFunctions H.rate := by
+          simpa [S, theorem2_poisson_process_and_condition_semantics.rate] using
+            product_sourceDataLikelihoodAtRate_eq_productRateLikelihoodWith
+              S s C
+    _ = productResidualWith G.toConditionFunctions s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith G.toConditionFunctions)
+          (totalCount s fun i => (C i).countWith G.toConditionFunctions) := by
+          exact product_rateLikelihoodWith_factorization_of_exists_pos_exposure
+            G.toConditionFunctions H.rate s C h_exists
+
+theorem product_likelihoodFromPoissonIncrementLawsAndConditionSemantics_eq_productResidual_mul_totalCountEvent_prob
+    {Ω' Incident : Type*} [MeasurableSpace Ω'] [DecidableEq Incident]
+    {P' : Measure Ω'}
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (Hc : FinitePoissonCountFamily Ω' P' Incident H.rate
+      (fun i => (C i).exposureWith G.toConditionFunctions))
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith G.toConditionFunctions) ≠
+        0) :
+    (∏ i ∈ s,
+        (C i).likelihoodFromSourceSemantics
+          (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+            H G)) =
+      productResidualWith G.toConditionFunctions s C *
+        P'.real {ω : Ω' |
+          (∑ i ∈ s, Hc.count i ω) =
+            totalCount s (fun i => (C i).countWith G.toConditionFunctions)} := by
+  rw [product_factorizationFromPoissonIncrementLawsAndConditionSemantics
+    H G s C h_totalExposure]
+  rw [Hc.total_count_real_eq_countLikelihood_finset
+    s (totalCount s fun i => (C i).countWith G.toConditionFunctions)]
+  rfl
+
+theorem product_likelihoodFromPoissonIncrementLawsAndConditionSemantics_eq_productResidual_mul_totalCountEvent_prob_of_exists_pos_exposure
+    {Ω' Incident : Type*} [MeasurableSpace Ω'] [DecidableEq Incident]
+    {P' : Measure Ω'}
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (Hc : FinitePoissonCountFamily Ω' P' Incident H.rate
+      (fun i => (C i).exposureWith G.toConditionFunctions))
+    (h_exists :
+      ∃ i ∈ s, 0 < (C i).exposureWith G.toConditionFunctions) :
+    (∏ i ∈ s,
+        (C i).likelihoodFromSourceSemantics
+          (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+            H G)) =
+      productResidualWith G.toConditionFunctions s C *
+        P'.real {ω : Ω' |
+          (∑ i ∈ s, Hc.count i ω) =
+            totalCount s (fun i => (C i).countWith G.toConditionFunctions)} := by
+  exact
+    product_likelihoodFromPoissonIncrementLawsAndConditionSemantics_eq_productResidual_mul_totalCountEvent_prob
+      H G s C Hc
+      (ne_of_gt
+        (totalExposure_pos_of_exists_pos s
+          (fun i => (C i).exposureWith G.toConditionFunctions)
+          (fun i _hi => exposureWith_nonneg G.toConditionFunctions (C i))
+          h_exists))
+
+theorem product_sourceDataLikelihoodAtRate_fromPoissonIncrementLawsAndConditionSemantics_eq_productResidual_mul_totalCountEvent_prob
+    {Ω' Incident : Type*} [MeasurableSpace Ω'] [DecidableEq Incident]
+    {P' : Measure Ω'}
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (Hc : FinitePoissonCountFamily Ω' P' Incident H.rate
+      (fun i => (C i).exposureWith G.toConditionFunctions))
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposureWith G.toConditionFunctions) ≠
+        0) :
+    (∏ i ∈ s,
+        (C i).sourceDataLikelihoodAtRate
+          (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+            H G)) =
+      productResidualWith G.toConditionFunctions s C *
+        P'.real {ω : Ω' |
+          (∑ i ∈ s, Hc.count i ω) =
+            totalCount s (fun i => (C i).countWith G.toConditionFunctions)} := by
+  rw [product_sourceDataLikelihoodAtRate_factorizationFromPoissonIncrementLawsAndConditionSemantics
+    H G s C h_totalExposure]
+  rw [Hc.total_count_real_eq_countLikelihood_finset
+    s (totalCount s fun i => (C i).countWith G.toConditionFunctions)]
+  rfl
+
+theorem product_sourceDataLikelihoodAtRate_fromPoissonIncrementLawsAndConditionSemantics_eq_productResidual_mul_totalCountEvent_prob_of_exists_pos_exposure
+    {Ω' Incident : Type*} [MeasurableSpace Ω'] [DecidableEq Incident]
+    {P' : Measure Ω'}
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (G : Theorem2ConditionFunctionSemantics)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (Hc : FinitePoissonCountFamily Ω' P' Incident H.rate
+      (fun i => (C i).exposureWith G.toConditionFunctions))
+    (h_exists :
+      ∃ i ∈ s, 0 < (C i).exposureWith G.toConditionFunctions) :
+    (∏ i ∈ s,
+        (C i).sourceDataLikelihoodAtRate
+          (theorem2_poisson_process_and_condition_semantics.fromPoissonIncrementLawsAndConditionSemantics
+            H G)) =
+      productResidualWith G.toConditionFunctions s C *
+        P'.real {ω : Ω' |
+          (∑ i ∈ s, Hc.count i ω) =
+            totalCount s (fun i => (C i).countWith G.toConditionFunctions)} := by
+  exact
+    product_sourceDataLikelihoodAtRate_fromPoissonIncrementLawsAndConditionSemantics_eq_productResidual_mul_totalCountEvent_prob
+      H G s C Hc
+      (ne_of_gt
+        (totalExposure_pos_of_exists_pos s
+          (fun i => (C i).exposureWith G.toConditionFunctions)
+          (fun i _hi => exposureWith_nonneg G.toConditionFunctions (C i))
+          h_exists))
+
+theorem product_factorizationFromCountingProcess_of_exists_pos_exposure
+    {Incident : Type*}
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcess Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists : ∃ i ∈ s, 0 < (C i).exposureWith K) :
+    (∏ i ∈ s, (C i).likelihoodFromCountingProcess K H) =
+      productResidualWith K s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+  exact product_factorizationFromCountingProcess K H s C
+    (ne_of_gt
+      (totalExposure_pos_of_exists_pos s
+        (fun i => (C i).exposureWith K)
+        (fun i hi => exposureWith_nonneg K (C i))
+        h_exists))
+
+theorem product_factorizationFromPoissonIncrementLaws_of_exists_pos_exposure
+    {Incident : Type*}
+    (K : Theorem2ConditionFunctions)
+    (H : HomogeneousPoissonCountingProcessByLaw Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists : ∃ i ∈ s, 0 < (C i).exposureWith K) :
+    (∏ i ∈ s, (C i).likelihoodFromPoissonIncrementLaws K H) =
+      productResidualWith K s C *
+        sourcePoissonPMF H.rate
+          (totalExposure s fun i => (C i).exposureWith K)
+          (totalCount s fun i => (C i).countWith K) := by
+  exact product_factorizationFromPoissonIncrementLaws K H s C
+    (ne_of_gt
+      (totalExposure_pos_of_exists_pos s
+        (fun i => (C i).exposureWith K)
+        (fun i hi => exposureWith_nonneg K (C i))
+        h_exists))
+
+theorem product_factorizationFromSourceSemantics_of_exists_pos_exposure
+    {Incident : Type*}
+    (S : theorem2_poisson_process_and_condition_semantics Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists : ∃ i ∈ s, 0 < (C i).exposureFromSourceSemantics S) :
+    (∏ i ∈ s, (C i).likelihoodFromSourceSemantics S) =
+      productResidualFromSourceSemantics S s C *
+        sourcePoissonPMF S.rate
+          (totalExposure s fun i => (C i).exposureFromSourceSemantics S)
+          (totalCount s fun i => (C i).countFromSourceSemantics S) := by
+  exact product_factorizationFromSourceSemantics S s C
+    (ne_of_gt
+      (totalExposure_pos_of_exists_pos s
+        (fun i => (C i).exposureFromSourceSemantics S)
+        (fun i _hi =>
+          exposureWith_nonneg S.conditionFunctions (C i))
+        h_exists))
+
+def productResidual {Incident : Type*}
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) : ℝ :=
+  theorem2ProcessLawCaseProductResidual s fun i => (C i).toProcessLawCase A
+
+theorem productResidual_eq_productResidualFromSourceSemantics_toSourceSemantics
+    {Incident : Type*}
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) :
+    productResidual A s C =
+      productResidualFromSourceSemantics A.toSourceSemantics s C := by
+  simp [productResidual, productResidualFromSourceSemantics,
+    productResidualWith, toProcessLawCase]
+
+theorem product_factorization {Incident : Type*}
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposure A) ≠ 0) :
+    (∏ i ∈ s, (C i).likelihood A) =
+      productResidual A s C *
+        sourcePoissonPMF A.rate
+          (totalExposure s fun i => (C i).exposure A)
+          (totalCount s fun i => (C i).count A) := by
+  simpa [likelihood, exposure, count, productResidual,
+    assumption_theorem2_poisson_process_and_conditions.rate] using
+      theorem1_process_law_likelihood_product_decomposition
+        s (fun i => (C i).toProcessLawCase A) A.processLaw h_totalExposure
+
+theorem product_factorization_via_toSourceSemantics {Incident : Type*}
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_totalExposure :
+      totalExposure s (fun i => (C i).exposure A) ≠ 0) :
+    (∏ i ∈ s, (C i).likelihood A) =
+      productResidual A s C *
+        sourcePoissonPMF A.rate
+          (totalExposure s fun i => (C i).exposure A)
+          (totalCount s fun i => (C i).count A) := by
+  classical
+  have h_source :
+      totalExposure s
+        (fun i => (C i).exposureFromSourceSemantics A.toSourceSemantics) ≠
+          0 := by
+    simpa [totalExposure,
+      Theorem2ObservedWindowCase.exposure_eq_exposureFromSourceSemantics_toSourceSemantics]
+      using h_totalExposure
+  calc
+    (∏ i ∈ s, (C i).likelihood A)
+        = ∏ i ∈ s,
+            (C i).likelihoodFromSourceSemantics A.toSourceSemantics := by
+            refine Finset.prod_congr rfl ?_
+            intro i _hi
+            exact
+              (C i).likelihood_eq_likelihoodFromSourceSemantics_toSourceSemantics
+                A
+    _ = productResidualFromSourceSemantics A.toSourceSemantics s C *
+          sourcePoissonPMF A.toSourceSemantics.rate
+            (totalExposure s
+              fun i => (C i).exposureFromSourceSemantics A.toSourceSemantics)
+            (totalCount s
+              fun i => (C i).countFromSourceSemantics A.toSourceSemantics) := by
+            exact product_factorizationFromSourceSemantics
+              A.toSourceSemantics s C h_source
+    _ = productResidual A s C *
+          sourcePoissonPMF A.rate
+            (totalExposure s fun i => (C i).exposure A)
+            (totalCount s fun i => (C i).count A) := by
+            simp [productResidual_eq_productResidualFromSourceSemantics_toSourceSemantics,
+              totalExposure, totalCount,
+              Theorem2ObservedWindowCase.exposure_eq_exposureFromSourceSemantics_toSourceSemantics,
+              Theorem2ObservedWindowCase.count_eq_countFromSourceSemantics_toSourceSemantics,
+              assumption_theorem2_poisson_process_and_conditions.toSourceSemantics,
+              theorem2_poisson_process_and_condition_semantics.rate,
+              assumption_theorem2_poisson_process_and_conditions.rate]
+
+theorem product_factorization_of_exists_pos_exposure {Incident : Type*}
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase)
+    (h_exists : ∃ i ∈ s, 0 < (C i).exposure A) :
+    (∏ i ∈ s, (C i).likelihood A) =
+      productResidual A s C *
+        sourcePoissonPMF A.rate
+          (totalExposure s fun i => (C i).exposure A)
+          (totalCount s fun i => (C i).count A) := by
+  exact product_factorization A s C
+    (ne_of_gt
+      (totalExposure_pos_of_exists_pos s
+        (fun i => (C i).exposure A)
+        (fun i hi => exposure_nonneg A (C i))
+        h_exists))
+
+theorem productResidual_rateIndependent {Incident : Type*}
+    (A : assumption_theorem2_poisson_process_and_conditions Ω P)
+    (s : Finset Incident) (C : Incident → Theorem2ObservedWindowCase) :
+    RateIndependent (fun _rate : ℝ => productResidual A s C) := by
+  exact ⟨productResidual A s C, fun _ => rfl⟩
+
+end Theorem2ObservedWindowCase
+
+end
+
+end LBG24SpatialUnderreporting

@@ -1,0 +1,352 @@
+{
+  "items": {
+    "equation2_poisson_count_pmf_formula": {
+      "lean_statement_sha256": "46edb1d2ec791f7ddccea4d6ab61c702e7fccc931dd9ebd80a5a745aff876651",
+      "tex_statement": "\\forall (rate exposure : ℝ) (count : ℕ), sourcePoissonPMF rate exposure count = exp (-(rate * exposure)) * (rate * exposure) ^ count / ↑factorial"
+    },
+    "equation33_nyc_multi_report_factorization_from_local_count_process_at_sample": {
+      "lean_statement_sha256": "4283311616452182be4193c8822bba56b87b4c1094cb314f7560631e9da4c245",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (K : Theorem2ConditionFunctions) (baseCount count : ℕ) (hcount : 1 < count) (reportCount : ℝ \\to \\Omega \\to ℕ) (startTime inspectionTime workOrderTime : \\Omega \\to ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | startTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to IsStoppingTime 𝓕 inspectionTime \\to IsStoppingTime 𝓕 workOrderTime \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le inspectionTime \\omega) \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le workOrderTime \\omega) \\to \\forall (\\omega : \\Omega) (jumpTime : ℕ \\to ℝ) {rate : ℝ}, startTime \\omega < min (min (startTime \\omega + 100) (inspectionTime \\omega)) (workOrderTime \\omega) \\to Monotone (jumpTimelineEndpoint (startTime \\omega) jumpTime) \\to jumpTimelineEndpoint (startTime \\omega) jumpTime count \\le min (min (startTime \\omega + 100) (inspectionTime \\omega)) (workOrderTime \\omega) \\to \\exists W, \\exists (hW_window : startTime < endTime) (hWmono : Monotone (jumpTimelineEndpoint startTime jumpTime)) (hWlast : jumpTimelineEndpoint startTime jumpTime count \\le endTime), startTime = startTime \\omega \\land endTime = min (min (startTime \\omega + 100) (inspectionTime \\omega)) (workOrderTime \\omega) \\land (multiReportSourceDataFromOrderedWindow baseCount count hcount startTime endTime jumpTime hW_window hWmono hWlast).likelihood rate = (multiReportSourceDataFromOrderedWindow baseCount count hcount startTime endTime jumpTime hW_window hWmono hWlast).residual * sourcePoissonPMF rate exposure count"
+    },
+    "equation33_nyc_one_report_factorization_from_local_count_process_at_sample": {
+      "lean_statement_sha256": "b6de67e82c7daa19e107085060567fefc16abb042431be3aedd24785a08c3a6f",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (K : Theorem2ConditionFunctions) (baseCount : ℕ) (reportCount : ℝ \\to \\Omega \\to ℕ) (startTime inspectionTime workOrderTime : \\Omega \\to ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | startTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to IsStoppingTime 𝓕 inspectionTime \\to IsStoppingTime 𝓕 workOrderTime \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le inspectionTime \\omega) \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le workOrderTime \\omega) \\to \\forall (\\omega : \\Omega) {firstJumpTime rate : ℝ}, startTime \\omega < min (min (startTime \\omega + 100) (inspectionTime \\omega)) (workOrderTime \\omega) \\to startTime \\omega \\le firstJumpTime \\to firstJumpTime \\le min (min (startTime \\omega + 100) (inspectionTime \\omega)) (workOrderTime \\omega) \\to \\exists W, \\exists (hW_window : startTime < endTime) (hW_start_le_jump : startTime \\le firstJumpTime) (hW_jump_le_end : firstJumpTime \\le endTime), startTime = startTime \\omega \\land endTime = min (min (startTime \\omega + 100) (inspectionTime \\omega)) (workOrderTime \\omega) \\land (oneReportSourceDataFromOrderedWindow baseCount startTime endTime firstJumpTime hW_window hW_start_le_jump hW_jump_le_end).likelihood rate = (oneReportSourceDataFromOrderedWindow baseCount startTime endTime firstJumpTime hW_window hW_start_le_jump hW_jump_le_end).residual * sourcePoissonPMF rate exposure 1"
+    },
+    "equation33_nyc_preprocessing_observation_window_of_local_count_process_at_sample": {
+      "lean_statement_sha256": "b7847cfb6be3c0bcb09fe1958a3a54fb956831b8734d297b44e712cc2f8a0311",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (reportCount : ℝ \\to \\Omega \\to ℕ) (startTime inspectionTime workOrderTime : \\Omega \\to ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | startTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to IsStoppingTime 𝓕 inspectionTime \\to IsStoppingTime 𝓕 workOrderTime \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le inspectionTime \\omega) \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le workOrderTime \\omega) \\to \\forall (\\omega : \\Omega), \\exists W, startTime = startTime \\omega \\land endTime = min (min (startTime \\omega + 100) (inspectionTime \\omega)) (workOrderTime \\omega) \\land 0 \\le exposure"
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window": {
+      "lean_statement_sha256": "48b803784112fa1332d3dea4d10210f1e585b6d5c3c8426cc408bd6d2af3251e",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (startTime inspectionTime workOrderTime : \\Omega \\to ℝ), IsStoppingTime 𝓕 startTime \\to IsStoppingTime 𝓕 inspectionTime \\to IsStoppingTime 𝓕 workOrderTime \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le inspectionTime \\omega) \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le workOrderTime \\omega) \\to \\exists W, startTime = startTime \\land (endTime = fun \\omega  =>  min (min (startTime \\omega + 100) (inspectionTime \\omega)) (workOrderTime \\omega)) \\land \\forall (\\omega : \\Omega), 0 \\le exposure \\omega"
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_deterministic_endpoints": {
+      "lean_statement_sha256": "b1d632bf1c9c6712e46c3a0cc01027f4d4fb3cb24bb179c51f9b874b74ac16ae",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (startTime : \\Omega \\to ℝ) (inspectionTime workOrderTime : ℝ), IsStoppingTime 𝓕 startTime \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le inspectionTime) \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le workOrderTime) \\to \\exists W, startTime = startTime \\land (endTime = fun \\omega  =>  min (min (startTime \\omega + 100) inspectionTime) workOrderTime) \\land \\forall (\\omega : \\Omega), 0 \\le exposure \\omega"
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_first_count_arrival": {
+      "lean_statement_sha256": "749a8d7934b82d9f6023aa86ba9b36117692e7095cd23265b539a8fef472a771",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (reportCount : ℝ \\to \\Omega \\to ℕ) (startTime : \\Omega \\to ℝ) (inspectionTime workOrderTime : ℝ), FirstCountArrivalCertificate 𝓕 reportCount startTime \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le inspectionTime) \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le workOrderTime) \\to \\exists W, startTime = startTime \\land (endTime = fun \\omega  =>  min (min (startTime \\omega + 100) inspectionTime) workOrderTime) \\land \\forall (\\omega : \\Omega), 0 \\le exposure \\omega"
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_local_count_process": {
+      "lean_statement_sha256": "f24782f8ea137c16d24ef68343ce130b21d8773b062a74654880503b4051bd66",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (reportCount : ℝ \\to \\Omega \\to ℕ) (startTime : \\Omega \\to ℝ) (inspectionTime workOrderTime : ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | startTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le inspectionTime) \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le workOrderTime) \\to \\exists W, startTime = startTime \\land (endTime = fun \\omega  =>  min (min (startTime \\omega + 100) inspectionTime) workOrderTime) \\land \\forall (\\omega : \\Omega), 0 \\le exposure \\omega"
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_local_count_process_stopping_endpoints": {
+      "lean_statement_sha256": "bed251cf52497d2495755726719f60f49857ad5a62ec07e656acd8b4d1a9d538",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (reportCount : ℝ \\to \\Omega \\to ℕ) (startTime inspectionTime workOrderTime : \\Omega \\to ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | startTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to IsStoppingTime 𝓕 inspectionTime \\to IsStoppingTime 𝓕 workOrderTime \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le inspectionTime \\omega) \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le workOrderTime \\omega) \\to \\exists W, startTime = startTime \\land (endTime = fun \\omega  =>  min (min (startTime \\omega + 100) (inspectionTime \\omega)) (workOrderTime \\omega)) \\land \\forall (\\omega : \\Omega), 0 \\le exposure \\omega"
+    },
+    "equation33_nyc_zero_report_factorization_from_local_count_process_at_sample": {
+      "lean_statement_sha256": "1eed133c1e3665692cf0cb2f9a4391967befde0d1f48de7585cfe54016c5046c",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (K : Theorem2ConditionFunctions) (baseCount : ℕ) (reportCount : ℝ \\to \\Omega \\to ℕ) (startTime inspectionTime workOrderTime : \\Omega \\to ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | startTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to IsStoppingTime 𝓕 inspectionTime \\to IsStoppingTime 𝓕 workOrderTime \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le inspectionTime \\omega) \\to (\\forall (\\omega : \\Omega), startTime \\omega \\le workOrderTime \\omega) \\to \\forall (\\omega : \\Omega) (rate : ℝ), \\exists W, startTime = startTime \\omega \\land endTime = min (min (startTime \\omega + 100) (inspectionTime \\omega)) (workOrderTime \\omega) \\land (zeroReportSourceDataFromWindow baseCount W).likelihood rate = theorem2ZeroReportResidual startDensity (endDensity baseCount) * sourcePoissonPMF rate exposure 0"
+    },
+    "equation34_chicago_multi_report_factorization_from_local_count_process_at_sample": {
+      "lean_statement_sha256": "0137381afc171aa86aa70e77fabadf6cbeb72c0300b428c4526730944a343c44",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (K : Theorem2ConditionFunctions) (baseCount count : ℕ) (hcount : 1 < count) (reportCount : ℝ \\to \\Omega \\to ℕ) (firstReportTime closedTime retrievalTime : \\Omega \\to ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | firstReportTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to IsStoppingTime 𝓕 closedTime \\to IsStoppingTime 𝓕 retrievalTime \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le closedTime \\omega) \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le retrievalTime \\omega) \\to \\forall (\\omega : \\Omega) (jumpTime : ℕ \\to ℝ) {rate : ℝ}, firstReportTime \\omega < min (min (firstReportTime \\omega + 100) (closedTime \\omega)) (retrievalTime \\omega) \\to Monotone (jumpTimelineEndpoint (firstReportTime \\omega) jumpTime) \\to jumpTimelineEndpoint (firstReportTime \\omega) jumpTime count \\le min (min (firstReportTime \\omega + 100) (closedTime \\omega)) (retrievalTime \\omega) \\to \\exists W, \\exists (hW_window : startTime < endTime) (hWmono : Monotone (jumpTimelineEndpoint startTime jumpTime)) (hWlast : jumpTimelineEndpoint startTime jumpTime count \\le endTime), startTime = firstReportTime \\omega \\land endTime = min (min (firstReportTime \\omega + 100) (closedTime \\omega)) (retrievalTime \\omega) \\land (multiReportSourceDataFromOrderedWindow baseCount count hcount startTime endTime jumpTime hW_window hWmono hWlast).likelihood rate = (multiReportSourceDataFromOrderedWindow baseCount count hcount startTime endTime jumpTime hW_window hWmono hWlast).residual * sourcePoissonPMF rate exposure count"
+    },
+    "equation34_chicago_one_report_factorization_from_local_count_process_at_sample": {
+      "lean_statement_sha256": "c6eb847e2dbf68cd1887605e710200906aeb1d9494c039499121efd00fdd28f1",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (K : Theorem2ConditionFunctions) (baseCount : ℕ) (reportCount : ℝ \\to \\Omega \\to ℕ) (firstReportTime closedTime retrievalTime : \\Omega \\to ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | firstReportTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to IsStoppingTime 𝓕 closedTime \\to IsStoppingTime 𝓕 retrievalTime \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le closedTime \\omega) \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le retrievalTime \\omega) \\to \\forall (\\omega : \\Omega) {firstJumpTime rate : ℝ}, firstReportTime \\omega < min (min (firstReportTime \\omega + 100) (closedTime \\omega)) (retrievalTime \\omega) \\to firstReportTime \\omega \\le firstJumpTime \\to firstJumpTime \\le min (min (firstReportTime \\omega + 100) (closedTime \\omega)) (retrievalTime \\omega) \\to \\exists W, \\exists (hW_window : startTime < endTime) (hW_start_le_jump : startTime \\le firstJumpTime) (hW_jump_le_end : firstJumpTime \\le endTime), startTime = firstReportTime \\omega \\land endTime = min (min (firstReportTime \\omega + 100) (closedTime \\omega)) (retrievalTime \\omega) \\land (oneReportSourceDataFromOrderedWindow baseCount startTime endTime firstJumpTime hW_window hW_start_le_jump hW_jump_le_end).likelihood rate = (oneReportSourceDataFromOrderedWindow baseCount startTime endTime firstJumpTime hW_window hW_start_le_jump hW_jump_le_end).residual * sourcePoissonPMF rate exposure 1"
+    },
+    "equation34_chicago_preprocessing_observation_window_of_local_count_process_at_sample": {
+      "lean_statement_sha256": "721bd6c154b4d9896d603b5a7011c9da7d1a5e64f5fc7f8668c060e2e73a068f",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (reportCount : ℝ \\to \\Omega \\to ℕ) (firstReportTime closedTime retrievalTime : \\Omega \\to ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | firstReportTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to IsStoppingTime 𝓕 closedTime \\to IsStoppingTime 𝓕 retrievalTime \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le closedTime \\omega) \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le retrievalTime \\omega) \\to \\forall (\\omega : \\Omega), \\exists W, startTime = firstReportTime \\omega \\land endTime = min (min (firstReportTime \\omega + 100) (closedTime \\omega)) (retrievalTime \\omega) \\land 0 \\le exposure"
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window": {
+      "lean_statement_sha256": "26efbabd368051c0520902c6794625b2d242fc6a05175c648cdb92aa6a8c9ccd",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (firstReportTime closedTime retrievalTime : \\Omega \\to ℝ), IsStoppingTime 𝓕 firstReportTime \\to IsStoppingTime 𝓕 closedTime \\to IsStoppingTime 𝓕 retrievalTime \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le closedTime \\omega) \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le retrievalTime \\omega) \\to \\exists W, startTime = firstReportTime \\land (endTime = fun \\omega  =>  min (min (firstReportTime \\omega + 100) (closedTime \\omega)) (retrievalTime \\omega)) \\land \\forall (\\omega : \\Omega), 0 \\le exposure \\omega"
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_deterministic_endpoints": {
+      "lean_statement_sha256": "18146589c583f85d128c34f3565e8e85333a98faa1664d7a0b8092d1d1168377",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (firstReportTime : \\Omega \\to ℝ) (closedTime retrievalTime : ℝ), IsStoppingTime 𝓕 firstReportTime \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le closedTime) \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le retrievalTime) \\to \\exists W, startTime = firstReportTime \\land (endTime = fun \\omega  =>  min (min (firstReportTime \\omega + 100) closedTime) retrievalTime) \\land \\forall (\\omega : \\Omega), 0 \\le exposure \\omega"
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_first_count_arrival": {
+      "lean_statement_sha256": "afab5712fd54310062223292e43688881f735cf1902847a5f0e745cbda454542",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (reportCount : ℝ \\to \\Omega \\to ℕ) (firstReportTime : \\Omega \\to ℝ) (closedTime retrievalTime : ℝ), FirstCountArrivalCertificate 𝓕 reportCount firstReportTime \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le closedTime) \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le retrievalTime) \\to \\exists W, startTime = firstReportTime \\land (endTime = fun \\omega  =>  min (min (firstReportTime \\omega + 100) closedTime) retrievalTime) \\land \\forall (\\omega : \\Omega), 0 \\le exposure \\omega"
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_local_count_process": {
+      "lean_statement_sha256": "4c9a3366e3f33fd44a7b223acd28da01f2c869efa230c527ad39cf5ed8962892",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (reportCount : ℝ \\to \\Omega \\to ℕ) (firstReportTime : \\Omega \\to ℝ) (closedTime retrievalTime : ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | firstReportTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le closedTime) \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le retrievalTime) \\to \\exists W, startTime = firstReportTime \\land (endTime = fun \\omega  =>  min (min (firstReportTime \\omega + 100) closedTime) retrievalTime) \\land \\forall (\\omega : \\Omega), 0 \\le exposure \\omega"
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_local_count_process_stopping_endpoints": {
+      "lean_statement_sha256": "75af46a59217326579528ff06d89bb38e5de096d6c614ca3cdc7d632360a847d",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (reportCount : ℝ \\to \\Omega \\to ℕ) (firstReportTime closedTime retrievalTime : \\Omega \\to ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | firstReportTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to IsStoppingTime 𝓕 closedTime \\to IsStoppingTime 𝓕 retrievalTime \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le closedTime \\omega) \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le retrievalTime \\omega) \\to \\exists W, startTime = firstReportTime \\land (endTime = fun \\omega  =>  min (min (firstReportTime \\omega + 100) (closedTime \\omega)) (retrievalTime \\omega)) \\land \\forall (\\omega : \\Omega), 0 \\le exposure \\omega"
+    },
+    "equation34_chicago_zero_report_factorization_from_local_count_process_at_sample": {
+      "lean_statement_sha256": "d11d50262443163e8966e86bc1111def523eb3a05e133a4d7de503c191a97dfc",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {m\\Omega : MeasurableSpace \\Omega} (𝓕 : Filtration ℝ m\\Omega) (K : Theorem2ConditionFunctions) (baseCount : ℕ) (reportCount : ℝ \\to \\Omega \\to ℕ) (firstReportTime closedTime retrievalTime : \\Omega \\to ℝ), (\\forall (t : ℝ), Measurable (reportCount t)) \\to (\\forall (t : ℝ), {\\omega | firstReportTime \\omega \\le t} = {\\omega | 1 \\le reportCount t \\omega}) \\to IsStoppingTime 𝓕 closedTime \\to IsStoppingTime 𝓕 retrievalTime \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le closedTime \\omega) \\to (\\forall (\\omega : \\Omega), firstReportTime \\omega \\le retrievalTime \\omega) \\to \\forall (\\omega : \\Omega) (rate : ℝ), \\exists W, startTime = firstReportTime \\omega \\land endTime = min (min (firstReportTime \\omega + 100) (closedTime \\omega)) (retrievalTime \\omega) \\land (zeroReportSourceDataFromWindow baseCount W).likelihood rate = theorem2ZeroReportResidual startDensity (endDensity baseCount) * sourcePoissonPMF rate exposure 0"
+    },
+    "equation3_mle_global_logLikelihood_max": {
+      "lean_statement_sha256": "2bb465afc04d9dc7d19f8a29ca911cd43f86c49f32cf3c3a2dfc8ab586d03ce0",
+      "tex_statement": "\\forall {totalCount : ℕ} {totalExposure rate : ℝ}, totalCount \\ne 0 \\to 0 < totalExposure \\to 0 < rate \\to poissonRateLogLikelihood totalCount totalExposure rate \\le poissonRateLogLikelihood totalCount totalExposure (mleRate totalCount totalExposure)"
+    },
+    "equation3_mle_score_equation": {
+      "lean_statement_sha256": "014fa7892ce41f60437c57999c3c76530d64ab3113f7f3340e384641273ab0df",
+      "tex_statement": "\\forall {totalCount : ℕ} {totalExposure : ℝ}, totalCount \\ne 0 \\to totalExposure \\ne 0 \\to poissonRateScore totalCount totalExposure (mleRate totalCount totalExposure) = 0"
+    },
+    "equation3_product_likelihood_raw_shape": {
+      "lean_statement_sha256": "618bb0225e74f5daf42819d609be5192fe9d649c960ad0f39cf9ec16ae2325d5",
+      "tex_statement": "\\forall {Incident : Type u_1} (s : Finset Incident) (rate : ℝ) (exposure : Incident \\to ℝ) (count : Incident \\to ℕ), observedIncidentLikelihoodProduct s rate exposure count = observedIncidentLikelihoodProductResidual s exposure count * rate ^ totalObservedReportCount s count * exp (-(rate * totalObservationExposure s exposure))"
+    },
+    "equation3_product_likelihood_total_pmf": {
+      "lean_statement_sha256": "beab5e301d1eaac127effbe283b12eb6cdb71f7347402b9ef79e3d0503094340",
+      "tex_statement": "\\forall {Incident : Type u_1} (s : Finset Incident) (rate : ℝ) (exposure : Incident \\to ℝ) (count : Incident \\to ℕ), totalObservationExposure s exposure \\ne 0 \\to observedIncidentLikelihoodProduct s rate exposure count = observedIncidentLikelihoodTotalPMFResidual s exposure count * sourcePoissonPMF rate (totalObservationExposure s exposure) (totalObservedReportCount s count)"
+    },
+    "equation5_poisson_regression_rate_formula": {
+      "lean_statement_sha256": "254bf801058382b79fa643a0da3f88caaeeadcfd224786502b2df2afd4f7acf4",
+      "tex_statement": "\\forall {Feature : Type u_1} [inst : Fintype Feature] (alpha : ℝ) (beta theta : Feature \\to ℝ), poissonRegressionRate alpha beta theta = exp (alpha + \\sum j, beta j * theta j)"
+    },
+    "equation6_poisson_regression_likelihood_formula": {
+      "lean_statement_sha256": "1c2b69a6298830c70be3af89f52eaa172f32d71033acee1c5faa06e5503685a9",
+      "tex_statement": "\\forall {Feature : Type u_1} [inst : Fintype Feature] (alpha : ℝ) (beta theta : Feature \\to ℝ) (exposure : ℝ) (count : ℕ), poissonRegressionIncidentLikelihood alpha beta theta exposure count = sourcePoissonPMF (exp (alpha + \\sum j, beta j * theta j)) exposure count"
+    },
+    "equation7_zero_inflated_likelihood_nonnegative": {
+      "lean_statement_sha256": "e98808b8fa64d62325f739775de3c40eeac2363fda9c9d114aef47a523a50a52",
+      "tex_statement": "\\forall {gamma rate exposure : ℝ} {count : ℕ}, 0 \\le gamma \\to gamma \\le 1 \\to 0 \\le rate * exposure \\to 0 \\le zeroInflatedIncidentLikelihood gamma rate exposure count"
+    },
+    "equation7_zero_inflated_likelihood_positive_count": {
+      "lean_statement_sha256": "ad4379fdad759a08bc01cb4df90f5557a9afe5e3b1364ebdbafa46e10c83964c",
+      "tex_statement": "\\forall {gamma rate exposure : ℝ} {count : ℕ}, count \\ne 0 \\to zeroInflatedIncidentLikelihood gamma rate exposure count = (1 - gamma) * sourcePoissonPMF rate exposure count"
+    },
+    "equation7_zero_inflated_likelihood_zero": {
+      "lean_statement_sha256": "524cbaa597260f8862a078b423634b6c17b6a9fc9dff1f8556752eea7859094f",
+      "tex_statement": "\\forall (gamma rate exposure : ℝ), zeroInflatedIncidentLikelihood gamma rate exposure 0 = gamma + (1 - gamma) * sourcePoissonPMF rate exposure 0"
+    },
+    "equation7_zero_inflated_regression_likelihood_positive_count": {
+      "lean_statement_sha256": "e7c00112dd47848c765bbc62f10cc5436dcf8c6783d63d47a84e391e2f1d2317",
+      "tex_statement": "\\forall {Feature : Type u_1} [inst : Fintype Feature] {gamma alpha exposure : ℝ} {beta theta : Feature \\to ℝ} {count : ℕ}, count \\ne 0 \\to zeroInflatedRegressionIncidentLikelihood gamma alpha beta theta exposure count = (1 - gamma) * sourcePoissonPMF (exp (alpha + \\sum j, beta j * theta j)) exposure count"
+    },
+    "equation7_zero_inflated_regression_likelihood_zero": {
+      "lean_statement_sha256": "249b8a056678c134c870245195e49a206784d88d3e3bb9c73161a883d1304f9f",
+      "tex_statement": "\\forall {Feature : Type u_1} [inst : Fintype Feature] (gamma alpha : ℝ) (beta theta : Feature \\to ℝ) (exposure : ℝ), zeroInflatedRegressionIncidentLikelihood gamma alpha beta theta exposure 0 = gamma + (1 - gamma) * sourcePoissonPMF (exp (alpha + \\sum j, beta j * theta j)) exposure 0"
+    },
+    "first_report_probability_formula": {
+      "lean_statement_sha256": "f065d372e34d4f10c7e35404ae046f89a9d7b87312b5bd6fe5e58b3e362141c0",
+      "tex_statement": "\\forall (reportingRate duration : ℝ), firstReportProbability reportingRate duration = 1 - exp (-(reportingRate * duration))"
+    },
+    "homogeneous_reporting_delay_mean_formula": {
+      "lean_statement_sha256": "55e134a6daa7de066e6435988e12ff226da6cd1df50a65270140f82be45e3003",
+      "tex_statement": "\\forall (rate : ℝ) (h_rate : 0 < rate), \\int (x : ℝ), x ∂{ rate := rate, rate_pos := h_rate }.measure = 1 / rate"
+    },
+    "lemma1_continuous_duration_first_report_probability_integral": {
+      "lean_statement_sha256": "f1d79b4f2463311252a53391f01251cd3b3dedba3135fae821989774587e862d",
+      "tex_statement": "\\forall (reportingRate : ℝ) (durationDensity : ℝ \\to ℝ), \\int (t : ℝ) in Ici 0, durationDensity t = 1 \\to Integrable durationDensity (restrict (Ici 0)) \\to Integrable (fun t  =>  durationDensity t * noArrivalProb reportingRate t) (restrict (Ici 0)) \\to continuousDurationFirstReportProbability reportingRate durationDensity = \\int (t : ℝ) in Ici 0, durationDensity t * firstReportProbability reportingRate t"
+    },
+    "lemma1_continuous_duration_first_report_probability_le_one": {
+      "lean_statement_sha256": "ae1ec7dd975d1db5720ed943d2098e5d0a55879f111bd1ed4a531ae86c5ff22c",
+      "tex_statement": "\\forall (reportingRate : ℝ) {durationDensity : ℝ \\to ℝ}, (\\forall (t : ℝ), 0 \\le durationDensity t) \\to continuousDurationFirstReportProbability reportingRate durationDensity \\le 1"
+    },
+    "lemma1_continuous_duration_first_report_probability_nonnegative": {
+      "lean_statement_sha256": "b7a038b055118462eb30965e7abb9ef45f98fe127ee0b9e0622984340ecd6872",
+      "tex_statement": "\\forall {reportingRate : ℝ} {durationDensity : ℝ \\to ℝ}, \\int (t : ℝ) in Ici 0, durationDensity t = 1 \\to Integrable durationDensity (restrict (Ici 0)) \\to Integrable (fun t  =>  durationDensity t * noArrivalProb reportingRate t) (restrict (Ici 0)) \\to (\\forall (t : ℝ), 0 \\le durationDensity t) \\to 0 \\le reportingRate \\to 0 \\le continuousDurationFirstReportProbability reportingRate durationDensity"
+    },
+    "lemma1_continuous_duration_observed_rate_integral": {
+      "lean_statement_sha256": "36456e47fc34641f458dcfe4f86599a9dd43062937434b530341a9096ce9eb86",
+      "tex_statement": "\\forall (incidentRate reportingRate : ℝ) (durationDensity : ℝ \\to ℝ), \\int (t : ℝ) in Ici 0, durationDensity t = 1 \\to Integrable durationDensity (restrict (Ici 0)) \\to Integrable (fun t  =>  durationDensity t * noArrivalProb reportingRate t) (restrict (Ici 0)) \\to continuousDurationObservedIncidentRate incidentRate reportingRate durationDensity = incidentRate * \\int (t : ℝ) in Ici 0, durationDensity t * firstReportProbability reportingRate t"
+    },
+    "lemma1_continuous_duration_poisson_thinning_count_law": {
+      "lean_statement_sha256": "12b90ca480f0e3473b1a499c3bb00eddd381e175d3b2010c915d3b6ba15afb90",
+      "tex_statement": "\\forall (incidentMean reportingRate : ℝ) (durationDensity : ℝ \\to ℝ) (observedCount : ℕ), \\sum' (originalCount : ℕ), countLikelihood 1 incidentMean originalCount * binomialThinningMass (continuousDurationFirstReportProbability reportingRate durationDensity) originalCount observedCount = countLikelihood 1 (continuousDurationObservedIncidentRate incidentMean reportingRate durationDensity) observedCount"
+    },
+    "lemma1_finite_duration_first_report_weighted_average": {
+      "lean_statement_sha256": "2fe2ff50534aacf7d009a6f3c866aaa8cdde06940f792c98fca27a0d4a398a4f",
+      "tex_statement": "\\forall {DurationType : Type u_1} [inst : Fintype DurationType] (reportingRate : ℝ) (weight duration : DurationType \\to ℝ), \\sum d, weight d = 1 \\to finiteDurationFirstReportProbability reportingRate weight duration = \\sum d, weight d * firstReportProbability reportingRate (duration d)"
+    },
+    "lemma1_unit_interval_observed_counts_lln": {
+      "lean_statement_sha256": "63bab1394573db5d218931d24c35c74d3da6238643513c6730fbfdae5c21565b",
+      "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (observedCount : ℕ \\to \\Omega \\to ℝ), Integrable (observedCount 0) P \\to Pairwise (onFun (fun x1 x2  =>  IndepFun x1 x2 P) observedCount) \\to (\\forall (i : ℕ), IdentDistrib (observedCount i) (observedCount 0) P P) \\to \\forallᵐ (\\omega : \\Omega) ∂P, Tendsto (fun T  =>  (\\sum \\tau \\in range T, observedCount \\tau \\omega) / ↑T) atTop (nhds (\\int (\\omega : \\Omega), observedCount 0 \\omega ∂P))"
+    },
+    "lemma1_unit_interval_observed_counts_lln_to_continuous_duration_rate": {
+      "lean_statement_sha256": "4ffbc5e69f042e4bbeac514c4d6de2cf189e76ba748be1f5112cbe4199a70dd7",
+      "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (observedCount : ℕ \\to \\Omega \\to ℝ) (incidentRate reportingRate : ℝ) (durationDensity : ℝ \\to ℝ), Integrable (observedCount 0) P \\to Pairwise (onFun (fun x1 x2  =>  IndepFun x1 x2 P) observedCount) \\to (\\forall (i : ℕ), IdentDistrib (observedCount i) (observedCount 0) P P) \\to \\int (\\omega : \\Omega), observedCount 0 \\omega ∂P = continuousDurationObservedIncidentRate incidentRate reportingRate durationDensity \\to \\forallᵐ (\\omega : \\Omega) ∂P, Tendsto (fun T  =>  (\\sum \\tau \\in range T, observedCount \\tau \\omega) / ↑T) atTop (nhds (continuousDurationObservedIncidentRate incidentRate reportingRate durationDensity))"
+    },
+    "lemma2_exponential_waiting_tail": {
+      "lean_statement_sha256": "43db7004f7de148cecfb930268f2fff48a4c649cb6c0d08a5094ed8d5f2b5bcd",
+      "tex_statement": "\\forall (rate : ℝ) (h_rate : 0 < rate) {epsilon lower : ℝ}, 0 \\le epsilon \\to \\forall {elapsed startDensity : ℝ \\to ℝ}, \\int (s : ℝ) in Ici lower, startDensity s = 1 \\to (\\forall (s : ℝ), 0 \\le rate * elapsed s) \\to \\int (s : ℝ) in Ici lower, (noArrivalProb rate epsilon * \\sum' (count : ℕ), countLikelihood rate (elapsed s) count) * startDensity s = ({ rate := rate, rate_pos := h_rate }.measure (Ioi epsilon)).toReal"
+    },
+    "lemma2_exponential_waiting_tail_memoryless_ratio": {
+      "lean_statement_sha256": "638e1dd814cb6a5eba050a3c3a3ed61b7e7a696c55bef2d369a38bfd85a283e3",
+      "tex_statement": "\\forall (rate : ℝ) (h_rate : 0 < rate) {elapsed future : ℝ}, 0 \\le elapsed \\to 0 \\le future \\to ({ rate := rate, rate_pos := h_rate }.measure (Ioi (elapsed + future))).toReal / ({ rate := rate, rate_pos := h_rate }.measure (Ioi elapsed)).toReal = ({ rate := rate, rate_pos := h_rate }.measure (Ioi future)).toReal"
+    },
+    "lemma2_finite_jump_density_normalizes_to_count_probability": {
+      "lean_statement_sha256": "f6c9dc129a77e081770d62c71d59ac41220324ec39cf36549982206940aa76f4",
+      "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (H : HomogeneousPoissonProcessLaw \\Omega P) (T : OrderedFiniteJumpTimeline), exposure \\ne 0 \\to finiteJumpDensity T * (volume (orderedJumpRegion count exposure)).toReal = real {\\omega | intervalCount startTime endTime \\omega = count}"
+    },
+    "lemma2_one_jump_density_normalizes_to_count_probability": {
+      "lean_statement_sha256": "5fe32cadddd06543c100d75b47e3e0158aaa9d2efeb6b110dda46cb1a9c733e2",
+      "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (H : HomogeneousPoissonProcessLaw \\Omega P) (T : OrderedOneJumpWindow), exposure \\ne 0 \\to oneJumpDensity T * (volume (orderedJumpRegion 1 exposure)).toReal = real {\\omega | intervalCount startTime endTime \\omega = 1}"
+    },
+    "proposition1_continuous_duration_nonidentifiability": {
+      "lean_statement_sha256": "bf1500c6ca8c1dfbb18450294a2b7c5c0eee60a570c28f3552b61da8d3994548",
+      "tex_statement": "\\forall (durationDensity : ℝ \\to ℝ) {observedRate rate₁ rate₂ : ℝ}, rate₁ \\ne rate₂ \\to continuousDurationFirstReportProbability rate₁ durationDensity \\ne 0 \\to continuousDurationFirstReportProbability rate₂ durationDensity \\ne 0 \\to rate₁ \\ne rate₂ \\land continuousDurationObservedIncidentRate (observedRate / continuousDurationFirstReportProbability rate₁ durationDensity) rate₁ durationDensity = continuousDurationObservedIncidentRate (observedRate / continuousDurationFirstReportProbability rate₂ durationDensity) rate₂ durationDensity"
+    },
+    "proposition1_finite_duration_nonidentifiability_positive": {
+      "lean_statement_sha256": "c1fdb8700e888bab1fa829a71ad9c998e11e0e3d61d8267c536e584861ed3797",
+      "tex_statement": "\\forall {DurationType : Type u_1} [inst : Fintype DurationType] (weight duration : DurationType \\to ℝ) {observedRate rate₁ rate₂ : ℝ}, rate₁ \\ne rate₂ \\to 0 < rate₁ \\to 0 < rate₂ \\to (\\forall (d : DurationType), 0 \\le weight d) \\to \\sum d, weight d = 1 \\to (\\forall (d : DurationType), 0 \\le duration d) \\to (\\exists d, 0 < weight d \\land 0 < duration d) \\to rate₁ \\ne rate₂ \\land finiteDurationObservedIncidentRate (observedRate / finiteDurationFirstReportProbability rate₁ weight duration) rate₁ weight duration = finiteDurationObservedIncidentRate (observedRate / finiteDurationFirstReportProbability rate₂ weight duration) rate₂ weight duration"
+    },
+    "proposition1_homogeneous_nonidentifiability": {
+      "lean_statement_sha256": "a8ba125407b3588a0638f5de23d35e24f0c7063cdeb1e08051f35ce0d27f3ea6",
+      "tex_statement": "\\forall {observedRate rate₁ rate₂ duration : ℝ}, rate₁ \\ne rate₂ \\to firstReportProbability rate₁ duration \\ne 0 \\to firstReportProbability rate₂ duration \\ne 0 \\to rate₁ \\ne rate₂ \\land homogeneousObservedIncidentRate (observedRate / firstReportProbability rate₁ duration) rate₁ duration = homogeneousObservedIncidentRate (observedRate / firstReportProbability rate₂ duration) rate₂ duration"
+    },
+    "proposition1_homogeneous_nonidentifiability_positive": {
+      "lean_statement_sha256": "43f98198166b889c6cc2814bb3ce543710411a2439e17a71de37d51dfe9d629d",
+      "tex_statement": "\\forall {observedRate rate₁ rate₂ duration : ℝ}, rate₁ \\ne rate₂ \\to 0 < rate₁ \\to 0 < rate₂ \\to 0 < duration \\to rate₁ \\ne rate₂ \\land homogeneousObservedIncidentRate (observedRate / firstReportProbability rate₁ duration) rate₁ duration = homogeneousObservedIncidentRate (observedRate / firstReportProbability rate₂ duration) rate₂ duration"
+    },
+    "theorem1_likelihood_decomposition": {
+      "lean_statement_sha256": "81a91603945465606038e9695ea22eaa7e863b33a381df426af602bbb71a2ca4",
+      "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (A : assumption_theorem2_poisson_process_and_conditions \\Omega P) (C : Theorem2ObservedWindowCase), likelihood A C = residual A C * sourcePoissonPMF rate (exposure A C) (count A C)"
+    },
+    "theorem1_likelihood_decomposition_from_poisson_increment_laws": {
+      "lean_statement_sha256": "bdaedc20009f63233d74f29d35c3396d878f75b58b284792e8fb3786b85f7025",
+      "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (H : HomogeneousPoissonCountingProcessByLaw \\Omega P) (K : Theorem2ConditionFunctions) (C : Theorem2ObservedWindowCase), likelihoodFromPoissonIncrementLaws K H C = residualWith K C * sourcePoissonPMF rate (exposureWith K C) (countWith K C)"
+    },
+    "theorem1_likelihood_decomposition_from_poisson_increment_laws_and_fixed_condition_density_source_model": {
+      "lean_statement_sha256": "ceefed6c5980072abf494a92e9901bd94d9779f4cef94278d6e0c73382efac74",
+      "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (H : HomogeneousPoissonCountingProcessByLaw \\Omega P) (M : Theorem2FixedConditionDensitySourceModel) (C : Theorem2ObservedWindowCase), likelihoodFromSourceSemantics (fromPoissonIncrementLawsAndConditionDensitySourceModel H toConditionDensitySourceModel) C = residualWith toConditionFunctions C * sourcePoissonPMF rate (exposureWith toConditionFunctions C) (countWith toConditionFunctions C)"
+    },
+    "theorem1_likelihood_decomposition_from_primitive_poisson_process": {
+      "lean_statement_sha256": "67ae07386167b98d0a32a044de1e5b406ed153557929824ee545351465e4868b",
+      "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (H : HomogeneousPoissonCountingProcess \\Omega P) (K : Theorem2ConditionFunctions) (C : Theorem2ObservedWindowCase), likelihoodFromCountingProcess K H C = residualWith K C * sourcePoissonPMF rate (exposureWith K C) (countWith K C)"
+    },
+    "theorem1_likelihood_decomposition_from_process_source_data": {
+      "lean_statement_sha256": "9abd544fdbca0ecc226b7a1993fd6db5116d035ba35da26a375b0881e5e673a8",
+      "tex_statement": "\\forall (D : Theorem2ProcessSourceData) (rate : ℝ), likelihood rate = residual * sourcePoissonPMF rate exposure count"
+    },
+    "theorem1_likelihood_decomposition_from_source_semantics": {
+      "lean_statement_sha256": "8d239c891e38034edecd0711ce48a6537932bc1ca8e20421b6b49fe24de7829f",
+      "tex_statement": "\\forall {\\Omega : Type u_1} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (S : theorem2_poisson_process_and_condition_semantics \\Omega P) (C : Theorem2ObservedWindowCase), likelihoodFromSourceSemantics S C = residualFromSourceSemantics S C * sourcePoissonPMF rate (exposureFromSourceSemantics S C) (countFromSourceSemantics S C)"
+    },
+    "theorem1_likelihood_product_decomposition_from_poisson_increment_laws": {
+      "lean_statement_sha256": "9c364ad8c0ee38dcb64787d925d513f8cd97d624b70c5d37b56eb8c4eb27acbc",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {Incident : Type u_2} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (H : HomogeneousPoissonCountingProcessByLaw \\Omega P) (K : Theorem2ConditionFunctions) (s : Finset Incident) (C : Incident \\to Theorem2ObservedWindowCase), (totalExposure s fun i  =>  exposureWith K (C i)) \\ne 0 \\to \\prod i \\in s, likelihoodFromPoissonIncrementLaws K H (C i) = productResidualWith K s C * sourcePoissonPMF rate (totalExposure s fun i  =>  exposureWith K (C i)) (totalCount s fun i  =>  countWith K (C i))"
+    },
+    "theorem1_likelihood_product_decomposition_from_poisson_increment_laws_of_exists_pos_exposure": {
+      "lean_statement_sha256": "5bae60c938d0e5dbee168554e9e674e4758281325131b3830bb8d02b7ebee588",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {Incident : Type u_2} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (H : HomogeneousPoissonCountingProcessByLaw \\Omega P) (K : Theorem2ConditionFunctions) (s : Finset Incident) (C : Incident \\to Theorem2ObservedWindowCase), (\\exists i \\in s, 0 < exposureWith K (C i)) \\to \\prod i \\in s, likelihoodFromPoissonIncrementLaws K H (C i) = productResidualWith K s C * sourcePoissonPMF rate (totalExposure s fun i  =>  exposureWith K (C i)) (totalCount s fun i  =>  countWith K (C i))"
+    },
+    "theorem1_likelihood_product_decomposition_from_primitive_poisson_process": {
+      "lean_statement_sha256": "3c9d28bf15a9c3fe84f4392a6832c9dddedbd7d893c4ade1daeeea2f660bd1c4",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {Incident : Type u_2} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (H : HomogeneousPoissonCountingProcess \\Omega P) (K : Theorem2ConditionFunctions) (s : Finset Incident) (C : Incident \\to Theorem2ObservedWindowCase), (totalExposure s fun i  =>  exposureWith K (C i)) \\ne 0 \\to \\prod i \\in s, likelihoodFromCountingProcess K H (C i) = productResidualWith K s C * sourcePoissonPMF rate (totalExposure s fun i  =>  exposureWith K (C i)) (totalCount s fun i  =>  countWith K (C i))"
+    },
+    "theorem1_likelihood_product_decomposition_from_primitive_poisson_process_of_exists_pos_exposure": {
+      "lean_statement_sha256": "010598d70a8d1955abafcacb1f4a04bc25a170258aff8398341d0d4c16688eb2",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {Incident : Type u_2} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (H : HomogeneousPoissonCountingProcess \\Omega P) (K : Theorem2ConditionFunctions) (s : Finset Incident) (C : Incident \\to Theorem2ObservedWindowCase), (\\exists i \\in s, 0 < exposureWith K (C i)) \\to \\prod i \\in s, likelihoodFromCountingProcess K H (C i) = productResidualWith K s C * sourcePoissonPMF rate (totalExposure s fun i  =>  exposureWith K (C i)) (totalCount s fun i  =>  countWith K (C i))"
+    },
+    "theorem1_likelihood_product_decomposition_from_process_law_cases": {
+      "lean_statement_sha256": "2a36f52423fb85102ad4863205844d238b6d0d9394936a66719f87bd025d4115",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {Incident : Type u_2} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (A : assumption_theorem2_poisson_process_and_conditions \\Omega P) (s : Finset Incident) (C : Incident \\to Theorem2ObservedWindowCase), (totalExposure s fun i  =>  exposure A (C i)) \\ne 0 \\to \\prod i \\in s, likelihood A (C i) = productResidual A s C * sourcePoissonPMF rate (totalExposure s fun i  =>  exposure A (C i)) (totalCount s fun i  =>  count A (C i))"
+    },
+    "theorem1_likelihood_product_decomposition_from_process_law_cases_of_exists_pos_exposure": {
+      "lean_statement_sha256": "cba9fd4ea588c6f3f64c91dc512e47aab430841d746945004786e279cf421600",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {Incident : Type u_2} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (A : assumption_theorem2_poisson_process_and_conditions \\Omega P) (s : Finset Incident) (C : Incident \\to Theorem2ObservedWindowCase), (\\exists i \\in s, 0 < exposure A (C i)) \\to \\prod i \\in s, likelihood A (C i) = productResidual A s C * sourcePoissonPMF rate (totalExposure s fun i  =>  exposure A (C i)) (totalCount s fun i  =>  count A (C i))"
+    },
+    "theorem1_likelihood_product_decomposition_from_process_source_data": {
+      "lean_statement_sha256": "7da355613e7a0977c2c48e94d5cf627c4aef547b4b9620700ef04ae9082ad542",
+      "tex_statement": "\\forall {Incident : Type u_1} (s : Finset Incident) (D : Incident \\to Theorem2ProcessSourceData) (rate : ℝ), (totalExposure s fun i  =>  (D i).exposure) \\ne 0 \\to \\prod i \\in s, (D i).likelihood rate = theorem2ProcessSourceDataProductResidual s D * sourcePoissonPMF rate (totalExposure s fun i  =>  (D i).exposure) (totalCount s fun i  =>  (D i).count)"
+    },
+    "theorem1_likelihood_product_decomposition_from_source_semantics": {
+      "lean_statement_sha256": "beba73b1bbf9726d7dea75ef6ad2c01e355ead518eea196450d854e5283f422a",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {Incident : Type u_2} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (S : theorem2_poisson_process_and_condition_semantics \\Omega P) (s : Finset Incident) (C : Incident \\to Theorem2ObservedWindowCase), (totalExposure s fun i  =>  exposureFromSourceSemantics S (C i)) \\ne 0 \\to \\prod i \\in s, likelihoodFromSourceSemantics S (C i) = productResidualFromSourceSemantics S s C * sourcePoissonPMF rate (totalExposure s fun i  =>  exposureFromSourceSemantics S (C i)) (totalCount s fun i  =>  countFromSourceSemantics S (C i))"
+    },
+    "theorem1_likelihood_product_decomposition_from_source_semantics_of_exists_pos_exposure": {
+      "lean_statement_sha256": "2db0414ce127ab93482957e65545e567e56a33339f210aad9205282ed29c3b44",
+      "tex_statement": "\\forall {\\Omega : Type u_1} {Incident : Type u_2} [inst : MeasurableSpace \\Omega] {P : Measure \\Omega} (S : theorem2_poisson_process_and_condition_semantics \\Omega P) (s : Finset Incident) (C : Incident \\to Theorem2ObservedWindowCase), (\\exists i \\in s, 0 < exposureFromSourceSemantics S (C i)) \\to \\prod i \\in s, likelihoodFromSourceSemantics S (C i) = productResidualFromSourceSemantics S s C * sourcePoissonPMF rate (totalExposure s fun i  =>  exposureFromSourceSemantics S (C i)) (totalCount s fun i  =>  countFromSourceSemantics S (C i))"
+    },
+    "theorem1_rate_likelihood_product_decomposition_with_fixed_condition_density_source_model": {
+      "lean_statement_sha256": "7a04a6e787c0208edb5310ac9a423eb1a78027e72977591da8a7872636d6b96f",
+      "tex_statement": "\\forall {Incident : Type u_1} (M : Theorem2FixedConditionDensitySourceModel) (rate : ℝ) (s : Finset Incident) (C : Incident \\to Theorem2ObservedWindowCase), (totalExposure s fun i  =>  exposureWith toConditionFunctions (C i)) \\ne 0 \\to \\prod i \\in s, rateLikelihoodWith toConditionFunctions rate (C i) = productResidualWith toConditionFunctions s C * sourcePoissonPMF rate (totalExposure s fun i  =>  exposureWith toConditionFunctions (C i)) (totalCount s fun i  =>  countWith toConditionFunctions (C i))"
+    },
+    "theorem1_rate_likelihood_product_decomposition_with_fixed_condition_density_source_model_of_exists_pos_exposure": {
+      "lean_statement_sha256": "91551ee3c5d7be9e1475da00fdd4b1c52bf145249cd83a6b82d8536809cecebd",
+      "tex_statement": "\\forall {Incident : Type u_1} (M : Theorem2FixedConditionDensitySourceModel) (rate : ℝ) (s : Finset Incident) (C : Incident \\to Theorem2ObservedWindowCase), (\\exists i \\in s, 0 < exposureWith toConditionFunctions (C i)) \\to \\prod i \\in s, rateLikelihoodWith toConditionFunctions rate (C i) = productResidualWith toConditionFunctions s C * sourcePoissonPMF rate (totalExposure s fun i  =>  exposureWith toConditionFunctions (C i)) (totalCount s fun i  =>  countWith toConditionFunctions (C i))"
+    },
+    "theorem2_corrected_case_factorization": {
+      "lean_statement_sha256": "a26a42fbdbdde3c1ee5c34c79b40edaa5429cd949b3c7e993df6717114540480",
+      "tex_statement": "\\forall {kernelResidual rate exposure : ℝ} {count : ℕ}, exposure \\ne 0 \\to theorem2RawCaseLikelihood kernelResidual rate exposure count = theorem2CorrectedResidual kernelResidual exposure count * sourcePoissonPMF rate exposure count"
+    },
+    "theorem2_interarrival_kernel_collection": {
+      "lean_statement_sha256": "5d78b9197fa5767a5a2714d5072cdee99397b12f3f95462f244c252ba2fd631c",
+      "tex_statement": "\\forall {Jump : Type u_1} (jumps : Finset Jump) {rate exposure tail : ℝ} (gap : Jump \\to ℝ), \\sum j \\in jumps, gap j + tail = exposure \\to theorem2InterarrivalTailLikelihood jumps rate gap tail = rate ^ card * exp (-(rate * exposure))"
+    },
+    "theorem2_multi_report_condition_functions_factorization": {
+      "lean_statement_sha256": "86eb388773894bcd5f4965cb0862180050f1b595bc72b01da522fcc197b538a7",
+      "tex_statement": "\\forall (K : Theorem2ConditionFunctions) (baseCount count : ℕ) (hcount : 1 < count) (gap : Fin count \\to ℝ) {tail exposure rate : ℝ}, (\\forall (j : Fin count), 0 \\le gap j) \\to 0 \\le tail \\to \\forall (hexposure : \\sum j, gap j + tail = exposure) (h_exposure : exposure \\ne 0), (multiReportSourceData baseCount count hcount gap tail exposure hexposure h_exposure).likelihood rate = (multiReportSourceData baseCount count hcount gap tail exposure hexposure h_exposure).residual * sourcePoissonPMF rate (multiReportSourceData baseCount count hcount gap tail exposure hexposure h_exposure).exposure (multiReportSourceData baseCount count hcount gap tail exposure hexposure h_exposure).count"
+    },
+    "theorem2_multi_report_jump_times_factorization": {
+      "lean_statement_sha256": "6f41fdef73f2bbcd0a2c564ef9de459572826a0c22b01eca58777a8ffbeb28dc",
+      "tex_statement": "\\forall (K : Theorem2ConditionFunctions) (baseCount count : ℕ) (hcount : 1 < count) {startTime endTime rate : ℝ} (jumpTime : ℕ \\to ℝ), Monotone (jumpTimelineEndpoint startTime jumpTime) \\to jumpTimelineEndpoint startTime jumpTime count \\le endTime \\to \\forall (h_exposure : observationExposure startTime endTime \\ne 0), (multiReportSourceDataFromJumpTimes baseCount count hcount startTime endTime jumpTime h_exposure).likelihood rate = (multiReportSourceDataFromJumpTimes baseCount count hcount startTime endTime jumpTime h_exposure).residual * sourcePoissonPMF rate (multiReportSourceDataFromJumpTimes baseCount count hcount startTime endTime jumpTime h_exposure).exposure (multiReportSourceDataFromJumpTimes baseCount count hcount startTime endTime jumpTime h_exposure).count"
+    },
+    "theorem2_multi_report_kernel_collection": {
+      "lean_statement_sha256": "f2b463c755ab5c3b064f4635dda171aacdfd550435bbae28a1e8f67bdc13ce74",
+      "tex_statement": "\\forall {Jump : Type u_1} (jumps : Finset Jump) {startDensity endDensityAfterLastJump survivalIntegralProduct rate exposure tail : ℝ} {count : ℕ} (gap : Jump \\to ℝ), card = count \\to \\sum j \\in jumps, gap j + tail = exposure \\to theorem2MultiReportKernelResidual startDensity endDensityAfterLastJump survivalIntegralProduct * theorem2InterarrivalTailLikelihood jumps rate gap tail = theorem2MultiReportLikelihood startDensity endDensityAfterLastJump survivalIntegralProduct rate exposure count"
+    },
+    "theorem2_multi_report_ordered_region_volume_normalization": {
+      "lean_statement_sha256": "62c0f7a733c8b94035264d984affeef60c70898e288c1ea594b7772646b67b27",
+      "tex_statement": "\\forall {count : ℕ} {rate exposure tail : ℝ} (gap : Fin count \\to ℝ), \\sum j, gap j + tail = exposure \\to 0 \\le exposure \\to exposure \\ne 0 \\to theorem2InterarrivalTailLikelihood univ rate gap tail * (volume (orderedJumpRegion count exposure)).toReal = sourcePoissonPMF rate exposure count"
+    },
+    "theorem2_multi_report_process_kernel_source_case": {
+      "lean_statement_sha256": "ed8110752ec4e2b97b596c8aa9564ea54735259710574cb9740a3e51c354652b",
+      "tex_statement": "\\forall {Jump : Type u_1} (jumps : Finset Jump) {startDensity endDensityAfterLastJump survivalIntegralProduct rate exposure tail : ℝ} {count : ℕ} (gap : Jump \\to ℝ), card = count \\to \\sum j \\in jumps, gap j + tail = exposure \\to 1 < count \\to exposure \\ne 0 \\to 1 < count \\land theorem2MultiReportProcessKernelLikelihood jumps startDensity endDensityAfterLastJump survivalIntegralProduct rate gap tail = theorem2CorrectedResidual (theorem2MultiReportKernelResidual startDensity endDensityAfterLastJump survivalIntegralProduct) exposure count * sourcePoissonPMF rate exposure count"
+    },
+    "theorem2_multi_report_source_case": {
+      "lean_statement_sha256": "7b5b50f90542d115e10e6349bf762dba8f610a9c1272bc5cc283a428e018f975",
+      "tex_statement": "\\forall {startDensity endDensityAfterLastJump survivalIntegralProduct rate exposure : ℝ} {count : ℕ}, 1 < count \\to exposure \\ne 0 \\to 1 < count \\land theorem2MultiReportLikelihood startDensity endDensityAfterLastJump survivalIntegralProduct rate exposure count = theorem2CorrectedResidual (theorem2MultiReportKernelResidual startDensity endDensityAfterLastJump survivalIntegralProduct) exposure count * sourcePoissonPMF rate exposure count"
+    },
+    "theorem2_one_report_condition_functions_factorization": {
+      "lean_statement_sha256": "c6abda8bd373e52280aad74ff98c61813f6cf708ade1d6674300837efb9fffba",
+      "tex_statement": "\\forall (K : Theorem2ConditionFunctions) (baseCount : ℕ) {gap tail exposure rate : ℝ}, 0 \\le gap \\to 0 \\le tail \\to \\forall (hexposure : gap + tail = exposure) (h_exposure : exposure \\ne 0), (oneReportSourceData baseCount gap tail exposure hexposure h_exposure).likelihood rate = (oneReportSourceData baseCount gap tail exposure hexposure h_exposure).residual * sourcePoissonPMF rate (oneReportSourceData baseCount gap tail exposure hexposure h_exposure).exposure (oneReportSourceData baseCount gap tail exposure hexposure h_exposure).count"
+    },
+    "theorem2_one_report_jump_time_factorization": {
+      "lean_statement_sha256": "b766ec361f2989c2cb53279beaa9fca1c43568f2ee51697d3398cfabbd1ca415",
+      "tex_statement": "\\forall (K : Theorem2ConditionFunctions) (baseCount : ℕ) {startTime endTime firstJumpTime rate : ℝ}, startTime \\le firstJumpTime \\to firstJumpTime \\le endTime \\to \\forall (h_exposure : observationExposure startTime endTime \\ne 0), (oneReportSourceDataFromJumpTime baseCount startTime endTime firstJumpTime h_exposure).likelihood rate = (oneReportSourceDataFromJumpTime baseCount startTime endTime firstJumpTime h_exposure).residual * sourcePoissonPMF rate (oneReportSourceDataFromJumpTime baseCount startTime endTime firstJumpTime h_exposure).exposure (oneReportSourceDataFromJumpTime baseCount startTime endTime firstJumpTime h_exposure).count"
+    },
+    "theorem2_one_report_kernel_collection": {
+      "lean_statement_sha256": "34001339688eaa4ee442f88bf41b5bec6930772a9befdd60a5e9e5968627b23d",
+      "tex_statement": "\\forall {startDensity endDensityAfterJump endSurvivalIntegral rate gap tail exposure : ℝ}, gap + tail = exposure \\to theorem2OneReportKernelResidual startDensity endDensityAfterJump endSurvivalIntegral * interarrivalDensityKernel rate gap * noArrivalProb rate tail = theorem2OneReportLikelihood startDensity endDensityAfterJump endSurvivalIntegral rate exposure"
+    },
+    "theorem2_one_report_ordered_region_volume_normalization": {
+      "lean_statement_sha256": "65696e0aec3844d85f0437630c06f0ae3d49b34c3cd526809a959cb1251d00bf",
+      "tex_statement": "\\forall {rate gap tail exposure : ℝ}, gap + tail = exposure \\to 0 \\le exposure \\to exposure \\ne 0 \\to interarrivalDensityKernel rate gap * noArrivalProb rate tail * (volume (orderedJumpRegion 1 exposure)).toReal = sourcePoissonPMF rate exposure 1"
+    },
+    "theorem2_one_report_ordered_volume_normalization": {
+      "lean_statement_sha256": "2d8158e085db1bee55858b0caa307e44bbc383b9aefc2adab4a1fba8fabf8753",
+      "tex_statement": "\\forall {rate gap tail exposure : ℝ}, gap + tail = exposure \\to exposure \\ne 0 \\to interarrivalDensityKernel rate gap * noArrivalProb rate tail * orderedJumpNestedVolume 1 exposure = sourcePoissonPMF rate exposure 1"
+    },
+    "theorem2_one_report_process_kernel_source_case": {
+      "lean_statement_sha256": "551b407d86e471f3b3413e13168aff6d4bf2ad94ce58f2477a739941a0ba5ec0",
+      "tex_statement": "\\forall {startDensity endDensityAfterJump endSurvivalIntegral rate gap tail exposure : ℝ}, gap + tail = exposure \\to exposure \\ne 0 \\to theorem2OneReportProcessKernelLikelihood startDensity endDensityAfterJump endSurvivalIntegral rate gap tail = theorem2OneReportKernelResidual startDensity endDensityAfterJump endSurvivalIntegral / exposure * sourcePoissonPMF rate exposure 1"
+    },
+    "theorem2_one_report_source_case": {
+      "lean_statement_sha256": "7333e09887eeb26498557d264d47c6a12c9462de446e4df1e85f99f1e17f5368",
+      "tex_statement": "\\forall {startDensity endDensityAfterJump endSurvivalIntegral rate exposure : ℝ}, exposure \\ne 0 \\to theorem2OneReportLikelihood startDensity endDensityAfterJump endSurvivalIntegral rate exposure = theorem2OneReportKernelResidual startDensity endDensityAfterJump endSurvivalIntegral / exposure * sourcePoissonPMF rate exposure 1"
+    },
+    "theorem2_two_report_ordered_region_volume_normalization": {
+      "lean_statement_sha256": "98549ceda6aa6643f091e847d97c913bdf014af4c224e2eb5bc27f8e6bbdff1b",
+      "tex_statement": "\\forall {rate exposure tail : ℝ} (gap : Fin 2 \\to ℝ), \\sum j, gap j + tail = exposure \\to 0 \\le exposure \\to exposure \\ne 0 \\to theorem2InterarrivalTailLikelihood univ rate gap tail * (volume (orderedJumpRegion 2 exposure)).toReal = sourcePoissonPMF rate exposure 2"
+    },
+    "theorem2_zero_report_condition_functions_factorization": {
+      "lean_statement_sha256": "118c9f596341d431f3856607752d12ae284a0b814b05136c5a8880840710c132",
+      "tex_statement": "\\forall (K : Theorem2ConditionFunctions) (baseCount : ℕ) (W : ObservationWindow) (rate : ℝ), (zeroReportSourceDataFromWindow baseCount W).likelihood rate = (zeroReportSourceDataFromWindow baseCount W).residual * sourcePoissonPMF rate (zeroReportSourceDataFromWindow baseCount W).exposure (zeroReportSourceDataFromWindow baseCount W).count"
+    },
+    "theorem2_zero_report_process_kernel_source_case": {
+      "lean_statement_sha256": "c79602d869ea900654f347d0b5d3f23ba993076d4d408d1b2c573bd1baa79777",
+      "tex_statement": "\\forall (startDensity endDensity rate exposure : ℝ), theorem2ZeroReportProcessKernelLikelihood startDensity endDensity rate exposure = theorem2ZeroReportResidual startDensity endDensity * sourcePoissonPMF rate exposure 0"
+    },
+    "theorem2_zero_report_source_case": {
+      "lean_statement_sha256": "ded8d60f17141746be8cddce246acda7e64639fa017e734e3ece8965348cc6e7",
+      "tex_statement": "\\forall (startDensity endDensity rate exposure : ℝ), theorem2ZeroReportLikelihood startDensity endDensity rate exposure = theorem2ZeroReportResidual startDensity endDensity * sourcePoissonPMF rate exposure 0"
+    }
+  },
+  "paper": "LBG24SpatialUnderreporting",
+  "prompt_summary": [
+    "Translate each Lean declaration from the Lean statement alone, with no paper context.",
+    "Preserve every visible variable, binder, hypothesis, domain condition, equivalence or implication direction, and conclusion.",
+    "For formula-bearing rows, expose the current dashboard Lean preview and stable Lean declaration digest."
+  ],
+  "prompt_version": "lean-to-tex-v2-strict-context-free-recursive-definitions",
+  "schema": 1,
+  "translated_at": "2026-06-28T12:00:00Z",
+  "translator": "gpt-5-codex",
+  "translator_type": "model",
+  "validated_at": "2026-06-28T12:00:00Z"
+}

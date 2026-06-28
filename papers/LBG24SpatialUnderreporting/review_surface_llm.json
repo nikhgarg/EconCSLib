@@ -1,0 +1,362 @@
+{
+  "comment": "No-paper-context review-surface pass for the public partial LBG24 checkpoint.",
+  "items": {
+    "Theorem2PrimitiveSourceModel": {
+      "judgment": "paper_facing_assumption",
+      "reason": "Explicitly listed assumption/proof-boundary row for the LBG24 partial checkpoint."
+    },
+    "assumption_theorem2_poisson_process_and_conditions": {
+      "judgment": "paper_facing_assumption",
+      "reason": "Explicitly listed assumption/proof-boundary row for the LBG24 partial checkpoint."
+    },
+    "equation2_poisson_count_pmf_formula": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "equation33_nyc_multi_report_factorization_from_local_count_process_at_sample": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation33_nyc_one_report_factorization_from_local_count_process_at_sample": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation33_nyc_preprocessing_observation_window_of_local_count_process_at_sample": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_deterministic_endpoints": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_first_count_arrival": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_local_count_process": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation33_nyc_preprocessing_stopping_observation_window_of_local_count_process_stopping_endpoints": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation33_nyc_zero_report_factorization_from_local_count_process_at_sample": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation34_chicago_multi_report_factorization_from_local_count_process_at_sample": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation34_chicago_one_report_factorization_from_local_count_process_at_sample": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation34_chicago_preprocessing_observation_window_of_local_count_process_at_sample": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_deterministic_endpoints": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_first_count_arrival": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_local_count_process": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation34_chicago_preprocessing_stopping_observation_window_of_local_count_process_stopping_endpoints": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation34_chicago_zero_report_factorization_from_local_count_process_at_sample": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "equation3_mle_global_logLikelihood_max": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "equation3_mle_score_equation": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "equation3_product_likelihood_raw_shape": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "equation3_product_likelihood_total_pmf": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "equation5_poisson_regression_rate_formula": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "equation6_poisson_regression_likelihood_formula": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "equation7_zero_inflated_likelihood_nonnegative": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "equation7_zero_inflated_likelihood_positive_count": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "equation7_zero_inflated_likelihood_zero": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "equation7_zero_inflated_regression_likelihood_positive_count": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "equation7_zero_inflated_regression_likelihood_zero": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "first_report_probability_formula": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "homogeneous_reporting_delay_mean_formula": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma1_continuous_duration_first_report_probability_integral": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma1_continuous_duration_first_report_probability_le_one": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma1_continuous_duration_first_report_probability_nonnegative": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma1_continuous_duration_observed_rate_integral": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma1_continuous_duration_poisson_thinning_count_law": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma1_finite_duration_first_report_weighted_average": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma1_unit_interval_observed_counts_lln": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma1_unit_interval_observed_counts_lln_to_continuous_duration_rate": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma2_exponential_waiting_tail": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma2_exponential_waiting_tail_memoryless_ratio": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma2_finite_jump_density_normalizes_to_count_probability": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "lemma2_one_jump_density_normalizes_to_count_probability": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "proposition1_continuous_duration_nonidentifiability": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "proposition1_finite_duration_nonidentifiability_positive": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "proposition1_homogeneous_nonidentifiability": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "proposition1_homogeneous_nonidentifiability_positive": {
+      "judgment": "paper_facing",
+      "reason": "Source-facing formula, lemma subclaim, theorem consequence, or equation row used by the audited LBG24 interface."
+    },
+    "theorem1_likelihood_decomposition": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_decomposition_from_poisson_increment_laws": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_decomposition_from_poisson_increment_laws_and_fixed_condition_density_source_model": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_decomposition_from_primitive_poisson_process": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_decomposition_from_process_source_data": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_decomposition_from_source_semantics": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_product_decomposition_from_poisson_increment_laws": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_product_decomposition_from_poisson_increment_laws_of_exists_pos_exposure": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_product_decomposition_from_primitive_poisson_process": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_product_decomposition_from_primitive_poisson_process_of_exists_pos_exposure": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_product_decomposition_from_process_law_cases": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_product_decomposition_from_process_law_cases_of_exists_pos_exposure": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_product_decomposition_from_process_source_data": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_product_decomposition_from_source_semantics": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_likelihood_product_decomposition_from_source_semantics_of_exists_pos_exposure": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_rate_likelihood_product_decomposition_with_fixed_condition_density_source_model": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem1_rate_likelihood_product_decomposition_with_fixed_condition_density_source_model_of_exists_pos_exposure": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_corrected_case_factorization": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_interarrival_kernel_collection": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_multi_report_condition_functions_factorization": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_multi_report_jump_times_factorization": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_multi_report_kernel_collection": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_multi_report_ordered_region_volume_normalization": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_multi_report_process_kernel_source_case": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_multi_report_source_case": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_one_report_condition_functions_factorization": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_one_report_jump_time_factorization": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_one_report_kernel_collection": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_one_report_ordered_region_volume_normalization": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_one_report_ordered_volume_normalization": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_one_report_process_kernel_source_case": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_one_report_source_case": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_poisson_process_and_condition_semantics": {
+      "judgment": "paper_facing_assumption",
+      "reason": "Explicitly listed assumption/proof-boundary row for the LBG24 partial checkpoint."
+    },
+    "theorem2_two_report_ordered_region_volume_normalization": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_zero_report_condition_functions_factorization": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_zero_report_process_kernel_source_case": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    },
+    "theorem2_zero_report_source_case": {
+      "judgment": "paper_facing_conditional_boundary",
+      "reason": "Paper-facing theorem/equation row retained for the partial public checkpoint; its statement sidecar records the compact certificate boundary."
+    }
+  },
+  "judgment": "passes",
+  "paper": "LBG24SpatialUnderreporting",
+  "reason": "The 87-row surface is above the 30-row LLM threshold but below the 120-row curation threshold. Rows are source-facing formulas, named theorem/equation consequences, explicit conditional-boundary endpoints, or the three explicit source/proof-boundary assumption rows; broad aggregate theorem wrappers are auxiliary proof-facing rows outside this public review surface.",
+  "review_rows": 87,
+  "review_surface_sha256": "d237e115d54411f8190f8164b4fbed83801028fcec2e400967debe74f73f1638",
+  "schema": 1,
+  "validated_at": "2026-06-28T12:00:00Z",
+  "validator": "gpt-5-codex",
+  "validator_type": "model"
+}

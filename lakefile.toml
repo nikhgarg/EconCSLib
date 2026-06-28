@@ -17,6 +17,7 @@ defaultTargets = [
   "PKG25NoFreeLunch",
   "LMMS04FairDivision",
   "LOS02CombinatorialAuctions",
+  "LBG24SpatialUnderreporting",
   "GKGMM19IterativeLocalVoting",
 ]
 
@@ -93,6 +94,10 @@ srcDir = "papers"
 
 [[lean_lib]]
 name = "LOS02CombinatorialAuctions"
+srcDir = "papers"
+
+[[lean_lib]]
+name = "LBG24SpatialUnderreporting"
 srcDir = "papers"
 
 [[lean_lib]]

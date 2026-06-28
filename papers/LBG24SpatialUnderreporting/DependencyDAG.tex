@@ -1,0 +1,110 @@
+\documentclass[tikz,border=10pt]{standalone}
+\input{../../docs/tikz/dag_preamble.tex}
+
+\begin{document}
+
+\begin{tikzpicture}[
+  x=1cm,
+  y=1cm,
+  every node/.append style={outer sep=4pt}
+]
+
+\dagPaperMetadata
+  {Quantifying Spatial Under-reporting Disparities}
+  {Liu, Bhandaram, Garg}
+  {Nature Computational Science}
+  {2024}
+  {arXiv:2204.08620 v4 / DOI 10.1038/s43588-023-00572-6}
+
+\dagPaperLegendRightOfMetadata{
+\node[dag_result, dag_template_legend] (legRes) at (0,0) {formalized\\result};
+\node[dag_lemma, dag_template_legend] (legLem) at (4.2,0) {formalized\\lemma};
+\node[dag_model, dag_template_legend] (legDef) at (8.4,0) {formalized\\definition};
+\node[dag_conditional, dag_template_legend] (legCond) at (12.6,0) {conditional\\boundary};
+\node[dag_partial, dag_template_legend] (legPart) at (0,-2.6) {partial\\paper};
+\node[dag_unformalized, dag_template_legend] (legOpen) at (4.2,-2.6) {remaining\\library work};
+}
+\daglegend{(legRes)(legLem)(legDef)(legCond)(legPart)(legOpen)}{Legend}
+
+\begin{dagPaperBody}
+
+\node[dag_model] (CountLaw) at (0,0) {
+  \textbf{Poisson count law} \\
+  count paths, independent increments, PMF consequences
+};
+
+\node[dag_result] (PMF) at (6.7,0) {
+  \textbf{Eq. (2)} \\
+  Poisson count PMF
+};
+
+\node[dag_lemma] (Lemma1) at (13.4,0) {
+  \textbf{Lemma 1} \\
+  detection probability, thinning count law, LLN route
+};
+
+\node[dag_result] (Prop1) at (13.4,-3.2) {
+  \textbf{Proposition 1} \\
+  reporting-rate non-identifiability collisions
+};
+
+\node[dag_lemma] (Lemma2) at (0,-3.2) {
+  \textbf{Appendix Lemma 2} \\
+  exponential no-arrival / waiting-time tail
+};
+
+\node[dag_model] (StoppingWindows) at (0,-6.4) {
+  \textbf{Min-censored observation windows} \\
+  min-censored windows and pathwise observation windows
+};
+
+\node[dag_conditional] (PrimitiveWrapper) at (6.7,-3.2) {
+  \textbf{Compact source certificate} \\
+  homogeneous count law + fixed $g(s),h_m(e)$ kernels
+};
+
+\node[dag_result] (CaseAlg) at (6.7,-6.4) {
+  \textbf{Appendix B.2 algebra} \\
+  zero/one/multi cases, interarrival kernels, corrected residual
+};
+
+\node[dag_conditional] (Thm1) at (13.4,-6.4) {
+  \textbf{Theorem 1 / Appendix Theorem 2} \\
+  likelihood and finite-product PMF decomposition from the certificate
+};
+
+\node[dag_result] (MLE) at (0,-9.6) {
+  \textbf{Eq. (3)} \\
+  product likelihood, score equation, global MLE
+};
+
+\node[dag_result] (RegZI) at (13.4,-9.6) {
+  \textbf{Eq. (5)--(7)} \\
+  Poisson regression and zero-inflated likelihoods
+};
+
+\node[dag_unformalized] (Future) at (6.7,-10.9) {
+  \textbf{Remaining library work} \\
+  derive the compact certificate from a concrete continuous-time \\
+  homogeneous Poisson process and adapted/stopping endpoints
+};
+
+\draw[dag_arrow] (CountLaw) -- (PMF);
+\draw[dag_arrow] (PMF) -- (Lemma1);
+\draw[dag_arrow] (Lemma1) -- (Prop1);
+\draw[dag_arrow] (PMF) -- (Lemma2);
+\draw[dag_arrow] (CountLaw) -- (PrimitiveWrapper);
+\draw[dag_arrow] (Lemma2) -- (PrimitiveWrapper);
+\draw[dag_arrow] (StoppingWindows) -- (Thm1);
+\draw[dag_arrow] (PrimitiveWrapper) -- (CaseAlg);
+\draw[dag_arrow] (CaseAlg) -- (Thm1);
+\draw[dag_arrow] (PMF) -- (MLE);
+\draw[dag_arrow] (Thm1) -- (MLE);
+\draw[dag_arrow] (Thm1) -- (RegZI);
+\draw[dag_arrow] (PMF) -- (RegZI);
+\draw[dag_dashed_arrow] (Future) -- (PrimitiveWrapper);
+\draw[dag_dashed_arrow] (Future) -- (StoppingWindows);
+
+\end{dagPaperBody}
+\end{tikzpicture}
+\end{document}

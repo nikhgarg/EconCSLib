@@ -80,6 +80,24 @@ theorem measure_Ioi_toReal (M : Model) {x : ℝ} (hx : 0 ≤ x) :
       rw [M.cdf_eq x, if_pos hx]
       ring
 
+/--
+Memoryless tail ratio for a positive-rate exponential model, stated directly
+in terms of the model's tail probabilities.
+-/
+theorem measure_Ioi_add_div_measure_Ioi_toReal
+    (M : Model) {elapsed future : ℝ}
+    (h_elapsed : 0 ≤ elapsed) (h_future : 0 ≤ future) :
+    (M.measure (Set.Ioi (elapsed + future))).toReal /
+        (M.measure (Set.Ioi elapsed)).toReal =
+      (M.measure (Set.Ioi future)).toReal := by
+  rw [M.measure_Ioi_toReal (add_nonneg h_elapsed h_future)]
+  rw [M.measure_Ioi_toReal h_elapsed]
+  rw [M.measure_Ioi_toReal h_future]
+  rw [show -(M.rate * (elapsed + future)) =
+      -(M.rate * elapsed) + -(M.rate * future) by ring]
+  rw [Real.exp_add]
+  field_simp [Real.exp_ne_zero]
+
 theorem measure_Iic_toReal (M : Model) {x : ℝ} (hx : 0 ≤ x) :
     (M.measure (Set.Iic x)).toReal =
       1 - Real.exp (-(M.rate * x)) := by

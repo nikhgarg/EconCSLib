@@ -38,6 +38,7 @@ import EconCSLib.Foundations.Probability.MeasureInequalities
 import EconCSLib.Foundations.Probability.Occupancy
 import EconCSLib.Foundations.Probability.OrderStatistics
 import EconCSLib.Foundations.Probability.Pareto
+import EconCSLib.Foundations.Probability.PoissonProcess
 import EconCSLib.Foundations.Probability.RandomUtility
 import EconCSLib.Foundations.Probability.RandomUtilityDensity
 import EconCSLib.Foundations.Probability.RealDistribution
@@ -100,6 +101,11 @@ Aggregate import for reusable probability infrastructure.
   `EconCSLib.Foundations.Probability.MDP`,
   `EconCSLib.Foundations.Probability.CTMC`, and
   `EconCSLib.Foundations.Probability.RenewalReward`.
+  `EconCSLib.Foundations.Probability.PoissonProcess` includes reusable
+  Poisson count likelihoods, no-arrival and interarrival-tail kernels, ordered
+  observation windows, thinning-count algebra, homogeneous process-law
+  interfaces, and finite-product likelihood collapses for event-count
+  observation models.
 - Finite sampling and occupancy tools:
   `EconCSLib.Foundations.Probability.Weighted`,
   `EconCSLib.Foundations.Probability.WithoutReplacement`, and
